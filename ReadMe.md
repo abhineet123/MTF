@@ -20,7 +20,7 @@ We also provide a simple interface for [ROS](http://www.ros.org/) called [mtf_br
 
 Currently, MTF only works under Unix though support for Windows is under active development and will be added soon. Though it has been tested comprehensively only under Linux, specifically Ubuntu 14.04, it should work on Macintosh systems too (see [Compile/Runtime Notes](#compileruntime-notes) section below for resolving possible issues).
 
-MTF is provided under [BSD license](https://opensource.org/licenses/BSD-3-Clause) and so is free for research and commercial applications. We do request, however, that [this paper](https://arxiv.org/abs/1602.09130) be cited by any publications resulting from projects that use MTF so more people can get to know about and benefit from it. Finally, if any issues are encountered while installing or running the library, please create an entry under the `Issues` section and we will do our best to resolve it as soon as possible.
+MTF is provided under [BSD license](https://opensource.org/licenses/BSD-3-Clause) and so is free for research and commercial applications. We do request, however, that [this paper](https://arxiv.org/abs/1602.09130) be cited by any publications resulting from projects that use MTF so more people can get to know about and benefit from it. Finally, if any issues are encountered while installing or running the library, please create an entry in the [Issues](https://github.com/abhineet123/MTF/issues) section and we will do our best to resolve it as soon as possible.
 
 Installation:
 -------------
