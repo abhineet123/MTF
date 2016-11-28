@@ -18,6 +18,7 @@ batch/
 Build/
 Backup/
 Data/
+Docs/
 log/
 Libraries/
 runMTF

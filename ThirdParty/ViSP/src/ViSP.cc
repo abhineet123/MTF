@@ -116,8 +116,8 @@ warp(nullptr), tracker(nullptr){
 		printf("Using Homography SSM\n");
 		warp.reset(new vpTemplateTrackerWarpHomography);
 		break;
-	case SSMType::HomographySL3:
-		printf("Using HomographySL3 SSM\n");
+	case SSMType::SL3:
+		printf("Using SL3 SSM\n");
 		warp.reset(new vpTemplateTrackerWarpHomographySL3);
 		break;
 	case SSMType::Affine:

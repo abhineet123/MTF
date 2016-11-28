@@ -1623,8 +1623,8 @@ inline TrackerBase *getTracker(const char *tracker_type){
 		ViSPParams::SSMType vp_stracker_type = ViSPParams::SSMType::Homography;
 		if(!strcmp(visp_ssm, "8")){
 			vp_stracker_type = ViSPParams::SSMType::Homography;
-		} else if(!strcmp(visp_ssm, "l8")){
-			vp_stracker_type = ViSPParams::SSMType::HomographySL3;
+		} else if(!strcmp(visp_ssm, "l8") || !strcmp(visp_ssm, "sl3")){
+			vp_stracker_type = ViSPParams::SSMType::SL3;
 		} else if(!strcmp(visp_ssm, "6")){
 			vp_stracker_type = ViSPParams::SSMType::Affine;
 		} else if(!strcmp(visp_ssm, "4")){

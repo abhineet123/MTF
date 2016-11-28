@@ -8,7 +8,7 @@
 
 struct ViSPParams{
 	enum class SSMType{
-		Homography, HomographySL3, Affine,
+		Homography, SL3, Affine,
 		Similarity, Isometry, Translation
 	};
 	enum class SMType{
