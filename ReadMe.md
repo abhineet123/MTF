@@ -14,13 +14,13 @@ for more details on the system design and
 [**this one**](http://webdocs.cs.ualberta.ca/~asingh1/docs/Modular%20Decomposition%20and%20Analysis%20of%20Registration%20based%20Trackers%20(CRV%202016).pdf)
 for some preliminary results. There is also a [**dedicated website**](http://webdocs.cs.ualberta.ca/~vis/mtf/) where Doxygen documentation will soon be available along with detailed tutorials and examples. It also provides several datasets formatted to work with MTF.
 
-The library is implemented entirely in C++ though a Python interface called `pyMTF` also exists and works seamlessly with our [Python Tracking Framework](https://bitbucket.org/abhineet123/ptf). 
+The library is implemented entirely in C++ though a Python interface called `pyMTF` also exists and works seamlessly with our [Python Tracking Framework](https://github.com/abhineet123/PTF). 
 A Matlab interface similar to [Mexvision](http://ugweb.cs.ualberta.ca/~vis/courses/CompVis/lab/mexVision/) is currently under development too.
 We also provide a simple interface for [ROS](http://www.ros.org/) called [mtf_bridge](https://gitlab.com/vis/mtf_bridge) for seamless integration with robotics applications. A ROS package that uses it to exemplify integration of MTF with ROS is present in the `ROS` sub folder.
 
 Currently, MTF only works under Unix though support for Windows is under active development and will be added soon. Though it has been tested comprehensively only under Linux, specifically Ubuntu 14.04, it should work on Macintosh systems too (see [Compile/Runtime Notes](#compileruntime-notes) section below for resolving possible issues).
 
-MTF is provided under [BSD license](https://opensource.org/licenses/BSD-3-Clause) and so is free for research and commercial applications. We do request, however, that [this paper](https://arxiv.org/abs/1602.09130) be cited by any publications resulting from projects that use MTF so more people can get to know about and benefit from it.
+MTF is provided under [BSD license](https://opensource.org/licenses/BSD-3-Clause) and so is free for research and commercial applications. We do request, however, that [this paper](https://arxiv.org/abs/1602.09130) be cited by any publications resulting from projects that use MTF so more people can get to know about and benefit from it. Finally, if any issues are encountered while installing or running the library, please create an entry under the `Issues` section and we will do our best to resolve it as soon as possible.
 
 Installation:
 -------------
@@ -36,9 +36,9 @@ Installation:
     * [ViSP library](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see below).
 	    - Note that [version 3.0.0](http://gforge.inria.fr/frs/download.php/latestfile/475/visp-3.0.0.zip)+ is required. The Ubuntu apt package is 2.8 and is therefore incompatible.
     * [Caffe](http://caffe.berkeleyvision.org/) is needed for some optional modules including FMaps, Regnet and GOTURN if these are enabled during compilation
-	* [Xvision](https://bitbucket.org/abhineet123/xvision2) should be installed if it is enabled during compilation (see below).
+	* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see below).
 	    - **Not recommended** as Xvision is very difficult to install and configure on modern systems
-* **Download** the source code using `git clone https://abhineet123@bitbucket.org/abhineet123/mtf.git`.
+* **Download** the source code as zip file or clone using `git clone https://github.com/abhineet123/MTF.git`.
 * MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the former is recommended for developers/contributors as it offers finer level of control while the latter is for users of the library who only want to install it once (or when the former does not work). For cmake, first use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile and then use one of the make commands as specified below.
 * Use one of the following **make commands** to compile and install the library and the demo application:
     * `make` or `make mtf` : compiles the shared library (_libmtf.so_) to the build directory (_Build/Release_)
@@ -50,7 +50,7 @@ Installation:
 	* `make install_exe`: creates _runMTF_ if needed and copies it to _/usr/local/bin_; this needs administrative privilege too - change `MTF_EXEC_INSTALL_DIR` in Examples/Examples.mak (or during compilation as above) if this is not available
     * **`make mtfi` : all of the above - recommended command that compiles and installs the library and the executable**
     * `make py`/`make install_py` : compile/install the Python interface to MTF - this creates a Python module called _pyMTF.so_ that serves as a front end for running these trackers from Python.
-	    - usage of this module is fully demonstrated in the `mtfTracker.py` file in our [Python Tracking Framework](https://bitbucket.org/abhineet123/ptf)
+	    - usage of this module is fully demonstrated in the `mtfTracker.py` file in our [Python Tracking Framework](https://github.com/abhineet123/PTF)
 	    -  installation location can be specified through `MTF_PY_INSTALL_DIR` (defaults to _/usr/local/lib/python2.7/dist-packages/_)
 		- currently only supports Python 2.7 so will give compilation errors if Python 3 is also installed and set as default
     * `make uav`/`make install_uav` : compile/install an application called `trackUAVTrajectory` that tracks the trajectory of a UAV in a satellite image of the area over which it flew while capturing images from above
