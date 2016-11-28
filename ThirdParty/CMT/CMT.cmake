@@ -1,0 +1,5 @@
+set(LIBS_LEARNING ${LIBS_LEARNING} cmt)
+set(LEARNING_TRACKERS ${LEARNING_TRACKERS} CMT/src/CMT)
+set(THIRD_PARTY_INCLUDE_DIRS ${THIRD_PARTY_INCLUDE_DIRS} CMT/include)
+# target_link_libraries(mtf cmt)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR})

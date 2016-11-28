@@ -1,0 +1,87 @@
+\hypertarget{classHACLK}{\section{H\-A\-C\-L\-K$<$ A\-M, S\-S\-M $>$ Class Template Reference}
+\label{classHACLK}\index{H\-A\-C\-L\-K$<$ A\-M, S\-S\-M $>$@{H\-A\-C\-L\-K$<$ A\-M, S\-S\-M $>$}}
+}
+Inheritance diagram for H\-A\-C\-L\-K$<$ A\-M, S\-S\-M $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classHACLK}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \{ \\*
+{\bfseries Gauss\-Newton}, 
+{\bfseries Newton}, 
+{\bfseries Initial\-Newton}, 
+{\bfseries Current\-Newton}, 
+\\*
+{\bfseries Converged\-Newton}
+ \}
+\item 
+\hypertarget{classHACLK_aea5c88e5ed26c6b5f3914dd6a333535e}{typedef \hyperlink{structHACLKParams}{H\-A\-C\-L\-K\-Params} {\bfseries Param\-Type}}\label{classHACLK_aea5c88e5ed26c6b5f3914dd6a333535e}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classHACLK_af2729c6008639b5009212214780a5899}{{\bfseries H\-A\-C\-L\-K} (const \hyperlink{structHACLKParams}{Param\-Type} $\ast$haclk\-\_\-params=nullptr, const \hyperlink{structAMParams}{A\-M\-Params} $\ast$am\-\_\-params=nullptr, const \hyperlink{structSSMParams}{S\-S\-M\-Params} $\ast$ssm\-\_\-params=nullptr)}\label{classHACLK_af2729c6008639b5009212214780a5899}
+
+\item 
+\hypertarget{classHACLK_ab2ebdfe87be6bd27d88e64739b6287b1}{void {\bfseries initialize} (const cv\-::\-Mat \&corners) override}\label{classHACLK_ab2ebdfe87be6bd27d88e64739b6287b1}
+
+\item 
+\hypertarget{classHACLK_aee3c321d63b71822ed51fcec04b219e5}{void {\bfseries update} () override}\label{classHACLK_aee3c321d63b71822ed51fcec04b219e5}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classHACLK_ac8db1e67d533f067fa907f62d092371a}{bool {\bfseries use\-\_\-newton\-\_\-method}}\label{classHACLK_ac8db1e67d533f067fa907f62d092371a}
+
+\item 
+\hypertarget{classHACLK_ab2d257d242d7ed7fc99ab0f67636fe62}{\hyperlink{structHACLKParams}{Param\-Type} {\bfseries params}}\label{classHACLK_ab2d257d242d7ed7fc99ab0f67636fe62}
+
+\item 
+\hypertarget{classHACLK_af4af6fad4891e79604874024c219afd6}{Matrix\-Xd \hyperlink{classHACLK_af4af6fad4891e79604874024c219afd6}{init\-\_\-pix\-\_\-jacobian}}\label{classHACLK_af4af6fad4891e79604874024c219afd6}
+
+\begin{DoxyCompactList}\small\item\em N x S jacobians of the pix values w.\-r.\-t the S\-S\-M state vector. \end{DoxyCompactList}\item 
+\hypertarget{classHACLK_af9a83d6bd6f0c9a28e1fa55566467f52}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-jacobian}}\label{classHACLK_af9a83d6bd6f0c9a28e1fa55566467f52}
+
+\item 
+\hypertarget{classHACLK_a6375da2cc74b787e142e5940c6691b68}{Matrix\-Xd \hyperlink{classHACLK_a6375da2cc74b787e142e5940c6691b68}{init\-\_\-pix\-\_\-hessian}}\label{classHACLK_a6375da2cc74b787e142e5940c6691b68}
+
+\begin{DoxyCompactList}\small\item\em N x S x S hessians of the pixel values w.\-r.\-t the S\-S\-M state vector stored as a (S$\ast$\-S) x N 2\-D matrix. \end{DoxyCompactList}\item 
+\hypertarget{classHACLK_a2e41b2138751bcb648148e68a6accabd}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-hessian}}\label{classHACLK_a2e41b2138751bcb648148e68a6accabd}
+
+\item 
+\hypertarget{classHACLK_a12cd9ed711a94382d6ae8fb04c7c7555}{Row\-Vector\-Xd \hyperlink{classHACLK_a12cd9ed711a94382d6ae8fb04c7c7555}{similarity\-\_\-jacobian}}\label{classHACLK_a12cd9ed711a94382d6ae8fb04c7c7555}
+
+\begin{DoxyCompactList}\small\item\em 1 x S Jacobian of the A\-M error norm w.\-r.\-t. S\-S\-M state vector \end{DoxyCompactList}\item 
+\hypertarget{classHACLK_a0c0831c264ccf58e1c8140541ea107ef}{Matrix\-Xd \hyperlink{classHACLK_a0c0831c264ccf58e1c8140541ea107ef}{hessian}}\label{classHACLK_a0c0831c264ccf58e1c8140541ea107ef}
+
+\begin{DoxyCompactList}\small\item\em S x S Hessian of the A\-M error norm w.\-r.\-t. S\-S\-M state vector. \end{DoxyCompactList}\item 
+\hypertarget{classHACLK_ad37d4fa90531b6db259173e108c54cb6}{Matrix24d {\bfseries curr\-\_\-conv\-\_\-corners}}\label{classHACLK_ad37d4fa90531b6db259173e108c54cb6}
+
+\item 
+\hypertarget{classHACLK_a72de22bc57f15c21013d482d46bfee61}{Matrix24d {\bfseries prev\-\_\-corners}}\label{classHACLK_a72de22bc57f15c21013d482d46bfee61}
+
+\item 
+\hypertarget{classHACLK_a589b547a4e40bb2e5a7477a2730401bd}{Vector\-Xd {\bfseries ssm\-\_\-update}}\label{classHACLK_a589b547a4e40bb2e5a7477a2730401bd}
+
+\item 
+\hypertarget{classHACLK_af0c99a7979057ee8bf1a762525d58cc5}{Matrix3d {\bfseries warp\-\_\-update}}\label{classHACLK_af0c99a7979057ee8bf1a762525d58cc5}
+
+\item 
+\hypertarget{classHACLK_ab1e939ce76a7213dd90f3b7a0cdc8050}{int {\bfseries n\-\_\-frames}}\label{classHACLK_ab1e939ce76a7213dd90f3b7a0cdc8050}
+
+\item 
+\hypertarget{classHACLK_a0c1bc94737457eccb962ef8d3f624d6f}{int {\bfseries frame\-\_\-id}}\label{classHACLK_a0c1bc94737457eccb962ef8d3f624d6f}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/H\-A\-C\-L\-K.\-h\end{DoxyCompactItemize}

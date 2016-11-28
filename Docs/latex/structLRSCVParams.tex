@@ -1,0 +1,59 @@
+\hypertarget{structLRSCVParams}{\section{L\-R\-S\-C\-V\-Params Struct Reference}
+\label{structLRSCVParams}\index{L\-R\-S\-C\-V\-Params@{L\-R\-S\-C\-V\-Params}}
+}
+Inheritance diagram for L\-R\-S\-C\-V\-Params\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{structLRSCVParams}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structLRSCVParams_a40fcc92c67805d6c1765ddc4bbfa1945}{\hyperlink{structLRSCVParams_a40fcc92c67805d6c1765ddc4bbfa1945}{L\-R\-S\-C\-V\-Params} (const \hyperlink{structAMParams}{A\-M\-Params} $\ast$am\-\_\-params, int \-\_\-sub\-\_\-regions\-\_\-x, int \-\_\-sub\-\_\-regions\-\_\-y, int \-\_\-spacing\-\_\-x, int \-\_\-spacing\-\_\-y, bool \-\_\-affine\-\_\-mapping, bool \-\_\-once\-\_\-per\-\_\-frame, int \-\_\-n\-\_\-bins, double \-\_\-pre\-\_\-seed, bool \-\_\-weighted\-\_\-mapping, bool \-\_\-show\-\_\-subregions, bool \-\_\-debug\-\_\-mode)}\label{structLRSCVParams_a40fcc92c67805d6c1765ddc4bbfa1945}
+
+\begin{DoxyCompactList}\small\item\em value constructor \end{DoxyCompactList}\item 
+\hypertarget{structLRSCVParams_a9c47e58f1ace93504f0359618d6edcca}{\hyperlink{structLRSCVParams_a9c47e58f1ace93504f0359618d6edcca}{L\-R\-S\-C\-V\-Params} (const \hyperlink{structLRSCVParams}{L\-R\-S\-C\-V\-Params} $\ast$params=nullptr)}\label{structLRSCVParams_a9c47e58f1ace93504f0359618d6edcca}
+
+\begin{DoxyCompactList}\small\item\em default and copy constructor \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structLRSCVParams_a23df2105963b893015fe67af1b65ad9a}{int \hyperlink{structLRSCVParams_a23df2105963b893015fe67af1b65ad9a}{sub\-\_\-regions\-\_\-x}}\label{structLRSCVParams_a23df2105963b893015fe67af1b65ad9a}
+
+\begin{DoxyCompactList}\small\item\em no. of sub regions in horizontal and vertical directions \end{DoxyCompactList}\item 
+\hypertarget{structLRSCVParams_a13deafaa7ce4c5a44e859bf494805df2}{int {\bfseries sub\-\_\-regions\-\_\-y}}\label{structLRSCVParams_a13deafaa7ce4c5a44e859bf494805df2}
+
+\item 
+\hypertarget{structLRSCVParams_ab58a53853a644cfbef628b53b8dd09eb}{int \hyperlink{structLRSCVParams_ab58a53853a644cfbef628b53b8dd09eb}{spacing\-\_\-x}}\label{structLRSCVParams_ab58a53853a644cfbef628b53b8dd09eb}
+
+\begin{DoxyCompactList}\small\item\em spacing in pixels between adjacent sub regions \end{DoxyCompactList}\item 
+\hypertarget{structLRSCVParams_ab1ae36837e725859468bd1669b51b3d2}{int {\bfseries spacing\-\_\-y}}\label{structLRSCVParams_ab1ae36837e725859468bd1669b51b3d2}
+
+\item 
+\hypertarget{structLRSCVParams_a5ae23b1b9d6a5caaaea937e65d12e08b}{bool {\bfseries affine\-\_\-mapping}}\label{structLRSCVParams_a5ae23b1b9d6a5caaaea937e65d12e08b}
+
+\item 
+\hypertarget{structLRSCVParams_af7c2d98f9eacc9c1322ada05bd78d298}{bool {\bfseries once\-\_\-per\-\_\-frame}}\label{structLRSCVParams_af7c2d98f9eacc9c1322ada05bd78d298}
+
+\item 
+\hypertarget{structLRSCVParams_a0b19238d280c8c178d54ddc8f991286f}{int \hyperlink{structLRSCVParams_a0b19238d280c8c178d54ddc8f991286f}{n\-\_\-bins}}\label{structLRSCVParams_a0b19238d280c8c178d54ddc8f991286f}
+
+\begin{DoxyCompactList}\small\item\em no. of bins in the histograms \end{DoxyCompactList}\item 
+\hypertarget{structLRSCVParams_af841b81912dcc95c6e4a33e899126709}{double \hyperlink{structLRSCVParams_af841b81912dcc95c6e4a33e899126709}{pre\-\_\-seed}}\label{structLRSCVParams_af841b81912dcc95c6e4a33e899126709}
+
+\begin{DoxyCompactList}\small\item\em initial value with which each bin of the joint histogram is pre-\/seeded to avoid numerical instabilities due to empty or near empty bins \end{DoxyCompactList}\item 
+\hypertarget{structLRSCVParams_a0bf9c1baa18183dcf0fa534cf3cf07ad}{bool \hyperlink{structLRSCVParams_a0bf9c1baa18183dcf0fa534cf3cf07ad}{weighted\-\_\-mapping}}\label{structLRSCVParams_a0bf9c1baa18183dcf0fa534cf3cf07ad}
+
+\begin{DoxyCompactList}\small\item\em enable this to map each intensity to the weighted average of the two entries of the intensity map corresponding to the floor and ceil of that intensity; if disabled it will be mapped to the entry corresponding to its floor leading to some information loss due to the fractional part that was discarded \end{DoxyCompactList}\item 
+\hypertarget{structLRSCVParams_a3c7bc336693cc9a792b9b65c4a3b8fd2}{bool {\bfseries show\-\_\-subregions}}\label{structLRSCVParams_a3c7bc336693cc9a792b9b65c4a3b8fd2}
+
+\item 
+\hypertarget{structLRSCVParams_af18a4f58ac823d1e9c675b3021b423d4}{bool \hyperlink{structLRSCVParams_af18a4f58ac823d1e9c675b3021b423d4}{debug\-\_\-mode}}\label{structLRSCVParams_af18a4f58ac823d1e9c675b3021b423d4}
+
+\begin{DoxyCompactList}\small\item\em decides whether logging data will be printed for debugging purposes; only matters if logging option is enabled at compile time \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+A\-M/include/mtf/\-A\-M/L\-R\-S\-C\-V.\-h\end{DoxyCompactItemize}

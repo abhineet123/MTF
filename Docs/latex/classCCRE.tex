@@ -1,0 +1,370 @@
+\hypertarget{classCCRE}{\section{C\-C\-R\-E Class Reference}
+\label{classCCRE}\index{C\-C\-R\-E@{C\-C\-R\-E}}
+}
+
+
+Cross Cumulative Residual Entropy.  
+
+
+
+
+{\ttfamily \#include $<$C\-C\-R\-E.\-h$>$}
+
+Inheritance diagram for C\-C\-R\-E\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=4.000000cm]{classCCRE}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCCRE_a3005dd4c7093c54a066347df2ecb7431}{typedef \hyperlink{structCCREParams}{C\-C\-R\-E\-Params} {\bfseries Param\-Type}}\label{classCCRE_a3005dd4c7093c54a066347df2ecb7431}
+
+\item 
+\hypertarget{classCCRE_ac55a39adcb2c002aff5260fa78f96b53}{typedef double {\bfseries Element\-Type}}\label{classCCRE_ac55a39adcb2c002aff5260fa78f96b53}
+
+\item 
+\hypertarget{classCCRE_a55c3a42bfa3b8ebcccd9c51e73f36394}{typedef double {\bfseries Result\-Type}}\label{classCCRE_a55c3a42bfa3b8ebcccd9c51e73f36394}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCCRE_adc57df943876cd0f20fc9d653d5b3acb}{{\bfseries C\-C\-R\-E} (const \hyperlink{structCCREParams}{Param\-Type} $\ast$ccre\-\_\-params=nullptr, int \-\_\-n\-\_\-channels=1)}\label{classCCRE_adc57df943876cd0f20fc9d653d5b3acb}
+
+\item 
+\hypertarget{classCCRE_a72851d2a7225768fac7e0f59e95cb99d}{double \hyperlink{classCCRE_a72851d2a7225768fac7e0f59e95cb99d}{get\-Likelihood} () const override}\label{classCCRE_a72851d2a7225768fac7e0f59e95cb99d}
+
+\begin{DoxyCompactList}\small\item\em returns a normalized version of the similarity that lies between 0 and 1 and can be interpreted as the likelihood that the current patch represents the same object as the initial patch \end{DoxyCompactList}\item 
+bool \hyperlink{classCCRE_a5ef4da8fc8c410bddaded394596169be}{is\-Symmetrical} () const override
+\begin{DoxyCompactList}\small\item\em return false if the similarity function f is not symmetrical, i.\-e. \end{DoxyCompactList}\item 
+void \hyperlink{classCCRE_aa108e906b98207bbb4b5eb86ca6f5bc8}{initialize\-Similarity} () override
+\begin{DoxyCompactList}\small\item\em methods to initialize the state variables -\/ to be called once when the tracker is initialized. \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_a5d8901983d3383c05e0bc35de29a9656}{void {\bfseries initialize\-Grad} () override}\label{classCCRE_a5d8901983d3383c05e0bc35de29a9656}
+
+\item 
+void \hyperlink{classCCRE_ade5c18165416a3c179cadecab9df7712}{initialize\-Hess} () override
+\begin{DoxyCompactList}\small\item\em even though the Hessian of the error norm w.\-r.\-t. \end{DoxyCompactList}\item 
+void \hyperlink{classCCRE_a88f2514eb41b3a38278cca83c1b884dd}{update\-Similarity} (bool prereq\-\_\-only=1) override
+\begin{DoxyCompactList}\small\item\em functions for updating state variables when a new image arrives \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_a52a2b20f5413ed69f5651eb2d8c88c21}{void {\bfseries update\-Init\-Grad} () override}\label{classCCRE_a52a2b20f5413ed69f5651eb2d8c88c21}
+
+\item 
+\hypertarget{classCCRE_ab28162c5805e25a9fe16c471e796ec39}{void {\bfseries update\-Curr\-Grad} () override}\label{classCCRE_ab28162c5805e25a9fe16c471e796ec39}
+
+\item 
+void \hyperlink{classCCRE_a2357913ffb5630de31b891c9847d1c0a}{cmpt\-Init\-Hessian} (Matrix\-Xd \&hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian) override
+\begin{DoxyCompactList}\small\item\em compute the S x S Hessian of the error norm using the supplied N x S Jacobian of pixel values w.\-r.\-t. \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_a09dfa7ac01a955a71c1f4a4fe2086411}{void {\bfseries cmpt\-Curr\-Hessian} (Matrix\-Xd \&hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian) override}\label{classCCRE_a09dfa7ac01a955a71c1f4a4fe2086411}
+
+\item 
+\hypertarget{classCCRE_a9d4f059246c4eac4cacccd47f38a517f}{void \hyperlink{classCCRE_a9d4f059246c4eac4cacccd47f38a517f}{cmpt\-Init\-Hessian} (Matrix\-Xd \&init\-\_\-hessian, const Matrix\-Xd \&init\-\_\-pix\-\_\-jacobian, const Matrix\-Xd \&init\-\_\-pix\-\_\-hessian) override}\label{classCCRE_a9d4f059246c4eac4cacccd47f38a517f}
+
+\begin{DoxyCompactList}\small\item\em compute the exact Hessian by considering the second order terms too \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_ad8f83bc4d5afc1425a1d9e6a7c6584d1}{void {\bfseries cmpt\-Curr\-Hessian} (Matrix\-Xd \&curr\-\_\-hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-hessian) override}\label{classCCRE_ad8f83bc4d5afc1425a1d9e6a7c6584d1}
+
+\item 
+\hypertarget{classCCRE_a1f10eb0fc8a53cb6f257cadc9e4af172}{void {\bfseries cmpt\-Self\-Hessian} (Matrix\-Xd \&self\-\_\-hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian) override}\label{classCCRE_a1f10eb0fc8a53cb6f257cadc9e4af172}
+
+\item 
+\hypertarget{classCCRE_a657d200ec0aa7c0a41217ee02ed19fd7}{void {\bfseries cmpt\-Self\-Hessian} (Matrix\-Xd \&self\-\_\-hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-hessian) override}\label{classCCRE_a657d200ec0aa7c0a41217ee02ed19fd7}
+
+\item 
+\hypertarget{classCCRE_a217052773a5664d03548b20a0fc41f2f}{void \hyperlink{classCCRE_a217052773a5664d03548b20a0fc41f2f}{initialize\-Dist\-Feat} () override}\label{classCCRE_a217052773a5664d03548b20a0fc41f2f}
+
+\begin{DoxyCompactList}\small\item\em to be called once during initialization if any of the distance feature functionality is to be used \end{DoxyCompactList}\item 
+void \hyperlink{classCCRE_a102becb1188b7408863bc2036b07b079}{update\-Dist\-Feat} () override
+\begin{DoxyCompactList}\small\item\em computes a \char`\"{}distance\char`\"{} vector using the current image patch such that, when the distance vectors corresponding to two patches are passed to the distance operator above, it uses these to compute a scalar that measures the distance or dissimilarity between the two patches; this distance vector should be designed so as to offload as much computation as possible from the distance operator, i.\-e. \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_a74605d82644df1e0407288900b8af4f8}{const double $\ast$ {\bfseries get\-Dist\-Feat} () override}\label{classCCRE_a74605d82644df1e0407288900b8af4f8}
+
+\item 
+\hypertarget{classCCRE_a1abb4b695361b138deb6b8f3b056bcbc}{void \hyperlink{classCCRE_a1abb4b695361b138deb6b8f3b056bcbc}{update\-Dist\-Feat} (double $\ast$feat\-\_\-addr) override}\label{classCCRE_a1abb4b695361b138deb6b8f3b056bcbc}
+
+\begin{DoxyCompactList}\small\item\em overloaded version to write the distance feature directly to a row (or column) of a matrix storing the distance features corresponding to several patches; \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_a661e2c1055913da2b72432d0e0bba590}{double \hyperlink{classCCRE_a661e2c1055913da2b72432d0e0bba590}{operator()} (const double $\ast$hist1\-\_\-mat\-\_\-addr, const double $\ast$hist2\-\_\-mat\-\_\-addr, size\-\_\-t hist\-\_\-mat\-\_\-size, double worst\-\_\-dist=-\/1) const override}\label{classCCRE_a661e2c1055913da2b72432d0e0bba590}
+
+\begin{DoxyCompactList}\small\item\em computes the distance / dissimilarity between two patches where each is codified or represented by a suitable distance feature computed using update\-Dist\-Feat \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_a5ead9c9e9298c6f666b0134b3baa2225}{int \hyperlink{classCCRE_a5ead9c9e9298c6f666b0134b3baa2225}{get\-Dist\-Feat\-Size} () override}\label{classCCRE_a5ead9c9e9298c6f666b0134b3baa2225}
+
+\begin{DoxyCompactList}\small\item\em returns the size of the distance vector \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCCRE_a7e74137f7fd5f83e5cb831813157102a}{\hyperlink{structCCREParams}{Param\-Type} {\bfseries params}}\label{classCCRE_a7e74137f7fd5f83e5cb831813157102a}
+
+\item 
+\hypertarget{classCCRE_a0d172170d85e26d8eda32b889b0af245}{int {\bfseries feat\-\_\-size}}\label{classCCRE_a0d172170d85e26d8eda32b889b0af245}
+
+\item 
+\hypertarget{classCCRE_af97657776d1263aa1ba31aed2c0c86ed}{Vector\-Xd {\bfseries feat\-\_\-vec}}\label{classCCRE_af97657776d1263aa1ba31aed2c0c86ed}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCCRE_a3601a5e879139e69558e9d88291f4645}{void {\bfseries update\-Sym\-Similarity} (bool prereq\-\_\-only)}\label{classCCRE_a3601a5e879139e69558e9d88291f4645}
+
+\item 
+\hypertarget{classCCRE_a6652e68a3221c69bd2bc830cdd32182f}{void {\bfseries update\-Sym\-Init\-Grad} ()}\label{classCCRE_a6652e68a3221c69bd2bc830cdd32182f}
+
+\item 
+\hypertarget{classCCRE_acdb7a48305fe90c59a1cfa32c7e31fc6}{void {\bfseries cmpt\-Sym\-Init\-Hessian} (Matrix\-Xd \&hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian)}\label{classCCRE_acdb7a48305fe90c59a1cfa32c7e31fc6}
+
+\item 
+\hypertarget{classCCRE_a5ba97f2ce7f3f571c76f042de7557562}{void {\bfseries cmpt\-Cum\-Self\-Hist} ()}\label{classCCRE_a5ba97f2ce7f3f571c76f042de7557562}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCCRE_a546c521ce21bb460cfbba80216735a5b}{double {\bfseries max\-\_\-similarity}}\label{classCCRE_a546c521ce21bb460cfbba80216735a5b}
+
+\item 
+\hypertarget{classCCRE_ac4c475d6fec27db6f8522da1e803443a}{double \hyperlink{classCCRE_ac4c475d6fec27db6f8522da1e803443a}{hist\-\_\-pre\-\_\-seed}}\label{classCCRE_ac4c475d6fec27db6f8522da1e803443a}
+
+\begin{DoxyCompactList}\small\item\em value with which to preseed the individual histograms \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_afc96a1d02a189c32d3ef78cf79c4dae5}{double \hyperlink{classCCRE_afc96a1d02a189c32d3ef78cf79c4dae5}{hist\-\_\-norm\-\_\-mult}}\label{classCCRE_afc96a1d02a189c32d3ef78cf79c4dae5}
+
+\begin{DoxyCompactList}\small\item\em multiplicative factor for normalizing histograms \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_aa0a39232ee88f1526e5404c0fdf8495a}{int {\bfseries joint\-\_\-hist\-\_\-size}}\label{classCCRE_aa0a39232ee88f1526e5404c0fdf8495a}
+
+\item 
+\hypertarget{classCCRE_a4277fca9c76ece7b115f2233d9147ed4}{double {\bfseries log\-\_\-hist\-\_\-norm\-\_\-mult}}\label{classCCRE_a4277fca9c76ece7b115f2233d9147ed4}
+
+\item 
+\hypertarget{classCCRE_a33d8fc22570e6953bb3a354e208a1f02}{Vector\-Xd \hyperlink{classCCRE_a33d8fc22570e6953bb3a354e208a1f02}{init\-\_\-hist}}\label{classCCRE_a33d8fc22570e6953bb3a354e208a1f02}
+
+\begin{DoxyCompactList}\small\item\em n\-\_\-bins x n\-\_\-bins joint histograms; \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_a4e9702f1e4d81f0ed0190b2062d2bfcc}{Vector\-Xd {\bfseries curr\-\_\-hist}}\label{classCCRE_a4e9702f1e4d81f0ed0190b2062d2bfcc}
+
+\item 
+\hypertarget{classCCRE_a2c43cee0ffbb540dd735d8ce805942a2}{Vector\-Xd {\bfseries init\-\_\-cum\-\_\-hist}}\label{classCCRE_a2c43cee0ffbb540dd735d8ce805942a2}
+
+\item 
+\hypertarget{classCCRE_af8538160dbb6848eee1b6cd9b1f4e788}{Vector\-Xd {\bfseries curr\-\_\-cum\-\_\-hist}}\label{classCCRE_af8538160dbb6848eee1b6cd9b1f4e788}
+
+\item 
+\hypertarget{classCCRE_aaba3d5a34118b0294dd716b39fec2023}{Matrix\-Xd {\bfseries init\-\_\-hist\-\_\-mat}}\label{classCCRE_aaba3d5a34118b0294dd716b39fec2023}
+
+\item 
+\hypertarget{classCCRE_aa156f513feb2faac94befeba89efe10e}{Matrix\-Xd {\bfseries curr\-\_\-hist\-\_\-mat}}\label{classCCRE_aa156f513feb2faac94befeba89efe10e}
+
+\item 
+\hypertarget{classCCRE_adbc7633506a0567f791cbae97e69cfbf}{Matrix\-Xd {\bfseries init\-\_\-cum\-\_\-hist\-\_\-mat}}\label{classCCRE_adbc7633506a0567f791cbae97e69cfbf}
+
+\item 
+\hypertarget{classCCRE_a7d4cb88fcd5fd88a7132de4a538a4bfb}{Matrix\-Xd {\bfseries curr\-\_\-cum\-\_\-hist\-\_\-mat}}\label{classCCRE_a7d4cb88fcd5fd88a7132de4a538a4bfb}
+
+\item 
+\hypertarget{classCCRE_a481007f939c43ae813a3a4d222fd0852}{Matrix\-Xd {\bfseries cum\-\_\-joint\-\_\-hist}}\label{classCCRE_a481007f939c43ae813a3a4d222fd0852}
+
+\item 
+\hypertarget{classCCRE_a09ce115f1eb533a2a7532672cd85d218}{Matrix\-Xd \hyperlink{classCCRE_a09ce115f1eb533a2a7532672cd85d218}{init\-\_\-hist\-\_\-grad}}\label{classCCRE_a09ce115f1eb533a2a7532672cd85d218}
+
+\begin{DoxyCompactList}\small\item\em n\-\_\-bins X N gradients of the marginal histograms w.\-r.\-t. pixel values \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_a9282d15b8d7022acb34b1d3818fb95bb}{Matrix\-Xd {\bfseries curr\-\_\-hist\-\_\-grad}}\label{classCCRE_a9282d15b8d7022acb34b1d3818fb95bb}
+
+\item 
+\hypertarget{classCCRE_acef298fae49c3d1468d2eb6b06ad70ef}{Matrix\-Xd {\bfseries init\-\_\-cum\-\_\-hist\-\_\-grad}}\label{classCCRE_acef298fae49c3d1468d2eb6b06ad70ef}
+
+\item 
+\hypertarget{classCCRE_aa10af4a3b8ed62f174274c4b61f0696a}{Matrix\-Xd {\bfseries curr\-\_\-cum\-\_\-hist\-\_\-grad}}\label{classCCRE_aa10af4a3b8ed62f174274c4b61f0696a}
+
+\item 
+\hypertarget{classCCRE_adea408b52017021834f32627ec414d0e}{Matrix\-Xd {\bfseries init\-\_\-hist\-\_\-hess}}\label{classCCRE_adea408b52017021834f32627ec414d0e}
+
+\item 
+\hypertarget{classCCRE_a910480195c78dfdf3f4646824a31775e}{Matrix\-Xd {\bfseries curr\-\_\-hist\-\_\-hess}}\label{classCCRE_a910480195c78dfdf3f4646824a31775e}
+
+\item 
+\hypertarget{classCCRE_ae31b16cb8fffb353705b76e36c144daf}{Matrix\-Xd {\bfseries init\-\_\-cum\-\_\-hist\-\_\-hess}}\label{classCCRE_ae31b16cb8fffb353705b76e36c144daf}
+
+\item 
+\hypertarget{classCCRE_ae465fffc2324511111fd44f22737f046}{Matrix\-Xd {\bfseries curr\-\_\-cum\-\_\-hist\-\_\-hess}}\label{classCCRE_ae465fffc2324511111fd44f22737f046}
+
+\item 
+\hypertarget{classCCRE_a2f4c80f752c9a6a1629639259b7f77e1}{Matrix\-Xd \hyperlink{classCCRE_a2f4c80f752c9a6a1629639259b7f77e1}{init\-\_\-cum\-\_\-joint\-\_\-hist\-\_\-grad}}\label{classCCRE_a2f4c80f752c9a6a1629639259b7f77e1}
+
+\begin{DoxyCompactList}\small\item\em (n\-\_\-bins$\ast$n\-\_\-bins) X N gradients of the (flattened) current joint histogram w.\-r.\-t. initial and current pixel values \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_a45c2e08608fc6abcae306ced54cc5a74}{Matrix\-Xd {\bfseries curr\-\_\-cum\-\_\-joint\-\_\-hist\-\_\-grad}}\label{classCCRE_a45c2e08608fc6abcae306ced54cc5a74}
+
+\item 
+\hypertarget{classCCRE_adb2310a4d06be52d31d1f958e8a829ef}{Matrix\-Xd {\bfseries ccre\-\_\-log\-\_\-term}}\label{classCCRE_adb2310a4d06be52d31d1f958e8a829ef}
+
+\item 
+\hypertarget{classCCRE_ae8d74b675f6a0cac46ed821fe760c6ea}{Matrix\-Xd {\bfseries init\-\_\-hess\-\_\-factor}}\label{classCCRE_ae8d74b675f6a0cac46ed821fe760c6ea}
+
+\item 
+\hypertarget{classCCRE_a8cbe93ea74773cdf0ede899b85b02654}{Matrix\-Xd {\bfseries cum\-\_\-hess\-\_\-factor}}\label{classCCRE_a8cbe93ea74773cdf0ede899b85b02654}
+
+\item 
+\hypertarget{classCCRE_a710bedd5b90610c74fe55525c3724bcd}{Matrix\-Xd {\bfseries init\-\_\-hist\-\_\-grad\-\_\-ratio}}\label{classCCRE_a710bedd5b90610c74fe55525c3724bcd}
+
+\item 
+\hypertarget{classCCRE_aedab53e6fff99eb49a1b0cf28a35a758}{Matrix\-Xd {\bfseries cum\-\_\-hist\-\_\-grad\-\_\-ratio}}\label{classCCRE_aedab53e6fff99eb49a1b0cf28a35a758}
+
+\item 
+\hypertarget{classCCRE_a732fb8e068e7f25de6a507b427fb6210}{Matrix\-Xd {\bfseries init\-\_\-hist\-\_\-hess\-\_\-ratio}}\label{classCCRE_a732fb8e068e7f25de6a507b427fb6210}
+
+\item 
+\hypertarget{classCCRE_ac906668e7ee64d311abe8174adf13f75}{Matrix\-Xd {\bfseries cum\-\_\-hist\-\_\-hess\-\_\-ratio}}\label{classCCRE_ac906668e7ee64d311abe8174adf13f75}
+
+\item 
+\hypertarget{classCCRE_a8100a8b209a18bc7173b3c6115eb50fc}{Vector\-Xd {\bfseries init\-\_\-hist\-\_\-log}}\label{classCCRE_a8100a8b209a18bc7173b3c6115eb50fc}
+
+\item 
+\hypertarget{classCCRE_af4197c77ed7f45d4403c7d7c5516347c}{Vector\-Xd {\bfseries curr\-\_\-hist\-\_\-log}}\label{classCCRE_af4197c77ed7f45d4403c7d7c5516347c}
+
+\item 
+\hypertarget{classCCRE_a4234dd16c7f0c40483363bcc4ed29ccd}{Vector\-Xd {\bfseries init\-\_\-cum\-\_\-hist\-\_\-log}}\label{classCCRE_a4234dd16c7f0c40483363bcc4ed29ccd}
+
+\item 
+\hypertarget{classCCRE_a776439467de445d05da1012427bae80c}{Vector\-Xd {\bfseries curr\-\_\-cum\-\_\-hist\-\_\-log}}\label{classCCRE_a776439467de445d05da1012427bae80c}
+
+\item 
+\hypertarget{classCCRE_ad8bb30e4ea7c51076d1fab82ce844dbf}{Matrix\-Xd {\bfseries cum\-\_\-joint\-\_\-hist\-\_\-log}}\label{classCCRE_ad8bb30e4ea7c51076d1fab82ce844dbf}
+
+\item 
+\hypertarget{classCCRE_aa3bd03550ddfdea720e7b4017cdfad38}{Vector\-Xd {\bfseries cum\-\_\-joint\-\_\-hist\-\_\-sum}}\label{classCCRE_aa3bd03550ddfdea720e7b4017cdfad38}
+
+\item 
+\hypertarget{classCCRE_a7821bb023f4a60221219c8a4c69b7351}{Matrix\-Xd {\bfseries self\-\_\-cum\-\_\-joint\-\_\-hist}}\label{classCCRE_a7821bb023f4a60221219c8a4c69b7351}
+
+\item 
+\hypertarget{classCCRE_ac5c4d91774b512e82050e5d95e2fa5c0}{Matrix\-Xd {\bfseries self\-\_\-cum\-\_\-joint\-\_\-hist\-\_\-log}}\label{classCCRE_ac5c4d91774b512e82050e5d95e2fa5c0}
+
+\item 
+\hypertarget{classCCRE_a394cc5c5aded9439b9e7c1023f9a4e13}{Matrix\-Xd {\bfseries self\-\_\-ccre\-\_\-log\-\_\-term}}\label{classCCRE_a394cc5c5aded9439b9e7c1023f9a4e13}
+
+\item 
+\hypertarget{classCCRE_af7db10318c583dfa60f3d00e65f7a65d}{Matrix\-X2i \hyperlink{classCCRE_af7db10318c583dfa60f3d00e65f7a65d}{\-\_\-std\-\_\-bspl\-\_\-ids}}\label{classCCRE_af7db10318c583dfa60f3d00e65f7a65d}
+
+\begin{DoxyCompactList}\small\item\em only used internally to increase speed by offlining as many computations as possible; \end{DoxyCompactList}\item 
+\hypertarget{classCCRE_ae1f206752f925899335da36ab1dbef7b}{Matrix\-X2i {\bfseries \-\_\-init\-\_\-bspl\-\_\-ids}}\label{classCCRE_ae1f206752f925899335da36ab1dbef7b}
+
+\item 
+\hypertarget{classCCRE_ae8249f1cf2323c20a61963e812cf4aa9}{Matrix\-X2i {\bfseries \-\_\-curr\-\_\-bspl\-\_\-ids}}\label{classCCRE_ae8249f1cf2323c20a61963e812cf4aa9}
+
+\item 
+\hypertarget{classCCRE_a2eb5400ff35dd0c5bea7198ee61c5064}{Matrix\-Xi {\bfseries \-\_\-linear\-\_\-idx}}\label{classCCRE_a2eb5400ff35dd0c5bea7198ee61c5064}
+
+\item 
+\hypertarget{classCCRE_a5262075e3786ea02afdb30629e4466ce}{Matrix\-Xi {\bfseries \-\_\-linear\-\_\-idx2}}\label{classCCRE_a5262075e3786ea02afdb30629e4466ce}
+
+\item 
+\hypertarget{classCCRE_abde50706b47156bf8869a06c06717978}{Matrix\-X2i {\bfseries block\-\_\-extents}}\label{classCCRE_abde50706b47156bf8869a06c06717978}
+
+\item 
+\hypertarget{classCCRE_ae65b69a35d1b40650f5224fa9937bfb7}{char $\ast$ {\bfseries log\-\_\-fname}}\label{classCCRE_ae65b69a35d1b40650f5224fa9937bfb7}
+
+\item 
+\hypertarget{classCCRE_aa8e549ac84b7ecb99ac327625d650e2c}{char $\ast$ {\bfseries time\-\_\-fname}}\label{classCCRE_aa8e549ac84b7ecb99ac327625d650e2c}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Cross Cumulative Residual Entropy. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classCCRE_a2357913ffb5630de31b891c9847d1c0a}{\index{C\-C\-R\-E@{C\-C\-R\-E}!cmpt\-Init\-Hessian@{cmpt\-Init\-Hessian}}
+\index{cmpt\-Init\-Hessian@{cmpt\-Init\-Hessian}!CCRE@{C\-C\-R\-E}}
+\subsubsection[{cmpt\-Init\-Hessian}]{\setlength{\rightskip}{0pt plus 5cm}void C\-C\-R\-E\-::cmpt\-Init\-Hessian (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd \&}]{d2f\-\_\-dp2, }
+\item[{const Matrix\-Xd \&}]{d\-I0\-\_\-dpssm}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classCCRE_a2357913ffb5630de31b891c9847d1c0a}
+
+
+compute the S x S Hessian of the error norm using the supplied N x S Jacobian of pixel values w.\-r.\-t. 
+
+external parameters; compute the approximate Hessian by ignoring the second order terms 
+
+Reimplemented from \hyperlink{classAppearanceModel_ab153b47d09f121796d3f411626a5321c}{Appearance\-Model}.
+
+\hypertarget{classCCRE_ade5c18165416a3c179cadecab9df7712}{\index{C\-C\-R\-E@{C\-C\-R\-E}!initialize\-Hess@{initialize\-Hess}}
+\index{initialize\-Hess@{initialize\-Hess}!CCRE@{C\-C\-R\-E}}
+\subsubsection[{initialize\-Hess}]{\setlength{\rightskip}{0pt plus 5cm}void C\-C\-R\-E\-::initialize\-Hess (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classCCRE_ade5c18165416a3c179cadecab9df7712}
+
+
+even though the Hessian of the error norm w.\-r.\-t. 
+
+pixel values is not a state variable (since it does not need to be computed separately to get the Hessian w.\-r.\-t S\-S\-M), this function is provided as a place to perform any one-\/time computations that may help to decrease the runtime cost of the interfacing function that computes this Hessian 
+
+Reimplemented from \hyperlink{classAppearanceModel_afb47df1d5e8a74f41ac70af3612180d2}{Appearance\-Model}.
+
+\hypertarget{classCCRE_aa108e906b98207bbb4b5eb86ca6f5bc8}{\index{C\-C\-R\-E@{C\-C\-R\-E}!initialize\-Similarity@{initialize\-Similarity}}
+\index{initialize\-Similarity@{initialize\-Similarity}!CCRE@{C\-C\-R\-E}}
+\subsubsection[{initialize\-Similarity}]{\setlength{\rightskip}{0pt plus 5cm}void C\-C\-R\-E\-::initialize\-Similarity (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classCCRE_aa108e906b98207bbb4b5eb86ca6f5bc8}
+
+
+methods to initialize the state variables -\/ to be called once when the tracker is initialized. 
+
+if any of these are reimplemented, there should be a statement there copying the computed value in the \char`\"{}init\char`\"{} variable to the corresponding \char`\"{}curr\char`\"{} variable so the two have the same value after this function is called;
+
+Note for the S\-M\-: the \char`\"{}initialize\char`\"{} function for any state variable whose \char`\"{}update\char`\"{} function will be called later should be called once from the S\-M's own initialize function even if the initial value of that variable will not be used later; this is because updating the state variable may involve some computations which need to be performed only once and the A\-M is free to delegate any such computations to the respective \char`\"{}initialize\char`\"{} function to avoid repeating them in the \char`\"{}update\char`\"{} function which can have a negative impact on performance; thus if this function is not called, the results of these computations that are needed by the \char`\"{}update\char`\"{} function will remain uncomputed leading to undefined behavior;
+
+also the initialize functions have a boolean indicator parameter called \char`\"{}is\-\_\-initialized\char`\"{} which defaults to true but should be set to false if they are called only to update the internal state to take into account any changes to the initial template, i.\-e. if they are called again after the first call to initialize the state (when it should be left to true) 
+
+Reimplemented from \hyperlink{classAppearanceModel_abcd79170a5fccc0e9aa10675404ad655}{Appearance\-Model}.
+
+\hypertarget{classCCRE_a5ef4da8fc8c410bddaded394596169be}{\index{C\-C\-R\-E@{C\-C\-R\-E}!is\-Symmetrical@{is\-Symmetrical}}
+\index{is\-Symmetrical@{is\-Symmetrical}!CCRE@{C\-C\-R\-E}}
+\subsubsection[{is\-Symmetrical}]{\setlength{\rightskip}{0pt plus 5cm}bool C\-C\-R\-E\-::is\-Symmetrical (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classCCRE_a5ef4da8fc8c410bddaded394596169be}
+
+
+return false if the similarity function f is not symmetrical, i.\-e. 
+
+f(a,b) != f(b, a); also applies to the distance functor so the two should be consistent; 
+
+Reimplemented from \hyperlink{classAppearanceModel_a432b2d068bf735abfa58c023773e1721}{Appearance\-Model}.
+
+\hypertarget{classCCRE_a102becb1188b7408863bc2036b07b079}{\index{C\-C\-R\-E@{C\-C\-R\-E}!update\-Dist\-Feat@{update\-Dist\-Feat}}
+\index{update\-Dist\-Feat@{update\-Dist\-Feat}!CCRE@{C\-C\-R\-E}}
+\subsubsection[{update\-Dist\-Feat}]{\setlength{\rightskip}{0pt plus 5cm}void C\-C\-R\-E\-::update\-Dist\-Feat (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classCCRE_a102becb1188b7408863bc2036b07b079}
+
+
+computes a \char`\"{}distance\char`\"{} vector using the current image patch such that, when the distance vectors corresponding to two patches are passed to the distance operator above, it uses these to compute a scalar that measures the distance or dissimilarity between the two patches; this distance vector should be designed so as to offload as much computation as possible from the distance operator, i.\-e. 
+
+every computation that depends only on the current patch should be performed here and the results should be stored, suitably coded, in the distannce vector where they will be decoded and used to compute the distance measure 
+
+Reimplemented from \hyperlink{classAppearanceModel_afc815587980df0cd28412a2cd1670854}{Appearance\-Model}.
+
+\hypertarget{classCCRE_a88f2514eb41b3a38278cca83c1b884dd}{\index{C\-C\-R\-E@{C\-C\-R\-E}!update\-Similarity@{update\-Similarity}}
+\index{update\-Similarity@{update\-Similarity}!CCRE@{C\-C\-R\-E}}
+\subsubsection[{update\-Similarity}]{\setlength{\rightskip}{0pt plus 5cm}void C\-C\-R\-E\-::update\-Similarity (
+\begin{DoxyParamCaption}
+\item[{bool}]{prereq\-\_\-only = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classCCRE_a88f2514eb41b3a38278cca83c1b884dd}
+
+
+functions for updating state variables when a new image arrives 
+
+prereq\-\_\-only should be left to true if update is only called to compute the prerequisites for the two gradient functions and the actual value of similarity is not needed 
+
+Reimplemented from \hyperlink{classAppearanceModel_a06136ecd903e85ed2007da2c7b12bd58}{Appearance\-Model}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+A\-M/include/mtf/\-A\-M/C\-C\-R\-E.\-h\end{DoxyCompactItemize}

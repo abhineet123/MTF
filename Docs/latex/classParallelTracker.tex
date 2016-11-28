@@ -1,0 +1,83 @@
+\hypertarget{classParallelTracker}{\section{Parallel\-Tracker Class Reference}
+\label{classParallelTracker}\index{Parallel\-Tracker@{Parallel\-Tracker}}
+}
+
+
+run multiple trackers in parallel  
+
+
+
+
+{\ttfamily \#include $<$Parallel\-Tracker.\-h$>$}
+
+Inheritance diagram for Parallel\-Tracker\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classParallelTracker}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classParallelTracker_ad06038b84c806f19981ab41b1682d97c}{typedef \hyperlink{structParallelParams}{Parallel\-Params} {\bfseries Param\-Type}}\label{classParallelTracker_ad06038b84c806f19981ab41b1682d97c}
+
+\item 
+\hypertarget{classParallelTracker_a06e56acac22b62df8aa500679fa7d64a}{typedef Param\-Type\-::\-Prl\-Est\-Method {\bfseries Estimation\-Method}}\label{classParallelTracker_a06e56acac22b62df8aa500679fa7d64a}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classParallelTracker_a645a934166103676c0f5ea1a83b3a3ee}{{\bfseries Parallel\-Tracker} (const vector$<$ Tracker\-Base $\ast$ $>$ \-\_\-trackers, const \hyperlink{structParallelParams}{Param\-Type} $\ast$parl\-\_\-params)}\label{classParallelTracker_a645a934166103676c0f5ea1a83b3a3ee}
+
+\item 
+\hypertarget{classParallelTracker_a969ac44ccfbb8d0b73edf98fa19b1d07}{void {\bfseries set\-Image} (const cv\-::\-Mat \&img) override}\label{classParallelTracker_a969ac44ccfbb8d0b73edf98fa19b1d07}
+
+\item 
+\hypertarget{classParallelTracker_a148e190d1535deaf261e7434cc98c9d2}{void {\bfseries initialize} (const cv\-::\-Mat \&corners) override}\label{classParallelTracker_a148e190d1535deaf261e7434cc98c9d2}
+
+\item 
+\hypertarget{classParallelTracker_a6942daca56cf3da0e06831a34a70f5c5}{void {\bfseries update} () override}\label{classParallelTracker_a6942daca56cf3da0e06831a34a70f5c5}
+
+\item 
+\hypertarget{classParallelTracker_a53787aaf11ec49896ba5ef71a520b322}{const cv\-::\-Mat \& {\bfseries get\-Region} () override}\label{classParallelTracker_a53787aaf11ec49896ba5ef71a520b322}
+
+\item 
+\hypertarget{classParallelTracker_a090d725a1b06c25eea4043941048af73}{void {\bfseries set\-Region} (const cv\-::\-Mat \&corners) override}\label{classParallelTracker_a090d725a1b06c25eea4043941048af73}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classParallelTracker_a427bb70a8fd733e1163918c888de8117}{\hyperlink{structParallelParams}{Param\-Type} {\bfseries params}}\label{classParallelTracker_a427bb70a8fd733e1163918c888de8117}
+
+\item 
+\hypertarget{classParallelTracker_a15422685396f6c0f48efac669c4035b2}{bool {\bfseries failure\-\_\-detected}}\label{classParallelTracker_a15422685396f6c0f48efac669c4035b2}
+
+\item 
+\hypertarget{classParallelTracker_a3d9d3a66f219c9e6da179bd9405e0453}{vector$<$ cv\-::\-Mat $>$ {\bfseries img\-\_\-buffer}}\label{classParallelTracker_a3d9d3a66f219c9e6da179bd9405e0453}
+
+\item 
+\hypertarget{classParallelTracker_ae1f13883c63d32e333ab2c177a820814}{vector$<$ cv\-::\-Mat $>$ {\bfseries corners\-\_\-buffer}}\label{classParallelTracker_ae1f13883c63d32e333ab2c177a820814}
+
+\item 
+\hypertarget{classParallelTracker_a0a832ffbe352e025aba9d352c49f9850}{int {\bfseries buffer\-\_\-id}}\label{classParallelTracker_a0a832ffbe352e025aba9d352c49f9850}
+
+\item 
+\hypertarget{classParallelTracker_affdd3e6a92144e24e11ebb7db44d8989}{bool {\bfseries buffer\-\_\-filled}}\label{classParallelTracker_affdd3e6a92144e24e11ebb7db44d8989}
+
+\item 
+\hypertarget{classParallelTracker_a2d51cee1b967759c3d334b10512f6fb6}{cv\-::\-Mat {\bfseries curr\-\_\-img}}\label{classParallelTracker_a2d51cee1b967759c3d334b10512f6fb6}
+
+\item 
+\hypertarget{classParallelTracker_a901779fc572fac368c0040def888e587}{cv\-::\-Mat {\bfseries mean\-\_\-corners\-\_\-cv}}\label{classParallelTracker_a901779fc572fac368c0040def888e587}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+run multiple trackers in parallel 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/Parallel\-Tracker.\-h\end{DoxyCompactItemize}

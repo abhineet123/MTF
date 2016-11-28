@@ -1,0 +1,100 @@
+\hypertarget{classParallelSM}{\section{Parallel\-S\-M$<$ A\-M, S\-S\-M $>$ Class Template Reference}
+\label{classParallelSM}\index{Parallel\-S\-M$<$ A\-M, S\-S\-M $>$@{Parallel\-S\-M$<$ A\-M, S\-S\-M $>$}}
+}
+
+
+run multiple search methods in parallel with the same A\-M/\-S\-S\-M; although the code here is currently identical to \hyperlink{classParallelTracker}{Parallel\-Tracker}, a seperate module exists for future extensions that take advantage of the additional information that is available to this class through direct access to the underlying A\-M and S\-S\-M  
+
+
+
+
+{\ttfamily \#include $<$Parallel\-S\-M.\-h$>$}
+
+Inheritance diagram for Parallel\-S\-M$<$ A\-M, S\-S\-M $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classParallelSM}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classParallelSM_aa5670bffef6eee89e429d6c92460877e}{typedef \hyperlink{structParallelParams}{Parallel\-Params} {\bfseries Param\-Type}}\label{classParallelSM_aa5670bffef6eee89e429d6c92460877e}
+
+\item 
+\hypertarget{classParallelSM_a94757ff4679ff9648d0f711ead5c09e7}{typedef Param\-Type\-::\-Prl\-Est\-Method {\bfseries Prl\-Est\-Method}}\label{classParallelSM_a94757ff4679ff9648d0f711ead5c09e7}
+
+\item 
+\hypertarget{classParallelSM_a1009fdfe10af0738bda26aa2870fa953}{typedef S\-M\-::\-S\-S\-M\-Params {\bfseries S\-S\-M\-Params}}\label{classParallelSM_a1009fdfe10af0738bda26aa2870fa953}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classParallelSM_a5bdf4c3754bd83528a4ede0648100cf3}{{\bfseries Parallel\-S\-M} (const vector$<$ \hyperlink{classSearchMethod}{S\-M} $\ast$ $>$ \-\_\-trackers, const \hyperlink{structParallelParams}{Param\-Type} $\ast$parl\-\_\-params, const \hyperlink{structSSMParams}{S\-S\-M\-Params} $\ast$ssm\-\_\-params)}\label{classParallelSM_a5bdf4c3754bd83528a4ede0648100cf3}
+
+\item 
+\hypertarget{classParallelSM_a3c35411d6914c92f8b11e1cd07cfed6d}{void {\bfseries set\-Image} (const cv\-::\-Mat \&img) override}\label{classParallelSM_a3c35411d6914c92f8b11e1cd07cfed6d}
+
+\item 
+\hypertarget{classParallelSM_aea9cdb92bea96c013dab747859780de1}{void {\bfseries initialize} (const cv\-::\-Mat \&corners) override}\label{classParallelSM_aea9cdb92bea96c013dab747859780de1}
+
+\item 
+\hypertarget{classParallelSM_ae026e76bc9e68091fd4ace3b34d96b1e}{void {\bfseries update} () override}\label{classParallelSM_ae026e76bc9e68091fd4ace3b34d96b1e}
+
+\item 
+\hypertarget{classParallelSM_a221f9ac6ca30422cb04787ac50a0616d}{const cv\-::\-Mat \& {\bfseries get\-Region} () override}\label{classParallelSM_a221f9ac6ca30422cb04787ac50a0616d}
+
+\item 
+\hypertarget{classParallelSM_ace107afbb700495b0b1ea85532fbd309}{void {\bfseries set\-Region} (const cv\-::\-Mat \&corners) override}\label{classParallelSM_ace107afbb700495b0b1ea85532fbd309}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classParallelSM_ad16d4e1836141f6a85f08142ffa2ed78}{S\-S\-M {\bfseries ssm}}\label{classParallelSM_ad16d4e1836141f6a85f08142ffa2ed78}
+
+\item 
+\hypertarget{classParallelSM_a7df613b3f6c95155d74e08e4a1935d70}{\hyperlink{structParallelParams}{Param\-Type} {\bfseries params}}\label{classParallelSM_a7df613b3f6c95155d74e08e4a1935d70}
+
+\item 
+\hypertarget{classParallelSM_ab25f7d8854c3eb7508522c16349216de}{bool {\bfseries failure\-\_\-detected}}\label{classParallelSM_ab25f7d8854c3eb7508522c16349216de}
+
+\item 
+\hypertarget{classParallelSM_a6fc050c8b04236ccb805823b39b27733}{int {\bfseries buffer\-\_\-id}}\label{classParallelSM_a6fc050c8b04236ccb805823b39b27733}
+
+\item 
+\hypertarget{classParallelSM_a1d751179c10fa5bce8d691fce72845ab}{bool {\bfseries buffer\-\_\-filled}}\label{classParallelSM_a1d751179c10fa5bce8d691fce72845ab}
+
+\item 
+\hypertarget{classParallelSM_abe00faae9e94f1f2850a35f7532fbf67}{vector$<$ cv\-::\-Mat $>$ {\bfseries img\-\_\-buffer}}\label{classParallelSM_abe00faae9e94f1f2850a35f7532fbf67}
+
+\item 
+\hypertarget{classParallelSM_a3755e2079cfa021e3db703902d5d8134}{vector$<$ cv\-::\-Mat $>$ {\bfseries corners\-\_\-buffer}}\label{classParallelSM_a3755e2079cfa021e3db703902d5d8134}
+
+\item 
+\hypertarget{classParallelSM_af54120d7d1ab4ebd60bd5c8bd9132a84}{cv\-::\-Mat {\bfseries curr\-\_\-img}}\label{classParallelSM_af54120d7d1ab4ebd60bd5c8bd9132a84}
+
+\item 
+\hypertarget{classParallelSM_a5b7b7568ce7660eede019abffa650862}{cv\-::\-Mat {\bfseries mean\-\_\-corners\-\_\-cv}}\label{classParallelSM_a5b7b7568ce7660eede019abffa650862}
+
+\item 
+\hypertarget{classParallelSM_a2d600739f559fbe0f28390d770ef4edc}{int {\bfseries ssm\-\_\-state\-\_\-size}}\label{classParallelSM_a2d600739f559fbe0f28390d770ef4edc}
+
+\item 
+\hypertarget{classParallelSM_aa9070fb57a74a0ded4450de0b3fafe28}{std\-::vector$<$ Vector\-Xd $>$ {\bfseries ssm\-\_\-states}}\label{classParallelSM_aa9070fb57a74a0ded4450de0b3fafe28}
+
+\item 
+\hypertarget{classParallelSM_ae6a0c2dd5bd1cfc9180dedbd7f5ae398}{Vector\-Xd {\bfseries mean\-\_\-state}}\label{classParallelSM_ae6a0c2dd5bd1cfc9180dedbd7f5ae398}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class A\-M, class S\-S\-M$>$class Parallel\-S\-M$<$ A\-M, S\-S\-M $>$}
+
+run multiple search methods in parallel with the same A\-M/\-S\-S\-M; although the code here is currently identical to \hyperlink{classParallelTracker}{Parallel\-Tracker}, a seperate module exists for future extensions that take advantage of the additional information that is available to this class through direct access to the underlying A\-M and S\-S\-M 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/Parallel\-S\-M.\-h\end{DoxyCompactItemize}

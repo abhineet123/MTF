@@ -1,0 +1,78 @@
+\hypertarget{structMIParams}{\section{M\-I\-Params Struct Reference}
+\label{structMIParams}\index{M\-I\-Params@{M\-I\-Params}}
+}
+Inheritance diagram for M\-I\-Params\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{structMIParams}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structMIParams_aacca20277bf120fca95f3641018a6556}{M\-I\-Params} (const \hyperlink{structAMParams}{A\-M\-Params} $\ast$am\-\_\-params, int \-\_\-n\-\_\-bins, double \-\_\-pre\-\_\-seed, bool \-\_\-partition\-\_\-of\-\_\-unity, double \-\_\-likelihood\-\_\-alpha, \hyperlink{classImageBase}{Image\-Base} $\ast$\-\_\-pix\-\_\-mapper, bool \-\_\-debug\-\_\-mode)
+\begin{DoxyCompactList}\small\item\em decides whether logging data will be printed for debugging purposes; \end{DoxyCompactList}\item 
+\hypertarget{structMIParams_a7d61e0e505a06adcc6631c70ea115735}{\hyperlink{structMIParams_a7d61e0e505a06adcc6631c70ea115735}{M\-I\-Params} (const \hyperlink{structMIParams}{M\-I\-Params} $\ast$params=nullptr)}\label{structMIParams_a7d61e0e505a06adcc6631c70ea115735}
+
+\begin{DoxyCompactList}\small\item\em default/copy constructor \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{structMIParams_a2e0e6ee1bd5cab5498d929798333798d}{n\-\_\-bins}
+\begin{DoxyCompactList}\small\item\em no. \end{DoxyCompactList}\item 
+double \hyperlink{structMIParams_a08f5a14dae9f3109340a5761812acfcf}{pre\-\_\-seed}
+\begin{DoxyCompactList}\small\item\em initial value with which each bin of the joint histogram is pre-\/seeded \end{DoxyCompactList}\item 
+\hypertarget{structMIParams_a4ec0963865cdf4d11c598fd4a0b00c15}{bool \hyperlink{structMIParams_a4ec0963865cdf4d11c598fd4a0b00c15}{partition\-\_\-of\-\_\-unity}}\label{structMIParams_a4ec0963865cdf4d11c598fd4a0b00c15}
+
+\begin{DoxyCompactList}\small\item\em decides whether the partition of unity constraint has to be strictly observed for border bins; if enabled, the pixel values will be normalized in the range \mbox{[}1, n\-\_\-bins-\/2\mbox{]} so each pixel contributes to all 4 bins \end{DoxyCompactList}\item 
+\hypertarget{structMIParams_ab98649fd9eaf55ccd1f5598abebd1d26}{\hyperlink{classImageBase}{Image\-Base} $\ast$ {\bfseries pix\-\_\-mapper}}\label{structMIParams_ab98649fd9eaf55ccd1f5598abebd1d26}
+
+\item 
+\hypertarget{structMIParams_a6078e752c2e4a5836030a5a29bf77d77}{double \hyperlink{structMIParams_a6078e752c2e4a5836030a5a29bf77d77}{likelihood\-\_\-alpha}}\label{structMIParams_a6078e752c2e4a5836030a5a29bf77d77}
+
+\begin{DoxyCompactList}\small\item\em multiplicative factor for the exponent in the likelihood \end{DoxyCompactList}\item 
+\hypertarget{structMIParams_a760ecb18e987f1a1f796ed1660887ff5}{bool {\bfseries debug\-\_\-mode}}\label{structMIParams_a760ecb18e987f1a1f796ed1660887ff5}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{structMIParams_aacca20277bf120fca95f3641018a6556}{\index{M\-I\-Params@{M\-I\-Params}!M\-I\-Params@{M\-I\-Params}}
+\index{M\-I\-Params@{M\-I\-Params}!MIParams@{M\-I\-Params}}
+\subsubsection[{M\-I\-Params}]{\setlength{\rightskip}{0pt plus 5cm}M\-I\-Params\-::\-M\-I\-Params (
+\begin{DoxyParamCaption}
+\item[{const {\bf A\-M\-Params} $\ast$}]{am\-\_\-params, }
+\item[{int}]{\-\_\-n\-\_\-bins, }
+\item[{double}]{\-\_\-pre\-\_\-seed, }
+\item[{bool}]{\-\_\-partition\-\_\-of\-\_\-unity, }
+\item[{double}]{\-\_\-likelihood\-\_\-alpha, }
+\item[{{\bf Image\-Base} $\ast$}]{\-\_\-pix\-\_\-mapper, }
+\item[{bool}]{\-\_\-debug\-\_\-mode}
+\end{DoxyParamCaption}
+)}}\label{structMIParams_aacca20277bf120fca95f3641018a6556}
+
+
+decides whether logging data will be printed for debugging purposes; 
+
+only matters if logging is enabled at compile time value constructor 
+
+\subsection{Member Data Documentation}
+\hypertarget{structMIParams_a2e0e6ee1bd5cab5498d929798333798d}{\index{M\-I\-Params@{M\-I\-Params}!n\-\_\-bins@{n\-\_\-bins}}
+\index{n\-\_\-bins@{n\-\_\-bins}!MIParams@{M\-I\-Params}}
+\subsubsection[{n\-\_\-bins}]{\setlength{\rightskip}{0pt plus 5cm}int M\-I\-Params\-::n\-\_\-bins}}\label{structMIParams_a2e0e6ee1bd5cab5498d929798333798d}
+
+
+no. 
+
+of bins in the histograms used internally -\/ dimensionality of the \hyperlink{classMI}{M\-I} error vector will be n\-\_\-bins $\ast$ n\-\_\-bins; if partition\-\_\-of\-\_\-unity is enabled, this should be 2 more than the desired no. of bins (w.\-r.\-t normalized pixel range) since the actual range within which the pixel values are normalized is 2 less than this value to avoid boundary conditions while computing the contribution of each pixel to different bins by ensuring that pixels with the maximum and minimum values contribute to all 4 bins required by the bspl function of degree 3 used here; \hypertarget{structMIParams_a08f5a14dae9f3109340a5761812acfcf}{\index{M\-I\-Params@{M\-I\-Params}!pre\-\_\-seed@{pre\-\_\-seed}}
+\index{pre\-\_\-seed@{pre\-\_\-seed}!MIParams@{M\-I\-Params}}
+\subsubsection[{pre\-\_\-seed}]{\setlength{\rightskip}{0pt plus 5cm}double M\-I\-Params\-::pre\-\_\-seed}}\label{structMIParams_a08f5a14dae9f3109340a5761812acfcf}
+
+
+initial value with which each bin of the joint histogram is pre-\/seeded 
+
+to avoid numerical instabilities due to empty or near empty bins (caused e.\-g. by having to assume log(0) = 0 for empty bins) 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+A\-M/include/mtf/\-A\-M/M\-I.\-h\end{DoxyCompactItemize}

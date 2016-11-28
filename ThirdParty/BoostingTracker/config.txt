@@ -1,0 +1,24 @@
+% tracking with on-line boosting
+version 0.3
+
+% source options: USB, AVI, IMAGES
+source = IMAGES
+% only if source is AVI OR IMAGES
+directory = ./imgs
+
+% write debug information
+debug = true
+saveDir = ./results
+
+% classifier (boosting)
+numSelectors = 100
+
+% search region (size and resolution)
+overlap = 0.99
+searchFactor = 2
+
+%initialization bounding box: MOUSE or COORDINATES 
+initBB = MOUSE
+
+%if COORDINATES bb = x y width height
+bb = 530 340 42 111

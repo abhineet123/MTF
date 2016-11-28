@@ -1,0 +1,72 @@
+\hypertarget{classPGB}{\section{P\-G\-B Class Reference}
+\label{classPGB}\index{P\-G\-B@{P\-G\-B}}
+}
+
+
+Piecewise Gain and Bias illumination model.  
+
+
+
+
+{\ttfamily \#include $<$P\-G\-B.\-h$>$}
+
+Inheritance diagram for P\-G\-B\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classPGB}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classPGB_a5c3d6a1ab906a7f700331c5fe4ad6d03}{typedef \hyperlink{structPGBParams}{P\-G\-B\-Params} {\bfseries Param\-Type}}\label{classPGB_a5c3d6a1ab906a7f700331c5fe4ad6d03}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classPGB_ad5478be9619d269f03b721ef79706e39}{{\bfseries P\-G\-B} (const \hyperlink{structPGBParams}{Param\-Type} $\ast$\-\_\-pgb\-\_\-params=nullptr)}\label{classPGB_ad5478be9619d269f03b721ef79706e39}
+
+\item 
+\hypertarget{classPGB_a417e85e1224db09f90bc0023fe951920}{void {\bfseries initialize} (double $\ast$p) override}\label{classPGB_a417e85e1224db09f90bc0023fe951920}
+
+\item 
+\hypertarget{classPGB_a8bfdd5508674d0ebb74b24a3804cd00c}{int {\bfseries get\-State\-Size} () const override}\label{classPGB_a8bfdd5508674d0ebb74b24a3804cd00c}
+
+\item 
+\hypertarget{classPGB_a7f2f85646d84c71913f0476eecaacb2f}{void {\bfseries apply} (double $\ast$g, const double $\ast$I, const double $\ast$p) override}\label{classPGB_a7f2f85646d84c71913f0476eecaacb2f}
+
+\item 
+\hypertarget{classPGB_a0a3065d1437ffef8e418515cc8bcc033}{void {\bfseries invert} (double $\ast$inv\-\_\-p, const double $\ast$p) override}\label{classPGB_a0a3065d1437ffef8e418515cc8bcc033}
+
+\item 
+\hypertarget{classPGB_ae4195eca099d591500ddc65d2d3f34ca}{void {\bfseries update} (double $\ast$new\-\_\-p, const double $\ast$old\-\_\-p, const double $\ast$dp) override}\label{classPGB_ae4195eca099d591500ddc65d2d3f34ca}
+
+\item 
+\hypertarget{classPGB_a2b9a8cc854588e7cae6762727e1afd38}{void {\bfseries cmpt\-Param\-Jacobian} (double $\ast$df\-\_\-dp, const double $\ast$df\-\_\-dg, const double $\ast$I, const double $\ast$p) override}\label{classPGB_a2b9a8cc854588e7cae6762727e1afd38}
+
+\item 
+\hypertarget{classPGB_a8bc5d229bf77233375196aec8f4c0048}{void {\bfseries cmpt\-Param\-Hessian} (double $\ast$d2f\-\_\-dp2, const double $\ast$d2f\-\_\-dg2, const double $\ast$df\-\_\-dg, const double $\ast$I, const double $\ast$p) override}\label{classPGB_a8bc5d229bf77233375196aec8f4c0048}
+
+\item 
+\hypertarget{classPGB_a91cf0278a6f8cc07097c8fbd32524e66}{void {\bfseries cmpt\-Pix\-Jacobian} (double $\ast$df\-\_\-d\-I, const double $\ast$df\-\_\-dg, const double $\ast$I, const double $\ast$p) override}\label{classPGB_a91cf0278a6f8cc07097c8fbd32524e66}
+
+\item 
+\hypertarget{classPGB_a0ecdb9ad6c6e85a76e54874f93469b66}{void {\bfseries cmpt\-Pix\-Hessian} (double $\ast$d2f\-\_\-d\-I2, const double $\ast$d2f\-\_\-dg2, const double $\ast$df\-\_\-dg, const double $\ast$I, const double $\ast$p) override}\label{classPGB_a0ecdb9ad6c6e85a76e54874f93469b66}
+
+\item 
+\hypertarget{classPGB_a643c38f6f8b4b35a2a2cb146fd09f883}{void {\bfseries cmpt\-Cross\-Hessian} (double $\ast$d2f\-\_\-dp\-\_\-d\-I, const double $\ast$d2f\-\_\-dg2, const double $\ast$df\-\_\-dg, const double $\ast$I, const double $\ast$p) override}\label{classPGB_a643c38f6f8b4b35a2a2cb146fd09f883}
+
+\item 
+\hypertarget{classPGB_a16a5cbdc881bb48177db00ff281aa9fb}{Pix\-Hess\-Type {\bfseries get\-Pix\-Hess\-Type} () override}\label{classPGB_a16a5cbdc881bb48177db00ff281aa9fb}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Piecewise Gain and Bias illumination model. 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+A\-M/include/mtf/\-A\-M/P\-G\-B.\-h\end{DoxyCompactItemize}

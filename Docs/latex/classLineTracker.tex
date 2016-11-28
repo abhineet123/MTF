@@ -1,0 +1,107 @@
+\hypertarget{classLineTracker}{\section{Line\-Tracker Class Reference}
+\label{classLineTracker}\index{Line\-Tracker@{Line\-Tracker}}
+}
+Inheritance diagram for Line\-Tracker\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classLineTracker}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classLineTracker_a74f938bb06c9de06411830651c7fa6cf}{typedef \hyperlink{structLineTrackerParams}{Line\-Tracker\-Params} {\bfseries Param\-Type}}\label{classLineTracker_a74f938bb06c9de06411830651c7fa6cf}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classLineTracker_af75196bdbc5ca7911b6667e3e24b744b}{{\bfseries Line\-Tracker} (const vector$<$ Tracker\-Base $\ast$ $>$ trackers, const \hyperlink{structLineTrackerParams}{Param\-Type} $\ast$line\-\_\-params=nullptr)}\label{classLineTracker_af75196bdbc5ca7911b6667e3e24b744b}
+
+\item 
+\hypertarget{classLineTracker_a36a1b0fa3bbaa73a35c7b2084b5709e9}{void {\bfseries initialize} (const cv\-::\-Mat \&cv\-\_\-corners) override}\label{classLineTracker_a36a1b0fa3bbaa73a35c7b2084b5709e9}
+
+\item 
+\hypertarget{classLineTracker_a9ab4a07ef01a05be6e6a7057ae187ead}{void {\bfseries update} () override}\label{classLineTracker_a9ab4a07ef01a05be6e6a7057ae187ead}
+
+\item 
+\hypertarget{classLineTracker_a4f0afd192cd82b50b1b945c76e2c95f0}{void {\bfseries init\-Grid\-Positions} (const cv\-::\-Mat \&cv\-\_\-corners)}\label{classLineTracker_a4f0afd192cd82b50b1b945c76e2c95f0}
+
+\item 
+\hypertarget{classLineTracker_a12fe80abc0489d78b053fd9d0591be8f}{void {\bfseries update\-Alpha} (\hyperlink{structgridLine}{grid\-Line} $\ast$curr\-\_\-lines, \hyperlink{structgridLine}{grid\-Line} $\ast$prev\-\_\-lines, int no\-\_\-of\-\_\-lines, int line\-\_\-type)}\label{classLineTracker_a12fe80abc0489d78b053fd9d0591be8f}
+
+\item 
+\hypertarget{classLineTracker_a0bfc2cc4dce44b88f2dda19410aba866}{int {\bfseries update\-Line\-Params\-L\-S} (\hyperlink{structgridLine}{grid\-Line} $\ast$curr\-\_\-lines, \hyperlink{structgridLine}{grid\-Line} $\ast$prev\-\_\-lines, \hyperlink{structlineParams}{line\-Params} $\ast$mean\-\_\-params, int no\-\_\-of\-\_\-lines, int line\-\_\-type)}\label{classLineTracker_a0bfc2cc4dce44b88f2dda19410aba866}
+
+\item 
+\hypertarget{classLineTracker_a629ae9e222500152bf4b3fd1c90e17e8}{int {\bfseries update\-Line\-Params\-Weighted\-L\-S} (\hyperlink{structgridLine}{grid\-Line} $\ast$curr\-\_\-lines, \hyperlink{structgridLine}{grid\-Line} $\ast$prev\-\_\-lines, \hyperlink{structlineParams}{line\-Params} $\ast$mean\-\_\-params, int no\-\_\-of\-\_\-lines, int line\-\_\-type)}\label{classLineTracker_a629ae9e222500152bf4b3fd1c90e17e8}
+
+\item 
+\hypertarget{classLineTracker_a91862b496dd0c80294932847ec8f1674}{void {\bfseries reset\-Line\-Params\-To\-Prev} (\hyperlink{structgridLine}{grid\-Line} $\ast$curr\-\_\-lines, \hyperlink{structgridLine}{grid\-Line} $\ast$prev\-\_\-lines, int no\-\_\-of\-\_\-lines)}\label{classLineTracker_a91862b496dd0c80294932847ec8f1674}
+
+\item 
+\hypertarget{classLineTracker_aed08c436973db9d003e771b269828422}{void {\bfseries reset\-Line\-Params\-To\-Mean} (\hyperlink{structgridLine}{grid\-Line} $\ast$curr\-\_\-lines, \hyperlink{structgridLine}{grid\-Line} $\ast$prev\-\_\-lines, \hyperlink{structlineParams}{line\-Params} $\ast$mean\-\_\-params, int no\-\_\-of\-\_\-lines, int reset\-\_\-c=0)}\label{classLineTracker_aed08c436973db9d003e771b269828422}
+
+\item 
+\hypertarget{classLineTracker_a18509ae1884c2ca7c6383ecd5357315c}{void {\bfseries update\-Grid\-With\-Line\-Intersections} ()}\label{classLineTracker_a18509ae1884c2ca7c6383ecd5357315c}
+
+\item 
+\hypertarget{classLineTracker_afe4467ad69bf51230c01a2fb739b04bc}{void {\bfseries update\-Distance\-Weights} ()}\label{classLineTracker_afe4467ad69bf51230c01a2fb739b04bc}
+
+\item 
+\hypertarget{classLineTracker_a19f8e93a431d3fa52c462c77a5d7c5d0}{void {\bfseries reset\-Tracker\-States} ()}\label{classLineTracker_a19f8e93a431d3fa52c462c77a5d7c5d0}
+
+\item 
+\hypertarget{classLineTracker_a3f26f799e3970e2eb21c505d47b91941}{void {\bfseries update\-C\-V\-Corners} ()}\label{classLineTracker_a3f26f799e3970e2eb21c505d47b91941}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classLineTracker_ad6b1fe206ed17843823e4b5cf0b58926}{\hyperlink{structLineTrackerParams}{Param\-Type} {\bfseries params}}\label{classLineTracker_ad6b1fe206ed17843823e4b5cf0b58926}
+
+\item 
+\hypertarget{classLineTracker_a26b3854b3012f44e603b8f3493482962}{int {\bfseries corner\-\_\-tracker\-\_\-ids} \mbox{[}4\mbox{]}}\label{classLineTracker_a26b3854b3012f44e603b8f3493482962}
+
+\item 
+\hypertarget{classLineTracker_a87ab809023ff851a78312cb44502ed12}{int {\bfseries frame\-\_\-id}}\label{classLineTracker_a87ab809023ff851a78312cb44502ed12}
+
+\item 
+\hypertarget{classLineTracker_a9f55dc961cf851f8d24e77cb69587ec9}{cv\-::\-Point2d $\ast$ {\bfseries tracker\-\_\-pos}}\label{classLineTracker_a9f55dc961cf851f8d24e77cb69587ec9}
+
+\item 
+\hypertarget{classLineTracker_aeafc78afaaea7e896af88944eae765bf}{cv\-::\-Point2d {\bfseries wt\-\_\-mean\-\_\-pt}}\label{classLineTracker_aeafc78afaaea7e896af88944eae765bf}
+
+\item 
+\hypertarget{classLineTracker_a7eddde2a447a29d015a7327ad5d921cb}{\hyperlink{structgridPoint}{grid\-Point} $\ast$ {\bfseries curr\-\_\-grid\-\_\-pts}}\label{classLineTracker_a7eddde2a447a29d015a7327ad5d921cb}
+
+\item 
+\hypertarget{classLineTracker_aa7b59e441863bcdc659a2e847de0c138}{\hyperlink{structgridPoint}{grid\-Point} $\ast$ {\bfseries prev\-\_\-grid\-\_\-pts}}\label{classLineTracker_aa7b59e441863bcdc659a2e847de0c138}
+
+\item 
+\hypertarget{classLineTracker_a6e99a06f147fe02f792ae023cc32924b}{\hyperlink{structgridLine}{grid\-Line} $\ast$ {\bfseries curr\-\_\-vert\-\_\-lines}}\label{classLineTracker_a6e99a06f147fe02f792ae023cc32924b}
+
+\item 
+\hypertarget{classLineTracker_a5f181816d9edae0fffffe788d815a35a}{\hyperlink{structgridLine}{grid\-Line} $\ast$ {\bfseries curr\-\_\-horz\-\_\-lines}}\label{classLineTracker_a5f181816d9edae0fffffe788d815a35a}
+
+\item 
+\hypertarget{classLineTracker_a1ff877d36fa7b62ceacd9057dde67008}{\hyperlink{structgridLine}{grid\-Line} $\ast$ {\bfseries prev\-\_\-vert\-\_\-lines}}\label{classLineTracker_a1ff877d36fa7b62ceacd9057dde67008}
+
+\item 
+\hypertarget{classLineTracker_a6dbfee9c6517246fc236d6e66ed5b98a}{\hyperlink{structgridLine}{grid\-Line} $\ast$ {\bfseries prev\-\_\-horz\-\_\-lines}}\label{classLineTracker_a6dbfee9c6517246fc236d6e66ed5b98a}
+
+\item 
+\hypertarget{classLineTracker_aa4a9e69afc1ecb80990027d02608fa3e}{\hyperlink{structlineParams}{line\-Params} $\ast$ {\bfseries mean\-\_\-horz\-\_\-params}}\label{classLineTracker_aa4a9e69afc1ecb80990027d02608fa3e}
+
+\item 
+\hypertarget{classLineTracker_a6da360d20b22c82c8a268e9ad6c2cb19}{\hyperlink{structlineParams}{line\-Params} $\ast$ {\bfseries mean\-\_\-vert\-\_\-params}}\label{classLineTracker_a6da360d20b22c82c8a268e9ad6c2cb19}
+
+\item 
+\hypertarget{classLineTracker_a30019185a1c471dce129b8fa754ace27}{int {\bfseries is\-\_\-initialized}}\label{classLineTracker_a30019185a1c471dce129b8fa754ace27}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/Line\-Tracker.\-h\end{DoxyCompactItemize}

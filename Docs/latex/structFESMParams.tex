@@ -1,0 +1,73 @@
+\hypertarget{structFESMParams}{\section{F\-E\-S\-M\-Params Struct Reference}
+\label{structFESMParams}\index{F\-E\-S\-M\-Params@{F\-E\-S\-M\-Params}}
+}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bfseries Jac\-Type} \{ {\bfseries Original}, 
+{\bfseries Diff\-Of\-Jacs}
+ \}
+\item 
+enum {\bfseries Hess\-Type} \{ \\*
+{\bfseries Original}, 
+{\bfseries Sum\-Of\-Std}, 
+{\bfseries Sum\-Of\-Self}, 
+{\bfseries Initial\-Self}, 
+\\*
+{\bfseries Current\-Self}, 
+{\bfseries Std}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structFESMParams_a57a82c5ffa65057e1d238ff1854a4c89}{F\-E\-S\-M\-Params} (int \-\_\-max\-\_\-iters, double \-\_\-upd\-\_\-thresh, bool \-\_\-sec\-\_\-ord\-\_\-hess, bool \-\_\-enable\-\_\-spi, double \-\_\-spi\-\_\-thresh, bool \-\_\-debug\-\_\-mode)
+\begin{DoxyCompactList}\small\item\em decides whether logging data will be printed for debugging purposes; \end{DoxyCompactList}\item 
+\hypertarget{structFESMParams_a3016464835a07fe2813e7ee1bb9e861b}{{\bfseries F\-E\-S\-M\-Params} (\hyperlink{structFESMParams}{F\-E\-S\-M\-Params} $\ast$params=nullptr)}\label{structFESMParams_a3016464835a07fe2813e7ee1bb9e861b}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structFESMParams_a96be401b3db2c1b55143dffb8291be20}{int {\bfseries max\-\_\-iters}}\label{structFESMParams_a96be401b3db2c1b55143dffb8291be20}
+
+\item 
+\hypertarget{structFESMParams_ad0054f4f49459341a77c51bdce6989d6}{double \hyperlink{structFESMParams_ad0054f4f49459341a77c51bdce6989d6}{upd\-\_\-thresh}}\label{structFESMParams_ad0054f4f49459341a77c51bdce6989d6}
+
+\begin{DoxyCompactList}\small\item\em maximum iterations of the \hyperlink{classFESMBase}{F\-E\-S\-M\-Base} algorithm to run for each frame \end{DoxyCompactList}\item 
+\hypertarget{structFESMParams_a24f6ba0bf9d418d9ced7c04f3b4db32a}{bool \hyperlink{structFESMParams_a24f6ba0bf9d418d9ced7c04f3b4db32a}{sec\-\_\-ord\-\_\-hess}}\label{structFESMParams_a24f6ba0bf9d418d9ced7c04f3b4db32a}
+
+\begin{DoxyCompactList}\small\item\em maximum L1 norm of the state update vector at which to stop the iterations \end{DoxyCompactList}\item 
+\hypertarget{structFESMParams_a8ade0f5732bcc69614c95898aa2147ad}{bool {\bfseries enable\-\_\-spi}}\label{structFESMParams_a8ade0f5732bcc69614c95898aa2147ad}
+
+\item 
+\hypertarget{structFESMParams_a9fadb0002e1632b1c11f302bfd4d6f3a}{double {\bfseries spi\-\_\-thresh}}\label{structFESMParams_a9fadb0002e1632b1c11f302bfd4d6f3a}
+
+\item 
+\hypertarget{structFESMParams_a1598fce243fc405685aa6780056ef7f3}{bool {\bfseries debug\-\_\-mode}}\label{structFESMParams_a1598fce243fc405685aa6780056ef7f3}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{structFESMParams_a57a82c5ffa65057e1d238ff1854a4c89}{\index{F\-E\-S\-M\-Params@{F\-E\-S\-M\-Params}!F\-E\-S\-M\-Params@{F\-E\-S\-M\-Params}}
+\index{F\-E\-S\-M\-Params@{F\-E\-S\-M\-Params}!FESMParams@{F\-E\-S\-M\-Params}}
+\subsubsection[{F\-E\-S\-M\-Params}]{\setlength{\rightskip}{0pt plus 5cm}F\-E\-S\-M\-Params\-::\-F\-E\-S\-M\-Params (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-max\-\_\-iters, }
+\item[{double}]{\-\_\-upd\-\_\-thresh, }
+\item[{bool}]{\-\_\-sec\-\_\-ord\-\_\-hess, }
+\item[{bool}]{\-\_\-enable\-\_\-spi, }
+\item[{double}]{\-\_\-spi\-\_\-thresh, }
+\item[{bool}]{\-\_\-debug\-\_\-mode}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{structFESMParams_a57a82c5ffa65057e1d238ff1854a4c89}
+
+
+decides whether logging data will be printed for debugging purposes; 
+
+only matters if logging is enabled at compile time 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/F\-E\-S\-M\-Base.\-h\end{DoxyCompactItemize}

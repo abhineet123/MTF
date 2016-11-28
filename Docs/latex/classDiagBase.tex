@@ -1,0 +1,106 @@
+\hypertarget{classDiagBase}{\section{Diag\-Base Class Reference}
+\label{classDiagBase}\index{Diag\-Base@{Diag\-Base}}
+}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bfseries Analytical\-Data\-Type} \{ \\*
+{\bfseries Norm}, 
+{\bfseries Feat\-Norm}, 
+{\bfseries Std\-Jac}, 
+{\bfseries E\-S\-M\-Jac}, 
+\\*
+{\bfseries Diff\-Of\-Jacs}, 
+{\bfseries Std}, 
+{\bfseries E\-S\-M}, 
+{\bfseries Init\-Self}, 
+\\*
+{\bfseries Curr\-Self}, 
+{\bfseries Std2}, 
+{\bfseries E\-S\-M2}, 
+{\bfseries Init\-Self2}, 
+\\*
+{\bfseries Curr\-Self2}, 
+{\bfseries Sum\-Of\-Std}, 
+{\bfseries Sum\-Of\-Std2}, 
+{\bfseries Sum\-Of\-Self}, 
+\\*
+{\bfseries Sum\-Of\-Self2}
+ \}
+\item 
+enum {\bfseries Numerical\-Data\-Type} \{ {\bfseries Jacobian}, 
+{\bfseries Hessian}, 
+{\bfseries N\-Hessian}
+ \}
+\item 
+\hypertarget{classDiagBase_a426a116745989c7137fb512fa7d584f2}{typedef Analytical\-Data\-Type {\bfseries A\-D\-T}}\label{classDiagBase_a426a116745989c7137fb512fa7d584f2}
+
+\item 
+\hypertarget{classDiagBase_a5ec839186aabccb0f15827bfa3b5642e}{typedef Numerical\-Data\-Type {\bfseries N\-D\-T}}\label{classDiagBase_a5ec839186aabccb0f15827bfa3b5642e}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classDiagBase_a0f5852709cb03bc86b5fca81f0483325}{{\bfseries Diag\-Base} (const cv\-::\-Mat \&init\-\_\-img)}\label{classDiagBase_a0f5852709cb03bc86b5fca81f0483325}
+
+\item 
+\hypertarget{classDiagBase_ab26161b77dd7a9161f8945f761feb61c}{virtual void {\bfseries set\-Image} (const cv\-::\-Mat \&img)=0}\label{classDiagBase_ab26161b77dd7a9161f8945f761feb61c}
+
+\item 
+\hypertarget{classDiagBase_a3a1cf2490a7647027c0f86e80c43bb03}{virtual void {\bfseries initialize} (const cv\-::\-Mat \&corners)=0}\label{classDiagBase_a3a1cf2490a7647027c0f86e80c43bb03}
+
+\item 
+\hypertarget{classDiagBase_ae1eb9474a09592e6daf0f0a776bf678f}{virtual void {\bfseries update} (const cv\-::\-Mat \&corners)=0}\label{classDiagBase_ae1eb9474a09592e6daf0f0a776bf678f}
+
+\item 
+\hypertarget{classDiagBase_acd4b15bf4f6bf3d3092f0a66e781127b}{virtual void {\bfseries initialize} (const cv\-::\-Mat \&img, const cv\-::\-Mat \&corners)}\label{classDiagBase_acd4b15bf4f6bf3d3092f0a66e781127b}
+
+\item 
+\hypertarget{classDiagBase_a1dda6929b6f96ce23581a379ad9c2d59}{virtual void {\bfseries update} (const cv\-::\-Mat \&img, const cv\-::\-Mat \&corners)}\label{classDiagBase_a1dda6929b6f96ce23581a379ad9c2d59}
+
+\item 
+\hypertarget{classDiagBase_a2ec31e3a577a7f2388b4dfaf5e1ed899}{virtual void {\bfseries generate\-Analytical\-Data} (Vector\-Xd \&param\-\_\-range, int n\-\_\-pts, Analytical\-Data\-Type data\-\_\-type, const char $\ast$fname)=0}\label{classDiagBase_a2ec31e3a577a7f2388b4dfaf5e1ed899}
+
+\item 
+\hypertarget{classDiagBase_a663aa4697855857c281ead3acdc2c04d}{void {\bfseries generate\-Analytical\-Data} (double param\-\_\-range, int n\-\_\-pts, Analytical\-Data\-Type data\-\_\-type, const char $\ast$fname=nullptr)}\label{classDiagBase_a663aa4697855857c281ead3acdc2c04d}
+
+\item 
+\hypertarget{classDiagBase_a3750265ecae09e3f48b441475560bd20}{virtual void {\bfseries generate\-Inverse\-Analytical\-Data} (Vector\-Xd \&param\-\_\-range, int n\-\_\-pts, Analytical\-Data\-Type data\-\_\-type, const char $\ast$fname=nullptr)=0}\label{classDiagBase_a3750265ecae09e3f48b441475560bd20}
+
+\item 
+\hypertarget{classDiagBase_ad8b6f94744ede59ee7138f6b1864d399}{void {\bfseries generate\-Inverse\-Analytical\-Data} (double param\-\_\-range, int n\-\_\-pts, Analytical\-Data\-Type data\-\_\-type, const char $\ast$fname=nullptr)}\label{classDiagBase_ad8b6f94744ede59ee7138f6b1864d399}
+
+\item 
+\hypertarget{classDiagBase_ad0fe63d853e3a68c05238c387fa4e9e7}{virtual void {\bfseries generate\-Numerical\-Data} (Vector\-Xd \&param\-\_\-range\-\_\-vec, int n\-\_\-pts, Numerical\-Data\-Type data\-\_\-type, const char $\ast$fname, double grad\-\_\-diff)=0}\label{classDiagBase_ad0fe63d853e3a68c05238c387fa4e9e7}
+
+\item 
+\hypertarget{classDiagBase_a1ced10e03d9d0c18ce9a7552f819f03b}{virtual void {\bfseries generate\-Inverse\-Numerical\-Data} (Vector\-Xd \&param\-\_\-range\-\_\-vec, int n\-\_\-pts, Numerical\-Data\-Type data\-\_\-type, const char $\ast$fname, double grad\-\_\-diff)=0}\label{classDiagBase_a1ced10e03d9d0c18ce9a7552f819f03b}
+
+\item 
+\hypertarget{classDiagBase_a44290bbaff4edc2862e6a6b14791118a}{virtual void {\bfseries generate\-S\-S\-M\-Param\-Data} (Vector\-Xd \&param\-\_\-range\-\_\-vec, int n\-\_\-pts, const char $\ast$fname)=0}\label{classDiagBase_a44290bbaff4edc2862e6a6b14791118a}
+
+\item 
+\hypertarget{classDiagBase_a0d84250f6110072f3ca9dbff0cd6e04c}{const char $\ast$ {\bfseries to\-String} (Analytical\-Data\-Type data\-\_\-type)}\label{classDiagBase_a0d84250f6110072f3ca9dbff0cd6e04c}
+
+\item 
+\hypertarget{classDiagBase_ad416e2fbded87de6c9752fcccd71fca3}{const char $\ast$ {\bfseries to\-String} (Numerical\-Data\-Type data\-\_\-type)}\label{classDiagBase_ad416e2fbded87de6c9752fcccd71fca3}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classDiagBase_ad4d3d755e60652be0c047aa53b2467ef}{int {\bfseries am\-\_\-dist\-\_\-size}}\label{classDiagBase_ad4d3d755e60652be0c047aa53b2467ef}
+
+\item 
+\hypertarget{classDiagBase_a616730726a2503ca6f2aaeebe403289f}{int {\bfseries ssm\-\_\-state\-\_\-size}}\label{classDiagBase_a616730726a2503ca6f2aaeebe403289f}
+
+\item 
+\hypertarget{classDiagBase_a8f6e96646d472f0f46612d95a263dd93}{Matrix\-Xd {\bfseries diagnostics\-\_\-data}}\label{classDiagBase_a8f6e96646d472f0f46612d95a263dd93}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+Test/include/mtf/\-Test/Diag\-Base.\-h\end{DoxyCompactItemize}

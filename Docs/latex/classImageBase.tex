@@ -1,0 +1,301 @@
+\hypertarget{classImageBase}{\section{Image\-Base Class Reference}
+\label{classImageBase}\index{Image\-Base@{Image\-Base}}
+}
+Inheritance diagram for Image\-Base\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=12.000000cm]{classImageBase}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classImageBase_aa0f54a34c4ce87f5b72c7c741145a94e}{typedef Eig\-Img\-T \hyperlink{classImageBase_aa0f54a34c4ce87f5b72c7c741145a94e}{Image\-T}}\label{classImageBase_aa0f54a34c4ce87f5b72c7c741145a94e}
+
+\begin{DoxyCompactList}\small\item\em convenience type if grayscale image is used as input by the A\-M \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classImageBase_a44574be90999ffd0c7a9d700608005db}{{\bfseries Image\-Base} (const \hyperlink{structImgParams}{Img\-Params} $\ast$img\-\_\-params=nullptr, const int \-\_\-n\-\_\-channels=1)}\label{classImageBase_a44574be90999ffd0c7a9d700608005db}
+
+\item 
+\hypertarget{classImageBase_afc86a63579a95bf7ee05aff4c1f21522}{virtual int \hyperlink{classImageBase_afc86a63579a95bf7ee05aff4c1f21522}{input\-Type} () const }\label{classImageBase_afc86a63579a95bf7ee05aff4c1f21522}
+
+\begin{DoxyCompactList}\small\item\em return the type of Open\-C\-V Mat image the A\-M requires as input; typically either C\-V\-\_\-32\-F\-C3 or C\-V\-\_\-32\-F\-C1 \end{DoxyCompactList}\item 
+virtual const cv\-::\-Mat \& \hyperlink{classImageBase_aeab7b6efa7fa9c98bec6e20594113bf0}{get\-Curr\-Img} () const 
+\begin{DoxyCompactList}\small\item\em accessor methods; these are not defined as 'const' since an appearance model may like to make some last moment changes to the variable being accessed before returning it to can avoid any unnecessary computations concerning the variable (e.\-g. \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_aa28aca0398cdecce95ad382665363938}{virtual int {\bfseries get\-Img\-Height} () const }\label{classImageBase_aa28aca0398cdecce95ad382665363938}
+
+\item 
+\hypertarget{classImageBase_a250f19163c9fe65ba2a4f137ce2bf90b}{virtual int {\bfseries get\-Img\-Width} () const }\label{classImageBase_a250f19163c9fe65ba2a4f137ce2bf90b}
+
+\item 
+\hypertarget{classImageBase_afe923eb9b81d60f333e2dfe0131bdd20}{virtual int {\bfseries get\-Res\-X} () const }\label{classImageBase_afe923eb9b81d60f333e2dfe0131bdd20}
+
+\item 
+\hypertarget{classImageBase_a2017f3faf5fe85d6cc26e471041c45ee}{virtual int {\bfseries get\-Res\-Y} () const }\label{classImageBase_a2017f3faf5fe85d6cc26e471041c45ee}
+
+\item 
+\hypertarget{classImageBase_a2151ca10c29dfe674c5503cd1f7352c6}{virtual int {\bfseries get\-N\-Pix} () const }\label{classImageBase_a2151ca10c29dfe674c5503cd1f7352c6}
+
+\item 
+\hypertarget{classImageBase_a5d28f1bd86db90f9d1a056545828f444}{virtual int {\bfseries get\-N\-Channels} () const }\label{classImageBase_a5d28f1bd86db90f9d1a056545828f444}
+
+\item 
+\hypertarget{classImageBase_a3e4aac727c581d0a2745641669864df1}{virtual int {\bfseries get\-Patch\-Size} () const }\label{classImageBase_a3e4aac727c581d0a2745641669864df1}
+
+\item 
+\hypertarget{classImageBase_a152c661dd701949ab326dfff6caf5fba}{virtual double {\bfseries get\-Grad\-Offset} () const }\label{classImageBase_a152c661dd701949ab326dfff6caf5fba}
+
+\item 
+\hypertarget{classImageBase_a23a89704145102741c43eaeef9dba171}{virtual double {\bfseries get\-Hess\-Offset} () const }\label{classImageBase_a23a89704145102741c43eaeef9dba171}
+
+\item 
+\hypertarget{classImageBase_a6f7d67dad333f72a55f49c4aa63ef1c0}{virtual const Pix\-Val\-T \& {\bfseries get\-Init\-Pix\-Vals} () const }\label{classImageBase_a6f7d67dad333f72a55f49c4aa63ef1c0}
+
+\item 
+\hypertarget{classImageBase_a99a58357f0eaa15c70e9c0ee21da9d05}{virtual const Pix\-Grad\-T \& {\bfseries get\-Init\-Pix\-Grad} () const }\label{classImageBase_a99a58357f0eaa15c70e9c0ee21da9d05}
+
+\item 
+\hypertarget{classImageBase_a2b0e6211578a63205e936412dfee1fb6}{virtual const Pix\-Hess\-T \& {\bfseries get\-Init\-Pix\-Hess} () const }\label{classImageBase_a2b0e6211578a63205e936412dfee1fb6}
+
+\item 
+\hypertarget{classImageBase_a28ec6b021eb2cbb57386979cbb8dd8f1}{virtual const Pix\-Val\-T \& {\bfseries get\-Curr\-Pix\-Vals} () const }\label{classImageBase_a28ec6b021eb2cbb57386979cbb8dd8f1}
+
+\item 
+\hypertarget{classImageBase_a5626c50674100fc7acd0364029ae2827}{virtual const Pix\-Grad\-T \& {\bfseries get\-Curr\-Pix\-Grad} () const }\label{classImageBase_a5626c50674100fc7acd0364029ae2827}
+
+\item 
+\hypertarget{classImageBase_a7793589a55eff60418443f6dca953f05}{virtual const Pix\-Hess\-T \& {\bfseries get\-Curr\-Pix\-Hess} () const }\label{classImageBase_a7793589a55eff60418443f6dca953f05}
+
+\item 
+\hypertarget{classImageBase_a9eb8fba660685c2a74b2cf2658b103ed}{virtual void \hyperlink{classImageBase_a9eb8fba660685c2a74b2cf2658b103ed}{set\-Curr\-Img} (const cv\-::\-Mat \&cv\-\_\-img)}\label{classImageBase_a9eb8fba660685c2a74b2cf2658b103ed}
+
+\begin{DoxyCompactList}\small\item\em modifier methods; \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_a8d50bae23e438e75a51cc6d38a0cb933}{virtual void {\bfseries set\-Init\-Pix\-Vals} (const Pix\-Val\-T \&pix\-\_\-vals)}\label{classImageBase_a8d50bae23e438e75a51cc6d38a0cb933}
+
+\item 
+\hypertarget{classImageBase_aadecea7cb19c93e5b0558f219344c599}{virtual void {\bfseries set\-Init\-Pix\-Grad} (const Pix\-Grad\-T \&pix\-\_\-grad)}\label{classImageBase_aadecea7cb19c93e5b0558f219344c599}
+
+\item 
+\hypertarget{classImageBase_a0c74c497e73154bfc99c3fe3790b138c}{virtual void {\bfseries set\-Init\-Pix\-Hess} (const Pix\-Hess\-T \&pix\-\_\-hess)}\label{classImageBase_a0c74c497e73154bfc99c3fe3790b138c}
+
+\item 
+\hypertarget{classImageBase_a63fe6a4acb201ee9418a96e28dbabc14}{virtual void {\bfseries set\-Curr\-Pix\-Vals} (const Pix\-Val\-T \&pix\-\_\-vals)}\label{classImageBase_a63fe6a4acb201ee9418a96e28dbabc14}
+
+\item 
+\hypertarget{classImageBase_a0f8d3b81eca127f6094b2804d2155905}{virtual void {\bfseries set\-Curr\-Pix\-Grad} (const Pix\-Grad\-T \&pix\-\_\-grad)}\label{classImageBase_a0f8d3b81eca127f6094b2804d2155905}
+
+\item 
+\hypertarget{classImageBase_a123a6ed44636823f12e9b49abdd80c99}{virtual void {\bfseries set\-Curr\-Pix\-Hess} (const Pix\-Hess\-T \&pix\-\_\-hess)}\label{classImageBase_a123a6ed44636823f12e9b49abdd80c99}
+
+\item 
+\hypertarget{classImageBase_ab803d031b7ed046b00e69d691504e14e}{virtual void \hyperlink{classImageBase_ab803d031b7ed046b00e69d691504e14e}{initialize\-Pix\-Vals} (const Pts\-T \&init\-\_\-pts)}\label{classImageBase_ab803d031b7ed046b00e69d691504e14e}
+
+\begin{DoxyCompactList}\small\item\em initialization methods -\/ to be called once when the tracker is initialized \end{DoxyCompactList}\item 
+virtual void \hyperlink{classImageBase_a2aeec772d5c4de56f4e8fbfd4f08e69d}{initialize\-Pix\-Grad} (const Grad\-Pts\-T \&warped\-\_\-offset\-\_\-pts)
+\begin{DoxyCompactList}\small\item\em functions to compute image differentials (gradient and hessian) are overloaded since there are two ways to define them\-: \end{DoxyCompactList}\item 
+virtual void \hyperlink{classImageBase_aa81f72f3d41e1be570b162789b8221d6}{initialize\-Pix\-Grad} (const Pts\-T \&init\-\_\-pts)
+\item 
+virtual void \hyperlink{classImageBase_a9e8f70830c1caffda808830f1cdf939d}{initialize\-Pix\-Hess} (const Pts\-T \&init\-\_\-pts, const Hess\-Pts\-T \&warped\-\_\-offset\-\_\-pts)
+\item 
+virtual void \hyperlink{classImageBase_a8ab724371b3b3874a026e530b40c4082}{initialize\-Pix\-Hess} (const Pts\-T \&init\-\_\-pts)
+\item 
+\hypertarget{classImageBase_a807fb84431ec6a39338a3809cd2f02bc}{virtual void {\bfseries update\-Pix\-Vals} (const Pts\-T \&curr\-\_\-pts)}\label{classImageBase_a807fb84431ec6a39338a3809cd2f02bc}
+
+\item 
+\hypertarget{classImageBase_af5d79c319b0feb05b1670289ff4c8f57}{virtual void {\bfseries update\-Pix\-Grad} (const Grad\-Pts\-T \&warped\-\_\-offset\-\_\-pts)}\label{classImageBase_af5d79c319b0feb05b1670289ff4c8f57}
+
+\item 
+\hypertarget{classImageBase_aec28bd13871be3cbfa37da46ce589f0c}{virtual void {\bfseries update\-Pix\-Grad} (const Pts\-T \&curr\-\_\-pts)}\label{classImageBase_aec28bd13871be3cbfa37da46ce589f0c}
+
+\item 
+\hypertarget{classImageBase_aaac5ac3287b29d744e6dd847e879e862}{virtual void {\bfseries update\-Pix\-Hess} (const Pts\-T \&curr\-\_\-pts)}\label{classImageBase_aaac5ac3287b29d744e6dd847e879e862}
+
+\item 
+\hypertarget{classImageBase_a155b46226f9824af99c7628ad7c33228}{virtual void {\bfseries update\-Pix\-Hess} (const Pts\-T \&curr\-\_\-pts, const Hess\-Pts\-T \&warped\-\_\-offset\-\_\-pts)}\label{classImageBase_a155b46226f9824af99c7628ad7c33228}
+
+\item 
+\hypertarget{classImageBase_ab356e9ea42029bdf2e527e517da9f524}{virtual void \hyperlink{classImageBase_ab356e9ea42029bdf2e527e517da9f524}{update\-Template} (const Pts\-T \&curr\-\_\-pts)}\label{classImageBase_ab356e9ea42029bdf2e527e517da9f524}
+
+\begin{DoxyCompactList}\small\item\em optional function to incorporate online learning or adaptation of the object template being tracked this should be called with the final location of the object (obtained by the search process) in the curent image by default it updates the template with the running average of all the object patches seen so far \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_a296af969f6f7b03c850007076397a026}{virtual void \hyperlink{classImageBase_a296af969f6f7b03c850007076397a026}{extract\-Patch} (Vector\-Xd \&pix\-\_\-vals, const Pts\-T \&curr\-\_\-pts)}\label{classImageBase_a296af969f6f7b03c850007076397a026}
+
+\begin{DoxyCompactList}\small\item\em general utility function to extract raw pixel values from the current image at the specified points; might be useful for visualization purposes as the curr\-\_\-pix\-\_\-vals might not have raw pixel values; \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_ae8f0d73deaf9ddd78ba37120b164e5b0}{virtual \hyperlink{structImgStatus}{Img\-Status} $\ast$ {\bfseries is\-Initialized} ()=0}\label{classImageBase_ae8f0d73deaf9ddd78ba37120b164e5b0}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classImageBase_a05bb3e22989361a082501f48286f58ce}{Eig\-Img\-T \hyperlink{classImageBase_a05bb3e22989361a082501f48286f58ce}{curr\-\_\-img}}\label{classImageBase_a05bb3e22989361a082501f48286f58ce}
+
+\begin{DoxyCompactList}\small\item\em Eigen structure shaing memory with the Open\-C\-V image used by default with grayscale inputs. \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_a79c1a5f750185761ce3467f9eac640fe}{cv\-::\-Mat \hyperlink{classImageBase_a79c1a5f750185761ce3467f9eac640fe}{curr\-\_\-img\-\_\-cv}}\label{classImageBase_a79c1a5f750185761ce3467f9eac640fe}
+
+\begin{DoxyCompactList}\small\item\em Open\-C\-V image used by default with multi channel inputs. \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_a51a4b10eff8f050199c4b69225111ad9}{int \hyperlink{classImageBase_a51a4b10eff8f050199c4b69225111ad9}{img\-\_\-height}}\label{classImageBase_a51a4b10eff8f050199c4b69225111ad9}
+
+\begin{DoxyCompactList}\small\item\em height and width of the input images \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_a02e207fa46966b86c63618fbfe0192e0}{int {\bfseries img\-\_\-width}}\label{classImageBase_a02e207fa46966b86c63618fbfe0192e0}
+
+\item 
+\hypertarget{classImageBase_a4ea85cd1ec4b0655d0de1d452eb0e1ec}{int \hyperlink{classImageBase_a4ea85cd1ec4b0655d0de1d452eb0e1ec}{resx}}\label{classImageBase_a4ea85cd1ec4b0655d0de1d452eb0e1ec}
+
+\begin{DoxyCompactList}\small\item\em horizontal and vertical sampling resolutions for the object patch \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_adb1512179414cadfbca54e58de914320}{int {\bfseries resy}}\label{classImageBase_adb1512179414cadfbca54e58de914320}
+
+\item 
+\hypertarget{classImageBase_a01bbe6e54a59a6a54885222225233040}{int \hyperlink{classImageBase_a01bbe6e54a59a6a54885222225233040}{n\-\_\-pix}}\label{classImageBase_a01bbe6e54a59a6a54885222225233040}
+
+\begin{DoxyCompactList}\small\item\em no. of pixels in the sampled image patch to be tracked \end{DoxyCompactList}\item 
+const int \hyperlink{classImageBase_ac16eaa560cdf51fc9232ae115c3567e2}{n\-\_\-channels}
+\begin{DoxyCompactList}\small\item\em no. \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_a71d9ec399436e3c833ad7323670f1ed5}{int \hyperlink{classImageBase_a71d9ec399436e3c833ad7323670f1ed5}{patch\-\_\-size}}\label{classImageBase_a71d9ec399436e3c833ad7323670f1ed5}
+
+\begin{DoxyCompactList}\small\item\em size of the vector that represents the object patch in the image, typically n\-\_\-pix$\ast$n\-\_\-channels \end{DoxyCompactList}\item 
+Pix\-Val\-T \hyperlink{classImageBase_a6e5beaedb0a6d8e511446443dc2b80dc}{I0}
+\begin{DoxyCompactList}\small\item\em let N = n\-\_\-pix = no. of pixels and C = n\-\_\-channels = no. of channels \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_ab681301644f53a0609a53214c93aede0}{Pix\-Val\-T {\bfseries It}}\label{classImageBase_ab681301644f53a0609a53214c93aede0}
+
+\item 
+Pix\-Grad\-T \hyperlink{classImageBase_a932c969a6b33c3d3d4e2c120fa8fd815}{d\-I0\-\_\-dx}
+\begin{DoxyCompactList}\small\item\em (N$\ast$\-C) x 2 jacobian of pixel values in the warped image w.\-r.\-t. \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_a5b86e56c04d2bdfc846764e6ab5c52ee}{Pix\-Grad\-T {\bfseries d\-It\-\_\-dx}}\label{classImageBase_a5b86e56c04d2bdfc846764e6ab5c52ee}
+
+\item 
+Pix\-Hess\-T \hyperlink{classImageBase_a4540fc64d3c65262b2c489d9380f09d3}{d2\-I0\-\_\-dx2}
+\begin{DoxyCompactList}\small\item\em 4 x (N$\ast$\-C) Hessian of pixel values in the warped image w.\-r.\-t. \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_a242904300650df81767929bfd312998b}{Pix\-Hess\-T {\bfseries d2\-It\-\_\-dx2}}\label{classImageBase_a242904300650df81767929bfd312998b}
+
+\item 
+\hypertarget{classImageBase_ab4c84af6cf0169cae8497bb1666fbd47}{double \hyperlink{classImageBase_ab4c84af6cf0169cae8497bb1666fbd47}{pix\-\_\-norm\-\_\-add}}\label{classImageBase_ab4c84af6cf0169cae8497bb1666fbd47}
+
+\begin{DoxyCompactList}\small\item\em additive and multiplicative factors for normalizing pixel values \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_a35b4b321a878a44c3ee71a528689e091}{double {\bfseries pix\-\_\-norm\-\_\-mult}}\label{classImageBase_a35b4b321a878a44c3ee71a528689e091}
+
+\item 
+\hypertarget{classImageBase_a7dd1820d273ccb2e48ce0d0e2003d0b3}{int \hyperlink{classImageBase_a7dd1820d273ccb2e48ce0d0e2003d0b3}{frame\-\_\-count}}\label{classImageBase_a7dd1820d273ccb2e48ce0d0e2003d0b3}
+
+\begin{DoxyCompactList}\small\item\em incremented once during initialization and thereafter everytime the template is updated \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_a3d7c35acde3316f70cc71a09f843f811}{double \hyperlink{classImageBase_a3d7c35acde3316f70cc71a09f843f811}{grad\-\_\-eps}}\label{classImageBase_a3d7c35acde3316f70cc71a09f843f811}
+
+\begin{DoxyCompactList}\small\item\em offsets to use for computing the numerical image gradient and hessian \end{DoxyCompactList}\item 
+\hypertarget{classImageBase_a7248011def174fd4c80414796927991b}{double {\bfseries hess\-\_\-eps}}\label{classImageBase_a7248011def174fd4c80414796927991b}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classImageBase_aeab7b6efa7fa9c98bec6e20594113bf0}{\index{Image\-Base@{Image\-Base}!get\-Curr\-Img@{get\-Curr\-Img}}
+\index{get\-Curr\-Img@{get\-Curr\-Img}!ImageBase@{Image\-Base}}
+\subsubsection[{get\-Curr\-Img}]{\setlength{\rightskip}{0pt plus 5cm}virtual const cv\-::\-Mat\& Image\-Base\-::get\-Curr\-Img (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classImageBase_aeab7b6efa7fa9c98bec6e20594113bf0}
+
+
+accessor methods; these are not defined as 'const' since an appearance model may like to make some last moment changes to the variable being accessed before returning it to can avoid any unnecessary computations concerning the variable (e.\-g. 
+
+in its 'update' function) unless it is actually accessed; \hypertarget{classImageBase_a2aeec772d5c4de56f4e8fbfd4f08e69d}{\index{Image\-Base@{Image\-Base}!initialize\-Pix\-Grad@{initialize\-Pix\-Grad}}
+\index{initialize\-Pix\-Grad@{initialize\-Pix\-Grad}!ImageBase@{Image\-Base}}
+\subsubsection[{initialize\-Pix\-Grad}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Image\-Base\-::initialize\-Pix\-Grad (
+\begin{DoxyParamCaption}
+\item[{const Grad\-Pts\-T \&}]{warped\-\_\-offset\-\_\-pts}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classImageBase_a2aeec772d5c4de56f4e8fbfd4f08e69d}
+
+
+functions to compute image differentials (gradient and hessian) are overloaded since there are two ways to define them\-: 
+
+
+\begin{DoxyEnumerate}
+\item differential of the warped image\-: the image is warped first, then its differential is computed at the base (unwarped) locations
+\item warp of the image differential\-: differential is computed in the image coordinates and evaluated at the given (presumably warped) locations
+\end{DoxyEnumerate}
+\begin{DoxyEnumerate}
+\item gradient of the warped image 
+\end{DoxyEnumerate}
+
+Reimplemented in \hyperlink{classSCV_ad72451578ca3a16031924fcd238ae066}{S\-C\-V}, and \hyperlink{classSumOfAMs_ad58a98f4c992ef4ea3971ef34108a0de}{Sum\-Of\-A\-Ms}.
+
+\hypertarget{classImageBase_aa81f72f3d41e1be570b162789b8221d6}{\index{Image\-Base@{Image\-Base}!initialize\-Pix\-Grad@{initialize\-Pix\-Grad}}
+\index{initialize\-Pix\-Grad@{initialize\-Pix\-Grad}!ImageBase@{Image\-Base}}
+\subsubsection[{initialize\-Pix\-Grad}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Image\-Base\-::initialize\-Pix\-Grad (
+\begin{DoxyParamCaption}
+\item[{const Pts\-T \&}]{init\-\_\-pts}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classImageBase_aa81f72f3d41e1be570b162789b8221d6}
+
+\begin{DoxyEnumerate}
+\item warp of the image gradient 
+\end{DoxyEnumerate}
+
+Reimplemented in \hyperlink{classSCV_acb828cbac2799da234dcefaf48190e7c}{S\-C\-V}, and \hyperlink{classSumOfAMs_a5471a78347467e2de3c53a9107b0ffd1}{Sum\-Of\-A\-Ms}.
+
+\hypertarget{classImageBase_a9e8f70830c1caffda808830f1cdf939d}{\index{Image\-Base@{Image\-Base}!initialize\-Pix\-Hess@{initialize\-Pix\-Hess}}
+\index{initialize\-Pix\-Hess@{initialize\-Pix\-Hess}!ImageBase@{Image\-Base}}
+\subsubsection[{initialize\-Pix\-Hess}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Image\-Base\-::initialize\-Pix\-Hess (
+\begin{DoxyParamCaption}
+\item[{const Pts\-T \&}]{init\-\_\-pts, }
+\item[{const Hess\-Pts\-T \&}]{warped\-\_\-offset\-\_\-pts}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classImageBase_a9e8f70830c1caffda808830f1cdf939d}
+
+\begin{DoxyEnumerate}
+\item hessian of the warped image 
+\end{DoxyEnumerate}
+
+Reimplemented in \hyperlink{classSumOfAMs_a0d4f0a8a998165f8b37eed1984dcc700}{Sum\-Of\-A\-Ms}.
+
+\hypertarget{classImageBase_a8ab724371b3b3874a026e530b40c4082}{\index{Image\-Base@{Image\-Base}!initialize\-Pix\-Hess@{initialize\-Pix\-Hess}}
+\index{initialize\-Pix\-Hess@{initialize\-Pix\-Hess}!ImageBase@{Image\-Base}}
+\subsubsection[{initialize\-Pix\-Hess}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Image\-Base\-::initialize\-Pix\-Hess (
+\begin{DoxyParamCaption}
+\item[{const Pts\-T \&}]{init\-\_\-pts}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classImageBase_a8ab724371b3b3874a026e530b40c4082}
+
+\begin{DoxyEnumerate}
+\item warp of the image hessian 
+\end{DoxyEnumerate}
+
+Reimplemented in \hyperlink{classSumOfAMs_aae252eb6ade3ab8efbfd0d12da76e1c3}{Sum\-Of\-A\-Ms}.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classImageBase_a4540fc64d3c65262b2c489d9380f09d3}{\index{Image\-Base@{Image\-Base}!d2\-I0\-\_\-dx2@{d2\-I0\-\_\-dx2}}
+\index{d2\-I0\-\_\-dx2@{d2\-I0\-\_\-dx2}!ImageBase@{Image\-Base}}
+\subsubsection[{d2\-I0\-\_\-dx2}]{\setlength{\rightskip}{0pt plus 5cm}Pix\-Hess\-T Image\-Base\-::d2\-I0\-\_\-dx2\hspace{0.3cm}{\ttfamily [protected]}}}\label{classImageBase_a4540fc64d3c65262b2c489d9380f09d3}
+
+
+4 x (N$\ast$\-C) Hessian of pixel values in the warped image w.\-r.\-t. 
+
+pixel coordinate locations; each column of this matrix contains the 2x2 hessian for the respective location (for each channel) flasttened in the column major order; \hypertarget{classImageBase_a932c969a6b33c3d3d4e2c120fa8fd815}{\index{Image\-Base@{Image\-Base}!d\-I0\-\_\-dx@{d\-I0\-\_\-dx}}
+\index{d\-I0\-\_\-dx@{d\-I0\-\_\-dx}!ImageBase@{Image\-Base}}
+\subsubsection[{d\-I0\-\_\-dx}]{\setlength{\rightskip}{0pt plus 5cm}Pix\-Grad\-T Image\-Base\-::d\-I0\-\_\-dx\hspace{0.3cm}{\ttfamily [protected]}}}\label{classImageBase_a932c969a6b33c3d3d4e2c120fa8fd815}
+
+
+(N$\ast$\-C) x 2 jacobian of pixel values in the warped image w.\-r.\-t. 
+
+pixel coordinate locations aka gradient of the warped image or warp of the gradient image depending on the search method \hypertarget{classImageBase_a6e5beaedb0a6d8e511446443dc2b80dc}{\index{Image\-Base@{Image\-Base}!I0@{I0}}
+\index{I0@{I0}!ImageBase@{Image\-Base}}
+\subsubsection[{I0}]{\setlength{\rightskip}{0pt plus 5cm}Pix\-Val\-T Image\-Base\-::\-I0\hspace{0.3cm}{\ttfamily [protected]}}}\label{classImageBase_a6e5beaedb0a6d8e511446443dc2b80dc}
+
+
+let N = n\-\_\-pix = no. of pixels and C = n\-\_\-channels = no. of channels 
+
+pixel values for all channels in the object patch being tracked (flattened as a vector) \hypertarget{classImageBase_ac16eaa560cdf51fc9232ae115c3567e2}{\index{Image\-Base@{Image\-Base}!n\-\_\-channels@{n\-\_\-channels}}
+\index{n\-\_\-channels@{n\-\_\-channels}!ImageBase@{Image\-Base}}
+\subsubsection[{n\-\_\-channels}]{\setlength{\rightskip}{0pt plus 5cm}const int Image\-Base\-::n\-\_\-channels\hspace{0.3cm}{\ttfamily [protected]}}}\label{classImageBase_ac16eaa560cdf51fc9232ae115c3567e2}
+
+
+no. 
+
+of values that represent each pixel in the sampled patch defined as a constant to enable compile time optimizations 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+A\-M/include/mtf/\-A\-M/Image\-Base.\-h\end{DoxyCompactItemize}

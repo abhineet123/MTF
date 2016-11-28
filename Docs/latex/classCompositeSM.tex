@@ -1,0 +1,85 @@
+\hypertarget{classCompositeSM}{\section{Composite\-S\-M$<$ A\-M, S\-S\-M $>$ Class Template Reference}
+\label{classCompositeSM}\index{Composite\-S\-M$<$ A\-M, S\-S\-M $>$@{Composite\-S\-M$<$ A\-M, S\-S\-M $>$}}
+}
+
+
+base class for all composite search methods  
+
+
+
+
+{\ttfamily \#include $<$Composite\-S\-M.\-h$>$}
+
+Inheritance diagram for Composite\-S\-M$<$ A\-M, S\-S\-M $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classCompositeSM}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCompositeSM_abf3e40ea4049c095aad36c4e0da0de43}{typedef \hyperlink{classSearchMethod}{Search\-Method}$<$ A\-M, S\-S\-M $>$ {\bfseries S\-M}}\label{classCompositeSM_abf3e40ea4049c095aad36c4e0da0de43}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classCompositeSM_aa1d6d6e75145ebb87fb6c3ecf3134e05}{Composite\-S\-M} (const vector$<$ \hyperlink{classSearchMethod}{S\-M} $\ast$ $>$ \-\_\-trackers)
+\item 
+\hypertarget{classCompositeSM_a20316a95a57e6f6b75e24c4a66719a97}{void {\bfseries set\-Image} (const cv\-::\-Mat \&img) override}\label{classCompositeSM_a20316a95a57e6f6b75e24c4a66719a97}
+
+\item 
+\hypertarget{classCompositeSM_a72bc8a97252dce2bd5b541a8609bb33e}{int {\bfseries input\-Type} () const override}\label{classCompositeSM_a72bc8a97252dce2bd5b541a8609bb33e}
+
+\item 
+\hypertarget{classCompositeSM_adb512c8b6d82fbd653a48ac3d2ad9357}{void {\bfseries set\-Region} (const cv\-::\-Mat \&corners) override}\label{classCompositeSM_adb512c8b6d82fbd653a48ac3d2ad9357}
+
+\item 
+\hypertarget{classCompositeSM_ab4c4232cf45b68f31ebe25adf3d7cdb7}{virtual void {\bfseries set\-S\-P\-I\-Mask} (const bool $\ast$\-\_\-spi\-\_\-mask)}\label{classCompositeSM_ab4c4232cf45b68f31ebe25adf3d7cdb7}
+
+\item 
+\hypertarget{classCompositeSM_ab4bd7368edaaa850f75853182d733ec0}{virtual void {\bfseries clear\-S\-P\-I\-Mask} ()}\label{classCompositeSM_ab4bd7368edaaa850f75853182d733ec0}
+
+\item 
+\hypertarget{classCompositeSM_a2294250c4d7b9bbbb8b016e9bb47b683}{virtual void {\bfseries set\-Init\-Status} ()}\label{classCompositeSM_a2294250c4d7b9bbbb8b016e9bb47b683}
+
+\item 
+\hypertarget{classCompositeSM_a32a5b6531d6383909e1ef100439e8174}{virtual void {\bfseries clear\-Init\-Status} ()}\label{classCompositeSM_a32a5b6531d6383909e1ef100439e8174}
+
+\item 
+\hypertarget{classCompositeSM_aabe055e62f83356ae9fd4853410069b4}{virtual bool {\bfseries supports\-S\-P\-I} ()}\label{classCompositeSM_aabe055e62f83356ae9fd4853410069b4}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCompositeSM_ac60629d5d11fed646319411d9e1372aa}{const vector$<$ \hyperlink{classSearchMethod}{S\-M} $\ast$ $>$ {\bfseries trackers}}\label{classCompositeSM_ac60629d5d11fed646319411d9e1372aa}
+
+\item 
+\hypertarget{classCompositeSM_abe6f308b96f5dd274db50576cfe364d7}{int {\bfseries n\-\_\-trackers}}\label{classCompositeSM_abe6f308b96f5dd274db50576cfe364d7}
+
+\item 
+\hypertarget{classCompositeSM_aecf7653ffc7f24081acea3907d684205}{int {\bfseries input\-\_\-type}}\label{classCompositeSM_aecf7653ffc7f24081acea3907d684205}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class A\-M, class S\-S\-M$>$class Composite\-S\-M$<$ A\-M, S\-S\-M $>$}
+
+base class for all composite search methods 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classCompositeSM_aa1d6d6e75145ebb87fb6c3ecf3134e05}{\index{Composite\-S\-M@{Composite\-S\-M}!Composite\-S\-M@{Composite\-S\-M}}
+\index{Composite\-S\-M@{Composite\-S\-M}!CompositeSM@{Composite\-S\-M}}
+\subsubsection[{Composite\-S\-M}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class A\-M, class S\-S\-M$>$ {\bf Composite\-S\-M}$<$ A\-M, S\-S\-M $>$\-::{\bf Composite\-S\-M} (
+\begin{DoxyParamCaption}
+\item[{const vector$<$ {\bf S\-M} $\ast$ $>$}]{\-\_\-trackers}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classCompositeSM_aa1d6d6e75145ebb87fb6c3ecf3134e05}
+since all S\-Ms have the same A\-M, we can assume that they also have the same input type 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/Composite\-S\-M.\-h\end{DoxyCompactItemize}

@@ -1,0 +1,74 @@
+\hypertarget{classFALK}{\section{F\-A\-L\-K$<$ A\-M, S\-S\-M $>$ Class Template Reference}
+\label{classFALK}\index{F\-A\-L\-K$<$ A\-M, S\-S\-M $>$@{F\-A\-L\-K$<$ A\-M, S\-S\-M $>$}}
+}
+Inheritance diagram for F\-A\-L\-K$<$ A\-M, S\-S\-M $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classFALK}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classFALK_aa5546fa0c3e416e395f4c7b6bdac83b0}{typedef \hyperlink{structFALKParams}{F\-A\-L\-K\-Params} {\bfseries Param\-Type}}\label{classFALK_aa5546fa0c3e416e395f4c7b6bdac83b0}
+
+\item 
+\hypertarget{classFALK_aabe59f8aed651a0bb95bea0827371369}{typedef Param\-Type\-::\-Hess\-Type {\bfseries Hess\-Type}}\label{classFALK_aabe59f8aed651a0bb95bea0827371369}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classFALK_a934cc0db0b9c6c403688049ee1c16610}{{\bfseries F\-A\-L\-K} (const \hyperlink{structFALKParams}{Param\-Type} $\ast$falk\-\_\-params=nullptr, const \hyperlink{structAMParams}{A\-M\-Params} $\ast$am\-\_\-params=nullptr, const \hyperlink{structSSMParams}{S\-S\-M\-Params} $\ast$ssm\-\_\-params=nullptr)}\label{classFALK_a934cc0db0b9c6c403688049ee1c16610}
+
+\item 
+\hypertarget{classFALK_aeb316fca47c41b04699c76c506176831}{void {\bfseries initialize} (const cv\-::\-Mat \&corners) override}\label{classFALK_aeb316fca47c41b04699c76c506176831}
+
+\item 
+\hypertarget{classFALK_a382f20a48618e7d9b3fd3f4fdbdacb7c}{void {\bfseries update} () override}\label{classFALK_a382f20a48618e7d9b3fd3f4fdbdacb7c}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classFALK_a15721db6c945f66c847b76e7a55e850e}{\hyperlink{structFALKParams}{Param\-Type} {\bfseries params}}\label{classFALK_a15721db6c945f66c847b76e7a55e850e}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classFALK_a6fd04c140915ae2c95e2ffe4954ea14b}{Row\-Vector\-Xd \hyperlink{classFALK_a6fd04c140915ae2c95e2ffe4954ea14b}{jacobian}}\label{classFALK_a6fd04c140915ae2c95e2ffe4954ea14b}
+
+\begin{DoxyCompactList}\small\item\em 1 x S Jacobian of the A\-M similarity function w.\-r.\-t. S\-S\-M state vector \end{DoxyCompactList}\item 
+\hypertarget{classFALK_a9e7d06e0380210c65dd78c3661607c98}{Matrix\-Xd \hyperlink{classFALK_a9e7d06e0380210c65dd78c3661607c98}{hessian}}\label{classFALK_a9e7d06e0380210c65dd78c3661607c98}
+
+\begin{DoxyCompactList}\small\item\em S x S Hessian of the A\-M similarity function w.\-r.\-t. S\-S\-M state vector. \end{DoxyCompactList}\item 
+\hypertarget{classFALK_a60ac78fa548216594bac3186d8952517}{Matrix\-Xd \hyperlink{classFALK_a60ac78fa548216594bac3186d8952517}{init\-\_\-pix\-\_\-jacobian}}\label{classFALK_a60ac78fa548216594bac3186d8952517}
+
+\begin{DoxyCompactList}\small\item\em N x S jacobians of the pixel values w.\-r.\-t the S\-S\-M state vector. \end{DoxyCompactList}\item 
+\hypertarget{classFALK_a1818731dc14e4cc2251b5ab6a8fc13c8}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-jacobian}}\label{classFALK_a1818731dc14e4cc2251b5ab6a8fc13c8}
+
+\item 
+\hypertarget{classFALK_a684f543f251d55ed03b3d485066c53c6}{Matrix\-Xd \hyperlink{classFALK_a684f543f251d55ed03b3d485066c53c6}{init\-\_\-pix\-\_\-hessian}}\label{classFALK_a684f543f251d55ed03b3d485066c53c6}
+
+\begin{DoxyCompactList}\small\item\em N x S x S hessians of the pixel values w.\-r.\-t the S\-S\-M state vector stored as a (S$\ast$\-S) x N 2\-D matrix. \end{DoxyCompactList}\item 
+\hypertarget{classFALK_a47e18fd05f0ee46ad2b561db3a103bd3}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-hessian}}\label{classFALK_a47e18fd05f0ee46ad2b561db3a103bd3}
+
+\item 
+\hypertarget{classFALK_a70884ec27965ec6867cc254600063943}{Matrix24d {\bfseries prev\-\_\-corners}}\label{classFALK_a70884ec27965ec6867cc254600063943}
+
+\item 
+\hypertarget{classFALK_ac436569dcc13c6b903893934938c3c36}{Vector\-Xd {\bfseries ssm\-\_\-update}}\label{classFALK_ac436569dcc13c6b903893934938c3c36}
+
+\item 
+\hypertarget{classFALK_a6b36dc5832e82e11ee417362fcc3aa7f}{Matrix3d {\bfseries warp\-\_\-update}}\label{classFALK_a6b36dc5832e82e11ee417362fcc3aa7f}
+
+\item 
+\hypertarget{classFALK_a3035161f4a1c1d4c7dc12a42b5388303}{int {\bfseries frame\-\_\-id}}\label{classFALK_a3035161f4a1c1d4c7dc12a42b5388303}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/F\-A\-L\-K.\-h\end{DoxyCompactItemize}

@@ -1,0 +1,120 @@
+\hypertarget{classSimilitude}{\section{Similitude Class Reference}
+\label{classSimilitude}\index{Similitude@{Similitude}}
+}
+Inheritance diagram for Similitude\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classSimilitude}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimilitude_a1d3c95c60771c37d0834456c4f602b59}{typedef \hyperlink{structSimilitudeParams}{Similitude\-Params} {\bfseries Param\-Type}}\label{classSimilitude_a1d3c95c60771c37d0834456c4f602b59}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimilitude_a154f86f41623770bd278875af048c7f1}{{\bfseries Similitude} (const \hyperlink{structSimilitudeParams}{Param\-Type} $\ast$params\-\_\-in=nullptr)}\label{classSimilitude_a154f86f41623770bd278875af048c7f1}
+
+\item 
+\hypertarget{classSimilitude_a4e0b0a949f94902320ff34740e044554}{void {\bfseries set\-Corners} (const Corners\-T \&corners) override}\label{classSimilitude_a4e0b0a949f94902320ff34740e044554}
+
+\item 
+\hypertarget{classSimilitude_a4a528ed67ab6afe21776c2a57ee7a6d0}{void {\bfseries set\-State} (const Vector\-Xd \&ssm\-\_\-state) override}\label{classSimilitude_a4a528ed67ab6afe21776c2a57ee7a6d0}
+
+\item 
+\hypertarget{classSimilitude_aa6af70ed9fe0ddde1659a0c02462ebd7}{void {\bfseries compositional\-Update} (const Vector\-Xd \&state\-\_\-update) override}\label{classSimilitude_aa6af70ed9fe0ddde1659a0c02462ebd7}
+
+\item 
+\hypertarget{classSimilitude_a44cc27ae18d3b7db89a0d1ab2b7f23d9}{void {\bfseries get\-Init\-Pix\-Grad} (Matrix2\-Xd \&ssm\-\_\-grad, int pix\-\_\-id) override}\label{classSimilitude_a44cc27ae18d3b7db89a0d1ab2b7f23d9}
+
+\item 
+\hypertarget{classSimilitude_aaf73363b4c2376c58dcdd5beef0ac368}{void {\bfseries get\-Curr\-Pix\-Grad} (Matrix2\-Xd \&ssm\-\_\-grad, int pix\-\_\-id) override}\label{classSimilitude_aaf73363b4c2376c58dcdd5beef0ac368}
+
+\item 
+void \hyperlink{classSimilitude_a96e413d6abded447be0230c3ad7718bd}{cmpt\-Init\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&am\-\_\-jacobian) override
+\begin{DoxyCompactList}\small\item\em right multiplies the initial or current ssm jacobian with the provided am jacobian; though this can be accomplished by the search method itself with simple matrix multiplication, the ssm jacobian often satisfies several constraints (e.\-g. \end{DoxyCompactList}\item 
+\hypertarget{classSimilitude_a1790f89f31766287ed6821b0074a5245}{void {\bfseries cmpt\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&am\-\_\-jacobian) override}\label{classSimilitude_a1790f89f31766287ed6821b0074a5245}
+
+\item 
+\hypertarget{classSimilitude_abe696d847afe293b3e72d7dd80f45158}{void {\bfseries cmpt\-Approx\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pix\-\_\-jacobian) override}\label{classSimilitude_abe696d847afe293b3e72d7dd80f45158}
+
+\item 
+\hypertarget{classSimilitude_af94064b2c22646920f70f27ed44c3f4f}{void {\bfseries cmpt\-Warped\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pix\-\_\-grad) override}\label{classSimilitude_af94064b2c22646920f70f27ed44c3f4f}
+
+\item 
+\hypertarget{classSimilitude_a67a8ed81f464313740a68921405332ed}{void {\bfseries cmpt\-Init\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad) override}\label{classSimilitude_a67a8ed81f464313740a68921405332ed}
+
+\item 
+\hypertarget{classSimilitude_a54f4d827f79b40bda3c8972c1e21d443}{void {\bfseries cmpt\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad) override}\label{classSimilitude_a54f4d827f79b40bda3c8972c1e21d443}
+
+\item 
+\hypertarget{classSimilitude_a27ce5e6df51f74fc2d77fbdbcbd998db}{void {\bfseries cmpt\-Warped\-Pix\-Hessian} (Matrix\-Xd \&d2\-I\-\_\-dp2, const Pix\-Hess\-T \&d2\-I\-\_\-dw2, const Pix\-Grad\-T \&d\-I\-\_\-dw) override}\label{classSimilitude_a27ce5e6df51f74fc2d77fbdbcbd998db}
+
+\item 
+\hypertarget{classSimilitude_a6b7c56c69ea872c6b85c65ae9c096ce8}{void {\bfseries estimate\-Warp\-From\-Corners} (Vector\-Xd \&state\-\_\-update, const Matrix24d \&in\-\_\-corners, const Matrix24d \&out\-\_\-corners) override}\label{classSimilitude_a6b7c56c69ea872c6b85c65ae9c096ce8}
+
+\item 
+\hypertarget{classSimilitude_a838f9a892ec52286b361e9f811135429}{void {\bfseries estimate\-Warp\-From\-Pts} (Vector\-Xd \&state\-\_\-update, vector$<$ uchar $>$ \&mask, const vector$<$ cv\-::\-Point2f $>$ \&in\-\_\-pts, const vector$<$ cv\-::\-Point2f $>$ \&out\-\_\-pts, const \hyperlink{structSSMEstimatorParams}{Estimator\-Params} \&est\-\_\-params) override}\label{classSimilitude_a838f9a892ec52286b361e9f811135429}
+
+\item 
+\hypertarget{classSimilitude_a740ba636908f7b71547572c2526ae8b5}{void {\bfseries update\-Grad\-Pts} (double grad\-\_\-eps) override}\label{classSimilitude_a740ba636908f7b71547572c2526ae8b5}
+
+\item 
+\hypertarget{classSimilitude_a5f93e3fd32d93f7ee32bc173a8123eea}{void {\bfseries update\-Hess\-Pts} (double hess\-\_\-eps) override}\label{classSimilitude_a5f93e3fd32d93f7ee32bc173a8123eea}
+
+\item 
+\hypertarget{classSimilitude_a58fd5012312bb062368b051d3a256374}{void {\bfseries apply\-Warp\-To\-Corners} (Matrix24d \&warped\-\_\-corners, const Matrix24d \&orig\-\_\-corners, const Vector\-Xd \&state\-\_\-update) override}\label{classSimilitude_a58fd5012312bb062368b051d3a256374}
+
+\item 
+\hypertarget{classSimilitude_aceaf014c4f848b0b3743290cb06ed55e}{void {\bfseries apply\-Warp\-To\-Pts} (Matrix2\-Xd \&warped\-\_\-pts, const Matrix2\-Xd \&orig\-\_\-pts, const Vector\-Xd \&state\-\_\-update) override}\label{classSimilitude_aceaf014c4f848b0b3743290cb06ed55e}
+
+\item 
+\hypertarget{classSimilitude_a0dfa54fb8ae916ac219e3a13f89f63ac}{void {\bfseries generate\-Perturbation} (Vector\-Xd \&perturbation) override}\label{classSimilitude_a0dfa54fb8ae916ac219e3a13f89f63ac}
+
+\item 
+\hypertarget{classSimilitude_a6fa23175cfe675313bb14784f21dfee2}{void {\bfseries additive\-Random\-Walk} (Vector\-Xd \&perturbed\-\_\-state, const Vector\-Xd \&base\-\_\-state) override}\label{classSimilitude_a6fa23175cfe675313bb14784f21dfee2}
+
+\item 
+\hypertarget{classSimilitude_a3f3672a6446bd2c8ad23c3daca60e796}{void {\bfseries additive\-Auto\-Regression1} (Vector\-Xd \&perturbed\-\_\-state, Vector\-Xd \&perturbed\-\_\-ar, const Vector\-Xd \&base\-\_\-state, const Vector\-Xd \&base\-\_\-ar, double a=0.\-5) override}\label{classSimilitude_a3f3672a6446bd2c8ad23c3daca60e796}
+
+\item 
+\hypertarget{classSimilitude_a9e6d14d4700942f0e616fe3cb9d5471b}{void {\bfseries compositional\-Random\-Walk} (Vector\-Xd \&perturbed\-\_\-state, const Vector\-Xd \&base\-\_\-state) override}\label{classSimilitude_a9e6d14d4700942f0e616fe3cb9d5471b}
+
+\item 
+\hypertarget{classSimilitude_a4adf9107de454ab65ef8e21c09bebe40}{bool {\bfseries supports\-S\-P\-I} () override}\label{classSimilitude_a4adf9107de454ab65ef8e21c09bebe40}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSimilitude_aba48fab69ed4c576d61484bf0a60f3d7}{\hyperlink{structSimilitudeParams}{Param\-Type} {\bfseries params}}\label{classSimilitude_aba48fab69ed4c576d61484bf0a60f3d7}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classSimilitude_a96e413d6abded447be0230c3ad7718bd}{\index{Similitude@{Similitude}!cmpt\-Init\-Pix\-Jacobian@{cmpt\-Init\-Pix\-Jacobian}}
+\index{cmpt\-Init\-Pix\-Jacobian@{cmpt\-Init\-Pix\-Jacobian}!Similitude@{Similitude}}
+\subsubsection[{cmpt\-Init\-Pix\-Jacobian}]{\setlength{\rightskip}{0pt plus 5cm}void Similitude\-::cmpt\-Init\-Pix\-Jacobian (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd \&}]{jacobian\-\_\-prod, }
+\item[{const Pix\-Grad\-T \&}]{pixel\-\_\-grad}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classSimilitude_a96e413d6abded447be0230c3ad7718bd}
+
+
+right multiplies the initial or current ssm jacobian with the provided am jacobian; though this can be accomplished by the search method itself with simple matrix multiplication, the ssm jacobian often satisfies several constraints (e.\-g. 
+
+sparsity) that can be exploited to gain computational savings by manually computing the product matrix 
+
+Reimplemented from \hyperlink{classStateSpaceModel_ac956c679581e746891c62755fe715b3b}{State\-Space\-Model}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-S\-M/include/mtf/\-S\-S\-M/Similitude.\-h\end{DoxyCompactItemize}

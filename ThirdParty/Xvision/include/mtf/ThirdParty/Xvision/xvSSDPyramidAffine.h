@@ -1,0 +1,81 @@
+#ifndef MTF_XVSSD_PYRAMID_AFFINE_
+#define MTF_XVSSD_PYRAMID_AFFINE_
+
+#include "xvSSDMain.h"
+
+class XVSSDPyramidAffine: public XVSSDMain {
+
+	typedef XVPyramidStepper<XVAffineStepper< IMAGE_TYPE > >  STEPPER_TYPE;
+    typedef XVSSD< IMAGE_TYPE, STEPPER_TYPE > TRACKER_TYPE;
+    typedef TRACKER_TYPE::SP STATE_PAIR_TYPE;
+    typedef STEPPER_TYPE::STATE_TYPE STATE_TYPE;
+
+public:
+
+    TRACKER_TYPE *ssd;
+	STEPPER_TYPE *stepper;
+	STATE_PAIR_TYPE current_state;	
+
+	int no_of_levels;
+	double scale;
+
+
+	XVSSDPyramidAffine(const ParamType *xv_params = NULL,
+               int no_of_levels=2, double scale=0.5):
+        XVSSDMain(xv_params) {
+					  this->no_of_levels=no_of_levels;
+					  this->scale=scale;
+					  name="pyramid_Affine";
+		}
+
+    void initTracker() {
+        //printf("Using Pyramidal Affine SSD Tracker with:\n\t");
+		printf("\tno_of_levels=%d\n\t",no_of_levels);
+		printf("scale=%f\n\t",scale);
+
+		stepper=new STEPPER_TYPE(init_template, scale, no_of_levels);
+		STATE_TYPE state;
+		state.trans=*init_pos;
+		state.a=1.0;
+		state.b=0.0;
+		state.c=0.0;
+		state.d=1.0;
+		ssd=new TRACKER_TYPE;
+		ssd->setStepper(*(stepper));
+		ssd->initState(state);
+		template_img = ssd->getTarget();
+    }
+
+	double updateTrackerState() {
+		current_state=ssd->step(*xv_frame);
+		warped_img=ssd->warpedImage();
+		return current_state.error;		
+	}
+
+	void updateCorners(){
+		XVAffineMatrix tformMat(current_state.state.a, current_state.state.b, 
+			current_state.state.c, current_state.state.d);
+		for(int i=0; i<NCORNERS; ++i)
+			corners[i] = (tformMat * points[i]) + current_state.state.trans;
+	}
+	void getTransformedPoints(vector<XVPositionD> &in_pts, vector<XVPositionD> &out_pts){
+		XVAffineMatrix tformMat(current_state.state.a, current_state.state.b, 
+			current_state.state.c, current_state.state.d);
+		for(int i=0; i<NCORNERS; ++i)
+			out_pts[i] = (tformMat * in_pts[i]) + current_state.state.trans;
+	}
+	void resetTrackerPosition(double pos_x, double pos_y){
+		STATE_TYPE temp_state(current_state.state);
+		temp_state.trans.setX(pos_x);
+		temp_state.trans.setY(pos_y);
+		ssd->initState(temp_state);
+	}
+	void resetTrackerTemplate(IMAGE_TYPE *img, double pos_x, double pos_y,
+		double size_x, double size_y){
+			updateTemplate(img, pos_x, pos_y, size_x, size_y);
+			ssd->setStepper(STEPPER_TYPE(init_template, scale, no_of_levels));
+			resetTrackerPosition(pos_x, pos_y);
+	}
+
+};
+#endif

@@ -1,0 +1,81 @@
+\hypertarget{structESMHParams}{\section{E\-S\-M\-H\-Params Struct Reference}
+\label{structESMHParams}\index{E\-S\-M\-H\-Params@{E\-S\-M\-H\-Params}}
+}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bfseries Jac\-Type} \{ {\bfseries Original}, 
+{\bfseries Diff\-Of\-Jacs}
+ \}
+\item 
+enum {\bfseries Hess\-Type} \{ \\*
+{\bfseries Original}, 
+{\bfseries Sum\-Of\-Std}, 
+{\bfseries Sum\-Of\-Self}, 
+{\bfseries Initial\-Self}, 
+\\*
+{\bfseries Current\-Self}, 
+{\bfseries Std}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structESMHParams_a2146f0179851fd0958568f85261a4db2}{E\-S\-M\-H\-Params} (int \-\_\-max\-\_\-iters, double \-\_\-epsilon, Jac\-Type \-\_\-jac\-\_\-type, Hess\-Type \-\_\-hess\-\_\-type, bool \-\_\-sec\-\_\-ord\-\_\-hess, bool \-\_\-enable\-\_\-spi, double \-\_\-spi\-\_\-thresh, bool \-\_\-debug\-\_\-mode)
+\begin{DoxyCompactList}\small\item\em decides whether logging data will be printed for debugging purposes; \end{DoxyCompactList}\item 
+\hypertarget{structESMHParams_afd14946b9af7647cdb5308ed749271ab}{{\bfseries E\-S\-M\-H\-Params} (\hyperlink{structESMHParams}{E\-S\-M\-H\-Params} $\ast$params=nullptr)}\label{structESMHParams_afd14946b9af7647cdb5308ed749271ab}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structESMHParams_a8f45f0d4af3d09955181b5d5b25ecae2}{int {\bfseries max\-\_\-iters}}\label{structESMHParams_a8f45f0d4af3d09955181b5d5b25ecae2}
+
+\item 
+\hypertarget{structESMHParams_aa8d2c4ca1b1d2cce26b10ee1a8e09b9d}{double \hyperlink{structESMHParams_aa8d2c4ca1b1d2cce26b10ee1a8e09b9d}{epsilon}}\label{structESMHParams_aa8d2c4ca1b1d2cce26b10ee1a8e09b9d}
+
+\begin{DoxyCompactList}\small\item\em maximum iterations of the \hyperlink{classESMH}{E\-S\-M\-H} algorithm to run for each frame \end{DoxyCompactList}\item 
+\hypertarget{structESMHParams_a9538b538978dc781dc77513615655aea}{Jac\-Type \hyperlink{structESMHParams_a9538b538978dc781dc77513615655aea}{jac\-\_\-type}}\label{structESMHParams_a9538b538978dc781dc77513615655aea}
+
+\begin{DoxyCompactList}\small\item\em maximum L1 norm of the state update vector at which to stop the iterations \end{DoxyCompactList}\item 
+\hypertarget{structESMHParams_a1dce2f640a33132ac0010c4cbf0820b9}{Hess\-Type {\bfseries hess\-\_\-type}}\label{structESMHParams_a1dce2f640a33132ac0010c4cbf0820b9}
+
+\item 
+\hypertarget{structESMHParams_a5c2afd807d9f69d32d6bf7d98c6ddfa5}{bool {\bfseries sec\-\_\-ord\-\_\-hess}}\label{structESMHParams_a5c2afd807d9f69d32d6bf7d98c6ddfa5}
+
+\item 
+\hypertarget{structESMHParams_a1486ac30f592f10f63b0f27293c01b70}{bool {\bfseries enable\-\_\-spi}}\label{structESMHParams_a1486ac30f592f10f63b0f27293c01b70}
+
+\item 
+\hypertarget{structESMHParams_a270fb82685b55161011b6cc22d106e64}{double {\bfseries spi\-\_\-thresh}}\label{structESMHParams_a270fb82685b55161011b6cc22d106e64}
+
+\item 
+\hypertarget{structESMHParams_ad7f8a1b911f8df3f2b5c3ce4c31e9d4e}{bool {\bfseries debug\-\_\-mode}}\label{structESMHParams_ad7f8a1b911f8df3f2b5c3ce4c31e9d4e}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{structESMHParams_a2146f0179851fd0958568f85261a4db2}{\index{E\-S\-M\-H\-Params@{E\-S\-M\-H\-Params}!E\-S\-M\-H\-Params@{E\-S\-M\-H\-Params}}
+\index{E\-S\-M\-H\-Params@{E\-S\-M\-H\-Params}!ESMHParams@{E\-S\-M\-H\-Params}}
+\subsubsection[{E\-S\-M\-H\-Params}]{\setlength{\rightskip}{0pt plus 5cm}E\-S\-M\-H\-Params\-::\-E\-S\-M\-H\-Params (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-max\-\_\-iters, }
+\item[{double}]{\-\_\-epsilon, }
+\item[{Jac\-Type}]{\-\_\-jac\-\_\-type, }
+\item[{Hess\-Type}]{\-\_\-hess\-\_\-type, }
+\item[{bool}]{\-\_\-sec\-\_\-ord\-\_\-hess, }
+\item[{bool}]{\-\_\-enable\-\_\-spi, }
+\item[{double}]{\-\_\-spi\-\_\-thresh, }
+\item[{bool}]{\-\_\-debug\-\_\-mode}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{structESMHParams_a2146f0179851fd0958568f85261a4db2}
+
+
+decides whether logging data will be printed for debugging purposes; 
+
+only matters if logging is enabled at compile time 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/E\-S\-M\-H.\-h\end{DoxyCompactItemize}

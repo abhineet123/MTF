@@ -1,0 +1,219 @@
+\hypertarget{classSPSS}{\section{S\-P\-S\-S Class Reference}
+\label{classSPSS}\index{S\-P\-S\-S@{S\-P\-S\-S}}
+}
+
+
+Sum of Pixelwise Structural Similarity.  
+
+
+
+
+{\ttfamily \#include $<$S\-P\-S\-S.\-h$>$}
+
+Inheritance diagram for S\-P\-S\-S\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=4.000000cm]{classSPSS}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSPSS_a63d3713a7b1d0d6b3a20b4a169da87be}{typedef \hyperlink{structSPSSParams}{S\-P\-S\-S\-Params} {\bfseries Param\-Type}}\label{classSPSS_a63d3713a7b1d0d6b3a20b4a169da87be}
+
+\item 
+\hypertarget{classSPSS_a17409d2e95f4e5735bb1b334f8015cd2}{typedef bool {\bfseries is\-\_\-kdtree\-\_\-distance}}\label{classSPSS_a17409d2e95f4e5735bb1b334f8015cd2}
+
+\item 
+\hypertarget{classSPSS_a6a64c9170c0f0e75c9fbf64d7a4f86c4}{typedef double {\bfseries Element\-Type}}\label{classSPSS_a6a64c9170c0f0e75c9fbf64d7a4f86c4}
+
+\item 
+\hypertarget{classSPSS_ad82c9d4534fbabd235195e0a04206eb8}{typedef double {\bfseries Result\-Type}}\label{classSPSS_ad82c9d4534fbabd235195e0a04206eb8}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSPSS_ab20b5613ae14f25be7353e06075e4412}{{\bfseries S\-P\-S\-S} (const \hyperlink{structSPSSParams}{Param\-Type} $\ast$spss\-\_\-params=nullptr, const int \-\_\-n\-\_\-channels=1)}\label{classSPSS_ab20b5613ae14f25be7353e06075e4412}
+
+\item 
+\hypertarget{classSPSS_af0f5a2a9467f455a19d93ed073cd621e}{double \hyperlink{classSPSS_af0f5a2a9467f455a19d93ed073cd621e}{get\-Likelihood} () const override}\label{classSPSS_af0f5a2a9467f455a19d93ed073cd621e}
+
+\begin{DoxyCompactList}\small\item\em returns a normalized version of the similarity that lies between 0 and 1 and can be interpreted as the likelihood that the current patch represents the same object as the initial patch \end{DoxyCompactList}\item 
+\hypertarget{classSPSS_a957babe5d0e8b230a7f76c5cd9b4fe89}{void \hyperlink{classSPSS_a957babe5d0e8b230a7f76c5cd9b4fe89}{initialize\-Pix\-Vals} (const Matrix2\-Xd \&init\-\_\-pts) override}\label{classSPSS_a957babe5d0e8b230a7f76c5cd9b4fe89}
+
+\begin{DoxyCompactList}\small\item\em initialization methods -\/ to be called once when the tracker is initialized \end{DoxyCompactList}\item 
+void \hyperlink{classSPSS_a9f9bc491b562ca191934ef40304c90e8}{initialize\-Similarity} () override
+\begin{DoxyCompactList}\small\item\em methods to initialize the state variables -\/ to be called once when the tracker is initialized. \end{DoxyCompactList}\item 
+\hypertarget{classSPSS_aad8cdf9bf5e7c01f6d0cafd420b971b8}{void {\bfseries initialize\-Grad} () override}\label{classSPSS_aad8cdf9bf5e7c01f6d0cafd420b971b8}
+
+\item 
+void \hyperlink{classSPSS_af8fd6ef2a745be8a7fe899586c486ecc}{initialize\-Hess} () override
+\begin{DoxyCompactList}\small\item\em even though the Hessian of the error norm w.\-r.\-t. \end{DoxyCompactList}\item 
+\hypertarget{classSPSS_a758c9574e73eec78f8ad8dc8c854662b}{void {\bfseries update\-Pix\-Vals} (const Matrix2\-Xd \&curr\-\_\-pts) override}\label{classSPSS_a758c9574e73eec78f8ad8dc8c854662b}
+
+\item 
+void \hyperlink{classSPSS_a1a7a1a7cfce732222c3128f105e58bd3}{update\-Similarity} (bool prereq\-\_\-only=true) override
+\begin{DoxyCompactList}\small\item\em functions for updating state variables when a new image arrives \end{DoxyCompactList}\item 
+\hypertarget{classSPSS_acac568057b0f9ba9ffb08cefe518fa02}{void {\bfseries update\-Init\-Grad} () override}\label{classSPSS_acac568057b0f9ba9ffb08cefe518fa02}
+
+\item 
+\hypertarget{classSPSS_a6f6eee7f99a3844876f71f34a58ef727}{void {\bfseries update\-Curr\-Grad} () override}\label{classSPSS_a6f6eee7f99a3844876f71f34a58ef727}
+
+\item 
+void \hyperlink{classSPSS_a9f901d6ccc104d961d9b67929eaf6898}{cmpt\-Init\-Hessian} (Matrix\-Xd \&init\-\_\-hessian, const Matrix\-Xd \&init\-\_\-pix\-\_\-jacobian) override
+\begin{DoxyCompactList}\small\item\em compute the S x S Hessian of the error norm using the supplied N x S Jacobian of pixel values w.\-r.\-t. \end{DoxyCompactList}\item 
+\hypertarget{classSPSS_a96a8dd68371bc004806fe7edc0e5ceb2}{void \hyperlink{classSPSS_a96a8dd68371bc004806fe7edc0e5ceb2}{cmpt\-Init\-Hessian} (Matrix\-Xd \&init\-\_\-hessian, const Matrix\-Xd \&init\-\_\-pix\-\_\-jacobian, const Matrix\-Xd \&init\-\_\-pix\-\_\-hessian) override}\label{classSPSS_a96a8dd68371bc004806fe7edc0e5ceb2}
+
+\begin{DoxyCompactList}\small\item\em compute the exact Hessian by considering the second order terms too \end{DoxyCompactList}\item 
+\hypertarget{classSPSS_a18e614891f04f713b53871d28fbaec6e}{void {\bfseries cmpt\-Curr\-Hessian} (Matrix\-Xd \&curr\-\_\-hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian) override}\label{classSPSS_a18e614891f04f713b53871d28fbaec6e}
+
+\item 
+\hypertarget{classSPSS_aa44ca47ee2625b008e9af24836b05a13}{void {\bfseries cmpt\-Curr\-Hessian} (Matrix\-Xd \&curr\-\_\-hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-hessian) override}\label{classSPSS_aa44ca47ee2625b008e9af24836b05a13}
+
+\item 
+\hypertarget{classSPSS_a038ab8816635470f35348b12441d292c}{void {\bfseries cmpt\-Self\-Hessian} (Matrix\-Xd \&self\-\_\-hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian) override}\label{classSPSS_a038ab8816635470f35348b12441d292c}
+
+\item 
+\hypertarget{classSPSS_a6738779398425642188751929b9233ad}{void {\bfseries cmpt\-Self\-Hessian} (Matrix\-Xd \&self\-\_\-hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-hessian) override}\label{classSPSS_a6738779398425642188751929b9233ad}
+
+\item 
+\hypertarget{classSPSS_a1ef044f77c46aa50028ee18a84fbc4c2}{int \hyperlink{classSPSS_a1ef044f77c46aa50028ee18a84fbc4c2}{get\-Dist\-Feat\-Size} () override}\label{classSPSS_a1ef044f77c46aa50028ee18a84fbc4c2}
+
+\begin{DoxyCompactList}\small\item\em returns the size of the distance vector \end{DoxyCompactList}\item 
+\hypertarget{classSPSS_acfc0b3c6bccb7cf884ed8a5d4a3d7137}{void \hyperlink{classSPSS_acfc0b3c6bccb7cf884ed8a5d4a3d7137}{initialize\-Dist\-Feat} () override}\label{classSPSS_acfc0b3c6bccb7cf884ed8a5d4a3d7137}
+
+\begin{DoxyCompactList}\small\item\em to be called once during initialization if any of the distance feature functionality is to be used \end{DoxyCompactList}\item 
+\hypertarget{classSPSS_aa47eee19db38d35acde009defbcbcb79}{void \hyperlink{classSPSS_aa47eee19db38d35acde009defbcbcb79}{update\-Dist\-Feat} (double $\ast$feat\-\_\-addr) override}\label{classSPSS_aa47eee19db38d35acde009defbcbcb79}
+
+\begin{DoxyCompactList}\small\item\em overloaded version to write the distance feature directly to a row (or column) of a matrix storing the distance features corresponding to several patches; \end{DoxyCompactList}\item 
+\hypertarget{classSPSS_aca27088df6e11a8b358ead5a5af73390}{const double $\ast$ {\bfseries get\-Dist\-Feat} () override}\label{classSPSS_aca27088df6e11a8b358ead5a5af73390}
+
+\item 
+void \hyperlink{classSPSS_a3de6447fe362e409c2c929f9c7e8661e}{update\-Dist\-Feat} () override
+\begin{DoxyCompactList}\small\item\em computes a \char`\"{}distance\char`\"{} vector using the current image patch such that, when the distance vectors corresponding to two patches are passed to the distance operator above, it uses these to compute a scalar that measures the distance or dissimilarity between the two patches; this distance vector should be designed so as to offload as much computation as possible from the distance operator, i.\-e. \end{DoxyCompactList}\item 
+\hypertarget{classSPSS_a3b66aa6526f7389dc6a7f295b860c004}{double \hyperlink{classSPSS_a3b66aa6526f7389dc6a7f295b860c004}{operator()} (const double $\ast$a, const double $\ast$b, size\-\_\-t size, double worst\-\_\-dist=-\/1) const override}\label{classSPSS_a3b66aa6526f7389dc6a7f295b860c004}
+
+\begin{DoxyCompactList}\small\item\em computes the distance / dissimilarity between two patches where each is codified or represented by a suitable distance feature computed using update\-Dist\-Feat \end{DoxyCompactList}\item 
+\hypertarget{classSPSS_a4466ee063ee9ccc31aac460cf1d3e1e7}{Result\-Type {\bfseries accum\-\_\-dist} (const Element\-Type \&a, const Element\-Type \&b, int) const }\label{classSPSS_a4466ee063ee9ccc31aac460cf1d3e1e7}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSPSS_ab8e62f7429cbf95436410aa8101a8668}{\hyperlink{structSPSSParams}{Param\-Type} {\bfseries params}}\label{classSPSS_ab8e62f7429cbf95436410aa8101a8668}
+
+\item 
+\hypertarget{classSPSS_a3848b79d0324a4570b98388cbd92bfd2}{double {\bfseries c}}\label{classSPSS_a3848b79d0324a4570b98388cbd92bfd2}
+
+\item 
+\hypertarget{classSPSS_ab0f144fcff3cdd3a6230b75091c8fc60}{Vector\-Xd {\bfseries curr\-\_\-err\-\_\-vec}}\label{classSPSS_ab0f144fcff3cdd3a6230b75091c8fc60}
+
+\item 
+\hypertarget{classSPSS_a1c7f32461d4f4e5f048324be8849a071}{Vector\-Xd {\bfseries curr\-\_\-err\-\_\-vec\-\_\-num}}\label{classSPSS_a1c7f32461d4f4e5f048324be8849a071}
+
+\item 
+\hypertarget{classSPSS_afe5df759d7086fe0434e21cfa27648fc}{Vector\-Xd {\bfseries curr\-\_\-err\-\_\-vec\-\_\-den}}\label{classSPSS_afe5df759d7086fe0434e21cfa27648fc}
+
+\item 
+\hypertarget{classSPSS_ae2d118799c8f289638db77a354e79c01}{Vector\-Xd {\bfseries pix\-\_\-vals\-\_\-prod}}\label{classSPSS_ae2d118799c8f289638db77a354e79c01}
+
+\item 
+\hypertarget{classSPSS_ac41565c849198977db5098fded8766ed}{Vector\-Xd {\bfseries init\-\_\-pix\-\_\-vals\-\_\-sqr}}\label{classSPSS_ac41565c849198977db5098fded8766ed}
+
+\item 
+\hypertarget{classSPSS_ad85d65bc815918019127deef450dc88c}{Vector\-Xd {\bfseries curr\-\_\-pix\-\_\-vals\-\_\-sqr}}\label{classSPSS_ad85d65bc815918019127deef450dc88c}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Sum of Pixelwise Structural Similarity. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classSPSS_a9f901d6ccc104d961d9b67929eaf6898}{\index{S\-P\-S\-S@{S\-P\-S\-S}!cmpt\-Init\-Hessian@{cmpt\-Init\-Hessian}}
+\index{cmpt\-Init\-Hessian@{cmpt\-Init\-Hessian}!SPSS@{S\-P\-S\-S}}
+\subsubsection[{cmpt\-Init\-Hessian}]{\setlength{\rightskip}{0pt plus 5cm}void S\-P\-S\-S\-::cmpt\-Init\-Hessian (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd \&}]{d2f\-\_\-dp2, }
+\item[{const Matrix\-Xd \&}]{d\-I0\-\_\-dpssm}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classSPSS_a9f901d6ccc104d961d9b67929eaf6898}
+
+
+compute the S x S Hessian of the error norm using the supplied N x S Jacobian of pixel values w.\-r.\-t. 
+
+external parameters; compute the approximate Hessian by ignoring the second order terms 
+
+Reimplemented from \hyperlink{classAppearanceModel_ab153b47d09f121796d3f411626a5321c}{Appearance\-Model}.
+
+\hypertarget{classSPSS_af8fd6ef2a745be8a7fe899586c486ecc}{\index{S\-P\-S\-S@{S\-P\-S\-S}!initialize\-Hess@{initialize\-Hess}}
+\index{initialize\-Hess@{initialize\-Hess}!SPSS@{S\-P\-S\-S}}
+\subsubsection[{initialize\-Hess}]{\setlength{\rightskip}{0pt plus 5cm}void S\-P\-S\-S\-::initialize\-Hess (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classSPSS_af8fd6ef2a745be8a7fe899586c486ecc}
+
+
+even though the Hessian of the error norm w.\-r.\-t. 
+
+pixel values is not a state variable (since it does not need to be computed separately to get the Hessian w.\-r.\-t S\-S\-M), this function is provided as a place to perform any one-\/time computations that may help to decrease the runtime cost of the interfacing function that computes this Hessian 
+
+Reimplemented from \hyperlink{classAppearanceModel_afb47df1d5e8a74f41ac70af3612180d2}{Appearance\-Model}.
+
+\hypertarget{classSPSS_a9f9bc491b562ca191934ef40304c90e8}{\index{S\-P\-S\-S@{S\-P\-S\-S}!initialize\-Similarity@{initialize\-Similarity}}
+\index{initialize\-Similarity@{initialize\-Similarity}!SPSS@{S\-P\-S\-S}}
+\subsubsection[{initialize\-Similarity}]{\setlength{\rightskip}{0pt plus 5cm}void S\-P\-S\-S\-::initialize\-Similarity (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classSPSS_a9f9bc491b562ca191934ef40304c90e8}
+
+
+methods to initialize the state variables -\/ to be called once when the tracker is initialized. 
+
+if any of these are reimplemented, there should be a statement there copying the computed value in the \char`\"{}init\char`\"{} variable to the corresponding \char`\"{}curr\char`\"{} variable so the two have the same value after this function is called;
+
+Note for the S\-M\-: the \char`\"{}initialize\char`\"{} function for any state variable whose \char`\"{}update\char`\"{} function will be called later should be called once from the S\-M's own initialize function even if the initial value of that variable will not be used later; this is because updating the state variable may involve some computations which need to be performed only once and the A\-M is free to delegate any such computations to the respective \char`\"{}initialize\char`\"{} function to avoid repeating them in the \char`\"{}update\char`\"{} function which can have a negative impact on performance; thus if this function is not called, the results of these computations that are needed by the \char`\"{}update\char`\"{} function will remain uncomputed leading to undefined behavior;
+
+also the initialize functions have a boolean indicator parameter called \char`\"{}is\-\_\-initialized\char`\"{} which defaults to true but should be set to false if they are called only to update the internal state to take into account any changes to the initial template, i.\-e. if they are called again after the first call to initialize the state (when it should be left to true) 
+
+Reimplemented from \hyperlink{classAppearanceModel_abcd79170a5fccc0e9aa10675404ad655}{Appearance\-Model}.
+
+\hypertarget{classSPSS_a3de6447fe362e409c2c929f9c7e8661e}{\index{S\-P\-S\-S@{S\-P\-S\-S}!update\-Dist\-Feat@{update\-Dist\-Feat}}
+\index{update\-Dist\-Feat@{update\-Dist\-Feat}!SPSS@{S\-P\-S\-S}}
+\subsubsection[{update\-Dist\-Feat}]{\setlength{\rightskip}{0pt plus 5cm}void S\-P\-S\-S\-::update\-Dist\-Feat (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classSPSS_a3de6447fe362e409c2c929f9c7e8661e}
+
+
+computes a \char`\"{}distance\char`\"{} vector using the current image patch such that, when the distance vectors corresponding to two patches are passed to the distance operator above, it uses these to compute a scalar that measures the distance or dissimilarity between the two patches; this distance vector should be designed so as to offload as much computation as possible from the distance operator, i.\-e. 
+
+every computation that depends only on the current patch should be performed here and the results should be stored, suitably coded, in the distannce vector where they will be decoded and used to compute the distance measure 
+
+Reimplemented from \hyperlink{classAppearanceModel_afc815587980df0cd28412a2cd1670854}{Appearance\-Model}.
+
+\hypertarget{classSPSS_a1a7a1a7cfce732222c3128f105e58bd3}{\index{S\-P\-S\-S@{S\-P\-S\-S}!update\-Similarity@{update\-Similarity}}
+\index{update\-Similarity@{update\-Similarity}!SPSS@{S\-P\-S\-S}}
+\subsubsection[{update\-Similarity}]{\setlength{\rightskip}{0pt plus 5cm}void S\-P\-S\-S\-::update\-Similarity (
+\begin{DoxyParamCaption}
+\item[{bool}]{prereq\-\_\-only = {\ttfamily true}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classSPSS_a1a7a1a7cfce732222c3128f105e58bd3}
+
+
+functions for updating state variables when a new image arrives 
+
+prereq\-\_\-only should be left to true if update is only called to compute the prerequisites for the two gradient functions and the actual value of similarity is not needed 
+
+Reimplemented from \hyperlink{classAppearanceModel_a06136ecd903e85ed2007da2c7b12bd58}{Appearance\-Model}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+A\-M/include/mtf/\-A\-M/S\-P\-S\-S.\-h\end{DoxyCompactItemize}

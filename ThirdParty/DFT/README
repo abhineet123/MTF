@@ -1,0 +1,101 @@
+
+This  code has  been  presented for  the demo  :  "Tracking texture-less,  shiny
+objects with descriptor fields." Mixed  and Augmented Reality (ISMAR), 2014 IEEE
+International Symposium on. IEEE, 2014.
+
+It allows  to track homographies using  the descriptor fields introduced  in our
+CVPR paper:
+
+[1] Crivellaro Alberto and Vincent  Lepetit. "Robust 3D Tracking with Descriptor
+    Fields.", CVPR 2014
+
+Please cite [1] if you make use of this code.
+
+Authors: 
+	 Alberto Crivellaro 
+	 Yannick Verdie
+	 Kwang Moo Yi
+	 Pascal Fua
+	 Vincent Lepetit
+
+For questions or comments please write to :
+    	      
+	 alberto<dot>crivellaro<at>epfl<dot>ch
+
+
+================================================================================
+BUILDING: 
+
+The software  has been tested and  successfully run in  real time (> 30  fps) on
+linux Ubuntu  14.04 on a  MacBookPro i7 2.30GHz. It  was built with  gcc-4.9 and
+openmp 4.0. We also tested on MacOS  with clang (no openmp) and we also obtained
+good performance  (~20fps).  Older  versions of gcc/openmp  could lead  to worse
+performances.
+
+
+Prior  to  build the  code  you  should install  the  (latest  version of  the)
+following dependencies:
+
+   - opencv (we tested with 2.4.9 and 3.0)
+   - eigen 3 or more
+
+Moreover,  you   should  correctly  configure  your   LD_LIBRARY_PATH  and  your
+PKG_CONFIG_PATH. For building just 'make all’.  The build produces :
+
+   - libC++/libHomographyEstimation.so  : a  C++ dynamic  library for  computing
+     descriptor fields  out of a  grayscale image, for computing  the homography
+     between 2 images and several utilities for display, I/O, etc.
+
+   - ISMAR_Demo/homographyDemo  :  an executable  for  performing  real time  3D
+     tracking of planar surfaces., it links to the c++ library and can be use as
+     example to understand how to link to the library.
+
+   - unit/unittests : some tests
+
+
+================================================================================
+EXECUTING THE DEMO:
+
+./homographyDemo  <camera_device_number> 
+
+you should  initialize the template  putting a planar  surface in front  of the
+camera (covering at least  all the region in the black  rectangle on the image),
+and then press:
+
+    1 for tracking using image intensities
+    2 for tracking using gradient magnitude
+    3 for tracking using descriptor fields
+
+The             optimization            parameters             are            in
+ISMAR_Demo/parameter/parameters*****Optimization.yml files. You  can change them
+for attempting to achieve a better stability.
+
+
+
+================================================================================
+USING THE LIBRARY FOR YOUR PROJECTS: 
+
+include   libC++/HomographyEstimation.hpp   in   your  code,   and   link   with
+libHomographyEstimation.so  .   For  examples  on   how  to  use  the  different
+utilities, you can take a look at the unit tests, more in particular :
+
+    void LucaskanadeSSDTest();
+    void LucaskanadeDescriptorFieldsTest();
+    void LucaskanadeVideoSSDSpeedTest();
+    void LucaskanadeVideoDesciptorFieldsSpeedTest();
+    void LucaskanadeVideoGradientMagnitudeSpeedTest();
+
+
+
+================================================================================
+USEFUL LINKS:
+
+homepage of the project: http://cvlab.epfl.ch/page-107683-en.html 
+demonstration video: 	 https://www.youtube.com/watch?v=r-WJDM6HyAs
+
+
+
+
+
+
+

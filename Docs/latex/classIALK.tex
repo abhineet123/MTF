@@ -1,0 +1,83 @@
+\hypertarget{classIALK}{\section{I\-A\-L\-K$<$ A\-M, S\-S\-M $>$ Class Template Reference}
+\label{classIALK}\index{I\-A\-L\-K$<$ A\-M, S\-S\-M $>$@{I\-A\-L\-K$<$ A\-M, S\-S\-M $>$}}
+}
+Inheritance diagram for I\-A\-L\-K$<$ A\-M, S\-S\-M $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classIALK}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classIALK_abf0584c933a8ee778a08df64eddf95cb}{typedef \hyperlink{structIALKParams}{I\-A\-L\-K\-Params} {\bfseries Param\-Type}}\label{classIALK_abf0584c933a8ee778a08df64eddf95cb}
+
+\item 
+\hypertarget{classIALK_add56895de517b7b2cd6619a384ef432a}{typedef Param\-Type\-::\-Hess\-Type {\bfseries Hess\-Type}}\label{classIALK_add56895de517b7b2cd6619a384ef432a}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classIALK_ab051d8ec7bfdb2272c5831ea4cd66a65}{{\bfseries I\-A\-L\-K} (const \hyperlink{structIALKParams}{Param\-Type} $\ast$ialk\-\_\-params=nullptr, const \hyperlink{structAMParams}{A\-M\-Params} $\ast$am\-\_\-params=nullptr, const \hyperlink{structSSMParams}{S\-S\-M\-Params} $\ast$ssm\-\_\-params=nullptr)}\label{classIALK_ab051d8ec7bfdb2272c5831ea4cd66a65}
+
+\item 
+\hypertarget{classIALK_afa975ae63c0f6713b7af349541926d1c}{void {\bfseries initialize} (const cv\-::\-Mat \&corners) override}\label{classIALK_afa975ae63c0f6713b7af349541926d1c}
+
+\item 
+\hypertarget{classIALK_ac2bc288bb64c904ac4e7735799e60c6f}{void {\bfseries update} () override}\label{classIALK_ac2bc288bb64c904ac4e7735799e60c6f}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classIALK_a8b7e25577fed0a548f13637dbf9bb016}{\hyperlink{structIALKParams}{Param\-Type} {\bfseries params}}\label{classIALK_a8b7e25577fed0a548f13637dbf9bb016}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classIALK_a088b47de1bfc774d06ed471f3c49e246}{Row\-Vector\-Xd \hyperlink{classIALK_a088b47de1bfc774d06ed471f3c49e246}{jacobian}}\label{classIALK_a088b47de1bfc774d06ed471f3c49e246}
+
+\begin{DoxyCompactList}\small\item\em 1 x S Jacobian of the A\-M error norm w.\-r.\-t. S\-S\-M state vector \end{DoxyCompactList}\item 
+\hypertarget{classIALK_a2a9adc8908a42e6ef3ae9a4e3bc80840}{Matrix\-Xd \hyperlink{classIALK_a2a9adc8908a42e6ef3ae9a4e3bc80840}{hessian}}\label{classIALK_a2a9adc8908a42e6ef3ae9a4e3bc80840}
+
+\begin{DoxyCompactList}\small\item\em S x S Hessian of the A\-M error norm w.\-r.\-t. S\-S\-M state vector. \end{DoxyCompactList}\item 
+Matrix\-Xd \hyperlink{classIALK_a56a3ab9d611d6f87029491b5d9da8a7d}{init\-\_\-pix\-\_\-jacobian}
+\begin{DoxyCompactList}\small\item\em N x S jacobians of the pix values w.\-r.\-t the S\-S\-M state vector where N = resx $\ast$ resy is the no. \end{DoxyCompactList}\item 
+\hypertarget{classIALK_a2c635c3e6b8963345921317dd0a35e73}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-jacobian}}\label{classIALK_a2c635c3e6b8963345921317dd0a35e73}
+
+\item 
+\hypertarget{classIALK_a6a0d1395726fca89e7146c821bcb5967}{Matrix\-Xd \hyperlink{classIALK_a6a0d1395726fca89e7146c821bcb5967}{init\-\_\-pix\-\_\-hessian}}\label{classIALK_a6a0d1395726fca89e7146c821bcb5967}
+
+\begin{DoxyCompactList}\small\item\em N x S x S hessians of the pixel values w.\-r.\-t the S\-S\-M state vector stored as a (S$\ast$\-S) x N 2\-D matrix. \end{DoxyCompactList}\item 
+\hypertarget{classIALK_a06943e47f54e36699fe80500dc0ab7d4}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-hessian}}\label{classIALK_a06943e47f54e36699fe80500dc0ab7d4}
+
+\item 
+\hypertarget{classIALK_a52e12fae87d02868a0f4bb0e4782e8f1}{Matrix24d {\bfseries prev\-\_\-corners}}\label{classIALK_a52e12fae87d02868a0f4bb0e4782e8f1}
+
+\item 
+\hypertarget{classIALK_a962943fb279254d91cda28296183f556}{Vector\-Xd {\bfseries ssm\-\_\-update}}\label{classIALK_a962943fb279254d91cda28296183f556}
+
+\item 
+\hypertarget{classIALK_a06bd9af1aa0ee4a3f364e4377dbf30f9}{Matrix3d {\bfseries warp\-\_\-update}}\label{classIALK_a06bd9af1aa0ee4a3f364e4377dbf30f9}
+
+\item 
+\hypertarget{classIALK_a62a8292024fd92a6edf95109c75235d0}{int {\bfseries frame\-\_\-id}}\label{classIALK_a62a8292024fd92a6edf95109c75235d0}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classIALK_a56a3ab9d611d6f87029491b5d9da8a7d}{\index{I\-A\-L\-K@{I\-A\-L\-K}!init\-\_\-pix\-\_\-jacobian@{init\-\_\-pix\-\_\-jacobian}}
+\index{init\-\_\-pix\-\_\-jacobian@{init\-\_\-pix\-\_\-jacobian}!IALK@{I\-A\-L\-K}}
+\subsubsection[{init\-\_\-pix\-\_\-jacobian}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class A\-M , class S\-S\-M $>$ Matrix\-Xd {\bf I\-A\-L\-K}$<$ A\-M, S\-S\-M $>$\-::init\-\_\-pix\-\_\-jacobian\hspace{0.3cm}{\ttfamily [protected]}}}\label{classIALK_a56a3ab9d611d6f87029491b5d9da8a7d}
+
+
+N x S jacobians of the pix values w.\-r.\-t the S\-S\-M state vector where N = resx $\ast$ resy is the no. 
+
+of pixels in the object patch N x S jacobians of the pix values w.\-r.\-t the S\-S\-M state vector 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/I\-A\-L\-K.\-h\end{DoxyCompactItemize}

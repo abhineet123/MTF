@@ -1,0 +1,444 @@
+\hypertarget{classStateSpaceModel}{\section{State\-Space\-Model Class Reference}
+\label{classStateSpaceModel}\index{State\-Space\-Model@{State\-Space\-Model}}
+}
+Inheritance diagram for State\-Space\-Model\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=12.000000cm]{classStateSpaceModel}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classStateSpaceModel_aa326eb6f06fdf440a8a5b70247894ccc}{typedef \hyperlink{structSSMEstimatorParams}{S\-S\-M\-Estimator\-Params} {\bfseries Estimator\-Params}}\label{classStateSpaceModel_aa326eb6f06fdf440a8a5b70247894ccc}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classStateSpaceModel_ae3038548df31d41994592d5e1fa55b70}{{\bfseries State\-Space\-Model} (const \hyperlink{structSSMParams}{S\-S\-M\-Params} $\ast$params)}\label{classStateSpaceModel_ae3038548df31d41994592d5e1fa55b70}
+
+\item 
+\hypertarget{classStateSpaceModel_af7538994ee27fdee4a6686430a1cb6b4}{virtual int {\bfseries get\-State\-Size} ()}\label{classStateSpaceModel_af7538994ee27fdee4a6686430a1cb6b4}
+
+\item 
+\hypertarget{classStateSpaceModel_a3875e11548ec9236bb203aee44b28070}{virtual int {\bfseries get\-Res\-X} ()}\label{classStateSpaceModel_a3875e11548ec9236bb203aee44b28070}
+
+\item 
+\hypertarget{classStateSpaceModel_aaea8e70981e9171f84ca45fc9a0cf6c1}{virtual int {\bfseries get\-Res\-Y} ()}\label{classStateSpaceModel_aaea8e70981e9171f84ca45fc9a0cf6c1}
+
+\item 
+\hypertarget{classStateSpaceModel_a27bb8ee1cb8f5883eedda9210d6cac73}{virtual int {\bfseries get\-N\-Pts} ()}\label{classStateSpaceModel_a27bb8ee1cb8f5883eedda9210d6cac73}
+
+\item 
+\hypertarget{classStateSpaceModel_abd541e8159bd2cb5cf77d8982b633794}{virtual int {\bfseries get\-N\-Channels} ()}\label{classStateSpaceModel_abd541e8159bd2cb5cf77d8982b633794}
+
+\item 
+\hypertarget{classStateSpaceModel_ad8acc900a157f2e0085ca0a2e4eb5d8f}{virtual const Pts\-T \& {\bfseries get\-Pts} ()}\label{classStateSpaceModel_ad8acc900a157f2e0085ca0a2e4eb5d8f}
+
+\item 
+\hypertarget{classStateSpaceModel_ac337b4e350ee3b35a55a6e717af10504}{virtual const Corners\-T \& {\bfseries get\-Corners} ()}\label{classStateSpaceModel_ac337b4e350ee3b35a55a6e717af10504}
+
+\item 
+\hypertarget{classStateSpaceModel_ae2494bbafef9a94228bd092899f0f22b}{virtual const Vector\-Xd \& {\bfseries get\-State} ()}\label{classStateSpaceModel_ae2494bbafef9a94228bd092899f0f22b}
+
+\item 
+\hypertarget{classStateSpaceModel_ae8255e1c441159eb090aca872bb83d70}{virtual const Grad\-Pts\-T \& {\bfseries get\-Grad\-Pts} ()}\label{classStateSpaceModel_ae8255e1c441159eb090aca872bb83d70}
+
+\item 
+\hypertarget{classStateSpaceModel_a2c5061bfc6441e01164c50343616feea}{virtual const Hess\-Pts\-T \& {\bfseries get\-Hess\-Pts} ()}\label{classStateSpaceModel_a2c5061bfc6441e01164c50343616feea}
+
+\item 
+\hypertarget{classStateSpaceModel_a288778a0c735f8759362cece4a31a2a7}{virtual void {\bfseries get\-Corners} (cv\-::\-Point2d $\ast$cv\-\_\-corners)}\label{classStateSpaceModel_a288778a0c735f8759362cece4a31a2a7}
+
+\item 
+\hypertarget{classStateSpaceModel_a9db874f66ba2ff130719a80ba8348ade}{virtual void {\bfseries get\-Corners} (cv\-::\-Mat \&cv\-\_\-corners)}\label{classStateSpaceModel_a9db874f66ba2ff130719a80ba8348ade}
+
+\item 
+\hypertarget{classStateSpaceModel_a302d86e171a123932477c56e191f5f18}{virtual void {\bfseries set\-N\-Channels} (int \-\_\-n\-\_\-channels)}\label{classStateSpaceModel_a302d86e171a123932477c56e191f5f18}
+
+\item 
+\hypertarget{classStateSpaceModel_ae7e89511cd71018a38cf78c52e6d1c56}{virtual void {\bfseries set\-State} (const Vector\-Xd \&ssm\-\_\-state)}\label{classStateSpaceModel_ae7e89511cd71018a38cf78c52e6d1c56}
+
+\item 
+\hypertarget{classStateSpaceModel_aeb5db576866d3baf2383393622cccab4}{virtual void {\bfseries set\-Corners} (const Corners\-T \&eig\-\_\-corners)}\label{classStateSpaceModel_aeb5db576866d3baf2383393622cccab4}
+
+\item 
+\hypertarget{classStateSpaceModel_a31783c4608560245a8438a05b8047d91}{virtual void {\bfseries set\-Corners} (const cv\-::\-Mat \&cv\-\_\-corners)}\label{classStateSpaceModel_a31783c4608560245a8438a05b8047d91}
+
+\item 
+\hypertarget{classStateSpaceModel_a5c528e5683990a0829a19f1ed5f973a9}{virtual void {\bfseries initialize} (const Corners\-T \&eig\-\_\-corners, int \-\_\-n\-\_\-channels=1)}\label{classStateSpaceModel_a5c528e5683990a0829a19f1ed5f973a9}
+
+\item 
+\hypertarget{classStateSpaceModel_a349ef13226d8ed790b8d74ef63439ca8}{virtual void {\bfseries initialize} (const cv\-::\-Mat \&cv\-\_\-corners, int \-\_\-n\-\_\-channels=1)}\label{classStateSpaceModel_a349ef13226d8ed790b8d74ef63439ca8}
+
+\item 
+\hypertarget{classStateSpaceModel_a9c16a921e2f1a9a909e776fd54212251}{virtual void {\bfseries initialize\-Grad\-Pts} (double grad\-\_\-eps)}\label{classStateSpaceModel_a9c16a921e2f1a9a909e776fd54212251}
+
+\item 
+\hypertarget{classStateSpaceModel_ad6598c85748f7b2906b9134a32b44383}{virtual void {\bfseries initialize\-Hess\-Pts} (double hess\-\_\-eps)}\label{classStateSpaceModel_ad6598c85748f7b2906b9134a32b44383}
+
+\item 
+\hypertarget{classStateSpaceModel_aa1e1e988c331faa9869965f0b3a2190c}{virtual void {\bfseries additive\-Update} (const Vector\-Xd \&state\-\_\-update)}\label{classStateSpaceModel_aa1e1e988c331faa9869965f0b3a2190c}
+
+\item 
+\hypertarget{classStateSpaceModel_afc3fbcc3f2dcc6e555289e1d0f3e156c}{virtual void {\bfseries compositional\-Update} (const Vector\-Xd \&state\-\_\-update)}\label{classStateSpaceModel_afc3fbcc3f2dcc6e555289e1d0f3e156c}
+
+\item 
+\hypertarget{classStateSpaceModel_a43ddc8f9b4c2551c9ec6b200ca0db5ca}{virtual void {\bfseries update\-Grad\-Pts} (double grad\-\_\-eps)}\label{classStateSpaceModel_a43ddc8f9b4c2551c9ec6b200ca0db5ca}
+
+\item 
+\hypertarget{classStateSpaceModel_a1001d4563a839aadad2b59d5c1ea4847}{virtual void {\bfseries update\-Hess\-Pts} (double hess\-\_\-eps)}\label{classStateSpaceModel_a1001d4563a839aadad2b59d5c1ea4847}
+
+\item 
+\hypertarget{classStateSpaceModel_a4273b406876eaae7afaa18d954955c0b}{virtual void {\bfseries invert\-State} (Vector\-Xd \&inv\-\_\-state, const Vector\-Xd \&state)}\label{classStateSpaceModel_a4273b406876eaae7afaa18d954955c0b}
+
+\item 
+virtual void \hyperlink{classStateSpaceModel_ac956c679581e746891c62755fe715b3b}{cmpt\-Init\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pixel\-\_\-grad)
+\begin{DoxyCompactList}\small\item\em right multiplies the initial or current ssm jacobian with the provided am jacobian; though this can be accomplished by the search method itself with simple matrix multiplication, the ssm jacobian often satisfies several constraints (e.\-g. \end{DoxyCompactList}\item 
+\hypertarget{classStateSpaceModel_a640fd53fcecfed4f91278b7164946384}{virtual void {\bfseries cmpt\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pixel\-\_\-grad)}\label{classStateSpaceModel_a640fd53fcecfed4f91278b7164946384}
+
+\item 
+\hypertarget{classStateSpaceModel_a1c6b8896c06a492e0cbe923ee8f2aba0}{virtual void {\bfseries cmpt\-Warped\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pixel\-\_\-grad)}\label{classStateSpaceModel_a1c6b8896c06a492e0cbe923ee8f2aba0}
+
+\item 
+\hypertarget{classStateSpaceModel_a60540eda9d975f5172d2700712ed401d}{virtual void {\bfseries cmpt\-Approx\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pixel\-\_\-grad)}\label{classStateSpaceModel_a60540eda9d975f5172d2700712ed401d}
+
+\item 
+\hypertarget{classStateSpaceModel_ace3041e8376c3cdb9b639975017840ca}{virtual void {\bfseries cmpt\-Init\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad)}\label{classStateSpaceModel_ace3041e8376c3cdb9b639975017840ca}
+
+\item 
+\hypertarget{classStateSpaceModel_a25c016504e7aed4e4a089273a0210524}{virtual void {\bfseries cmpt\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad)}\label{classStateSpaceModel_a25c016504e7aed4e4a089273a0210524}
+
+\item 
+\hypertarget{classStateSpaceModel_a03223676277e6f5a6be4d7c3e24076bf}{virtual void {\bfseries cmpt\-Warped\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad)}\label{classStateSpaceModel_a03223676277e6f5a6be4d7c3e24076bf}
+
+\item 
+\hypertarget{classStateSpaceModel_a635ed4245d0325ad070896579745df0c}{virtual void {\bfseries cmpt\-Approx\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad)}\label{classStateSpaceModel_a635ed4245d0325ad070896579745df0c}
+
+\item 
+\hypertarget{classStateSpaceModel_a9cfb7407a0293d3b04e0c4e661045aaf}{virtual void {\bfseries apply\-Warp\-To\-Corners} (Corners\-T \&out\-\_\-corners, const Corners\-T \&in\-\_\-corners, const Vector\-Xd \&ssm\-\_\-state)}\label{classStateSpaceModel_a9cfb7407a0293d3b04e0c4e661045aaf}
+
+\item 
+\hypertarget{classStateSpaceModel_a8706d6bd58546ef6d4958b6751e506fa}{virtual void {\bfseries apply\-Warp\-To\-Pts} (Pts\-T \&out\-\_\-pts, const Pts\-T \&in\-\_\-pts, const Vector\-Xd \&ssm\-\_\-state)}\label{classStateSpaceModel_a8706d6bd58546ef6d4958b6751e506fa}
+
+\item 
+\hypertarget{classStateSpaceModel_a5059ab244d444ff65d5aab2c8f3f3381}{virtual void {\bfseries get\-Identity\-Warp} (Vector\-Xd \&p)}\label{classStateSpaceModel_a5059ab244d444ff65d5aab2c8f3f3381}
+
+\item 
+\hypertarget{classStateSpaceModel_a0f84e175d6a10e46b14289ac7ef21df6}{virtual void {\bfseries compose\-Warps} (Vector\-Xd \&p12, const Vector\-Xd \&p1, const Vector\-Xd \&p2)}\label{classStateSpaceModel_a0f84e175d6a10e46b14289ac7ef21df6}
+
+\item 
+\hypertarget{classStateSpaceModel_ab36e25193912bf9432a7847b338b456a}{virtual void {\bfseries estimate\-Warp\-From\-Corners} (Vector\-Xd \&state\-\_\-update, const Corners\-T \&in\-\_\-corners, const Corners\-T \&out\-\_\-corners)}\label{classStateSpaceModel_ab36e25193912bf9432a7847b338b456a}
+
+\item 
+\hypertarget{classStateSpaceModel_ac35938433ae0b96dd8b782867c6def4f}{virtual void {\bfseries estimate\-Warp\-From\-Corners} (Vector\-Xd \&state\-\_\-update, const cv\-::\-Mat \&in\-\_\-corners\-\_\-cv, const cv\-::\-Mat \&out\-\_\-corners\-\_\-cv)}\label{classStateSpaceModel_ac35938433ae0b96dd8b782867c6def4f}
+
+\item 
+\hypertarget{classStateSpaceModel_ac7aa757a7e29ab961ff15bb5c71543cf}{virtual void {\bfseries estimate\-Warp\-From\-Pts} (Vector\-Xd \&state\-\_\-update, vector$<$ uchar $>$ \&mask, const vector$<$ cv\-::\-Point2f $>$ \&in\-\_\-pts, const vector$<$ cv\-::\-Point2f $>$ \&out\-\_\-pts, const \hyperlink{structSSMEstimatorParams}{Estimator\-Params} \&est\-\_\-params)}\label{classStateSpaceModel_ac7aa757a7e29ab961ff15bb5c71543cf}
+
+\item 
+\hypertarget{classStateSpaceModel_ad205d63f37f8dce3ec521ba72a7c0ba8}{virtual void {\bfseries initialize\-Sampler} (const Vector\-Xd \&state\-\_\-sigma, const Vector\-Xd \&state\-\_\-mean)}\label{classStateSpaceModel_ad205d63f37f8dce3ec521ba72a7c0ba8}
+
+\item 
+\hypertarget{classStateSpaceModel_a7016de63d72ffce510fdec3ac63b96c3}{virtual void {\bfseries set\-Sampler} (const Vector\-Xd \&state\-\_\-sigma, const Vector\-Xd \&state\-\_\-mean)}\label{classStateSpaceModel_a7016de63d72ffce510fdec3ac63b96c3}
+
+\item 
+\hypertarget{classStateSpaceModel_addf7f5a6d6d2d1ecd31d7787ec80feb7}{virtual void {\bfseries set\-Sampler\-Mean} (const Vector\-Xd \&mean)}\label{classStateSpaceModel_addf7f5a6d6d2d1ecd31d7787ec80feb7}
+
+\item 
+\hypertarget{classStateSpaceModel_aea9777c1dadc0ea82f62d3e1eb560198}{virtual void {\bfseries set\-Sampler\-Sigma} (const Vector\-Xd \&std)}\label{classStateSpaceModel_aea9777c1dadc0ea82f62d3e1eb560198}
+
+\item 
+\hypertarget{classStateSpaceModel_a006f7c380b7e979555a0924633f99cb3}{virtual Vector\-Xd {\bfseries get\-Sampler\-Sigma} ()}\label{classStateSpaceModel_a006f7c380b7e979555a0924633f99cb3}
+
+\item 
+\hypertarget{classStateSpaceModel_a898fc3723557c462f075ed007a9d87c5}{virtual Vector\-Xd {\bfseries get\-Sampler\-Mean} ()}\label{classStateSpaceModel_a898fc3723557c462f075ed007a9d87c5}
+
+\item 
+\hypertarget{classStateSpaceModel_ab8d021f04732f3cf851121567a3ed49d}{virtual void {\bfseries compositional\-Random\-Walk} (Vector\-Xd \&perturbed\-\_\-state, const Vector\-Xd \&base\-\_\-state)}\label{classStateSpaceModel_ab8d021f04732f3cf851121567a3ed49d}
+
+\item 
+\hypertarget{classStateSpaceModel_a9d1f89aa055137020a1de8b5c64af740}{virtual void {\bfseries additive\-Random\-Walk} (Vector\-Xd \&perturbed\-\_\-state, const Vector\-Xd \&base\-\_\-state)}\label{classStateSpaceModel_a9d1f89aa055137020a1de8b5c64af740}
+
+\item 
+\hypertarget{classStateSpaceModel_ad6d792b9b4ae739a2b301bd7152fd642}{virtual void {\bfseries compositional\-Auto\-Regression1} (Vector\-Xd \&perturbed\-\_\-state, Vector\-Xd \&perturbed\-\_\-ar, const Vector\-Xd \&base\-\_\-state, const Vector\-Xd \&base\-\_\-ar, double a=0.\-5)}\label{classStateSpaceModel_ad6d792b9b4ae739a2b301bd7152fd642}
+
+\item 
+\hypertarget{classStateSpaceModel_abe9acdd35a181bff35821026e65b7998}{virtual void {\bfseries additive\-Auto\-Regression1} (Vector\-Xd \&perturbed\-\_\-state, Vector\-Xd \&perturbed\-\_\-ar, const Vector\-Xd \&base\-\_\-state, const Vector\-Xd \&base\-\_\-ar, double a=0.\-5)}\label{classStateSpaceModel_abe9acdd35a181bff35821026e65b7998}
+
+\item 
+\hypertarget{classStateSpaceModel_af2ca46965daa795113bbb2c3313687e1}{virtual void {\bfseries generate\-Perturbation} (Vector\-Xd \&perturbation)}\label{classStateSpaceModel_af2ca46965daa795113bbb2c3313687e1}
+
+\item 
+\hypertarget{classStateSpaceModel_aec2bf55b8d2579447210fcf52bd766ca}{virtual void {\bfseries generate\-Perturbed\-Pts} (Vector\-Xd \&perturbed\-\_\-pts)}\label{classStateSpaceModel_aec2bf55b8d2579447210fcf52bd766ca}
+
+\item 
+\hypertarget{classStateSpaceModel_aa0008179cfd5b2e7126fcd7d83193d2a}{virtual void {\bfseries get\-Perturbed\-Pts} (Vector\-Xd \&perturbed\-\_\-pts, const Vector\-Xd \&state\-\_\-update)}\label{classStateSpaceModel_aa0008179cfd5b2e7126fcd7d83193d2a}
+
+\item 
+\hypertarget{classStateSpaceModel_a5bff909bd0d35f8565324c2724066a66}{virtual void {\bfseries estimate\-Mean\-Of\-Samples} (Vector\-Xd \&sample\-\_\-mean, const std\-::vector$<$ Vector\-Xd $>$ \&samples, int n\-\_\-samples)}\label{classStateSpaceModel_a5bff909bd0d35f8565324c2724066a66}
+
+\item 
+\hypertarget{classStateSpaceModel_a68e7a798e0c7ac31ee79f5c856380b83}{virtual void {\bfseries estimate\-State\-Sigma} (Vector\-Xd \&state\-\_\-sigma, double pix\-\_\-sigma)}\label{classStateSpaceModel_a68e7a798e0c7ac31ee79f5c856380b83}
+
+\item 
+\hypertarget{classStateSpaceModel_a4dc4bcd0a4b9ca528fdd53f0423f5193}{virtual void {\bfseries get\-Init\-Pix\-Grad} (Pts\-T \&jacobian\-\_\-prod, int pix\-\_\-id)}\label{classStateSpaceModel_a4dc4bcd0a4b9ca528fdd53f0423f5193}
+
+\item 
+\hypertarget{classStateSpaceModel_a07f0bd621d26b539283f152ab45f29ab}{virtual void {\bfseries get\-Curr\-Pix\-Grad} (Pts\-T \&jacobian\-\_\-prod, int pix\-\_\-id)}\label{classStateSpaceModel_a07f0bd621d26b539283f152ab45f29ab}
+
+\item 
+\hypertarget{classStateSpaceModel_a5a7a1a38551522e1877b453062fc0f1f}{virtual void {\bfseries set\-Init\-Status} ()}\label{classStateSpaceModel_a5a7a1a38551522e1877b453062fc0f1f}
+
+\item 
+\hypertarget{classStateSpaceModel_a9d9b5a754b969d02d1881f10945baad6}{virtual void {\bfseries clear\-Init\-Status} ()}\label{classStateSpaceModel_a9d9b5a754b969d02d1881f10945baad6}
+
+\item 
+\hypertarget{classStateSpaceModel_a7b56124a6faf2aea497050f697757806}{virtual void {\bfseries set\-First\-Iter} ()}\label{classStateSpaceModel_a7b56124a6faf2aea497050f697757806}
+
+\item 
+\hypertarget{classStateSpaceModel_a6eee4ed388bc0d8c7ce0b668cb67599f}{virtual void {\bfseries clear\-First\-Iter} ()}\label{classStateSpaceModel_a6eee4ed388bc0d8c7ce0b668cb67599f}
+
+\item 
+\hypertarget{classStateSpaceModel_a437deb778661e9202e42f3a636c33dea}{virtual void {\bfseries set\-S\-P\-I\-Mask} (const bool $\ast$\-\_\-spi\-\_\-mask)}\label{classStateSpaceModel_a437deb778661e9202e42f3a636c33dea}
+
+\item 
+\hypertarget{classStateSpaceModel_a5d474f0a621659071be9bd0cdf37136d}{virtual void {\bfseries clear\-S\-P\-I\-Mask} ()}\label{classStateSpaceModel_a5d474f0a621659071be9bd0cdf37136d}
+
+\item 
+\hypertarget{classStateSpaceModel_a43c5fa9bdbd4d33422102da5112b7cc7}{virtual bool {\bfseries supports\-S\-P\-I} ()}\label{classStateSpaceModel_a43c5fa9bdbd4d33422102da5112b7cc7}
+
+\item 
+\hypertarget{classStateSpaceModel_a886da7a357a17c286a8bac0149aeb5e8}{{\bfseries State\-Space\-Model} (int \-\_\-resx, int \-\_\-resy)}\label{classStateSpaceModel_a886da7a357a17c286a8bac0149aeb5e8}
+
+\item 
+\hypertarget{classStateSpaceModel_af7538994ee27fdee4a6686430a1cb6b4}{virtual int {\bfseries get\-State\-Size} ()}\label{classStateSpaceModel_af7538994ee27fdee4a6686430a1cb6b4}
+
+\item 
+\hypertarget{classStateSpaceModel_a3875e11548ec9236bb203aee44b28070}{virtual int {\bfseries get\-Res\-X} ()}\label{classStateSpaceModel_a3875e11548ec9236bb203aee44b28070}
+
+\item 
+\hypertarget{classStateSpaceModel_aaea8e70981e9171f84ca45fc9a0cf6c1}{virtual int {\bfseries get\-Res\-Y} ()}\label{classStateSpaceModel_aaea8e70981e9171f84ca45fc9a0cf6c1}
+
+\item 
+\hypertarget{classStateSpaceModel_a27bb8ee1cb8f5883eedda9210d6cac73}{virtual int {\bfseries get\-N\-Pts} ()}\label{classStateSpaceModel_a27bb8ee1cb8f5883eedda9210d6cac73}
+
+\item 
+\hypertarget{classStateSpaceModel_ad8acc900a157f2e0085ca0a2e4eb5d8f}{virtual const Pts\-T \& {\bfseries get\-Pts} ()}\label{classStateSpaceModel_ad8acc900a157f2e0085ca0a2e4eb5d8f}
+
+\item 
+\hypertarget{classStateSpaceModel_ac337b4e350ee3b35a55a6e717af10504}{virtual const Corners\-T \& {\bfseries get\-Corners} ()}\label{classStateSpaceModel_ac337b4e350ee3b35a55a6e717af10504}
+
+\item 
+\hypertarget{classStateSpaceModel_ae2494bbafef9a94228bd092899f0f22b}{virtual const Vector\-Xd \& {\bfseries get\-State} ()}\label{classStateSpaceModel_ae2494bbafef9a94228bd092899f0f22b}
+
+\item 
+\hypertarget{classStateSpaceModel_ae8255e1c441159eb090aca872bb83d70}{virtual const Grad\-Pts\-T \& {\bfseries get\-Grad\-Pts} ()}\label{classStateSpaceModel_ae8255e1c441159eb090aca872bb83d70}
+
+\item 
+\hypertarget{classStateSpaceModel_a2c5061bfc6441e01164c50343616feea}{virtual const Hess\-Pts\-T \& {\bfseries get\-Hess\-Pts} ()}\label{classStateSpaceModel_a2c5061bfc6441e01164c50343616feea}
+
+\item 
+\hypertarget{classStateSpaceModel_a288778a0c735f8759362cece4a31a2a7}{virtual void {\bfseries get\-Corners} (cv\-::\-Point2d $\ast$cv\-\_\-corners)}\label{classStateSpaceModel_a288778a0c735f8759362cece4a31a2a7}
+
+\item 
+\hypertarget{classStateSpaceModel_a9db874f66ba2ff130719a80ba8348ade}{virtual void {\bfseries get\-Corners} (cv\-::\-Mat \&cv\-\_\-corners)}\label{classStateSpaceModel_a9db874f66ba2ff130719a80ba8348ade}
+
+\item 
+\hypertarget{classStateSpaceModel_ae7e89511cd71018a38cf78c52e6d1c56}{virtual void {\bfseries set\-State} (const Vector\-Xd \&ssm\-\_\-state)}\label{classStateSpaceModel_ae7e89511cd71018a38cf78c52e6d1c56}
+
+\item 
+\hypertarget{classStateSpaceModel_aeb5db576866d3baf2383393622cccab4}{virtual void {\bfseries set\-Corners} (const Corners\-T \&eig\-\_\-corners)}\label{classStateSpaceModel_aeb5db576866d3baf2383393622cccab4}
+
+\item 
+\hypertarget{classStateSpaceModel_a31783c4608560245a8438a05b8047d91}{virtual void {\bfseries set\-Corners} (const cv\-::\-Mat \&cv\-\_\-corners)}\label{classStateSpaceModel_a31783c4608560245a8438a05b8047d91}
+
+\item 
+\hypertarget{classStateSpaceModel_a6890ab582205f7fc0b69268631dd1b6b}{virtual void {\bfseries initialize} (const Corners\-T \&eig\-\_\-corners)}\label{classStateSpaceModel_a6890ab582205f7fc0b69268631dd1b6b}
+
+\item 
+\hypertarget{classStateSpaceModel_a5a27d741a12210245056f2b4afde24cd}{virtual void {\bfseries initialize} (const cv\-::\-Mat \&cv\-\_\-corners)}\label{classStateSpaceModel_a5a27d741a12210245056f2b4afde24cd}
+
+\item 
+\hypertarget{classStateSpaceModel_a9c16a921e2f1a9a909e776fd54212251}{virtual void {\bfseries initialize\-Grad\-Pts} (double grad\-\_\-eps)}\label{classStateSpaceModel_a9c16a921e2f1a9a909e776fd54212251}
+
+\item 
+\hypertarget{classStateSpaceModel_ad6598c85748f7b2906b9134a32b44383}{virtual void {\bfseries initialize\-Hess\-Pts} (double hess\-\_\-eps)}\label{classStateSpaceModel_ad6598c85748f7b2906b9134a32b44383}
+
+\item 
+\hypertarget{classStateSpaceModel_aa1e1e988c331faa9869965f0b3a2190c}{virtual void {\bfseries additive\-Update} (const Vector\-Xd \&state\-\_\-update)}\label{classStateSpaceModel_aa1e1e988c331faa9869965f0b3a2190c}
+
+\item 
+\hypertarget{classStateSpaceModel_afc3fbcc3f2dcc6e555289e1d0f3e156c}{virtual void {\bfseries compositional\-Update} (const Vector\-Xd \&state\-\_\-update)}\label{classStateSpaceModel_afc3fbcc3f2dcc6e555289e1d0f3e156c}
+
+\item 
+\hypertarget{classStateSpaceModel_a43ddc8f9b4c2551c9ec6b200ca0db5ca}{virtual void {\bfseries update\-Grad\-Pts} (double grad\-\_\-eps)}\label{classStateSpaceModel_a43ddc8f9b4c2551c9ec6b200ca0db5ca}
+
+\item 
+\hypertarget{classStateSpaceModel_a1001d4563a839aadad2b59d5c1ea4847}{virtual void {\bfseries update\-Hess\-Pts} (double hess\-\_\-eps)}\label{classStateSpaceModel_a1001d4563a839aadad2b59d5c1ea4847}
+
+\item 
+\hypertarget{classStateSpaceModel_a4273b406876eaae7afaa18d954955c0b}{virtual void {\bfseries invert\-State} (Vector\-Xd \&inv\-\_\-state, const Vector\-Xd \&state)}\label{classStateSpaceModel_a4273b406876eaae7afaa18d954955c0b}
+
+\item 
+virtual void \hyperlink{classStateSpaceModel_ac956c679581e746891c62755fe715b3b}{cmpt\-Init\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pixel\-\_\-grad)
+\begin{DoxyCompactList}\small\item\em right multiplies the initial or current ssm jacobian with the provided am jacobian; though this can be accomplished by the search method itself with simple matrix multiplication, the ssm jacobian often satisfies several constraints (e.\-g. \end{DoxyCompactList}\item 
+\hypertarget{classStateSpaceModel_a75424ecb8dae29778dd92a55e11bce04}{virtual void {\bfseries cmpt\-Curr\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pixel\-\_\-grad)}\label{classStateSpaceModel_a75424ecb8dae29778dd92a55e11bce04}
+
+\item 
+\hypertarget{classStateSpaceModel_a1e774953788e1499c9d42c4b3c1b3103}{virtual void {\bfseries cmpt\-Init\-Warped\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pixel\-\_\-grad)}\label{classStateSpaceModel_a1e774953788e1499c9d42c4b3c1b3103}
+
+\item 
+\hypertarget{classStateSpaceModel_ac0b9d1593ca91e6e9b0de9e8b0cf1e6d}{virtual void {\bfseries cmpt\-Curr\-Warped\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pixel\-\_\-grad)}\label{classStateSpaceModel_ac0b9d1593ca91e6e9b0de9e8b0cf1e6d}
+
+\item 
+\hypertarget{classStateSpaceModel_a9f0c3dadb8a24c1f51b879dadce129ee}{virtual void {\bfseries cmpt\-Init\-Joint\-Inv\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pixel\-\_\-grad)}\label{classStateSpaceModel_a9f0c3dadb8a24c1f51b879dadce129ee}
+
+\item 
+\hypertarget{classStateSpaceModel_af3700561116611a90c9bd62116f9f964}{virtual void {\bfseries cmpt\-Curr\-Joint\-Inv\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pixel\-\_\-grad)}\label{classStateSpaceModel_af3700561116611a90c9bd62116f9f964}
+
+\item 
+\hypertarget{classStateSpaceModel_ace3041e8376c3cdb9b639975017840ca}{virtual void {\bfseries cmpt\-Init\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad)}\label{classStateSpaceModel_ace3041e8376c3cdb9b639975017840ca}
+
+\item 
+\hypertarget{classStateSpaceModel_a55ce9ddbc2721dd1f78c0f8327a8f6b9}{virtual void {\bfseries cmpt\-Curr\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad)}\label{classStateSpaceModel_a55ce9ddbc2721dd1f78c0f8327a8f6b9}
+
+\item 
+\hypertarget{classStateSpaceModel_a226dba05502f0c172abb70413d94cd16}{virtual void {\bfseries cmpt\-Init\-Warped\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad)}\label{classStateSpaceModel_a226dba05502f0c172abb70413d94cd16}
+
+\item 
+\hypertarget{classStateSpaceModel_aafeacf7584bf65b0f792e60379e33f14}{virtual void {\bfseries cmpt\-Curr\-Warped\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad)}\label{classStateSpaceModel_aafeacf7584bf65b0f792e60379e33f14}
+
+\item 
+\hypertarget{classStateSpaceModel_a9cfb7407a0293d3b04e0c4e661045aaf}{virtual void {\bfseries apply\-Warp\-To\-Corners} (Corners\-T \&out\-\_\-corners, const Corners\-T \&in\-\_\-corners, const Vector\-Xd \&ssm\-\_\-state)}\label{classStateSpaceModel_a9cfb7407a0293d3b04e0c4e661045aaf}
+
+\item 
+\hypertarget{classStateSpaceModel_a8706d6bd58546ef6d4958b6751e506fa}{virtual void {\bfseries apply\-Warp\-To\-Pts} (Pts\-T \&out\-\_\-pts, const Pts\-T \&in\-\_\-pts, const Vector\-Xd \&ssm\-\_\-state)}\label{classStateSpaceModel_a8706d6bd58546ef6d4958b6751e506fa}
+
+\item 
+\hypertarget{classStateSpaceModel_ab36e25193912bf9432a7847b338b456a}{virtual void {\bfseries estimate\-Warp\-From\-Corners} (Vector\-Xd \&state\-\_\-update, const Corners\-T \&in\-\_\-corners, const Corners\-T \&out\-\_\-corners)}\label{classStateSpaceModel_ab36e25193912bf9432a7847b338b456a}
+
+\item 
+\hypertarget{classStateSpaceModel_a9faa847a6517a1cf036b73a8e8b03106}{virtual void {\bfseries estimate\-Warp\-From\-Pts} (Vector\-Xd \&state\-\_\-update, vector$<$ uchar $>$ \&mask, const vector$<$ cv\-::\-Point2f $>$ \&in\-\_\-pts, const vector$<$ cv\-::\-Point2f $>$ \&out\-\_\-pts, int estimation\-\_\-method, double ransac\-\_\-reproj\-\_\-thresh)}\label{classStateSpaceModel_a9faa847a6517a1cf036b73a8e8b03106}
+
+\item 
+\hypertarget{classStateSpaceModel_a5a7a1a38551522e1877b453062fc0f1f}{virtual void {\bfseries set\-Init\-Status} ()}\label{classStateSpaceModel_a5a7a1a38551522e1877b453062fc0f1f}
+
+\item 
+\hypertarget{classStateSpaceModel_a9d9b5a754b969d02d1881f10945baad6}{virtual void {\bfseries clear\-Init\-Status} ()}\label{classStateSpaceModel_a9d9b5a754b969d02d1881f10945baad6}
+
+\item 
+\hypertarget{classStateSpaceModel_a7b56124a6faf2aea497050f697757806}{virtual void {\bfseries set\-First\-Iter} ()}\label{classStateSpaceModel_a7b56124a6faf2aea497050f697757806}
+
+\item 
+\hypertarget{classStateSpaceModel_a6eee4ed388bc0d8c7ce0b668cb67599f}{virtual void {\bfseries clear\-First\-Iter} ()}\label{classStateSpaceModel_a6eee4ed388bc0d8c7ce0b668cb67599f}
+
+\item 
+\hypertarget{classStateSpaceModel_a437deb778661e9202e42f3a636c33dea}{virtual void {\bfseries set\-S\-P\-I\-Mask} (const bool $\ast$\-\_\-spi\-\_\-mask)}\label{classStateSpaceModel_a437deb778661e9202e42f3a636c33dea}
+
+\item 
+\hypertarget{classStateSpaceModel_a5d474f0a621659071be9bd0cdf37136d}{virtual void {\bfseries clear\-S\-P\-I\-Mask} ()}\label{classStateSpaceModel_a5d474f0a621659071be9bd0cdf37136d}
+
+\item 
+\hypertarget{classStateSpaceModel_a43c5fa9bdbd4d33422102da5112b7cc7}{virtual bool {\bfseries supports\-S\-P\-I} ()}\label{classStateSpaceModel_a43c5fa9bdbd4d33422102da5112b7cc7}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classStateSpaceModel_a40caacc8c64331bb9c735c84f3d36620}{string {\bfseries name}}\label{classStateSpaceModel_a40caacc8c64331bb9c735c84f3d36620}
+
+\item 
+\hypertarget{classStateSpaceModel_ad9ea2d3e2c18a9c3416b1a5d78189a8a}{\hyperlink{structSSMStatus}{S\-S\-M\-Status} {\bfseries is\-\_\-initialized}}\label{classStateSpaceModel_ad9ea2d3e2c18a9c3416b1a5d78189a8a}
+
+\item 
+\hypertarget{classStateSpaceModel_a0775f30e40628fbca9a748a128aaef2b}{bool {\bfseries first\-\_\-iter}}\label{classStateSpaceModel_a0775f30e40628fbca9a748a128aaef2b}
+
+\item 
+\hypertarget{classStateSpaceModel_a056dcbf609ddf26c82bb3301660619a4}{const bool $\ast$ {\bfseries spi\-\_\-mask}}\label{classStateSpaceModel_a056dcbf609ddf26c82bb3301660619a4}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classStateSpaceModel_a73540d40278ee80bbbba8a3a70c7ba7d}{int {\bfseries state\-\_\-size}}\label{classStateSpaceModel_a73540d40278ee80bbbba8a3a70c7ba7d}
+
+\item 
+\hypertarget{classStateSpaceModel_a35161e66eda46a3dd60dd78232e34799}{int {\bfseries resx}}\label{classStateSpaceModel_a35161e66eda46a3dd60dd78232e34799}
+
+\item 
+\hypertarget{classStateSpaceModel_a55fb756ff584214bb5f5649bd7d57b37}{int {\bfseries resy}}\label{classStateSpaceModel_a55fb756ff584214bb5f5649bd7d57b37}
+
+\item 
+\hypertarget{classStateSpaceModel_af284b51bf1e5ab79f034c3fe550f863d}{int {\bfseries n\-\_\-pts}}\label{classStateSpaceModel_af284b51bf1e5ab79f034c3fe550f863d}
+
+\item 
+\hypertarget{classStateSpaceModel_ab9d3d2e904655e3072cf7559beb3cdef}{int {\bfseries n\-\_\-channels}}\label{classStateSpaceModel_ab9d3d2e904655e3072cf7559beb3cdef}
+
+\item 
+\hypertarget{classStateSpaceModel_ac19b8d6fbf8f37adcf84d8a9d82b9cfa}{Vector\-Xd {\bfseries curr\-\_\-state}}\label{classStateSpaceModel_ac19b8d6fbf8f37adcf84d8a9d82b9cfa}
+
+\item 
+\hypertarget{classStateSpaceModel_a29ee5155ee72930489962176857efcb2}{Pts\-T {\bfseries init\-\_\-pts}}\label{classStateSpaceModel_a29ee5155ee72930489962176857efcb2}
+
+\item 
+\hypertarget{classStateSpaceModel_ad935ddcadfaad4aa6c8f464199b11066}{Pts\-T {\bfseries curr\-\_\-pts}}\label{classStateSpaceModel_ad935ddcadfaad4aa6c8f464199b11066}
+
+\item 
+\hypertarget{classStateSpaceModel_a9c9009c2534834d1a5dbcd1901d8d2d9}{Corners\-T {\bfseries init\-\_\-corners}}\label{classStateSpaceModel_a9c9009c2534834d1a5dbcd1901d8d2d9}
+
+\item 
+\hypertarget{classStateSpaceModel_a76b9ea7f94ff2d8178fd4e7faaf77bcc}{Corners\-T {\bfseries curr\-\_\-corners}}\label{classStateSpaceModel_a76b9ea7f94ff2d8178fd4e7faaf77bcc}
+
+\item 
+\hypertarget{classStateSpaceModel_a44b8674b7d8d4d74b2831b9577183741}{Grad\-Pts\-T {\bfseries grad\-\_\-pts}}\label{classStateSpaceModel_a44b8674b7d8d4d74b2831b9577183741}
+
+\item 
+\hypertarget{classStateSpaceModel_a19b69ca7948088186f984753d7c2fb62}{Hess\-Pts\-T {\bfseries hess\-\_\-pts}}\label{classStateSpaceModel_a19b69ca7948088186f984753d7c2fb62}
+
+\item 
+\hypertarget{classStateSpaceModel_a593eb13ef4496b08924da55ac826fc04}{bool {\bfseries identity\-\_\-jacobian}}\label{classStateSpaceModel_a593eb13ef4496b08924da55ac826fc04}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classStateSpaceModel_ac956c679581e746891c62755fe715b3b}{\index{State\-Space\-Model@{State\-Space\-Model}!cmpt\-Init\-Pix\-Jacobian@{cmpt\-Init\-Pix\-Jacobian}}
+\index{cmpt\-Init\-Pix\-Jacobian@{cmpt\-Init\-Pix\-Jacobian}!StateSpaceModel@{State\-Space\-Model}}
+\subsubsection[{cmpt\-Init\-Pix\-Jacobian}]{\setlength{\rightskip}{0pt plus 5cm}virtual void State\-Space\-Model\-::cmpt\-Init\-Pix\-Jacobian (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd \&}]{jacobian\-\_\-prod, }
+\item[{const Pix\-Grad\-T \&}]{pixel\-\_\-grad}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classStateSpaceModel_ac956c679581e746891c62755fe715b3b}
+
+
+right multiplies the initial or current ssm jacobian with the provided am jacobian; though this can be accomplished by the search method itself with simple matrix multiplication, the ssm jacobian often satisfies several constraints (e.\-g. 
+
+sparsity) that can be exploited to gain computational savings by manually computing the product matrix 
+
+Reimplemented in \hyperlink{classSpline_a8db3ad0a056e94f2adc7503677fd1675}{Spline}, \hyperlink{classLieAffine_a25b82bb4020629dfaa792b71e6b74567}{Lie\-Affine}, \hyperlink{classSimilitude_a96e413d6abded447be0230c3ad7718bd}{Similitude}, \hyperlink{classLieIsometry_a3959b6cf83ac76224c58902f8a4c41aa}{Lie\-Isometry}, \hyperlink{classSL3_a5942f2e2cdd33447fa6eedd5a9104dc9}{S\-L3}, \hyperlink{classLieHomography_af27ac56fd834a994901949548db721ff}{Lie\-Homography}, \hyperlink{classIsometry_aec3c4d4f20d5c34ee3ab79747e6e1532}{Isometry}, \hyperlink{classTPS_ac3ae041e2b26fdcb1df4f98b27f12152}{T\-P\-S}, \hyperlink{classAffine_a64387caa4e95c06167fc2d6afa453110}{Affine}, \hyperlink{classCornerHomography_a09026e49b30f58affc5b0324747c8d1e}{Corner\-Homography}, \hyperlink{classTranslation_a636f8ce8dd8d4d72c2f110a2aeef7fc9}{Translation}, \hyperlink{classHomography_a2d9bf9a73b33fe6ea5537d1ab790aa0b}{Homography}, and \hyperlink{classTranscaling_ab349cd5b1915285f96ec447046540a44}{Transcaling}.
+
+\hypertarget{classStateSpaceModel_ac956c679581e746891c62755fe715b3b}{\index{State\-Space\-Model@{State\-Space\-Model}!cmpt\-Init\-Pix\-Jacobian@{cmpt\-Init\-Pix\-Jacobian}}
+\index{cmpt\-Init\-Pix\-Jacobian@{cmpt\-Init\-Pix\-Jacobian}!StateSpaceModel@{State\-Space\-Model}}
+\subsubsection[{cmpt\-Init\-Pix\-Jacobian}]{\setlength{\rightskip}{0pt plus 5cm}virtual void State\-Space\-Model\-::cmpt\-Init\-Pix\-Jacobian (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd \&}]{jacobian\-\_\-prod, }
+\item[{const Pix\-Grad\-T \&}]{pixel\-\_\-grad}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classStateSpaceModel_ac956c679581e746891c62755fe715b3b}
+
+
+right multiplies the initial or current ssm jacobian with the provided am jacobian; though this can be accomplished by the search method itself with simple matrix multiplication, the ssm jacobian often satisfies several constraints (e.\-g. 
+
+sparsity) that can be exploited to gain computational savings by manually computing the product matrix 
+
+Reimplemented in \hyperlink{classSpline_a8db3ad0a056e94f2adc7503677fd1675}{Spline}, \hyperlink{classLieAffine_a25b82bb4020629dfaa792b71e6b74567}{Lie\-Affine}, \hyperlink{classSimilitude_a96e413d6abded447be0230c3ad7718bd}{Similitude}, \hyperlink{classLieIsometry_a3959b6cf83ac76224c58902f8a4c41aa}{Lie\-Isometry}, \hyperlink{classSL3_a5942f2e2cdd33447fa6eedd5a9104dc9}{S\-L3}, \hyperlink{classLieHomography_af27ac56fd834a994901949548db721ff}{Lie\-Homography}, \hyperlink{classIsometry_aec3c4d4f20d5c34ee3ab79747e6e1532}{Isometry}, \hyperlink{classTPS_ac3ae041e2b26fdcb1df4f98b27f12152}{T\-P\-S}, \hyperlink{classAffine_a64387caa4e95c06167fc2d6afa453110}{Affine}, \hyperlink{classCornerHomography_a09026e49b30f58affc5b0324747c8d1e}{Corner\-Homography}, \hyperlink{classTranslation_a636f8ce8dd8d4d72c2f110a2aeef7fc9}{Translation}, \hyperlink{classHomography_a2d9bf9a73b33fe6ea5537d1ab790aa0b}{Homography}, and \hyperlink{classTranscaling_ab349cd5b1915285f96ec447046540a44}{Transcaling}.
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+S\-S\-M/include/mtf/\-S\-S\-M/State\-Space\-Model.\-h\item 
+S\-S\-M/include/mtf/\-S\-S\-M/Stochastic\-Sampler.\-h\end{DoxyCompactItemize}

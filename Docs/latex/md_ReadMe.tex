@@ -1,0 +1,138 @@
+Welcome to the home of {\bfseries Modular Tracking Framework (M\-T\-F)} -\/ a highly efficient and extensible library for \href{https://en.wikipedia.org/wiki/Kanade%E2%80%93Lucas%E2%80%93Tomasi_feature_tracker}{\tt $\ast$$\ast$registration based tracking$\ast$$\ast$} that utilizes a modular decomposition of trackers in this domain. Each tracker within this framework comprises the following 3 modules\-:
+
+
+\begin{DoxyEnumerate}
+\item {\bfseries Search Method (S\-M)}\-: \href{http://far.in.tum.de/pub/benhimane2007ijcv/benhimane2007ijcv.pdf}{\tt E\-S\-M}, \href{http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=990652&url=http%3A%2F%2Fieeexplore.ieee.org%2Fiel5%2F7768%2F21353%2F00990652.pdf%3Farnumber%3D990652}{\tt I\-C}, \href{http://dl.acm.org/citation.cfm?id=290123}{\tt I\-A}, \href{http://link.springer.com/article/10.1023%2FA%3A1008195814169}{\tt F\-C}, \href{http://dl.acm.org/citation.cfm?id=1623280}{\tt F\-A}, \href{http://www.comp.nus.edu.sg/~haoyu/rss/rss09/p44.html}{\tt N\-N}, \href{http://cv.snu.ac.kr/jhkwon/PAMI14_tracking/index.htm}{\tt P\-F} or \href{http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7158323&url=http%3A%2F%2Fieeexplore.ieee.org%2Fiel7%2F7158225%2F7158304%2F07158323.pdf%3Farnumber%3D7158323}{\tt R\-A\-N\-S\-A\-C}
+\item {\bfseries Appearance Model (A\-M)}\-: S\-S\-D, Z\-N\-C\-C, S\-C\-V, N\-C\-C, M\-I, C\-C\-R\-E K\-L\-D, S\-S\-I\-M or S\-P\-S\-S
+\item {\bfseries State Space Model (S\-S\-M)}\-: Homography (8 dof), Affine (6 dof), Similitude(4 dof), Isometery (3 dof) or pure Translation (2 dof)
+\end{DoxyEnumerate}
+
+Please refer \href{http://webdocs.cs.ualberta.ca/~asingh1/docs/Modular%20Tracking%20Framework%20A%20Uni%EF%AC%81ed%20Approach%20to%20Registration%20based%20Tracking%20(CRV%202016}{\tt this paper}.pdf) for more details on the system design and \href{http://webdocs.cs.ualberta.ca/~asingh1/docs/Modular%20Decomposition%20and%20Analysis%20of%20Registration%20based%20Trackers%20(CRV%202016}{\tt this one}.pdf) for some preliminary results. There is also an \href{http://webdocs.cs.ualberta.ca/~vis/mtf/}{\tt $\ast$$\ast$official website$\ast$$\ast$} where Doxygen documentation will soon be available along with detailed tutorials and examples. It also provides several datasets formatted to work with M\-T\-F.
+
+The library is implemented entirely in C++ though a Python interface called {\ttfamily py\-M\-T\-F} also exists and works seamlessly with our \href{https://bitbucket.org/abhineet123/ptf}{\tt Python Tracking Framework}. A Matlab interface similar to \href{http://ugweb.cs.ualberta.ca/~vis/courses/CompVis/lab/mexVision/}{\tt Mexvision} is currently under development too.
+
+We also provide a simple interface for \href{http://www.ros.org/}{\tt R\-O\-S} called \href{https://gitlab.com/vis/mtf_bridge}{\tt mtf\-\_\-bridge} for seamless integration with robotics applications.
+
+\subsection*{Installation\-: }
+
+
+\begin{DoxyItemize}
+\item Prerequisites\-:
+\begin{DoxyItemize}
+\item M\-T\-F uses some \href{https://en.wikipedia.org/wiki/C%2B%2B11}{\tt C++11} features so a supporting compiler is needed (\href{https://gcc.gnu.org/projects/cxx0x.html}{\tt G\-C\-C 4.\-7} or newer)
+\item \href{http://eigen.tuxfamily.org/index.php?title=Main_Page}{\tt Eigen} should be installed and added to the C/\-C++ include paths. This can be done, for instance, by running {\ttfamily echo \char`\"{}export C\-\_\-\-I\-N\-C\-L\-U\-D\-E\-\_\-\-P\-A\-T\-H=\$\-C\-\_\-\-I\-N\-C\-L\-U\-D\-E\-\_\-\-P\-A\-T\-H\-:/usr/include/eigen3\char`\"{} $>$$>$ $\sim$/.bashrc} and {\ttfamily echo \char`\"{}export C\-P\-L\-U\-S\-\_\-\-I\-N\-C\-L\-U\-D\-E\-\_\-\-P\-A\-T\-H=\$\-C\-P\-L\-U\-S\-\_\-\-I\-N\-C\-L\-U\-D\-E\-\_\-\-P\-A\-T\-H\-:/usr/include/eigen3\char`\"{} $>$$>$ $\sim$/.bashrc} assuming that Eigen is installed in \-\_\-/usr/include/eigen3\-\_\-
+\item \href{http://opencv.org/}{\tt Open\-C\-V} should be installed.
+\item \href{http://www.cs.ubc.ca/research/flann/}{\tt F\-L\-A\-N\-N library} and its dependency \href{https://www.hdfgroup.org/HDF5/release/obtain5.html}{\tt H\-D\-F5} should be installed for the N\-N search method
+\begin{DoxyItemize}
+\item N\-N can be disabled at compile time using nn=0 if these are not available (see below)
+\end{DoxyItemize}
+\item \href{http://www.boost.org/}{\tt Boost Library} should be installed
+\item \href{https://www.threadingbuildingblocks.org/}{\tt Intel T\-B\-B} / \href{http://openmp.org/wp/}{\tt Open\-M\-P} should be installed if parallelization is to be enabled.
+\item \href{https://visp.inria.fr/}{\tt Vi\-S\-P library} should be installed if its \href{https://visp.inria.fr/template-tracking/}{\tt template tracker module} or \href{http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html}{\tt input pipeline} is enabled during compilation (see below).
+\begin{DoxyItemize}
+\item Note that \href{http://gforge.inria.fr/frs/download.php/latestfile/475/visp-3.0.0.zip}{\tt version 3.\-0.\-0}+ is required. The Ubuntu apt package is 2.\-8 and is therefore incompatible.
+\end{DoxyItemize}
+\item \href{https://bitbucket.org/abhineet123/xvision2}{\tt Xvision} should be installed if it is enabled during compilation (see below).
+\end{DoxyItemize}
+\item Download the source code using {\ttfamily git clone \href{https://abhineet123}{\tt https\-://abhineet123}@bitbucket.\-org/abhineet123/mtf.git}.
+\item M\-T\-F comes with both a \href{https://www.gnu.org/software/make/}{\tt make} and a \href{https://cmake.org/}{\tt cmake} build system where the former is recommended for developers/contributors as it offers finer level of control while the latter is for users of the library who only want to install it once (or when the former does not work). For cmake, first use the \href{https://cmake.org/runningcmake/}{\tt standard method} (i.\-e. {\ttfamily mkdir build \&\& cd build \&\& cmake ..}) to create the makefile and then use one of the make commands as specified below.
+\item Use one of the following make commands to compile and install the library and the demo application\-:
+\begin{DoxyItemize}
+\item {\ttfamily make} or {\ttfamily make mtf} \-: compiles the shared library ({\itshape libmtf.\-so}) to the build directory ({\itshape Build/\-Release})
+\item {\ttfamily make install} \-: compiles the shared library if needed and copies it to \-\_\-/usr/lib\-\_\-; also copies the headers to \-\_\-/usr/include/mtf\-\_\-; this needs administrative (sudo) privilege.
+\begin{DoxyItemize}
+\item if this is not available, then the variables {\ttfamily M\-T\-F\-\_\-\-L\-I\-B\-\_\-\-I\-N\-S\-T\-A\-L\-L\-\_\-\-D\-I\-R} and {\ttfamily M\-T\-F\-\_\-\-H\-E\-A\-D\-E\-R\-\_\-\-I\-N\-S\-T\-A\-L\-L\-\_\-\-D\-I\-R} in the makefile can be modified to install elsewhere. This can be done either by editing the file itself or providing these with the make command as\-: {\ttfamily make install M\-T\-F\-\_\-\-L\-I\-B\-\_\-\-I\-N\-S\-T\-A\-L\-L\-\_\-\-D\-I\-R=$<$library\-\_\-installation\-\_\-dir$>$ M\-T\-F\-\_\-\-H\-E\-A\-D\-E\-R\-\_\-\-I\-N\-S\-T\-A\-L\-L\-\_\-\-D\-I\-R=$<$header\-\_\-installation\-\_\-dir$>$}
+\begin{DoxyItemize}
+\item these folders should be present in L\-D\-\_\-\-L\-I\-B\-R\-A\-R\-Y\-\_\-\-P\-A\-T\-H and C\-\_\-\-I\-N\-C\-L\-U\-D\-E\-\_\-\-P\-A\-T\-H/\-C\-P\-L\-U\-S\-\_\-\-I\-N\-C\-L\-U\-D\-E\-\_\-\-P\-A\-T\-H environment variables respectively
+\end{DoxyItemize}
+\end{DoxyItemize}
+\item {\ttfamily make mtfe} compiles the example file {\itshape Examples/run\-M\-T\-F.\-cc} to create an executable called {\itshape run\-M\-T\-F} that uses this library to track objects. This too is placed in the build directory.
+\item {\ttfamily make install\-\_\-exec}\-: creates {\itshape run\-M\-T\-F} if needed and copies it to \-\_\-/usr/bin\-\_\-; this needs administrative privilege too -\/ change {\ttfamily M\-T\-F\-\_\-\-E\-X\-E\-C\-\_\-\-I\-N\-S\-T\-A\-L\-L\-\_\-\-D\-I\-R} in Examples/\-Examples.\-mak if this is not available
+\item $\ast$$\ast${\ttfamily make mtfi}$\ast$$\ast$ \-: all of the above -\/ {\bfseries recommended command that compiles and installs the library and the executable}
+\item {\ttfamily make mtfp} \-: compile the Python interface to M\-T\-F -\/ this creates a Python module called {\itshape py\-M\-T\-F.\-so} that serves as a front end for running these trackers from Python. Usage of this module is fully demonstrated in the {\ttfamily mtf\-Tracker.\-py} file in our \href{https://bitbucket.org/abhineet123/ptf}{\tt Python Tracking Framework}
+\item Compile time switches for all of the above commands (only applicable to the make build system -\/ for cmake there are corresponding options that can be configured before building its makefile)\-:
+\begin{DoxyItemize}
+\item {\ttfamily only\-\_\-nt=1} will enable only the {\bfseries Non Templated (N\-T)} implementations of S\-Ms and disable their templated implementations that are extremely time consuming to compile though being faster at runtime (enabled by default)
+\begin{DoxyItemize}
+\item can be very useful for rapid debugging of A\-Ms and S\-S\-Ms where headers need to be modified;
+\item the N\-T implementation of N\-N only works with G\-N\-N since F\-L\-A\-N\-N library needs its object to be templated on the A\-M;
+\end{DoxyItemize}
+\item {\ttfamily nn=0} will disable the templated implementation of N\-N search method (enabled by default).
+\begin{DoxyItemize}
+\item should be specified if F\-L\-A\-N\-N is not available
+\item only matters if the previous option is not specified
+\end{DoxyItemize}
+\item {\ttfamily lt=0} will disable the third party open source learning based trackers -\/ \href{http://www.cvl.isy.liu.se/en/research/objrec/visualtracking/scalvistrack/index.html}{\tt D\-S\-S\-T}, \href{http://home.isr.uc.pt/~henriques/circulant/}{\tt K\-C\-F}, \href{http://www.gnebehay.com/cmt/}{\tt C\-M\-T}, \href{http://www.gnebehay.com/tld/}{\tt T\-L\-D}, \href{http://www4.comp.polyu.edu.hk/~cslzhang/CT/CT.htm}{\tt R\-C\-T}, \href{http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=5206737&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D5206737}{\tt M\-I\-L}, \href{http://www.samhare.net/research/struck, [Fragments based tracker](http://www.cs.technion.ac.il/~amita/fragtrack/fragtrack.htm}{\tt Struck} and \href{http://cvlab.epfl.ch/page-107683-en.html}{\tt Descriptor Fields Tracker (D\-F\-T)} -\/ that are also bundled with this library (in {\itshape Third\-Party} subfolder) (enabled by default).
+\item {\ttfamily vp=1} will enable Vi\-S\-P template trackers and input pipeline(disabled by default).
+\item {\ttfamily xv=1} will enable Xvision trackers and input pipeline (disabled by default and not recommended).
+\item {\ttfamily o=0} will compile the library in debug mode ({\itshape libmtf\-\_\-debug.\-so}) and disable optimization -\/ the corresponding executable is called {\itshape run\-M\-T\-Fd}
+\end{DoxyItemize}
+\item Clean up commands\-:
+\begin{DoxyItemize}
+\item {\ttfamily make clean} \-: removes all the .o files and the .so file created during compilation from the Build folder folder
+\item {\ttfamily make mtfc} \-: also removes the executable
+\end{DoxyItemize}
+\end{DoxyItemize}
+\end{DoxyItemize}
+
+\subsection*{Setting Parameters\-: }
+
+M\-T\-F parameters can be specified either in the {\itshape cfg} files present in the {\itshape Config} sub folder or from the command line. Please refer the Read\-Me in the $\ast$$\ast$\-\_\-\-Config\-\_\-$\ast$$\ast$ sub folder for detailed instructions.
+
+\subsection*{Running the demo application\-: }
+
+Use either {\ttfamily make run} or {\ttfamily run\-M\-T\-F} to start the tracking application using the settings specified as above.
+
+\section*{$\ast$$\ast$\-For Developers$\ast$$\ast$ }
+
+\subsection*{Adding a new Appearance Model (A\-M) or State Space Model (S\-S\-M)\-: }
+
+\subsection*{make }
+
+
+\begin{DoxyEnumerate}
+\item Modify the .mak file in the respective sub directory to\-:
+\begin{DoxyItemize}
+\item add the name of the A\-M/\-S\-S\-M to the variable {\ttfamily A\-P\-P\-E\-A\-R\-A\-N\-C\-E\-\_\-\-M\-O\-D\-E\-L\-S} or {\ttfamily S\-T\-A\-T\-E\-\_\-\-S\-P\-A\-C\-E\-\_\-\-M\-O\-D\-E\-L\-S} respectively
+\item add rule to compile the .o of the new A\-M/\-S\-S\-M that is dependent on its source and header files -\/ simplest method would be to copy an existing command and change the names of the model.
+\end{DoxyItemize}
+\item Modify makefile to add any extra dependencies that the new files need to include under variable {\ttfamily F\-L\-A\-G\-S64} and extra libraries to link against under {\ttfamily L\-I\-B\-\_\-\-M\-T\-F\-\_\-\-L\-I\-B\-S}
+\end{DoxyEnumerate}
+
+\subsection*{cmake }
+
+
+\begin{DoxyEnumerate}
+\item -\/ Modify the A\-M/\-A\-M.\-cmake file to add the name of the A\-M to set(A\-P\-P\-E\-A\-R\-A\-N\-C\-E\-\_\-\-M\-O\-D\-E\-L\-S …)
+\begin{DoxyItemize}
+\item Modify the S\-M/\-S\-M.\-cmake file to add the name of the S\-M to set(S\-E\-A\-R\-C\-H\-\_\-\-M\-E\-T\-H\-O\-D\-S …)
+\end{DoxyItemize}
+\item Modify \char`\"{}mtf.\-h\char`\"{} to add a new A\-M/\-S\-S\-M option in the overloaded function {\ttfamily get\-Tracker\-Obj} (starting lines 498 and 533 respectively) that can be used with your config file to pick the A\-M/\-S\-S\-M, and create an object with this selected model.
+\item Modify \char`\"{}\-Macros/register.\-h\char`\"{} to add the new A\-M/\-S\-S\-M class name under {\ttfamily \-\_\-\-R\-E\-G\-I\-S\-T\-E\-R\-\_\-\-T\-R\-A\-C\-K\-E\-R\-S\-\_\-\-A\-M/\-\_\-\-R\-E\-G\-I\-S\-T\-E\-R\-\_\-\-H\-T\-R\-A\-C\-K\-E\-R\-S\-\_\-\-A\-M} or {\ttfamily \-\_\-\-R\-E\-G\-I\-S\-T\-E\-R\-\_\-\-T\-R\-A\-C\-K\-E\-R\-S/\-\_\-\-R\-E\-G\-I\-S\-T\-E\-R\-\_\-\-T\-R\-A\-C\-K\-E\-R\-S\-\_\-\-S\-S\-M/\-\_\-\-R\-E\-G\-I\-S\-T\-E\-R\-\_\-\-H\-T\-R\-A\-C\-K\-E\-R\-S/\-\_\-\-R\-E\-G\-I\-S\-T\-E\-R\-\_\-\-H\-T\-R\-A\-C\-K\-E\-R\-S\-\_\-\-S\-S\-M} respectively
+\end{DoxyEnumerate}
+
+All steps are identical for adding a new Search Method (S\-M) too except the last one which is not needed. Instead this header needs to be included and the appropriate macro needs to be called from its source file to register the S\-M with all existing A\-Ms and S\-S\-Ms. Refer to the last 2 lines of the .cc file of any existing S\-M to see how to do this.
+
+\subsection*{Example\-: Implementing a minimalistic A\-M that can be used with N\-N search method\-: }
+
+You need to create a new derived class from Appearance\-Model. Implement the following functions\-:
+
+
+\begin{DoxyEnumerate}
+\item {\ttfamily initialize\-Pix\-Vals/update\-Pix\-Vals} \-: takes the current location of the object as a 2x\-N matrix where N = no. of sampled points and each column contains the x,y coordinates of one point. By default, it is simply supposed to extract the pixel values at these locations from the current image but there is no restriction by design and you are free to compute anything from these pixel values.
+\item {\ttfamily initialize\-Dist\-Feat/update\-Dist\-Feat} \-: these compute a distance feature transform from the current patch.
+\item {\ttfamily get\-Dist\-Feat}\-: returns a pointer to an array containing the distance feature vector computed by the above function. There is also an overloaded variant of update\-Dist\-Feat that takes a pointer as input and directly writes this feature vector to the pre-\/allocated array pointed to by this pointer.
+\item distance functor ({\ttfamily operator()})\-: computes a scalar that measures the dissimilarity or distance between two feature vectors (obtained using the previous two functions).
+\end{DoxyEnumerate}
+
+\subsection*{Example\-: Implementing a minimalistic A\-M that can be used with Particle Filter search method\-: }
+
+You need to create a new derived class from Appearance\-Model. Implement the following functions\-:
+
+
+\begin{DoxyEnumerate}
+\item Same as with N\-N. No need to overwrite if just need to extract the pixel values
+\item {\ttfamily get\-Likelihood}\-: get the likelihood/weights of the particle
+\item {\ttfamily initialize}\-: initialize some class variables like the initial features.
+\item {\ttfamily update}\-: update the similarty between current patch and the template 
+\end{DoxyEnumerate}

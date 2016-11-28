@@ -1,0 +1,104 @@
+\hypertarget{classLevMarq}{\section{Lev\-Marq Class Reference}
+\label{classLevMarq}\index{Lev\-Marq@{Lev\-Marq}}
+}
+
+
+Levenberg Marquardt Solver for refining estimated S\-S\-M paarameters copied from Cv\-Lev\-Marq in calib3d module of Open\-C\-V.  
+
+
+
+
+{\ttfamily \#include $<$S\-S\-M\-Estimator.\-h$>$}
+
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \{ {\bfseries D\-O\-N\-E} = 0, 
+{\bfseries S\-T\-A\-R\-T\-E\-D} = 1, 
+{\bfseries C\-A\-L\-C\-\_\-\-J} = 2, 
+{\bfseries C\-H\-E\-C\-K\-\_\-\-E\-R\-R} = 3
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classLevMarq_a99bcd18817a2cc94b6a35a1719951f8a}{{\bfseries Lev\-Marq} (int nparams, int nerrs, Cv\-Term\-Criteria criteria=cv\-Term\-Criteria(C\-V\-\_\-\-T\-E\-R\-M\-C\-R\-I\-T\-\_\-\-E\-P\-S+C\-V\-\_\-\-T\-E\-R\-M\-C\-R\-I\-T\-\_\-\-I\-T\-E\-R, 30, D\-B\-L\-\_\-\-E\-P\-S\-I\-L\-O\-N), bool complete\-Symm\-Flag=false)}\label{classLevMarq_a99bcd18817a2cc94b6a35a1719951f8a}
+
+\item 
+\hypertarget{classLevMarq_a367aac3258cff53fb39d59d499f7b21b}{void {\bfseries init} (int nparams, int nerrs, Cv\-Term\-Criteria criteria=cv\-Term\-Criteria(C\-V\-\_\-\-T\-E\-R\-M\-C\-R\-I\-T\-\_\-\-E\-P\-S+C\-V\-\_\-\-T\-E\-R\-M\-C\-R\-I\-T\-\_\-\-I\-T\-E\-R, 30, D\-B\-L\-\_\-\-E\-P\-S\-I\-L\-O\-N), bool complete\-Symm\-Flag=false)}\label{classLevMarq_a367aac3258cff53fb39d59d499f7b21b}
+
+\item 
+\hypertarget{classLevMarq_a2d71b01830f3c56b707f794518780e90}{bool {\bfseries update} (const Cv\-Mat $\ast$\&param, Cv\-Mat $\ast$\&J, Cv\-Mat $\ast$\&err)}\label{classLevMarq_a2d71b01830f3c56b707f794518780e90}
+
+\item 
+\hypertarget{classLevMarq_ac68ac93b105cf0bacc9d694149592a3c}{bool {\bfseries update\-Alt} (const Cv\-Mat $\ast$\&param, Cv\-Mat $\ast$\&Jt\-J, Cv\-Mat $\ast$\&Jt\-Err, double $\ast$\&err\-Norm)}\label{classLevMarq_ac68ac93b105cf0bacc9d694149592a3c}
+
+\item 
+\hypertarget{classLevMarq_acf5194a53c5be41b88465a0984bea9b8}{void {\bfseries clear} ()}\label{classLevMarq_acf5194a53c5be41b88465a0984bea9b8}
+
+\item 
+\hypertarget{classLevMarq_aace014ab6b2063babe12aabf0311c24c}{void {\bfseries step} ()}\label{classLevMarq_aace014ab6b2063babe12aabf0311c24c}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classLevMarq_aecf74aea14045cfe1f6f72e857fe6c2c}{cv\-::\-Ptr$<$ Cv\-Mat $>$ {\bfseries mask}}\label{classLevMarq_aecf74aea14045cfe1f6f72e857fe6c2c}
+
+\item 
+\hypertarget{classLevMarq_af46d799bda945c496c44c11cf1fa5998}{cv\-::\-Ptr$<$ Cv\-Mat $>$ {\bfseries prev\-Param}}\label{classLevMarq_af46d799bda945c496c44c11cf1fa5998}
+
+\item 
+\hypertarget{classLevMarq_a7728fec5d3f0d5cdc5ddafb267c41fca}{cv\-::\-Ptr$<$ Cv\-Mat $>$ {\bfseries param}}\label{classLevMarq_a7728fec5d3f0d5cdc5ddafb267c41fca}
+
+\item 
+\hypertarget{classLevMarq_a18acce9e7d1c4347fe46d8bd311072c4}{cv\-::\-Ptr$<$ Cv\-Mat $>$ {\bfseries J}}\label{classLevMarq_a18acce9e7d1c4347fe46d8bd311072c4}
+
+\item 
+\hypertarget{classLevMarq_a1da29ce46ef7ad8968452d3635714fba}{cv\-::\-Ptr$<$ Cv\-Mat $>$ {\bfseries err}}\label{classLevMarq_a1da29ce46ef7ad8968452d3635714fba}
+
+\item 
+\hypertarget{classLevMarq_a185126576a30353096b91aa9a4b53055}{cv\-::\-Ptr$<$ Cv\-Mat $>$ {\bfseries Jt\-J}}\label{classLevMarq_a185126576a30353096b91aa9a4b53055}
+
+\item 
+\hypertarget{classLevMarq_a3b8a32b02fb2f26a6aa70dcbf683337f}{cv\-::\-Ptr$<$ Cv\-Mat $>$ {\bfseries Jt\-J\-N}}\label{classLevMarq_a3b8a32b02fb2f26a6aa70dcbf683337f}
+
+\item 
+\hypertarget{classLevMarq_ad1354639ef42ce751ca02059366dc17d}{cv\-::\-Ptr$<$ Cv\-Mat $>$ {\bfseries Jt\-Err}}\label{classLevMarq_ad1354639ef42ce751ca02059366dc17d}
+
+\item 
+\hypertarget{classLevMarq_ade52c74834b2d02b3fe3ada9f222f39e}{cv\-::\-Ptr$<$ Cv\-Mat $>$ {\bfseries Jt\-J\-V}}\label{classLevMarq_ade52c74834b2d02b3fe3ada9f222f39e}
+
+\item 
+\hypertarget{classLevMarq_ae17c0c8c9371039ed613fc0742c3441a}{cv\-::\-Ptr$<$ Cv\-Mat $>$ {\bfseries Jt\-J\-W}}\label{classLevMarq_ae17c0c8c9371039ed613fc0742c3441a}
+
+\item 
+\hypertarget{classLevMarq_ab4eda72ffe360d5b8a85bd7240505dc8}{double {\bfseries prev\-Err\-Norm}}\label{classLevMarq_ab4eda72ffe360d5b8a85bd7240505dc8}
+
+\item 
+\hypertarget{classLevMarq_a77ff573168949fedc7d7c5edf9079e5a}{double {\bfseries err\-Norm}}\label{classLevMarq_a77ff573168949fedc7d7c5edf9079e5a}
+
+\item 
+\hypertarget{classLevMarq_a0f143ad88c9c8825b11e0a7554f448da}{int {\bfseries lambda\-Lg10}}\label{classLevMarq_a0f143ad88c9c8825b11e0a7554f448da}
+
+\item 
+\hypertarget{classLevMarq_a2aa05304ef18ed081a3441d6a322095a}{Cv\-Term\-Criteria {\bfseries criteria}}\label{classLevMarq_a2aa05304ef18ed081a3441d6a322095a}
+
+\item 
+\hypertarget{classLevMarq_abc150716b5ae44cc893cd9cdd68678e6}{int {\bfseries state}}\label{classLevMarq_abc150716b5ae44cc893cd9cdd68678e6}
+
+\item 
+\hypertarget{classLevMarq_a962aabb6f91fd7ab62dc8e3c1c0587fc}{int {\bfseries iters}}\label{classLevMarq_a962aabb6f91fd7ab62dc8e3c1c0587fc}
+
+\item 
+\hypertarget{classLevMarq_a27165a637c591387639f1ec8e687e3b5}{bool {\bfseries complete\-Symm\-Flag}}\label{classLevMarq_a27165a637c591387639f1ec8e687e3b5}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Levenberg Marquardt Solver for refining estimated S\-S\-M paarameters copied from Cv\-Lev\-Marq in calib3d module of Open\-C\-V. 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-S\-M/include/mtf/\-S\-S\-M/S\-S\-M\-Estimator.\-h\end{DoxyCompactItemize}

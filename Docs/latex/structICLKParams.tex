@@ -1,0 +1,74 @@
+\hypertarget{structICLKParams}{\section{I\-C\-L\-K\-Params Struct Reference}
+\label{structICLKParams}\index{I\-C\-L\-K\-Params@{I\-C\-L\-K\-Params}}
+}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bfseries Hess\-Type} \{ {\bfseries Initial\-Self}, 
+{\bfseries Current\-Self}, 
+{\bfseries Std}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structICLKParams_a2af0cd6dfd77ac0fb5ecf4e50485a970}{I\-C\-L\-K\-Params} (int \-\_\-max\-\_\-iters, double \-\_\-epsilon, Hess\-Type \-\_\-hess\-\_\-type, bool \-\_\-sec\-\_\-ord\-\_\-hess, bool \-\_\-update\-\_\-ssm, bool \-\_\-chained\-\_\-warp, bool \-\_\-debug\-\_\-mode)
+\begin{DoxyCompactList}\small\item\em decides whether logging data will be printed for debugging purposes; \end{DoxyCompactList}\item 
+\hypertarget{structICLKParams_a9a13691f0aaf8d10e4700e77ddeb6270}{{\bfseries I\-C\-L\-K\-Params} (const \hyperlink{structICLKParams}{I\-C\-L\-K\-Params} $\ast$params=nullptr)}\label{structICLKParams_a9a13691f0aaf8d10e4700e77ddeb6270}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structICLKParams_af84dd9fd7cbcdf2219943d35a80b4005}{static const char $\ast$ {\bfseries to\-String} (Hess\-Type \hyperlink{structICLKParams_a07bb2297e80debb470a3696e1e1877c6}{hess\-\_\-type})}\label{structICLKParams_af84dd9fd7cbcdf2219943d35a80b4005}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structICLKParams_a61c0bc94051ecefae6ffd263ec5bb6e0}{int {\bfseries max\-\_\-iters}}\label{structICLKParams_a61c0bc94051ecefae6ffd263ec5bb6e0}
+
+\item 
+\hypertarget{structICLKParams_a4390c0932e546ff1f947af5d0b24b162}{double \hyperlink{structICLKParams_a4390c0932e546ff1f947af5d0b24b162}{epsilon}}\label{structICLKParams_a4390c0932e546ff1f947af5d0b24b162}
+
+\begin{DoxyCompactList}\small\item\em maximum iterations of the \hyperlink{classICLK}{I\-C\-L\-K} algorithm to run for each frame \end{DoxyCompactList}\item 
+\hypertarget{structICLKParams_a07bb2297e80debb470a3696e1e1877c6}{Hess\-Type \hyperlink{structICLKParams_a07bb2297e80debb470a3696e1e1877c6}{hess\-\_\-type}}\label{structICLKParams_a07bb2297e80debb470a3696e1e1877c6}
+
+\begin{DoxyCompactList}\small\item\em maximum L2 norm of the state update vector at which to stop the iterations \end{DoxyCompactList}\item 
+\hypertarget{structICLKParams_aae7c66e6a6d77b2a3a95891064ec3cf2}{bool {\bfseries sec\-\_\-ord\-\_\-hess}}\label{structICLKParams_aae7c66e6a6d77b2a3a95891064ec3cf2}
+
+\item 
+\hypertarget{structICLKParams_a8e6e92fada7da215608de2913d77c1bf}{bool {\bfseries update\-\_\-ssm}}\label{structICLKParams_a8e6e92fada7da215608de2913d77c1bf}
+
+\item 
+\hypertarget{structICLKParams_a69537756ab955142e5f1a6302e6449a6}{bool {\bfseries chained\-\_\-warp}}\label{structICLKParams_a69537756ab955142e5f1a6302e6449a6}
+
+\item 
+\hypertarget{structICLKParams_a09054b8d4a1aac5060ddf2850ec989be}{bool {\bfseries debug\-\_\-mode}}\label{structICLKParams_a09054b8d4a1aac5060ddf2850ec989be}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{structICLKParams_a2af0cd6dfd77ac0fb5ecf4e50485a970}{\index{I\-C\-L\-K\-Params@{I\-C\-L\-K\-Params}!I\-C\-L\-K\-Params@{I\-C\-L\-K\-Params}}
+\index{I\-C\-L\-K\-Params@{I\-C\-L\-K\-Params}!ICLKParams@{I\-C\-L\-K\-Params}}
+\subsubsection[{I\-C\-L\-K\-Params}]{\setlength{\rightskip}{0pt plus 5cm}I\-C\-L\-K\-Params\-::\-I\-C\-L\-K\-Params (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-max\-\_\-iters, }
+\item[{double}]{\-\_\-epsilon, }
+\item[{Hess\-Type}]{\-\_\-hess\-\_\-type, }
+\item[{bool}]{\-\_\-sec\-\_\-ord\-\_\-hess, }
+\item[{bool}]{\-\_\-update\-\_\-ssm, }
+\item[{bool}]{\-\_\-chained\-\_\-warp, }
+\item[{bool}]{\-\_\-debug\-\_\-mode}
+\end{DoxyParamCaption}
+)}}\label{structICLKParams_a2af0cd6dfd77ac0fb5ecf4e50485a970}
+
+
+decides whether logging data will be printed for debugging purposes; 
+
+only matters if logging is enabled at compile time 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/I\-C\-L\-K\-Params.\-h\end{DoxyCompactItemize}

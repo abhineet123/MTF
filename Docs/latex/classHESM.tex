@@ -1,0 +1,78 @@
+\hypertarget{classHESM}{\section{H\-E\-S\-M$<$ A\-M, S\-S\-M, S\-S\-M2 $>$ Class Template Reference}
+\label{classHESM}\index{H\-E\-S\-M$<$ A\-M, S\-S\-M, S\-S\-M2 $>$@{H\-E\-S\-M$<$ A\-M, S\-S\-M, S\-S\-M2 $>$}}
+}
+Inheritance diagram for H\-E\-S\-M$<$ A\-M, S\-S\-M, S\-S\-M2 $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classHESM}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classHESM_abf41db8320054f6d6832d01efa6ebf80}{typedef \hyperlink{structHESMParams}{H\-E\-S\-M\-Params} {\bfseries Param\-Type}}\label{classHESM_abf41db8320054f6d6832d01efa6ebf80}
+
+\item 
+\hypertarget{classHESM_af4b52c198e7fd03cee9524ae0d62fc7a}{typedef S\-S\-M2\-::\-Param\-Type {\bfseries S\-S\-M2\-Params}}\label{classHESM_af4b52c198e7fd03cee9524ae0d62fc7a}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classHESM_a71c77aa3cfab2430af02a0798cbd173f}{\hyperlink{classHESM_a71c77aa3cfab2430af02a0798cbd173f}{H\-E\-S\-M} (const \hyperlink{structHESMParams}{Param\-Type} $\ast$nesm\-\_\-params=N\-U\-L\-L, const \hyperlink{structAMParams}{A\-M\-Params} $\ast$am\-\_\-params=N\-U\-L\-L, const \hyperlink{structSSMParams}{S\-S\-M\-Params} $\ast$ssm\-\_\-params=N\-U\-L\-L, S\-S\-M2\-Params $\ast$ssm2\-\_\-params=N\-U\-L\-L)}\label{classHESM_a71c77aa3cfab2430af02a0798cbd173f}
+
+\begin{DoxyCompactList}\small\item\em A x S mean of the initial and current jacobians of the A\-M error vector w.\-r.\-t. the S\-S\-M state vector;. \end{DoxyCompactList}\item 
+\hypertarget{classHESM_aa0134870cb70c8123643d425549fd2b3}{void {\bfseries initialize} (const cv\-::\-Mat \&corners)}\label{classHESM_aa0134870cb70c8123643d425549fd2b3}
+
+\item 
+\hypertarget{classHESM_a3b5036e4cbf5aa113e43ead3efb61cb1}{void {\bfseries update} ()}\label{classHESM_a3b5036e4cbf5aa113e43ead3efb61cb1}
+
+\item 
+\hypertarget{classHESM_a1c2db3ae802c81f00b0c4093612c114d}{{\footnotesize template$<$class \-\_\-\-S\-S\-M $>$ }\\void {\bfseries update\-S\-S\-M} (\-\_\-\-S\-S\-M $\ast$\-\_\-ssm, \hyperlink{structSSMData}{S\-S\-M\-Data} \&\-\_\-data)}\label{classHESM_a1c2db3ae802c81f00b0c4093612c114d}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classHESM_a87e59e57ccec4467d7745c2d99219e6e}{\hyperlink{structHESMParams}{Param\-Type} {\bfseries params}}\label{classHESM_a87e59e57ccec4467d7745c2d99219e6e}
+
+\item 
+\hypertarget{classHESM_a6c1c00ffbc289e8028529807e8c0da50}{int {\bfseries frame\-\_\-id}}\label{classHESM_a6c1c00ffbc289e8028529807e8c0da50}
+
+\item 
+\hypertarget{classHESM_ad8a37b50b1f76c6598e3c76e497d733a}{char $\ast$ {\bfseries log\-\_\-fname}}\label{classHESM_ad8a37b50b1f76c6598e3c76e497d733a}
+
+\item 
+\hypertarget{classHESM_a6dba5f327ca9a5a158b62016d19a1708}{char $\ast$ {\bfseries time\-\_\-fname}}\label{classHESM_a6dba5f327ca9a5a158b62016d19a1708}
+
+\item 
+\hypertarget{classHESM_a40cfa5c9a331cbc73050639667eb451b}{S\-S\-M2 $\ast$ {\bfseries ssm2}}\label{classHESM_a40cfa5c9a331cbc73050639667eb451b}
+
+\item 
+\hypertarget{classHESM_ab2b7017dd86f6c2cebc5e07dba545cb2}{\hyperlink{structSSMData}{S\-S\-M\-Data} {\bfseries ssm\-\_\-data}}\label{classHESM_ab2b7017dd86f6c2cebc5e07dba545cb2}
+
+\item 
+\hypertarget{classHESM_ac426f9fe32f637e70f2e2d3d8a59f7de}{\hyperlink{structSSMData}{S\-S\-M\-Data} {\bfseries ssm2\-\_\-data}}\label{classHESM_ac426f9fe32f637e70f2e2d3d8a59f7de}
+
+\item 
+\hypertarget{classHESM_a05b53b1bef8dc84572c6e10d9b7bff42}{Matrix24d {\bfseries prev\-\_\-corners}}\label{classHESM_a05b53b1bef8dc84572c6e10d9b7bff42}
+
+\item 
+Matrix3d \hyperlink{classHESM_a2528f05cea5cc5c9485a5b31a9b6d092}{ssm2\-\_\-warp\-\_\-update}
+\begin{DoxyCompactList}\small\item\em N x S jacobians of the pixel values w.\-r.\-t the S\-S\-M state vector where N = resx $\ast$ resy is the no. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classHESM_a2528f05cea5cc5c9485a5b31a9b6d092}{\index{H\-E\-S\-M@{H\-E\-S\-M}!ssm2\-\_\-warp\-\_\-update@{ssm2\-\_\-warp\-\_\-update}}
+\index{ssm2\-\_\-warp\-\_\-update@{ssm2\-\_\-warp\-\_\-update}!HESM@{H\-E\-S\-M}}
+\subsubsection[{ssm2\-\_\-warp\-\_\-update}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class A\-M , class S\-S\-M , class S\-S\-M2 $>$ Matrix3d {\bf H\-E\-S\-M}$<$ A\-M, S\-S\-M, S\-S\-M2 $>$\-::ssm2\-\_\-warp\-\_\-update}}\label{classHESM_a2528f05cea5cc5c9485a5b31a9b6d092}
+
+
+N x S jacobians of the pixel values w.\-r.\-t the S\-S\-M state vector where N = resx $\ast$ resy is the no. 
+
+of pixels in the object patch 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/H\-E\-S\-M.\-h\end{DoxyCompactItemize}

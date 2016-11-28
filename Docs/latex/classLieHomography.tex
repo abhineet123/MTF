@@ -1,0 +1,96 @@
+\hypertarget{classLieHomography}{\section{Lie\-Homography Class Reference}
+\label{classLieHomography}\index{Lie\-Homography@{Lie\-Homography}}
+}
+Inheritance diagram for Lie\-Homography\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classLieHomography}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classLieHomography_afbeb5fbe72e4158bb822d91e87298d13}{typedef \hyperlink{structLieHomographyParams}{Lie\-Homography\-Params} {\bfseries Param\-Type}}\label{classLieHomography_afbeb5fbe72e4158bb822d91e87298d13}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classLieHomography_a01ab57ea6f24a99b3b8774489322875d}{{\bfseries Lie\-Homography} (const \hyperlink{structLieHomographyParams}{Param\-Type} $\ast$params\-\_\-in=nullptr)}\label{classLieHomography_a01ab57ea6f24a99b3b8774489322875d}
+
+\item 
+\hypertarget{classLieHomography_a720e62f9f5aadec738238c296d22c8c9}{void {\bfseries set\-Corners} (const Matrix24d \&corners) override}\label{classLieHomography_a720e62f9f5aadec738238c296d22c8c9}
+
+\item 
+\hypertarget{classLieHomography_a6d3d0f5d4f7ae3eb98f0c7569da7c358}{void {\bfseries compositional\-Update} (const Vector\-Xd \&state\-\_\-update) override}\label{classLieHomography_a6d3d0f5d4f7ae3eb98f0c7569da7c358}
+
+\item 
+\hypertarget{classLieHomography_ad34b258aeaa1949df61eb090ff30a3fd}{void {\bfseries get\-Init\-Pix\-Grad} (Matrix2\-Xd \&ssm\-\_\-grad, int pix\-\_\-id) override}\label{classLieHomography_ad34b258aeaa1949df61eb090ff30a3fd}
+
+\item 
+\hypertarget{classLieHomography_a33c5d7fb2748c795b7ec9ccb1e50054d}{void {\bfseries get\-Curr\-Pix\-Grad} (Matrix2\-Xd \&ssm\-\_\-grad, int pix\-\_\-id) override}\label{classLieHomography_a33c5d7fb2748c795b7ec9ccb1e50054d}
+
+\item 
+void \hyperlink{classLieHomography_af27ac56fd834a994901949548db721ff}{cmpt\-Init\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pix\-\_\-jacobian) override
+\begin{DoxyCompactList}\small\item\em right multiplies the initial or current ssm jacobian with the provided am jacobian; though this can be accomplished by the search method itself with simple matrix multiplication, the ssm jacobian often satisfies several constraints (e.\-g. \end{DoxyCompactList}\item 
+\hypertarget{classLieHomography_a3908d623952e7850f3b61fcf338c5d73}{void {\bfseries cmpt\-Warped\-Pix\-Jacobian} (Matrix\-Xd \&d\-I\-\_\-dp, const Pix\-Grad\-T \&d\-I\-\_\-dw) override}\label{classLieHomography_a3908d623952e7850f3b61fcf338c5d73}
+
+\item 
+\hypertarget{classLieHomography_ac1359f4b5b7d08970a540fb9f8b9023d}{void {\bfseries cmpt\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pix\-\_\-jacobian) override}\label{classLieHomography_ac1359f4b5b7d08970a540fb9f8b9023d}
+
+\item 
+\hypertarget{classLieHomography_af3c47617230a514c30ac37e249213f21}{void {\bfseries cmpt\-Approx\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pix\-\_\-jacobian) override}\label{classLieHomography_af3c47617230a514c30ac37e249213f21}
+
+\item 
+\hypertarget{classLieHomography_a9219fc12d8f9b38c988c5fd72f3996d5}{void {\bfseries estimate\-Warp\-From\-Corners} (Vector\-Xd \&state\-\_\-update, const Matrix24d \&in\-\_\-corners, const Matrix24d \&out\-\_\-corners) override}\label{classLieHomography_a9219fc12d8f9b38c988c5fd72f3996d5}
+
+\item 
+\hypertarget{classLieHomography_aa6874d732e2c9269fa0903034edec422}{void {\bfseries estimate\-Warp\-From\-Pts} (Vector\-Xd \&state\-\_\-update, vector$<$ uchar $>$ \&mask, const vector$<$ cv\-::\-Point2f $>$ \&in\-\_\-pts, const vector$<$ cv\-::\-Point2f $>$ \&out\-\_\-pts, const \hyperlink{structSSMEstimatorParams}{Estimator\-Params} \&est\-\_\-params) override}\label{classLieHomography_aa6874d732e2c9269fa0903034edec422}
+
+\item 
+\hypertarget{classLieHomography_adf69401801a0fe45066ea16a5bba51ff}{void {\bfseries invert\-State} (Vector\-Xd \&inv\-\_\-state, const Vector\-Xd \&state) override}\label{classLieHomography_adf69401801a0fe45066ea16a5bba51ff}
+
+\item 
+\hypertarget{classLieHomography_a3dd0fe245a98c615bf82e771cbcabe5e}{void {\bfseries cmpt\-Init\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad) override}\label{classLieHomography_a3dd0fe245a98c615bf82e771cbcabe5e}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classLieHomography_a37d204695e9465e02885be0e06cdc47c}{\hyperlink{structLieHomographyParams}{Param\-Type} {\bfseries params}}\label{classLieHomography_a37d204695e9465e02885be0e06cdc47c}
+
+\item 
+\hypertarget{classLieHomography_a1709f21df2f6af4bf25535c9a49b8577}{Matrix3d {\bfseries lie\-Alg\-Basis} \mbox{[}8\mbox{]}}\label{classLieHomography_a1709f21df2f6af4bf25535c9a49b8577}
+
+\item 
+\hypertarget{classLieHomography_a2ccf8d0c0c578fe55d5ba226c2286a3d}{Row\-Vector3d {\bfseries zero\-\_\-vec}}\label{classLieHomography_a2ccf8d0c0c578fe55d5ba226c2286a3d}
+
+\item 
+\hypertarget{classLieHomography_ac9e625abcadf407845509bcafd595696}{Matrix3d {\bfseries lie\-\_\-alg\-\_\-mat}}\label{classLieHomography_ac9e625abcadf407845509bcafd595696}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classLieHomography_af27ac56fd834a994901949548db721ff}{\index{Lie\-Homography@{Lie\-Homography}!cmpt\-Init\-Pix\-Jacobian@{cmpt\-Init\-Pix\-Jacobian}}
+\index{cmpt\-Init\-Pix\-Jacobian@{cmpt\-Init\-Pix\-Jacobian}!LieHomography@{Lie\-Homography}}
+\subsubsection[{cmpt\-Init\-Pix\-Jacobian}]{\setlength{\rightskip}{0pt plus 5cm}void Lie\-Homography\-::cmpt\-Init\-Pix\-Jacobian (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd \&}]{jacobian\-\_\-prod, }
+\item[{const Pix\-Grad\-T \&}]{pixel\-\_\-grad}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classLieHomography_af27ac56fd834a994901949548db721ff}
+
+
+right multiplies the initial or current ssm jacobian with the provided am jacobian; though this can be accomplished by the search method itself with simple matrix multiplication, the ssm jacobian often satisfies several constraints (e.\-g. 
+
+sparsity) that can be exploited to gain computational savings by manually computing the product matrix 
+
+Reimplemented from \hyperlink{classStateSpaceModel_ac956c679581e746891c62755fe715b3b}{State\-Space\-Model}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-S\-M/include/mtf/\-S\-S\-M/Lie\-Homography.\-h\end{DoxyCompactItemize}

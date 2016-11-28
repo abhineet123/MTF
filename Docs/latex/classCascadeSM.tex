@@ -1,0 +1,88 @@
+\hypertarget{classCascadeSM}{\section{Cascade\-S\-M$<$ A\-M, S\-S\-M $>$ Class Template Reference}
+\label{classCascadeSM}\index{Cascade\-S\-M$<$ A\-M, S\-S\-M $>$@{Cascade\-S\-M$<$ A\-M, S\-S\-M $>$}}
+}
+
+
+run multiple search methods in cascade with the same A\-M/\-S\-S\-M; although the code here is currently identical to \hyperlink{classCascadeTracker}{Cascade\-Tracker}, a seperate module exists for future extensions that take advantage of the additional information that is available to the Cascade through direct access to the underlying A\-M and S\-S\-M  
+
+
+
+
+{\ttfamily \#include $<$Cascade\-S\-M.\-h$>$}
+
+Inheritance diagram for Cascade\-S\-M$<$ A\-M, S\-S\-M $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classCascadeSM}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCascadeSM_a2160669d0a3c681e6f6dd96daf67f3bc}{typedef \hyperlink{structCascadeParams}{Cascade\-Params} {\bfseries Param\-Type}}\label{classCascadeSM_a2160669d0a3c681e6f6dd96daf67f3bc}
+
+\item 
+\hypertarget{classCascadeSM_a5c5b6836ce4813905865b7e2b6abc034}{typedef S\-M\-::\-S\-S\-M\-Params {\bfseries S\-S\-M\-Params}}\label{classCascadeSM_a5c5b6836ce4813905865b7e2b6abc034}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCascadeSM_a513ca9d591958b20edd5578fe3e008ea}{{\bfseries Cascade\-S\-M} (const vector$<$ \hyperlink{classSearchMethod}{S\-M} $\ast$ $>$ \-\_\-trackers, const \hyperlink{structCascadeParams}{Param\-Type} $\ast$casc\-\_\-params)}\label{classCascadeSM_a513ca9d591958b20edd5578fe3e008ea}
+
+\item 
+\hypertarget{classCascadeSM_aaf5ad7cc2386611fc1fe89ee51b98be5}{void {\bfseries initialize} (const cv\-::\-Mat \&corners) override}\label{classCascadeSM_aaf5ad7cc2386611fc1fe89ee51b98be5}
+
+\item 
+\hypertarget{classCascadeSM_a259830554eba3cde05b22ac2987b0619}{void {\bfseries update} () override}\label{classCascadeSM_a259830554eba3cde05b22ac2987b0619}
+
+\item 
+\hypertarget{classCascadeSM_adb874c060f5afc2ad6f254d036982b66}{void {\bfseries set\-Image} (const cv\-::\-Mat \&img) override}\label{classCascadeSM_adb874c060f5afc2ad6f254d036982b66}
+
+\item 
+\hypertarget{classCascadeSM_a0e1062fb079385a9401f38c1d07ed973}{const cv\-::\-Mat \& {\bfseries get\-Region} () override}\label{classCascadeSM_a0e1062fb079385a9401f38c1d07ed973}
+
+\item 
+\hypertarget{classCascadeSM_a4da53dbe64b328cee42ebbea97ad312c}{void {\bfseries set\-Region} (const cv\-::\-Mat \&corners) override}\label{classCascadeSM_a4da53dbe64b328cee42ebbea97ad312c}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCascadeSM_a103a9c3e9d7fd24d635a5e712ab63d5c}{void {\bfseries update\-Trackers} (const cv\-::\-Mat \&img)}\label{classCascadeSM_a103a9c3e9d7fd24d635a5e712ab63d5c}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCascadeSM_aa890250e26b0f2f63e374c4a1ca95633}{\hyperlink{structCascadeParams}{Param\-Type} {\bfseries params}}\label{classCascadeSM_aa890250e26b0f2f63e374c4a1ca95633}
+
+\item 
+\hypertarget{classCascadeSM_a968678d70af6c50ec1d5e6a975ad1b28}{bool {\bfseries failure\-\_\-detected}}\label{classCascadeSM_a968678d70af6c50ec1d5e6a975ad1b28}
+
+\item 
+\hypertarget{classCascadeSM_a171d626bc3fddb4d52858f1faa4eb10d}{vector$<$ cv\-::\-Mat $>$ {\bfseries img\-\_\-buffer}}\label{classCascadeSM_a171d626bc3fddb4d52858f1faa4eb10d}
+
+\item 
+\hypertarget{classCascadeSM_a28020796ab72ee542176e46d11d9b8ba}{vector$<$ cv\-::\-Mat $>$ {\bfseries corners\-\_\-buffer}}\label{classCascadeSM_a28020796ab72ee542176e46d11d9b8ba}
+
+\item 
+\hypertarget{classCascadeSM_a5718343c4985f1fc99cc8e042b3f4fd3}{int {\bfseries buffer\-\_\-id}}\label{classCascadeSM_a5718343c4985f1fc99cc8e042b3f4fd3}
+
+\item 
+\hypertarget{classCascadeSM_ae9f9bb3f7a8f1866f7d94d78b0606705}{bool {\bfseries buffer\-\_\-filled}}\label{classCascadeSM_ae9f9bb3f7a8f1866f7d94d78b0606705}
+
+\item 
+\hypertarget{classCascadeSM_a6193fd7ff22c2c4dfcf0522ac5921bce}{cv\-::\-Mat {\bfseries curr\-\_\-img}}\label{classCascadeSM_a6193fd7ff22c2c4dfcf0522ac5921bce}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class A\-M, class S\-S\-M$>$class Cascade\-S\-M$<$ A\-M, S\-S\-M $>$}
+
+run multiple search methods in cascade with the same A\-M/\-S\-S\-M; although the code here is currently identical to \hyperlink{classCascadeTracker}{Cascade\-Tracker}, a seperate module exists for future extensions that take advantage of the additional information that is available to the Cascade through direct access to the underlying A\-M and S\-S\-M 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/Cascade\-S\-M.\-h\end{DoxyCompactItemize}

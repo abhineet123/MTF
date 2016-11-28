@@ -1,0 +1,12 @@
+%YAML:1.0
+resTol: 0.005
+pTol: 0.000004
+maxIter: 100
+maxIterSingleLevel: 10
+pyramidSmoothingVariance: [ 35, 17, 9, 5]
+presmoothingVariance: 2
+nControlPointsOnEdge: 40
+borderThicknessHorizontal: 10 #this is a comment!
+borderThicknessVertical: 10.4
+bAdaptativeChoiceOfPoints: 0
+bNormalizeDescriptors: 0

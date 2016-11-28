@@ -1,0 +1,68 @@
+\hypertarget{classFCGD}{\section{F\-C\-G\-D$<$ A\-M, S\-S\-M $>$ Class Template Reference}
+\label{classFCGD}\index{F\-C\-G\-D$<$ A\-M, S\-S\-M $>$@{F\-C\-G\-D$<$ A\-M, S\-S\-M $>$}}
+}
+Inheritance diagram for F\-C\-G\-D$<$ A\-M, S\-S\-M $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classFCGD}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classFCGD_ace4dce4f0076cc0603d3bb9e714f2551}{typedef \hyperlink{structFCGDParams}{F\-C\-G\-D\-Params} {\bfseries Param\-Type}}\label{classFCGD_ace4dce4f0076cc0603d3bb9e714f2551}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classFCGD_a3e2cd1f6442e1cd884044a4707a7a341}{{\bfseries F\-C\-G\-D} (const \hyperlink{structFCGDParams}{Param\-Type} $\ast$fclk\-\_\-params=nullptr, const A\-M\-Params $\ast$am\-\_\-params=nullptr, const S\-S\-M\-Params $\ast$ssm\-\_\-params=nullptr)}\label{classFCGD_a3e2cd1f6442e1cd884044a4707a7a341}
+
+\item 
+\hypertarget{classFCGD_ae07900bd460d62121bf64dae87936ef7}{void {\bfseries initialize} (const cv\-::\-Mat \&corners) override}\label{classFCGD_ae07900bd460d62121bf64dae87936ef7}
+
+\item 
+\hypertarget{classFCGD_a6cf36f8418a08bd9106d7da61bf20462}{void {\bfseries update} () override}\label{classFCGD_a6cf36f8418a08bd9106d7da61bf20462}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classFCGD_a4148c07ff3804cc51378256352cd9357}{\hyperlink{structFCGDParams}{Param\-Type} {\bfseries params}}\label{classFCGD_a4148c07ff3804cc51378256352cd9357}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classFCGD_a761e40c1ebe46b7e62a3fa75da150b96}{Matrix\-Xd \hyperlink{classFCGD_a761e40c1ebe46b7e62a3fa75da150b96}{hessian}}\label{classFCGD_a761e40c1ebe46b7e62a3fa75da150b96}
+
+\begin{DoxyCompactList}\small\item\em 1 x S Jacobian of the A\-M error norm w.\-r.\-t. S\-S\-M state vector \end{DoxyCompactList}\item 
+\hypertarget{classFCGD_a22e06e9ffa6592724a2f24e843d7228b}{Row\-Vector\-Xd {\bfseries jacobian}}\label{classFCGD_a22e06e9ffa6592724a2f24e843d7228b}
+
+\item 
+\hypertarget{classFCGD_a29be26fe5db90f44157504d3b59267c5}{Matrix\-Xd \hyperlink{classFCGD_a29be26fe5db90f44157504d3b59267c5}{init\-\_\-pix\-\_\-jacobian}}\label{classFCGD_a29be26fe5db90f44157504d3b59267c5}
+
+\begin{DoxyCompactList}\small\item\em N x S jacobians of the pix values w.\-r.\-t the S\-S\-M state vector. \end{DoxyCompactList}\item 
+\hypertarget{classFCGD_a736050ed3c0120bfc4ce43fc120074c7}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-jacobian}}\label{classFCGD_a736050ed3c0120bfc4ce43fc120074c7}
+
+\item 
+\hypertarget{classFCGD_aa3859a59b58f94cc267b7ea1a17431f9}{Vector\-Xd {\bfseries ssm\-\_\-update}}\label{classFCGD_aa3859a59b58f94cc267b7ea1a17431f9}
+
+\item 
+\hypertarget{classFCGD_a29ac79950e25b05a0fb0e40f2226eb04}{Matrix24d {\bfseries prev\-\_\-corners}}\label{classFCGD_a29ac79950e25b05a0fb0e40f2226eb04}
+
+\item 
+\hypertarget{classFCGD_a03b1b86d4a6dcb6787600685607b2955}{Matrix3d {\bfseries warp\-\_\-update}}\label{classFCGD_a03b1b86d4a6dcb6787600685607b2955}
+
+\item 
+\hypertarget{classFCGD_ae2e89662028e09272088ffe8943e96b1}{int {\bfseries frame\-\_\-id}}\label{classFCGD_ae2e89662028e09272088ffe8943e96b1}
+
+\item 
+\hypertarget{classFCGD_a8911d78ab56f334b3a09a19161e29fee}{double {\bfseries learning\-\_\-rate}}\label{classFCGD_a8911d78ab56f334b3a09a19161e29fee}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/F\-C\-G\-D.\-h\end{DoxyCompactItemize}

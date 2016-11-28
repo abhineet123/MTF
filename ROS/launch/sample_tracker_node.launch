@@ -1,0 +1,12 @@
+<!-- 
+     Sample launch file that instantiates a tracker node and the SharedImageWriter. With this configuration
+     the output of a usb camera is used as input for the tracker
+-->
+<launch>
+    <node name="SharedImageWriter" pkg="mtf_bridge" type="SharedImageWriter" output="screen"> 
+        <remap from="/camera/image_raw" to="/usb_cam/image_raw"/>
+    </node>
+
+    <node name="sample_tracker_node" pkg="mtf_bridge" type="sample_tracker_node" output="screen"> 
+    </node>
+</launch>

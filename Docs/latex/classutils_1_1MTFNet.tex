@@ -1,0 +1,43 @@
+\hypertarget{classutils_1_1MTFNet}{\section{utils\-:\-:M\-T\-F\-Net Class Reference}
+\label{classutils_1_1MTFNet}\index{utils\-::\-M\-T\-F\-Net@{utils\-::\-M\-T\-F\-Net}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classutils_1_1MTFNet_a2fae5241e9c54156b6e6a880671e0e08}{\hyperlink{classutils_1_1MTFNet_a2fae5241e9c54156b6e6a880671e0e08}{M\-T\-F\-Net} (Reg\-Net\-Params \-\_\-rgparams)}\label{classutils_1_1MTFNet_a2fae5241e9c54156b6e6a880671e0e08}
+
+\begin{DoxyCompactList}\small\item\em Constructs network and fills net\-\_\- object, sets mean\-\_\- , num\-\_\-channels\-\_\-, and input\-\_\-geometry\-\_\-. \end{DoxyCompactList}\item 
+\hypertarget{classutils_1_1MTFNet_a77607498ecd7d980a2045c7e9b121246}{void \hyperlink{classutils_1_1MTFNet_a77607498ecd7d980a2045c7e9b121246}{preprocess\-Batch} (std\-::vector$<$ cv\-::\-Mat $>$ \&batch)}\label{classutils_1_1MTFNet_a77607498ecd7d980a2045c7e9b121246}
+
+\begin{DoxyCompactList}\small\item\em preprocess the data by subtracting the mean \end{DoxyCompactList}\item 
+\hypertarget{classutils_1_1MTFNet_a2877464498807a99ac22150c03d017c3}{void \hyperlink{classutils_1_1MTFNet_a2877464498807a99ac22150c03d017c3}{extract\-Batch} (int bs, int bi, std\-::vector$<$ cv\-::\-Mat $>$ t\-\_\-data, std\-::vector$<$ cv\-::\-Mat $>$ t\-\_\-labels, std\-::vector$<$ cv\-::\-Mat $>$ \&t\-\_\-data\-\_\-b, std\-::vector$<$ cv\-::\-Mat $>$ \&t\-\_\-labels\-\_\-b)}\label{classutils_1_1MTFNet_a2877464498807a99ac22150c03d017c3}
+
+\begin{DoxyCompactList}\small\item\em Extract minibatch. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classutils_1_1MTFNet_a3b78d77bece125b59d3d6e147ae6a487}{boost\-::shared\-\_\-ptr$<$ caffe\-::\-Net\\*
+$<$ float $>$ $>$ {\bfseries net\-\_\-}}\label{classutils_1_1MTFNet_a3b78d77bece125b59d3d6e147ae6a487}
+
+\item 
+\hypertarget{classutils_1_1MTFNet_a5f2ceab437687ae13d5f762ad803286e}{boost\-::shared\-\_\-ptr\\*
+$<$ caffe\-::\-Solver$<$ float $>$ $>$ {\bfseries solver\-\_\-}}\label{classutils_1_1MTFNet_a5f2ceab437687ae13d5f762ad803286e}
+
+\item 
+\hypertarget{classutils_1_1MTFNet_a430553949f90e01b340b5fba3661e323}{cv\-::\-Size {\bfseries input\-\_\-geometry\-\_\-}}\label{classutils_1_1MTFNet_a430553949f90e01b340b5fba3661e323}
+
+\item 
+\hypertarget{classutils_1_1MTFNet_a4ec3d2b73c386bc4c4abc6387b5b7d41}{int {\bfseries num\-\_\-channels\-\_\-}}\label{classutils_1_1MTFNet_a4ec3d2b73c386bc4c4abc6387b5b7d41}
+
+\item 
+\hypertarget{classutils_1_1MTFNet_a4c10d3af8c47203efc47e7353bb76390}{cv\-::\-Scalar {\bfseries channel\-\_\-mean\-\_\-}}\label{classutils_1_1MTFNet_a4c10d3af8c47203efc47e7353bb76390}
+
+\item 
+\hypertarget{classutils_1_1MTFNet_a2e6763f6f4d738bafd7b4fdf1cb9b070}{Reg\-Net\-Params {\bfseries rgparams}}\label{classutils_1_1MTFNet_a2e6763f6f4d738bafd7b4fdf1cb9b070}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+Utilities/include/mtf/\-Utilities/net\-Utils.\-h\end{DoxyCompactItemize}

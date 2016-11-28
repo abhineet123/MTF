@@ -1,0 +1,101 @@
+\hypertarget{classgnn_1_1GNN}{\section{gnn\-:\-:G\-N\-N$<$ A\-M $>$ Class Template Reference}
+\label{classgnn_1_1GNN}\index{gnn\-::\-G\-N\-N$<$ A\-M $>$@{gnn\-::\-G\-N\-N$<$ A\-M $>$}}
+}
+Inheritance diagram for gnn\-:\-:G\-N\-N$<$ A\-M $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classgnn_1_1GNN}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classgnn_1_1GNN_a45509461044fc7a8c2c9e8f1541b354d}{typedef \hyperlink{structgnn_1_1GNNParams}{G\-N\-N\-Params} {\bfseries Param\-Type}}\label{classgnn_1_1GNN_a45509461044fc7a8c2c9e8f1541b354d}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classgnn_1_1GNN_a3ef3c7eca7fa61304ded6b74e736b9c3}{{\bfseries G\-N\-N} (const A\-M $\ast$\-\_\-dist\-\_\-func, int \-\_\-n\-\_\-samples, int \-\_\-n\-\_\-dims, bool \-\_\-is\-\_\-symmetrical=true, const \hyperlink{structgnn_1_1GNNParams}{Param\-Type} $\ast$gnn\-\_\-params=nullptr)}\label{classgnn_1_1GNN_a3ef3c7eca7fa61304ded6b74e736b9c3}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a041899e3872c67753c7f6635691ef45d}{void {\bfseries compute\-Distances} (const double $\ast$dataset)}\label{classgnn_1_1GNN_a041899e3872c67753c7f6635691ef45d}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a895f34aeb9d6c1f2a40e23b2dba36a65}{void {\bfseries build\-Graph} (const double $\ast$dataset)}\label{classgnn_1_1GNN_a895f34aeb9d6c1f2a40e23b2dba36a65}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a7b56ab242b2b0aaaf4e1377521d9fb20}{void {\bfseries search\-Graph} (const double $\ast$query, const double $\ast$dataset, int $\ast$nn\-\_\-ids, double $\ast$nn\-\_\-dists, int K=1)}\label{classgnn_1_1GNN_a7b56ab242b2b0aaaf4e1377521d9fb20}
+
+\item 
+\hypertarget{classgnn_1_1GNN_aef78402a962fca21ff078de246714e6c}{void {\bfseries save\-Graph} (const char $\ast$file\-\_\-name)}\label{classgnn_1_1GNN_aef78402a962fca21ff078de246714e6c}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a460a8d8c984558c55f28c4d7b54c5e18}{void {\bfseries load\-Graph} (const char $\ast$file\-\_\-name)}\label{classgnn_1_1GNN_a460a8d8c984558c55f28c4d7b54c5e18}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a8c8cf493de68e3abad95d8c5413e5375}{void {\bfseries build\-Graph} (const double $\ast$X, int k)}\label{classgnn_1_1GNN_a8c8cf493de68e3abad95d8c5413e5375}
+
+\item 
+\hypertarget{classgnn_1_1GNN_aef87dcda4d56d55e17712e204ead65c1}{int {\bfseries search\-Graph} (const double $\ast$Xq, const double $\ast$X, int N\-Ns, int K)}\label{classgnn_1_1GNN_aef87dcda4d56d55e17712e204ead65c1}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classgnn_1_1GNN_ae6e5a1a1622c6499805be134fd96ca36}{int {\bfseries get\-Rand\-Num} (int lb, int ub)}\label{classgnn_1_1GNN_ae6e5a1a1622c6499805be134fd96ca36}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a5020e3d998563b2279b0a4d125dad109}{{\footnotesize template$<$typename Scalar\-T $>$ }\\void {\bfseries swap} (Scalar\-T $\ast$i, Scalar\-T $\ast$j)}\label{classgnn_1_1GNN_a5020e3d998563b2279b0a4d125dad109}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a8a4b8d1a5201f6c15b46d33a953889bc}{void {\bfseries knn\-Search2} (const double $\ast$Q, \hyperlink{structgnn_1_1IndxDist}{Indx\-Dist} $\ast$dists, const double $\ast$X, int rows, int cols, int k)}\label{classgnn_1_1GNN_a8a4b8d1a5201f6c15b46d33a953889bc}
+
+\item 
+\hypertarget{classgnn_1_1GNN_aeb77b996e512dd021a922d3f8aa2ef75}{void {\bfseries knn\-Search11} (const double $\ast$Q, \hyperlink{structgnn_1_1IndxDist}{Indx\-Dist} $\ast$dists, const double $\ast$X, int rows, int cols, int k, int $\ast$X\-\_\-inds)}\label{classgnn_1_1GNN_aeb77b996e512dd021a922d3f8aa2ef75}
+
+\item 
+\hypertarget{classgnn_1_1GNN_ad3a945133912195829a28db482d289ca}{int {\bfseries min} (int a, int b)}\label{classgnn_1_1GNN_ad3a945133912195829a28db482d289ca}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a9d769573a9aef4d4b35047989c82de89}{void {\bfseries pick\-K\-N\-Ns} (\hyperlink{structgnn_1_1IndxDist}{Indx\-Dist} $\ast$vis\-\_\-nodes, int visited, \hyperlink{structgnn_1_1IndxDist}{Indx\-Dist} $\ast$$\ast$gnn\-\_\-dists, int K, int $\ast$gnns\-\_\-cap)}\label{classgnn_1_1GNN_a9d769573a9aef4d4b35047989c82de89}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a2d8add065ffda33d9c4b56c431bbd67f}{void {\bfseries add\-Node} (\hyperlink{structgnn_1_1Node}{Node} $\ast$node\-\_\-i, int nn)}\label{classgnn_1_1GNN_a2d8add065ffda33d9c4b56c431bbd67f}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classgnn_1_1GNN_a3ac4ebdff631df1852fbeebef513230b}{const A\-M $\ast$ {\bfseries dist\-\_\-func}}\label{classgnn_1_1GNN_a3ac4ebdff631df1852fbeebef513230b}
+
+\item 
+\hypertarget{classgnn_1_1GNN_aab908567c880074067e9ca6e332ed66f}{const int {\bfseries n\-\_\-samples}}\label{classgnn_1_1GNN_aab908567c880074067e9ca6e332ed66f}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a70eab0aebf2978f956da3b9473388219}{const int {\bfseries n\-\_\-dims}}\label{classgnn_1_1GNN_a70eab0aebf2978f956da3b9473388219}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a06f37f0a5fd5133a600c22bd4ae4d95b}{const bool {\bfseries is\-\_\-symmetrical}}\label{classgnn_1_1GNN_a06f37f0a5fd5133a600c22bd4ae4d95b}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a49104d6ec9519fa8c19307639c8571ba}{\hyperlink{structgnn_1_1GNNParams}{Param\-Type} {\bfseries params}}\label{classgnn_1_1GNN_a49104d6ec9519fa8c19307639c8571ba}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a5ed6bcf9456fde5882e230f20e71b6b4}{\hyperlink{structgnn_1_1Node}{Node} $\ast$ {\bfseries nodes}}\label{classgnn_1_1GNN_a5ed6bcf9456fde5882e230f20e71b6b4}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a73c75358d06d65299f143e117d3e3c13}{Matrix\-Xd {\bfseries dataset\-\_\-distances}}\label{classgnn_1_1GNN_a73c75358d06d65299f143e117d3e3c13}
+
+\item 
+\hypertarget{classgnn_1_1GNN_a0b418512ff0aa7b8ce2f8ca0cc3dcbf9}{int {\bfseries start\-\_\-node\-\_\-idx}}\label{classgnn_1_1GNN_a0b418512ff0aa7b8ce2f8ca0cc3dcbf9}
+
+\item 
+\hypertarget{classgnn_1_1GNN_ac07236c6c6325311cbd861735418272d}{bool {\bfseries dist\-\_\-computed}}\label{classgnn_1_1GNN_ac07236c6c6325311cbd861735418272d}
+
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/G\-N\-N.\-h\end{DoxyCompactItemize}

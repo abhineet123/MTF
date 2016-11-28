@@ -1,0 +1,90 @@
+\hypertarget{classLieAffine}{\section{Lie\-Affine Class Reference}
+\label{classLieAffine}\index{Lie\-Affine@{Lie\-Affine}}
+}
+Inheritance diagram for Lie\-Affine\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classLieAffine}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classLieAffine_ac6c68c809e3c76f1c54899d7a2bd4a3e}{typedef \hyperlink{structLieAffineParams}{Lie\-Affine\-Params} {\bfseries Param\-Type}}\label{classLieAffine_ac6c68c809e3c76f1c54899d7a2bd4a3e}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classLieAffine_a17705db354ead43d4339e209f40139b5}{{\bfseries Lie\-Affine} (\hyperlink{structLieAffineParams}{Lie\-Affine\-Params} $\ast$params\-\_\-in=nullptr)}\label{classLieAffine_a17705db354ead43d4339e209f40139b5}
+
+\item 
+\hypertarget{classLieAffine_a4ca9553e02449785e853d6922c8c5513}{void {\bfseries set\-Corners} (const Matrix24d \&corners) override}\label{classLieAffine_a4ca9553e02449785e853d6922c8c5513}
+
+\item 
+\hypertarget{classLieAffine_ad5a417d95c28c8d67fe076fdc63a8e01}{void {\bfseries compositional\-Update} (const Vector\-Xd \&state\-\_\-update) override}\label{classLieAffine_ad5a417d95c28c8d67fe076fdc63a8e01}
+
+\item 
+void \hyperlink{classLieAffine_a25b82bb4020629dfaa792b71e6b74567}{cmpt\-Init\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pix\-\_\-jacobian) override
+\begin{DoxyCompactList}\small\item\em right multiplies the initial or current ssm jacobian with the provided am jacobian; though this can be accomplished by the search method itself with simple matrix multiplication, the ssm jacobian often satisfies several constraints (e.\-g. \end{DoxyCompactList}\item 
+\hypertarget{classLieAffine_af01629a5e34f114904f866d146ff0105}{void {\bfseries cmpt\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pix\-\_\-jacobian) override}\label{classLieAffine_af01629a5e34f114904f866d146ff0105}
+
+\item 
+\hypertarget{classLieAffine_a20dfcf2476ee928bea5ed20e1dfe4059}{void {\bfseries get\-Init\-Pix\-Grad} (Matrix2\-Xd \&ssm\-\_\-grad, int pix\-\_\-id) override}\label{classLieAffine_a20dfcf2476ee928bea5ed20e1dfe4059}
+
+\item 
+\hypertarget{classLieAffine_abfbee75881f854408717116edaca223a}{void {\bfseries get\-Curr\-Pix\-Grad} (Matrix2\-Xd \&ssm\-\_\-grad, int pix\-\_\-id) override}\label{classLieAffine_abfbee75881f854408717116edaca223a}
+
+\item 
+\hypertarget{classLieAffine_a84af68ca735c6dbd20661c57edcb9336}{void {\bfseries cmpt\-Approx\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pix\-\_\-jacobian) override}\label{classLieAffine_a84af68ca735c6dbd20661c57edcb9336}
+
+\item 
+\hypertarget{classLieAffine_a2d2b8f37d208c39eccd82781db87add2}{void {\bfseries estimate\-Warp\-From\-Corners} (Vector\-Xd \&state\-\_\-update, const Matrix24d \&in\-\_\-corners, const Matrix24d \&out\-\_\-corners) override}\label{classLieAffine_a2d2b8f37d208c39eccd82781db87add2}
+
+\item 
+\hypertarget{classLieAffine_afbad040b5581f2503ad217f9f56796eb}{void {\bfseries estimate\-Warp\-From\-Pts} (Vector\-Xd \&state\-\_\-update, vector$<$ uchar $>$ \&mask, const vector$<$ cv\-::\-Point2f $>$ \&in\-\_\-pts, const vector$<$ cv\-::\-Point2f $>$ \&out\-\_\-pts, int estimation\-\_\-method, double ransac\-\_\-reproj\-\_\-thresh) override}\label{classLieAffine_afbad040b5581f2503ad217f9f56796eb}
+
+\item 
+\hypertarget{classLieAffine_ae2a1d44032931fb22c07588306ad5b83}{void {\bfseries invert\-State} (Vector\-Xd \&inv\-\_\-state, const Vector\-Xd \&state) override}\label{classLieAffine_ae2a1d44032931fb22c07588306ad5b83}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classLieAffine_a34468baac11abb1c23e520bdafd6a3ae}{\hyperlink{structLieAffineParams}{Param\-Type} {\bfseries params}}\label{classLieAffine_a34468baac11abb1c23e520bdafd6a3ae}
+
+\item 
+\hypertarget{classLieAffine_a12ef39544ef06d40d9b268a35f419af6}{Matrix3d {\bfseries lie\-Alg\-Basis} \mbox{[}8\mbox{]}}\label{classLieAffine_a12ef39544ef06d40d9b268a35f419af6}
+
+\item 
+\hypertarget{classLieAffine_a48a2365ce7a10569f1451b56c4454336}{Row\-Vector3d {\bfseries zero\-\_\-vec}}\label{classLieAffine_a48a2365ce7a10569f1451b56c4454336}
+
+\item 
+\hypertarget{classLieAffine_aa3fe521295bec316a5737d5231672796}{Matrix3d {\bfseries lie\-\_\-alg\-\_\-mat}}\label{classLieAffine_aa3fe521295bec316a5737d5231672796}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classLieAffine_a25b82bb4020629dfaa792b71e6b74567}{\index{Lie\-Affine@{Lie\-Affine}!cmpt\-Init\-Pix\-Jacobian@{cmpt\-Init\-Pix\-Jacobian}}
+\index{cmpt\-Init\-Pix\-Jacobian@{cmpt\-Init\-Pix\-Jacobian}!LieAffine@{Lie\-Affine}}
+\subsubsection[{cmpt\-Init\-Pix\-Jacobian}]{\setlength{\rightskip}{0pt plus 5cm}void Lie\-Affine\-::cmpt\-Init\-Pix\-Jacobian (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd \&}]{jacobian\-\_\-prod, }
+\item[{const Pix\-Grad\-T \&}]{pixel\-\_\-grad}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classLieAffine_a25b82bb4020629dfaa792b71e6b74567}
+
+
+right multiplies the initial or current ssm jacobian with the provided am jacobian; though this can be accomplished by the search method itself with simple matrix multiplication, the ssm jacobian often satisfies several constraints (e.\-g. 
+
+sparsity) that can be exploited to gain computational savings by manually computing the product matrix 
+
+Reimplemented from \hyperlink{classStateSpaceModel_ac956c679581e746891c62755fe715b3b}{State\-Space\-Model}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-S\-M/include/mtf/\-S\-S\-M/Lie\-Affine.\-h\end{DoxyCompactItemize}

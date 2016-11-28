@@ -1,0 +1,102 @@
+\hypertarget{classESMH}{\section{E\-S\-M\-H$<$ A\-M, S\-S\-M $>$ Class Template Reference}
+\label{classESMH}\index{E\-S\-M\-H$<$ A\-M, S\-S\-M $>$@{E\-S\-M\-H$<$ A\-M, S\-S\-M $>$}}
+}
+Inheritance diagram for E\-S\-M\-H$<$ A\-M, S\-S\-M $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classESMH}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classESMH_a462c285889008b4f0bb90e5cb9999209}{typedef \hyperlink{structESMHParams}{E\-S\-M\-H\-Params} {\bfseries Param\-Type}}\label{classESMH_a462c285889008b4f0bb90e5cb9999209}
+
+\item 
+\hypertarget{classESMH_ade5807b653259fc6e359dd66c5ea2832}{typedef Param\-Type\-::\-Jac\-Type {\bfseries Jac\-Type}}\label{classESMH_ade5807b653259fc6e359dd66c5ea2832}
+
+\item 
+\hypertarget{classESMH_aa2ecca0f297a5943d2caab8e733f497e}{typedef Param\-Type\-::\-Hess\-Type {\bfseries Hess\-Type}}\label{classESMH_aa2ecca0f297a5943d2caab8e733f497e}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classESMH_a43853036da62afbc048847b9b0525bf6}{{\bfseries E\-S\-M\-H} (const \hyperlink{structESMHParams}{Param\-Type} $\ast$esm\-\_\-params, const \hyperlink{structAMParams}{A\-M\-Params} $\ast$am\-\_\-params, const \hyperlink{structSSMParams}{S\-S\-M\-Params} $\ast$ssm\-\_\-params)}\label{classESMH_a43853036da62afbc048847b9b0525bf6}
+
+\item 
+\hypertarget{classESMH_a2655fedddfaa8c11bbebf36fc7d99435}{void {\bfseries initialize} (const cv\-::\-Mat \&corners) override}\label{classESMH_a2655fedddfaa8c11bbebf36fc7d99435}
+
+\item 
+\hypertarget{classESMH_ac308eb0f0003c2b3cb515b0d4874db10}{void {\bfseries update} () override}\label{classESMH_ac308eb0f0003c2b3cb515b0d4874db10}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classESMH_a219054c57568def4e70a0648c24508ca}{\hyperlink{structESMHParams}{Param\-Type} {\bfseries params}}\label{classESMH_a219054c57568def4e70a0648c24508ca}
+
+\item 
+\hypertarget{classESMH_aeb4d26f04f7342c844e465b5be7e5bd2}{int {\bfseries frame\-\_\-id}}\label{classESMH_aeb4d26f04f7342c844e465b5be7e5bd2}
+
+\item 
+\hypertarget{classESMH_a12d17ae5a89de7017f728e11b02d703f}{Vector\-Xc {\bfseries pix\-\_\-mask2}}\label{classESMH_a12d17ae5a89de7017f728e11b02d703f}
+
+\item 
+\hypertarget{classESMH_aff7a27546fb557d1caee79cf8aeeab71}{Vector\-Xb {\bfseries pix\-\_\-mask}}\label{classESMH_aff7a27546fb557d1caee79cf8aeeab71}
+
+\item 
+\hypertarget{classESMH_a70f43fde224bfa1dd32558d6c8c42bb6}{Vector\-Xd {\bfseries rel\-\_\-pix\-\_\-diff}}\label{classESMH_a70f43fde224bfa1dd32558d6c8c42bb6}
+
+\item 
+\hypertarget{classESMH_aae20e3d5a7f1ad9b2548cd647092d076}{double {\bfseries max\-\_\-pix\-\_\-diff}}\label{classESMH_aae20e3d5a7f1ad9b2548cd647092d076}
+
+\item 
+\hypertarget{classESMH_ae3b0d2f6491dadc762d819b7fe824a31}{Matrix24d {\bfseries prev\-\_\-corners}}\label{classESMH_ae3b0d2f6491dadc762d819b7fe824a31}
+
+\item 
+Matrix\-Xd \hyperlink{classESMH_a705f1088f5a2a311463bfb9c59967941}{init\-\_\-pix\-\_\-jacobian}
+\begin{DoxyCompactList}\small\item\em N x S jacobians of the pixel values w.\-r.\-t the S\-S\-M state vector where N = resx $\ast$ resy is the no. \end{DoxyCompactList}\item 
+\hypertarget{classESMH_a08864655ce72855f5a692368e9f96bb6}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-jacobian}}\label{classESMH_a08864655ce72855f5a692368e9f96bb6}
+
+\item 
+\hypertarget{classESMH_a2d91cb739ee987432da7e95dea5b13ae}{Matrix\-Xd {\bfseries mean\-\_\-pix\-\_\-jacobian}}\label{classESMH_a2d91cb739ee987432da7e95dea5b13ae}
+
+\item 
+\hypertarget{classESMH_a4bb14113f170c065e182d84c6bfff9fe}{Matrix\-Xd {\bfseries init\-\_\-pix\-\_\-hessian}}\label{classESMH_a4bb14113f170c065e182d84c6bfff9fe}
+
+\item 
+\hypertarget{classESMH_a95468d74c34e74a5f229961f8d090502}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-hessian}}\label{classESMH_a95468d74c34e74a5f229961f8d090502}
+
+\item 
+\hypertarget{classESMH_a6e1297817fc28659c443e992255fd7d2}{Matrix\-Xd {\bfseries mean\-\_\-pix\-\_\-hessian}}\label{classESMH_a6e1297817fc28659c443e992255fd7d2}
+
+\item 
+\hypertarget{classESMH_a0ec68b4ff62ff30a318148dbbf1a605f}{Vector\-Xd {\bfseries ssm\-\_\-update}}\label{classESMH_a0ec68b4ff62ff30a318148dbbf1a605f}
+
+\item 
+\hypertarget{classESMH_a4eca65fbf26a66bdaba80c6de599aa82}{Row\-Vector\-Xd \hyperlink{classESMH_a4eca65fbf26a66bdaba80c6de599aa82}{jacobian}}\label{classESMH_a4eca65fbf26a66bdaba80c6de599aa82}
+
+\begin{DoxyCompactList}\small\item\em 1 x S Jacobian of the A\-M error norm w.\-r.\-t. S\-S\-M state vector \end{DoxyCompactList}\item 
+\hypertarget{classESMH_a3f378f0d6bc6f9a5704a92f1c822d5d6}{Matrix\-Xd \hyperlink{classESMH_a3f378f0d6bc6f9a5704a92f1c822d5d6}{hessian}}\label{classESMH_a3f378f0d6bc6f9a5704a92f1c822d5d6}
+
+\begin{DoxyCompactList}\small\item\em S x S Hessian of the A\-M error norm w.\-r.\-t. S\-S\-M state vector. \end{DoxyCompactList}\item 
+\hypertarget{classESMH_ab5ed5bf94eaca5895a1845aaee24fd7d}{Matrix\-Xd {\bfseries init\-\_\-self\-\_\-hessian}}\label{classESMH_ab5ed5bf94eaca5895a1845aaee24fd7d}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classESMH_a705f1088f5a2a311463bfb9c59967941}{\index{E\-S\-M\-H@{E\-S\-M\-H}!init\-\_\-pix\-\_\-jacobian@{init\-\_\-pix\-\_\-jacobian}}
+\index{init\-\_\-pix\-\_\-jacobian@{init\-\_\-pix\-\_\-jacobian}!ESMH@{E\-S\-M\-H}}
+\subsubsection[{init\-\_\-pix\-\_\-jacobian}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class A\-M , class S\-S\-M $>$ Matrix\-Xd {\bf E\-S\-M\-H}$<$ A\-M, S\-S\-M $>$\-::init\-\_\-pix\-\_\-jacobian}}\label{classESMH_a705f1088f5a2a311463bfb9c59967941}
+
+
+N x S jacobians of the pixel values w.\-r.\-t the S\-S\-M state vector where N = resx $\ast$ resy is the no. 
+
+of pixels in the object patch 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/E\-S\-M\-H.\-h\end{DoxyCompactItemize}

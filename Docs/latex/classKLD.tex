@@ -1,0 +1,222 @@
+\hypertarget{classKLD}{\section{K\-L\-D Class Reference}
+\label{classKLD}\index{K\-L\-D@{K\-L\-D}}
+}
+Inheritance diagram for K\-L\-D\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classKLD}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classKLD_af85302b0a97fc784ea17583f84babf86}{typedef \hyperlink{structKLDParams}{K\-L\-D\-Params} {\bfseries Param\-Type}}\label{classKLD_af85302b0a97fc784ea17583f84babf86}
+
+\item 
+\hypertarget{classKLD_afdc6d3ea875df625c20faf37263b621f}{typedef double {\bfseries Element\-Type}}\label{classKLD_afdc6d3ea875df625c20faf37263b621f}
+
+\item 
+\hypertarget{classKLD_a2234a2ff6cc21aa161edb2975aa7d475}{typedef double {\bfseries Result\-Type}}\label{classKLD_a2234a2ff6cc21aa161edb2975aa7d475}
+
+\item 
+\hypertarget{classKLD_aceb785fb297217dec53b98fabd583b13}{typedef bool {\bfseries is\-\_\-kdtree\-\_\-distance}}\label{classKLD_aceb785fb297217dec53b98fabd583b13}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classKLD_a87476df9d6b0baa4d67dab95b75e9814}{{\bfseries K\-L\-D} (const \hyperlink{structKLDParams}{Param\-Type} $\ast$kld\-\_\-params=nullptr)}\label{classKLD_a87476df9d6b0baa4d67dab95b75e9814}
+
+\item 
+void \hyperlink{classKLD_a0086dc5d8b48e01c053090e667cacdad}{initialize\-Similarity} () override
+\begin{DoxyCompactList}\small\item\em methods to initialize the state variables -\/ to be called once when the tracker is initialized. \end{DoxyCompactList}\item 
+void \hyperlink{classKLD_a303fabab01458afed9364cca944eb028}{update\-Similarity} (bool prereq\-\_\-only=1) override
+\begin{DoxyCompactList}\small\item\em functions for updating state variables when a new image arrives \end{DoxyCompactList}\item 
+\hypertarget{classKLD_a6ce8c73142017d3b53075cf0774275cf}{void {\bfseries initialize\-Grad} () override}\label{classKLD_a6ce8c73142017d3b53075cf0774275cf}
+
+\item 
+void \hyperlink{classKLD_adc93f2d2e4a33bfed44c34cfcf839fc1}{initialize\-Hess} () override
+\begin{DoxyCompactList}\small\item\em even though the Hessian of the error norm w.\-r.\-t. \end{DoxyCompactList}\item 
+\hypertarget{classKLD_a522b0a98c822a705ca1b2dcfa9e3e192}{void {\bfseries update\-Init\-Grad} () override}\label{classKLD_a522b0a98c822a705ca1b2dcfa9e3e192}
+
+\item 
+\hypertarget{classKLD_a4debf27190e1df08bf168602007a43b2}{void {\bfseries update\-Curr\-Grad} () override}\label{classKLD_a4debf27190e1df08bf168602007a43b2}
+
+\item 
+void \hyperlink{classKLD_a3cabba5f44910411c3df473906406ea6}{cmpt\-Init\-Hessian} (Matrix\-Xd \&hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian) override
+\begin{DoxyCompactList}\small\item\em compute the S x S Hessian of the error norm using the supplied N x S Jacobian of pixel values w.\-r.\-t. \end{DoxyCompactList}\item 
+\hypertarget{classKLD_ad7ac185b46c27ee3a868812ddef29754}{void {\bfseries cmpt\-Curr\-Hessian} (Matrix\-Xd \&hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian) override}\label{classKLD_ad7ac185b46c27ee3a868812ddef29754}
+
+\item 
+\hypertarget{classKLD_a1acf71d5aa9c122f3648ec986b9a15c4}{void \hyperlink{classKLD_a1acf71d5aa9c122f3648ec986b9a15c4}{cmpt\-Init\-Hessian} (Matrix\-Xd \&init\-\_\-hessian, const Matrix\-Xd \&init\-\_\-pix\-\_\-jacobian, const Matrix\-Xd \&init\-\_\-pix\-\_\-hessian) override}\label{classKLD_a1acf71d5aa9c122f3648ec986b9a15c4}
+
+\begin{DoxyCompactList}\small\item\em compute the exact Hessian by considering the second order terms too \end{DoxyCompactList}\item 
+\hypertarget{classKLD_a649c042adee042a7782d01eaa09da739}{void {\bfseries cmpt\-Curr\-Hessian} (Matrix\-Xd \&curr\-\_\-hessian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-jacobian, const Matrix\-Xd \&curr\-\_\-pix\-\_\-hessian) override}\label{classKLD_a649c042adee042a7782d01eaa09da739}
+
+\item 
+\hypertarget{classKLD_ad68942319d702993bc20dcefaf3ae744}{void \hyperlink{classKLD_ad68942319d702993bc20dcefaf3ae744}{initialize\-Dist\-Feat} () override}\label{classKLD_ad68942319d702993bc20dcefaf3ae744}
+
+\begin{DoxyCompactList}\small\item\em to be called once during initialization if any of the distance feature functionality is to be used \end{DoxyCompactList}\item 
+\hypertarget{classKLD_a887432e0d1cb139f8b7ab8d245f2aa7b}{int \hyperlink{classKLD_a887432e0d1cb139f8b7ab8d245f2aa7b}{get\-Dist\-Feat\-Size} () override}\label{classKLD_a887432e0d1cb139f8b7ab8d245f2aa7b}
+
+\begin{DoxyCompactList}\small\item\em returns the size of the distance vector \end{DoxyCompactList}\item 
+void \hyperlink{classKLD_a957d7334574a554851bfdfd444910afe}{update\-Dist\-Feat} () override
+\begin{DoxyCompactList}\small\item\em computes a \char`\"{}distance\char`\"{} vector using the current image patch such that, when the distance vectors corresponding to two patches are passed to the distance operator above, it uses these to compute a scalar that measures the distance or dissimilarity between the two patches; this distance vector should be designed so as to offload as much computation as possible from the distance operator, i.\-e. \end{DoxyCompactList}\item 
+\hypertarget{classKLD_a636e1d6d9806a8faca4ddc48c359f409}{const double $\ast$ {\bfseries get\-Dist\-Feat} () override}\label{classKLD_a636e1d6d9806a8faca4ddc48c359f409}
+
+\item 
+\hypertarget{classKLD_a94e8aa66cbdc98e8a5fb60b133f8aa06}{void \hyperlink{classKLD_a94e8aa66cbdc98e8a5fb60b133f8aa06}{update\-Dist\-Feat} (double $\ast$feat\-\_\-addr) override}\label{classKLD_a94e8aa66cbdc98e8a5fb60b133f8aa06}
+
+\begin{DoxyCompactList}\small\item\em overloaded version to write the distance feature directly to a row (or column) of a matrix storing the distance features corresponding to several patches; \end{DoxyCompactList}\item 
+\hypertarget{classKLD_a076a33497b5a2762acc6a8eb166e7d19}{double \hyperlink{classKLD_a076a33497b5a2762acc6a8eb166e7d19}{operator()} (const double $\ast$hist1\-\_\-mat\-\_\-addr, const double $\ast$hist2\-\_\-mat\-\_\-addr, size\-\_\-t hist\-\_\-mat\-\_\-size, double worst\-\_\-dist=-\/1) const override}\label{classKLD_a076a33497b5a2762acc6a8eb166e7d19}
+
+\begin{DoxyCompactList}\small\item\em computes the distance / dissimilarity between two patches where each is codified or represented by a suitable distance feature computed using update\-Dist\-Feat \end{DoxyCompactList}\item 
+\hypertarget{classKLD_a9e6f1ce4066dc64e573185fe4ba0398d}{{\footnotesize template$<$typename U , typename V $>$ }\\Result\-Type \hyperlink{classKLD_a9e6f1ce4066dc64e573185fe4ba0398d}{accum\-\_\-dist} (const U \&a, const V \&b, int) const }\label{classKLD_a9e6f1ce4066dc64e573185fe4ba0398d}
+
+\begin{DoxyCompactList}\small\item\em Partial distance, used by the kd-\/tree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classKLD_a67e07721f65c35580e2475e793a8f25b}{\hyperlink{structKLDParams}{Param\-Type} {\bfseries params}}\label{classKLD_a67e07721f65c35580e2475e793a8f25b}
+
+\item 
+\hypertarget{classKLD_aa38772b2094604d7557b9442ef7de090}{char $\ast$ {\bfseries log\-\_\-fname}}\label{classKLD_aa38772b2094604d7557b9442ef7de090}
+
+\item 
+\hypertarget{classKLD_adf9be2ea35800f2df177d03ec0c8533a}{char $\ast$ {\bfseries time\-\_\-fname}}\label{classKLD_adf9be2ea35800f2df177d03ec0c8533a}
+
+\item 
+\hypertarget{classKLD_a6b33ebf72caaeaa17a4ed01897b07009}{double \hyperlink{classKLD_a6b33ebf72caaeaa17a4ed01897b07009}{hist\-\_\-norm\-\_\-mult}}\label{classKLD_a6b33ebf72caaeaa17a4ed01897b07009}
+
+\begin{DoxyCompactList}\small\item\em multiplicative factor for normalizing histograms \end{DoxyCompactList}\item 
+\hypertarget{classKLD_a7f69c70f4eea0faa4753af83277e772d}{Vector\-Xd {\bfseries init\-\_\-hist}}\label{classKLD_a7f69c70f4eea0faa4753af83277e772d}
+
+\item 
+\hypertarget{classKLD_a61dd5dc80ba9bd04cb28b6eade58f70b}{Vector\-Xd {\bfseries curr\-\_\-hist}}\label{classKLD_a61dd5dc80ba9bd04cb28b6eade58f70b}
+
+\item 
+\hypertarget{classKLD_abf07aa28ddb108311265b475e49ac987}{Matrix\-Xd {\bfseries init\-\_\-hist\-\_\-mat}}\label{classKLD_abf07aa28ddb108311265b475e49ac987}
+
+\item 
+\hypertarget{classKLD_abbdeec5b0bb1006a1d907d1cdd99aa8e}{Matrix\-Xd {\bfseries curr\-\_\-hist\-\_\-mat}}\label{classKLD_abbdeec5b0bb1006a1d907d1cdd99aa8e}
+
+\item 
+\hypertarget{classKLD_a67cc62a69bdf3cd4e18358ed62c84ea1}{Matrix\-Xd \hyperlink{classKLD_a67cc62a69bdf3cd4e18358ed62c84ea1}{init\-\_\-hist\-\_\-grad}}\label{classKLD_a67cc62a69bdf3cd4e18358ed62c84ea1}
+
+\begin{DoxyCompactList}\small\item\em n\-\_\-bins X N gradients of the individual histograms w.\-r.\-t. pixel values \end{DoxyCompactList}\item 
+\hypertarget{classKLD_a91532b248ec97d51fba9e12da77da587}{Matrix\-Xd {\bfseries curr\-\_\-hist\-\_\-grad}}\label{classKLD_a91532b248ec97d51fba9e12da77da587}
+
+\item 
+\hypertarget{classKLD_a39902f8002bfde64ce618ce63dcb87d9}{Matrix\-Xd {\bfseries init\-\_\-hist\-\_\-hess}}\label{classKLD_a39902f8002bfde64ce618ce63dcb87d9}
+
+\item 
+\hypertarget{classKLD_ab2bfa3d2f5b20ed0e61ac66322b9f7fc}{Matrix\-Xd {\bfseries curr\-\_\-hist\-\_\-hess}}\label{classKLD_ab2bfa3d2f5b20ed0e61ac66322b9f7fc}
+
+\item 
+\hypertarget{classKLD_a4635f1ff5cb739cb687ca4ebd404dc6c}{Vector\-Xd {\bfseries init\-\_\-grad\-\_\-factor}}\label{classKLD_a4635f1ff5cb739cb687ca4ebd404dc6c}
+
+\item 
+\hypertarget{classKLD_ae464ff1e1bc97020b1c48f68d6572ac8}{Vector\-Xd {\bfseries curr\-\_\-grad\-\_\-factor}}\label{classKLD_ae464ff1e1bc97020b1c48f68d6572ac8}
+
+\item 
+\hypertarget{classKLD_ae5f76cdc448fd689b6a3b8203a9c5513}{Vector\-Xd {\bfseries init\-\_\-hist\-\_\-log}}\label{classKLD_ae5f76cdc448fd689b6a3b8203a9c5513}
+
+\item 
+\hypertarget{classKLD_a3e641a379b707e0bd10f7b76a5bd1ae6}{Vector\-Xd {\bfseries curr\-\_\-hist\-\_\-log}}\label{classKLD_a3e641a379b707e0bd10f7b76a5bd1ae6}
+
+\item 
+\hypertarget{classKLD_a2f64e376047799b0bc7838b3ef895278}{int {\bfseries feat\-\_\-size}}\label{classKLD_a2f64e376047799b0bc7838b3ef895278}
+
+\item 
+\hypertarget{classKLD_a58387f23acf88b35444a69399e8723fd}{Vector\-Xd {\bfseries feat\-\_\-vec}}\label{classKLD_a58387f23acf88b35444a69399e8723fd}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classKLD_a3cabba5f44910411c3df473906406ea6}{\index{K\-L\-D@{K\-L\-D}!cmpt\-Init\-Hessian@{cmpt\-Init\-Hessian}}
+\index{cmpt\-Init\-Hessian@{cmpt\-Init\-Hessian}!KLD@{K\-L\-D}}
+\subsubsection[{cmpt\-Init\-Hessian}]{\setlength{\rightskip}{0pt plus 5cm}void K\-L\-D\-::cmpt\-Init\-Hessian (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd \&}]{d2f\-\_\-dp2, }
+\item[{const Matrix\-Xd \&}]{d\-I0\-\_\-dpssm}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classKLD_a3cabba5f44910411c3df473906406ea6}
+
+
+compute the S x S Hessian of the error norm using the supplied N x S Jacobian of pixel values w.\-r.\-t. 
+
+external parameters; compute the approximate Hessian by ignoring the second order terms 
+
+Reimplemented from \hyperlink{classAppearanceModel_ab153b47d09f121796d3f411626a5321c}{Appearance\-Model}.
+
+\hypertarget{classKLD_adc93f2d2e4a33bfed44c34cfcf839fc1}{\index{K\-L\-D@{K\-L\-D}!initialize\-Hess@{initialize\-Hess}}
+\index{initialize\-Hess@{initialize\-Hess}!KLD@{K\-L\-D}}
+\subsubsection[{initialize\-Hess}]{\setlength{\rightskip}{0pt plus 5cm}void K\-L\-D\-::initialize\-Hess (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classKLD_adc93f2d2e4a33bfed44c34cfcf839fc1}
+
+
+even though the Hessian of the error norm w.\-r.\-t. 
+
+pixel values is not a state variable (since it does not need to be computed separately to get the Hessian w.\-r.\-t S\-S\-M), this function is provided as a place to perform any one-\/time computations that may help to decrease the runtime cost of the interfacing function that computes this Hessian 
+
+Reimplemented from \hyperlink{classAppearanceModel_afb47df1d5e8a74f41ac70af3612180d2}{Appearance\-Model}.
+
+\hypertarget{classKLD_a0086dc5d8b48e01c053090e667cacdad}{\index{K\-L\-D@{K\-L\-D}!initialize\-Similarity@{initialize\-Similarity}}
+\index{initialize\-Similarity@{initialize\-Similarity}!KLD@{K\-L\-D}}
+\subsubsection[{initialize\-Similarity}]{\setlength{\rightskip}{0pt plus 5cm}void K\-L\-D\-::initialize\-Similarity (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classKLD_a0086dc5d8b48e01c053090e667cacdad}
+
+
+methods to initialize the state variables -\/ to be called once when the tracker is initialized. 
+
+if any of these are reimplemented, there should be a statement there copying the computed value in the \char`\"{}init\char`\"{} variable to the corresponding \char`\"{}curr\char`\"{} variable so the two have the same value after this function is called;
+
+Note for the S\-M\-: the \char`\"{}initialize\char`\"{} function for any state variable whose \char`\"{}update\char`\"{} function will be called later should be called once from the S\-M's own initialize function even if the initial value of that variable will not be used later; this is because updating the state variable may involve some computations which need to be performed only once and the A\-M is free to delegate any such computations to the respective \char`\"{}initialize\char`\"{} function to avoid repeating them in the \char`\"{}update\char`\"{} function which can have a negative impact on performance; thus if this function is not called, the results of these computations that are needed by the \char`\"{}update\char`\"{} function will remain uncomputed leading to undefined behavior;
+
+also the initialize functions have a boolean indicator parameter called \char`\"{}is\-\_\-initialized\char`\"{} which defaults to true but should be set to false if they are called only to update the internal state to take into account any changes to the initial template, i.\-e. if they are called again after the first call to initialize the state (when it should be left to true) 
+
+Reimplemented from \hyperlink{classAppearanceModel_abcd79170a5fccc0e9aa10675404ad655}{Appearance\-Model}.
+
+\hypertarget{classKLD_a957d7334574a554851bfdfd444910afe}{\index{K\-L\-D@{K\-L\-D}!update\-Dist\-Feat@{update\-Dist\-Feat}}
+\index{update\-Dist\-Feat@{update\-Dist\-Feat}!KLD@{K\-L\-D}}
+\subsubsection[{update\-Dist\-Feat}]{\setlength{\rightskip}{0pt plus 5cm}void K\-L\-D\-::update\-Dist\-Feat (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classKLD_a957d7334574a554851bfdfd444910afe}
+
+
+computes a \char`\"{}distance\char`\"{} vector using the current image patch such that, when the distance vectors corresponding to two patches are passed to the distance operator above, it uses these to compute a scalar that measures the distance or dissimilarity between the two patches; this distance vector should be designed so as to offload as much computation as possible from the distance operator, i.\-e. 
+
+every computation that depends only on the current patch should be performed here and the results should be stored, suitably coded, in the distannce vector where they will be decoded and used to compute the distance measure 
+
+Reimplemented from \hyperlink{classAppearanceModel_afc815587980df0cd28412a2cd1670854}{Appearance\-Model}.
+
+\hypertarget{classKLD_a303fabab01458afed9364cca944eb028}{\index{K\-L\-D@{K\-L\-D}!update\-Similarity@{update\-Similarity}}
+\index{update\-Similarity@{update\-Similarity}!KLD@{K\-L\-D}}
+\subsubsection[{update\-Similarity}]{\setlength{\rightskip}{0pt plus 5cm}void K\-L\-D\-::update\-Similarity (
+\begin{DoxyParamCaption}
+\item[{bool}]{prereq\-\_\-only = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classKLD_a303fabab01458afed9364cca944eb028}
+
+
+functions for updating state variables when a new image arrives 
+
+prereq\-\_\-only should be left to true if update is only called to compute the prerequisites for the two gradient functions and the actual value of similarity is not needed 
+
+Reimplemented from \hyperlink{classAppearanceModel_a06136ecd903e85ed2007da2c7b12bd58}{Appearance\-Model}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+A\-M/include/mtf/\-A\-M/K\-L\-D.\-h\end{DoxyCompactItemize}

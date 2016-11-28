@@ -1,0 +1,148 @@
+\hypertarget{classSCV}{\section{S\-C\-V Class Reference}
+\label{classSCV}\index{S\-C\-V@{S\-C\-V}}
+}
+
+
+Sum of Conditional Variance.  
+
+
+
+
+{\ttfamily \#include $<$S\-C\-V.\-h$>$}
+
+Inheritance diagram for S\-C\-V\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=5.000000cm]{classSCV}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSCV_a6ef2c44672ea8b08cad884cb349dd00b}{typedef \hyperlink{structSCVParams}{S\-C\-V\-Params} {\bfseries Param\-Type}}\label{classSCV_a6ef2c44672ea8b08cad884cb349dd00b}
+
+\item 
+\hypertarget{classSCV_a09d9a8cfc89de577f4ac6bea7234d4fc}{typedef S\-C\-V\-Params\-::\-Hist\-Type {\bfseries Hist\-Type}}\label{classSCV_a09d9a8cfc89de577f4ac6bea7234d4fc}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSCV_ac279c27c4556bc978db3e80145635fc3}{{\bfseries S\-C\-V} (const \hyperlink{structSCVParams}{Param\-Type} $\ast$scv\-\_\-params=nullptr, const int \-\_\-n\-\_\-channels=1)}\label{classSCV_ac279c27c4556bc978db3e80145635fc3}
+
+\item 
+\hypertarget{classSCV_a7b22733ac9613321df318caed6c556a5}{void \hyperlink{classSCV_a7b22733ac9613321df318caed6c556a5}{initialize\-Pix\-Vals} (const Matrix2\-Xd \&init\-\_\-pts) override}\label{classSCV_a7b22733ac9613321df318caed6c556a5}
+
+\begin{DoxyCompactList}\small\item\em initialization methods -\/ to be called once when the tracker is initialized \end{DoxyCompactList}\item 
+void \hyperlink{classSCV_acb828cbac2799da234dcefaf48190e7c}{initialize\-Pix\-Grad} (const Matrix2\-Xd \&init\-\_\-pts) override
+\item 
+void \hyperlink{classSCV_ad72451578ca3a16031924fcd238ae066}{initialize\-Pix\-Grad} (const Matrix8\-Xd \&warped\-\_\-offset\-\_\-pts) override
+\begin{DoxyCompactList}\small\item\em functions to compute image differentials (gradient and hessian) are overloaded since there are two ways to define them\-: \end{DoxyCompactList}\item 
+\hypertarget{classSCV_a56fe79909d61e0f7f5fdc215385017fe}{void {\bfseries update\-Pix\-Vals} (const Matrix2\-Xd \&curr\-\_\-pts) override}\label{classSCV_a56fe79909d61e0f7f5fdc215385017fe}
+
+\item 
+\hypertarget{classSCV_a57be6a18ceb5f61b3a1107bca2bd4715}{void {\bfseries update\-Pix\-Grad} (const Matrix2\-Xd \&curr\-\_\-pts) override}\label{classSCV_a57be6a18ceb5f61b3a1107bca2bd4715}
+
+\item 
+\hypertarget{classSCV_aa00dfdbc5788abf28a98ca5d2180f1f5}{void {\bfseries update\-Pix\-Grad} (const Matrix8\-Xd \&warped\-\_\-offset\-\_\-pts) override}\label{classSCV_aa00dfdbc5788abf28a98ca5d2180f1f5}
+
+\item 
+\hypertarget{classSCV_a50e94b3477bc1d951991c5f05f528c05}{void {\bfseries update\-Pix\-Hess} (const Matrix2\-Xd \&curr\-\_\-pts) override}\label{classSCV_a50e94b3477bc1d951991c5f05f528c05}
+
+\item 
+\hypertarget{classSCV_a504ece6542207c25f088fadb507463df}{double \hyperlink{classSCV_a504ece6542207c25f088fadb507463df}{operator()} (const double $\ast$a, const double $\ast$b, size\-\_\-t size, double worst\-\_\-dist=-\/1) const override}\label{classSCV_a504ece6542207c25f088fadb507463df}
+
+\begin{DoxyCompactList}\small\item\em computes the distance / dissimilarity between two patches where each is codified or represented by a suitable distance feature computed using update\-Dist\-Feat \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSCV_af94023a052cd2f1dc315c210beef6ac1}{\hyperlink{structSCVParams}{Param\-Type} {\bfseries params}}\label{classSCV_af94023a052cd2f1dc315c210beef6ac1}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classSCV_ab911f64ccbdc8518b74658820e72a1c7}{cv\-::\-Mat {\bfseries init\-\_\-img\-\_\-cv}}\label{classSCV_ab911f64ccbdc8518b74658820e72a1c7}
+
+\item 
+\hypertarget{classSCV_a825db972995d9868d0dce2670ced91dd}{Eig\-Img\-T {\bfseries init\-\_\-img}}\label{classSCV_a825db972995d9868d0dce2670ced91dd}
+
+\item 
+\hypertarget{classSCV_a81dcb2ebe1b6f92f6c5d40b1245a616e}{Vector\-Xd {\bfseries I0\-\_\-orig}}\label{classSCV_a81dcb2ebe1b6f92f6c5d40b1245a616e}
+
+\item 
+\hypertarget{classSCV_a84ac52a3bf1125f9876e67a8df75946d}{Matrix2\-Xd {\bfseries init\-\_\-pts}}\label{classSCV_a84ac52a3bf1125f9876e67a8df75946d}
+
+\item 
+\hypertarget{classSCV_ac4a267fcb28f4b0bc0cdaa48ccf0b431}{Matrix8\-Xd {\bfseries init\-\_\-warped\-\_\-offset\-\_\-pts}}\label{classSCV_ac4a267fcb28f4b0bc0cdaa48ccf0b431}
+
+\item 
+\hypertarget{classSCV_a460b61345d7b24bd86dd483d62566630}{double {\bfseries hist\-\_\-pre\-\_\-seed}}\label{classSCV_a460b61345d7b24bd86dd483d62566630}
+
+\item 
+\hypertarget{classSCV_a668c282b6a97b8bf420ac2c2960a1390}{Vector\-Xd {\bfseries intensity\-\_\-map}}\label{classSCV_a668c282b6a97b8bf420ac2c2960a1390}
+
+\item 
+\hypertarget{classSCV_ab71ff5f212973b5b7d03979f7075fea9}{Matrix\-Xd \hyperlink{classSCV_ab71ff5f212973b5b7d03979f7075fea9}{curr\-\_\-joint\-\_\-hist}}\label{classSCV_ab71ff5f212973b5b7d03979f7075fea9}
+
+\begin{DoxyCompactList}\small\item\em n\-\_\-bins x n\-\_\-bins joint histograms; \end{DoxyCompactList}\item 
+\hypertarget{classSCV_ae88062320678cbbbb8818bc1130c931a}{Vector\-Xd {\bfseries init\-\_\-hist}}\label{classSCV_ae88062320678cbbbb8818bc1130c931a}
+
+\item 
+\hypertarget{classSCV_a91328eb9b3d75a98dfe38d6314ca2374}{Vector\-Xd {\bfseries curr\-\_\-hist}}\label{classSCV_a91328eb9b3d75a98dfe38d6314ca2374}
+
+\item 
+\hypertarget{classSCV_ab25adc302fb0aab71e73096bbc023d57}{Matrix\-Xd {\bfseries init\-\_\-hist\-\_\-mat}}\label{classSCV_ab25adc302fb0aab71e73096bbc023d57}
+
+\item 
+\hypertarget{classSCV_a1bbc4054db851405cd72eaaaade734c7}{Matrix\-Xd {\bfseries curr\-\_\-hist\-\_\-mat}}\label{classSCV_a1bbc4054db851405cd72eaaaade734c7}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Sum of Conditional Variance. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classSCV_acb828cbac2799da234dcefaf48190e7c}{\index{S\-C\-V@{S\-C\-V}!initialize\-Pix\-Grad@{initialize\-Pix\-Grad}}
+\index{initialize\-Pix\-Grad@{initialize\-Pix\-Grad}!SCV@{S\-C\-V}}
+\subsubsection[{initialize\-Pix\-Grad}]{\setlength{\rightskip}{0pt plus 5cm}void S\-C\-V\-::initialize\-Pix\-Grad (
+\begin{DoxyParamCaption}
+\item[{const Matrix2\-Xd \&}]{init\-\_\-pts}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classSCV_acb828cbac2799da234dcefaf48190e7c}
+
+\begin{DoxyEnumerate}
+\item warp of the image gradient 
+\end{DoxyEnumerate}
+
+Reimplemented from \hyperlink{classImageBase_aa81f72f3d41e1be570b162789b8221d6}{Image\-Base}.
+
+\hypertarget{classSCV_ad72451578ca3a16031924fcd238ae066}{\index{S\-C\-V@{S\-C\-V}!initialize\-Pix\-Grad@{initialize\-Pix\-Grad}}
+\index{initialize\-Pix\-Grad@{initialize\-Pix\-Grad}!SCV@{S\-C\-V}}
+\subsubsection[{initialize\-Pix\-Grad}]{\setlength{\rightskip}{0pt plus 5cm}void S\-C\-V\-::initialize\-Pix\-Grad (
+\begin{DoxyParamCaption}
+\item[{const Matrix8\-Xd \&}]{warped\-\_\-offset\-\_\-pts}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classSCV_ad72451578ca3a16031924fcd238ae066}
+
+
+functions to compute image differentials (gradient and hessian) are overloaded since there are two ways to define them\-: 
+
+
+\begin{DoxyEnumerate}
+\item differential of the warped image\-: the image is warped first, then its differential is computed at the base (unwarped) locations
+\item warp of the image differential\-: differential is computed in the image coordinates and evaluated at the given (presumably warped) locations
+\end{DoxyEnumerate}
+\begin{DoxyEnumerate}
+\item gradient of the warped image 
+\end{DoxyEnumerate}
+
+Reimplemented from \hyperlink{classImageBase_a2aeec772d5c4de56f4e8fbfd4f08e69d}{Image\-Base}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+A\-M/include/mtf/\-A\-M/S\-C\-V.\-h\end{DoxyCompactItemize}

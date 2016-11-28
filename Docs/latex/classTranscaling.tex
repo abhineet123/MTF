@@ -1,0 +1,105 @@
+\hypertarget{classTranscaling}{\section{Transcaling Class Reference}
+\label{classTranscaling}\index{Transcaling@{Transcaling}}
+}
+Inheritance diagram for Transcaling\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classTranscaling}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classTranscaling_a817035c2802317c15a2e6a6d2be2bf51}{typedef \hyperlink{structTranscalingParams}{Transcaling\-Params} {\bfseries Param\-Type}}\label{classTranscaling_a817035c2802317c15a2e6a6d2be2bf51}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classTranscaling_a35deea371353d299f95fa59b7d14e862}{{\bfseries Transcaling} (const \hyperlink{structTranscalingParams}{Param\-Type} $\ast$params\-\_\-in=nullptr)}\label{classTranscaling_a35deea371353d299f95fa59b7d14e862}
+
+\item 
+\hypertarget{classTranscaling_a7e2d827defd43d6c37b05ab2e88a3b8d}{void {\bfseries set\-State} (const Vector\-Xd \&ssm\-\_\-state) override}\label{classTranscaling_a7e2d827defd43d6c37b05ab2e88a3b8d}
+
+\item 
+\hypertarget{classTranscaling_a872d5763d0c069d8d434d83a52ff6188}{void {\bfseries compositional\-Update} (const Vector\-Xd \&state\-\_\-update) override}\label{classTranscaling_a872d5763d0c069d8d434d83a52ff6188}
+
+\item 
+\hypertarget{classTranscaling_afff0ed2552cfeb2fb3b9db7dbd12b0d7}{void {\bfseries get\-Init\-Pix\-Grad} (Matrix2\-Xd \&ssm\-\_\-grad, int pix\-\_\-id) override}\label{classTranscaling_afff0ed2552cfeb2fb3b9db7dbd12b0d7}
+
+\item 
+\hypertarget{classTranscaling_a9f4de1be4f7fef9789d366f31c7c1d60}{void {\bfseries get\-Curr\-Pix\-Grad} (Matrix2\-Xd \&ssm\-\_\-grad, int pix\-\_\-id) override}\label{classTranscaling_a9f4de1be4f7fef9789d366f31c7c1d60}
+
+\item 
+void \hyperlink{classTranscaling_ab349cd5b1915285f96ec447046540a44}{cmpt\-Init\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&am\-\_\-jacobian) override
+\begin{DoxyCompactList}\small\item\em right multiplies the initial or current ssm jacobian with the provided am jacobian; though this can be accomplished by the search method itself with simple matrix multiplication, the ssm jacobian often satisfies several constraints (e.\-g. \end{DoxyCompactList}\item 
+\hypertarget{classTranscaling_a2e1f4f4790ce426f3667f8ecfe43c8bc}{void {\bfseries cmpt\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&am\-\_\-jacobian) override}\label{classTranscaling_a2e1f4f4790ce426f3667f8ecfe43c8bc}
+
+\item 
+\hypertarget{classTranscaling_a2c3ddd830478b5b88473f016fcec9045}{void {\bfseries cmpt\-Approx\-Pix\-Jacobian} (Matrix\-Xd \&jacobian\-\_\-prod, const Pix\-Grad\-T \&pix\-\_\-jacobian) override}\label{classTranscaling_a2c3ddd830478b5b88473f016fcec9045}
+
+\item 
+\hypertarget{classTranscaling_a2a40dab27ed333912405407bc57d5146}{void {\bfseries cmpt\-Warped\-Pix\-Jacobian} (Matrix\-Xd \&d\-I\-\_\-dp, const Pix\-Grad\-T \&d\-I\-\_\-dx) override}\label{classTranscaling_a2a40dab27ed333912405407bc57d5146}
+
+\item 
+\hypertarget{classTranscaling_ae2f69ec541f30c662852b67dfe776280}{void {\bfseries cmpt\-Init\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad) override}\label{classTranscaling_ae2f69ec541f30c662852b67dfe776280}
+
+\item 
+\hypertarget{classTranscaling_ac6dedd9d0d6c3db475b5ef6c58166ea8}{void {\bfseries cmpt\-Pix\-Hessian} (Matrix\-Xd \&pix\-\_\-hess\-\_\-ssm, const Pix\-Hess\-T \&pix\-\_\-hess\-\_\-coord, const Pix\-Grad\-T \&pix\-\_\-grad) override}\label{classTranscaling_ac6dedd9d0d6c3db475b5ef6c58166ea8}
+
+\item 
+\hypertarget{classTranscaling_ad86832a909e99feeb38399dd434952f0}{void {\bfseries cmpt\-Warped\-Pix\-Hessian} (Matrix\-Xd \&d2\-I\-\_\-dp2, const Pix\-Hess\-T \&d2\-I\-\_\-dw2, const Pix\-Grad\-T \&d\-I\-\_\-dw) override}\label{classTranscaling_ad86832a909e99feeb38399dd434952f0}
+
+\item 
+\hypertarget{classTranscaling_a64aac240bad542bedc89afa56f98d856}{void {\bfseries estimate\-Warp\-From\-Corners} (Vector\-Xd \&state\-\_\-update, const Matrix24d \&in\-\_\-corners, const Matrix24d \&out\-\_\-corners) override}\label{classTranscaling_a64aac240bad542bedc89afa56f98d856}
+
+\item 
+\hypertarget{classTranscaling_abd898650758a493f2188dd772e7a49ed}{void {\bfseries estimate\-Warp\-From\-Pts} (Vector\-Xd \&state\-\_\-update, vector$<$ uchar $>$ \&mask, const vector$<$ cv\-::\-Point2f $>$ \&in\-\_\-pts, const vector$<$ cv\-::\-Point2f $>$ \&out\-\_\-pts, const \hyperlink{structSSMEstimatorParams}{Estimator\-Params} \&est\-\_\-params) override}\label{classTranscaling_abd898650758a493f2188dd772e7a49ed}
+
+\item 
+\hypertarget{classTranscaling_a6ba1fc6dcfac63ae943bf3239b00bb07}{void {\bfseries update\-Grad\-Pts} (double grad\-\_\-eps) override}\label{classTranscaling_a6ba1fc6dcfac63ae943bf3239b00bb07}
+
+\item 
+\hypertarget{classTranscaling_ae2c2b1612277cce83e3dcf7fc804cab9}{void {\bfseries update\-Hess\-Pts} (double hess\-\_\-eps) override}\label{classTranscaling_ae2c2b1612277cce83e3dcf7fc804cab9}
+
+\item 
+\hypertarget{classTranscaling_ab1ff2b9ba17daa477687cac436b9cac0}{void {\bfseries apply\-Warp\-To\-Corners} (Matrix24d \&warped\-\_\-corners, const Matrix24d \&orig\-\_\-corners, const Vector\-Xd \&state\-\_\-update) override}\label{classTranscaling_ab1ff2b9ba17daa477687cac436b9cac0}
+
+\item 
+\hypertarget{classTranscaling_ab2edd6291be08365b7efe206194ed05f}{void {\bfseries apply\-Warp\-To\-Pts} (Matrix2\-Xd \&warped\-\_\-pts, const Matrix2\-Xd \&orig\-\_\-pts, const Vector\-Xd \&state\-\_\-update) override}\label{classTranscaling_ab2edd6291be08365b7efe206194ed05f}
+
+\item 
+\hypertarget{classTranscaling_a21d28dc7b8e109a64c2cdd24e065bfb2}{bool {\bfseries supports\-S\-P\-I} () override}\label{classTranscaling_a21d28dc7b8e109a64c2cdd24e065bfb2}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classTranscaling_ad7fc78cc5cc2361316876b6b4eacd528}{\hyperlink{structTranscalingParams}{Param\-Type} {\bfseries params}}\label{classTranscaling_ad7fc78cc5cc2361316876b6b4eacd528}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classTranscaling_ab349cd5b1915285f96ec447046540a44}{\index{Transcaling@{Transcaling}!cmpt\-Init\-Pix\-Jacobian@{cmpt\-Init\-Pix\-Jacobian}}
+\index{cmpt\-Init\-Pix\-Jacobian@{cmpt\-Init\-Pix\-Jacobian}!Transcaling@{Transcaling}}
+\subsubsection[{cmpt\-Init\-Pix\-Jacobian}]{\setlength{\rightskip}{0pt plus 5cm}void Transcaling\-::cmpt\-Init\-Pix\-Jacobian (
+\begin{DoxyParamCaption}
+\item[{Matrix\-Xd \&}]{jacobian\-\_\-prod, }
+\item[{const Pix\-Grad\-T \&}]{pixel\-\_\-grad}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classTranscaling_ab349cd5b1915285f96ec447046540a44}
+
+
+right multiplies the initial or current ssm jacobian with the provided am jacobian; though this can be accomplished by the search method itself with simple matrix multiplication, the ssm jacobian often satisfies several constraints (e.\-g. 
+
+sparsity) that can be exploited to gain computational savings by manually computing the product matrix 
+
+Reimplemented from \hyperlink{classStateSpaceModel_ac956c679581e746891c62755fe715b3b}{State\-Space\-Model}.
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-S\-M/include/mtf/\-S\-S\-M/Transcaling.\-h\end{DoxyCompactItemize}

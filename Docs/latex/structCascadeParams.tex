@@ -1,0 +1,32 @@
+\hypertarget{structCascadeParams}{\section{Cascade\-Params Struct Reference}
+\label{structCascadeParams}\index{Cascade\-Params@{Cascade\-Params}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structCascadeParams_a62e31974b0b3a81c556cd8705b5e3841}{{\bfseries Cascade\-Params} (bool \-\_\-enable\-\_\-feedback, bool \-\_\-auto\-\_\-reinit, double \-\_\-reinit\-\_\-err\-\_\-thresh, int \-\_\-reinit\-\_\-frame\-\_\-gap)}\label{structCascadeParams_a62e31974b0b3a81c556cd8705b5e3841}
+
+\item 
+\hypertarget{structCascadeParams_ab6cb3cd34c90b755f0fc70e975bf407c}{{\bfseries Cascade\-Params} (const \hyperlink{structCascadeParams}{Cascade\-Params} $\ast$params=nullptr)}\label{structCascadeParams_ab6cb3cd34c90b755f0fc70e975bf407c}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structCascadeParams_a1132f7cd5f0d13f2fe9f2a0ae2b9c907}{bool \hyperlink{structCascadeParams_a1132f7cd5f0d13f2fe9f2a0ae2b9c907}{enable\-\_\-feedback}}\label{structCascadeParams_a1132f7cd5f0d13f2fe9f2a0ae2b9c907}
+
+\begin{DoxyCompactList}\small\item\em use the position of the last tracker in the cascade to update that of the first tracker before updating the cascade with the next frame \end{DoxyCompactList}\item 
+\hypertarget{structCascadeParams_a632ed34d7745e9c0c2164e7bca07a07d}{bool \hyperlink{structCascadeParams_a632ed34d7745e9c0c2164e7bca07a07d}{auto\-\_\-reinit}}\label{structCascadeParams_a632ed34d7745e9c0c2164e7bca07a07d}
+
+\begin{DoxyCompactList}\small\item\em automatically reinitialize all trackers when the change in corners between consecutive any two trackers in the cascade exceeds a threshold \end{DoxyCompactList}\item 
+\hypertarget{structCascadeParams_ac67600e34dc88745e25be88676fa9657}{double \hyperlink{structCascadeParams_ac67600e34dc88745e25be88676fa9657}{reinit\-\_\-err\-\_\-thresh}}\label{structCascadeParams_ac67600e34dc88745e25be88676fa9657}
+
+\begin{DoxyCompactList}\small\item\em threshold of corner change norm above which failure is assumed and trackers are reinitialized \end{DoxyCompactList}\item 
+\hypertarget{structCascadeParams_aea9dc6606b0b68839b6130a9dcf511e4}{int \hyperlink{structCascadeParams_aea9dc6606b0b68839b6130a9dcf511e4}{reinit\-\_\-frame\-\_\-gap}}\label{structCascadeParams_aea9dc6606b0b68839b6130a9dcf511e4}
+
+\begin{DoxyCompactList}\small\item\em gap between the frame in which the failure is detected and the one where trackers are reinitialized \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/Cascade\-Params.\-h\end{DoxyCompactItemize}

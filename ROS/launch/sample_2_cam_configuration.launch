@@ -1,0 +1,30 @@
+<!--
+     Sample launch file that instantiates 2 tracker nodes and their respective
+     SharedImageWriter nodes to use the system with two different camera source
+     topics. With this configuration the output of a usb camera is used as input
+     for the tracker
+-->
+<launch>
+    <group ns="tracker1">
+        <node name="sample_tracker_node_1" pkg="mtf_bridge" type="sample_tracker_node" output="screen"> 
+            <param name="shm_name" value="shm1"/>
+            <remap from="/init_buffer" to="/tracker1/init_buffer"/>
+            <remap from="/input_image" to="/tracker1/input_image"/>
+        </node>
+        <node name="SharedImageWriter" pkg="mtf_bridge" type="SharedImageWriter" output="screen"> 
+            <param name="shm_name" value="shm1"/>
+            <remap from="/camera/image_raw" to="/cam1/camera/image_raw"/>
+        </node>
+    </group> 
+    <group ns="tracker2">
+        <node name="sample_tracker_node_2" pkg="mtf_bridge" type="sample_tracker_node" output="screen"> 
+            <param name="shm_name" value="shm2"/>
+            <remap from="/init_buffer" to="/tracker2/init_buffer"/>
+            <remap from="/input_image" to="/tracker2/input_image"/>
+        </node>
+        <node name="SharedImageWriter" pkg="mtf_bridge" type="SharedImageWriter" output="screen"> 
+            <param name="shm_name" value="shm2"/>
+            <remap from="/camera/image_raw" to="/cam2/camera/image_raw"/>
+        </node>
+    </group> 
+</launch>

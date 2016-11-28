@@ -1,0 +1,72 @@
+\hypertarget{classIALK2}{\section{I\-A\-L\-K2$<$ A\-M, S\-S\-M $>$ Class Template Reference}
+\label{classIALK2}\index{I\-A\-L\-K2$<$ A\-M, S\-S\-M $>$@{I\-A\-L\-K2$<$ A\-M, S\-S\-M $>$}}
+}
+Inheritance diagram for I\-A\-L\-K2$<$ A\-M, S\-S\-M $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classIALK2}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classIALK2_aaf71baa2009274abafe1f0ffc99cbb73}{typedef \hyperlink{structIALK2Params}{I\-A\-L\-K2\-Params} {\bfseries Param\-Type}}\label{classIALK2_aaf71baa2009274abafe1f0ffc99cbb73}
+
+\item 
+\hypertarget{classIALK2_a06929e07f9be24fe60291d760f6a667d}{typedef Param\-Type\-::\-Hess\-Type {\bfseries Hess\-Type}}\label{classIALK2_a06929e07f9be24fe60291d760f6a667d}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classIALK2_a44df892466a7a49197ddc3da43a3443c}{{\bfseries I\-A\-L\-K2} (const \hyperlink{structIALK2Params}{Param\-Type} $\ast$iclk\-\_\-params=N\-U\-L\-L, const \hyperlink{structAMParams}{A\-M\-Params} $\ast$am\-\_\-params=N\-U\-L\-L, const \hyperlink{structSSMParams}{S\-S\-M\-Params} $\ast$ssm\-\_\-params=N\-U\-L\-L)}\label{classIALK2_a44df892466a7a49197ddc3da43a3443c}
+
+\item 
+\hypertarget{classIALK2_a36d6c057a850223ce0436945d837dfb6}{void {\bfseries initialize} (const cv\-::\-Mat \&corners) override}\label{classIALK2_a36d6c057a850223ce0436945d837dfb6}
+
+\item 
+\hypertarget{classIALK2_a9f9cbdb110c86602334ca6a5db31445e}{void {\bfseries update} () override}\label{classIALK2_a9f9cbdb110c86602334ca6a5db31445e}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classIALK2_af42772e069e1cb89bd849eb9b9dac21f}{\hyperlink{structIALK2Params}{Param\-Type} {\bfseries params}}\label{classIALK2_af42772e069e1cb89bd849eb9b9dac21f}
+
+\item 
+\hypertarget{classIALK2_a3b8688db64e652e1812953e6a9e103da}{Row\-Vector\-Xd \hyperlink{classIALK2_a3b8688db64e652e1812953e6a9e103da}{jacobian}}\label{classIALK2_a3b8688db64e652e1812953e6a9e103da}
+
+\begin{DoxyCompactList}\small\item\em 1 x S Jacobian of the A\-M error norm w.\-r.\-t. S\-S\-M state vector \end{DoxyCompactList}\item 
+\hypertarget{classIALK2_af0bae2ddd35a1a773f27de5bb30b64e1}{Matrix\-Xd \hyperlink{classIALK2_af0bae2ddd35a1a773f27de5bb30b64e1}{hessian}}\label{classIALK2_af0bae2ddd35a1a773f27de5bb30b64e1}
+
+\begin{DoxyCompactList}\small\item\em S x S Hessian of the A\-M error norm w.\-r.\-t. S\-S\-M state vector. \end{DoxyCompactList}\item 
+\hypertarget{classIALK2_a75785853d6458e94213451095324d061}{Matrix\-Xd \hyperlink{classIALK2_a75785853d6458e94213451095324d061}{init\-\_\-pix\-\_\-jacobian}}\label{classIALK2_a75785853d6458e94213451095324d061}
+
+\begin{DoxyCompactList}\small\item\em N x S jacobians of the pixel values w.\-r.\-t the S\-S\-M state vector. \end{DoxyCompactList}\item 
+\hypertarget{classIALK2_ab6507033c73d5f4c53103389772f0bf7}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-jacobian}}\label{classIALK2_ab6507033c73d5f4c53103389772f0bf7}
+
+\item 
+\hypertarget{classIALK2_a5eac5510857a25408c1e903b4f4f36ac}{Matrix\-Xd \hyperlink{classIALK2_a5eac5510857a25408c1e903b4f4f36ac}{init\-\_\-pix\-\_\-hessian}}\label{classIALK2_a5eac5510857a25408c1e903b4f4f36ac}
+
+\begin{DoxyCompactList}\small\item\em N x S x S hessians of the pixel values w.\-r.\-t the S\-S\-M state vector stored as a (S$\ast$\-S) x N 2\-D matrix. \end{DoxyCompactList}\item 
+\hypertarget{classIALK2_a7af6e78521d67b691653423a18e77a0b}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-hessian}}\label{classIALK2_a7af6e78521d67b691653423a18e77a0b}
+
+\item 
+\hypertarget{classIALK2_a8f3465edc4b825c9e2b897f24f1ad156}{Matrix24d {\bfseries prev\-\_\-corners}}\label{classIALK2_a8f3465edc4b825c9e2b897f24f1ad156}
+
+\item 
+\hypertarget{classIALK2_ac4b58e3e8002bd51b7287d7da40aed6c}{Vector\-Xd {\bfseries ssm\-\_\-update}}\label{classIALK2_ac4b58e3e8002bd51b7287d7da40aed6c}
+
+\item 
+\hypertarget{classIALK2_abb1bc228c541af9ff0acaca60f0dfd85}{Vector\-Xd {\bfseries inv\-\_\-update}}\label{classIALK2_abb1bc228c541af9ff0acaca60f0dfd85}
+
+\item 
+\hypertarget{classIALK2_a0afdaf9be67063c26648f9e2312c988b}{int {\bfseries frame\-\_\-id}}\label{classIALK2_a0afdaf9be67063c26648f9e2312c988b}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/I\-A\-L\-K2.\-h\end{DoxyCompactItemize}

@@ -1,0 +1,199 @@
+\hypertarget{classProjectiveBase}{\section{Projective\-Base Class Reference}
+\label{classProjectiveBase}\index{Projective\-Base@{Projective\-Base}}
+}
+
+
+base class for all S\-S\-Ms that can be expressed by homogeneous multiplication with a 3x3 projective transformation matrix  
+
+
+
+
+{\ttfamily \#include $<$Projective\-Base.\-h$>$}
+
+Inheritance diagram for Projective\-Base\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=12.000000cm]{classProjectiveBase}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classProjectiveBase_aa194546c058d67af644c3dc4fe072518}{typedef boost\-::minstd\-\_\-rand {\bfseries Sample\-Gen\-T}}\label{classProjectiveBase_aa194546c058d67af644c3dc4fe072518}
+
+\item 
+\hypertarget{classProjectiveBase_a7e146120c5c5f43543a669379808ac24}{typedef \\*
+boost\-::normal\-\_\-distribution\\*
+$<$ double $>$ {\bfseries Sample\-Dist\-T}}\label{classProjectiveBase_a7e146120c5c5f43543a669379808ac24}
+
+\item 
+\hypertarget{classProjectiveBase_abb4d5489045cf7862bb47c230077586f}{typedef Sample\-Dist\-T\-::param\-\_\-type {\bfseries Dist\-Param\-T}}\label{classProjectiveBase_abb4d5489045cf7862bb47c230077586f}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classProjectiveBase_aeff2258bfc60ed8235fa9f9c58b5ad93}{{\bfseries Projective\-Base} (const \hyperlink{structSSMParams}{S\-S\-M\-Params} $\ast$params)}\label{classProjectiveBase_aeff2258bfc60ed8235fa9f9c58b5ad93}
+
+\item 
+\hypertarget{classProjectiveBase_a4a872736ce6c05080fe1b1cca767b05d}{void {\bfseries set\-Corners} (const Corners\-T \&corners) override}\label{classProjectiveBase_a4a872736ce6c05080fe1b1cca767b05d}
+
+\item 
+\hypertarget{classProjectiveBase_a47d8b259d0c0e0b7320a33ea8a8df029}{void {\bfseries set\-State} (const Vector\-Xd \&ssm\-\_\-state) override}\label{classProjectiveBase_a47d8b259d0c0e0b7320a33ea8a8df029}
+
+\item 
+\hypertarget{classProjectiveBase_a95bef7c0dc68d1cffb0618e444915f6a}{void {\bfseries additive\-Update} (const Vector\-Xd \&state\-\_\-update) override}\label{classProjectiveBase_a95bef7c0dc68d1cffb0618e444915f6a}
+
+\item 
+\hypertarget{classProjectiveBase_ac6803fd1ba428d344b7b93e14931b9f2}{void {\bfseries invert\-State} (Vector\-Xd \&inv\-\_\-state, const Vector\-Xd \&state) override}\label{classProjectiveBase_ac6803fd1ba428d344b7b93e14931b9f2}
+
+\item 
+\hypertarget{classProjectiveBase_a2583799eea8a2581853b05ad831dd582}{void {\bfseries update\-Grad\-Pts} (double grad\-\_\-eps) override}\label{classProjectiveBase_a2583799eea8a2581853b05ad831dd582}
+
+\item 
+\hypertarget{classProjectiveBase_a883339ccb778bf2a8bf85fc7fef60e03}{void {\bfseries update\-Hess\-Pts} (double hess\-\_\-eps) override}\label{classProjectiveBase_a883339ccb778bf2a8bf85fc7fef60e03}
+
+\item 
+\hypertarget{classProjectiveBase_aae30cdd73ff9a19e7f667b25d8e28760}{void {\bfseries apply\-Warp\-To\-Corners} (Matrix24d \&warped\-\_\-corners, const Matrix24d \&orig\-\_\-corners, const Vector\-Xd \&state\-\_\-update) override}\label{classProjectiveBase_aae30cdd73ff9a19e7f667b25d8e28760}
+
+\item 
+\hypertarget{classProjectiveBase_a92d023d6f8bcbb43a388f6ca4370f9a0}{void {\bfseries apply\-Warp\-To\-Pts} (Matrix2\-Xd \&warped\-\_\-pts, const Matrix2\-Xd \&orig\-\_\-pts, const Vector\-Xd \&state\-\_\-update) override}\label{classProjectiveBase_a92d023d6f8bcbb43a388f6ca4370f9a0}
+
+\item 
+\hypertarget{classProjectiveBase_a1b157bfe5f939ec7758910cbe78caf3d}{void {\bfseries apply\-Warp\-To\-Pt} (double \&warped\-\_\-x, double \&warped\-\_\-y, double x, double y, const Proj\-Warp\-T \&warp)}\label{classProjectiveBase_a1b157bfe5f939ec7758910cbe78caf3d}
+
+\item 
+\hypertarget{classProjectiveBase_a3ee1fa50839622d08ae5e7e3084cd9e1}{void {\bfseries initialize\-Sampler} (const Vector\-Xd \&state\-\_\-sigma, const Vector\-Xd \&state\-\_\-mean) override}\label{classProjectiveBase_a3ee1fa50839622d08ae5e7e3084cd9e1}
+
+\item 
+\hypertarget{classProjectiveBase_ab5028169af0f200ce45c4ae70a1b99d5}{void {\bfseries set\-Sampler} (const Vector\-Xd \&state\-\_\-sigma, const Vector\-Xd \&state\-\_\-mean) override}\label{classProjectiveBase_ab5028169af0f200ce45c4ae70a1b99d5}
+
+\item 
+\hypertarget{classProjectiveBase_a908d0d2550c76631485670635170a748}{void {\bfseries set\-Sampler\-Mean} (const Vector\-Xd \&mean) override}\label{classProjectiveBase_a908d0d2550c76631485670635170a748}
+
+\item 
+\hypertarget{classProjectiveBase_a0f2d9416232805a66db57a4693273272}{void {\bfseries set\-Sampler\-Sigma} (const Vector\-Xd \&std) override}\label{classProjectiveBase_a0f2d9416232805a66db57a4693273272}
+
+\item 
+\hypertarget{classProjectiveBase_ade383adc360feee255b6cf03f10f6cd9}{Vector\-Xd {\bfseries get\-Sampler\-Sigma} () override}\label{classProjectiveBase_ade383adc360feee255b6cf03f10f6cd9}
+
+\item 
+\hypertarget{classProjectiveBase_a803921874fcd49d27fb016a908fc3055}{Vector\-Xd {\bfseries get\-Sampler\-Mean} () override}\label{classProjectiveBase_a803921874fcd49d27fb016a908fc3055}
+
+\item 
+\hypertarget{classProjectiveBase_a130574c30fe7dd7f1cab6e8c9b55470a}{void {\bfseries additive\-Random\-Walk} (Vector\-Xd \&perturbed\-\_\-state, const Vector\-Xd \&base\-\_\-state) override}\label{classProjectiveBase_a130574c30fe7dd7f1cab6e8c9b55470a}
+
+\item 
+\hypertarget{classProjectiveBase_adc3b9b1e1b4f31089aba0bd3af3de109}{void {\bfseries compositional\-Random\-Walk} (Vector\-Xd \&perturbed\-\_\-state, const Vector\-Xd \&base\-\_\-state) override}\label{classProjectiveBase_adc3b9b1e1b4f31089aba0bd3af3de109}
+
+\item 
+\hypertarget{classProjectiveBase_a15b7b0d6e1226102a2646e516622226d}{void {\bfseries additive\-Auto\-Regression1} (Vector\-Xd \&perturbed\-\_\-state, Vector\-Xd \&perturbed\-\_\-ar, const Vector\-Xd \&base\-\_\-state, const Vector\-Xd \&base\-\_\-ar, double a=0.\-5) override}\label{classProjectiveBase_a15b7b0d6e1226102a2646e516622226d}
+
+\item 
+\hypertarget{classProjectiveBase_a3871a29f648507d82b7daca67c68262e}{void {\bfseries compositional\-Auto\-Regression1} (Vector\-Xd \&perturbed\-\_\-state, Vector\-Xd \&perturbed\-\_\-ar, const Vector\-Xd \&base\-\_\-state, const Vector\-Xd \&base\-\_\-ar, double a=0.\-5) override}\label{classProjectiveBase_a3871a29f648507d82b7daca67c68262e}
+
+\item 
+\hypertarget{classProjectiveBase_aa3097d82ece74efc783cdd4ff4c112b9}{void {\bfseries generate\-Perturbation} (Vector\-Xd \&perturbation) override}\label{classProjectiveBase_aa3097d82ece74efc783cdd4ff4c112b9}
+
+\item 
+\hypertarget{classProjectiveBase_ae749bc545a75f091903323ba92d51eb3}{void {\bfseries generate\-Perturbed\-Pts} (Vector\-Xd \&perturbed\-\_\-pts) override}\label{classProjectiveBase_ae749bc545a75f091903323ba92d51eb3}
+
+\item 
+\hypertarget{classProjectiveBase_a6e8c888f186c2688d3903e3aa631e6ac}{void {\bfseries estimate\-Mean\-Of\-Samples} (Vector\-Xd \&sample\-\_\-mean, const std\-::vector$<$ Vector\-Xd $>$ \&samples, int n\-\_\-samples) override}\label{classProjectiveBase_a6e8c888f186c2688d3903e3aa631e6ac}
+
+\item 
+\hypertarget{classProjectiveBase_a559a95f25203bbd9990a128adb6e9135}{void {\bfseries get\-Perturbed\-Pts} (Vector\-Xd \&perturbed\-\_\-pts, const Vector\-Xd \&state\-\_\-perturbation) override}\label{classProjectiveBase_a559a95f25203bbd9990a128adb6e9135}
+
+\item 
+\hypertarget{classProjectiveBase_a7a245b6be4704da571c3f78501e8cd32}{void {\bfseries estimate\-State\-Sigma} (Vector\-Xd \&state\-\_\-sigma, double pix\-\_\-sigma) override}\label{classProjectiveBase_a7a245b6be4704da571c3f78501e8cd32}
+
+\item 
+\hypertarget{classProjectiveBase_abc2496e8f4f21d08b7c18059d192d7d5}{void {\bfseries get\-Identity\-Warp} (Vector\-Xd \&identity\-\_\-warp) override}\label{classProjectiveBase_abc2496e8f4f21d08b7c18059d192d7d5}
+
+\item 
+\hypertarget{classProjectiveBase_a9f458f41c73228f98aa63212b6114099}{void {\bfseries compose\-Warps} (Vector\-Xd \&composed\-\_\-state, const Vector\-Xd \&state\-\_\-1, const Vector\-Xd \&state\-\_\-2) override}\label{classProjectiveBase_a9f458f41c73228f98aa63212b6114099}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classProjectiveBase_af91569cc59a9cde3dc43087e8a18fb44}{std\-::vector$<$ Sample\-Gen\-T $>$ {\bfseries rand\-\_\-gen}}\label{classProjectiveBase_af91569cc59a9cde3dc43087e8a18fb44}
+
+\item 
+\hypertarget{classProjectiveBase_a1b8704a9cc46e095288475b4c6f2841a}{std\-::vector$<$ Sample\-Dist\-T $>$ {\bfseries rand\-\_\-dist}}\label{classProjectiveBase_a1b8704a9cc46e095288475b4c6f2841a}
+
+\item 
+\hypertarget{classProjectiveBase_afb931698d7deba3a69d76a006b6ef878}{Vector\-Xd {\bfseries state\-\_\-perturbation}}\label{classProjectiveBase_afb931698d7deba3a69d76a006b6ef878}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classProjectiveBase_a13b4da2565e0ccbc817e3dfd9edae358}{const Pts\-T \& {\bfseries get\-Norm\-Pts} () const }\label{classProjectiveBase_a13b4da2565e0ccbc817e3dfd9edae358}
+
+\item 
+\hypertarget{classProjectiveBase_af0b9aba5d19191c4a28fad0784f558f6}{const Hom\-Pts\-T \& {\bfseries get\-Hom\-Norm\-Pts} () const }\label{classProjectiveBase_af0b9aba5d19191c4a28fad0784f558f6}
+
+\item 
+\hypertarget{classProjectiveBase_a7806c08154c60374cef7512d93d56533}{const Corners\-T \& {\bfseries get\-Norm\-Corners} () const }\label{classProjectiveBase_a7806c08154c60374cef7512d93d56533}
+
+\item 
+\hypertarget{classProjectiveBase_ac57e5fd8e33ee87801c59f977778d0b0}{const Hom\-Corners\-T \& {\bfseries get\-Hom\-Norm\-Corners} () const }\label{classProjectiveBase_ac57e5fd8e33ee87801c59f977778d0b0}
+
+\item 
+\hypertarget{classProjectiveBase_a1160c2f8a47f2f0e0a09b0c308ddcf58}{void {\bfseries get\-Pts\-From\-Corners} (Proj\-Warp\-T \&warp, Pts\-T \&pts, Hom\-Pts\-T \&pts\-\_\-hm, const Corners\-T \&corners)}\label{classProjectiveBase_a1160c2f8a47f2f0e0a09b0c308ddcf58}
+
+\item 
+\hypertarget{classProjectiveBase_a48a4af195e56dfb100dc2983bb48e59c}{virtual void {\bfseries get\-Warp\-From\-State} (Matrix3d \&warp\-\_\-mat, const Vector\-Xd \&ssm\-\_\-state)=0}\label{classProjectiveBase_a48a4af195e56dfb100dc2983bb48e59c}
+
+\item 
+\hypertarget{classProjectiveBase_a7366bb9a0073f4d644df39e9c5d486c4}{virtual void {\bfseries get\-State\-From\-Warp} (Vector\-Xd \&state\-\_\-vec, const Matrix3d \&warp\-\_\-mat)=0}\label{classProjectiveBase_a7366bb9a0073f4d644df39e9c5d486c4}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classProjectiveBase_a56531dd0ac0f211d004926aec208bb47}{Proj\-Warp\-T {\bfseries warp\-\_\-mat}}\label{classProjectiveBase_a56531dd0ac0f211d004926aec208bb47}
+
+\item 
+\hypertarget{classProjectiveBase_a95bf833fbd576c348908c9fa49bf697e}{Proj\-Warp\-T {\bfseries warp\-\_\-update\-\_\-mat}}\label{classProjectiveBase_a95bf833fbd576c348908c9fa49bf697e}
+
+\item 
+\hypertarget{classProjectiveBase_af3f79f15a7b22c7a34d81e30e41aea50}{Proj\-Warp\-T {\bfseries inv\-\_\-warp\-\_\-mat}}\label{classProjectiveBase_af3f79f15a7b22c7a34d81e30e41aea50}
+
+\item 
+\hypertarget{classProjectiveBase_acfb46812b158e12247eed404f215c5c2}{Proj\-Warp\-T {\bfseries curr\-\_\-warp}}\label{classProjectiveBase_acfb46812b158e12247eed404f215c5c2}
+
+\item 
+\hypertarget{classProjectiveBase_a8def776e4535158d0f6ee8853e623ea3}{Hom\-Pts\-T \hyperlink{classProjectiveBase_a8def776e4535158d0f6ee8853e623ea3}{init\-\_\-pts\-\_\-hm}}\label{classProjectiveBase_a8def776e4535158d0f6ee8853e623ea3}
+
+\begin{DoxyCompactList}\small\item\em 3 x 3 projective warp matrix \end{DoxyCompactList}\item 
+\hypertarget{classProjectiveBase_ae6685b76b02e8f466e40f02dfc2619b1}{Hom\-Pts\-T {\bfseries curr\-\_\-pts\-\_\-hm}}\label{classProjectiveBase_ae6685b76b02e8f466e40f02dfc2619b1}
+
+\item 
+\hypertarget{classProjectiveBase_abd1017babcc973718003d4d779ae53d0}{Hom\-Corners\-T {\bfseries init\-\_\-corners\-\_\-hm}}\label{classProjectiveBase_abd1017babcc973718003d4d779ae53d0}
+
+\item 
+\hypertarget{classProjectiveBase_a7b14cdcb3953459d8f177c79a22b0dd7}{Hom\-Corners\-T {\bfseries curr\-\_\-corners\-\_\-hm}}\label{classProjectiveBase_a7b14cdcb3953459d8f177c79a22b0dd7}
+
+\item 
+\hypertarget{classProjectiveBase_abffab6e89ab313973c8af3c5acbdb1f7}{Pts\-T {\bfseries norm\-\_\-pts}}\label{classProjectiveBase_abffab6e89ab313973c8af3c5acbdb1f7}
+
+\item 
+\hypertarget{classProjectiveBase_acb53795da251bf9c1b4eccb17d8e67d5}{Hom\-Pts\-T {\bfseries norm\-\_\-pts\-\_\-hm}}\label{classProjectiveBase_acb53795da251bf9c1b4eccb17d8e67d5}
+
+\item 
+\hypertarget{classProjectiveBase_a7747ba618a08b561e3071d0703c52f92}{Corners\-T {\bfseries norm\-\_\-corners}}\label{classProjectiveBase_a7747ba618a08b561e3071d0703c52f92}
+
+\item 
+\hypertarget{classProjectiveBase_a6be3d7cc4a8f2273d6b25255f4eb9ab1}{Hom\-Corners\-T {\bfseries norm\-\_\-corners\-\_\-hm}}\label{classProjectiveBase_a6be3d7cc4a8f2273d6b25255f4eb9ab1}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+base class for all S\-S\-Ms that can be expressed by homogeneous multiplication with a 3x3 projective transformation matrix 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-S\-M/include/mtf/\-S\-S\-M/Projective\-Base.\-h\end{DoxyCompactItemize}

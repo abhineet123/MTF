@@ -1,0 +1,80 @@
+\hypertarget{structFALKParams}{\section{F\-A\-L\-K\-Params Struct Reference}
+\label{structFALKParams}\index{F\-A\-L\-K\-Params@{F\-A\-L\-K\-Params}}
+}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum {\bfseries Hess\-Type} \{ {\bfseries Initial\-Self}, 
+{\bfseries Current\-Self}, 
+{\bfseries Std}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structFALKParams_a5478ddf0e62e74d539aa39fca02f79b0}{F\-A\-L\-K\-Params} (int \-\_\-max\-\_\-iters, double \-\_\-epsilon, Hess\-Type \-\_\-hess\-\_\-type, bool \-\_\-sec\-\_\-ord\-\_\-hess, bool \-\_\-show\-\_\-grid, bool \-\_\-show\-\_\-patch, double \-\_\-patch\-\_\-resize\-\_\-factor, bool \-\_\-write\-\_\-frames, bool \-\_\-upd\-\_\-templ, bool \-\_\-debug\-\_\-mode)
+\begin{DoxyCompactList}\small\item\em decides whether logging data will be printed for debugging purposes; \end{DoxyCompactList}\item 
+\hypertarget{structFALKParams_a45cf22a7c4e26dc85306879d348429cd}{{\bfseries F\-A\-L\-K\-Params} (const \hyperlink{structFALKParams}{F\-A\-L\-K\-Params} $\ast$params=nullptr)}\label{structFALKParams_a45cf22a7c4e26dc85306879d348429cd}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structFALKParams_afb17dcf190ea13e6ceabd1e4feddfc4a}{int {\bfseries max\-\_\-iters}}\label{structFALKParams_afb17dcf190ea13e6ceabd1e4feddfc4a}
+
+\item 
+\hypertarget{structFALKParams_a83fc27e9249e2cad6a717d298b35dfaf}{double \hyperlink{structFALKParams_a83fc27e9249e2cad6a717d298b35dfaf}{epsilon}}\label{structFALKParams_a83fc27e9249e2cad6a717d298b35dfaf}
+
+\begin{DoxyCompactList}\small\item\em maximum iterations of the \hyperlink{classFALK}{F\-A\-L\-K} algorithm to run for each frame \end{DoxyCompactList}\item 
+\hypertarget{structFALKParams_aa3fe6c35c22f76ecde01d92f94380c32}{Hess\-Type \hyperlink{structFALKParams_aa3fe6c35c22f76ecde01d92f94380c32}{hess\-\_\-type}}\label{structFALKParams_aa3fe6c35c22f76ecde01d92f94380c32}
+
+\begin{DoxyCompactList}\small\item\em maximum L1 norm of the state update vector at which to stop the iterations \end{DoxyCompactList}\item 
+\hypertarget{structFALKParams_a06525c0f52efb447003b9781af356912}{bool {\bfseries sec\-\_\-ord\-\_\-hess}}\label{structFALKParams_a06525c0f52efb447003b9781af356912}
+
+\item 
+\hypertarget{structFALKParams_a27e82e7de3bb6734a4577769aebb2e03}{bool {\bfseries show\-\_\-grid}}\label{structFALKParams_a27e82e7de3bb6734a4577769aebb2e03}
+
+\item 
+\hypertarget{structFALKParams_a22855504c3ca706015338c7fb7bbd22a}{bool {\bfseries show\-\_\-patch}}\label{structFALKParams_a22855504c3ca706015338c7fb7bbd22a}
+
+\item 
+\hypertarget{structFALKParams_a8c43fe1b56fef51b74cb547092b49537}{double {\bfseries patch\-\_\-resize\-\_\-factor}}\label{structFALKParams_a8c43fe1b56fef51b74cb547092b49537}
+
+\item 
+\hypertarget{structFALKParams_a5595139787c7099817523e1539c1e15d}{bool {\bfseries write\-\_\-frames}}\label{structFALKParams_a5595139787c7099817523e1539c1e15d}
+
+\item 
+\hypertarget{structFALKParams_a3237674dfaecae009b4bedc1bdbe3dbd}{bool {\bfseries upd\-\_\-templ}}\label{structFALKParams_a3237674dfaecae009b4bedc1bdbe3dbd}
+
+\item 
+\hypertarget{structFALKParams_aa81d5bdda8acbae63aa9e79bfff50a63}{bool {\bfseries debug\-\_\-mode}}\label{structFALKParams_aa81d5bdda8acbae63aa9e79bfff50a63}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{structFALKParams_a5478ddf0e62e74d539aa39fca02f79b0}{\index{F\-A\-L\-K\-Params@{F\-A\-L\-K\-Params}!F\-A\-L\-K\-Params@{F\-A\-L\-K\-Params}}
+\index{F\-A\-L\-K\-Params@{F\-A\-L\-K\-Params}!FALKParams@{F\-A\-L\-K\-Params}}
+\subsubsection[{F\-A\-L\-K\-Params}]{\setlength{\rightskip}{0pt plus 5cm}F\-A\-L\-K\-Params\-::\-F\-A\-L\-K\-Params (
+\begin{DoxyParamCaption}
+\item[{int}]{\-\_\-max\-\_\-iters, }
+\item[{double}]{\-\_\-epsilon, }
+\item[{Hess\-Type}]{\-\_\-hess\-\_\-type, }
+\item[{bool}]{\-\_\-sec\-\_\-ord\-\_\-hess, }
+\item[{bool}]{\-\_\-show\-\_\-grid, }
+\item[{bool}]{\-\_\-show\-\_\-patch, }
+\item[{double}]{\-\_\-patch\-\_\-resize\-\_\-factor, }
+\item[{bool}]{\-\_\-write\-\_\-frames, }
+\item[{bool}]{\-\_\-upd\-\_\-templ, }
+\item[{bool}]{\-\_\-debug\-\_\-mode}
+\end{DoxyParamCaption}
+)}}\label{structFALKParams_a5478ddf0e62e74d539aa39fca02f79b0}
+
+
+decides whether logging data will be printed for debugging purposes; 
+
+only matters if logging is enabled at compile time 
+
+The documentation for this struct was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/F\-A\-L\-K\-Params.\-h\end{DoxyCompactItemize}

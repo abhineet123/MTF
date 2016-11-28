@@ -1,0 +1,107 @@
+\hypertarget{classESM}{\section{E\-S\-M$<$ A\-M, S\-S\-M $>$ Class Template Reference}
+\label{classESM}\index{E\-S\-M$<$ A\-M, S\-S\-M $>$@{E\-S\-M$<$ A\-M, S\-S\-M $>$}}
+}
+Inheritance diagram for E\-S\-M$<$ A\-M, S\-S\-M $>$\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{classESM}
+\end{center}
+\end{figure}
+\subsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classESM_a30b6609c9b894182e6fab15d725fe64c}{typedef \hyperlink{structESMParams}{E\-S\-M\-Params} {\bfseries Param\-Type}}\label{classESM_a30b6609c9b894182e6fab15d725fe64c}
+
+\item 
+\hypertarget{classESM_a4d4d5b39b63a16173d4b50d0a811195b}{typedef Param\-Type\-::\-Jac\-Type {\bfseries Jac\-Type}}\label{classESM_a4d4d5b39b63a16173d4b50d0a811195b}
+
+\item 
+\hypertarget{classESM_a3f8ad5f74ac439f7c2681143d5b6507b}{typedef Param\-Type\-::\-Hess\-Type {\bfseries Hess\-Type}}\label{classESM_a3f8ad5f74ac439f7c2681143d5b6507b}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classESM_ac953fa7deaee7a9264372f6dcba44a66}{{\bfseries E\-S\-M} (const \hyperlink{structESMParams}{Param\-Type} $\ast$esm\-\_\-params=nullptr, const \hyperlink{structAMParams}{A\-M\-Params} $\ast$am\-\_\-params=nullptr, const \hyperlink{structSSMParams}{S\-S\-M\-Params} $\ast$ssm\-\_\-params=nullptr)}\label{classESM_ac953fa7deaee7a9264372f6dcba44a66}
+
+\item 
+\hypertarget{classESM_ae5ec5d4f28ae33d4a2080096c2f8482c}{void {\bfseries initialize} (const cv\-::\-Mat \&corners) override}\label{classESM_ae5ec5d4f28ae33d4a2080096c2f8482c}
+
+\item 
+\hypertarget{classESM_a43a8457c148f57a0d56b3f857efb60ce}{void {\bfseries update} () override}\label{classESM_a43a8457c148f57a0d56b3f857efb60ce}
+
+\item 
+\hypertarget{classESM_a43390c8a9b71b7fac668519e56371aa5}{void {\bfseries set\-Region} (const cv\-::\-Mat \&corners) override}\label{classESM_a43390c8a9b71b7fac668519e56371aa5}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classESM_ad4dd514e166aff60c889b194d7126025}{\hyperlink{structESMParams}{Param\-Type} {\bfseries params}}\label{classESM_ad4dd514e166aff60c889b194d7126025}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classESM_a94615f6ec2c83d02b2479a6350906ee4}{{\bfseries init\-\_\-profiling} ()}\label{classESM_a94615f6ec2c83d02b2479a6350906ee4}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classESM_adf2dd5b5bd4503409811737ca7fc2da9}{int {\bfseries frame\-\_\-id}}\label{classESM_adf2dd5b5bd4503409811737ca7fc2da9}
+
+\item 
+\hypertarget{classESM_a2f4ea2877a533a8f8baea61c68534604}{Matrix24d {\bfseries prev\-\_\-corners}}\label{classESM_a2f4ea2877a533a8f8baea61c68534604}
+
+\item 
+Matrix\-Xd \hyperlink{classESM_a94ba04c1951052b8d82377aff8aab97c}{init\-\_\-pix\-\_\-jacobian}
+\begin{DoxyCompactList}\small\item\em N x S jacobians of the pixel values w.\-r.\-t the S\-S\-M state vector where N = resx $\ast$ resy is the no. \end{DoxyCompactList}\item 
+\hypertarget{classESM_a3ffe05e2d3bb4bf5a35f74072c0b1d75}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-jacobian}}\label{classESM_a3ffe05e2d3bb4bf5a35f74072c0b1d75}
+
+\item 
+\hypertarget{classESM_a89876e6e8f509aa15ded3268198ea41a}{Matrix\-Xd {\bfseries mean\-\_\-pix\-\_\-jacobian}}\label{classESM_a89876e6e8f509aa15ded3268198ea41a}
+
+\item 
+\hypertarget{classESM_ae81ed47c90e85af190d2903a3134e413}{Matrix\-Xd {\bfseries init\-\_\-pix\-\_\-hessian}}\label{classESM_ae81ed47c90e85af190d2903a3134e413}
+
+\item 
+\hypertarget{classESM_a0e887fb0aca62133e62424698c3b1a57}{Matrix\-Xd {\bfseries curr\-\_\-pix\-\_\-hessian}}\label{classESM_a0e887fb0aca62133e62424698c3b1a57}
+
+\item 
+\hypertarget{classESM_a977b4b9eb8e19488971a7a5a5524c91d}{Matrix\-Xd {\bfseries mean\-\_\-pix\-\_\-hessian}}\label{classESM_a977b4b9eb8e19488971a7a5a5524c91d}
+
+\item 
+\hypertarget{classESM_ad201b8c5ce4833c07cc085a2b5a8d013}{Vector\-Xd {\bfseries ssm\-\_\-update}}\label{classESM_ad201b8c5ce4833c07cc085a2b5a8d013}
+
+\item 
+\hypertarget{classESM_a54c786ab12bd20583b776fef3e52db51}{Row\-Vector\-Xd \hyperlink{classESM_a54c786ab12bd20583b776fef3e52db51}{jacobian}}\label{classESM_a54c786ab12bd20583b776fef3e52db51}
+
+\begin{DoxyCompactList}\small\item\em 1 x S Jacobian of the A\-M error norm w.\-r.\-t. S\-S\-M state vector \end{DoxyCompactList}\item 
+\hypertarget{classESM_a69a09c6bb6acfb2a5755222fcad2cdc6}{Matrix\-Xd \hyperlink{classESM_a69a09c6bb6acfb2a5755222fcad2cdc6}{hessian}}\label{classESM_a69a09c6bb6acfb2a5755222fcad2cdc6}
+
+\begin{DoxyCompactList}\small\item\em S x S Hessian of the A\-M error norm w.\-r.\-t. S\-S\-M state vector. \end{DoxyCompactList}\item 
+\hypertarget{classESM_a05c432d395f668e3c48631f775000dbd}{Matrix\-Xd {\bfseries init\-\_\-self\-\_\-hessian}}\label{classESM_a05c432d395f668e3c48631f775000dbd}
+
+\item 
+\hypertarget{classESM_ac22d50d7b2c34fc854a4e604018c9a0a}{char $\ast$ {\bfseries time\-\_\-fname}}\label{classESM_ac22d50d7b2c34fc854a4e604018c9a0a}
+
+\item 
+\hypertarget{classESM_ae47e8c53aa0e9e60f426b1291570168d}{char $\ast$ {\bfseries log\-\_\-fname}}\label{classESM_ae47e8c53aa0e9e60f426b1291570168d}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classESM_a94ba04c1951052b8d82377aff8aab97c}{\index{E\-S\-M@{E\-S\-M}!init\-\_\-pix\-\_\-jacobian@{init\-\_\-pix\-\_\-jacobian}}
+\index{init\-\_\-pix\-\_\-jacobian@{init\-\_\-pix\-\_\-jacobian}!ESM@{E\-S\-M}}
+\subsubsection[{init\-\_\-pix\-\_\-jacobian}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class A\-M , class S\-S\-M $>$ Matrix\-Xd {\bf E\-S\-M}$<$ A\-M, S\-S\-M $>$\-::init\-\_\-pix\-\_\-jacobian\hspace{0.3cm}{\ttfamily [protected]}}}\label{classESM_a94ba04c1951052b8d82377aff8aab97c}
+
+
+N x S jacobians of the pixel values w.\-r.\-t the S\-S\-M state vector where N = resx $\ast$ resy is the no. 
+
+of pixels in the object patch 
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+S\-M/include/mtf/\-S\-M/E\-S\-M.\-h\end{DoxyCompactItemize}
