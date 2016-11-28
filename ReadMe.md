@@ -18,7 +18,7 @@ The library is implemented entirely in C++ though a Python interface called `pyM
 A Matlab interface similar to [Mexvision](http://ugweb.cs.ualberta.ca/~vis/courses/CompVis/lab/mexVision/) is currently under development too.
 We also provide a simple interface for [ROS](http://www.ros.org/) called [mtf_bridge](https://gitlab.com/vis/mtf_bridge) for seamless integration with robotics applications. A ROS package that uses it to exemplify integration of MTF with ROS is present in the `ROS` sub folder.
 
-Currently, MTF only works under Unix though support for Windows is under active development and will be added soon. Though it has been tested comprehensively only under Linux, specifically Ubuntu 14.04, it should work on Macintosh systems too (see Compile/Runtime Notes section below for resolving possible issues).
+Currently, MTF only works under Unix though support for Windows is under active development and will be added soon. Though it has been tested comprehensively only under Linux, specifically Ubuntu 14.04, it should work on Macintosh systems too (see [Compile/Runtime Notes](#compileruntime-notes) section below for resolving possible issues).
 
 MTF is provided under [BSD license](https://opensource.org/licenses/BSD-3-Clause) and so is free for research and commercial applications. We do request, however, that [this paper](https://arxiv.org/abs/1602.09130) be cited by any publications resulting from projects that use MTF so more people can get to know about and benefit from it.
 
@@ -28,7 +28,7 @@ Installation:
     *  MTF uses some [C++11](https://en.wikipedia.org/wiki/C%2B%2B11) features so a supporting compiler is needed ([GCC 4.7](https://gcc.gnu.org/projects/cxx0x.html) or newer)
     * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) should be installed and added to the C/C++ include paths. This can be done, for instance, by running `echo "export C_INCLUDE_PATH=${C_INCLUDE_PATH}:/usr/include/eigen3" >> ~/.bashrc` and `echo "export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:/usr/include/eigen3" >> ~/.bashrc` assuming that Eigen is installed in _/usr/include/eigen3_
     * [OpenCV](http://opencv.org/) should be installed.
-		- **OpenCV 2.4.x is recommended since compatibility issues may exist with OpenCV 3.x that may prevent successful compilation** (see Compile/Runtime Notes section below)
+		- **OpenCV 2.4.x is recommended since compatibility issues may exist with OpenCV 3.x that may prevent successful compilation** (see [Compile/Runtime Notes](#compileruntime-notes) section below)
     * [FLANN library](http://www.cs.ubc.ca/research/flann/) and its dependency [HDF5](https://www.hdfgroup.org/HDF5/release/obtain5.html) should be installed for the NN search method
 	    - NN can be disabled at compile time using `nn=0` switch if these are not available (see compile time switches below)
 	* [Boost Library](http://www.boost.org/) should be installed
