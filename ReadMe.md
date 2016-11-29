@@ -33,10 +33,10 @@ Installation:
 	    - NN can be disabled at compile time using `nn=0` switch if these are not available (see [compile time switches](#compile-time-switches))
 	* [Boost Library](http://www.boost.org/) should be installed
     * [Intel TBB](https://www.threadingbuildingblocks.org/) / [OpenMP](http://openmp.org/wp/) should be installed if parallelization is to be enabled.
-    * [ViSP library](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see below).
+    * [ViSP library](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see [compile time switches](#compile-time-switches)).
 	    - Note that [version 3.0.0](http://gforge.inria.fr/frs/download.php/latestfile/475/visp-3.0.0.zip)+ is required. The Ubuntu apt package is 2.8 and is therefore incompatible.
     * [Caffe](http://caffe.berkeleyvision.org/) is needed for some optional modules including FMaps, Regnet and GOTURN if these are enabled during compilation
-	* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see below).
+	* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see [compile time switches]((#compile-time-switches))).
 	    - **Not recommended** as Xvision is very difficult to install and configure on modern systems
 * **Download** the source code as zip file or clone using `git clone https://github.com/abhineet123/MTF.git`.
 * MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the former is recommended for developers/contributors as it offers finer level of control while the latter is for users of the library who only want to install it once (or when the former does not work). For cmake, first use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile and then use one of the make commands as specified below.
