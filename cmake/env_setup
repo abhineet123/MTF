@@ -1,9 +1,0 @@
-#EIGEN3 include path
-export C_INCLUDE_PATH=${C_INCLUDE_PATH}:/usr/local/Cellar/eigen/3.2.10/include/eigen3
-export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:/usr/local/Cellar/eigen/3.2.10/include/eigen3
-
-#HDF5 include and lib path
-export C_INCLUDE_PATH=${C_INCLUDE_PATH}:/Applications/HDF_Group/HDF5/1.10.0-patch1/include
-export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:/Applications/HDF_Group/HDF5/1.10.0-patch1/include
-export LIBRARY_PATH=${LIBRARY_PATH}:/Applications/HDF_Group/HDF5/1.10.0-patch1/lib
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/Applications/HDF_Group/HDF5/1.10.0-patch1/lib
