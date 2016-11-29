@@ -5,6 +5,7 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "mtf/Config/parameters.h"
+#include "boost/filesystem/operations.hpp"
 
 #ifdef _WIN32
 #define snprintf  _snprintf
@@ -21,6 +22,7 @@
 #define MAX_PATH_SIZE 500
 
 using namespace std;
+namespace fs = boost::filesystem;
 
 enum FrameType{ MUTABLE };
 
@@ -55,12 +57,21 @@ public:
 			if(dev_fmt.empty()){ dev_fmt = "mpg"; }
 			if(dev_path.empty()){ dev_path = "."; }
 			file_path = dev_path + "/" + dev_name + "." + dev_fmt;
+			if(!fs::exists(file_path)){
+				throw std::invalid_argument(
+					cv::format("InputBase :: Video file %s does not exist", file_path.c_str()));
+			}
 			n_frames = getNumberOfVideoFrames(file_path.c_str());
 		} else if(img_source == SRC_IMG || img_source == SRC_DISK){
 			if(dev_fmt.empty()){ dev_fmt = "jpg"; }
 			if(dev_path.empty()){ dev_path = "."; }
+			std::string img_folder_path = dev_path + "/" + dev_name;
+			if(!fs::exists(img_folder_path)){
+				throw std::invalid_argument(
+					cv::format("InputBase :: Image sequence folder %s does not exist", img_folder_path.c_str()));
+			}
 
-			file_path = dev_path + "/" + dev_name + "/frame%05d." + dev_fmt;
+			file_path = img_folder_path + "/frame%05d." + dev_fmt;
 
 			n_frames = getNumberOfFrames(file_path.c_str());
 		}

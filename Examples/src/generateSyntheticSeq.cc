@@ -62,14 +62,14 @@ int main(int argc, char * argv[]) {
 		printf("Pipeline could not be initialized successfully\n");
 		return EXIT_FAILURE;
 	}
-	if(init_frame_id > 0){
-		if(input->n_frames > 0 && init_frame_id >= input->n_frames){
-			printf("init_frame_id: %d is larger than the maximum frame ID in the sequence: %d\n",
-				init_frame_id, input->n_frames - 1);
+	if(syn_frame_id > 0){
+		if(input->n_frames > 0 && syn_frame_id >= input->n_frames){
+			printf("syn_frame_id: %d is larger than the maximum frame ID in the sequence: %d\n",
+				syn_frame_id, input->n_frames - 1);
 			return EXIT_FAILURE;
 		}
-		printf("Skipping to frame %d before initializing trackers...\n", init_frame_id + 1);
-		for(int frame_id = 0; frame_id < init_frame_id; ++frame_id){
+		printf("Skipping to frame %d before initializing trackers...\n", syn_frame_id + 1);
+		for(int frame_id = 0; frame_id < syn_frame_id; ++frame_id){
 			if(!input->update()){
 				printf("Frame %d could not be read from the input pipeline\n", input->getFrameID() + 1);
 				return EXIT_FAILURE;
@@ -176,18 +176,7 @@ int main(int argc, char * argv[]) {
 		am->initializeSimilarity();
 		am->initializeSampler(am_state_sigma, am_state_mean);
 	}
-	if(syn_out_suffix.empty()){
-		syn_out_suffix = cv::format("warped_%s_s%d", syn_ssm.c_str(), syn_ssm_sigma_ids[0]);
-		if(syn_ilm != "0"){
-			syn_out_suffix = cv::format("%s_%s_s%d", syn_out_suffix.c_str(),
-				syn_ilm.c_str(), syn_am_sigma_ids[0]);
-		}
-		if(syn_add_noise){
-			syn_out_suffix = cv::format("%s_gauss_%4.2f_%4.2f", syn_out_suffix.c_str(), 
-				syn_noise_mean, syn_noise_sigma);
-		}
-	}
-	std::string out_seq_name = cv::format("%s_%d_%s", source_name.c_str(), init_frame_id, syn_out_suffix.c_str());
+	std::string out_seq_name = getSyntheticSeqName();
 	std::string syn_gt_path = cv::format("%s/Synthetic/%s.txt", db_root_path.c_str(), out_seq_name.c_str());
 	printf("Writing synthetic sequence GT to: %s\n", syn_gt_path.c_str());
 

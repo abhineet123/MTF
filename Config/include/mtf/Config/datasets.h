@@ -631,16 +631,33 @@ namespace mtf{
 			"chess_board_4"//4
 		};
 		char* sources_synthetic[] = {
-			"line",//0
-			"line_rot",//1
-			"line_rot2",//2
-			"nl_cereal_s3_warped_hom_2_gb_0",//3
-			"nl_cereal_s3_warped_hom_2_gb_2",//4
-			"nl_cereal_s3_warped_hom_2_gb_3",//5
-			"nl_cereal_s3_warped_hom_2_gb_4",//6
-			"nl_mugII_s4_warped_hom_2",//7
-			"lena"//8
+			"bear",//0
+			"board_robot",//1
+			"book4",//2
+			"box",//3
+			"box_robot",//4
+			"building_dynamic_lighting",//5
+			"cat_cylinder",//6
+			"cube",//7
+			"dft_still",//8
+			"lemming",//9
+			"mission_dynamic_lighting",//10
+			"mouse_pad",//11
+			"nl_bookI_s3",//12
+			"nl_bus",//13
+			"nl_cereal_s3",//14
+			"nl_juice_s3",//15
+			"nl_letter",//16
+			"nl_mugI_s3",//17
+			"nl_newspaper",//18
+			"paris_dynamic_lighting",//19
+			"phone",//20
+			"sunset_dynamic_lighting",//21
+			"sylvester",//22
+			"towel",//23
+			"wood_dynamic_lighting"//24
 		};
+
 		char* sources_live[] = {
 			"usb_cam",//0
 			"firewire_cam"//1

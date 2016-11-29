@@ -732,6 +732,7 @@ namespace mtf{
 		//std::vector<cv::Mat> conv_corners;
 		std::string  syn_ssm = "c8";
 		std::string  syn_ilm = "0";
+		int syn_frame_id = 0;
 		bool syn_grayscale_img = false;
 		bool syn_continuous_warping = true;
 		vectori syn_ssm_sigma_ids, syn_ssm_mean_ids;
@@ -2052,6 +2053,8 @@ namespace mtf{
 				syn_ssm = std::string(arg_val);
 			} else if(!strcmp(arg_name, "syn_ilm")){
 				syn_ilm = std::string(arg_val);
+			} else if(!strcmp(arg_name, "syn_frame_id")){
+				syn_frame_id = atoi(arg_val);
 			} else if(!strcmp(arg_name, "syn_grayscale_img")){
 				syn_grayscale_img = atoi(arg_val);
 			} else if(!strcmp(arg_name, "syn_continuous_warping")){
@@ -2190,6 +2193,21 @@ namespace mtf{
 			}
 			return true;
 		}
+
+		inline std::string getSyntheticSeqName(){
+			if(syn_out_suffix.empty()){
+				syn_out_suffix = cv::format("warped_%s_s%d", syn_ssm.c_str(), syn_ssm_sigma_ids[0]);
+				if(syn_ilm != "0"){
+					syn_out_suffix = cv::format("%s_%s_s%d", syn_out_suffix.c_str(),
+						syn_ilm.c_str(), syn_am_sigma_ids[0]);
+				}
+				if(syn_add_noise){
+					syn_out_suffix = cv::format("%s_gauss_%4.2f_%4.2f", syn_out_suffix.c_str(),
+						syn_noise_mean, syn_noise_sigma);
+				}
+			}
+			return cv::format("%s_%d_%s", source_name.c_str(), syn_frame_id, syn_out_suffix.c_str());
+		}
 		inline bool postProcessParams(){
 			if(mtf_res > 0){ resx = resy = mtf_res; }
 			if(img_resize_factor <= 0){ img_resize_factor = 1; }
@@ -2212,6 +2230,10 @@ namespace mtf{
 							return false;
 						}
 						source_name = combined_sources[actor_id][source_id];
+					}
+					if(actor_id == n_actors - 2){
+						//! synthetic sequence
+						source_name = getSyntheticSeqName();
 					}
 				}
 				source_path = db_root_path + "/" + actor;
