@@ -25,6 +25,7 @@ add_custom_target(install_exe
   -D "CMAKE_INSTALL_COMPONENT=exe"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
   )
+add_custom_target(exe DEPENDS runMTF)
 add_custom_target(mtfe DEPENDS runMTF install_exe)
 
 add_executable(trackUAVTrajectory Examples/src/trackUAVTrajectory.cc)
@@ -37,6 +38,7 @@ add_custom_target(install_uav
   -D "CMAKE_INSTALL_COMPONENT=uav"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
   )
+add_custom_target(uav DEPENDS trackUAVTrajectory)
 add_custom_target(mtfu DEPENDS trackUAVTrajectory install_uav)
 
 add_executable(extractPatch Examples/src/extractPatch.cc)
@@ -49,7 +51,7 @@ add_custom_target(install_patch
   -D "CMAKE_INSTALL_COMPONENT=patch"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
   )
-  
+ 
 add_executable(generateSyntheticSeq Examples/src/generateSyntheticSeq.cc)
 target_compile_options(generateSyntheticSeq PUBLIC ${MTF_RUNTIME_FLAGS})
 target_include_directories(generateSyntheticSeq PUBLIC  Examples/include ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
@@ -60,6 +62,7 @@ add_custom_target(install_syn
   -D "CMAKE_INSTALL_COMPONENT=syn"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
   )
+add_custom_target(syn DEPENDS generateSyntheticSeq)
 add_custom_target(mtfw DEPENDS generateSyntheticSeq install_syn)
 
 add_executable(createMosaic Examples/src/createMosaic.cc)
@@ -72,6 +75,7 @@ add_custom_target(install_mos
   -D "CMAKE_INSTALL_COMPONENT=mos"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
   )
+add_custom_target(mos DEPENDS createMosaic)
 add_custom_target(mtfm DEPENDS createMosaic install_mos)
 
 find_package(PythonLibs 2.7)
@@ -84,6 +88,7 @@ if(PYTHONLIBS_FOUND)
 		target_include_directories(pyMTF PUBLIC Examples/include ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
 		target_link_libraries(pyMTF mtf ${MTF_LIBS} ${PYTHON_LIBRARIES} ${PYTHON_LIBS} ${Boost_LIBRARIES})	
 		install(TARGETS pyMTF LIBRARY DESTINATION ${MTF_PY_INSTALL_DIR} COMPONENT py)
+		add_custom_target(py DEPENDS pyMTF)
 		add_custom_target(install_py
 		  ${CMAKE_COMMAND}
 		  -D "CMAKE_INSTALL_COMPONENT=py"
@@ -102,9 +107,12 @@ target_compile_options(testMTF PUBLIC ${MTF_RUNTIME_FLAGS})
 target_include_directories(testMTF PUBLIC Examples/include ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 target_link_libraries(testMTF mtf_test mtf ${MTF_LIBS} ${Boost_LIBRARIES})
 install(TARGETS testMTF RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT test_exe)
-add_custom_target(install_test_exe
+add_custom_target(test DEPENDS testMTF)
+add_custom_target(install_test
   ${CMAKE_COMMAND}
   -D "CMAKE_INSTALL_COMPONENT=test_exe"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
   )
-
+  
+add_custom_target(all DEPENDS runMTF createMosaic generateSyntheticSeq trackUAVTrajectory)
+add_custom_target(install_all DEPENDS install_exe install_mos install_syn install_uav)
