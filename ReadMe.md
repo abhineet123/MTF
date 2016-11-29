@@ -20,7 +20,7 @@ We also provide a simple interface for [ROS](http://www.ros.org/) called [mtf_br
 
 Currently, MTF only works under Unix though support for Windows is under active development and will be added soon. Though it has been tested comprehensively only under Linux, specifically Ubuntu 14.04, it should work on Macintosh systems too (see [Compile/Runtime Notes](#compileruntime-notes) section below for resolving possible issues).
 
-MTF is provided under [BSD license](https://opensource.org/licenses/BSD-3-Clause) and so is free for research and commercial applications. We do request, however, that [this paper](https://arxiv.org/abs/1602.09130) be cited by any publications resulting from projects that use MTF so more people can get to know about and benefit from it. Finally, if any issues are encountered while installing or running the library, please create an entry in the [Issues](https://github.com/abhineet123/MTF/issues) section and we will do our best to resolve it as soon as possible.
+MTF is provided under [BSD license](https://opensource.org/licenses/BSD-3-Clause) and so is free for research and commercial applications. We do request, however, that [this paper](https://arxiv.org/abs/1602.09130) be cited by any publications resulting from projects that use MTF so more people can get to know about and benefit from it. Finally, if any issues are encountered while installing or running the library, please create an entry in the [issues](https://github.com/abhineet123/MTF/issues) section and we will do our best to resolve it as soon as possible.
 
 Installation:
 -------------
@@ -30,7 +30,7 @@ Installation:
     * [OpenCV](http://opencv.org/) should be installed.
 		- **OpenCV 2.4.x is recommended since compatibility issues may exist with OpenCV 3.x that may prevent successful compilation** (see [Compile/Runtime Notes](#compileruntime-notes) section below)
     * [FLANN library](http://www.cs.ubc.ca/research/flann/) and its dependency [HDF5](https://www.hdfgroup.org/HDF5/release/obtain5.html) should be installed for the NN search method
-	    - NN can be disabled at compile time using `nn=0` switch if these are not available (see compile time switches below)
+	    - NN can be disabled at compile time using `nn=0` switch if these are not available (see [compile time switches](#compile-time-switches) below)
 	* [Boost Library](http://www.boost.org/) should be installed
     * [Intel TBB](https://www.threadingbuildingblocks.org/) / [OpenMP](http://openmp.org/wp/) should be installed if parallelization is to be enabled.
     * [ViSP library](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see below).
@@ -59,7 +59,7 @@ Installation:
 	* `make app app_name=<APPLICATION_NAME>`: build a custom application that uses MTF with its source code in `<APPLICATION_NAME>.cc`; the compiled executable goes in the build directory;
 	    - location of the source file (<APPLICATION_NAME>.cc) can be specified through `MTF_APP_SRC_DIR` (defaults to _Examples/src_)
 	    - `make mtfa` will install it too - installation location can be specified through `MTF_APP_INSTALL_DIR` (defaults to the current folder)
-    * **Compile time switches** for all of the above commands (only applicable to the **make** build system - for cmake there are corresponding options for some of the switches that can be configured before building its makefile):
+    * <a name="compile-time-switches"/>**Compile time switches**</a> for all of the above commands (only applicable to the **make** build system - for cmake there are corresponding options for some of the switches that can be configured before building its makefile):
 	    - `only_nt=1`/`nt=1` will enable only the **Non Templated (NT)** implementations of SMs and disable their templated versions that are extremely time consuming to compile though being faster at runtime (disabled by default)
 		    - can be very useful for rapid debugging of AMs and SSMs where headers need to be modified;
 		    - the NT implementation of NN only works with GNN since FLANN library needs its object to be templated on the AM; 
