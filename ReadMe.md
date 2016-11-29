@@ -100,7 +100,7 @@ Compile/Runtime Notes:
 * **Using MTF on Macintosh Systems**
 	* some thirdparty modules might not compile successfully on Macintosh systems if cmake uses clang instead of gcc as the default compiler; in such cases compiling with `lt=0` to disable all thirdparty modules is the best option.
     * if cmake build system is used, then `export CC=/usr/bin/gcc` and `export CXX=/use/bin/g++` must be run so that cmake uses gcc during compilation. 
-	* if FLANN based NN is enabled with cmake, environment variables may need to be set for hdf5 to be found using, for instance, 'export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/Applications/HDF_Group/HDF5/1.10.0-patch1/`
+	* if FLANN based NN is enabled with cmake, environment variables may need to be set for hdf5 to be found using, for instance, `export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/Applications/HDF_Group/HDF5/1.10.0-patch1/`
 * **Using MTF with OpenCV 3.x**
     * MTF has been tested and found to work with OpenCV 3.1 installed using [this method (option 2)](http://milq.github.io/install-opencv-ubuntu-debian/) on Ubuntu 14.04 but general compatibility with other system configurations is not guaranteed since comprehensive testing has only been doe with 2.4.x.
     * third party trackers in particular are likely to have issues with OpenCV 3.x as many use legacy versions so these should be disabled using `lt=0` if compilation or linking errors pertaining to these are found.
