@@ -4,7 +4,7 @@ option(WITH_GRID_FEAT "Enable Feature based Grid (RANSAC) Tracker (requires nonf
 option(WITH_REGNET "Enable regression network search method (requires a custom version of Caffe to be present)" OFF)
 
 set(SEARCH_METHODS "")
-set(SEARCH_METHODS_NT ESM AESM FCLK ICLK FALK IALK FCGD PF NN GridTrackerFlow)
+set(SEARCH_METHODS_NT ESM AESM FCLK ICLK FALK IALK FCSD PF NN GridTrackerFlow)
 set(SEARCH_PARAMS FCLK ICLK FALK IALK ESM NN PF Cascade Parallel Pyramidal RKLT GridTrackerFlow)
 set(COMPOSITE_SEARCH_METHODS CascadeTracker ParallelTracker PyramidalTracker LineTracker)
 if(WITH_TEMPLATED)
