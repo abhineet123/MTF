@@ -74,20 +74,24 @@ add_custom_target(install_mos
   )
 add_custom_target(mtfm DEPENDS createMosaic install_mos)
 
-find_package(PythonLibs 2.7 EXACT)
+find_package(PythonLibs 2.7)
 if(PYTHONLIBS_FOUND)
-	add_library (pyMTF MODULE Examples/src/pyMTF.cc)
-	set_target_properties(pyMTF PROPERTIES PREFIX "")
-	add_custom_target(mtfp DEPENDS pyMTF)
-	target_compile_options(pyMTF PUBLIC ${MTF_RUNTIME_FLAGS})
-	target_include_directories(pyMTF PUBLIC Examples/include ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
-	target_link_libraries(pyMTF mtf ${MTF_LIBS} ${PYTHON_LIBRARIES} ${PYTHON_LIBS} ${Boost_LIBRARIES})	
-	install(TARGETS pyMTF LIBRARY DESTINATION ${MTF_PY_INSTALL_DIR} COMPONENT py)
-	add_custom_target(install_py
-	  ${CMAKE_COMMAND}
-	  -D "CMAKE_INSTALL_COMPONENT=py"
-	  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-	  )
+	if(PYTHONLIBS_VERSION_STRING VERSION_LESS 3.0.0)
+		add_library (pyMTF MODULE Examples/src/pyMTF.cc)
+		set_target_properties(pyMTF PROPERTIES PREFIX "")
+		add_custom_target(mtfp DEPENDS pyMTF)
+		target_compile_options(pyMTF PUBLIC ${MTF_RUNTIME_FLAGS})
+		target_include_directories(pyMTF PUBLIC Examples/include ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
+		target_link_libraries(pyMTF mtf ${MTF_LIBS} ${PYTHON_LIBRARIES} ${PYTHON_LIBS} ${Boost_LIBRARIES})	
+		install(TARGETS pyMTF LIBRARY DESTINATION ${MTF_PY_INSTALL_DIR} COMPONENT py)
+		add_custom_target(install_py
+		  ${CMAKE_COMMAND}
+		  -D "CMAKE_INSTALL_COMPONENT=py"
+		  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+		  )
+	  else()
+		message(STATUS "Incompatible version of Python library found so PyMTF is disabled: "${PYTHONLIBS_VERSION_STRING})
+	endif()		
 else(PYTHONLIBS_FOUND)
 	message(STATUS "Python library not found so PyMTF is disabled")
 endif(PYTHONLIBS_FOUND)
