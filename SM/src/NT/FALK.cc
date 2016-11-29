@@ -4,7 +4,6 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "boost/filesystem/operations.hpp"
-#include "boost/filesystem/path.hpp"
 
 _MTF_BEGIN_NAMESPACE
 namespace nt{

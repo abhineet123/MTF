@@ -22,8 +22,14 @@ FLAGSCV = `pkg-config --cflags opencv`
 FLAGS64 = -I/usr/include
 WARNING_FLAGS = -Wfatal-errors -Wno-write-strings -Wno-unused-result
 LIBSCV = `pkg-config --libs opencv`
-MTF_LIBS +=  -lstdc++ -lboost_random
+MTF_LIBS +=  -lstdc++ -lboost_random -lboost_filesystem -lboost_system
 MTF_LIBS_DIRS = -L/usr/local/lib
+# if Mac OSX, then copy header files with -f instead of -u
+ifeq ($(shell uname -s), Darwin)
+COPY_FLAG = -f
+else
+COPY_FLAG = -u
+endif
 EIGEN_INCLUDE_FLAGS=$(addprefix -I, ${EIGEN_INCLUDE_DIRS})
 MTF_COMPILETIME_FLAGS = -std=c++11 ${EIGEN_INCLUDE_FLAGS}
 MTF_RUNTIME_FLAGS = -std=c++11 ${EIGEN_INCLUDE_FLAGS}
@@ -120,7 +126,7 @@ install_nt: install_lib_nt install_header
 install_lib: ${MTF_LIB_INSTALL_DIR} ${MTF_LIB_INSTALL_DIR}/${MTF_LIB_SO}
 install_lib_nt: ${MTF_LIB_INSTALL_DIR} ${MTF_LIB_INSTALL_DIR}/${MTF_NT_LIB_SO}
 install_header: ${MTF_HEADER_INSTALL_DIR}
-	@${MTF_HEADER_INSTALL_CMD_PREFIX} cp -a -u -v ${MTF_INSTALLED_INCLUDE_DIRS} ${MTF_HEADER_INSTALL_DIR}/	
+	@${MTF_HEADER_INSTALL_CMD_PREFIX} cp -a ${COPY_FLAG} -v ${MTF_INSTALLED_INCLUDE_DIRS} ${MTF_HEADER_INSTALL_DIR}/	
 clean: 
 	rm -f ${BUILD_DIR}/*.o ${BUILD_DIR}/*.so
 

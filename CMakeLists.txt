@@ -10,7 +10,7 @@ set (MTF_VERSION_MINOR 0)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/" ${CMAKE_MODULE_PATH})
 
 find_package(OpenCV REQUIRED)
-find_package(Boost REQUIRED COMPONENTS random)
+find_package(Boost REQUIRED COMPONENTS random filesystem system)
 find_package(Eigen3 REQUIRED)
 
 if(NOT CMAKE_BUILD_TYPE)
