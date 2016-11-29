@@ -2,6 +2,9 @@
 #include "mtf/Utilities/miscUtils.h"
 #include <time.h>
 #include <stdexcept>
+#if CV_MAJOR_VERSION == 3
+#include "opencv2/imgproc/imgproc.hpp"
+#endif
 
 #include "DiagAnalytic.cc"
 #include "DiagInvAnalytic.cc"
