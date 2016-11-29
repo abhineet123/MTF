@@ -90,7 +90,7 @@ if(PYTHONLIBS_FOUND)
 		  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
 		  )
 	  else()
-		message(STATUS "Incompatible version of Python library found so PyMTF is disabled: "${PYTHONLIBS_VERSION_STRING})
+		message(STATUS "Incompatible version of Python library found so PyMTF is disabled: " ${PYTHONLIBS_VERSION_STRING})
 	endif()		
 else(PYTHONLIBS_FOUND)
 	message(STATUS "Python library not found so PyMTF is disabled")
