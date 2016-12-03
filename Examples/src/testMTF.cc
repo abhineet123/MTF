@@ -263,6 +263,7 @@ int main(int argc, char * argv[]) {
 
 	printf("frame_id: %d\n", input->getFrameID());
 	vector<double> proc_times;
+	double total_time_taken = 0;
 	for(int frame_id = start_id; frame_id <= end_id; frame_id++){
 		printf("Processing frame: %d\n", frame_id);
 		//update diagnostics module
@@ -271,14 +272,17 @@ int main(int argc, char * argv[]) {
 		mtf_clock_get(frame_start_time);
 		for(int data_id = 0; data_id < diag_len; data_id++){
 			if(diag_gen[data_id] - '0'){
-				clock_t start_time = clock();
+				mtf_clock_get(start_time);				
 				if(diag_inv){
 					generateInverseData(data_id, adt_len, diag_len);
 				} else{
 					generateData(data_id, adt_len, diag_len);
 				}
-				clock_t end_time = clock();
-				double time_taken = static_cast<double>(end_time - start_time) / CLOCKS_PER_SEC;
+				mtf_clock_get(end_time);
+				
+				double time_taken;
+				mtf_clock_measure(start_time, end_time, time_taken);
+				total_time_taken += time_taken;
 				if(diag_verbose){
 					printf("Time taken:\t %f\n", time_taken);
 				}
@@ -302,11 +306,11 @@ int main(int argc, char * argv[]) {
 			}
 		}
 		mtf_clock_get(frame_end_time);
-		double time_taken;
-		mtf_clock_measure(frame_start_time, frame_end_time, time_taken);
-		proc_times.push_back(time_taken);
+		double frame_time_taken;
+		mtf_clock_measure(frame_start_time, frame_end_time, frame_time_taken);
+		proc_times.push_back(frame_time_taken);
 		if(diag_verbose){
-			printf("Done frame %d. Time taken:\t %f\n", frame_id, time_taken);
+			printf("Done frame %d. Time taken:\t %f\n", frame_id, frame_time_taken);
 		}
 		if(diag_verbose){
 			printf("***********************************\n");
@@ -329,6 +333,9 @@ int main(int argc, char * argv[]) {
 				out_files[data_id].close();
 			}
 		}
+	}
+	if(diag_verbose){
+		printf("Total Time taken:\t %f\n", total_time_taken);
 	}
 	printf("Done closing files\n");
 	return EXIT_SUCCESS;

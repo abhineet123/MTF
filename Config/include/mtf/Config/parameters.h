@@ -2231,7 +2231,7 @@ namespace mtf{
 						}
 						source_name = combined_sources[actor_id][source_id];
 					}
-					if(actor_id == n_actors - 2){
+					if(actor == "Synthetic"){
 						//! synthetic sequence
 						source_name = getSyntheticSeqName();
 					}

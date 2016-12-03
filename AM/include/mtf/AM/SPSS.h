@@ -41,17 +41,17 @@ public:
 	// nothing is done here since curr_grad is same as and shares memory with  curr_pix_diff
 	void updateCurrGrad() override;
 
-	void cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jacobian) override;
-	void cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jacobian,
-		const MatrixXd &init_pix_hessian) override;
+	void cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dp) override;
+	void cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dp,
+		const MatrixXd &d2I0_dp2) override;
 
-	void cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacobian) override;
-	void cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacobian,
-		const MatrixXd &curr_pix_hessian) override;
+	void cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp) override;
+	void cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp,
+		const MatrixXd &d2It_dp2) override;
 
-	void cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobian) override;
-	void cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobian,
-		const MatrixXd &curr_pix_hessian) override;
+	void cmptSelfHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp) override;
+	void cmptSelfHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp,
+		const MatrixXd &d2It_dp2) override;
 
 	/*Support for FLANN library*/
 	typedef bool is_kdtree_distance;
@@ -69,13 +69,8 @@ protected:
 	ParamType params;
 
 	double c;
-
-	VectorXd curr_err_vec;
-	VectorXd curr_err_vec_num, curr_err_vec_den;
-
-	VectorXd pix_vals_prod;
-	VectorXd init_pix_vals_sqr;
-	VectorXd curr_pix_vals_sqr;
+	VectorXd f_vec, f_vec_den;
+	VectorXd I0_sqr, It_sqr;
 };
 
 _MTF_END_NAMESPACE

@@ -99,22 +99,20 @@ void SPSS::updatePixVals(const Matrix2Xd& curr_pts){
 
 void SPSS::initializeSimilarity(){
 	if(!is_initialized.similarity){
-		curr_err_vec.resize(patch_size);
-		curr_err_vec_den.resize(patch_size);
+		f_vec.resize(patch_size);
+		f_vec_den.resize(patch_size);
 
-		init_pix_vals_sqr.resize(patch_size);
-		curr_pix_vals_sqr.resize(patch_size);
-		pix_vals_prod.resize(patch_size);
+		I0_sqr.resize(patch_size);
+		It_sqr.resize(patch_size);
 	}
 
-	init_pix_vals_sqr = I0.array() * I0.array();
+	I0_sqr = I0.array() * I0.array();
 
 
 	if(!is_initialized.similarity){
-		curr_pix_vals_sqr = init_pix_vals_sqr;
-		pix_vals_prod = init_pix_vals_sqr;
-		curr_err_vec_den = 2 * init_pix_vals_sqr.array() + c;
-		curr_err_vec.fill(1);
+		It_sqr = I0_sqr;
+		f_vec_den = 2 * I0_sqr.array() + c;
+		f_vec.fill(1);
 
 		f = static_cast<double>(patch_size);
 		is_initialized.similarity = true;
@@ -134,89 +132,120 @@ void SPSS::initializeGrad(){
 }
 
 void SPSS::updateSimilarity(bool prereq_only){
-	f = 0;
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		pix_vals_prod(pix_id) = I0(pix_id)*It(pix_id);
-		curr_pix_vals_sqr(pix_id) = It(pix_id)*It(pix_id);
-		curr_err_vec_den(pix_id) = init_pix_vals_sqr(pix_id) + curr_pix_vals_sqr(pix_id) + c;
-		f += curr_err_vec(pix_id) = (2 * pix_vals_prod(pix_id) + c) / curr_err_vec_den(pix_id);
-	}
+	It_sqr = It.array() * It.array();
+	f_vec_den = (I0_sqr + It_sqr).array() + c;
+	f_vec = (2 * I0.array() * It.array() + c) / f_vec_den.array();
+
+	if(prereq_only){ return; }
+
+	f = f_vec.sum();
+
+	//f = 0;
+	//for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	//	pix_vals_prod(pix_id) = I0(pix_id)*It(pix_id);
+	//	curr_pix_vals_sqr(pix_id) = It(pix_id)*It(pix_id);
+	//	curr_err_vec_den(pix_id) = init_pix_vals_sqr(pix_id) + curr_pix_vals_sqr(pix_id) + c;
+	//	f += curr_err_vec(pix_id) = (2 * pix_vals_prod(pix_id) + c) / curr_err_vec_den(pix_id);
+	//}
 }
 
 void SPSS::updateInitGrad(){
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		df_dI0(pix_id) =
-			2 * (It(pix_id)*(curr_pix_vals_sqr(pix_id) - init_pix_vals_sqr(pix_id))
-			+
-			c*(It(pix_id) - 2 * I0(pix_id)))
-			/
-			(curr_err_vec_den(pix_id) * curr_err_vec_den(pix_id));
-	}
+	df_dI0 =
+		2 * (It.array() * (It_sqr - I0_sqr).array()	+ c*(It - 2 * I0).array())
+		/
+		(f_vec_den.array() * f_vec_den.array());
+
+	//for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	//	df_dI0(pix_id) =
+	//		2 * (It(pix_id)*(curr_pix_vals_sqr(pix_id) - init_pix_vals_sqr(pix_id))
+	//		+
+	//		c*(It(pix_id) - 2 * I0(pix_id)))
+	//		/
+	//		(curr_err_vec_den(pix_id) * curr_err_vec_den(pix_id));
+	//}
 }
 void SPSS::updateCurrGrad(){
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		df_dIt(pix_id) =
-			2 * (I0(pix_id) - curr_err_vec(pix_id)*It(pix_id))
-			/
-			curr_err_vec_den(pix_id);
+	df_dIt = 2 * (I0.array() - f_vec.array()*It.array()) / f_vec_den.array();
+
+	//for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	//	df_dIt(pix_id) =
+	//		2 * (I0(pix_id) - curr_err_vec(pix_id)*It(pix_id))
+	//		/
+	//		curr_err_vec_den(pix_id);
+	//}
+}
+
+void SPSS::cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dp){
+	assert(d2f_dp2.cols() == d2f_dp2.rows());
+
+	d2f_dp2 = (dI0_dp.array().colwise() *
+		(-2 * (f_vec.array() + I0.array()*df_dI0.transpose().array()) / f_vec_den.array())
+		).matrix().transpose() * dI0_dp;
+
+	//d2f_dp2.fill(0);
+	//for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	//	double init_hess = -2 * (f_vec(pix_id) + I0(pix_id)*df_dI0(pix_id)) / f_vec_den(pix_id);
+	//	d2f_dp2 += dI0_dp.row(pix_id).transpose() * dI0_dp.row(pix_id) * init_hess;
+	//}
+}
+
+void SPSS::cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dp,
+	const MatrixXd &d2I0_dp2){
+	int p_size = d2f_dp2.rows();
+
+	assert(d2f_dp2.cols() == p_size);
+	assert(d2I0_dp2.rows() == p_size * p_size);
+
+	cmptInitHessian(d2f_dp2, dI0_dp);
+
+	//Map<VectorXd>(d2f_dp2.data(), p_size*p_size) +=
+	//	(d2I0_dp2.array().rowwise() * df_dI0.array()).matrix().rowwise().sum();
+
+	for(int pix_id = 0; pix_id < patch_size; ++pix_id){
+		d2f_dp2 +=  Map<const MatrixXd>(d2I0_dp2.col(pix_id).data(), p_size, p_size) * df_dI0(pix_id);
 	}
 }
 
-void SPSS::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jacobian){
-	assert(init_hessian.cols() == init_hessian.rows());
+void SPSS::cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp){
+	assert(d2f_dp2.cols() == d2f_dp2.rows());
 
-	init_hessian.fill(0);
+	d2f_dp2 = (dIt_dp.array().colwise() *
+		(-2 * (f_vec.array() + 3 * df_dIt.transpose().array()*It.array()) / f_vec_den.array()) 
+		).matrix().transpose() * dIt_dp;
+
+	//curr_hessian.fill(0);
+	//for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	//	double hess = -2 * (f_vec(pix_id) + 3 * df_dIt(pix_id)*It(pix_id)) /
+	//		f_vec_den(pix_id);
+	//	curr_hessian += dIt_dp.row(pix_id).transpose() * dIt_dp.row(pix_id) * hess;
+	//}
+}
+void SPSS::cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp,
+	const MatrixXd &d2It_dp2){
+	int p_size = d2f_dp2.rows();
+	assert(d2f_dp2.cols() == p_size);
+	assert(d2It_dp2.rows() == p_size * p_size);
+
+	cmptCurrHessian(d2f_dp2, dIt_dp);
+
+	//Map<VectorXd>(d2f_dp2.data(), p_size*p_size) += 
+	//	(d2It_dp2.array().rowwise() * df_dIt.array()).matrix().rowwise().sum();
+
 	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		double init_hess = -2 * (curr_err_vec(pix_id) + I0(pix_id)*df_dI0(pix_id)) / curr_err_vec_den(pix_id);
-		init_hessian += init_pix_jacobian.row(pix_id).transpose() * init_pix_jacobian.row(pix_id) * init_hess;
+		d2f_dp2 += Map<const MatrixXd>(d2It_dp2.col(pix_id).data(), p_size, p_size) * df_dIt(pix_id);
 	}
 }
 
-void SPSS::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jacobian,
-	const MatrixXd &init_pix_hessian){
-	int ssm_state_size = init_hessian.rows();
-
-	assert(init_hessian.cols() == ssm_state_size);
-	assert(init_pix_hessian.rows() == ssm_state_size * ssm_state_size);
-	init_hessian.fill(0);
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		double init_hess = -2 * (curr_err_vec(pix_id) + I0(pix_id)*df_dI0(pix_id)) / curr_err_vec_den(pix_id);
-		init_hessian += init_pix_jacobian.row(pix_id).transpose() * init_pix_jacobian.row(pix_id) * init_hess
-			+ Map<const MatrixXd>(init_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size) * df_dI0(pix_id);
-	}
-}
-
-void SPSS::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacobian){
-	assert(curr_hessian.cols() == curr_hessian.rows());
-	curr_hessian.fill(0);
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		double hess = -2 * (curr_err_vec(pix_id) + 3 * df_dIt(pix_id)*It(pix_id)) /
-			curr_err_vec_den(pix_id);
-		curr_hessian += curr_pix_jacobian.row(pix_id).transpose() * curr_pix_jacobian.row(pix_id) * hess;
-	}
-}
-void SPSS::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacobian,
-	const MatrixXd &curr_pix_hessian){
-	int ssm_state_size = curr_hessian.rows();
-	assert(curr_hessian.cols() == ssm_state_size);
-	assert(curr_pix_hessian.rows() == ssm_state_size * ssm_state_size);
-
-	curr_hessian.fill(0);
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		double hess = -2 * (curr_err_vec(pix_id) + 3 * df_dIt(pix_id)*It(pix_id)) /
-			curr_err_vec_den(pix_id);
-		curr_hessian += curr_pix_jacobian.row(pix_id).transpose() * curr_pix_jacobian.row(pix_id) * hess
-			+ Map<const MatrixXd>(curr_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size) * df_dIt(pix_id);
-	}
-}
-
-void SPSS::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobian){
+void SPSS::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &dIt_dp){
 	assert(self_hessian.cols() == self_hessian.rows());
-	self_hessian.fill(0);
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		double self_hess = -2 / (2 * curr_pix_vals_sqr(pix_id) + c);
-		self_hessian += curr_pix_jacobian.row(pix_id).transpose() * curr_pix_jacobian.row(pix_id) * self_hess;
-	}
+	self_hessian = (dIt_dp.array().colwise() * 
+		(-2 / (2 * It_sqr.array() + c))).matrix().transpose() * dIt_dp;
+
+	//self_hessian.fill(0);
+	//for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	//	double self_hess = -2 / (2 * curr_pix_vals_sqr(pix_id) + c);
+	//	self_hessian += curr_pix_jacobian.row(pix_id).transpose() * curr_pix_jacobian.row(pix_id) * self_hess;
+	//}
 }
 
 void SPSS::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobian,

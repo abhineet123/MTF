@@ -31,25 +31,28 @@ int n_pts, ADT data_type, const char* fname){
 	//if(data_type == iHessian){
 	//	am->cmptCurrHessian(hessian, init_pix_jacobian, init_pix_hessian);		
 	//}
-	utils::printScalarToFile(frame_id, "frame", "log/diagnostics/extreme_corners.txt", "%d");
-	printf("img_height: %d img_width: %d\n", am->getImgHeight(), am->getImgWidth());
-	cv::Mat curr_img_cv_out(am->getImgHeight(), am->getImgWidth(), CV_8UC3);	
-	cv::Mat corners(2, 4, CV_64FC1); 
-	ssm->getCorners(corners);
-	cv::Rect roi = utils::getBestFitRectangle<int>(corners);
-	roi.x -= 40;
-	roi.y -= 40;
-	roi.width += 80;
-	roi.height += 80;
+
+	//utils::printScalarToFile(frame_id, "frame", "log/diagnostics/extreme_corners.txt", "%d");
+	//printf("img_height: %d img_width: %d\n", am->getImgHeight(), am->getImgWidth());
+	//cv::Mat curr_img_cv_out(am->getImgHeight(), am->getImgWidth(), CV_8UC3);	
+	//cv::Mat corners(2, 4, CV_64FC1); 
+	//ssm->getCorners(corners);
+	//cv::Rect roi = utils::getBestFitRectangle<int>(corners);
+	//roi.x -= 40;
+	//roi.y -= 40;
+	//roi.width += 80;
+	//roi.height += 80;
+
 	for(int state_id = 0; state_id < state_size; state_id++){
 		//printf("Processing state parameter %d....\n", state_id);
-		if(data_type == ADT::Norm){			
-			//am->getCurrImg().convertTo(curr_img_cv_out, curr_img_cv_out.type());
-			curr_img_cv_out = CV_RGB(255, 255, 255);
-			utils::printScalarToFile(state_id, "state", "log/diagnostics/extreme_corners.txt", "%d");
-			utils::printMatrixToFile(ssm->getCorners(), nullptr, "log/diagnostics/extreme_corners.txt");
-			drawCurrCorners(curr_img_cv_out, state_id, 1, false, CV_RGB(0, 0, 0));
-		}
+
+		//if(data_type == ADT::Norm){			
+		//	//am->getCurrImg().convertTo(curr_img_cv_out, curr_img_cv_out.type());
+		//	curr_img_cv_out = CV_RGB(255, 255, 255);
+		//	utils::printScalarToFile(state_id, "state", "log/diagnostics/extreme_corners.txt", "%d");
+		//	utils::printMatrixToFile(ssm->getCorners(), nullptr, "log/diagnostics/extreme_corners.txt");
+		//	drawCurrCorners(curr_img_cv_out, state_id, 1, false, CV_RGB(0, 0, 0));
+		//}
 
 		state_update.setZero();
 		diagnostics_data.col(2 * state_id) = VectorXd::LinSpaced(n_pts, min_state(state_id), max_state(state_id));
@@ -63,6 +66,7 @@ int n_pts, ADT data_type, const char* fname){
 
 			//utils::printMatrix(state_update, "state_update");
 			//utils::printMatrix(ssm->getCorners(), "curr_corners");
+
 			double data_val = getADTVal(data_type, state_id);
 
 			if(params.show_patches){
@@ -80,26 +84,26 @@ int n_pts, ADT data_type, const char* fname){
 				imshow(curr_img_win_name, curr_img_cv_uchar);
 				if(cv::waitKey(1) == 27){ exit(0); }
 			}
-			if(data_type == ADT::Norm){
-				if(pt_id == 0){
-					utils::printMatrixToFile(ssm->getCorners(), nullptr, "log/diagnostics/extreme_corners.txt");
-					drawCurrCorners(curr_img_cv_out, state_id, 1, false, CV_RGB(255, 0, 0));
-				} else if(pt_id == n_pts - 1){
-					utils::printMatrixToFile(ssm->getCorners(), nullptr, "log/diagnostics/extreme_corners.txt");
-					drawCurrCorners(curr_img_cv_out, state_id, 1, false, CV_RGB(0, 255, 0));
-				}
-			}
+			//if(data_type == ADT::Norm){
+			//	if(pt_id == 0){
+			//		utils::printMatrixToFile(ssm->getCorners(), nullptr, "log/diagnostics/extreme_corners.txt");
+			//		drawCurrCorners(curr_img_cv_out, state_id, 1, false, CV_RGB(255, 0, 0));
+			//	} else if(pt_id == n_pts - 1){
+			//		utils::printMatrixToFile(ssm->getCorners(), nullptr, "log/diagnostics/extreme_corners.txt");
+			//		drawCurrCorners(curr_img_cv_out, state_id, 1, false, CV_RGB(0, 255, 0));
+			//	}
+			//}
 			diagnostics_data(pt_id, 2 * state_id + 1) = data_val;
 
 			resetState(state_update, state_id);
 
 			//if((pt_id + 1) % 50 == 0){ printf("Done %d points\n", pt_id + 1); }
 		}
-		if(data_type == ADT::Norm){
-			//imshow("curr_img_cv_out", curr_img_cv_out);
-			//if(cv::waitKey(0) == 27){ exit(0); }
-			cv::imwrite(cv::format("log/diagnostics/frame_%d_state_%d.bmp", frame_id, state_id), curr_img_cv_out(roi));
-		}
+		//if(data_type == ADT::Norm){
+		//	//imshow("curr_img_cv_out", curr_img_cv_out);
+		//	//if(cv::waitKey(0) == 27){ exit(0); }
+		//	cv::imwrite(cv::format("log/diagnostics/frame_%d_state_%d.bmp", frame_id, state_id), curr_img_cv_out(roi));
+		//}
 	}
 	if(params.show_data){
 		utils::printMatrix(diagnostics_data, cv::format("%s data", toString(data_type)).c_str());
