@@ -1,6 +1,5 @@
 //! main header that provides functions for creating trackers
 #include "mtf/mtf.h"
-
 //! tools for reading in images from various sources like image sequences, 
 //! videos and cameras, pre processing these images and getting
 //! objects to track either from ground truth or interactively from the user
@@ -12,14 +11,14 @@
 //! MTF specific exceptions
 #include "mtf/Utilities/excpUtils.h"
 
-#include <vector>
-#include <memory>
-
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
 #include "boost/filesystem/operations.hpp"
 #include "boost/filesystem/path.hpp"
+
+#include <vector>
+#include <memory>
 
 /**
 any FPS larger than this is considered meaningless and
