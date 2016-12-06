@@ -7,7 +7,7 @@ project(MTF)
 set (MTF_VERSION_MAJOR 1)
 set (MTF_VERSION_MINOR 0)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/" ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 
 find_package(OpenCV REQUIRED)
 find_package(Boost REQUIRED COMPONENTS random filesystem system)

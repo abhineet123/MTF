@@ -18,15 +18,17 @@
 #include <mtf/mtf.h>
 #include "mtf/Utilities/miscUtils.h"
 
+#include "mtf/Tools/pipeline.h"
+
 typedef std::unique_ptr<mtf::TrackerBase> Tracker_;
 
 int const rate = 30;
 
 cv::Mat display_frame;
-cv::Mat gray_frame;
-cv::Mat rgb_frame;
 std::vector<cv::Point> new_tracker_points;
 std::vector<Tracker_> trackers;
+std::vector<PreProc_> pre_procs;
+
 ros::Publisher tracker_pub;
 SharedImageReader *image_reader;
 
@@ -45,7 +47,7 @@ struct Patch {
 
 cv::Point get_patch_center(mtf::TrackerBase &tracker) {
 	cv::Point2d cv_corners[4];
-	mtf::utils::cornersToPoints(cv_corners, tracker.getRegion());
+	mtf::utils::Corners(tracker.getRegion()).points(cv_corners);
     Eigen::Vector3d tl(cv_corners[0].x, cv_corners[0].y, 1);
     Eigen::Vector3d tr(cv_corners[1].x, cv_corners[1].y, 1);
     Eigen::Vector3d br(cv_corners[2].x, cv_corners[2].y, 1);
@@ -59,16 +61,9 @@ cv::Point get_patch_center(mtf::TrackerBase &tracker) {
     return center;
 }
 
-// TODO: Should we remove the gaussian blur?
-void format_frame() {
-    image_reader->get_next_frame()->convertTo(rgb_frame, rgb_frame.type());
-    cv::cvtColor(rgb_frame, gray_frame, cv::COLOR_RGB2GRAY);
-    cv::GaussianBlur(gray_frame, gray_frame, cv::Size(5, 5), 3);
-}
-
 mtf_bridge::Patch get_tracker_patch(mtf::TrackerBase &tracker) {
 	cv::Point2d cv_corners[4];
-	mtf::utils::cornersToPoints(cv_corners, tracker.getRegion());
+	mtf::utils::Corners(tracker.getRegion()).points(cv_corners);
     mtf_bridge::Point top_left;
     top_left.x = cv_corners[0].x;
     top_left.y = cv_corners[0].y;
@@ -105,9 +100,12 @@ void update_trackers() {
     if (trackers.empty()) {
         return;
     }
-
-    format_frame();
-
+	//! opdate pre processors
+	for(std::vector<PreProc_>::const_iterator pre_proc = pre_procs.begin();
+		pre_proc != pre_procs.end(); ++pre_proc) {
+		(*pre_proc)->update(*(image_reader->get_next_frame()));
+	}
+	//! opdate trackers
     mtf_bridge::PatchTrackers tracker_msg;
     for(std::vector<Tracker_>::const_iterator tracker = trackers.begin(); 
 		tracker != trackers.end(); ++tracker) {
@@ -133,7 +131,7 @@ void draw_frame(std::string cv_window_title) {
 		for(std::vector<Tracker_>::const_iterator tracker = trackers.begin(); 
 			tracker != trackers.end(); ++tracker) {
 			cv::Point2d cv_corners[4];
-			mtf::utils::cornersToPoints(cv_corners, (*tracker)->getRegion());
+			mtf::utils::Corners((*tracker)->getRegion()).points(cv_corners);
             draw_patch(cv_corners, cv::Scalar(0, 0, 255));
             cv::Point center = get_patch_center(**tracker);
             cv::circle(display_frame, center, 5, cv::Scalar(0, 0, 255), -1);
@@ -175,7 +173,10 @@ void initialize_tracker() {
 
 	trackers.push_back(Tracker_(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm)));
 
-    format_frame();
+	pre_procs.push_back(getPreProc(pre_procs, trackers.back()->inputType(), pre_proc_type));
+	pre_procs.back()->initialize(*(image_reader->get_next_frame()));
+
+	trackers.back()->setImage(pre_procs.back()->getFrame());
 	trackers.back()->initialize(new_tracker_corners);
 
     ROS_INFO_STREAM("Tracker initialized");
@@ -226,10 +227,6 @@ int main(int argc, char *argv[]) {
     }
 
     ROS_INFO_STREAM("Left click to select tracker corners. Right click to reset corners, press 'd' to delete tracker");
-
-    // Initialize frame
-    rgb_frame.create(image_reader->get_height(), image_reader->get_width(), CV_32FC3);
-    gray_frame.create(image_reader->get_height(), image_reader->get_width(), CV_32FC1);
 
 	while(ros::ok()){
 		ros::spinOnce();

@@ -1,7 +1,27 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(mtf_bridge)
 
+option(WITH_TEMPLATED "Enable templated implementations of search methods (faster at runtime but take much longer to compile)" OFF)
+
+
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
+set(MTF_RUNTIME_FLAGS -Wfatal-errors -Wno-write-strings -O3 -DDISABLE_VISP -D DISABLE_XVISION -DDISABLE_THIRD_PARTY_TRACKERS -DDISABLE_PFSL3 -DDISABLE_GOTURN -DDISABLE_GRID_FEAT -DDISABLE_REGNET -DDISABLE_DFM) 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
+
+if(NOT WITH_TEMPLATED)
+message(STATUS "Templated implementations of SMs are disabled")
+set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DENABLE_ONLY_NT  -DDISABLE_NN)
+else()
+find_package(FLANN)
+find_package(HDF5)
+if(FLANN_FOUND AND HDF5_FOUND) 
+set(MTF_LIBS ${MTF_LIBS} ${FLANN_LIBS} ${HDF5_LIBRARIES})
+else()
+message(STATUS "FLANN/HDF5 library not found so the templated version NN search method has been disabled")
+set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DDISABLE_NN)
+endif()
+endif()
 
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
@@ -14,6 +34,8 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(Eigen REQUIRED)
+
+set(MTF_LIBS mtf ${OpenCV_LIBRARIES})
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -44,8 +66,7 @@ add_message_files(
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
-  std_msgs  # Or other packages containing msgs
-  visual_servoing
+  std_msgs  # Or other packages containing msgs  
 )
 
 ################################################
@@ -85,14 +106,13 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${EIGEN_INCLUDE_DIRS}
-  /usr/include/dc1394/
   /usr/include
-  /usr/local/include/opencv
   /usr/local/include  
 )
 
 link_directories(
   /usr/lib
+  /usr/local/lib
   /usr/X11R6/lib64
   /usr/X11R6/lib
   /lib/
@@ -111,15 +131,15 @@ target_link_libraries(SharedImageWriter
   ${catkin_LIBRARIES}
   rt
 )
-
 target_link_libraries(sample_tracker_node
   SharedImageReader
   ${catkin_LIBRARIES}
-  rt
-  mtf
-  flann
-  hdf5
-  ${OpenCV_LIBRARIES}
+  ${MTF_LIBS}
 )
+add_dependencies(SharedImageReader ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
+add_dependencies(SharedImageWriter ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
+add_dependencies(sample_tracker_node ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
 
-set_target_properties(sample_tracker_node PROPERTIES COMPILE_FLAGS "-Wfatal-errors -Wno-write-strings -O3 -D DISABLE_VISP -D DISABLE_XVISION -D DISABLE_LEARNING_TRACKERS -D DISABLE_PFSL3") 
+target_compile_options(sample_tracker_node PUBLIC ${MTF_RUNTIME_FLAGS})
+
+# set_target_properties(sample_tracker_node PROPERTIES COMPILE_FLAGS ${MTF_RUNTIME_FLAGS}) 

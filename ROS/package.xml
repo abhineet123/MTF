@@ -5,9 +5,9 @@
   <description>The mtf_bridge package. Provides a simple compatibility layer between the Modular Tracking Framework (MTF) and ROS.
   </description>
 
-  <maintainer email="oscar@rmz.ca">Oscar Ramirez</maintainer>
+  <maintainer email="asingh1@ualberta.ca">Abhineet Singh</maintainer>
 
-  <license>MIT</license>
+  <license>BSD</license>
 
   <buildtool_depend>catkin</buildtool_depend>
 

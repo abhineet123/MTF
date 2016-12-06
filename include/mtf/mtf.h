@@ -213,8 +213,10 @@ typedef std::unique_ptr<IALKParams> IALKParams_;
 typedef std::unique_ptr<FCSDParams> FCSDParams_;
 typedef std::unique_ptr<PFParams> PFParams_;
 typedef std::unique_ptr<NNParams> NNParams_;
+#ifndef ENABLE_ONLY_NT
 #ifndef DISABLE_NN
 typedef std::unique_ptr<FLANNParams> FLANNParams_;
+#endif
 #endif
 #ifndef DISABLE_REGNET
 typedef std::unique_ptr<RegNetParams> RegNetParams_;
