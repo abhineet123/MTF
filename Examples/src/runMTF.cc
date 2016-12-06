@@ -366,9 +366,8 @@ int main(int argc, char * argv[]) {
 				cv_utils.getGT(input->getFrameID(), reinit_frame_id);
 		}
 		cv::Mat tracker_corners = trackers[0]->getRegion().clone();
-		if(resized_images){
-			tracker_corners /= img_resize_factor;
-		}
+		if(resized_images){ tracker_corners /= img_resize_factor; }
+
 		//! non finite entries in the tracker region indicate invalid tracker state
 		if(invalid_state_check){
 			if(mtf::utils::hasNaN<double>(tracker_corners) || mtf::utils::hasInf<double>(tracker_corners)){
@@ -435,7 +434,9 @@ int main(int argc, char * argv[]) {
 					}
 				}
 				trackers[0]->initialize(cv_utils.getGT(reinit_frame_id));
-				tracker_corners = resized_images ? trackers[0]->getRegion() / img_resize_factor : trackers[0]->getRegion();
+				tracker_corners = trackers[0]->getRegion().clone();
+				if(resized_images){ tracker_corners /= img_resize_factor; }
+
 				is_initialized = true;
 				invalid_tracker_state = tracker_failed = false;
 			}
