@@ -36,15 +36,7 @@ int main(int argc, char * argv[]){
 
 	cv::Mat init_corners = mtf::utils::getFrameCorners(input->getFrame(), mos_track_border);
 	mos_ssm->initialize(init_corners);
-	int min_x = mos_border, min_y = mos_border;
-	int max_x = mos_border + input->getFrame().cols, 
-		max_y = mos_border + input->getFrame().rows;
-	//! center of the mosaic image surrounded by the border
-	mtf::CornersT init_location;
-	init_location <<
-		min_x, max_x, max_x, min_x,
-		min_y, min_y, max_y, max_y;
-	mos_ssm->setCorners(init_location);
+
 
 	//! dummy AM - 3 channel SSD - to extract pixel values from the current image
 	mtf::AM mos_am(mtf::getAM("ssd3", "0"));
@@ -86,17 +78,18 @@ int main(int argc, char * argv[]){
 		write_mask_disp.setTo(cv::Scalar(0));
 	}
 
-	mtf::utils::writePixelsToImage(mosaic_img, mos_am->getPatch(init_pts),
-		mos_ssm->getPts(), mos_am->getNChannels(), write_mask);
-
 	printf("Using displayed image of size: %d x %d\n", mosaic_disp_img.cols, mosaic_disp_img.rows);
 
 
 	mtf::CornersT prev_location_norm = mtf::utils::Corners(
-		mtf::utils::getFrameCorners(input->getFrame(), 0),
-		input->getFrame().cols, input->getFrame().rows).eig();
-
+		mtf::utils::getFrameCorners(input->getFrame(), 0)).eig();
 	mtf::CornersT curr_location_norm;
+
+	mos_ssm->setCorners(mtf::CornersT(prev_location_norm.array() + mos_border));
+
+	mtf::utils::writePixelsToImage(mosaic_img, mos_am->getPatch(init_pts),
+		mos_ssm->getPts(), mos_am->getNChannels(), write_mask);
+
 	while(input->update()){
 
 		pre_proc.update(input->getFrame());
@@ -108,9 +101,7 @@ int main(int argc, char * argv[]){
 		mos_ssm->estimateWarpFromCorners(curr_warp, init_corners, tracker->getRegion());
 		mos_ssm->invertState(inv_warp, curr_warp);
 		mos_ssm->applyWarpToCorners(curr_location_norm, prev_location_norm, inv_warp);
-		mtf::CornersT curr_location = curr_location_norm.array() + mos_border;
-
-		mos_ssm->setCorners(curr_location);
+		mos_ssm->setCorners(mtf::CornersT(curr_location_norm.array() + mos_border));
 
 		//mos_ssm->compositionalUpdate(inv_warp);
 
