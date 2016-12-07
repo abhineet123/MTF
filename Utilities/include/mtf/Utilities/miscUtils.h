@@ -32,10 +32,9 @@ namespace utils{
 		};
 		template<typename PtScalarT>
 		void points(cv::Point_<PtScalarT>(&pt_corners)[4]){
-			cv::Point2d cv_corners[4];
 			for(int corner_id = 0; corner_id < 4; ++corner_id) {
-				cv_corners[corner_id].x = corners.at<double>(0, corner_id);
-				cv_corners[corner_id].y = corners.at<double>(1, corner_id);
+				pt_corners[corner_id].x = corners.at<double>(0, corner_id);
+				pt_corners[corner_id].y = corners.at<double>(1, corner_id);
 			}
 		}
 		cv::Mat mat(){ return corners; }
