@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(mtf_bridge)
 
-option(WITH_TEMPLATED "Enable templated implementations of search methods (faster at runtime but take much longer to compile)" ON)
-
+option(WITH_TEMPLATED "Enable templated implementations of search methods (faster at runtime but take much longer to compile)" OFF)
+option(WITH_THIRD_PARTY "Enable Third Party Trackers" ON)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
-set(MTF_RUNTIME_FLAGS -Wfatal-errors -Wno-write-strings -O3 -DDISABLE_VISP -D DISABLE_XVISION -DDISABLE_THIRD_PARTY_TRACKERS -DDISABLE_PFSL3 -DDISABLE_GOTURN -DDISABLE_GRID_FEAT -DDISABLE_REGNET -DDISABLE_DFM) 
+set(MTF_RUNTIME_FLAGS -Wfatal-errors -Wno-write-strings -O3 -DDISABLE_XVISION -DDISABLE_PFSL3 -DDISABLE_GOTURN -DDISABLE_GRID_FEAT -DDISABLE_REGNET -DDISABLE_DFM) 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 
 if(NOT WITH_TEMPLATED)
@@ -20,6 +20,27 @@ set(MTF_LIBS ${MTF_LIBS} ${FLANN_LIBS} ${HDF5_LIBRARIES})
 else()
 message(STATUS "FLANN/HDF5 library not found so the templated version NN search method has been disabled")
 set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DDISABLE_NN)
+endif()
+endif()
+
+if(NOT WITH_THIRD_PARTY)
+message(STATUS "Third party trackers disabled")
+set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DDISABLE_THIRD_PARTY_TRACKERS)
+else()
+option(WITH_VISP "Enable ViSP template tracker and pipeline" OFF)
+if(NOT WITH_VISP)
+message(STATUS "ViSP disabled")
+set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DDISABLE_VISP)
+endif()
+option(WITH_DFT "Enable Descriptor Fields tracker (third party) " OFF)
+if(NOT WITH_DFT)
+message(STATUS "DFT disabled")
+set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DDISABLE_DFT)
+endif()
+option(WITH_MIL "Enable Multiple Instance Learning based tracker (third party)" OFF)
+if(NOT WITH_MIL)
+message(STATUS "MIL tracker disabled")
+set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DDISABLE_MIL)
 endif()
 endif()
 

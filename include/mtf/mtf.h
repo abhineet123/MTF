@@ -132,8 +132,10 @@
 #include "mtf/ThirdParty/CMT/CMT.h"
 #include "mtf/ThirdParty/TLD/TLD.h"
 #include "mtf/ThirdParty/Struck/Struck.h"
-#include "mtf/ThirdParty/MIL/MIL.h"
 #include "mtf/ThirdParty/FRG/FRG.h"
+#ifndef DISABLE_MIL
+#include "mtf/ThirdParty/MIL/MIL.h"
+#endif
 #ifndef DISABLE_DFT
 #include "mtf/ThirdParty/DFT/DFT.h"
 #endif
@@ -1554,7 +1556,14 @@ inline TrackerBase *getTracker(const char *tracker_type){
 	} else if(!strcmp(tracker_type, "strk")){
 		struck::StruckParams strk_params(strk_config_path);
 		return new struck::Struck(&strk_params);
-	} else if(!strcmp(tracker_type, "mil")){
+	} else if(!strcmp(tracker_type, "frg")){
+		FRGParams frg_params(frg_n_bins, frg_search_margin,
+			static_cast<FRGParams::HistComparisonMetric>(frg_hist_cmp_metric),
+			frg_resize_factor, frg_show_window);
+		return new FRG(&frg_params);
+	}
+#ifndef DISABLE_MIL
+	else if(!strcmp(tracker_type, "mil")){
 		MILParams mil_params(
 			mil_algorithm,
 			mil_num_classifiers,
@@ -1566,12 +1575,7 @@ inline TrackerBase *getTracker(const char *tracker_type){
 			);
 		return new MIL(&mil_params);
 	}
-	else if(!strcmp(tracker_type, "frg")){
-		FRGParams frg_params(frg_n_bins, frg_search_margin,
-			static_cast<FRGParams::HistComparisonMetric>(frg_hist_cmp_metric),
-			frg_resize_factor, frg_show_window);
-		return new FRG(&frg_params);
-	}
+#endif
 #ifndef DISABLE_DFT
 	else if(!strcmp(tracker_type, "dft")){
 		dft::DFTParams dft_params(dft_res_to_l, dft_p_to_l, dft_max_iter,
