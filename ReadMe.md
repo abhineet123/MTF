@@ -81,7 +81,7 @@ Installation:
             * if a runtime linking error is encountered, add ViSP library install path to `LD_LIBRARY_PATH` variable by running, for instance, `echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/x86_64-linux-gnu/" >> ~/.bashrc`
 	    - `xv=1` will enable [Xvision](http://www.cs.jhu.edu/CIPS/xvision/) trackers and input pipeline (disabled by default and not recommended).
 	    - `o=0` will compile the library in debug mode (_libmtf_debug.so_) and disable optimization - the corresponding executables will be suffixed with 'd' ( for example _runMTFd_)
-		- `ver=<version_postfix>` will postfix all compiled library and executable files with the provided postfix so that multiple versions may coexist on the same system without conflict; e.g. `ver=2` will create libmtf_v2.so and runMTF_v2 and same for all libraries created during MTF compilation (including those for included third party trackers);
+		- `ver=<version_postfix>` will postfix all compiled library and executable files with the provided postfix so that multiple versions may coexist on the same system without conflict; e.g. `ver=2` will create libmtf_v2.so and runMTF_v2 and same for all libraries created during MTF compilation (including those for third party trackers);
 		- `header_only=1` can be used with `make exe` or `make mtfe` to build a stand alone version of _runMTF_ called _runMTFh_ that does not need to link with _libmtf.so_
             * this disables third party trackers automatically as several of those have their own libraries built from within MTF
 			* it will still need to link against external libraries that it uses (like OpenCV, FLANN and boost)
