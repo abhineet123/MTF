@@ -1,0 +1,2 @@
+set(mtf_bridge_MESSAGE_FILES "/home/abhineet/E/UofA/Thesis/Code/TrackingFramework/C++/MTF/ROS/src/mtf_bridge/msg/Patch.msg;/home/abhineet/E/UofA/Thesis/Code/TrackingFramework/C++/MTF/ROS/src/mtf_bridge/msg/PatchTrackers.msg;/home/abhineet/E/UofA/Thesis/Code/TrackingFramework/C++/MTF/ROS/src/mtf_bridge/msg/Point.msg;/home/abhineet/E/UofA/Thesis/Code/TrackingFramework/C++/MTF/ROS/src/mtf_bridge/msg/BufferInit.msg")
+set(mtf_bridge_SERVICE_FILES "")
