@@ -1,8 +1,0 @@
-prefix=/home/abhineet/E/UofA/Thesis/Code/TrackingFramework/C++/MTF/ROS/devel
-
-Name: mtf_bridge
-Description: Description of mtf_bridge
-Version: 0.1.0
-Cflags: -I/home/abhineet/E/UofA/Thesis/Code/TrackingFramework/C++/MTF/ROS/devel/include
-Libs: -L/home/abhineet/E/UofA/Thesis/Code/TrackingFramework/C++/MTF/ROS/devel/lib 
-Requires: 
