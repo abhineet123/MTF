@@ -69,7 +69,7 @@ double SSDBase::getLikelihood() const{
 	very small numbers that may lead to loss of information due to the limited precision
 	of floating point operations;
 	*/
-	return exp(-sqrt(-likelihood_alpha * f / (static_cast<double>(patch_size))));
+	return exp(-likelihood_alpha * sqrt(-f / (static_cast<double>(patch_size))));
 }
 
 void SSDBase::updateSimilarity(bool prereq_only){
