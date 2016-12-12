@@ -16,7 +16,7 @@ TEST_BASE_HEADERS = $(addsuffix .h, ${TEST_BASE_CLASSES})
 TEST_HEADERS = $(addprefix ${TEST_HEADER_DIR}/,$(addsuffix .h, ${TEST_TOOLS}))
 TEST_HEADERS += ${TEST_BASE_HEADERS}
 
-MTF_HEADERS += ${TEST_HEADER_DIR}/mtf_test.h ${TEST_HEADERS}
+#MTF_HEADERS += ${TEST_HEADER_DIR}/mtf_test.h ${TEST_HEADERS}
 
 ifeq (${o}, 1)
 MTF_TEST_LIB_NAME = libmtf_test.so
