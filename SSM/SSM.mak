@@ -1,6 +1,11 @@
 # -------------------------------------------------------------------------------------- #
 # --------------------------------- State Space Models --------------------------------- #
 # -------------------------------------------------------------------------------------- #
+sl3_max_val ?= -1
+SL3_FLAGS = 
+ifneq (${sl3_max_val}, -1)
+SL3_FLAGS += -DSL3_MAX_VALID_VAL=${sl3_max_val}
+endif
 SSM_INCLUDE_DIR = SSM/include
 SSM_SRC_DIR = SSM/src
 SSM_HEADER_DIR = ${SSM_INCLUDE_DIR}/mtf/SSM
@@ -31,7 +36,7 @@ ${BUILD_DIR}/CornerHomography.o: ${SSM_SRC_DIR}/CornerHomography.cc ${SSM_HEADER
 	${CXX} -c -fPIC ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< ${FLAGS64} -o $@
 	
 ${BUILD_DIR}/SL3.o: ${SSM_SRC_DIR}/SL3.cc ${SSM_HEADER_DIR}/SL3.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h ${MACROS_HEADER_DIR}/common.h ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h ${UTILITIES_HEADER_DIR}/excpUtils.h
-	${CXX} -c -fPIC ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< ${FLAGS64} -o $@
+	${CXX} -c -fPIC ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${SL3_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS}  $< ${FLAGS64} -o $@
 	
 ${BUILD_DIR}/Homography.o: ${SSM_SRC_DIR}/Homography.cc ${SSM_HEADER_DIR}/Homography.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h ${MACROS_HEADER_DIR}/common.h ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h
 	${CXX} -c -fPIC ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< ${FLAGS64} -o $@

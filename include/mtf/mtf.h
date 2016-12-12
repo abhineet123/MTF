@@ -1387,6 +1387,13 @@ inline TrackerBase *getCompositeSM(const char *sm_type,
 		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
 			casc_reinit_err_thresh, casc_reinit_frame_gap);
 		return new CascadeTracker(trackers, &casc_params);
+	} else if(!strcmp(sm_type, "pfrk")){// PF + RKLT
+		vector<TrackerBase*> trackers;
+		trackers.push_back(getSM("pf", am_type, ssm_type, ilm_type));
+		trackers.push_back(getCompositeSM("rkl", am_type, ssm_type, ilm_type));
+		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
+			casc_reinit_err_thresh, casc_reinit_frame_gap);
+		return new CascadeTracker(trackers, &casc_params);
 	} else if(!strcmp(sm_type, "nnic")){// NN + ICLK
 		vector<TrackerBase*> trackers;
 		trackers.push_back(getSM("nn", am_type, ssm_type, ilm_type));
@@ -1426,6 +1433,13 @@ inline TrackerBase *getCompositeSM(const char *sm_type,
 		vector<TrackerBase*> trackers;
 		if(!getNNk(trackers, am_type, ssm_type, ilm_type)){ return nullptr; }
 		trackers.push_back(getSM("esm", am_type, ssm_type, ilm_type));
+		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
+			casc_reinit_err_thresh, casc_reinit_frame_gap);
+		return new CascadeTracker(trackers, &casc_params);
+	} else if(!strcmp(sm_type, "nnrk")){// NN + RKLT
+		vector<TrackerBase*> trackers;
+		trackers.push_back(getSM("nn", am_type, ssm_type, ilm_type));
+		trackers.push_back(getCompositeSM("rkl", am_type, ssm_type, ilm_type));
 		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
 			casc_reinit_err_thresh, casc_reinit_frame_gap);
 		return new CascadeTracker(trackers, &casc_params);

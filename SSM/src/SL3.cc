@@ -8,9 +8,10 @@
 #include "opencv2/calib3d/calib3d.hpp"
 #include <boost/random/random_device.hpp>
 #include <boost/random/seed_seq.hpp>
-
-#define MAX_VALID_VAL 1e50
-#define is_unbounded(eig_mat) (eig_mat.array().cwiseAbs().eval() > MAX_VALID_VAL).any()
+#ifndef SL3_MAX_VALID_VAL
+#define SL3_MAX_VALID_VAL 1e10
+#endif
+#define is_unbounded(eig_mat) (eig_mat.array().cwiseAbs().eval() > SL3_MAX_VALID_VAL).any()
 
 _MTF_BEGIN_NAMESPACE
 
