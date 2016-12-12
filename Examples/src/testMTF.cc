@@ -227,13 +227,13 @@ int main(int argc, char * argv[]) {
 			if(diag_gen[data_id] - '0'){
 				const char* data_name = getDataTypeName(data_id, adt_len, diag_len);
 				if(diag_inv){
-					bin_out_fname = cv_format("%s/%s_%d_inv_%s_%d_%d_%s.bin",
-						diag_data_dir.c_str(), diag_out_prefix.c_str(), diag_update_type, data_name, diag_frame_gap,
-						start_id, diag_end_id >= diag_start_id ? to_string(end_id).c_str() : "end");
+					bin_out_fname = cv_format("%s/%s_%d_inv_%s_%d_%d_%d.bin",
+						diag_data_dir.c_str(), diag_out_prefix.c_str(), diag_update_type, data_name, 
+						diag_frame_gap, start_id, end_id);
 				} else{
-					bin_out_fname = cv_format("%s/%s_%d_%s_%d_%d_%s.bin",
-						diag_data_dir.c_str(), diag_out_prefix.c_str(), diag_update_type, data_name,diag_frame_gap,
-						start_id, diag_end_id >= diag_start_id ? to_string(end_id).c_str():"end");
+					bin_out_fname = cv_format("%s/%s_%d_%s_%d_%d_%d.bin",
+						diag_data_dir.c_str(), diag_out_prefix.c_str(), diag_update_type, data_name,
+						diag_frame_gap, start_id, end_id);
 				}
 
 				if(diag_inv){
