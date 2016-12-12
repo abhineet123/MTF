@@ -567,7 +567,7 @@ namespace mtf{
 
 		double diag_grad_diff = 0.1;
 		int diag_res = 50;
-		int diag_update = 0;
+		int diag_update_type = 0;
 		int diag_start_id = 0;
 		int diag_end_id = 0;
 
@@ -1379,8 +1379,8 @@ namespace mtf{
 				diag_3d = atoi(arg_val);
 			} else if(!strcmp(arg_name, "diag_3d_ids")){
 				diag_3d_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "diag_update")){
-				diag_update = atoi(arg_val);
+			} else if(!strcmp(arg_name, "diag_update_type")){
+				diag_update_type = atoi(arg_val);
 			} else if(!strcmp(arg_name, "diag_start_id")){
 				diag_start_id = atoi(arg_val);
 			} else if(!strcmp(arg_name, "diag_end_id")){

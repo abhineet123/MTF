@@ -132,7 +132,7 @@ int main(int argc, char * argv[]) {
 		return EXIT_FAILURE;
 	}
 	mtf::DiagnosticsParams diag_params(
-		static_cast<mtf::DiagnosticsParams::UpdateType>(diag_update),
+		static_cast<mtf::DiagnosticsParams::UpdateType>(diag_update_type),
 		diag_show_data, diag_show_corners, diag_show_patches,
 		diag_enable_validation, diag_validation_prec);
 	diag.reset(new  mtf::Diagnostics(am, ssm, &diag_params));
@@ -228,11 +228,11 @@ int main(int argc, char * argv[]) {
 				const char* data_name = getDataTypeName(data_id, adt_len, diag_len);
 				if(diag_inv){
 					bin_out_fname = cv::format("%s/%s_%d_inv_%s_%d_%d_%d.bin",
-						diag_data_dir.c_str(), diag_out_prefix.c_str(), diag_update, data_name,
+						diag_data_dir.c_str(), diag_out_prefix.c_str(), diag_update_type, data_name,
 						diag_frame_gap, start_id, end_id);
 				} else{
 					bin_out_fname = cv::format("%s/%s_%d_%s_%d_%d_%d.bin",
-						diag_data_dir.c_str(), diag_out_prefix.c_str(), diag_update, data_name,
+						diag_data_dir.c_str(), diag_out_prefix.c_str(), diag_update_type, data_name,
 						diag_frame_gap, start_id, end_id);
 				}
 
