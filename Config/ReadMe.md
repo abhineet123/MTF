@@ -186,6 +186,14 @@ Input/Output related parameters:
 			0: Disable
 			1: Enable
 			
+	 Parameter:	'tracking_err_type'
+		Description:		
+			method used for computing the tracking error; 
+		Possible Values:
+			0: Mean Corner Distance or MCD error - mean euclidean distance between the corners of the two bounding boxes
+			1: Center Location Error or CLE - euclidean distance between the centroids of the two bounding boxes
+			2: Jaccard Error - ration of intersection to union between the two bounding boxes
+			
 	 Parameter:	'record_frames'
 		Description:
 			record the tracked frames into a video file called Tracked_video.avi; 

@@ -63,7 +63,7 @@ namespace mtf{
 		int buffer_count = 10;
 		int buffer_id = 0;
 
-		// flags//
+		//! flags
 		int show_xv_window = 0;
 		int pause_after_frame = 0;
 		bool print_corners = false;
@@ -113,7 +113,7 @@ namespace mtf{
 		std::string source_name = "nl_bookI_s3";
 		std::string source_fmt = "jpg";
 
-		// for Xvision trackers
+		//! for Xvision trackers
 		int steps_per_frame = 1;
 		int patch_size = 0;
 
@@ -148,7 +148,7 @@ namespace mtf{
 		int xvg_adjust_grid = 0;
 		int xvg_adjust_lines = 1;
 
-		// for MTF
+		//! for MTF
 		unsigned int mtf_res = 50;
 		unsigned int resx = 50;
 		unsigned int resy = 50;
@@ -265,7 +265,7 @@ namespace mtf{
 		bool spl_static_wts = true;
 		bool spl_debug_mode = 0;
 
-		// SCV and RSCV
+		//! SCV and RSCV
 		int scv_hist_type = 0;
 		bool scv_use_bspl = 0;
 		int scv_n_bins = 256;
@@ -278,12 +278,12 @@ namespace mtf{
 		bool scv_approx_dist_feat = true;
 		double scv_likelihood_alpha = 0;
 
-		// LSCV and LRSCV
+		//! LSCV and LRSCV
 		int lscv_sub_regions = 3;
 		int lscv_spacing = 10;
 		bool lscv_show_subregions = false;
 
-		// LKLD
+		//! LKLD
 		int lkld_n_bins = 8;
 		double lkld_pre_seed = 0.1;
 		bool lkld_pou = 1;
@@ -423,7 +423,7 @@ namespace mtf{
 		int rbf_n_ctrl_pts_x = 3;
 		int rbf_n_ctrl_pts_y = 3;
 
-		// Particle Filter
+		//! Particle Filter
 		int pf_max_iters = 1;
 		int pf_n_particles = 100;
 		int pf_dynamic_model = 1;
@@ -442,29 +442,29 @@ namespace mtf{
 		bool pf_jacobian_as_sigma = false;
 		bool pf_debug_mode = false;
 
-		// Multi Layer Particle Filter
+		//! Multi Layer Particle Filter
 		int pfk_n_layers;
 		vectorvi pfk_ssm_sigma_ids;
 
-		// Gaussian parameters for sampling SSM parameters - used by NN, PF and RG
+		//! Gaussian parameters for sampling SSM parameters - used by NN, PF and RG
 		vectorvd ssm_sigma;
 		vectorvd ssm_mean;
 
 		vectorvd am_sigma;
 		vectorvd am_mean;
 
-		// Hierarchical SSM tracker
+		//! Hierarchical SSM tracker
 		char* hrch_sm = "iclk";
 		char* hrch_am = "ssd";
 
-		// Cascade tracker
+		//! Cascade tracker
 		int casc_n_trackers = 2;
 		bool casc_enable_feedback = 1;
 		bool casc_auto_reinit = false;
 		double casc_reinit_err_thresh = 1.0;
 		int casc_reinit_frame_gap = 1;
 
-		// Grid tracker
+		//! Grid tracker
 		char* grid_sm = "iclk";
 		char* grid_am = "ssd";
 		char* grid_ssm = "2";
@@ -478,7 +478,7 @@ namespace mtf{
 		bool grid_show_trackers = false;
 		bool grid_show_tracker_edges = false;
 		bool grid_use_tbb = true;
-		// OpenCV grid tracker
+		//! OpenCV grid tracker
 		int grid_pyramid_levels = 2;
 		bool grid_use_min_eig_vals = 0;
 		double grid_min_eig_thresh = 1e-4;
@@ -517,14 +517,14 @@ namespace mtf{
 		bool line_reset_template = false;
 		bool line_debug_mode = false;
 
-		//RKL Tracker
+		//! RKL Tracker
 		char* rkl_sm = "iclk";
 		bool rkl_enable_spi = true;
 		bool rkl_enable_feedback = true;
 		bool rkl_failure_detection = true;
 		double rkl_failure_thresh = 15.0;
 
-		//Parallel Tracker
+		//! Parallel Tracker
 		int prl_n_trackers = 1;
 		int prl_estimation_method = 0;
 		bool prl_reset_to_mean = false;
@@ -532,13 +532,13 @@ namespace mtf{
 		double prl_reinit_err_thresh = 1.0;
 		int prl_reinit_frame_gap = 1;
 
-		//Pyramidal Tracker
+		//! Pyramidal Tracker
 		std::string pyr_sm = "fc";
 		int pyr_no_of_levels = 3;
 		double pyr_scale_factor = 0.65;
 		bool pyr_show_levels = false;
 
-		// MTF Diagnostics
+		//! MTF Diagnostics
 		char* diag_am = "ssd";
 		char* diag_ssm = "2";
 		char* diag_ilm = "0";
@@ -580,7 +580,7 @@ namespace mtf{
 		bool esm_spi_enable = false;
 		double esm_spi_thresh = 10;
 
-		// DSST
+		//! DSST
 		double dsst_padding = 1;
 		double dsst_sigma = 1.0 / 16;
 		double dsst_scale_sigma = 1.0 / 4;
@@ -595,13 +595,13 @@ namespace mtf{
 		int dsst_is_rotating = 1;
 		int dsst_bin_size = 1;
 
-		// KCF
+		//! KCF
 		double kcf_padding; //extra area surrounding the target
 		double kcf_lambda; //regularization
 		double kcf_output_sigma_factor; //spatial bandwidth (proportional to target)
 		double kcf_interp_factor; //linear interpolation factor for adaptation
 		double kcf_kernel_sigma; //gaussian kernel bandwidth
-		//for scaling
+		//! for scaling
 		int kcf_number_scales;
 		double kcf_scale_step;
 		double kcf_scale_model_max_area;
@@ -618,20 +618,20 @@ namespace mtf{
 		int mil_neg_num_train = 65;
 		int mil_num_features = 250;
 
-		// CMT
+		//! CMT
 		bool cmt_estimate_scale = true;
 		bool cmt_estimate_rotation = false;
 		char* cmt_feat_detector = "FAST";
 		char* cmt_desc_extractor = "BRISK";
 		double cmt_resize_factor = 0.5;
 
-		// TLD
+		//! TLD
 		bool tld_tracker_enabled = true;
 		bool tld_detector_enabled = true;
 		bool tld_learning_enabled = true;
 		bool tld_alternating = false;
 
-		//RCT
+		//! RCT
 		int rct_min_n_rect = 2;
 		int rct_max_n_rect = 4;
 		int rct_n_feat = 50;
@@ -641,7 +641,7 @@ namespace mtf{
 
 		std::string strk_config_path = "Config/struck.cfg";
 
-		//ViSP Template Tracker
+		//! ViSP Template Tracker
 		char* visp_sm = "fclk";
 		char* visp_am = "ssd";
 		char* visp_ssm = "8";
@@ -651,7 +651,7 @@ namespace mtf{
 		double visp_thresh_grad = 60;
 		int visp_pyr_n_levels = 0;
 		int visp_pyr_level_to_stop = 1;
-		//ViSP Pipeline
+		//! ViSP Pipeline
 		int visp_fw_res = 0;
 		int visp_fw_fps = 0;
 		int visp_usb_res = 0;
@@ -659,7 +659,7 @@ namespace mtf{
 		int visp_usb_n_buffers = 3;
 
 
-		// PFSL3
+		//! PFSL3
 		int pfsl3_p_x = 40;
 		int pfsl3_p_y = 40;
 		double pfsl3_rot = 0;
@@ -692,7 +692,7 @@ namespace mtf{
 		std::string gtrn_model_file = "Data/GOTURN/tracker.prototxt";
 		std::string gtrn_trained_file = "Data/GOTURN/solver.prototxt";
 
-		//DFT
+		//! DFT
 		float dft_res_to_l = 1e-10;
 		float dft_p_to_l = 5e-5;
 		int dft_max_iter = 50;
@@ -710,7 +710,7 @@ namespace mtf{
 		double frg_resize_factor = 0.5;
 		bool frg_show_window = false;
 
-		// PCA Patch Extraction
+		//! PCA Patch Extraction
 		std::vector<int> extracted_frame_ids = { 0, 1, 2, 3, 4 };
 		int extraction_id = 0;
 		// PCA
@@ -719,7 +719,7 @@ namespace mtf{
 		float pca_f_factor = 0.95;
 		bool pca_show_basis = false;
 
-		// FMaps
+		//! FMaps
 		int dfm_nfmaps = 1;
 		char* dfm_layer_name = "conv1";
 		int dfm_vis = 0;
@@ -728,7 +728,7 @@ namespace mtf{
 		char *dfm_params_f_name = "../../../VGG_Models/VGG_CNN_F.caffemodel";
 		char *dfm_mean_f_name = "../../../VGG_Models/VGG_mean.binaryproto";
 
-		// HACLK
+		//! HACLK
 		//std::vector<cv::Mat> conv_corners;
 		std::string  syn_ssm = "c8";
 		std::string  syn_ilm = "0";
