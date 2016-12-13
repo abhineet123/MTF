@@ -250,17 +250,17 @@ MTF Tracker specific parameters:
 			Search method to use for the MTF tracker or the name of the detection based tracker
 		Possible Values:
 			ic/iclk:	Inverse Compositional Lucas Kanade
-				iclm/icl:	use Levenberg Marquardt formulation (only NT version supports this now)
+				iclm/icl:	use Levenberg Marquardt (LM) formulation (only NT version supports this now)
 			fc/fclk:	Forward Compositional Lucas Kanade
-				fclm/fcl:	use Levenberg Marquardt formulation (only NT version supports this now)
+				fclm/fcl:	use LM formulation (only NT version supports this now)
 			fa/falk:	Forward Additive Lucas Kanade
-				falm/fal:	use Levenberg Marquardt formulation (only NT version supports this now)
+				falm/fal:	use LM formulation (only NT version supports this now)
 			ia/ialk:	Inverse Additive Lucas Kanade
-				ialm/ial:	use Levenberg Marquardt formulation (only NT version supports this now)
+				ialm/ial:	use LM formulation (only NT version supports this now)
 			esm:	Efficient Second-order Minimization
-				eslm/esl:	use Levenberg Marquardt formulation (only NT version supports this now)
+				eslm/esl:	use LM formulation (only NT version supports this now)
 			
-			Note:	Levenberg Marquardt formulation can also be enabled for all of the above SMs by setting leven_marq to 1 (currently only NT version supports this so enable_nt should be 1 too)
+			Note:	LM formulation can also be enabled for all of the above SMs by setting leven_marq to 1 (currently only NT version supports this so enable_nt should be 1 too)
 			
 			pf:	Particle filter 
 				pfic:	cascade tracker with PF+ICLK
