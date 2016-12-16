@@ -219,7 +219,8 @@ Input/Output related parameters:
 			
 	 Parameter:	'reset_at_each_frame'
 		Description:
-			reset tracker to the ground truth at each frame; unlike the previous option, here the template remains unchanged;
+			reset tracker to the ground truth at each frame; 
+			unlike the previous option, here the template remains unchanged;
 			only works when a dataset sequence is used and its ground truth is available;
 			
 	 Parameter:	'reinit_on_failure'
@@ -255,15 +256,15 @@ MTF Tracker specific parameters:
 			Search method to use for the MTF tracker or the name of the detection based tracker
 		Possible Values:
 			ic/iclk:	Inverse Compositional Lucas Kanade
-				iclm/icl:	use Levenberg Marquardt (LM) formulation
+				icl/iclm:	use Levenberg Marquardt (LM) formulation
 			fc/fclk:	Forward Compositional Lucas Kanade
-				fclm/fcl:	use LM formulation
+				fcl/fclm:	use LM formulation
 			fa/falk:	Forward Additive Lucas Kanade
-				falm/fal:	use LM formulation
+				fal/falm:	use LM formulation
 			ia/ialk:	Inverse Additive Lucas Kanade
-				ialm/ial:	use LM formulation
+				ial/ialm:	use LM formulation
 			esm:	Efficient Second-order Minimization
-				eslm/esl:	use LM formulation
+				esl/eslm:	use LM formulation
 			
 			Note:	LM formulation can also be enabled for all of the above SMs by setting leven_marq to 1
 			
