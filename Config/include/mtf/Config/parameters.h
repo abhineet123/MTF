@@ -91,6 +91,7 @@ namespace mtf{
 
 
 		bool reinit_at_each_frame = false;
+		bool reset_at_each_frame = false;
 		int reinit_on_failure = false;
 		double reinit_err_thresh = 5.0;
 		int reinit_frame_skip = 5;
@@ -1131,6 +1132,8 @@ namespace mtf{
 			//! Reinitialization
 			else if(!strcmp(arg_name, "reinit_at_each_frame")){
 				reinit_at_each_frame = atoi(arg_val);
+			} else if(!strcmp(arg_name, "reset_at_each_frame")){
+				reset_at_each_frame = atoi(arg_val);
 			} else if(!strcmp(arg_name, "reinit_on_failure")){
 				reinit_on_failure = atoi(arg_val);
 			} else if(!strcmp(arg_name, "reinit_err_thresh")){

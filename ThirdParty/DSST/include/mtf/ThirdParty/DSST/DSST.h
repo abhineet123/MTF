@@ -15,9 +15,11 @@
 
 #include "Params.h"
 #include "mtf/TrackerBase.h"
+#include "mtf/Utilities/warpUtils.h"
 //#include <windows.h>
 
 using namespace std;
+using namespace mtf;
 //using namespace cv;
 
 
@@ -29,6 +31,7 @@ class DSSTTracker : public mtf::TrackerBase
 
 public:
 	trackingSetup tSetup;
+	trackingSetup prev_tSetup;
 	cv::Mat currCorners;
     bool first;
     int *idxs;
@@ -36,6 +39,7 @@ public:
 
 	DSSTTracker(DSSTParams *params = NULL);
 	void initialize(const cv::Mat& corners) override;
+    void setRegion(const cv::Mat& corners) override;
 	void update() override;
 	void setImage(const cv::Mat &img) override{currFrame = img; }
 	int inputType() const  override{ return CV_32FC1; }
@@ -44,6 +48,7 @@ public:
 private:
 	//~DSSTTracker();
 	cv::Mat inverseFourier(cv::Mat original, int flag=0);
+    void reset_filters();
 	cv::Mat createFourier(cv::Mat original, int flag=0);
 	cv::Mat hann(int size);
 	float *convert1DArray(cv::Mat &patch);
@@ -53,9 +58,10 @@ private:
 	//cv::Mat *create_feature_map2(cv::Mat& patch, int full, int &nChns, cv::Mat& Gray, bool scaling);
 	cv::Mat get_scale_sample(cv::Mat img, trackingSetup tSetup, DSSTParams tParams, int &nDims,bool display = false);
 	cv::Mat *get_translation_sample(cv::Mat img, trackingSetup tSet, int &nDims);
-	void train(bool first, cv::Mat img);
+	void train(bool first, cv::Mat img, bool original);
 	cv::Point updateCentroid(cv::Point oldC, int w , int h , int imgw, int imgh);
 	cv::RotatedRect processFrame(cv::Mat img, bool enableScaling, bool enableRotating);
+    cv::RotatedRect processFrame_bb(cv::Mat img, bool enableScaling, bool enableRotating, cv::RotatedRect bb);
 	double computeCorrelationVariance(double *arr, int arrW, int arrH);
 	cv::Mat convert2DImageFloat(double *arr, int w, int h);
 	cv::Mat convertNormalizedFloatImg(cv::Mat &img);

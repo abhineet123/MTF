@@ -18,6 +18,11 @@ ICLK<AM, SSM >::ICLK(const ParamType *iclk_params,
 	printf("chained_warp: %d\n", params.chained_warp);
 	printf("hess_type: %d\n", params.hess_type);
 	printf("sec_ord_hess: %d\n", params.sec_ord_hess);
+	printf("leven_marq: %d\n", params.leven_marq);
+	if(params.leven_marq){
+		printf("lm_delta_init: %f\n", params.lm_delta_init);
+		printf("lm_delta_update: %f\n", params.lm_delta_update);
+	}
 	printf("enable_learning: %d\n", params.enable_learning);
 	printf("debug_mode: %d\n", params.debug_mode);
 
@@ -33,20 +38,23 @@ ICLK<AM, SSM >::ICLK(const ParamType *iclk_params,
 	const char *hess_order = params.sec_ord_hess ? "Second" : "First";
 	printf("Using %s order %s Hessian\n", 
 		hess_order, ICLKParams::toString(params.hess_type));
-	init_pix_jacobian.resize(am.getPatchSize(), ssm.getStateSize());
-	if(params.hess_type == HessType::CurrentSelf){
-		curr_pix_jacobian.resize(am.getPatchSize(), ssm.getStateSize());
+	if(params.leven_marq){
+		printf("Using Levenberg Marquardt formulation...\n");
 	}
-	jacobian.resize(ssm.getStateSize());
-	hessian.resize(ssm.getStateSize(), ssm.getStateSize());
+	dI0_dpssm.resize(am.getPatchSize(), ssm.getStateSize());
+	if(params.hess_type == HessType::CurrentSelf){
+		dIt_dpssm.resize(am.getPatchSize(), ssm.getStateSize());
+	}
+	df_dp.resize(ssm.getStateSize());
+	d2f_dp2.resize(ssm.getStateSize(), ssm.getStateSize());
 	ssm_update.resize(ssm.getStateSize());
 	inv_update.resize(ssm.getStateSize());
 
 	if(params.sec_ord_hess){
 		if(params.hess_type == HessType::CurrentSelf){
-			curr_pix_hessian.resize(ssm.getStateSize()*ssm.getStateSize(), am.getPatchSize());
+			d2It_dpssm2.resize(ssm.getStateSize()*ssm.getStateSize(), am.getPatchSize());
 		} else {
-			init_pix_hessian.resize(ssm.getStateSize()*ssm.getStateSize(), am.getPatchSize());
+			d2I0_dpssm2.resize(ssm.getStateSize()*ssm.getStateSize(), am.getPatchSize());
 		}
 	}
 }
@@ -72,11 +80,11 @@ void ICLK<AM, SSM >::initialize(const cv::Mat &corners){
 		am.initializePixGrad(ssm.getGradPts());
 	}
 	if(params.chained_warp){
-		ssm.cmptWarpedPixJacobian(init_pix_jacobian, am.getInitPixGrad());
+		ssm.cmptWarpedPixJacobian(dI0_dpssm, am.getInitPixGrad());
 	} else{
-		ssm.cmptInitPixJacobian(init_pix_jacobian, am.getInitPixGrad());
+		ssm.cmptInitPixJacobian(dI0_dpssm, am.getInitPixGrad());
 	}
-	am.cmptInitJacobian(jacobian, init_pix_jacobian);
+	am.cmptInitJacobian(df_dp, dI0_dpssm);
 
 	if(params.sec_ord_hess){
 		if(params.sec_ord_hess){
@@ -89,19 +97,22 @@ void ICLK<AM, SSM >::initialize(const cv::Mat &corners){
 		}
 		if(params.hess_type != HessType::CurrentSelf){
 			if(params.chained_warp){
-				ssm.cmptWarpedPixHessian(init_pix_hessian, am.getInitPixHess(), 
+				ssm.cmptWarpedPixHessian(d2I0_dpssm2, am.getInitPixHess(), 
 					am.getInitPixGrad());
 			} else{
-				ssm.cmptInitPixHessian(init_pix_hessian, am.getInitPixHess(),
+				ssm.cmptInitPixHessian(d2I0_dpssm2, am.getInitPixHess(),
 					am.getInitPixGrad());
 			}
 		}
 	}
 	if(params.hess_type == HessType::InitialSelf){
 		if(params.sec_ord_hess){
-			am.cmptSelfHessian(hessian, init_pix_jacobian, init_pix_hessian);
+			am.cmptSelfHessian(d2f_dp2, dI0_dpssm, d2I0_dpssm2);
 		} else{
-			am.cmptSelfHessian(hessian, init_pix_jacobian);
+			am.cmptSelfHessian(d2f_dp2, dI0_dpssm);
+		}
+		if(params.leven_marq){
+			d2f_dp2_orig = d2f_dp2;
 		}
 	}
 	ssm.getCorners(cv_corners_mat);
@@ -115,19 +126,22 @@ void ICLK<AM, SSM >::setRegion(const cv::Mat& corners){
 	ssm.setCorners(corners);
 	if(params.update_ssm){
 		// since the above command completely resets the SSM state including its initial points,
-		// any quantities that depend on these, like init_pix_jacobian and init_pix_hessian,
+		// any quantities that depend on these, like dI0_dpssm and d2I0_dpssm2,
 		// must be recomputed along with quantities that depend on these in turn.
-		ssm.cmptWarpedPixJacobian(init_pix_jacobian, am.getInitPixGrad());
-		am.cmptInitJacobian(jacobian, init_pix_jacobian);
+		ssm.cmptWarpedPixJacobian(dI0_dpssm, am.getInitPixGrad());
+		am.cmptInitJacobian(df_dp, dI0_dpssm);
 		if(params.hess_type != HessType::CurrentSelf){
 			if(params.sec_ord_hess){
-				ssm.cmptWarpedPixHessian(init_pix_hessian, am.getInitPixHess(), am.getInitPixGrad());
+				ssm.cmptWarpedPixHessian(d2I0_dpssm2, am.getInitPixHess(), am.getInitPixGrad());
 			}
 			if(params.hess_type == HessType::InitialSelf){
 				if(params.sec_ord_hess){
-					am.cmptSelfHessian(hessian, init_pix_jacobian, init_pix_hessian);
+					am.cmptSelfHessian(d2f_dp2, dI0_dpssm, d2I0_dpssm2);
 				} else{
-					am.cmptSelfHessian(hessian, init_pix_jacobian);
+					am.cmptSelfHessian(d2f_dp2, dI0_dpssm);
+				}
+				if(params.leven_marq){
+					d2f_dp2_orig = d2f_dp2;
 				}
 			}
 		}
@@ -141,43 +155,69 @@ void ICLK<AM, SSM >::update(){
 	write_frame_id(frame_id);
 
 	am.setFirstIter();
-	for(int i = 0; i < params.max_iters; i++){
+
+	double prev_similarity = 0;
+	double leven_marq_delta = params.lm_delta_init;
+	bool state_reset = false;
+
+	for(int iter_id = 0; iter_id < params.max_iters; ++iter_id){
 		init_timer();
 
 		am.updatePixVals(ssm.getPts());
 		record_event("am.updatePixVals");
 
-		am.updateSimilarity();
+		am.updateSimilarity(false);
 		record_event("am.updateSimilarity");
+
+		if(params.leven_marq && !state_reset){
+			double curr_similarity = am.getSimilarity();
+			if(iter_id > 0){
+				if(curr_similarity < prev_similarity){
+					leven_marq_delta *= params.lm_delta_update;
+					//! undo the last update
+					ssm.compositionalUpdate(ssm_update);
+					state_reset = true;
+					continue;
+				}
+				if(curr_similarity > prev_similarity){
+					leven_marq_delta /= params.lm_delta_update;
+				}
+			}
+			prev_similarity = curr_similarity;
+		}
+		state_reset = false;
 
 		am.updateInitGrad();
 		record_event("am.updateInitGrad");
 
-		am.cmptInitJacobian(jacobian, init_pix_jacobian);
+		am.cmptInitJacobian(df_dp, dI0_dpssm);
 		record_event("am.cmptInitJacobian");
 
 		switch(params.hess_type){
 		case HessType::InitialSelf:
+			if(params.leven_marq){
+				d2f_dp2 = d2f_dp2_orig;
+			}
 			break;
 		case HessType::CurrentSelf:
 			if(params.chained_warp){
 				am.updatePixGrad(ssm.getPts());
 				record_event("am.updatePixGrad");
-				ssm.cmptWarpedPixJacobian(curr_pix_jacobian, am.getCurrPixGrad());
+				ssm.cmptWarpedPixJacobian(dIt_dpssm, am.getCurrPixGrad());
 				record_event("ssm.cmptWarpedPixJacobian");
 			} else{
 				ssm.updateGradPts(am.getGradOffset());
 				record_event("ssm.updateGradPts");
 				am.updatePixGrad(ssm.getGradPts());
 				record_event("am.updatePixGrad");
-				ssm.cmptInitPixJacobian(curr_pix_jacobian, am.getCurrPixGrad());
+				ssm.cmptInitPixJacobian(dIt_dpssm, am.getCurrPixGrad());
 				record_event("ssm.cmptInitPixJacobian");
 			}
 			if(params.sec_ord_hess){
 				if(params.chained_warp){
 					am.updatePixHess(ssm.getPts());
 					record_event("am.updatePixHess");
-					ssm.cmptWarpedPixHessian(curr_pix_hessian, am.getCurrPixHess(),
+					ssm.cmptWarpedPixHessian(d2It_dpssm2, am.getCurrPixHess(),
 						am.getCurrPixGrad());
 					record_event("ssm.cmptWarpedPixHessian");
 				} else{
@@ -185,28 +225,35 @@ void ICLK<AM, SSM >::update(){
 					record_event("ssm.updateHessPts");
 					am.updatePixHess(ssm.getPts(), ssm.getHessPts());
 					record_event("am.updatePixHess");
-					ssm.cmptInitPixHessian(curr_pix_hessian, am.getCurrPixHess(), am.getCurrPixGrad());
+					ssm.cmptInitPixHessian(d2It_dpssm2, am.getCurrPixHess(), am.getCurrPixGrad());
 					record_event("ssm.cmptInitPixHessian");
 				}
-				am.cmptSelfHessian(hessian, curr_pix_jacobian, curr_pix_hessian);
+				am.cmptSelfHessian(d2f_dp2, dIt_dpssm, d2It_dpssm2);
 				record_event("am.cmptSelfHessian (second order)");
 			} else{
-				am.cmptSelfHessian(hessian, curr_pix_jacobian);
+				am.cmptSelfHessian(d2f_dp2, dIt_dpssm);
 				record_event("am.cmptSelfHessian (first order)");
 			}
 			break;
 		case HessType::Std:
 			if(params.sec_ord_hess){
-				am.cmptInitHessian(hessian, init_pix_jacobian, init_pix_hessian);
+				am.cmptInitHessian(d2f_dp2, dI0_dpssm, d2I0_dpssm2);
 				record_event("am.cmptInitHessian (second order)");
 			} else{
-				am.cmptInitHessian(hessian, init_pix_jacobian);
+				am.cmptInitHessian(d2f_dp2, dI0_dpssm);
 				record_event("am.cmptInitHessian (first order)");
 			}
 			break;
 		}
+		if(params.leven_marq){
+			//utils::printMatrix(hessian, "original hessian");
+			MatrixXd diag_d2f_dp2 = d2f_dp2.diagonal().asDiagonal();
+			//utils::printMatrix(diag_hessian, "diag_hessian");
+			d2f_dp2 += leven_marq_delta*diag_d2f_dp2;
+			//utils::printMatrix(hessian, "LM hessian");
+		}
 
-		ssm_update = -hessian.colPivHouseholderQr().solve(jacobian.transpose());
+		ssm_update = -d2f_dp2.colPivHouseholderQr().solve(df_dp.transpose());
 		record_event("ssm_update");
 
 		ssm.invertState(inv_update, ssm_update);
@@ -222,7 +269,7 @@ void ICLK<AM, SSM >::update(){
 
 		if(update_norm < params.epsilon){
 			if(params.debug_mode){
-				printf("n_iters: %d\n", i + 1);
+				printf("n_iters: %d\n", iter_id + 1);
 			}
 			break;
 		}

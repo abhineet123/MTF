@@ -17,7 +17,6 @@ private:
 public:
 	typedef ICLKParams ParamType;
 	typedef typename ParamType::HessType HessType;
-	ParamType params;
 
 	using SearchMethod<AM, SSM> ::am;
 	using SearchMethod<AM, SSM> ::ssm;
@@ -29,26 +28,32 @@ public:
 	using SearchMethod<AM, SSM> ::initialize;
 	using SearchMethod<AM, SSM> ::update;
 
-	// Let S = size of SSM state vector and N = resx * resy = no. of pixels in the object patch
-	//! 1 x S Jacobian of the AM error norm w.r.t. SSM state vector
-	RowVectorXd jacobian;
-	//! S x S Hessian of the AM error norm w.r.t. SSM state vector
-	MatrixXd hessian;
-	//! N x S jacobians of the pixel values w.r.t the SSM state vector 
-	MatrixXd init_pix_jacobian, curr_pix_jacobian;
-	//! N x S x S hessians of the pixel values w.r.t the SSM state vector stored as a (S*S) x N 2D matrix
-	MatrixXd init_pix_hessian, curr_pix_hessian;
-
-	Matrix24d prev_corners;
-	VectorXd ssm_update, inv_update;
-	int frame_id;
-
 	ICLK(const ParamType *iclk_params = nullptr,
 		const AMParams *am_params = nullptr, const SSMParams *ssm_params = nullptr);
 
 	void initialize(const cv::Mat &corners) override;
 	void update() override;
 	void setRegion(const cv::Mat& corners) override;
+
+protected:
+
+	ParamType params;
+
+	// Let S = size of SSM state vector and N = resx * resy = no. of pixels in the object patch
+	//! 1 x S Jacobian of the AM error norm w.r.t. SSM state vector
+	RowVectorXd df_dp;
+	//! S x S Hessian of the AM error norm w.r.t. SSM state vector
+	MatrixXd d2f_dp2_orig, d2f_dp2;
+	//! N x S jacobians of the pixel values w.r.t the SSM state vector 
+	MatrixXd dI0_dpssm, dIt_dpssm;
+	//! N x S x S hessians of the pixel values w.r.t the SSM state vector stored as a (S*S) x N 2D matrix
+	MatrixXd d2I0_dpssm2, d2It_dpssm2;
+
+	Matrix24d prev_corners;
+	VectorXd ssm_update, inv_update;
+	int frame_id;
+
+
 };
 _MTF_END_NAMESPACE
 

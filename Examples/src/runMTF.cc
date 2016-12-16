@@ -205,7 +205,8 @@ int main(int argc, char * argv[]) {
 	nor is it possible to reinitialize the object from ground truth
 	*/
 	if(!read_obj_from_gt){
-		reinit_at_each_frame = reinit_on_failure = show_tracking_error = write_tracking_error = show_ground_truth = 0;
+		reset_at_each_frame = reinit_at_each_frame = reinit_on_failure = 
+			show_tracking_error = write_tracking_error = show_ground_truth = 0;
 	}
 	/**
 	original GT will be overwritten by tracking data only if it is not read from reinit gt -
@@ -219,6 +220,9 @@ int main(int argc, char * argv[]) {
 	if(reinit_at_each_frame){
 		printf("Reinitializing tracker at each frame...\n");
 		reinit_on_failure = false;
+	} else if(reset_at_each_frame){
+		printf("Resetting tracker at each frame...\n");		
+		reinit_on_failure = false;
 	}
 
 	if(show_tracking_error || write_tracking_error || reinit_on_failure){
@@ -231,7 +235,8 @@ int main(int argc, char * argv[]) {
 			} else{
 				printf("Disabling tracking error computation since ground truth is not available\n");
 			}
-			reinit_at_each_frame = reinit_on_failure = show_tracking_error = write_tracking_error = show_ground_truth = 0;
+			reset_at_each_frame = reinit_at_each_frame = reinit_on_failure = 
+				show_tracking_error = write_tracking_error = show_ground_truth = 0;
 		} else{
 			printf("Using %s error to measure tracking accuracy\n",
 				mtf::utils::toString(static_cast<TrackErrT>(tracking_err_type)));
@@ -255,7 +260,10 @@ int main(int argc, char * argv[]) {
 			if(reinit_at_each_frame){
 				tracking_data_dir = cv_format("log/tracking_data/reinit/%s/%s",
 					actor.c_str(), source_name.c_str());
-			} else if(reinit_on_failure){
+			} else if(reset_at_each_frame){
+				tracking_data_dir = cv_format("log/tracking_data/reset/%s/%s",
+					actor.c_str(), source_name.c_str());
+			}else if(reinit_on_failure){
 				std::string reinit_data_dir = std::floor(reinit_err_thresh) == reinit_err_thresh ?
 					//! reinit_err_thresh is an integer
 					cv_format("reinit_%d_%d", static_cast<int>(reinit_err_thresh), reinit_frame_skip) :
@@ -462,7 +470,10 @@ int main(int argc, char * argv[]) {
 			}
 			trackers[0]->initialize(cv_utils.getGT(input->getFrameID()));
 			invalid_tracker_state = tracker_failed = false;
-		} 
+		} else if(reset_at_each_frame){
+			trackers[0]->setRegion(cv_utils.getGT(input->getFrameID()));
+			invalid_tracker_state = tracker_failed = false;
+		}
 		if(invalid_tracker_state){
 			printf("Unrecoverable tracking loss detected. Exiting...\n");
 			break;

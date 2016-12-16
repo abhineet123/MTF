@@ -304,8 +304,7 @@ TrackerBase *getTracker(const char *sm_type,
 			getESMParams().get());
 	} else if(!strcmp(sm_type, "iclm") || !strcmp(sm_type, "icl")){
 		leven_marq = true;
-		return new nt::ICLK(AM(new AMType(am_params)), SSM(new SSMType(ssm_params)),
-			getICLKParams().get());
+		return new ICLK<AMType, SSMType>(getICLKParams().get(), am_params, ssm_params);
 	} else if(!strcmp(sm_type, "fclm") || !strcmp(sm_type, "fcl")){
 		leven_marq = true;
 		return new nt::FCLK(AM(new AMType(am_params)), SSM(new SSMType(ssm_params)),

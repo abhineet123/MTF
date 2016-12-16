@@ -21,26 +21,26 @@ namespace utils{
 	}
 
 	// returning versions
-	inline Matrix3Xd homogenize(const Matrix2Xd &dehom_mat){
-		Matrix3Xd hom_mat;
+	inline HomPtsT homogenize(const PtsT &dehom_mat){
+		HomPtsT hom_mat;
 		hom_mat.resize(NoChange, dehom_mat.cols());
 		homogenize(dehom_mat, hom_mat);
 		return hom_mat;
 	}
-	inline Matrix2Xd dehomogenize(const Matrix3Xd &hom_mat){
-		Matrix2Xd dehom_mat;
+	inline PtsT dehomogenize(const HomPtsT &hom_mat){
+		PtsT dehom_mat;
 		dehom_mat.resize(NoChange, hom_mat.cols());
 		dehomogenize(hom_mat, dehom_mat);
 		return dehom_mat;
 	}
-	inline Matrix3d getTranslationMatrix(double tx, double ty){
-		Matrix3d trans_mat = Matrix3d::Identity();
+	inline ProjWarpT getTranslationMatrix(double tx, double ty){
+		ProjWarpT trans_mat = ProjWarpT::Identity();
 		trans_mat(0, 2) = tx;
 		trans_mat(1, 2) = ty;
 		return trans_mat;
 	}
-	inline Matrix3d getRotationMatrix(double theta){
-		Matrix3d rot_mat = Matrix3d::Identity();
+	inline ProjWarpT getRotationMatrix(double theta){
+		ProjWarpT rot_mat = ProjWarpT::Identity();
 		double cos_theta = cos(theta);
 		double sin_theta = sin(theta);
 		rot_mat(0, 0) = cos_theta;
@@ -49,14 +49,14 @@ namespace utils{
 		rot_mat(1, 1) = cos_theta;
 		return rot_mat;
 	}
-	inline Matrix3d getScalingMatrix(double s){
-		Matrix3d scale_mat = Matrix3d::Identity();
+	inline ProjWarpT getScalingMatrix(double s){
+		ProjWarpT scale_mat = ProjWarpT::Identity();
 		scale_mat(0, 0) += s;
 		scale_mat(1, 1) += s;
 		return scale_mat;
 	}
-	inline Matrix3d getShearingMatrix(double a, double b){
-		Matrix3d shear_mat = Matrix3d::Identity();
+	inline ProjWarpT getShearingMatrix(double a, double b){
+		ProjWarpT shear_mat = ProjWarpT::Identity();
 		shear_mat(0, 0) += a;
 		shear_mat(0, 1) = b;
 		return shear_mat;
@@ -64,29 +64,30 @@ namespace utils{
 
 	//! Variants of Direct Linear Transformation (DLT) algorithm to estimate best fit parameters 
 	//! for different SSMs from pairs of corresponding points and/or corners
-	Matrix3d computeHomographyDLT(const Matrix2Xd &in_pts, const Matrix2Xd &out_pts, int n_pix);
-	Matrix3d computeHomographyDLT(const Matrix24d &in_corners, const Matrix24d &out_corners);
-	Matrix3d computeHomographyNDLT(const Matrix24d &in_corners, const Matrix24d &out_corners);
-	Matrix3d computeAffineDLT(const Matrix24d &in_corners, const Matrix24d &out_corners);
-	Matrix3d computeAffineDLT(const Matrix2Xd &in_pts, const Matrix2Xd &out_pts);
-	Matrix3d computeAffineDLT(const Matrix23d &in_pts, const Matrix23d &out_pts);
-	Matrix3d computeAffineNDLT(const Matrix24d &in_corners, const Matrix24d &out_corners);
-	Matrix3d computeSimilitudeDLT(const Matrix24d &in_corners, const Matrix24d &out_corners);
-	Matrix3d computeSimilitudeNDLT(const Matrix24d &in_corners, const Matrix24d &out_corners);
-	Matrix3d computeSimilitudeDLT(const Matrix2Xd &in_pts, const Matrix2Xd &out_pts);
-	Matrix3d computeSimilitudeNDLT(const Matrix2Xd &in_pts, const Matrix2Xd &out_pts);
-	Vector3d computeIsometryDLT(const Matrix2Xd &in_pts, const Matrix2Xd &out_pts);
-	Matrix3d computeTranscalingDLT(const Matrix24d &in_corners, const Matrix24d &out_corners);
-	Matrix3d computeTranscalingDLT(const Matrix2Xd &in_corners, const Matrix2Xd &out_corners);
+	ProjWarpT computeHomographyDLT(const PtsT &in_pts, const PtsT &out_pts, int n_pix);
+	ProjWarpT computeHomographyDLT(const CornersT &in_corners, const CornersT &out_corners);
+	ProjWarpT computeHomographyNDLT(const CornersT &in_corners, const CornersT &out_corners);
+	ProjWarpT computeAffineDLT(const CornersT &in_corners, const CornersT &out_corners);
+	ProjWarpT computeAffineDLT(const PtsT &in_pts, const PtsT &out_pts);
+	ProjWarpT computeAffineDLT(const Matrix23d &in_pts, const Matrix23d &out_pts);
+	ProjWarpT computeAffineNDLT(const CornersT &in_corners, const CornersT &out_corners);
+	ProjWarpT computeSimilitudeDLT(const CornersT &in_corners, const CornersT &out_corners);
+	ProjWarpT computeSimilitudeNDLT(const CornersT &in_corners, const CornersT &out_corners);
+	ProjWarpT computeSimilitudeDLT(const PtsT &in_pts, const PtsT &out_pts);
+	ProjWarpT computeSimilitudeNDLT(const PtsT &in_pts, const PtsT &out_pts);
+	Vector3d computeIsometryDLT(const PtsT &in_pts, const PtsT &out_pts);
+	Vector3d computeIsometryDLT(const CornersT &in_pts, const CornersT &out_pts);
+	ProjWarpT computeTranscalingDLT(const CornersT &in_corners, const CornersT &out_corners);
+	ProjWarpT computeTranscalingDLT(const PtsT &in_corners, const PtsT &out_corners);
 
-	void decomposeHomographyForward(Matrix3d &affine_mat, Matrix3d &proj_mat, const Matrix3d &hom_mat);
-	void decomposeHomographyInverse(Matrix3d &affine_mat, Matrix3d &proj_mat, const Matrix3d &hom_mat);
-	void decomposeAffineForward(Vector6d &affine_params, const Matrix3d &affine_mat);
-	void decomposeAffineInverse(Vector6d &affine_params, const Matrix3d &affine_mat);
-	void decomposeAffineInverse(Matrix3d &trans_mat, Matrix3d &rot_mat,
-		Matrix3d &scale_mat, Matrix3d &shear_mat, const Matrix3d &affine_mat);
-	void decomposeAffineForward(Matrix3d &trans_mat, Matrix3d &rot_mat,
-		Matrix3d &scale_mat, Matrix3d &shear_mat, const Matrix3d &affine_mat);
+	void decomposeHomographyForward(ProjWarpT &affine_mat, ProjWarpT &proj_mat, const ProjWarpT &hom_mat);
+	void decomposeHomographyInverse(ProjWarpT &affine_mat, ProjWarpT &proj_mat, const ProjWarpT &hom_mat);
+	void decomposeAffineForward(Vector6d &affine_params, const ProjWarpT &affine_mat);
+	void decomposeAffineInverse(Vector6d &affine_params, const ProjWarpT &affine_mat);
+	void decomposeAffineInverse(ProjWarpT &trans_mat, ProjWarpT &rot_mat,
+		ProjWarpT &scale_mat, ProjWarpT &shear_mat, const ProjWarpT &affine_mat);
+	void decomposeAffineForward(ProjWarpT &trans_mat, ProjWarpT &rot_mat,
+		ProjWarpT &scale_mat, ProjWarpT &shear_mat, const ProjWarpT &affine_mat);
 
 
 	/**
@@ -94,13 +95,13 @@ namespace utils{
 	and their mean distance from origin becomes unity; also returns the inverse normalization
 	matrix which, when multiplied to the normalized points will give the original points back
 	*/
-	void normalizePts(Matrix24d &norm_pts, Matrix3d &inv_norm_mat, const Matrix24d &pts);
-	void normalizePts(Matrix2Xd &norm_pts, Matrix3d &inv_norm_mat, const Matrix2Xd &pts);
+	void normalizePts(CornersT &norm_pts, ProjWarpT &inv_norm_mat, const CornersT &pts);
+	void normalizePts(PtsT &norm_pts, ProjWarpT &inv_norm_mat, const PtsT &pts);
 		/**
 	computes the 2D coordinates for an equally spaced grid of points that covers a
 	square centered at the origin and lying between +c and -c in both x and y directions
 	*/
-	void getNormUnitSquarePts(Matrix2Xd &std_grid, Matrix24d &basis_corners,
+	void getNormUnitSquarePts(PtsT &std_grid, CornersT &basis_corners,
 		int resx, int resy, double min_x = -0.5, double min_y = -0.5,
 		double max_x = 0.5, double max_y = 0.5);
 	void getPtsFromCorners(PtsT &pts, const CornersT &corners,
@@ -127,7 +128,7 @@ namespace utils{
 	//! returns the id of the grid point nearest to the given point
 	double getNearestPt(double x, double y, const mtf::PtsT &grid_pts, int n_pts);
 
-	MatrixX2d computeTPS(const Matrix24d &in_corners, const Matrix24d &out_corners);
+	MatrixX2d computeTPS(const CornersT &in_corners, const CornersT &out_corners);
 	void applyTPS(PtsT &out_pts, const PtsT &in_pts,
 		const PtsT &control_pts, const MatrixX2d &tps_params);
 	inline double tps(double r){ return r*r*log(r); }

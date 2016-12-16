@@ -8,7 +8,7 @@ _MTF_BEGIN_NAMESPACE
 namespace utils{
 	// specialization for dehomogenous matrix with 3 rows
 	template<>
-	inline void dehomogenize<Matrix3Xd, Matrix3Xd>(const Matrix3Xd &hom_mat, Matrix3Xd &dehom_mat){
+	inline void dehomogenize<HomPtsT, HomPtsT>(const HomPtsT &hom_mat, HomPtsT &dehom_mat){
 		assert(hom_mat.cols() == dehom_mat.cols());
 		dehom_mat = hom_mat.array().rowwise() / hom_mat.array().row(2);
 	}
@@ -165,7 +165,7 @@ namespace utils{
 		return nearest_id;
 	}
 
-	ProjWarpT computeHomographyDLT(const Matrix24d &in_corners, const Matrix24d &out_corners){
+	ProjWarpT computeHomographyDLT(const CornersT &in_corners, const CornersT &out_corners){
 		// special function for computing homography between two sets of corners
 		Matrix89d constraint_matrix;
 		for(int i = 0; i < 4; i++){
@@ -211,7 +211,7 @@ namespace utils{
 		//cout<<"err_mat:\n"<<err_mat<<"\n";
 		//cout<<"svd_error:"<<svd_error<<"\n";
 
-		Matrix3d hom_mat;
+		ProjWarpT hom_mat;
 		hom_mat << h(0), h(1), h(2),
 			h(3), h(4), h(5),
 			h(6), h(7), h(8);
@@ -219,7 +219,7 @@ namespace utils{
 		return hom_mat;
 	}
 
-	Matrix3d computeHomographyDLT(const Matrix2Xd &in_pts, const Matrix2Xd &out_pts, int n_pts){
+	ProjWarpT computeHomographyDLT(const PtsT &in_pts, const PtsT &out_pts, int n_pts){
 		//general function for computing homography between two sets of points
 		assert(in_pts.cols() == n_pts);
 		assert(out_pts.cols() == n_pts);
@@ -252,7 +252,7 @@ namespace utils{
 		JacobiSVD<MatrixXd> svd(constraint_matrix, ComputeThinU | ComputeThinV);
 		int n_cols = svd.matrixV().cols();
 		VectorXd h = svd.matrixV().col(n_cols - 1);
-		Matrix3d hom_mat;
+		ProjWarpT hom_mat;
 		hom_mat << h(0), h(1), h(2),
 			h(3), h(4), h(5),
 			h(6), h(7), h(8);
@@ -262,15 +262,15 @@ namespace utils{
 	}
 	// normalizes the target corners before computing the homography; 
 	// supposed to be more numerically stable than the standard non-normalized version;
-	Matrix3d computeHomographyNDLT(const Matrix24d &in_corners, const Matrix24d &out_corners){
-		Matrix24d norm_corners;
-		Matrix3d inv_norm_mat;
+	ProjWarpT computeHomographyNDLT(const CornersT &in_corners, const CornersT &out_corners){
+		CornersT norm_corners;
+		ProjWarpT inv_norm_mat;
 		normalizePts(norm_corners, inv_norm_mat, out_corners);
-		Matrix3d init_warp = computeHomographyDLT(in_corners, norm_corners);
+		ProjWarpT init_warp = computeHomographyDLT(in_corners, norm_corners);
 		init_warp = inv_norm_mat * init_warp;
 		return init_warp;
 	}
-	Matrix3d computeAffineDLT(const Matrix24d &in_corners, const Matrix24d &out_corners){
+	ProjWarpT computeAffineDLT(const CornersT &in_corners, const CornersT &out_corners){
 		Matrix86d A;
 		A.fill(0);
 		Vector8d pt_vec;
@@ -327,7 +327,7 @@ namespace utils{
 		//utils::printMatrix(x2, "x2");
 		//utils::printMatrix(x, "x");
 
-		Matrix3d affine_mat = Matrix3d::Zero();
+		ProjWarpT affine_mat = ProjWarpT::Zero();
 		affine_mat(0, 0) = x(0);
 		affine_mat(0, 1) = x(1);
 		affine_mat(0, 2) = x(2);
@@ -338,7 +338,7 @@ namespace utils{
 		return affine_mat;
 	}
 
-	Matrix3d computeAffineDLT(const Matrix2Xd &in_pts, const Matrix2Xd &out_pts){
+	ProjWarpT computeAffineDLT(const PtsT &in_pts, const PtsT &out_pts){
 		assert(in_pts.cols() == out_pts.cols());
 		int n_pts = in_pts.cols();
 		MatrixXd A(2 * n_pts, 6);
@@ -362,7 +362,7 @@ namespace utils{
 		VectorXd x = svd.matrixV() * ((svd.matrixU().transpose() * out_pts_vec).array() / 
 			svd.singularValues().array()).matrix();
 
-		Matrix3d affine_mat = Matrix3d::Zero();
+		ProjWarpT affine_mat = ProjWarpT::Zero();
 		affine_mat(0, 0) = x(0);
 		affine_mat(0, 1) = x(1);
 		affine_mat(0, 2) = x(2);
@@ -373,16 +373,16 @@ namespace utils{
 		return affine_mat;
 	}
 
-	Matrix3d computeAffineNDLT(const Matrix24d &in_corners, const Matrix24d &out_corners){
-		Matrix24d norm_corners;
-		Matrix3d inv_norm_mat;
+	ProjWarpT computeAffineNDLT(const CornersT &in_corners, const CornersT &out_corners){
+		CornersT norm_corners;
+		ProjWarpT inv_norm_mat;
 		normalizePts(norm_corners, inv_norm_mat, out_corners);
-		Matrix3d init_warp = computeAffineDLT(in_corners, norm_corners);
+		ProjWarpT init_warp = computeAffineDLT(in_corners, norm_corners);
 		init_warp = inv_norm_mat * init_warp;
 		return init_warp;
 	}
 	//! for 3 pairs of corresponding points
-	Matrix3d computeAffineDLT(const Matrix23d &in_pts, const Matrix23d &out_pts){
+	ProjWarpT computeAffineDLT(const Matrix23d &in_pts, const Matrix23d &out_pts){
 		Matrix66d A;
 		A.fill(0);
 		Vector6d pt_vec;
@@ -407,7 +407,7 @@ namespace utils{
 		Matrix66d V = svd.matrixV();
 		Vector6d S = svd.singularValues();
 		Vector6d x = V * ((U.transpose() * out_pts_vec).array() / S.array()).matrix();
-		Matrix3d affine_mat = Matrix3d::Zero();
+		ProjWarpT affine_mat = ProjWarpT::Zero();
 		affine_mat(0, 0) = x(0);
 		affine_mat(0, 1) = x(1);
 		affine_mat(0, 2) = x(2);
@@ -418,7 +418,7 @@ namespace utils{
 		return affine_mat;
 	}
 
-	Matrix3d computeSimilitudeDLT(const Matrix24d &in_corners, const Matrix24d &out_corners){
+	ProjWarpT computeSimilitudeDLT(const CornersT &in_corners, const CornersT &out_corners){
 		Matrix84d A;
 		A.fill(0);
 		// flattened version of the 2x4 matrix of target corner points
@@ -447,7 +447,7 @@ namespace utils{
 
 		Vector4d x = V * ((U.transpose() * corner_diff_vec).array() / S.array()).matrix();
 
-		Matrix3d sim_mat = Matrix3d::Zero();
+		ProjWarpT sim_mat = ProjWarpT::Zero();
 		sim_mat(0, 0) = 1 + x(2);
 		sim_mat(0, 1) = -x(3);
 		sim_mat(0, 2) = x(0);
@@ -458,15 +458,15 @@ namespace utils{
 
 		return sim_mat;
 	}
-	Matrix3d computeSimilitudeNDLT(const Matrix24d &in_corners, const Matrix24d &out_corners){
-		Matrix24d norm_corners;
-		Matrix3d inv_norm_mat;
+	ProjWarpT computeSimilitudeNDLT(const CornersT &in_corners, const CornersT &out_corners){
+		CornersT norm_corners;
+		ProjWarpT inv_norm_mat;
 		normalizePts(norm_corners, inv_norm_mat, out_corners);
-		Matrix3d init_warp = computeSimilitudeDLT(in_corners, norm_corners);
+		ProjWarpT init_warp = computeSimilitudeDLT(in_corners, norm_corners);
 		init_warp = inv_norm_mat * init_warp;
 		return init_warp;
 	}
-	Matrix3d computeSimilitudeDLT(const Matrix2Xd &in_pts, const Matrix2Xd &out_pts){
+	ProjWarpT computeSimilitudeDLT(const PtsT &in_pts, const PtsT &out_pts){
 		assert(in_pts.cols() == out_pts.cols());
 		int n_pts = in_pts.cols();
 		MatrixXd A(2 * n_pts, 4);
@@ -489,7 +489,7 @@ namespace utils{
 		VectorXd x = svd.matrixV() * ((svd.matrixU().transpose() * corner_diff_vec).array() / 
 			svd.singularValues().array()).matrix();
 
-		Matrix3d sim_mat = Matrix3d::Zero();
+		ProjWarpT sim_mat = ProjWarpT::Zero();
 		sim_mat(0, 0) = 1 + x(2);
 		sim_mat(0, 1) = -x(3);
 		sim_mat(0, 2) = x(0);
@@ -500,24 +500,24 @@ namespace utils{
 
 		return sim_mat;
 	}
-	Matrix3d computeSimilitudeNDLT(const Matrix2Xd &in_pts, const Matrix2Xd &out_pts){
+	ProjWarpT computeSimilitudeNDLT(const PtsT &in_pts, const PtsT &out_pts){
 		assert(in_pts.cols() == out_pts.cols());
-		Matrix2Xd norm_pts;
+		PtsT norm_pts;
 		norm_pts.resize(Eigen::NoChange, in_pts.cols());
-		Matrix3d inv_norm_mat;
+		ProjWarpT inv_norm_mat;
 		normalizePts(norm_pts, inv_norm_mat, out_pts);
-		Matrix3d init_warp = computeSimilitudeDLT(in_pts, norm_pts);
+		ProjWarpT init_warp = computeSimilitudeDLT(in_pts, norm_pts);
 		init_warp = inv_norm_mat * init_warp;
 		return init_warp;
 	}
 
-	Vector3d computeIsometryDLT(const Matrix2Xd &in_pts, const Matrix2Xd &out_pts){
+	Vector3d computeIsometryDLT(const PtsT &in_pts, const PtsT &out_pts){
 		assert(in_pts.cols() == out_pts.cols());
 		int n_pts = in_pts.cols();
 		MatrixXd A(2 * n_pts, 4);
 		A.fill(0);
 		VectorXd corner_diff_vec(n_pts * 2);
-		for(int pt_id = 0; pt_id < n_pts; pt_id++){
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 			int r1 = 2 * pt_id;
 			A(r1, 0) = 1;
 			A(r1, 2) = in_pts(0, pt_id);
@@ -542,8 +542,38 @@ namespace utils{
 		iso_params[2] = theta;
 		return iso_params;
 	}
+	Vector3d computeIsometryDLT(const CornersT &in_pts, const CornersT &out_pts){
+		assert(in_pts.cols() == out_pts.cols());
+		Matrix84d A;
+		A.fill(0);
+		Vector8d corner_diff_vec;
+		for(int corner_id = 0; corner_id < 4; ++corner_id){
+			int r1 = 2 * corner_id;
+			A(r1, 0) = 1;
+			A(r1, 2) = in_pts(0, corner_id);
+			A(r1, 3) = -in_pts(1, corner_id);
+			corner_diff_vec(r1) = out_pts(0, corner_id) - in_pts(0, corner_id);
 
-	Matrix3d computeTranscalingDLT(const Matrix24d &in_corners, const Matrix24d &out_corners){
+			int r2 = 2 * corner_id + 1;
+			A(r2, 1) = 1;
+			A(r2, 2) = in_pts(1, corner_id);
+			A(r2, 3) = in_pts(0, corner_id);
+			corner_diff_vec(r2) = out_pts(1, corner_id) - in_pts(1, corner_id);
+		}
+		JacobiSVD<MatrixXd> svd(A, ComputeThinU | ComputeThinV);
+		VectorXd x = svd.matrixV() * ((svd.matrixU().transpose() * corner_diff_vec).array() /
+			svd.singularValues().array()).matrix();
+
+		double a = x[2], b = x[3];
+		double theta = atan2(b, a + 1);
+		Vector3d iso_params;
+		iso_params[0] = x[0];
+		iso_params[1] = x[1];
+		iso_params[2] = theta;
+		return iso_params;
+	}
+
+	ProjWarpT computeTranscalingDLT(const CornersT &in_corners, const CornersT &out_corners){
 		Matrix83d A;
 		A.fill(0);
 		// flattened version of the 2x4 matrix of target corner points
@@ -568,12 +598,12 @@ namespace utils{
 		}
 		JacobiSVD<MatrixXd> svd(A, ComputeThinU | ComputeThinV);
 		Matrix83d U = svd.matrixU();
-		Matrix3d V = svd.matrixV();
+		ProjWarpT V = svd.matrixV();
 		Vector3d S = svd.singularValues();
 
 		Vector3d x = V * ((U.transpose() * corner_diff_vec).array() / S.array()).matrix();
 
-		Matrix3d transcale_mat = Matrix3d::Zero();
+		ProjWarpT transcale_mat = ProjWarpT::Zero();
 		transcale_mat(0, 0) = 1 + x(2);
 		transcale_mat(0, 2) = x(0);
 		transcale_mat(1, 1) = 1 + x(2);
@@ -583,7 +613,7 @@ namespace utils{
 		return transcale_mat;
 	}
 
-	Matrix3d computeTranscalingDLT(const Matrix2Xd &in_pts, const Matrix2Xd &out_pts){
+	ProjWarpT computeTranscalingDLT(const PtsT &in_pts, const PtsT &out_pts){
 		assert(in_pts.cols() == out_pts.cols());
 		int n_pts = in_pts.cols();
 		MatrixXd A(2 * n_pts, 3);
@@ -608,7 +638,7 @@ namespace utils{
 		Vector3d x = svd.matrixV() * ((svd.matrixU().transpose() * corner_diff_vec).array() /
 			svd.singularValues().array()).matrix();
 
-		Matrix3d transcale_mat = Matrix3d::Zero();
+		ProjWarpT transcale_mat = ProjWarpT::Zero();
 		transcale_mat(0, 0) = 1 + x(2);
 		transcale_mat(0, 2) = x(0);
 		transcale_mat(1, 1) = 1 + x(2);
@@ -621,9 +651,9 @@ namespace utils{
 	// normalizes the given points so that their mean (centroid) moves to origin
 	// and their mean distance from origin becomes unity; also returns the inverse normalization
 	// matrix which, when multiplied to the normalized points will give the original points back
-	void normalizePts(Matrix24d &norm_pts, Matrix3d &inv_norm_mat, const Matrix24d &pts){
+	void normalizePts(CornersT &norm_pts, ProjWarpT &inv_norm_mat, const CornersT &pts){
 		Vector2d centroid = pts.rowwise().mean();
-		Matrix24d trans_pts = pts.colwise() - centroid;
+		CornersT trans_pts = pts.colwise() - centroid;
 
 		//double mean_dist = (trans_pts.norm())/4;
 
@@ -653,9 +683,9 @@ namespace utils{
 		inv_norm_mat(1, 2) = centroid(1);
 	}
 
-	void normalizePts(Matrix2Xd &norm_pts, Matrix3d &inv_norm_mat, const Matrix2Xd &pts){
+	void normalizePts(PtsT &norm_pts, ProjWarpT &inv_norm_mat, const PtsT &pts){
 		Vector2d centroid = pts.rowwise().mean();
-		Matrix2Xd trans_pts = pts.colwise() - centroid;
+		PtsT trans_pts = pts.colwise() - centroid;
 
 		//double mean_dist = (trans_pts.norm())/4;
 
@@ -675,8 +705,8 @@ namespace utils{
 		inv_norm_mat(0, 2) = centroid(0);
 		inv_norm_mat(1, 2) = centroid(1);
 	}
-	void decomposeHomographyForward(Matrix3d &affine_mat, Matrix3d &proj_mat,
-		const Matrix3d &hom_mat){
+	void decomposeHomographyForward(ProjWarpT &affine_mat, ProjWarpT &proj_mat,
+		const ProjWarpT &hom_mat){
 		assert(hom_mat(2, 2) == 1.0);
 
 		double h1 = hom_mat(0, 0);
@@ -697,8 +727,8 @@ namespace utils{
 		affine_mat << a1, a2, a3, a4, a5, a6, 0, 0, 1;
 		proj_mat << 1, 0, 0, 0, 1, 0, h7, h8, 1;
 	}
-	void decomposeHomographyInverse(Matrix3d &affine_mat, Matrix3d &proj_mat,
-		const Matrix3d &hom_mat){
+	void decomposeHomographyInverse(ProjWarpT &affine_mat, ProjWarpT &proj_mat,
+		const ProjWarpT &hom_mat){
 		assert(hom_mat(2, 2) == 1.0);
 
 		double h1 = hom_mat(0, 0);
@@ -718,7 +748,7 @@ namespace utils{
 		proj_mat << 1, 0, 0, 0, 1, 0, v1, v2, u;
 	}
 	void decomposeAffineForward(Vector6d &affine_params,
-		const Matrix3d &affine_mat){
+		const ProjWarpT &affine_mat){
 		assert(affine_mat(2, 0) == 0.0);
 		assert(affine_mat(2, 1) == 0.0);
 		assert(affine_mat(2, 2) == 1.0);
@@ -751,8 +781,8 @@ namespace utils{
 		printScalar(new_cos_theta, "new_cos_theta");
 		affine_params << tx, ty, theta, s, a, b;
 	}
-	void decomposeAffineForward(Matrix3d &trans_mat, Matrix3d &rot_mat,
-		Matrix3d &scale_mat, Matrix3d &shear_mat, const Matrix3d &affine_mat){
+	void decomposeAffineForward(ProjWarpT &trans_mat, ProjWarpT &rot_mat,
+		ProjWarpT &scale_mat, ProjWarpT &shear_mat, const ProjWarpT &affine_mat){
 		Vector6d affine_params;
 		decomposeAffineForward(affine_params, affine_mat);
 		trans_mat = getTranslationMatrix(affine_params(0), affine_params(1));
@@ -761,7 +791,7 @@ namespace utils{
 		shear_mat = getShearingMatrix(affine_params(4), affine_params(5));
 	}
 	void decomposeAffineInverse(Vector6d &affine_params,
-		const Matrix3d &affine_mat){
+		const ProjWarpT &affine_mat){
 		assert(affine_mat(2, 0) == 0.0);
 		assert(affine_mat(2, 1) == 0.0);
 		assert(affine_mat(2, 2) == 1.0);
@@ -790,8 +820,8 @@ namespace utils{
 		double theta = acos(cos_theta);
 		affine_params << tx, ty, theta, s, a, b;
 	}
-	void decomposeAffineInverse(Matrix3d &trans_mat, Matrix3d &rot_mat,
-		Matrix3d &scale_mat, Matrix3d &shear_mat, const Matrix3d &affine_mat){
+	void decomposeAffineInverse(ProjWarpT &trans_mat, ProjWarpT &rot_mat,
+		ProjWarpT &scale_mat, ProjWarpT &shear_mat, const ProjWarpT &affine_mat){
 		Vector6d affine_params;
 		decomposeAffineInverse(affine_params, affine_mat);
 		trans_mat = getTranslationMatrix(affine_params(0), affine_params(1));
@@ -806,7 +836,7 @@ namespace utils{
 		printMatrix(shear_mat, "shear_mat");
 	}
 	// compute the thin plate spline transformation relating two sets of corners
-	MatrixX2d computeTPS(const Matrix24d &in_corners, const Matrix24d &out_corners){
+	MatrixX2d computeTPS(const CornersT &in_corners, const CornersT &out_corners){
 		Matrix4d K;
 		K(0, 0) = K(1, 1) = K(2, 2) = K(3, 3) = 0;
 		K(0, 1) = K(1, 0) = tps((in_corners.col(0) - in_corners.col(1)).norm());
@@ -821,7 +851,7 @@ namespace utils{
 		P.col(2) = in_corners.row(1).transpose();
 
 		Matrix7d L;
-		L << K, P, P.transpose(), Matrix3d::Zero();
+		L << K, P, P.transpose(), ProjWarpT::Zero();
 		Matrix72d Y;
 		Y.topRows <4>() = out_corners.transpose();
 		Y.bottomRows<3>().fill(0);

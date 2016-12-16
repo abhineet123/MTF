@@ -41,6 +41,7 @@ struct target
 
 struct trackingSetup
 {
+    cv::Mat init_bb;
 	cv::Mat trans_cos_win;
 	cv::Mat scale_cos_win;
 	cv::Mat rot_cos_win;
@@ -72,6 +73,7 @@ struct trackingSetup
 
 	cv::Point centroid;
 	cv::Size original;
+    float original_rot;
 	cv::Size padded;
     cv::RotatedRect current_bb;    
 };
