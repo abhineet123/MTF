@@ -127,6 +127,7 @@ namespace nt{
 				}
 				prev_similarity = curr_similarity;
 			}
+			state_reset = false;
 
 			ssm->cmptApproxPixJacobian(curr_pix_jacobian, am->getInitPixGrad());
 			record_event("am->cmptApproxPixJacobian");

@@ -18,8 +18,6 @@ namespace nt{
 		typedef IALKParams ParamType;
 		typedef typename ParamType::HessType HessType;
 
-		ParamType params;
-
 		using SearchMethod::initialize;
 		using SearchMethod::update;		
 
@@ -27,7 +25,11 @@ namespace nt{
 
 		void initialize(const cv::Mat &corners) override;
 		void update() override;
-	private:
+
+	protected:
+
+		ParamType params;
+
 		// Let S = size of SSM state vector and N = resx * resy = no. of pixels in the object patch
 
 		//! 1 x S Jacobian of the AM error norm w.r.t. SSM state vector

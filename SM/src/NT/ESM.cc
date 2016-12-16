@@ -170,7 +170,7 @@ namespace nt{
 
 			//! compute the prerequisites for the gradient functions
 			am->updateSimilarity(false);
-			record_event("am->update");
+			record_event("am->updateSimilarity");
 
 			if(params.leven_marq && !state_reset){
 				double curr_similarity = am->getSimilarity();

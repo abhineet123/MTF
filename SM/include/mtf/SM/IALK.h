@@ -18,8 +18,6 @@ public:
 	typedef IALKParams ParamType;
 	typedef typename ParamType::HessType HessType;
 
-	ParamType params;
-
 	using SearchMethod<AM, SSM> ::am;
 	using SearchMethod<AM, SSM> ::ssm;
 	using typename SearchMethod<AM, SSM> ::AMParams;
@@ -38,12 +36,15 @@ public:
 
 protected:
 
+	ParamType params;
+
+
 	// Let S = size of SSM state vector and N = resx * resy = no. of pixels in the object patch
 
 	//! 1 x S Jacobian of the AM error norm w.r.t. SSM state vector
 	RowVectorXd jacobian;
 	//! S x S Hessian of the AM error norm w.r.t. SSM state vector
-	MatrixXd hessian;
+	MatrixXd init_self_hessian, hessian;
 	//! N x S jacobians of the pix values w.r.t the SSM state vector where N = resx * resy
 	//! is the no. of pixels in the object patch
 	//! N x S jacobians of the pix values w.r.t the SSM state vector 

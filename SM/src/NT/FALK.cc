@@ -16,16 +16,17 @@ namespace nt{
 		printf("Using Forward Additive Lucas Kanade (NT) SM with:\n");
 		printf("max_iters: %d\n", params.max_iters);
 		printf("epsilon: %f\n", params.epsilon);
-		printf("show_grid: %d\n", params.show_grid);
-		printf("show_patch: %d\n", params.show_patch);
-		printf("patch_resize_factor: %f\n", params.patch_resize_factor);
-		printf("write_frames: %d\n", params.write_frames);
-		printf("enable_learning: %d\n", params.enable_learning);
+		printf("hess_type: %d\n", params.hess_type);
 		printf("leven_marq: %d\n", params.leven_marq);
 		if(params.leven_marq){
 			printf("lm_delta_init: %f\n", params.lm_delta_init);
 			printf("lm_delta_update: %f\n", params.lm_delta_update);
 		}
+		printf("enable_learning: %d\n", params.enable_learning);
+		printf("show_grid: %d\n", params.show_grid);
+		printf("show_patch: %d\n", params.show_patch);
+		printf("patch_resize_factor: %f\n", params.patch_resize_factor);
+		printf("write_frames: %d\n", params.write_frames);
 		printf("debug_mode: %d\n", params.debug_mode);
 
 		printf("appearance model: %s\n", am->name.c_str());
@@ -117,6 +118,7 @@ namespace nt{
 		if(params.leven_marq){
 			init_self_hessian = hessian;
 		}
+
 		ssm->getCorners(cv_corners_mat);
 
 		if(params.show_grid){ drawGrid(); }
@@ -167,6 +169,7 @@ namespace nt{
 				}
 				prev_similarity = curr_similarity;
 			}
+			state_reset = false;
 
 			am->updatePixGrad(ssm->getPts());
 			record_event("am->updatePixGrad");

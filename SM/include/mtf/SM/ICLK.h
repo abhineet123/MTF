@@ -50,7 +50,11 @@ protected:
 	MatrixXd d2I0_dpssm2, d2It_dpssm2;
 
 	Matrix24d prev_corners;
-	VectorXd ssm_update, inv_update;
+
+	VectorXd state_update, ssm_update, am_update;
+	VectorXd inv_ssm_update, inv_am_update;
+
+	int state_size, ssm_state_size, am_state_size;
 	int frame_id;
 
 

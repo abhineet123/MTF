@@ -213,9 +213,14 @@ Input/Output related parameters:
 			
 	 Parameter:	'reinit_at_each_frame'
 		Description:
-			reinitialize tracker at each frame so that tracking is only done from frame to frame;
+			reinitialize tracker from ground truth at each frame so that tracking is only done from frame to frame;
 			only works when a dataset sequence is used and its ground truth is available;
 			normally used for testing tracker on synthetic sequences;
+			
+	 Parameter:	'reset_at_each_frame'
+		Description:
+			reset tracker to the ground truth at each frame; unlike the previous option, here the template remains unchanged;
+			only works when a dataset sequence is used and its ground truth is available;
 			
 	 Parameter:	'reinit_on_failure'
 		Description:
@@ -250,17 +255,17 @@ MTF Tracker specific parameters:
 			Search method to use for the MTF tracker or the name of the detection based tracker
 		Possible Values:
 			ic/iclk:	Inverse Compositional Lucas Kanade
-				iclm/icl:	use Levenberg Marquardt (LM) formulation (only NT version supports this now)
+				iclm/icl:	use Levenberg Marquardt (LM) formulation
 			fc/fclk:	Forward Compositional Lucas Kanade
-				fclm/fcl:	use LM formulation (only NT version supports this now)
+				fclm/fcl:	use LM formulation
 			fa/falk:	Forward Additive Lucas Kanade
-				falm/fal:	use LM formulation (only NT version supports this now)
+				falm/fal:	use LM formulation
 			ia/ialk:	Inverse Additive Lucas Kanade
-				ialm/ial:	use LM formulation (only NT version supports this now)
+				ialm/ial:	use LM formulation
 			esm:	Efficient Second-order Minimization
-				eslm/esl:	use LM formulation (only NT version supports this now)
+				eslm/esl:	use LM formulation
 			
-			Note:	LM formulation can also be enabled for all of the above SMs by setting leven_marq to 1 (currently only NT version supports this so enable_nt should be 1 too)
+			Note:	LM formulation can also be enabled for all of the above SMs by setting leven_marq to 1
 			
 			pf:	Particle filter 
 				pfic:	cascade tracker with PF+ICLK

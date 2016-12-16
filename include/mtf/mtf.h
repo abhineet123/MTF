@@ -297,26 +297,22 @@ TrackerBase *getTracker(const char *sm_type,
 	} else if(!strcmp(sm_type, "ialk") || !strcmp(sm_type, "ia")){
 		return new IALK<AMType, SSMType>(getIALKParams().get(), am_params, ssm_params);
 	}
-	//! Levenberg Marquardt Formulations - only NT versions support this for now so returning those instead
+	//! Levenberg Marquardt Formulations
 	else if(!strcmp(sm_type, "eslm") || !strcmp(sm_type, "esl")){
 		leven_marq = true;
-		return new nt::ESM(AM(new AMType(am_params)), SSM(new SSMType(ssm_params)),
-			getESMParams().get());
+		return new ESM<AMType, SSMType>(getESMParams().get(), am_params, ssm_params);
 	} else if(!strcmp(sm_type, "iclm") || !strcmp(sm_type, "icl")){
 		leven_marq = true;
 		return new ICLK<AMType, SSMType>(getICLKParams().get(), am_params, ssm_params);
 	} else if(!strcmp(sm_type, "fclm") || !strcmp(sm_type, "fcl")){
 		leven_marq = true;
-		return new nt::FCLK(AM(new AMType(am_params)), SSM(new SSMType(ssm_params)),
-			getFCLKParams().get());
+		return new FCLK<AMType, SSMType>(getFCLKParams().get(), am_params, ssm_params);
 	} else if(!strcmp(sm_type, "falm") || !strcmp(sm_type, "fal")){
 		leven_marq = true;
-		return new nt::FALK(AM(new AMType(am_params)), SSM(new SSMType(ssm_params)),
-			getFALKParams().get());
+		return new FALK<AMType, SSMType>(getFALKParams().get(), am_params, ssm_params);
 	} else if(!strcmp(sm_type, "ialm") || !strcmp(sm_type, "ial")){
 		leven_marq = true;
-		return new nt::IALK(AM(new AMType(am_params)), SSM(new SSMType(ssm_params)),
-			getIALKParams().get());
+		return new IALK<AMType, SSMType>(getIALKParams().get(), am_params, ssm_params);
 	}
 	//! Particle Filter 
 	else if(!strcmp(sm_type, "pf")){
@@ -741,9 +737,6 @@ TrackerBase *getTracker(const char *sm_type,
 #endif
 	printf("Invalid search method provided: %s\n", sm_type);
 	return nullptr;
-
-	//if(am_params){ delete(am_params); }
-	//if(ssm_params){ delete(ssm_params); }
 }
 
 template< class AMType >

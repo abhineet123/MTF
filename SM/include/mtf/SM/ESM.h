@@ -11,7 +11,6 @@ class ESM : public SearchMethod < AM, SSM > {
 
 public:
 	typedef ESMParams ParamType;
-	ParamType params;
 
 	typedef typename ParamType::JacType JacType;
 	typedef typename ParamType::HessType HessType;
@@ -34,22 +33,25 @@ public:
 	void setRegion(const cv::Mat& corners) override;
 
 protected:
+	ParamType params;
+
+	//! N x S jacobians of the pixel values w.r.t the SSM state vector where N = resx * resy
+	//! is the no. of pixels in the object patch
+	MatrixXd dI0_dpssm, dIt_dpssm, mean_dI_dpssm;
+	MatrixXd d2I0_dpssm2, d2It_dpssm2, mean_d2I_dpssm2;
+
+	//! 1 x S Jacobian of the AM error norm w.r.t. SSM state vector
+	RowVectorXd df_dp;
+	//! S x S Hessian of the AM error norm w.r.t. SSM state vector
+	MatrixXd d2f_dp2, init_d2f_dp2;
+
+	VectorXd state_update, ssm_update, am_update;
+	VectorXd inv_ssm_update, inv_am_update;
+	int state_size, ssm_state_size, am_state_size;
 
 	int frame_id;
 
 	Matrix24d prev_corners;
-
-	//! N x S jacobians of the pixel values w.r.t the SSM state vector where N = resx * resy
-	//! is the no. of pixels in the object patch
-	MatrixXd init_pix_jacobian, curr_pix_jacobian, mean_pix_jacobian;
-	MatrixXd init_pix_hessian, curr_pix_hessian, mean_pix_hessian;
-
-	VectorXd ssm_update;
-
-	//! 1 x S Jacobian of the AM error norm w.r.t. SSM state vector
-	RowVectorXd jacobian;
-	//! S x S Hessian of the AM error norm w.r.t. SSM state vector
-	MatrixXd hessian, init_self_hessian;
 
 	init_profiling();
 	char *time_fname;

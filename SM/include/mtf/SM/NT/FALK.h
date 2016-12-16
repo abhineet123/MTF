@@ -47,7 +47,6 @@ namespace nt{
 
 		Matrix24d prev_corners;
 		VectorXd ssm_update;
-		Matrix3d warp_update;
 		int frame_id;
 	};
 }

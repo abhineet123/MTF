@@ -14,6 +14,12 @@ FALK<AM, SSM >::FALK(const ParamType *falk_params,
 	printf("max_iters: %d\n", params.max_iters);
 	printf("epsilon: %f\n", params.epsilon);
 	printf("enable_learning: %d\n", params.enable_learning);
+	printf("hess_type: %d\n", params.hess_type);
+	printf("leven_marq: %d\n", params.leven_marq);
+	if(params.leven_marq){
+		printf("lm_delta_init: %f\n", params.lm_delta_init);
+		printf("lm_delta_update: %f\n", params.lm_delta_update);
+	}
 	printf("debug_mode: %d\n", params.debug_mode);
 
 	printf("appearance model: %s\n", am.name.c_str());
@@ -26,18 +32,10 @@ FALK<AM, SSM >::FALK(const ParamType *falk_params,
 	frame_id = 0;
 
 	const char *hess_order = params.sec_ord_hess ? "Second" : "First";
-	switch(params.hess_type){
-	case HessType::InitialSelf:
-		printf("Using %s order Initial Self Hessian\n", hess_order);
-		break;
-	case HessType::CurrentSelf:
-		printf("Using %s order Current Self Hessian\n", hess_order);
-		break;
-	case HessType::Std:
-		printf("Using %s order Standard Hessian\n", hess_order);
-		break;
-	default:
-		throw std::invalid_argument("Invalid Hessian type provided");
+	printf("Using %s order %s Hessian\n", hess_order,
+		FALKParams::toString(params.hess_type));
+	if(params.leven_marq){
+		printf("Using Levenberg Marquardt formulation...\n");
 	}
 
 	ssm_update.resize(ssm.getStateSize());
@@ -83,6 +81,9 @@ void FALK<AM, SSM >::initialize(const cv::Mat &corners){
 			am.cmptSelfHessian(hessian, init_pix_jacobian);
 		}
 	}
+	if(params.leven_marq){
+		init_self_hessian = hessian;
+	}
 	ssm.getCorners(cv_corners_mat);
 
 	end_timer();
@@ -94,22 +95,46 @@ void FALK<AM, SSM >::update(){
 	++frame_id;
 	write_frame_id(frame_id);
 
+	double prev_f = 0;
+	double leven_marq_delta = params.lm_delta_init;
+	bool state_reset = false;
+
 	am.setFirstIter();
-	for(int iter_id = 0; iter_id < params.max_iters; iter_id++){
+	for(int iter_id = 0; iter_id < params.max_iters; ++iter_id){
 		init_timer();
 
 		am.updatePixVals(ssm.getPts());
 		record_event("am.updatePixVals");
+
+		// compute the prerequisites for the gradient function
+		am.updateSimilarity(false);
+		record_event("am.updateSimilarity");
+
+		if(params.leven_marq && !state_reset){
+			double f = am.getSimilarity();
+			if(iter_id > 0){
+				if(f < prev_f){
+					leven_marq_delta *= params.lm_delta_update;
+					//! undo the last update
+					VectorXd inv_ssm_update = -ssm_update;
+					ssm.additiveUpdate(inv_ssm_update);
+
+					state_reset = true;
+					continue;
+				}
+				if(f > prev_f){
+					leven_marq_delta /= params.lm_delta_update;
+				}
+			}
+			prev_f = f;
+		}
+		state_reset = false;
 
 		am.updatePixGrad(ssm.getPts());
 		record_event("am.updatePixGrad");
 
 		ssm.cmptPixJacobian(curr_pix_jacobian, am.getCurrPixGrad());
 		record_event("ssm.cmptPixJacobian");
-
-		// compute the prerequisites for the gradient function
-		am.updateSimilarity();
-		record_event("am.updateSimilarity");
 
 		am.updateCurrGrad();
 		record_event("am.updateCurrGrad");
@@ -128,6 +153,9 @@ void FALK<AM, SSM >::update(){
 		// compute similarity Hessian
 		switch(params.hess_type){
 		case HessType::InitialSelf:
+			if(params.leven_marq){
+				hessian = init_self_hessian;
+			}
 			break;
 		case HessType::CurrentSelf:
 			if(params.sec_ord_hess){
@@ -148,7 +176,11 @@ void FALK<AM, SSM >::update(){
 			}
 			break;
 		}
-		//ssm_update = hessian.inverse() * jacobian.transpose();
+		if(params.leven_marq){
+			MatrixXd diag_hessian = hessian.diagonal().asDiagonal();
+			hessian += leven_marq_delta*diag_hessian;
+		}
+
 		ssm_update = -hessian.colPivHouseholderQr().solve(jacobian.transpose());
 		record_event("ssm_update");
 
@@ -159,12 +191,7 @@ void FALK<AM, SSM >::update(){
 		double update_norm = (prev_corners - ssm.getCorners()).squaredNorm();
 		record_event("update_norm");
 
-		if(update_norm < params.epsilon){
-			if(params.debug_mode){
-				printf("n_iters: %d\n", iter_id + 1);
-			}
-			break;
-		}
+		if(update_norm < params.epsilon){ break; }
 		am.clearFirstIter();
 	}
 	if(params.enable_learning){

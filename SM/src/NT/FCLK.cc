@@ -313,8 +313,7 @@ namespace nt{
 			record_event("ssm->compositionalUpdate");
 
 			am->updateState(am_update);
-			record_event("ssm->updateParam");
-
+			record_event("am.updateState");
 
 			double update_norm = (prev_corners - ssm->getCorners()).squaredNorm();
 			record_event("update_norm");
