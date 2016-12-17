@@ -261,7 +261,8 @@ int main(int argc, char * argv[]) {
 				tracking_data_dir = cv_format("log/tracking_data/reinit/%s/%s",
 					actor.c_str(), source_name.c_str());
 			} else if(reset_at_each_frame){
-				tracking_data_dir = cv_format("log/tracking_data/reset/%s/%s",
+				tracking_data_dir = cv_format("log/tracking_data/%s/%s/%s",
+					reset_to_init ? "reset_to_init" : "reset",
 					actor.c_str(), source_name.c_str());
 			}else if(reinit_on_failure){
 				std::string reinit_data_dir = std::floor(reinit_err_thresh) == reinit_err_thresh ?
@@ -471,7 +472,11 @@ int main(int argc, char * argv[]) {
 			trackers[0]->initialize(cv_utils.getGT(input->getFrameID()));
 			invalid_tracker_state = tracker_failed = false;
 		} else if(reset_at_each_frame){
-			trackers[0]->setRegion(cv_utils.getGT(input->getFrameID()));
+			if(reset_to_init){
+				trackers[0]->setRegion(cv_utils.getGT(init_frame_id));
+			} else{
+				trackers[0]->setRegion(cv_utils.getGT(input->getFrameID()));
+			}			
 			invalid_tracker_state = tracker_failed = false;
 		}
 		if(invalid_tracker_state){
