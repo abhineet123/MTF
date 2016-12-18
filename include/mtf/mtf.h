@@ -251,13 +251,14 @@ template< class AMType, class SSMType >
 bool getPFk(vector<SearchMethod<AMType, SSMType>*> &trackers,
 	const typename AMType::ParamType *am_params = nullptr,
 	const typename SSMType::ParamType *ssm_params = nullptr){
-	if(pfk_ssm_sigma_ids.size() < pfk_n_layers){
+	int n_pfk_ssm_sigma_ids = pfk_ssm_sigma_ids.size();
+	if(n_pfk_ssm_sigma_ids < pfk_n_layers){
 		printf("Insufficient sigma IDs specified for %d layer PF: %lu\n", pfk_n_layers, pfk_ssm_sigma_ids.size());
 		return false;
 	}
 	typedef SearchMethod<AMType, SSMType> SMType;
 	for(int layer_id = 0; layer_id < pfk_n_layers; ++layer_id){
-		pf_ssm_sigma_ids = pfk_ssm_sigma_ids[layer_id];
+		pf_ssm_sigma_ids = pfk_ssm_sigma_ids[n_pfk_ssm_sigma_ids - layer_id - 1];
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("pf", am_params, ssm_params)));
 		if(!trackers.back()){ return false; }
 	}
@@ -268,13 +269,14 @@ template< class AMType, class SSMType >
 bool getNNk(vector<SearchMethod<AMType, SSMType>*> &trackers,
 	const typename AMType::ParamType *am_params = nullptr,
 	const typename SSMType::ParamType *ssm_params = nullptr){
-	if(nnk_ssm_sigma_ids.size() < nnk_n_layers){
+	int n_nnk_ssm_sigma_ids = nnk_ssm_sigma_ids.size();
+	if(n_nnk_ssm_sigma_ids < nnk_n_layers){
 		printf("Insufficient sigma IDs specified for %d layer NN: %lu\n", nnk_n_layers, nnk_ssm_sigma_ids.size());
 		return false;
 	}
 	typedef SearchMethod<AMType, SSMType> SMType;
 	for(int layer_id = 0; layer_id < nnk_n_layers; ++layer_id){
-		nn_ssm_sigma_ids = nnk_ssm_sigma_ids[layer_id];
+		nn_ssm_sigma_ids = nnk_ssm_sigma_ids[n_nnk_ssm_sigma_ids - layer_id - 1];
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("nn", am_params, ssm_params)));
 		if(!trackers.back()){ return false; }
 	}
