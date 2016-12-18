@@ -274,7 +274,7 @@ bool getNNk(vector<SearchMethod<AMType, SSMType>*> &trackers,
 	}
 	typedef SearchMethod<AMType, SSMType> SMType;
 	for(int layer_id = 0; layer_id < nnk_n_layers; ++layer_id){
-		nn_ssm_sigma_ids = nnk_ssm_sigma_ids[0];
+		nn_ssm_sigma_ids = nnk_ssm_sigma_ids[layer_id];
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("nn", am_params, ssm_params)));
 		if(!trackers.back()){ return false; }
 	}
