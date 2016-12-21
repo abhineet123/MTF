@@ -96,7 +96,7 @@ void FALK<AM, SSM >::update(){
 	write_frame_id(frame_id);
 
 	double prev_f = 0;
-	double leven_marq_delta = params.lm_delta_init;
+	double lm_delta = params.lm_delta_init;
 	bool state_reset = false;
 
 	am.setFirstIter();
@@ -114,7 +114,7 @@ void FALK<AM, SSM >::update(){
 			double f = am.getSimilarity();
 			if(iter_id > 0){
 				if(f < prev_f){
-					leven_marq_delta *= params.lm_delta_update;
+					lm_delta *= params.lm_delta_update;
 					//! undo the last update
 					VectorXd inv_ssm_update = -ssm_update;
 					ssm.additiveUpdate(inv_ssm_update);
@@ -123,7 +123,7 @@ void FALK<AM, SSM >::update(){
 					continue;
 				}
 				if(f > prev_f){
-					leven_marq_delta /= params.lm_delta_update;
+					lm_delta /= params.lm_delta_update;
 				}
 			}
 			prev_f = f;
@@ -178,7 +178,7 @@ void FALK<AM, SSM >::update(){
 		}
 		if(params.leven_marq){
 			MatrixXd diag_hessian = hessian.diagonal().asDiagonal();
-			hessian += leven_marq_delta*diag_hessian;
+			hessian += lm_delta*diag_hessian;
 		}
 
 		ssm_update = -hessian.colPivHouseholderQr().solve(jacobian.transpose());

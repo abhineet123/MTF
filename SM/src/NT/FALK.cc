@@ -131,8 +131,8 @@ namespace nt{
 		++frame_id;
 		write_frame_id(frame_id);
 
-		double prev_similarity = 0;
-		double leven_marq_delta = params.lm_delta_init;
+		double prev_f = 0;
+		double lm_delta = params.lm_delta_init;
 		bool state_reset = false;
 
 		am->setFirstIter();
@@ -147,27 +147,27 @@ namespace nt{
 			record_event("am->updateSimilarity");
 
 			if(params.leven_marq && !state_reset){
-				double curr_similarity = am->getSimilarity();
+				double f = am->getSimilarity();
 				if(iter_id > 0){
-					if(curr_similarity < prev_similarity){
-						leven_marq_delta *= params.lm_delta_update;
+					if(f < prev_f){
+						lm_delta *= params.lm_delta_update;
 						//! undo the last update
 						VectorXd inv_ssm_update = -ssm_update;
 						ssm->additiveUpdate(inv_ssm_update);
 
 						if(params.debug_mode){
 							printf("curr_similarity: %20.14f\t prev_similarity: %20.14f\n",
-								curr_similarity, prev_similarity);
-							utils::printScalar(leven_marq_delta, "leven_marq_delta");
+								f, prev_f);
+							utils::printScalar(lm_delta, "leven_marq_delta");
 						}
 						state_reset = true;
 						continue;
 					}
-					if(curr_similarity > prev_similarity){
-						leven_marq_delta /= params.lm_delta_update;
+					if(f > prev_f){
+						lm_delta /= params.lm_delta_update;
 					}
 				}
-				prev_similarity = curr_similarity;
+				prev_f = f;
 			}
 			state_reset = false;
 
@@ -221,7 +221,7 @@ namespace nt{
 				//utils::printMatrix(hessian, "original hessian");
 				MatrixXd diag_hessian = hessian.diagonal().asDiagonal();
 				//utils::printMatrix(diag_hessian, "diag_hessian");
-				hessian += leven_marq_delta*diag_hessian;
+				hessian += lm_delta*diag_hessian;
 				//utils::printMatrix(hessian, "LM hessian");
 			}
 			ssm_update = -hessian.colPivHouseholderQr().solve(jacobian.transpose());

@@ -151,7 +151,9 @@ void CascadeSM<AM, SSM>::setRegion(const cv::Mat& corners)   {
 	for(int tracker_id = 1; tracker_id < n_trackers; ++tracker_id) {
 		trackers[tracker_id]->setRegion(corners);
 	}
-	corners.copyTo(corners_buffer[buffer_id]);
+	if(params.auto_reinit){
+		corners.copyTo(corners_buffer[buffer_id]);
+	}
 }
 
 _MTF_END_NAMESPACE

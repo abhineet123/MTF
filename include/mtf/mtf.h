@@ -377,26 +377,51 @@ TrackerBase *getTracker(const char *sm_type,
 	}
 #ifndef DISABLE_NN
 	//! NN tracker
-	else if(!strcmp(sm_type, "nn")){
+	else if(!strcmp(sm_type, "nn")){// Nearest Neighbor Search
 		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
-	} else if(!strcmp(sm_type, "gnn") || !strcmp(sm_type, "fgnn")){// Graph based NN
-		nn_index_type = 0;
+	} else if(!strcmp(sm_type, "nnkdt") || !strcmp(sm_type, "kdt")){// NN with KD Tree Index
+		nn_index_type = 1;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nnkmn") || !strcmp(sm_type, "kmn")){// NN with KMeans Clustering Index
+		nn_index_type = 2;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "gnn")){// Graph based NN
+		nn_fgnn_index_type = nn_index_type = 0;		
 		return getTracker<AMType, SSMType>("nn", am_params, ssm_params);
-	} else if(!strcmp(sm_type, "nnic")){// NNIC with 1 layer of NN		
+	} else if(!strcmp(sm_type, "fgnn")){// Graph based NN with FLANN based index
+		nn_index_type = 0;
+		nn_fgnn_index_type = nn_fgnn_index_type == 0 ? 2 : nn_fgnn_index_type;
+		return getTracker<AMType, SSMType>("nn", am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nn1k")){// NN with 1000 samples
+		nn_n_samples = 1000;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nn2k")){// NN with 2000 samples
+		nn_n_samples = 2000;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nn5k")){// NN with 5000 samples
+		nn_n_samples = 5000;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nn10k")){// NN with 10000 samples
+		nn_n_samples = 10000;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nn100k")){// NN with 100000 samples
+		nn_n_samples = 100000;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nnic")){// NN + ICLK 	
 		vector<SMType*> trackers;
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("nn", am_params, ssm_params)));
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("ic", am_params, ssm_params)));
 		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
 			casc_reinit_err_thresh, casc_reinit_frame_gap);
 		return new CascadeSM<AMType, SSMType>(trackers, &casc_params);
-	} else if(!strcmp(sm_type, "nnfc")){
+	} else if(!strcmp(sm_type, "nnfc")){// NN + FCLK 	
 		vector<SMType*> trackers;
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("nn", am_params, ssm_params)));
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("fc", am_params, ssm_params)));
 		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
 			casc_reinit_err_thresh, casc_reinit_frame_gap);
 		return new CascadeSM<AMType, SSMType>(trackers, &casc_params);
-	} else if(!strcmp(sm_type, "nnes")){
+	} else if(!strcmp(sm_type, "nnes")){// NN + ESM 	
 		vector<SMType*> trackers;
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("nn", am_params, ssm_params)));
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("esm", am_params, ssm_params)));
@@ -423,14 +448,14 @@ TrackerBase *getTracker(const char *sm_type,
 		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
 			casc_reinit_err_thresh, casc_reinit_frame_gap);
 		return new CascadeSM<AMType, SSMType>(trackers, &casc_params);
-	} else if(!strcmp(sm_type, "nnkfc")){
+	} else if(!strcmp(sm_type, "nnkfc")){// NNFC with Multi layer NN
 		vector<SMType*> trackers;
 		if(!getNNk(trackers, am_params, ssm_params)){ return nullptr; }
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("fc", am_params, ssm_params)));
 		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
 			casc_reinit_err_thresh, casc_reinit_frame_gap);
 		return new CascadeSM<AMType, SSMType>(trackers, &casc_params);
-	} else if(!strcmp(sm_type, "nnkes")){
+	} else if(!strcmp(sm_type, "nnkes")){// NNES with Multi layer NN
 		vector<SMType*> trackers;
 		if(!getNNk(trackers, am_params, ssm_params)){ return nullptr; }
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("esm", am_params, ssm_params)));
@@ -439,11 +464,6 @@ TrackerBase *getTracker(const char *sm_type,
 		return new CascadeSM<AMType, SSMType>(trackers, &casc_params);
 	}
 #endif
-	//else if(!strcmp(sm_type, "haclk")){
-	//	HACLKParams haclk_params(max_iters, epsilon, rec_init_err_grad, 
-	//		debug_mode, hess_type, conv_corners);
-	//	return new HACLK<AMType, SSMType>(&haclk_params, am_params, ssm_params);
-	//} 	
 	//! cascade of search methods
 	else if(!strcmp(sm_type, "casm")){
 		//! make copies of the original AM and SSM types in case they have 
@@ -575,20 +595,6 @@ TrackerBase *getTracker(const char *sm_type,
 			prl_reset_to_mean, prl_auto_reinit, prl_reinit_err_thresh, prl_reinit_frame_gap);
 		return new ParallelSM<AMType, SSMType>(trackers, &prl_params, ssm_params);
 	}
-	//else if(!strcmp(sm_type, "esmh")){
-	//	ESMHParams esm_params(max_iters, epsilon,
-	//		static_cast<ESMHParams::JacType>(jac_type),
-	//		static_cast<ESMHParams::HessType>(hess_type),
-	//		sec_ord_hess, esm_spi_enable, esm_spi_thresh, debug_mode);
-	//	return new ESMH<AMType, SSMType>(&esm_params, am_params, ssm_params);
-	//}
-	//else if(!strcmp(sm_type, "ialk2")){
-	//	IALK2Params ialk_params(max_iters, epsilon,
-	//		static_cast<IALK2Params::HessType>(hess_type), sec_ord_hess, debug_mode);
-	//	return new IALK2<AMType, SSMType>(&ialk_params, am_params, ssm_params);
-	//} else if(!strcmp(sm_type, "fesm")){
-	//	return getFESMObj<AMType, SSMType>(am_params, ssm_params);
-	//}
 #endif
 	if(!strcmp(sm_type, "casc")){// general purpose cascaded tracker 
 		FILE *fid = nullptr;
@@ -1146,6 +1152,21 @@ inline nt::SearchMethod *getSM(const char *sm_type,
 	} else if(!strcmp(sm_type, "pf")){
 		return new nt::PF(am, ssm, getPFParams().get());
 	} else if(!strcmp(sm_type, "nn")){
+		return new nt::NN(am, ssm, getNNParams().get());
+	} else if(!strcmp(sm_type, "nn1k")){// NN with 1000 samples
+		nn_n_samples = 1000;
+		return new nt::NN(am, ssm, getNNParams().get());
+	} else if(!strcmp(sm_type, "nn2k")){// NN with 2000 samples
+		nn_n_samples = 2000;
+		return new nt::NN(am, ssm, getNNParams().get());
+	} else if(!strcmp(sm_type, "nn5k")){// NN with 5000 samples
+		nn_n_samples = 5000;
+		return new nt::NN(am, ssm, getNNParams().get());
+	} else if(!strcmp(sm_type, "nn10k")){// NN with 10000 samples
+		nn_n_samples = 10000;
+		return new nt::NN(am, ssm, getNNParams().get());
+	} else if(!strcmp(sm_type, "nn100k")){// NN with 100000 samples
+		nn_n_samples = 100000;
 		return new nt::NN(am, ssm, getNNParams().get());
 	} else if(!strcmp(sm_type, "gnn")){// Graph based NN
 		nn_index_type = 0;

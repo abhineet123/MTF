@@ -129,6 +129,9 @@ void CascadeTracker::setRegion(const cv::Mat& corners) {
 	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++){
 		trackers[tracker_id]->setRegion(corners);
 	}
+	if(params.auto_reinit){
+		corners.copyTo(corners_buffer[buffer_id]);
+	}
 }
 void CascadeTracker::setImage(const cv::Mat &img){
 	curr_img = img;
