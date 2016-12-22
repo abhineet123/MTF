@@ -6,7 +6,7 @@
 	assert(warp(2, 2) == 1.0)
 
 #define AFF_NORMALIZED_INIT 0
-#define AFF_CORNER_BASED_SAMPLING 0
+#define AFF_PT_BASED_SAMPLING 0
 #define AFF_DEBUG_MODE 0
 
 #include "ProjectiveBase.h"
@@ -15,10 +15,10 @@ _MTF_BEGIN_NAMESPACE
 
 struct AffineParams : SSMParams{
 	bool normalized_init;
-	bool pt_based_sampling;
+	int pt_based_sampling;
 	bool debug_mode;
 	AffineParams(const SSMParams *ssm_params,
-		bool _normalized_init, bool _pt_based_sampling,
+		bool _normalized_init, int _pt_based_sampling,
 		bool _debug_mode);
 	AffineParams(const AffineParams *params = nullptr);
 };
@@ -93,11 +93,6 @@ public:
 #endif
 
 protected:
-
-	Matrix23d rand_d;
-	Vector2d rand_t;
-
-	Matrix23d init_canonical_pts, perturbed_canonical_pts;
 
 	Vector6d stateToGeom(const Vector6d &state);
 	Vector6d geomToState(const Vector6d &geom);

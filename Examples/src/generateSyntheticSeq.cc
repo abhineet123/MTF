@@ -105,7 +105,7 @@ int main(int argc, char * argv[]) {
 		size_y = 2*cv_utils.getObj().size_y;
 	}
 
-	mtf::utils::printMatrix<double>(init_corners, "init_corners");
+	//mtf::utils::printMatrix<double>(init_corners, "init_corners");
 
 	cv::Point fps_origin(10, 20);
 	double fps_font_size = 1.00;
@@ -148,23 +148,26 @@ int main(int argc, char * argv[]) {
 	const mtf::PixValT &original_patch = am->getInitPixVals();
 
 	//mtf::utils::printMatrix(original_patch, "original_patch");
-	mtf::utils::printMatrix<double>(original_corners, "original_corners");
+	//mtf::utils::printMatrix<double>(original_corners, "original_corners");
 
 	//! generate random warp
 	mtf::vectorvd syn_ssm_sigma, syn_ssm_mean;
-	VectorXd state_sigma(ssm->getStateSize());
+	VectorXd state_sigma;
 	if(syn_pix_sigma > 0){
+		state_sigma.resize(ssm->getStateSize());
 		ssm->estimateStateSigma(state_sigma, syn_pix_sigma);
 	} else{
 		getSamplerParams(syn_ssm_sigma, syn_ssm_mean, syn_ssm_sigma_ids, syn_ssm_mean_ids, "Synthetic");
-		state_sigma = Map<const VectorXd>(syn_ssm_sigma[0].data(), ssm->getStateSize());
+		state_sigma = Map<const VectorXd>(syn_ssm_sigma[0].data(), syn_ssm_sigma[0].size());
 	}
 	VectorXd state_mean = VectorXd::Zero(ssm->getStateSize());
 	VectorXd ssm_perturbation(ssm->getStateSize()), am_perturbation;
 	VectorXd inv_ssm_perturbation(ssm->getStateSize()), inv_am_perturbation;
 	ssm->initializeSampler(state_sigma, state_mean);
 
-	if(am->getStateSize()){
+	const bool using_ilm = am->getStateSize() ? true : false;
+
+	if(using_ilm){
 		mtf::vectorvd syn_am_sigma, syn_am_mean;
 		getAMSamplerParams(syn_am_sigma, syn_am_mean, syn_am_sigma_ids, syn_am_mean_ids, "Synthetic");
 		VectorXd am_state_sigma = Map<const VectorXd>(syn_am_sigma[0].data(), syn_am_sigma[0].size());
@@ -266,7 +269,7 @@ int main(int argc, char * argv[]) {
 		ssm->compositionalUpdate(ssm_perturbation);
 		mtf::PtsT warped_pts = ssm->getPts();
 
-		if(am->getStateSize()){
+		if(using_ilm){
 			am->generatePerturbation(am_perturbation);
 			am->invertState(inv_am_perturbation, am_perturbation);
 			//cout << "am_perturbation: " << am_perturbation.transpose() << "\n";
@@ -294,7 +297,7 @@ int main(int argc, char * argv[]) {
 		if(!syn_continuous_warping){
 			//! reset the SSM to its previous state
 			ssm->compositionalUpdate(inv_ssm_perturbation);
-			if(am->getStateSize()){
+			if(using_ilm){
 				//! reset the AM to its previous state
 				am->updateState(inv_am_perturbation);
 			}
@@ -309,7 +312,7 @@ int main(int argc, char * argv[]) {
 			if(syn_continuous_warping){
 				//! reset the SSM to its previous state
 				ssm->compositionalUpdate(inv_ssm_perturbation);
-				if(am->getStateSize()){
+				if(using_ilm){
 					//! reset the AM to its previous state
 					am->updateState(inv_am_perturbation);
 				}
@@ -317,7 +320,7 @@ int main(int argc, char * argv[]) {
 
 			//! apply inverse of the warp perturbation to the SSM
 			ssm->compositionalUpdate(inv_ssm_perturbation);
-			if(am->getStateSize()){
+			if(using_ilm){
 				//! reset the AM to its previous state
 				am->updateState(inv_am_perturbation);
 			}
@@ -355,7 +358,7 @@ int main(int argc, char * argv[]) {
 
 			//! reset the SSM to the previous state
 			ssm->compositionalUpdate(ssm_perturbation);
-			if(am->getStateSize()){
+			if(using_ilm){
 				//! reset the AM to its previous state
 				am->updateState(am_perturbation);
 			}

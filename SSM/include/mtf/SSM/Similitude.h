@@ -9,6 +9,7 @@
 
 #define SIM_NORMALIZED_INIT false
 #define SIM_GEOM_SAMPLING true
+#define SIM_PT_BASED_SAMPLING 0
 #define SIM_N_MODEL_PTS 2
 #define SIM_DEBUG_MODE 0
 
@@ -19,11 +20,13 @@ _MTF_BEGIN_NAMESPACE
 struct SimilitudeParams : SSMParams{
 	bool normalized_init;
 	bool geom_sampling;
+	int pt_based_sampling;
 	int n_model_pts;
 	bool debug_mode;
 	SimilitudeParams(const SSMParams *ssm_params, 
 		bool _normalized_init, bool _geom_sampling,
-		int _n_model_pts, bool _debug_mode);
+		int pt_based_sampling, int _n_model_pts,
+		bool _debug_mode);
 	SimilitudeParams(const SimilitudeParams *params = nullptr);
 };
 

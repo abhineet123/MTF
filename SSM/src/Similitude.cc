@@ -7,10 +7,12 @@ _MTF_BEGIN_NAMESPACE
 
 SimilitudeParams::SimilitudeParams(const SSMParams *ssm_params, 
 bool _normalized_init, bool _geom_sampling,
-int _n_model_pts, bool _debug_mode) :
+int _pt_based_sampling, int _n_model_pts,
+bool _debug_mode) :
 SSMParams(ssm_params),
 normalized_init(_normalized_init),
 geom_sampling(_geom_sampling),
+pt_based_sampling(_pt_based_sampling),
 n_model_pts(_n_model_pts),
 debug_mode(_debug_mode){}
 
@@ -18,11 +20,13 @@ SimilitudeParams::SimilitudeParams(const SimilitudeParams *params) :
 SSMParams(params),
 normalized_init(SIM_NORMALIZED_INIT),
 geom_sampling(SIM_GEOM_SAMPLING),
+pt_based_sampling(SIM_PT_BASED_SAMPLING),
 n_model_pts(SIM_N_MODEL_PTS),
 debug_mode(SIM_DEBUG_MODE){
 	if(params){
 		normalized_init = params->normalized_init;
 		geom_sampling = params->geom_sampling;
+		pt_based_sampling = params->pt_based_sampling;
 		n_model_pts = params->n_model_pts;
 		debug_mode = params->debug_mode;
 	}
@@ -38,6 +42,7 @@ params(_params){
 	printf("resy: %d\n", resy);
 	printf("normalized_init: %d\n", params.normalized_init);
 	printf("geom_sampling: %d\n", params.geom_sampling);
+	printf("pt_based_sampling: %d\n", params.pt_based_sampling);
 	printf("n_model_pts: %d\n", params.n_model_pts);
 	printf("debug_mode: %d\n", params.debug_mode);
 
@@ -395,6 +400,28 @@ void Similitude::generatePerturbation(VectorXd &perturbation){
 			geom_perturbation(state_id) = rand_dist[state_id](rand_gen[state_id]);
 		}
 		perturbation = geomToState(geom_perturbation);
+	} else if(params.pt_based_sampling){
+		PtsT orig_pts, perturbed_pts;
+		orig_pts.resize(Eigen::NoChange, 2);
+		perturbed_pts.resize(Eigen::NoChange, 2);
+		orig_pts.col(0) = init_corners.col(0);
+		orig_pts.col(1) = init_corners.col(2);
+		if(params.pt_based_sampling == 1){
+			perturbed_pts(0, 0) = orig_pts(0, 0) + rand_dist[0](rand_gen[0]);
+			perturbed_pts(1, 0) = orig_pts(1, 0) + rand_dist[1](rand_gen[1]);
+			perturbed_pts(0, 1) = orig_pts(0, 1) + rand_dist[2](rand_gen[2]);
+			perturbed_pts(1, 1) = orig_pts(1, 1) + rand_dist[3](rand_gen[3]);
+			Matrix3d sim_warp = utils::computeSimilitudeDLT(orig_pts, perturbed_pts);
+			getStateFromWarp(perturbation, sim_warp);
+		} else {
+			//! different perturbation for x,y coordinates of each corner
+			//! followed by consistent translational perturbation to all corners
+			perturbed_pts(0, 0) = orig_pts(0, 0) + rand_dist[1](rand_gen[1]);
+			perturbed_pts(1, 0) = orig_pts(1, 0) + rand_dist[1](rand_gen[1]);
+			perturbed_pts(0, 1) = orig_pts(0, 1) + rand_dist[1](rand_gen[1]);
+			perturbed_pts(1, 1) = orig_pts(1, 1) + rand_dist[1](rand_gen[1]);
+			perturbed_pts = perturbed_pts.colwise() + Vector2d(rand_dist[0](rand_gen[0]), rand_dist[0](rand_gen[0]));
+		}
 	} else{
 		ProjectiveBase::generatePerturbation(perturbation);
 	}

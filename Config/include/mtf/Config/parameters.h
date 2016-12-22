@@ -235,7 +235,7 @@ namespace mtf{
 
 		//! Affine
 		int aff_normalized_init = 0;
-		bool aff_pt_based_sampling = false;
+		int aff_pt_based_sampling = 0;
 
 		//! Homograhy
 		int hom_normalized_init = 0;
@@ -251,6 +251,7 @@ namespace mtf{
 		//! Similitude
 		bool sim_normalized_init = false;
 		bool sim_geom_sampling = true;
+		int sim_pt_based_sampling = 0;
 		int sim_n_model_pts = 2;
 
 		//! SL3
@@ -1209,6 +1210,8 @@ namespace mtf{
 				sim_n_model_pts = atoi(arg_val);
 			} else if(!strcmp(arg_name, "sim_geom_sampling")){
 				sim_geom_sampling = atoi(arg_val);
+			} else if(!strcmp(arg_name, "sim_pt_based_sampling")){
+				sim_pt_based_sampling = atoi(arg_val);
 			}
 			//! SL3
 			else if(!strcmp(arg_name, "sl3_normalized_init")){

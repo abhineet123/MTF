@@ -5,12 +5,11 @@
 
 #include <Eigen/SVD>
 
-
 _MTF_BEGIN_NAMESPACE
 
 AffineParams::AffineParams(const SSMParams *ssm_params,
-bool _normalized_init,
-bool _pt_based_sampling, bool _debug_mode) :
+bool _normalized_init, int _pt_based_sampling, 
+bool _debug_mode) :
 SSMParams(ssm_params),
 normalized_init(_normalized_init),
 pt_based_sampling(_pt_based_sampling),
@@ -19,7 +18,7 @@ debug_mode(_debug_mode){}
 AffineParams::AffineParams(const AffineParams *params) :
 SSMParams(params),
 normalized_init(AFF_NORMALIZED_INIT),
-pt_based_sampling(AFF_CORNER_BASED_SAMPLING),
+pt_based_sampling(AFF_PT_BASED_SAMPLING),
 debug_mode(AFF_DEBUG_MODE){
 	if(params){
 		normalized_init = params->normalized_init;
@@ -458,21 +457,32 @@ void Affine::generatePerturbation(VectorXd &perturbation){
 	assert(perturbation.size() == state_size);	
 	if(params.pt_based_sampling){
 		//! perturb three canonical points and estimate affine transformation using DLT
-		rand_t(0) = rand_dist[0](rand_gen[0]);
-		rand_t(1) = rand_dist[0](rand_gen[0]);
-		for(int pt_id = 0; pt_id < 3; ++pt_id){
-			rand_d(0, pt_id) = rand_dist[1](rand_gen[1]);
-			rand_d(1, pt_id) = rand_dist[1](rand_gen[1]);
-		}
+		Matrix23d orig_pts, perturbed_pts;
 		//! use the bottom left, bottom right and top center points
 		//! as canaonical points to add the random perturbations to;
-		init_canonical_pts.col(0) = init_corners.col(3);
-		init_canonical_pts.col(1) = init_corners.col(2);
-		init_canonical_pts.col(0) = (init_corners.col(0) + init_corners.col(1)) / 2.0;
+		orig_pts.col(0) = init_corners.col(2);
+		orig_pts.col(1) = init_corners.col(3);
+		orig_pts.col(2) = (init_corners.col(0) + init_corners.col(1)) / 2.0;
 
-		perturbed_canonical_pts = init_canonical_pts + rand_d;
-		perturbed_canonical_pts = perturbed_canonical_pts.colwise() + rand_t;
-		Matrix3d aff_warp = utils::computeAffineDLT(init_canonical_pts, perturbed_canonical_pts);
+		if(params.pt_based_sampling == 1){
+			perturbed_pts = orig_pts;
+			perturbed_pts(0, 0) += rand_dist[0](rand_gen[0]);
+			perturbed_pts(1, 0) += rand_dist[1](rand_gen[1]);
+			perturbed_pts(0, 1) += rand_dist[2](rand_gen[2]);
+			perturbed_pts(1, 1) += rand_dist[3](rand_gen[3]);
+			perturbed_pts(0, 2) += rand_dist[4](rand_gen[4]);
+			perturbed_pts(1, 2) += rand_dist[5](rand_gen[5]);
+		} else {
+			//! different perturbation for x,y coordinates of each corner
+			//! followed by consistent translational perturbation to all corners
+			Matrix23d rand_d;
+			for(int pt_id = 0; pt_id < 3; ++pt_id){
+				rand_d(0, pt_id) = rand_dist[1](rand_gen[1]);
+				rand_d(1, pt_id) = rand_dist[1](rand_gen[1]);
+			}
+			perturbed_pts = (orig_pts + rand_d).colwise() + Vector2d(rand_dist[0](rand_gen[0]), rand_dist[0](rand_gen[0]));
+		}
+		Matrix3d aff_warp = utils::computeAffineDLT(orig_pts, perturbed_pts);
 		getStateFromWarp(perturbation, aff_warp);
 	} else{
 		//! perform geometric perturbation

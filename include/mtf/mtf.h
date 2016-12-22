@@ -887,7 +887,8 @@ inline SSMParams_ getSSMParams(const char *ssm_type){
 	} else if(!strcmp(ssm_type, "aff") || !strcmp(ssm_type, "6")){
 		return SSMParams_(new AffineParams(ssm_params.get(), aff_normalized_init, aff_pt_based_sampling, debug_mode));
 	} else if(!strcmp(ssm_type, "sim") || !strcmp(ssm_type, "4")){
-		return SSMParams_(new SimilitudeParams(ssm_params.get(), sim_normalized_init, sim_geom_sampling, sim_n_model_pts, debug_mode));
+		return SSMParams_(new SimilitudeParams(ssm_params.get(), sim_normalized_init,
+			sim_geom_sampling, sim_pt_based_sampling, sim_n_model_pts, debug_mode));
 	} else if(!strcmp(ssm_type, "iso") || !strcmp(ssm_type, "3")){
 		return SSMParams_(new IsometryParams(ssm_params.get(), debug_mode));
 	} else if(!strcmp(ssm_type, "trs") || !strcmp(ssm_type, "3s")){

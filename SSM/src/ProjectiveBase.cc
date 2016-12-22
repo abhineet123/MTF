@@ -160,18 +160,28 @@ void ProjectiveBase::applyWarpToPt(double &warped_x, double &warped_y, double x,
 // --------------------------- Stochastic Sampler --------------------------- //
 // -------------------------------------------------------------------------- //
 
-void ProjectiveBase::initializeSampler(const VectorXd &state_sigma,
-	const VectorXd &state_mean){
-	if(state_sigma.size() != state_size){		
+void ProjectiveBase::initializeSampler(const VectorXd &_state_sigma,
+	const VectorXd &_state_mean){
+	VectorXd state_sigma(state_size), state_mean(state_size);
+	if(_state_sigma.size() == 1){
+		state_sigma.fill(_state_sigma[0]);
+	} else if(_state_sigma.size() != state_size){
 		throw std::invalid_argument(
 			cv::format("ProjectiveBase::initializeSampler :: SSM sigma has invalid size %d\n",
-			state_sigma.size()));
+			_state_sigma.size()));
+	} else{
+		state_sigma = _state_sigma;
 	}
-	if(state_mean.size() != state_size){
+	if(_state_mean.size() == 1){
+		state_mean.fill(_state_mean[0]);
+	} else if(_state_mean.size() != state_size){
 		throw std::invalid_argument(
 			cv::format("ProjectiveBase::initializeSampler :: SSM mean has invalid size %d\n",
-			state_mean.size()));
+			_state_mean.size()));
+	} else{
+		state_mean = _state_mean;
 	}
+
 	printf("Initializing %s sampler with sigma: ", name.c_str());
 	utils::printMatrix(state_sigma.transpose(), nullptr, "%e");
 
@@ -206,21 +216,23 @@ void ProjectiveBase::setSampler(const VectorXd &state_sigma,
 	const VectorXd &state_mean){
 	assert(state_sigma.size() == state_size);
 	assert(state_mean.size() == state_size);
-	for(int state_id = 0; state_id < state_size; state_id++){
+	for(int state_id = 0; state_id < state_size; ++state_id){
 		rand_dist[state_id].param(DistParamT(state_mean[state_id], state_sigma[state_id]));
 	}
 }
 
-void ProjectiveBase::setSamplerMean(const VectorXd &mean){
+void ProjectiveBase::setSamplerMean(const VectorXd &state_mean){
+	assert(state_mean.size() == state_size);
 	for(int state_id = 0; state_id < state_size; state_id++){
 		double state_sigma = rand_dist[state_id].sigma();
-		rand_dist[state_id].param(DistParamT(mean[state_id], state_sigma));
+		rand_dist[state_id].param(DistParamT(state_mean[state_id], state_sigma));
 	}
 }
-void ProjectiveBase::setSamplerSigma(const VectorXd &std){
+void ProjectiveBase::setSamplerSigma(const VectorXd &state_sigma){
+	assert(state_sigma.size() == state_size);
 	for(int state_id = 0; state_id < state_size; state_id++){
-		double mean = rand_dist[state_id].mean();
-		rand_dist[state_id].param(DistParamT(mean, std[state_id]));
+		double state_mean = rand_dist[state_id].mean();
+		rand_dist[state_id].param(DistParamT(state_mean, state_sigma[state_id]));
 	}
 }
 
