@@ -19,7 +19,7 @@ GB::GB(const ParamType *_gb_params) :
 IlluminationModel(_gb_params), params(_gb_params){
 	name = "gb";
 	printf("\n");
-	printf("Using Gain and Bias illumination model with:\n");
+	printf("Using Gain and Bias ILM with:\n");
 	printf("additive_update: %d\n", params.additive_update);
 }
 

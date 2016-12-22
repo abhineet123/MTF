@@ -107,13 +107,7 @@ int main(int argc, char * argv[]) {
 
 	//mtf::utils::printMatrix<double>(init_corners, "init_corners");
 
-	cv::Point fps_origin(10, 20);
-	double fps_font_size = 1.00;
-	cv::Scalar fps_color(0, 255, 0);
-	cv::Point err_origin(10, 40);
-	double err_font_size = 1.00;
-	cv::Scalar err_color(0, 255, 0);
-	cv::Scalar gt_color(0, 255, 0);
+	double font_size = 1.00;
 
 	resx = size_x;
 	resy = size_y;
@@ -383,14 +377,14 @@ int main(int argc, char * argv[]) {
 		if(syn_show_output){
 			cv::Mat original_img = input->getFrame().clone();
 			mtf::utils::drawRegion(original_img, original_bounding_box,
-				cv::Scalar(0, 255, 0), line_thickness, nullptr, fps_font_size,
+				cv::Scalar(0, 255, 0), line_thickness, nullptr, font_size,
 				show_corner_ids, 1 - show_corner_ids);
 			mtf::utils::drawRegion(original_img, warped_bounding_box,
-				cv::Scalar(0, 0, 255), line_thickness, nullptr, fps_font_size,
+				cv::Scalar(0, 0, 255), line_thickness, nullptr, font_size,
 				show_corner_ids, 1 - show_corner_ids);
 			cv::Mat warped_img_annotated = warped_img.clone();
 			mtf::utils::drawRegion(warped_img_annotated, warped_bounding_box,
-				cv::Scalar(0, 0, 255), line_thickness, nullptr, fps_font_size,
+				cv::Scalar(0, 0, 255), line_thickness, nullptr, font_size,
 				show_corner_ids, 1 - show_corner_ids);
 			cv::imshow("original_img", original_img);
 			cv::imshow(warped_img_win_name, warped_img_annotated);

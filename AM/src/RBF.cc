@@ -32,7 +32,7 @@ RBF::RBF(const ParamType *_pgb_params) :
 IlluminationModel(_pgb_params), params(_pgb_params){
 	name = "rbf";
 	printf("\n");
-	printf("Using Radial Basis Function illumination model with:\n");
+	printf("Using Radial Basis Function ILM with:\n");
 	printf("sampling_res: %d x %d\n", resx, resy);
 	printf("n_ctrl_pts: %d x %d\n", params.n_ctrl_pts_x, params.n_ctrl_pts_y);
 

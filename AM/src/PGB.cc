@@ -31,7 +31,7 @@ PGB::PGB(const ParamType *_pgb_params) :
 IlluminationModel(_pgb_params), params(_pgb_params){
 	name = "pgb";
 	printf("\n");
-	printf("Using Piecewise Gain and Bias illumination model with:\n");
+	printf("Using Piecewise Gain and Bias ILM with:\n");
 	printf("sampling_res: %d x %d\n", resx, resy);
 	printf("sub_regions: %d x %d\n", params.n_regions_x, params.n_regions_y);
 
