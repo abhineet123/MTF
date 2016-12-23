@@ -206,6 +206,8 @@ typedef std::shared_ptr<StateSpaceModel> SSM;
 
 typedef std::unique_ptr<AMParams> AMParams_;
 typedef std::unique_ptr<SSMParams> SSMParams_;
+typedef std::unique_ptr<SSMEstimatorParams> SSMEstParams_;
+
 
 typedef std::unique_ptr<ESMParams> ESMParams_;
 typedef std::unique_ptr<FCLKParams> FCLKParams_;
@@ -226,6 +228,7 @@ typedef std::unique_ptr<RegNetParams> RegNetParams_;
 
 AMParams_ getAMParams(const char *am_type, const char *ilm_type);
 SSMParams_ getSSMParams(const char *ssm_type);
+SSMEstParams_ getSSMEstParams();
 ESMParams_ getESMParams();
 FCLKParams_ getFCLKParams();
 ICLKParams_ getICLKParams();
@@ -664,15 +667,13 @@ TrackerBase *getTracker(const char *sm_type,
 		if(!strcmp(grid_sm, "cv")){
 			GridTrackerCVParams grid_params(
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
-				grid_pyramid_levels, grid_use_min_eig_vals, grid_min_eig_thresh,
-				max_iters, epsilon, grid_show_trackers, debug_mode);
-			SSMEstimatorParams est_params(static_cast<SSMEstimatorParams::EstType>(est_method),
-				est_ransac_reproj_thresh, est_n_model_pts, est_refine, est_max_iters,
-				est_confidence, est_lm_max_iters);
+				grid_reset_at_each_frame, grid_patch_centroid_inside,
+				grid_pyramid_levels, grid_use_min_eig_vals,
+				grid_min_eig_thresh, max_iters, epsilon, grid_show_trackers, debug_mode);
 			typename SSMType::ParamType _ssm_params(ssm_params);
 			_ssm_params.resx = grid_params.getResX();
 			_ssm_params.resy = grid_params.getResY();
-			return new GridTrackerCV<SSMType>(&grid_params, &est_params, &_ssm_params);
+			return new GridTrackerCV<SSMType>(&grid_params, getSSMEstParams().get(), &_ssm_params);
 		}
 #ifndef ENABLE_ONLY_NT
 		else if(!strcmp(grid_sm, "flow")){
@@ -680,15 +681,12 @@ TrackerBase *getTracker(const char *sm_type,
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
 				grid_pyramid_levels, grid_use_const_grad, grid_min_eig_thresh,
 				max_iters, epsilon, grid_show_trackers, debug_mode);
-			SSMEstimatorParams est_params(static_cast<SSMEstimatorParams::EstType>(est_method),
-				est_ransac_reproj_thresh, est_n_model_pts, est_refine, est_max_iters,
-				est_confidence, est_lm_max_iters);
 			resx = grid_params.getResX();
 			resy = grid_params.getResY();
 			typename SSMType::ParamType _ssm_params(ssm_params);
 			_ssm_params.resx = grid_params.getResX();
 			_ssm_params.resy = grid_params.getResY();
-			return new GridTrackerFlow<AMType, SSMType>(&grid_params, &est_params, am_params, &_ssm_params);
+			return new GridTrackerFlow<AMType, SSMType>(&grid_params, getSSMEstParams().get(), am_params, &_ssm_params);
 		}
 #endif
 #ifndef DISABLE_NN
@@ -696,19 +694,16 @@ TrackerBase *getTracker(const char *sm_type,
 		else if(!strcmp(grid_sm, "feat")){
 			GridTrackerFeatParams grid_params(
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
-				grid_init_at_each_frame, grid_detect_keypoints, grid_rebuild_index,
+				grid_reset_at_each_frame, grid_detect_keypoints, grid_rebuild_index,
 				max_iters, epsilon, !strcmp(grid_sm, "pyr"),
 				grid_show_trackers, grid_show_tracker_edges, debug_mode);
 			SIFTParams sift_params(sift_n_features, sift_n_octave_layers,
 				sift_contrast_thresh, sift_edge_thresh, sift_sigma);
-			SSMEstimatorParams est_params(static_cast<SSMEstimatorParams::EstType>(est_method),
-				est_ransac_reproj_thresh, est_n_model_pts, est_refine, est_max_iters,
-				est_confidence, est_lm_max_iters);
 			typename SSMType::ParamType _ssm_params(ssm_params);
 			_ssm_params.resx = grid_params.getResX();
 			_ssm_params.resy = grid_params.getResY();
 			return new GridTrackerFeat<SSMType>(&grid_params, &sift_params,
-				getFLANNParams().get(), &est_params, &_ssm_params);
+				getFLANNParams().get(), getSSMEstParams().get(), &_ssm_params);
 		}
 #endif
 #endif
@@ -730,16 +725,13 @@ TrackerBase *getTracker(const char *sm_type,
 			bool is_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
 			GridTrackerParams grid_params(
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
-				grid_init_at_each_frame, grid_dyn_patch_size, grid_use_tbb,
-				max_iters, epsilon, is_pyr, grid_show_trackers,
+				grid_reset_at_each_frame, grid_dyn_patch_size, grid_patch_centroid_inside,
+				grid_use_tbb, max_iters, epsilon, is_pyr, grid_show_trackers,
 				grid_show_tracker_edges, debug_mode);
-			SSMEstimatorParams est_params(static_cast<SSMEstimatorParams::EstType>(est_method),
-				est_ransac_reproj_thresh, est_n_model_pts, est_refine, est_max_iters,
-				est_confidence, est_lm_max_iters);
 			typename SSMType::ParamType _ssm_params(ssm_params);
 			_ssm_params.resx = grid_params.getResX();
 			_ssm_params.resy = grid_params.getResY();
-			return new GridTracker<SSMType>(trackers, &grid_params, &est_params, &_ssm_params);
+			return new GridTracker<SSMType>(trackers, &grid_params, getSSMEstParams().get(), &_ssm_params);
 		}
 	}
 #endif
@@ -1183,6 +1175,11 @@ inline nt::SearchMethod *getSM(const char *sm_type,
 		return nullptr;
 	}
 }
+inline SSMEstParams_ getSSMEstParams(){
+	return SSMEstParams_(new SSMEstimatorParams(static_cast<SSMEstimatorParams::EstType>(est_method),
+		est_ransac_reproj_thresh, est_n_model_pts, est_refine, est_max_iters,
+		est_max_subset_attempts, est_use_boost_rng, est_confidence, est_lm_max_iters));
+}
 
 inline ESMParams_ getESMParams(){
 	return 	ESMParams_(new ESMParams(max_iters, epsilon,
@@ -1465,13 +1462,10 @@ inline TrackerBase *getCompositeSM(const char *sm_type,
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
 				grid_pyramid_levels, grid_use_const_grad, grid_min_eig_thresh,
 				max_iters, epsilon, grid_show_trackers, debug_mode);
-			SSMEstimatorParams est_params(static_cast<SSMEstimatorParams::EstType>(est_method),
-				est_ransac_reproj_thresh, est_n_model_pts, est_refine, est_max_iters,
-				est_confidence, est_lm_max_iters);
 			resx = grid_params.getResX();
 			resy = grid_params.getResY();
 			return new nt::GridTrackerFlow(AM(getAM(am_type, ilm_type)), SSM(getSSM(ssm_type)),
-				&grid_params, &est_params);
+				&grid_params, getSSMEstParams().get());
 		} else{
 			return nullptr;
 		}

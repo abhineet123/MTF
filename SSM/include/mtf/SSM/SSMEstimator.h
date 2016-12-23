@@ -4,6 +4,8 @@
 #include "mtf/Macros/common.h"
 #include "SSMEstimatorParams.h"
 
+#include <boost/random/mersenne_twister.hpp>
+
 _MTF_BEGIN_NAMESPACE
 
 //! Base class for robust estimators for different SSMs
@@ -12,15 +14,16 @@ _MTF_BEGIN_NAMESPACE
 
 class SSMEstimator{
 public:
-	SSMEstimator(int _modelPoints, CvSize _modelSize, int _maxBasicSolutions);
+	SSMEstimator(int _modelPoints, CvSize _modelSize, 
+		int _maxBasicSolutions, bool _use_boost_rng);
 	virtual ~SSMEstimator();
 
 	virtual int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) = 0;
 	virtual bool runLMeDS(const CvMat* m1, const CvMat* m2, CvMat* model,
-		CvMat* mask, double confidence = 0.99, int maxIters = 2000);
+		CvMat* mask, double confidence = 0.99, int maxIters = 2000, int maxAttempts = 300);
 	virtual bool runRANSAC(const CvMat* m1, const CvMat* m2, CvMat* model,
-		CvMat* mask, double threshold,
-		double confidence = 0.99, int maxIters = 2000);
+		CvMat* mask, double threshold, double confidence = 0.99, int maxIters = 2000,
+		int maxAttempts=300);
 	virtual bool refine(const CvMat*, const CvMat*, CvMat*, int) { return true; }
 	virtual void setSeed(int64 seed);
 
@@ -34,16 +37,21 @@ protected:
 		CvMat* ms1, CvMat* ms2, int maxAttempts = 1000);
 	virtual bool checkSubset(const CvMat* ms1, int count);
 
-	CvRNG rng;
+	typedef boost::mt19937 BoostRNG;
+
+	CvRNG cv_rng;
+	BoostRNG boost_rng;
+
 	int modelPoints;
 	CvSize modelSize;
 	int maxBasicSolutions;
 	bool checkPartialSubsets;
+	const bool use_boost_rng;
 };
 
 class HomographyEstimator : public SSMEstimator{
 public:
-	HomographyEstimator(int modelPoints);
+	HomographyEstimator(int modelPoints, bool _use_boost_rng);
 
 	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
 	bool refine(const CvMat* m1, const CvMat* m2,
@@ -55,7 +63,7 @@ protected:
 
 class AffineEstimator : public SSMEstimator{
 public:
-	AffineEstimator(int modelPoints);
+	AffineEstimator(int modelPoints, bool _use_boost_rng);
 
 	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
 	bool refine(const CvMat* m1, const CvMat* m2,
@@ -67,7 +75,7 @@ protected:
 
 class SimilitudeEstimator : public SSMEstimator{
 public:
-	SimilitudeEstimator(int modelPoints);
+	SimilitudeEstimator(int modelPoints, bool _use_boost_rng);
 
 	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
 	bool refine(const CvMat* m1, const CvMat* m2,
@@ -79,7 +87,7 @@ protected:
 
 class IsometryEstimator : public SSMEstimator{
 public:
-	IsometryEstimator(int modelPoints);
+	IsometryEstimator(int modelPoints, bool _use_boost_rng);
 
 	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
 	bool refine(const CvMat* m1, const CvMat* m2,
@@ -91,7 +99,7 @@ protected:
 
 class TranscalingEstimator : public SSMEstimator{
 public:
-	TranscalingEstimator(int modelPoints);
+	TranscalingEstimator(int modelPoints, bool _use_boost_rng);
 
 	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
 	bool refine(const CvMat* m1, const CvMat* m2,
@@ -103,7 +111,7 @@ protected:
 
 class TranslationEstimator : public SSMEstimator{
 public:
-	TranslationEstimator(int modelPoints);
+	TranslationEstimator(int modelPoints, bool _use_boost_rng);
 
 	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
 	bool refine(const CvMat* m1, const CvMat* m2,

@@ -476,8 +476,9 @@ namespace mtf{
 		int grid_res = 10;
 		int grid_patch_size = 10;
 		int grid_patch_res = 0;
-		bool grid_init_at_each_frame = true;
+		int grid_reset_at_each_frame = 1;
 		bool grid_dyn_patch_size = false;
+		bool grid_patch_centroid_inside = true;
 		bool grid_show_trackers = false;
 		bool grid_show_tracker_edges = false;
 		bool grid_use_tbb = true;
@@ -502,6 +503,8 @@ namespace mtf{
 		double est_ransac_reproj_thresh = 10;
 		int est_n_model_pts = 4;
 		int est_max_iters = 2000;
+		int est_max_subset_attempts = 300;
+		bool est_use_boost_rng = false;
 		double est_confidence = 0.995;
 		bool est_refine = true;
 		int est_lm_max_iters = 10;
@@ -1623,10 +1626,12 @@ namespace mtf{
 				grid_patch_size = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_patch_res")){
 				grid_patch_res = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_init_at_each_frame")){
-				grid_init_at_each_frame = atoi(arg_val);
+			} else if(!strcmp(arg_name, "grid_reset_at_each_frame")){
+				grid_reset_at_each_frame = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_dyn_patch_size")){
 				grid_dyn_patch_size = atoi(arg_val);
+			} else if(!strcmp(arg_name, "grid_patch_centroid_inside")){
+				grid_patch_centroid_inside = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_show_trackers")){
 				grid_show_trackers = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_show_tracker_edges")){
@@ -1668,6 +1673,10 @@ namespace mtf{
 				est_n_model_pts = atoi(arg_val);
 			} else if(!strcmp(arg_name, "est_max_iters")){
 				est_max_iters = atoi(arg_val);
+			} else if(!strcmp(arg_name, "est_max_subset_attempts")){
+				est_max_subset_attempts = atoi(arg_val);
+			} else if(!strcmp(arg_name, "est_use_boost_rng")){
+				est_use_boost_rng = atoi(arg_val);
 			} else if(!strcmp(arg_name, "est_confidence")){
 				est_confidence = atof(arg_val);
 			} else if(!strcmp(arg_name, "est_refine")){

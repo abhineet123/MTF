@@ -634,9 +634,18 @@ For GridTracker and RKLT:
 			set to 1 to dynamically adjust the patch sizes based on the size of the overall object bounding box by dividing it evenly; 
 			the individual patches in this case are no longer rectangular;
 		
-	 Parameter:	'grid_init_at_each_frame'
+	 Parameter:	'grid_reset_at_each_frame'
 		Description:
-			set to 1 to reinitialize the patch trackers at each frame based on the estimated location of the larger bounding box
+			specify the level of resetting applied to the patch trackers at each frame based on the estimated location of the larger bounding box;
+		Possible Values:
+			0:	No resetting
+			1:	Reset both current location and template, i.e. reinitialize the trackers
+			2:	Reset only current location	(not available for GridTrackerCV and GridTrackerFlow)	
+			
+	 Parameter:	'grid_patch_centroid_inside'
+		Description:
+			set to 1 to initialize/reset all patch trackers such that their centroids lie completely inside the larger bounding box;
+			if set to 0, centroids of some of the trackers will lie on the edges of the bounding box so that part of the corresponding patches will be outside it;
 			
 	 Parameter:	'grid_show_trackers'
 		Description:
@@ -699,6 +708,15 @@ For SSM Estimator:
 	 Parameter:	'est_max_iters'
 		Description:
 			maximum iterations for the robust estimator (RANSAC or Least Median)
+			
+	 Parameter:	'est_max_subset_attempts'
+		Description:
+			maximum attempts made to generate each valid point subset from which a candidate warp is estimated; 
+			if none is found in these many attempts, the RANSAC or LMS procedure will be terminated and the best warp found so far will be returned;	
+			
+	 Parameter:	'est_use_boost_rng'
+		Description:
+			Use the random number generator in boost library rather than the one in OpenCV;		
 			
 	 Parameter:	'est_confidence'
 		Description:

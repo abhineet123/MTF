@@ -6,9 +6,26 @@
 _MTF_BEGIN_NAMESPACE
 
 namespace utils{
-	struct Corners{		
+
+	/**
+	compute the rectangle that best fits an arbitrry quadrilateral
+	in terms of maximizing the Jaccard index of overlap 
+	between the corresponding regions; 
+	an optional resize factor is provided to avaoid further loss in precision
+	in case a resizing is needed and the input corners are floating point numbers;	
+	*/ 
+	template<typename ValT>
+	cv::Rect_<ValT> getBestFitRectangle(const cv::Mat &corners,
+		int img_width = 0, int img_height = 0, int border_size = 0);
+	//! adjust the rectangle bounds so it lies entirely within the image with the given size
+	template<typename ValT>
+	cv::Rect_<ValT> getBoundedRectangle(const cv::Rect_<ValT> &_in_rect, int img_width, int img_height,
+		int border_size = 0);
+
+	//! convert region corners between various formats
+	struct Corners{
 		template<typename PtScalarT>
-		Corners(const cv::Point_<PtScalarT>(&pt_corners)[4], 
+		Corners(const cv::Point_<PtScalarT>(&pt_corners)[4],
 			PtScalarT offset_x = 0, PtScalarT offset_y = 0){
 			corners.create(2, 4, CV_64FC1);
 			for(int corner_id = 0; corner_id < 4; corner_id++) {
@@ -16,13 +33,24 @@ namespace utils{
 				corners.at<double>(1, corner_id) = pt_corners[corner_id].y + offset_y;
 			}
 		}
+		template<typename RectScalarT>
+		Corners(const cv::Rect_<RectScalarT> rect,
+			RectScalarT offset_x = 0, RectScalarT offset_y = 0){
+			corners.create(2, 4, CV_64FC1);
+			RectScalarT min_x = rect.x + offset_x, min_y = rect.y + offset_y;
+			RectScalarT max_x = min_x + rect.width, max_y = min_y + rect.height;
+			corners.at<double>(0, 0) = corners.at<double>(0, 3) = min_x;
+			corners.at<double>(0, 1) = corners.at<double>(0, 2) = max_x;
+			corners.at<double>(1, 0) = corners.at<double>(1, 1) = min_y;
+			corners.at<double>(1, 2) = corners.at<double>(1, 3) = max_y;
+		}
 		Corners(const cv::Mat &mat_corners,
 			double offset_x = 0, double offset_y = 0){
 			corners = mat_corners.clone();
 			corners.row(0) += offset_x;
 			corners.row(1) += offset_y;
 		}
-		Corners(const CornersT &eig_corners, 
+		Corners(const CornersT &eig_corners,
 			double offset_x = 0, double offset_y = 0){
 			corners.create(2, 4, CV_64FC1);
 			for(int corner_id = 0; corner_id < 4; ++corner_id){
@@ -30,6 +58,10 @@ namespace utils{
 				corners.at<double>(1, corner_id) = eig_corners(1, corner_id) + offset_y;
 			}
 		};
+		template<typename RectScalarT>
+		cv::Rect_<RectScalarT>  rect(){
+			return getBestFitRectangle<RectScalarT>(corners);
+		}
 		template<typename PtScalarT>
 		void points(cv::Point_<PtScalarT>(&pt_corners)[4]){
 			for(int corner_id = 0; corner_id < 4; ++corner_id) {
@@ -38,7 +70,7 @@ namespace utils{
 			}
 		}
 		cv::Mat mat(){ return corners; }
-		void mat(cv::Mat &mat_corners){	mat_corners = corners.clone();	}
+		void mat(cv::Mat &mat_corners){ mat_corners = corners.clone(); }
 		CornersT eig(){
 			CornersT eig_corners;
 			eig(eig_corners);
@@ -115,7 +147,7 @@ namespace utils{
 	// write scalar value to a custom formatted ASCII text file
 	template<typename ScalarT>
 	inline void printScalarToFile(ScalarT scalar_val, const char* scalar_name,
-		const char* fname, const char* fmt = "%15.9f", const char* mode = "a", 
+		const char* fname, const char* fmt = "%15.9f", const char* mode = "a",
 		const char *name_sep = "\t", const char *val_sep = "\n"){
 		//typedef typename ImageT::RealScalar ScalarT;
 		FILE *fid = fopen(fname, mode);
@@ -245,14 +277,14 @@ namespace utils{
 	inline bool isFinite(const cv::Mat &cv_mat){
 		for(int row_id = 0; row_id < cv_mat.rows; ++row_id){
 			for(int col_id = 0; col_id < cv_mat.cols; ++col_id){
-				if(std::isnan(cv_mat.at<ScalarT>(row_id, col_id))||
+				if(std::isnan(cv_mat.at<ScalarT>(row_id, col_id)) ||
 					std::isinf(cv_mat.at<ScalarT>(row_id, col_id))){
 					return false;
 				}
 			}
 		}
 		return true;
-	}	
+	}
 	void drawCorners(cv::Mat &img, const cv::Point2d(&cv_corners)[4],
 		const cv::Scalar corners_col, const std::string label);
 	// mask a vector, i.e. retain only those entries where the given mask is true
@@ -352,26 +384,14 @@ namespace utils{
 	}
 	int writeTimesToFile(vector<double> &proc_times,
 		vector<char*> &proc_labels, char *time_fname, int iter_id);
-	// compute the rectangle that best fits an arbitrry quadrilateral
-	// in terms of maximizing the Jaccard index of overlap 
-	// between the corresponding regions; 
-	// an optional resize factor is provided to avaoid further loss in precision
-	// in case a resizing is needed and the input corners are floating point numbers;
-	template<typename ValT>
-	cv::Rect_<ValT> getBestFitRectangle(const cv::Mat &corners,
-		int img_width = 0, int img_height = 0, int border_size=0);
-	// adjust the rectangle bounds so it lies entirely within the image with the given size
-	template<typename ValT>
-	cv::Rect_<ValT> getBoundedRectangle(const cv::Rect_<ValT> &_in_rect, int img_width, int img_height,
-		int border_size=0);
 	//! draw the boundary of the image region represented by the polygon formed by the specified vertices
 	void drawRegion(cv::Mat &img, const cv::Mat &vertices, cv::Scalar col = cv::Scalar(0, 255, 0),
 		int line_thickness = 2, const char *label = nullptr, double font_size = 0.50,
 		bool show_corner_ids = false, bool show_label = false);
 	void drawGrid(cv::Mat &img, const PtsT &grid_pts, int res_x, int res_y,
-		cv::Scalar col = cv::Scalar(0, 255, 0), int thickness=1);
+		cv::Scalar col = cv::Scalar(0, 255, 0), int thickness = 1);
 	template<typename ImgValT, typename PatchValT>
-	void drawPatch(cv::Mat &img, const cv::Mat &patch, int n_channels=1, int start_x = 0, int start_y = 0);
+	void drawPatch(cv::Mat &img, const cv::Mat &patch, int n_channels = 1, int start_x = 0, int start_y = 0);
 	void writeCorners(FILE *out_fid, const cv::Mat &corners, int frame_id, bool write_header = false);
 
 	//! functions to handle tracking error computation
@@ -396,7 +416,7 @@ namespace utils{
 
 	cv::Mat readTrackerLocation(const std::string &file_path);
 	cv::Mat getFrameCorners(const cv::Mat &img, int borner_size = 1);
-	mtf::PtsT getFramePts(const cv::Mat &img, int borner_size=1);
+	mtf::PtsT getFramePts(const cv::Mat &img, int borner_size = 1);
 	cv::Point2d getCentroid(const cv::Mat &corners);
 	template<typename ScalarT>
 	inline void getCentroid(cv::Point_<ScalarT> &centroid,
@@ -405,10 +425,18 @@ namespace utils{
 			+ corners.at<double>(0, 2) + corners.at<double>(0, 3)) / 4.0;
 		centroid.y = (corners.at<double>(1, 0) + corners.at<double>(1, 1)
 			+ corners.at<double>(1, 2) + corners.at<double>(1, 3)) / 4.0;
-		
+
 	}
-	cv::Mat reshapePatch(const VectorXd &curr_patch, 
-		int img_height, int img_width, int n_channels=1);
+	inline void getCentroid(Vector2d &centroid,
+		const cv::Mat &corners){
+		centroid(0) = (corners.at<double>(0, 0) + corners.at<double>(0, 1)
+			+ corners.at<double>(0, 2) + corners.at<double>(0, 3)) / 4.0;
+		centroid(1) = (corners.at<double>(1, 0) + corners.at<double>(1, 1)
+			+ corners.at<double>(1, 2) + corners.at<double>(1, 3)) / 4.0;
+
+	}
+	cv::Mat reshapePatch(const VectorXd &curr_patch,
+		int img_height, int img_width, int n_channels = 1);
 }
 _MTF_END_NAMESPACE
 #endif

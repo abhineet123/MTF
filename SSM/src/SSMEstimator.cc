@@ -8,22 +8,29 @@
 #endif
 #include "opencv2/calib3d/calib3d.hpp"
 #include <iostream>
+#include <boost/random/random_device.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
+
 
 _MTF_BEGIN_NAMESPACE
 
 SSMEstimator::SSMEstimator(int _modelPoints, CvSize _modelSize,
-int _maxBasicSolutions) {
-	modelPoints = _modelPoints;
-	modelSize = _modelSize;
-	maxBasicSolutions = _maxBasicSolutions;
-	checkPartialSubsets = true;
-	rng = cvRNG(-1);
+int _maxBasicSolutions, bool _use_boost_rng):
+modelPoints(_modelPoints),
+modelSize(_modelSize),
+maxBasicSolutions(_maxBasicSolutions),
+checkPartialSubsets(true),
+use_boost_rng(_use_boost_rng){
+	boost::random_device seed_gen;     
+	boost_rng = BoostRNG(seed_gen());
+	cv_rng = cvRNG(seed_gen());
 }
 
 SSMEstimator::~SSMEstimator() {}
 
 void SSMEstimator::setSeed(int64 seed) {
-	rng = cvRNG(seed);
+	cv_rng = cvRNG(seed);
+	boost_rng.seed(seed);
 }
 
 
@@ -66,8 +73,8 @@ int cvRANSACUpdateNumIters(double p, double ep,
 }
 
 bool SSMEstimator::runRANSAC(const CvMat* m1, const CvMat* m2, CvMat* model,
-	CvMat* mask0, double reprojThreshold,
-	double confidence, int maxIters) {
+	CvMat* mask0, double reprojThreshold,double confidence, int maxIters,
+	int maxAttempts) {
 	bool result = false;
 	cv::Ptr<CvMat> mask = cvCloneMat(mask0);
 	cv::Ptr<CvMat> models, err, tmask;
@@ -96,7 +103,7 @@ bool SSMEstimator::runRANSAC(const CvMat* m1, const CvMat* m2, CvMat* model,
 	for(iter = 0; iter < niters; iter++) {
 		int i, goodCount, nmodels;
 		if(count > modelPoints) {
-			bool found = getSubset(m1, m2, ms1, ms2, 300);
+			bool found = getSubset(m1, m2, ms1, ms2, maxAttempts);
 			if(!found) {
 				if(iter == 0)
 					return false;
@@ -122,6 +129,8 @@ bool SSMEstimator::runRANSAC(const CvMat* m1, const CvMat* m2, CvMat* model,
 		}
 	}
 
+	//printf("SSMEstimator::runRANSAC :: iter: %d\n", iter);
+
 	if(maxGoodCount > 0) {
 		if(mask != mask0)
 			cvCopy(mask, mask0);
@@ -134,7 +143,7 @@ bool SSMEstimator::runRANSAC(const CvMat* m1, const CvMat* m2, CvMat* model,
 
 static CV_IMPLEMENT_QSORT(icvSortDistances, int, CV_LT)
 bool SSMEstimator::runLMeDS(const CvMat* m1, const CvMat* m2, CvMat* model,
-CvMat* mask, double confidence, int maxIters) {
+CvMat* mask, double confidence, int maxIters, int maxAttempts) {
 	const double outlierRatio = 0.45;
 	bool result = false;
 	cv::Ptr<CvMat> models;
@@ -168,7 +177,7 @@ CvMat* mask, double confidence, int maxIters) {
 	for(iter = 0; iter < niters; iter++) {
 		int i, nmodels;
 		if(count > modelPoints) {
-			bool found = getSubset(m1, m2, ms1, ms2, 300);
+			bool found = getSubset(m1, m2, ms1, ms2, maxAttempts);
 			if(!found) {
 				if(iter == 0)
 					return false;
@@ -195,6 +204,8 @@ CvMat* mask, double confidence, int maxIters) {
 		}
 	}
 
+	//printf("SSMEstimator::runLMeDS :: iter: %d\n", iter);
+
 	if(minMedian < DBL_MAX) {
 		sigma = 2.5 * 1.4826 * (1 + 5. / (count - modelPoints)) * sqrt(minMedian);
 		sigma = MAX(sigma, 0.001);
@@ -220,9 +231,11 @@ bool SSMEstimator::getSubset(const CvMat* m1, const CvMat* m2,
 	assert(CV_IS_MAT_CONT(m1->type & m2->type) && (elemSize % sizeof(int) == 0));
 	elemSize /= sizeof(int);
 
+	boost::random::uniform_int_distribution<int> uni(0, count-1);
+
 	for(; iters < maxAttempts; iters++) {
 		for(i = 0; i < modelPoints && iters < maxAttempts;) {
-			idx[i] = idx_i = cvRandInt(&rng) % count;
+			idx[i] = idx_i = use_boost_rng ? uni(boost_rng) : cvRandInt(&cv_rng) % count;
 			for(j = 0; j < i; j++)
 				if(idx_i == idx[j])
 					break;
@@ -284,8 +297,8 @@ bool SSMEstimator::checkSubset(const CvMat* m, int count) {
 	return i > i1;
 }
 
-HomographyEstimator::HomographyEstimator(int _modelPoints)
-	: SSMEstimator(_modelPoints, cvSize(3, 3), 1) {
+HomographyEstimator::HomographyEstimator(int _modelPoints, bool _use_boost_rng)
+	: SSMEstimator(_modelPoints, cvSize(3, 3), 1, _use_boost_rng) {
 	assert(_modelPoints >= 4);
 	checkPartialSubsets = false;
 }
@@ -420,8 +433,8 @@ bool HomographyEstimator::refine(const CvMat* m1, const CvMat* m2,
 	return true;
 }
 
-AffineEstimator::AffineEstimator(int _modelPoints)
-	: SSMEstimator(_modelPoints, cvSize(3, 2), 1) {
+AffineEstimator::AffineEstimator(int _modelPoints, bool _use_boost_rng)
+	: SSMEstimator(_modelPoints, cvSize(3, 2), 1, _use_boost_rng) {
 	assert(_modelPoints >= 3);
 	checkPartialSubsets = false;
 }
@@ -516,8 +529,8 @@ bool AffineEstimator::refine(const CvMat* m1, const CvMat* m2,
 	return true;
 }
 
-SimilitudeEstimator::SimilitudeEstimator(int _modelPoints)
-	: SSMEstimator(_modelPoints, cvSize(2, 2), 1) {
+SimilitudeEstimator::SimilitudeEstimator(int _modelPoints, bool _use_boost_rng)
+	: SSMEstimator(_modelPoints, cvSize(2, 2), 1, _use_boost_rng) {
 	assert(_modelPoints >= 2);
 	checkPartialSubsets = false;
 }
@@ -611,8 +624,8 @@ bool SimilitudeEstimator::refine(const CvMat* m1, const CvMat* m2,
 }
 
 
-IsometryEstimator::IsometryEstimator(int _modelPoints)
-	: SSMEstimator(_modelPoints, cvSize(3, 1), 1) {
+IsometryEstimator::IsometryEstimator(int _modelPoints, bool _use_boost_rng)
+	: SSMEstimator(_modelPoints, cvSize(3, 1), 1, _use_boost_rng) {
 	assert(_modelPoints >= 2);
 	checkPartialSubsets = false;
 }
@@ -706,8 +719,8 @@ bool IsometryEstimator::refine(const CvMat* m1, const CvMat* m2,
 }
 
 
-TranscalingEstimator::TranscalingEstimator(int _modelPoints)
-	: SSMEstimator(_modelPoints, cvSize(3, 1), 1) {
+TranscalingEstimator::TranscalingEstimator(int _modelPoints, bool _use_boost_rng)
+	: SSMEstimator(_modelPoints, cvSize(3, 1), 1, _use_boost_rng) {
 	assert(_modelPoints >= 2);
 	checkPartialSubsets = false;
 }
@@ -799,8 +812,8 @@ bool TranscalingEstimator::refine(const CvMat* m1, const CvMat* m2,
 	return true;
 }
 
-TranslationEstimator::TranslationEstimator(int _modelPoints)
-	: SSMEstimator(_modelPoints, cvSize(2, 1), 1) {
+TranslationEstimator::TranslationEstimator(int _modelPoints, bool _use_boost_rng)
+	: SSMEstimator(_modelPoints, cvSize(2, 1), 1, _use_boost_rng) {
 	assert(_modelPoints >= 1);
 	checkPartialSubsets = false;
 }
@@ -1158,13 +1171,14 @@ int estimateHomography(const CvMat* objectPoints, const CvMat* imagePoints,
 	if(!tempMask.empty())
 		cvSet(tempMask, cvScalarAll(1.));
 
-	HomographyEstimator estimator(params.n_model_pts);
+	HomographyEstimator estimator(params.n_model_pts, params.use_boost_rng);
 	int method = n_pts == params.n_model_pts ? 0 : params.method_cv;
 	if(method == CV_LMEDS)
-		result = estimator.runLMeDS(M, m, &matH, tempMask, params.confidence, params.max_iters);
+		result = estimator.runLMeDS(M, m, &matH, tempMask, params.confidence, 
+		params.max_iters, params.max_subset_attempts);
 	else if(method == CV_RANSAC)
 		result = estimator.runRANSAC(M, m, &matH, tempMask, params.ransac_reproj_thresh,
-		params.confidence, params.max_iters);
+		params.confidence, params.max_iters, params.max_subset_attempts);
 	else
 		result = estimator.runKernel(M, m, &matH) > 0;
 
@@ -1241,14 +1255,15 @@ int	estimateAffine(const CvMat* in_pts, const CvMat* out_pts,
 	if(!tempMask.empty())
 		cvSet(tempMask, cvScalarAll(1.));
 
-	AffineEstimator estimator(params.n_model_pts);
+	AffineEstimator estimator(params.n_model_pts, params.use_boost_rng);
 
 	int method = n_pts == params.n_model_pts ? 0 : params.method_cv;
 	if(method == CV_LMEDS)
-		result = estimator.runLMeDS(in_pts_hm, out_pts_hm, &matH, tempMask, params.confidence, params.max_iters);
+		result = estimator.runLMeDS(in_pts_hm, out_pts_hm, &matH, tempMask, params.confidence, 
+		params.max_iters, params.max_subset_attempts);
 	else if(method == CV_RANSAC)
 		result = estimator.runRANSAC(in_pts_hm, out_pts_hm, &matH, tempMask, params.ransac_reproj_thresh,
-		params.confidence, params.max_iters);
+		params.confidence, params.max_iters, params.max_subset_attempts);
 	else
 		result = estimator.runKernel(in_pts_hm, out_pts_hm, &matH) > 0;
 
@@ -1325,15 +1340,16 @@ int	estimateSimilitude(const CvMat* in_pts, const CvMat* out_pts,
 	if(!tempMask.empty())
 		cvSet(tempMask, cvScalarAll(1.));
 
-	SimilitudeEstimator estimator(params.n_model_pts);
+	SimilitudeEstimator estimator(params.n_model_pts, params.use_boost_rng);
 
 	int method = n_pts == params.n_model_pts ? 0 : params.method_cv;
 
 	if(method == CV_LMEDS)
-		result = estimator.runLMeDS(in_pts_hm, out_pts_hm, &matH, tempMask, params.confidence, params.max_iters);
+		result = estimator.runLMeDS(in_pts_hm, out_pts_hm, &matH, tempMask, params.confidence,
+		params.max_iters, params.max_subset_attempts);
 	else if(method == CV_RANSAC)
 		result = estimator.runRANSAC(in_pts_hm, out_pts_hm, &matH, tempMask, params.ransac_reproj_thresh,
-		params.confidence, params.max_iters);
+		params.confidence, params.max_iters, params.max_subset_attempts);
 	else
 		result = estimator.runKernel(in_pts_hm, out_pts_hm, &matH) > 0; 
 
@@ -1411,15 +1427,16 @@ int	estimateIsometry(const CvMat* in_pts, const CvMat* out_pts,
 	if(!tempMask.empty())
 		cvSet(tempMask, cvScalarAll(1.));
 
-	IsometryEstimator estimator(params.n_model_pts);
+	IsometryEstimator estimator(params.n_model_pts, params.use_boost_rng);
 
 	int method = n_pts == params.n_model_pts ? 0 : params.method_cv;
 
 	if(method == CV_LMEDS)
-		result = estimator.runLMeDS(in_pts_hm, out_pts_hm, &matH, tempMask, params.confidence, params.max_iters);
+		result = estimator.runLMeDS(in_pts_hm, out_pts_hm, &matH, tempMask, params.confidence,
+		params.max_iters, params.max_subset_attempts);
 	else if(method == CV_RANSAC)
 		result = estimator.runRANSAC(in_pts_hm, out_pts_hm, &matH, tempMask, params.ransac_reproj_thresh,
-		params.confidence, params.max_iters);
+		params.confidence, params.max_iters, params.max_subset_attempts);
 	else
 		result = estimator.runKernel(in_pts_hm, out_pts_hm, &matH) > 0;
 
@@ -1497,15 +1514,16 @@ int	estimateTranscaling(const CvMat* in_pts, const CvMat* out_pts,
 	if(!tempMask.empty())
 		cvSet(tempMask, cvScalarAll(1.));
 
-	TranscalingEstimator estimator(params.n_model_pts);
+	TranscalingEstimator estimator(params.n_model_pts, params.use_boost_rng);
 
 	int method = n_pts == params.n_model_pts ? 0 : params.method_cv;
 
 	if(method == CV_LMEDS)
-		result = estimator.runLMeDS(in_pts_hm, out_pts_hm, &matH, tempMask, params.confidence, params.max_iters);
+		result = estimator.runLMeDS(in_pts_hm, out_pts_hm, &matH, tempMask, params.confidence,
+		params.max_iters, params.max_subset_attempts);
 	else if(method == CV_RANSAC)
 		result = estimator.runRANSAC(in_pts_hm, out_pts_hm, &matH, tempMask, params.ransac_reproj_thresh,
-		params.confidence, params.max_iters);
+		params.confidence, params.max_iters, params.max_subset_attempts);
 	else
 		result = estimator.runKernel(in_pts_hm, out_pts_hm, &matH) > 0;
 
@@ -1582,15 +1600,16 @@ int	estimateTranslation(const CvMat* in_pts, const CvMat* out_pts,
 	if(!tempMask.empty())
 		cvSet(tempMask, cvScalarAll(1.));
 
-	TranslationEstimator estimator(params.n_model_pts);
+	TranslationEstimator estimator(params.n_model_pts, params.use_boost_rng);
 
 	int method = n_pts == params.n_model_pts ? 0 : params.method_cv;
 
 	if(method == CV_LMEDS)
-		result = estimator.runLMeDS(in_pts_hm, out_pts_hm, &matH, tempMask, params.confidence, params.max_iters);
+		result = estimator.runLMeDS(in_pts_hm, out_pts_hm, &matH, tempMask, params.confidence,
+		params.max_iters, params.max_subset_attempts);
 	else if(method == CV_RANSAC)
 		result = estimator.runRANSAC(in_pts_hm, out_pts_hm, &matH, tempMask, params.ransac_reproj_thresh,
-		params.confidence, params.max_iters);
+		params.confidence, params.max_iters, params.max_subset_attempts);
 	else
 		result = estimator.runKernel(in_pts_hm, out_pts_hm, &matH) > 0; 0;
 

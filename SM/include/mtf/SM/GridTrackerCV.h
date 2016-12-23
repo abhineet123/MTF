@@ -8,6 +8,8 @@
 #define GTCV_GRID_SIZE_Y 10
 #define GTCV_SEARCH_WINDOW_X 10
 #define GTCV_SEARCH_WINDOW_Y 10
+#define GTCV_RESET_AT_EACH_FRAME 1
+#define GTCV_PATCH_CENTROID_INSIDE 0
 #define GTCV_PYRAMID_LEVELS 0
 #define GTCV_USE_MIN_EIG_VALS 0
 #define GTCV_MIN_EIG_THRESH 1e-4
@@ -23,6 +25,8 @@ struct GridTrackerCVParams{
 
 	int grid_size_x, grid_size_y;
 	int search_window_x, search_window_y;
+	bool reset_at_each_frame;
+	bool patch_centroid_inside;
 
 	int pyramid_levels;
 	bool use_min_eig_vals;
@@ -39,17 +43,19 @@ struct GridTrackerCVParams{
 	GridTrackerCVParams(
 		int _grid_size_x, int _grid_size_y,
 		int _search_window_x, int _search_window_y,
+		bool reset_at_each_frame, bool _patch_centroid_inside,
 		int _pyramid_levels, bool _use_min_eig_vals,
 		double _min_eig_thresh, int _max_iters, 
 		double _epsilon,bool _show_trackers,
 		bool _debug_mode);
 	GridTrackerCVParams(const GridTrackerCVParams *params = nullptr);
-
+	
 	int getResX() const{ return resx; }
 	int getResY() const{ return resy; }
 
 private:
 	int resx, resy;
+	void updateRes();
 };
 
 template<class SSM>

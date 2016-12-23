@@ -18,12 +18,15 @@ struct SSMEstimatorParams{
 	double ransac_reproj_thresh;
 	int n_model_pts;
 	int max_iters;
+	int max_subset_attempts;
+	bool  use_boost_rng;
 	double confidence;
 	bool refine;
 	int lm_max_iters;
 	
-	SSMEstimatorParams(EstType _method, double _ransac_reproj_thresh, int _n_model_pts,
-		bool _refine, int _max_iters, double _confidence, int _lm_max_iters);
+	SSMEstimatorParams(EstType _method, double _ransac_reproj_thresh, 
+		int _n_model_pts, bool _refine, int _max_iters, int _max_subset_attempts,
+		bool  _use_boost_rng, double _confidence, int _lm_max_iters);
 	SSMEstimatorParams(const SSMEstimatorParams *params = nullptr);
 
 	void print() const;

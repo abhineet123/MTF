@@ -21,8 +21,8 @@ _MTF_BEGIN_NAMESPACE
 GridTrackerParams::GridTrackerParams(
 int _grid_size_x, int _grid_size_y,
 int _patch_size_x, int _patch_size_y,
-bool _init_at_each_frame,
-bool _dyn_patch_size, bool _use_tbb,
+bool _init_at_each_frame, bool _dyn_patch_size,
+bool _patch_centroid_inside, bool _use_tbb,
 int _max_iters, double _epsilon, bool _enable_pyr,
 bool _show_trackers, bool _show_tracker_edges,
 bool _debug_mode) :
@@ -30,8 +30,9 @@ grid_size_x(_grid_size_x),
 grid_size_y(_grid_size_y),
 patch_size_x(_patch_size_x),
 patch_size_y(_patch_size_y),
-init_at_each_frame(_init_at_each_frame),
+reset_at_each_frame(_init_at_each_frame),
 dyn_patch_size(_dyn_patch_size),
+patch_centroid_inside(_patch_centroid_inside),
 use_tbb(_use_tbb),
 max_iters(_max_iters),
 epsilon(_epsilon),
@@ -39,10 +40,7 @@ enable_pyr(_enable_pyr),
 show_trackers(_show_trackers),
 show_tracker_edges(_show_tracker_edges),
 debug_mode(_debug_mode){
-	//resx = dyn_patch_size ? grid_size_x + 1 : grid_size_x;
-	//resy = dyn_patch_size ? grid_size_y + 1 : grid_size_y;
-	resx = grid_size_x + 1;
-	resy = grid_size_y + 1;
+	updateRes();
 }
 
 GridTrackerParams::GridTrackerParams(const GridTrackerParams *params) :
@@ -50,8 +48,9 @@ grid_size_x(GT_GRID_SIZE_X),
 grid_size_y(GT_GRID_SIZE_Y),
 patch_size_x(GT_PATCH_SIZE_X),
 patch_size_y(GT_PATCH_SIZE_Y),
-init_at_each_frame(GT_INIT_AT_EACH_FRAME),
+reset_at_each_frame(GT_RESET_AT_EACH_FRAME),
 dyn_patch_size(GT_DYN_PATCH_SIZE),
+patch_centroid_inside(GT_PATCH_CENTROID_INSIDE),
 use_tbb(GT_USE_TBB),
 max_iters(GT_MAX_ITERS),
 epsilon(GT_EPSILON),
@@ -64,8 +63,9 @@ debug_mode(GT_DEBUG_MODE){
 		grid_size_y = params->grid_size_y;
 		patch_size_x = params->patch_size_x;
 		patch_size_y = params->patch_size_y;
-		init_at_each_frame = params->init_at_each_frame;
+		reset_at_each_frame = params->reset_at_each_frame;
 		dyn_patch_size = params->dyn_patch_size;
+		patch_centroid_inside = params->patch_centroid_inside;
 		use_tbb = params->use_tbb;
 		max_iters = params->max_iters;
 		epsilon = params->epsilon;
@@ -74,11 +74,18 @@ debug_mode(GT_DEBUG_MODE){
 		show_tracker_edges = params->show_tracker_edges;
 		debug_mode = params->debug_mode;
 	}
-	//resx = dyn_patch_size ? grid_size_x + 1 : grid_size_x;
-	//resy = dyn_patch_size ? grid_size_y + 1 : grid_size_y;
-	resx = grid_size_x + 1;
-	resy = grid_size_y + 1;
+	updateRes();
 }
+void GridTrackerParams::updateRes(){
+	if(dyn_patch_size || patch_centroid_inside){
+		resx = grid_size_x + 1;
+		resy = grid_size_y + 1;
+	} else{
+		resx = grid_size_x;
+		resy = grid_size_y;
+	}
+}
+
 template<class SSM>
 GridTracker<SSM>::GridTracker(const vector<TrackerBase*> _trackers,
 	const ParamType *grid_params, const EstimatorParams *_est_params,
@@ -89,7 +96,8 @@ GridTracker<SSM>::GridTracker(const vector<TrackerBase*> _trackers,
 	printf("Using Grid tracker with:\n");
 	printf("grid_size: %d x %d\n", params.grid_size_x, params.grid_size_y);
 	printf("patch_size: %d x %d\n", params.patch_size_x, params.patch_size_y);
-	printf("init_at_each_frame: %d\n", params.init_at_each_frame);
+	printf("reset_at_each_frame: %d\n", params.reset_at_each_frame);
+	printf("patch_centroid_inside: %d\n", params.patch_centroid_inside);
 	printf("use_tbb: %d\n", params.use_tbb);
 	printf("max_iters: %d\n", params.max_iters);
 	printf("epsilon: %f\n", params.epsilon);
@@ -115,6 +123,9 @@ GridTracker<SSM>::GridTracker(const vector<TrackerBase*> _trackers,
 			cv::format("GridTrackerCV: SSM has invalid sampling resolution: %d x %d",
 			ssm.getResX(), ssm.getResY()));
 	}
+
+	reinit_at_each_frame = params.reset_at_each_frame == 1;
+
 
 	int sub_regions_x = params.grid_size_x + 1, sub_regions_y = params.grid_size_y + 1;
 	_linear_idx.resize(sub_regions_y, sub_regions_x);
@@ -204,7 +215,7 @@ void GridTracker<SSM>::setImage(const cv::Mat &img) {
 template<class SSM>
 void GridTracker<SSM>::initialize(const cv::Mat &corners) {
 	ssm.initialize(corners);
-	initTrackers();
+	resetTrackers(true);
 	ssm.getCorners(cv_corners_mat);
 	if(params.show_trackers){ showTrackers(); }
 }
@@ -221,7 +232,7 @@ void GridTracker<SSM>::update() {
 		trackers[tracker_id]->update();
 		utils::getCentroid(curr_pts[tracker_id], trackers[tracker_id]->getRegion());
 		//patch_corners = trackers[tracker_id]->getRegion();
-		
+
 	}
 #ifdef ENABLE_TBB
 		});
@@ -230,9 +241,8 @@ void GridTracker<SSM>::update() {
 		Matrix24d opt_warped_corners;
 		ssm.applyWarpToCorners(opt_warped_corners, ssm.getCorners(), ssm_update);
 		ssm.setCorners(opt_warped_corners);
-
-		if(params.init_at_each_frame){
-			initTrackers();
+		if(params.reset_at_each_frame){
+			resetTrackers(reinit_at_each_frame);
 		} else {
 			for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++){
 				prev_pts[tracker_id].x = curr_pts[tracker_id].x;
@@ -245,37 +255,19 @@ void GridTracker<SSM>::update() {
 template<class SSM>
 void GridTracker<SSM>::setRegion(const cv::Mat& corners) {
 	ssm.setCorners(corners);
-	if(params.init_at_each_frame){
-		initTrackers();
-	} else {
-		if(params.dyn_patch_size){
-			for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++){
-				int row_id = tracker_id / params.grid_size_x;
-				int col_id = tracker_id % params.grid_size_x;
-				prev_pts[tracker_id].x = (ssm.getPts()(0, _linear_idx(row_id, col_id)) + ssm.getPts()(0, _linear_idx(row_id, col_id + 1))
-					+ ssm.getPts()(0, _linear_idx(row_id + 1, col_id + 1)) + ssm.getPts()(0, _linear_idx(row_id + 1, col_id))) / 4.0;
-				prev_pts[tracker_id].y = (ssm.getPts()(1, _linear_idx(row_id, col_id)) + ssm.getPts()(1, _linear_idx(row_id, col_id + 1))
-					+ ssm.getPts()(1, _linear_idx(row_id + 1, col_id + 1)) + ssm.getPts()(1, _linear_idx(row_id + 1, col_id))) / 4.0;
-			}
-		} else{
-			for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++){
-				prev_pts[tracker_id].x = ssm.getPts()(0, tracker_id);
-				prev_pts[tracker_id].y = ssm.getPts()(1, tracker_id);
-			}
-		}
-	}
+	resetTrackers(reinit_at_each_frame);
 	ssm.getCorners(cv_corners_mat);
 }
 
 template<class SSM>
-void GridTracker<SSM>::initTrackers(){
+void GridTracker<SSM>::resetTrackers(bool reinit){
 #ifdef ENABLE_TBB
 	parallel_for(tbb::blocked_range<size_t>(0, n_trackers),
 		[&](const tbb::blocked_range<size_t>& r){
 		for(size_t tracker_id = r.begin(); tracker_id != r.end(); ++tracker_id){
 #else
 #pragma omp parallel for schedule(GRID_OMP_SCHD)
-	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++){
+	for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
 
 #endif
 		int row_id = tracker_id / params.grid_size_x;
@@ -293,34 +285,25 @@ void GridTracker<SSM>::initTrackers(){
 		patch_corners.at<double>(0, 3) = ssm.getPts()(0, _linear_idx(row_id + 1, col_id));
 		patch_corners.at<double>(1, 3) = ssm.getPts()(1, _linear_idx(row_id + 1, col_id));
 
-		if(params.dyn_patch_size){
-			trackers[tracker_id]->initialize(patch_corners);
-			//patch_corners = trackers[tracker_id]->getRegion();
-			utils::getCentroid(prev_pts[tracker_id], trackers[tracker_id]->getRegion());
-		} else{
+		if(!params.dyn_patch_size){
 			Vector2d patch_centroid = ssm.getPts().col(tracker_id);
-			patch_centroid(0) = (patch_corners.at<double>(0, 0) + patch_corners.at<double>(0, 1)
-				+ patch_corners.at<double>(0, 2) + patch_corners.at<double>(0, 3)) / 4.0;
-			patch_centroid(1) = (patch_corners.at<double>(1, 0) + patch_corners.at<double>(1, 1)
-				+ patch_corners.at<double>(1, 2) + patch_corners.at<double>(1, 3)) / 4.0;
-			double min_x = patch_centroid(0) - centrod_dist_x;
-			double max_x = patch_centroid(0) + centrod_dist_x;
-			double min_y = patch_centroid(1) - centrod_dist_y;
-			double max_y = patch_centroid(1) + centrod_dist_y;
-
-			patch_corners.at<double>(0, 0) = patch_corners.at<double>(0, 3) = min_x;
-			patch_corners.at<double>(0, 1) = patch_corners.at<double>(0, 2) = max_x;
-			patch_corners.at<double>(1, 0) = patch_corners.at<double>(1, 1) = min_y;
-			patch_corners.at<double>(1, 2) = patch_corners.at<double>(1, 3) = max_y;
-
-			trackers[tracker_id]->initialize(patch_corners);
-
-			prev_pts[tracker_id].x = patch_centroid(0);
-			prev_pts[tracker_id].y = patch_centroid(1);
+			if(params.patch_centroid_inside){
+				utils::getCentroid(patch_centroid, patch_corners);
+			}
+			patch_corners = utils::Corners(cv::Rect_<double>(
+				patch_centroid(0) - centrod_dist_x, patch_centroid(1) - centrod_dist_y,
+				params.patch_size_x, params.patch_size_y)).mat();
 		}
+		if(reinit){
+			trackers[tracker_id]->initialize(patch_corners);
+		} else{
+			trackers[tracker_id]->setRegion(patch_corners);
+		}
+		//patch_corners = trackers[tracker_id]->getRegion();
+		utils::getCentroid(prev_pts[tracker_id], trackers[tracker_id]->getRegion());
 	}
 #ifdef ENABLE_TBB
-	});
+		});
 #endif		
 }
 

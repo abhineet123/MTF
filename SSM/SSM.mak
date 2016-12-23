@@ -16,8 +16,8 @@ MTF_INCLUDE_DIRS += ${SSM_INCLUDE_DIR}
 
 STATE_SPACE_MODELS = Spline LieHomography CornerHomography Homography SL3 Affine Similitude Isometry Transcaling Translation
 SSM_MODULES = ProjectiveBase SSMEstimator SSMEstimatorParams 
-STATE_SPACE_OBJS = $(addprefix ${BUILD_DIR}/,$(addsuffix .o, ${STATE_SPACE_MODELS} ${SSM_MODULES}))	
-STATE_SPACE_HEADERS = $(addprefix ${SSM_HEADER_DIR}/, $(addsuffix .h, ${STATE_SPACE_MODELS} ${SSM_MODULES}))
+STATE_SPACE_OBJS = $(addprefix ${BUILD_DIR}/,$(addsuffix .o, ${SSM_MODULES} ${STATE_SPACE_MODELS}))	
+STATE_SPACE_HEADERS = $(addprefix ${SSM_HEADER_DIR}/, $(addsuffix .h, ${SSM_MODULES} ${STATE_SPACE_MODELS}))
 STATE_SPACE_HEADERS += ${SSM_BASE_HEADERS}
 
 MTF_HEADERS += ${STATE_SPACE_HEADERS}

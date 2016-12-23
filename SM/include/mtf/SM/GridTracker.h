@@ -9,9 +9,10 @@
 #define GT_GRID_SIZE_Y 10
 #define GT_PATCH_SIZE_X 10
 #define GT_PATCH_SIZE_Y 10
-#define GT_INIT_AT_EACH_FRAME 1
+#define GT_RESET_AT_EACH_FRAME 2
 #define GT_DYN_PATCH_SIZE 0
-#define GT_USE_TBB 1
+#define GT_PATCH_CENTROID_INSIDE true
+#define GT_USE_TBB true
 #define GT_MAX_ITERS 1
 #define GT_EPSILON 0.01
 #define GT_ENABLE_PYR 0
@@ -26,8 +27,10 @@ struct GridTrackerParams{
 	int grid_size_x, grid_size_y;
 	int patch_size_x, patch_size_y;
 
-	bool init_at_each_frame;
+	int reset_at_each_frame;
 	bool dyn_patch_size;
+
+	bool patch_centroid_inside;
 
 	bool use_tbb;
 
@@ -44,8 +47,8 @@ struct GridTrackerParams{
 	GridTrackerParams(
 		int _grid_size_x, int _grid_size_y,
 		int _patch_size_x, int _patch_size_y,
-		bool _init_at_each_frame,
-		bool _dyn_patch_size, bool _use_tbb,
+		bool _init_at_each_frame, bool _dyn_patch_size, 
+		bool _patch_centroid_inside, bool _use_tbb,
 		int _max_iters, double _epsilon, bool _enable_pyr,
 		bool _show_trackers, bool _show_tracker_edges,
 		bool _debug_mode);
@@ -56,6 +59,7 @@ struct GridTrackerParams{
 
 private:
 	int resx, resy;
+	void updateRes();
 };
 
 template<class SSM>
@@ -104,8 +108,10 @@ private:
 	MatrixXi _linear_idx;
 	int pause_seq;
 
+	bool reinit_at_each_frame;
+
 	~GridTracker(){}
-	void initTrackers();
+	void resetTrackers(bool reinit=true);
 	void showTrackers();
 
 };

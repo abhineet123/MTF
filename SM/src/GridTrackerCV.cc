@@ -11,6 +11,7 @@ _MTF_BEGIN_NAMESPACE
 GridTrackerCVParams::GridTrackerCVParams(
 int _grid_size_x, int _grid_size_y,
 int _search_window_x, int _search_window_y,
+bool _reset_at_each_frame, bool _patch_centroid_inside,
 int _pyramid_levels, bool _use_min_eig_vals,
 double _min_eig_thresh, int _max_iters, 
 double _epsilon, bool _show_trackers, 
@@ -19,6 +20,8 @@ grid_size_x(_grid_size_x),
 grid_size_y(_grid_size_y),
 search_window_x(_search_window_x),
 search_window_y(_search_window_y),
+reset_at_each_frame(_reset_at_each_frame),
+patch_centroid_inside(_patch_centroid_inside),
 pyramid_levels(_pyramid_levels),
 use_min_eig_vals(_use_min_eig_vals),
 min_eig_thresh(_min_eig_thresh),
@@ -26,14 +29,16 @@ max_iters(_max_iters),
 epsilon(_epsilon),
 show_trackers(_show_trackers),
 debug_mode(_debug_mode){
-	resx = grid_size_x;
-	resy = grid_size_y;
+	updateRes();
+
 }
 GridTrackerCVParams::GridTrackerCVParams(const GridTrackerCVParams *params) :
 grid_size_x(GTCV_GRID_SIZE_X),
 grid_size_y(GTCV_GRID_SIZE_Y),
 search_window_x(GTCV_SEARCH_WINDOW_X),
 search_window_y(GTCV_SEARCH_WINDOW_Y),
+reset_at_each_frame(GTCV_RESET_AT_EACH_FRAME),
+patch_centroid_inside(GTCV_PATCH_CENTROID_INSIDE),
 pyramid_levels(GTCV_PYRAMID_LEVELS),
 use_min_eig_vals(GTCV_USE_MIN_EIG_VALS),
 min_eig_thresh(GTCV_MIN_EIG_THRESH),
@@ -45,6 +50,8 @@ debug_mode(GTCV_DEBUG_MODE){
 		grid_size_y = params->grid_size_y;
 		search_window_x = params->search_window_x;
 		search_window_y = params->search_window_y;
+		reset_at_each_frame = params->reset_at_each_frame;
+		patch_centroid_inside = params->patch_centroid_inside;
 		pyramid_levels = params->pyramid_levels;
 		use_min_eig_vals = params->use_min_eig_vals;
 		min_eig_thresh = params->min_eig_thresh;
@@ -53,8 +60,16 @@ debug_mode(GTCV_DEBUG_MODE){
 		show_trackers = params->show_trackers;
 		debug_mode = params->debug_mode;
 	}
-	resx = grid_size_x;
-	resy = grid_size_y;
+	updateRes();
+}
+void GridTrackerCVParams::updateRes(){
+	if(patch_centroid_inside){
+		resx = grid_size_x + 1;
+		resy = grid_size_y + 1;
+	} else{
+		resx = grid_size_x;
+		resy = grid_size_y;
+	}
 }
 
 template<class SSM>
@@ -65,6 +80,8 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 	printf("Using OpenCV Grid tracker with:\n");
 	printf("grid_size: %d x %d\n", params.grid_size_x, params.grid_size_y);
 	printf("search window size: %d x %d\n", params.search_window_x, params.search_window_y);
+	printf("reset_at_each_frame: %d\n", params.reset_at_each_frame);
+	printf("patch_centroid_inside: %d\n", params.patch_centroid_inside);
 	printf("pyramid_levels: %d\n", params.pyramid_levels);
 	printf("use_min_eig_vals: %d\n", params.use_min_eig_vals);
 	printf("min_eig_thresh: %f\n", params.min_eig_thresh);
@@ -110,6 +127,13 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 		lk_flags = 0;
 	}
 
+	int sub_regions_x = params.grid_size_x + 1, sub_regions_y = params.grid_size_y + 1;
+	_linear_idx.resize(sub_regions_y, sub_regions_x);
+	for(int idy = 0; idy < sub_regions_y; idy++){
+		for(int idx = 0; idx < sub_regions_x; idx++){
+			_linear_idx(idy, idx) = idy * sub_regions_x + idx;
+		}
+	}
 	if(params.show_trackers){
 		patch_win_name = "Patch Trackers";
 		cv::namedWindow(patch_win_name);
@@ -146,11 +170,39 @@ void GridTrackerCV<SSM>::update() {
 	Matrix24d opt_warped_corners;
 	ssm.applyWarpToCorners(opt_warped_corners, ssm.getCorners(), ssm_update);
 	ssm.setCorners(opt_warped_corners);
+	
+	if(params.reset_at_each_frame){
+		const PtsT &opt_warped_pts = ssm.getPts();
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+			if(params.patch_centroid_inside){
+				int row_id = pt_id / params.grid_size_x;
+				int col_id = pt_id % params.grid_size_x;
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		prev_pts[pt_id].x = curr_pts[pt_id].x;
-		prev_pts[pt_id].y = curr_pts[pt_id].y;
+				patch_corners.at<double>(0, 0) = ssm.getPts()(0, _linear_idx(row_id, col_id));
+				patch_corners.at<double>(1, 0) = ssm.getPts()(1, _linear_idx(row_id, col_id));
+
+				patch_corners.at<double>(0, 1) = ssm.getPts()(0, _linear_idx(row_id, col_id + 1));
+				patch_corners.at<double>(1, 1) = ssm.getPts()(1, _linear_idx(row_id, col_id + 1));
+
+				patch_corners.at<double>(0, 2) = ssm.getPts()(0, _linear_idx(row_id + 1, col_id + 1));
+				patch_corners.at<double>(1, 2) = ssm.getPts()(1, _linear_idx(row_id + 1, col_id + 1));
+
+				patch_corners.at<double>(0, 3) = ssm.getPts()(0, _linear_idx(row_id + 1, col_id));
+				patch_corners.at<double>(1, 3) = ssm.getPts()(1, _linear_idx(row_id + 1, col_id));
+
+				utils::getCentroid(prev_pts[pt_id], patch_corners);
+			} else{
+				prev_pts[pt_id].x = ssm.getPts()(0, pt_id);
+				prev_pts[pt_id].y = ssm.getPts()(1, pt_id);
+			}
+		}
+	} else{
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+			prev_pts[pt_id].x = curr_pts[pt_id].x;
+			prev_pts[pt_id].y = curr_pts[pt_id].y;
+		}
 	}
+
 	ssm.getCorners(cv_corners_mat);
 	curr_img.copyTo(prev_img);
 
@@ -172,8 +224,27 @@ template<class SSM>
 void GridTrackerCV<SSM>::setRegion(const cv::Mat& corners) {
 	ssm.setCorners(corners);
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		prev_pts[pt_id].x = ssm.getPts()(0, pt_id);
-		prev_pts[pt_id].y = ssm.getPts()(1, pt_id);
+		if(params.patch_centroid_inside){
+			int row_id = pt_id / params.grid_size_x;
+			int col_id = pt_id % params.grid_size_x;
+
+			patch_corners.at<double>(0, 0) = ssm.getPts()(0, _linear_idx(row_id, col_id));
+			patch_corners.at<double>(1, 0) = ssm.getPts()(1, _linear_idx(row_id, col_id));
+
+			patch_corners.at<double>(0, 1) = ssm.getPts()(0, _linear_idx(row_id, col_id + 1));
+			patch_corners.at<double>(1, 1) = ssm.getPts()(1, _linear_idx(row_id, col_id + 1));
+
+			patch_corners.at<double>(0, 2) = ssm.getPts()(0, _linear_idx(row_id + 1, col_id + 1));
+			patch_corners.at<double>(1, 2) = ssm.getPts()(1, _linear_idx(row_id + 1, col_id + 1));
+
+			patch_corners.at<double>(0, 3) = ssm.getPts()(0, _linear_idx(row_id + 1, col_id));
+			patch_corners.at<double>(1, 3) = ssm.getPts()(1, _linear_idx(row_id + 1, col_id));
+
+			utils::getCentroid(prev_pts[pt_id], patch_corners);
+		} else{
+			prev_pts[pt_id].x = ssm.getPts()(0, pt_id);
+			prev_pts[pt_id].y = ssm.getPts()(1, pt_id);
+		}
 	}
 	ssm.getCorners(cv_corners_mat);
 }
