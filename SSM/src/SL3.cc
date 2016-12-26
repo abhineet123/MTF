@@ -194,7 +194,7 @@ void SL3::compositionalUpdate(const VectorXd& state_update){
 void SL3::getWarpFromState(Matrix3d &warp_mat,
 	const VectorXd& ssm_state){
 	validate_ssm_state(ssm_state);
-	assert(ssm_state.size() == state_size);
+	assert(ssm_state.size() == 8);
 	if(!ssm_state.allFinite() || is_unbounded(ssm_state)){
 		utils::printMatrix(ssm_state.transpose(), "ssm_state");
 		throw mtf::utils::InvalidTrackerState("SL3::getWarpFromState::Invalid state provided");
@@ -262,7 +262,7 @@ void SL3::getStateFromLieAlgMat(VectorXd &ssm_state,
 
 void SL3::initializeSampler(const VectorXd &state_sigma, 
 	const VectorXd &state_mean){
-	if(state_sigma.size() != state_size){
+	if(state_sigma.size() != 8){
 		throw std::invalid_argument(
 			cv::format("SL3::initializeSampler :: SSM sigma has invalid size: %d\n",
 			state_sigma.size()));
@@ -276,11 +276,10 @@ void SL3::initializeSampler(const VectorXd &state_sigma,
 	rand_dist.resize(1);
 
 	boost::random_device r;
-	for(int state_id = 0; state_id < 1; ++state_id) {
-		boost::random::seed_seq seed{ r(), r(), r(), r(), r(), r(), r(), r() };
-		rand_gen[state_id] = SampleGenT(seed);
-		rand_dist[state_id] = SampleDistT(0, 1);
-	}
+	boost::random::seed_seq seed{ r(), r(), r(), r(), r(), r(), r(), r() };
+	rand_gen[0] = SampleGenT(seed);
+	rand_dist[0] = SampleDistT(0, 1);
+
 	if(params.debug_mode){
 		utils::printMatrixToFile(covariance_mat, "covariance_mat", "log/sl3.txt");
 	}
@@ -300,8 +299,8 @@ VectorXd SL3::getSamplerSigma(){
 
 void SL3::generatePerturbation(VectorXd &perturbation){
 	assert(perturbation.size() == state_size);
-	VectorXd rand_vec(state_size);
-	for(int state_id = 0; state_id < state_size; state_id++){
+	Vector8d rand_vec;
+	for(int state_id = 0; state_id < 8; state_id++){
 		rand_vec(state_id) = rand_dist[0](rand_gen[0]);
 	}
 	perturbation = covariance_mat*rand_vec;
