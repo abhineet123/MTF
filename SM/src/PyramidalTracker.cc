@@ -6,8 +6,8 @@
 _MTF_BEGIN_NAMESPACE
 
 PyramidalTracker::PyramidalTracker(const vector<TrackerBase*> _trackers,
- const ParamType *parl_params) : CompositeBase(_trackers),
-	params(parl_params), external_img_pyramid(false){
+const ParamType *parl_params) : CompositeBase(_trackers),
+params(parl_params), external_img_pyramid(false){
 	if(n_trackers != params.no_of_levels){
 		throw std::domain_error(
 			cv::format("PyramidalTracker :: no. of trackers: %d does not match the no. of levels in the pyramid: %d",
@@ -35,7 +35,7 @@ PyramidalTracker::PyramidalTracker(const vector<TrackerBase*> _trackers,
 	img_sizes.resize(params.no_of_levels);
 	overall_scale_factor = pow(params.scale_factor, params.no_of_levels - 1);
 }
-void PyramidalTracker::setImage(const cv::Mat &img){	
+void PyramidalTracker::setImage(const cv::Mat &img){
 	if(img_pyramid[0].empty()){
 		img_sizes[0] = cv::Size(img.cols, img.rows);
 		printf("Level %d: size: %dx%d\n",
@@ -62,7 +62,7 @@ void PyramidalTracker::setImagePyramid(const vector<cv::Mat> &_img_pyramid){
 	if(_img_pyramid.size() != params.no_of_levels){
 		throw std::invalid_argument(
 			cv::format(
-			"PyramidalTracker::setImagePyramid :: Mismatch between the no. of levels in the provided pyramid: %d and the expected: %d", 
+			"PyramidalTracker::setImagePyramid :: Mismatch between the no. of levels in the provided pyramid: %d and the expected: %d",
 			_img_pyramid.size(), params.no_of_levels)
 			);
 	}
@@ -81,13 +81,13 @@ void PyramidalTracker::updateImagePyramid(){
 		} else{
 			cv::resize(img_pyramid[pyr_level - 1], img_pyramid[pyr_level], img_sizes[pyr_level]);
 			cv::GaussianBlur(img_pyramid[pyr_level], img_pyramid[pyr_level], cv::Size(5, 5), 3);
-		}		
+		}
 	}
 }
 void PyramidalTracker::initialize(const cv::Mat &corners)  {
 	if(!external_img_pyramid){
 		updateImagePyramid();
-	}	
+	}
 	trackers[0]->initialize(corners);
 	cv::Mat scaled_corners = corners.clone();
 	for(int pyr_level = 1; pyr_level < params.no_of_levels; ++pyr_level){
@@ -105,15 +105,15 @@ void PyramidalTracker::update()  {
 	if(!external_img_pyramid){
 		updateImagePyramid();
 	}
-	trackers[n_trackers-1]->update();
-	for(int tracker_id = n_trackers-2; tracker_id >= 0; --tracker_id) {
+	trackers[n_trackers - 1]->update();
+	for(int tracker_id = n_trackers - 2; tracker_id >= 0; --tracker_id) {
 		cv::Mat scaled_up_corners = trackers[tracker_id + 1]->getRegion() / params.scale_factor;
 		trackers[tracker_id]->setRegion(scaled_up_corners);
 		trackers[tracker_id]->update();
 	}
 	cv::Mat scaled_down_corners = trackers[0]->getRegion() * overall_scale_factor;
 	trackers[n_trackers - 1]->setRegion(scaled_down_corners);
-	if(params.show_levels){	showImagePyramid(); }
+	if(params.show_levels){ showImagePyramid(); }
 }
 void PyramidalTracker::setRegion(const cv::Mat& corners)   {
 	trackers[0]->setRegion(corners);

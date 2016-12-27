@@ -777,8 +777,14 @@ For Pyramidal Tracker:
 			ration between the image sizes in consecutive levels of the pyramid;
 			for instance if the main image is 800x600 and there are 3 levels in the pyramid, a scale factor of 0.5 means that level 2 and 3 have image sizes of 400x300 and 200x150 respectively;
 			
+	 Parameter:	'pyr_scale_res'
+		Description:
+			scale the sampling resolution for the tracker at each level of the pyramid;
+	 
 	 Parameter:	'pyr_show_levels'
 		Description:
-			show the image for each level in the pyramid annotated with th tracker's location;
+			show the image for each level in the pyramid annotated with th tracker's location;	 
+			
+			
 	 
 	

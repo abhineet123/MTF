@@ -503,18 +503,34 @@ TrackerBase *getTracker(const char *sm_type,
 		PyramidalParams pyr_params(pyr_no_of_levels, pyr_scale_factor, pyr_show_levels);
 		vector<SMType*> trackers;
 		trackers.resize(pyr_params.no_of_levels);
+		if(pyr_scale_res){
+			printf("Sampling resolution scaling for pyramid levels is enabled");
+		}
+		int resx_back = resx, resy_back = resy;
+		typename AMType::ParamType _am_params(am_params);
+		typename SSMType::ParamType _ssm_params(ssm_params);
 		for(int tracker_id = 0; tracker_id < pyr_params.no_of_levels; tracker_id++) {
 			if(enable_nt){
 				printf("PyramidalSM cannot be used with NT search methods\n");
 				return nullptr;
 			} else{
-				trackers[tracker_id] = dynamic_cast<SMType*>(getTracker<AMType, SSMType>(pyr_sm.c_str(), am_params, ssm_params));
+				trackers[tracker_id] = dynamic_cast<SMType*>(getTracker<AMType, SSMType>(pyr_sm.c_str(), &_am_params, &_ssm_params));
 			}
 			if(!trackers[tracker_id]){
 				printf("Search method provided: %s is not compatible with PyramidalSM\n", pyr_sm.c_str());
 				return nullptr;
 			}
+			if(pyr_scale_res){
+				resx *= pyr_scale_factor;
+				resy *= pyr_scale_factor;
+				_am_params.resx = resx;
+				_am_params.resy = resy;
+				_ssm_params.resx = resx;
+				_ssm_params.resy = resy;
+			}
 		}
+		resx = resx_back;
+		resy = resy_back;
 		return new PyramidalSM<AMType, SSMType>(trackers, &pyr_params);
 	}
 	//! hierarchical SSM tracker
@@ -640,15 +656,27 @@ TrackerBase *getTracker(const char *sm_type,
 		PyramidalParams pyr_params(pyr_no_of_levels, pyr_scale_factor, pyr_show_levels);
 		vector<TrackerBase*> trackers;
 		trackers.resize(pyr_params.no_of_levels);
-		for(int tracker_id = 0; tracker_id < pyr_params.no_of_levels; tracker_id++) {
-			if(enable_nt){
-				trackers[tracker_id] = getTracker(pyr_sm.c_str(), mtf_am, mtf_ssm, mtf_ilm);
-			} else{
-				trackers[tracker_id] = getTracker<AMType, SSMType>(pyr_sm.c_str(), am_params, ssm_params);
-			}
-			if(!trackers[tracker_id]){ return nullptr; }
-
+		if(pyr_scale_res){
+			printf("Sampling resolution scaling for pyramid levels is enabled");
 		}
+		int resx_back = resx, resy_back = resy;
+		typename AMType::ParamType _am_params(am_params);
+		typename SSMType::ParamType _ssm_params(ssm_params);
+		for(int tracker_id = 0; tracker_id < pyr_params.no_of_levels; ++tracker_id) {
+			trackers[tracker_id] = enable_nt ? getTracker(pyr_sm.c_str(), mtf_am, mtf_ssm, mtf_ilm) :
+				getTracker<AMType, SSMType>(pyr_sm.c_str(), &_am_params, &_ssm_params);
+			if(!trackers[tracker_id]){ return nullptr; }
+			if(pyr_scale_res){
+				resx *= pyr_scale_factor;
+				resy *= pyr_scale_factor;
+				_am_params.resx = resx;
+				_am_params.resy = resy;
+				_ssm_params.resx = resx;
+				_ssm_params.resy = resy;
+			}
+		}
+		resx = resx_back;
+		resy = resy_back;
 		return new PyramidalTracker(trackers, &pyr_params);
 	} else if(!strcmp(sm_type, "line")){
 		vector<TrackerBase*> trackers;
@@ -700,10 +728,11 @@ TrackerBase *getTracker(const char *sm_type,
 #ifndef DISABLE_NN
 #ifndef DISABLE_GRID_FEAT
 		else if(!strcmp(grid_sm, "feat")){
+			bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
 			GridTrackerFeatParams grid_params(
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
 				grid_reset_at_each_frame, grid_detect_keypoints, grid_rebuild_index,
-				max_iters, epsilon, !strcmp(grid_sm, "pyr"),
+				max_iters, epsilon, enable_pyr,
 				grid_show_trackers, grid_show_tracker_edges, debug_mode);
 			SIFTParams sift_params(sift_n_features, sift_n_octave_layers,
 				sift_contrast_thresh, sift_edge_thresh, sift_sigma);
@@ -730,11 +759,11 @@ TrackerBase *getTracker(const char *sm_type,
 			}
 			resx = resx_back;
 			resy = resy_back;
-			bool is_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
+			bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
 			GridTrackerParams grid_params(
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
 				grid_reset_at_each_frame, grid_dyn_patch_size, grid_patch_centroid_inside,
-				grid_use_tbb, max_iters, epsilon, is_pyr, grid_show_trackers,
+				grid_use_tbb, max_iters, epsilon, enable_pyr, grid_show_trackers,
 				grid_show_tracker_edges, debug_mode);
 			typename SSMType::ParamType _ssm_params(ssm_params);
 			_ssm_params.resx = grid_params.getResX();

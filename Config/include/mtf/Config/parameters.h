@@ -541,7 +541,8 @@ namespace mtf{
 		//! Pyramidal Tracker
 		std::string pyr_sm = "fc";
 		int pyr_no_of_levels = 3;
-		double pyr_scale_factor = 0.65;
+		double pyr_scale_factor = 0.50;
+		bool pyr_scale_res = true;
 		bool pyr_show_levels = false;
 
 		//! MTF Diagnostics
@@ -1717,7 +1718,9 @@ namespace mtf{
 				pyr_no_of_levels = atoi(arg_val);
 			} else if(!strcmp(arg_name, "pyr_scale_factor")) {
 				pyr_scale_factor = atof(arg_val);
-			} else if(!strcmp(arg_name, "pyr_show_levels")) {
+			} else if(!strcmp(arg_name, "pyr_scale_res")) {
+				pyr_scale_res = atoi(arg_val);
+			}else if(!strcmp(arg_name, "pyr_show_levels")) {
 				pyr_show_levels = atoi(arg_val);
 			}
 			//! Gradient Descent
