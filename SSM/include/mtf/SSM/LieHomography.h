@@ -4,7 +4,9 @@
 #define VALIDATE_LIE_HOM_WARP(warp) \
 	assert(warp.determinant() == 1.0);
 
-#define LHOM_NORMALIZED_BASIS 0
+
+#define LHOM_NORMALIZED_INIT 0
+#define LHOM_GRAD_EPS 1e-8
 #define LHOM_DEBUG_MODE 0
 
 #include "ProjectiveBase.h"
@@ -13,10 +15,12 @@ _MTF_BEGIN_NAMESPACE
 
 struct LieHomographyParams : SSMParams{
 	bool normalized_init;
+	double grad_eps;
 	bool debug_mode;
 	//! value constructor
 	LieHomographyParams(const SSMParams *ssm_params,
-		bool _init_as_basis, bool _debug_mode);
+		bool _normalized_init, double _grad_eps,
+		bool _debug_mode);
 	//! copy/default constructor
 	LieHomographyParams(const LieHomographyParams *params = nullptr);
 };
@@ -62,6 +66,7 @@ public:
 private:
 	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
 	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
+	void computeJacobian(MatrixXd &jacobian, Matrix3Xd &basis_pts_hm);
 
 
 

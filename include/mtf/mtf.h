@@ -909,7 +909,8 @@ inline TrackerBase *getTracker(const char *sm_type, const char *am_type,
 inline SSMParams_ getSSMParams(const char *ssm_type){
 	SSMParams_ ssm_params(new SSMParams(resx, resy));
 	if(!strcmp(ssm_type, "lie_hom") || !strcmp(ssm_type, "l8")){
-		return SSMParams_(new LieHomographyParams(ssm_params.get(), lhom_normalized_init, debug_mode));
+		return SSMParams_(new LieHomographyParams(ssm_params.get(), lhom_normalized_init, 
+			lhom_grad_eps, debug_mode));
 	} else if(!strcmp(ssm_type, "chom") || !strcmp(ssm_type, "c8")){
 		return SSMParams_(new CornerHomographyParams(ssm_params.get(), chom_normalized_init,
 			chom_grad_eps, debug_mode));

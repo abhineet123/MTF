@@ -42,8 +42,8 @@ params(_params){
 	state_size = 8;
 
 	curr_state.resize(state_size);
-	init_jacobian.resize(16, n_pts);
-	curr_jacobian.resize(16, n_pts);
+	dw_dp_0.resize(16, n_pts);
+	dw_dp_t.resize(16, n_pts);
 
 	inc_pts.resize(NoChange, n_pts);
 	dec_pts.resize(NoChange, n_pts);	
@@ -62,7 +62,7 @@ void CornerHomography::setCorners(const CornersT& corners){
 		init_pts_hm = getHomNormPts();
 		getStateFromWarp(curr_state, curr_warp);
 		if(!is_initialized.pts){
-			computeJacobian(init_jacobian, init_corners, init_pts_hm);
+			computeJacobian(dw_dp_0, init_corners, init_pts_hm);
 		}
 	} else{
 		init_corners = curr_corners;
@@ -71,7 +71,7 @@ void CornerHomography::setCorners(const CornersT& corners){
 		init_pts_hm = curr_pts_hm;
 		curr_warp = Matrix3d::Identity();
 		curr_state.fill(0);
-		computeJacobian(init_jacobian, init_corners, init_pts_hm);
+		computeJacobian(dw_dp_0, init_corners, init_pts_hm);
 	}
 }
 
@@ -165,9 +165,10 @@ void CornerHomography::invertState(VectorXd& inv_state, const VectorXd& state){
 	getStateFromWarp(inv_state, inv_warp_mat);
 }
 
-void CornerHomography::cmptInitPixJacobian(MatrixXd &jacobian_prod,
-	const PixGradT &pix_jacobian){
-	validate_ssm_jacobian(jacobian_prod, pix_jacobian);
+void CornerHomography::cmptInitPixJacobian(MatrixXd &dI_dp,
+	const PixGradT &dI_dw){
+	validate_ssm_jacobian(dI_dp, dI_dw);
+
 	//MatrixXd jacobian_prod2(n_pts, state_size);
 	//clock_t start_time=clock();
 	//for(int i = 0; i < n_pts; i++){
@@ -180,19 +181,21 @@ void CornerHomography::cmptInitPixJacobian(MatrixXd &jacobian_prod,
 	//utils::printMatrixToFile(jacobian_prod2, "ssm jacobian_prod2", "log/mtf_log.txt", "%15.9f", "a");
 
 	//INIT_TIMER(start_time);
+	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-
-		double Ix = pix_jacobian(pt_id, 0);
-		double Iy = pix_jacobian(pt_id, 1);
-
-		jacobian_prod(pt_id, 0) = Ix * init_jacobian(0, pt_id) + Iy * init_jacobian(1, pt_id);
-		jacobian_prod(pt_id, 1) = Ix * init_jacobian(2, pt_id) + Iy * init_jacobian(3, pt_id);
-		jacobian_prod(pt_id, 2) = Ix * init_jacobian(4, pt_id) + Iy * init_jacobian(5, pt_id);
-		jacobian_prod(pt_id, 3) = Ix * init_jacobian(6, pt_id) + Iy * init_jacobian(7, pt_id);
-		jacobian_prod(pt_id, 4) = Ix * init_jacobian(8, pt_id) + Iy * init_jacobian(9, pt_id);
-		jacobian_prod(pt_id, 5) = Ix * init_jacobian(10, pt_id) + Iy * init_jacobian(11, pt_id);
-		jacobian_prod(pt_id, 6) = Ix * init_jacobian(12, pt_id) + Iy * init_jacobian(13, pt_id);
-		jacobian_prod(pt_id, 7) = Ix * init_jacobian(14, pt_id) + Iy * init_jacobian(15, pt_id);
+		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+			double Ix = dI_dw(ch_pt_id, 0);
+			double Iy = dI_dw(ch_pt_id, 1);
+			dI_dp(ch_pt_id, 0) = Ix * dw_dp_0(0, pt_id) + Iy * dw_dp_0(1, pt_id);
+			dI_dp(ch_pt_id, 1) = Ix * dw_dp_0(2, pt_id) + Iy * dw_dp_0(3, pt_id);
+			dI_dp(ch_pt_id, 2) = Ix * dw_dp_0(4, pt_id) + Iy * dw_dp_0(5, pt_id);
+			dI_dp(ch_pt_id, 3) = Ix * dw_dp_0(6, pt_id) + Iy * dw_dp_0(7, pt_id);
+			dI_dp(ch_pt_id, 4) = Ix * dw_dp_0(8, pt_id) + Iy * dw_dp_0(9, pt_id);
+			dI_dp(ch_pt_id, 5) = Ix * dw_dp_0(10, pt_id) + Iy * dw_dp_0(11, pt_id);
+			dI_dp(ch_pt_id, 6) = Ix * dw_dp_0(12, pt_id) + Iy * dw_dp_0(13, pt_id);
+			dI_dp(ch_pt_id, 7) = Ix * dw_dp_0(14, pt_id) + Iy * dw_dp_0(15, pt_id);
+			++ch_pt_id;
+		}
 	}
 	//end_time = clock();
 	//double prod_delay = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
@@ -228,45 +231,49 @@ void CornerHomography::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 			double Ix = (dwx_dx*dI_dw(ch_pt_id, 0) + dwy_dx*dI_dw(ch_pt_id, 1))*inv_det;
 			double Iy = (dwx_dy*dI_dw(ch_pt_id, 0) + dwy_dy*dI_dw(ch_pt_id, 1))*inv_det;
 
-			dI_dp(pt_id, 0) = Ix * init_jacobian(0, pt_id) + Iy * init_jacobian(1, pt_id);
-			dI_dp(pt_id, 1) = Ix * init_jacobian(2, pt_id) + Iy * init_jacobian(3, pt_id);
-			dI_dp(pt_id, 2) = Ix * init_jacobian(4, pt_id) + Iy * init_jacobian(5, pt_id);
-			dI_dp(pt_id, 3) = Ix * init_jacobian(6, pt_id) + Iy * init_jacobian(7, pt_id);
-			dI_dp(pt_id, 4) = Ix * init_jacobian(8, pt_id) + Iy * init_jacobian(9, pt_id);
-			dI_dp(pt_id, 5) = Ix * init_jacobian(10, pt_id) + Iy * init_jacobian(11, pt_id);
-			dI_dp(pt_id, 6) = Ix * init_jacobian(12, pt_id) + Iy * init_jacobian(13, pt_id);
-			dI_dp(pt_id, 7) = Ix * init_jacobian(14, pt_id) + Iy * init_jacobian(15, pt_id);
+			dI_dp(pt_id, 0) = Ix * dw_dp_0(0, pt_id) + Iy * dw_dp_0(1, pt_id);
+			dI_dp(pt_id, 1) = Ix * dw_dp_0(2, pt_id) + Iy * dw_dp_0(3, pt_id);
+			dI_dp(pt_id, 2) = Ix * dw_dp_0(4, pt_id) + Iy * dw_dp_0(5, pt_id);
+			dI_dp(pt_id, 3) = Ix * dw_dp_0(6, pt_id) + Iy * dw_dp_0(7, pt_id);
+			dI_dp(pt_id, 4) = Ix * dw_dp_0(8, pt_id) + Iy * dw_dp_0(9, pt_id);
+			dI_dp(pt_id, 5) = Ix * dw_dp_0(10, pt_id) + Iy * dw_dp_0(11, pt_id);
+			dI_dp(pt_id, 6) = Ix * dw_dp_0(12, pt_id) + Iy * dw_dp_0(13, pt_id);
+			dI_dp(pt_id, 7) = Ix * dw_dp_0(14, pt_id) + Iy * dw_dp_0(15, pt_id);
 
 			++ch_pt_id;
 		}
 	}
 }
 
-void CornerHomography::cmptPixJacobian(MatrixXd &jacobian_prod,
-	const PixGradT &pix_jacobian){
-	validate_ssm_jacobian(jacobian_prod, pix_jacobian);
+void CornerHomography::cmptPixJacobian(MatrixXd &dI_dp,
+	const PixGradT &dI_dw){
+	validate_ssm_jacobian(dI_dp, dI_dw);
 
-	computeJacobian(curr_jacobian, curr_corners, curr_pts_hm);
+	computeJacobian(dw_dp_t, curr_corners, curr_pts_hm);
 
+	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		double Ix = pix_jacobian(pt_id, 0);
-		double Iy = pix_jacobian(pt_id, 1);
+		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+			double Ix = dI_dw(ch_pt_id, 0);
+			double Iy = dI_dw(ch_pt_id, 1);
+			dI_dp(ch_pt_id, 0) = Ix * dw_dp_t(0, pt_id) + Iy * dw_dp_t(1, pt_id);
+			dI_dp(ch_pt_id, 1) = Ix * dw_dp_t(2, pt_id) + Iy * dw_dp_t(3, pt_id);
+			dI_dp(ch_pt_id, 2) = Ix * dw_dp_t(4, pt_id) + Iy * dw_dp_t(5, pt_id);
+			dI_dp(ch_pt_id, 3) = Ix * dw_dp_t(6, pt_id) + Iy * dw_dp_t(7, pt_id);
+			dI_dp(ch_pt_id, 4) = Ix * dw_dp_t(8, pt_id) + Iy * dw_dp_t(9, pt_id);
+			dI_dp(ch_pt_id, 5) = Ix * dw_dp_t(10, pt_id) + Iy * dw_dp_t(11, pt_id);
+			dI_dp(ch_pt_id, 6) = Ix * dw_dp_t(12, pt_id) + Iy * dw_dp_t(13, pt_id);
+			dI_dp(ch_pt_id, 7) = Ix * dw_dp_t(14, pt_id) + Iy * dw_dp_t(15, pt_id);
 
-		jacobian_prod(pt_id, 0) = Ix * curr_jacobian(0, pt_id) + Iy * curr_jacobian(1, pt_id);
-		jacobian_prod(pt_id, 1) = Ix * curr_jacobian(2, pt_id) + Iy * curr_jacobian(3, pt_id);
-		jacobian_prod(pt_id, 2) = Ix * curr_jacobian(4, pt_id) + Iy * curr_jacobian(5, pt_id);
-		jacobian_prod(pt_id, 3) = Ix * curr_jacobian(6, pt_id) + Iy * curr_jacobian(7, pt_id);
-		jacobian_prod(pt_id, 4) = Ix * curr_jacobian(8, pt_id) + Iy * curr_jacobian(9, pt_id);
-		jacobian_prod(pt_id, 5) = Ix * curr_jacobian(10, pt_id) + Iy * curr_jacobian(11, pt_id);
-		jacobian_prod(pt_id, 6) = Ix * curr_jacobian(12, pt_id) + Iy * curr_jacobian(13, pt_id);
-		jacobian_prod(pt_id, 7) = Ix * curr_jacobian(14, pt_id) + Iy * curr_jacobian(15, pt_id);
+			++ch_pt_id;
+		}
 	}
 }
-void CornerHomography::cmptApproxPixJacobian(MatrixXd &jacobian_prod,
-	const PixGradT &pix_jacobian) {
-	validate_ssm_jacobian(jacobian_prod, pix_jacobian);
+void CornerHomography::cmptApproxPixJacobian(MatrixXd &dI_dp,
+	const PixGradT &dI_dw) {
+	validate_ssm_jacobian(dI_dp, dI_dw);
 
-	computeJacobian(curr_jacobian, curr_corners, curr_pts_hm);
+	computeJacobian(dw_dp_t, curr_corners, curr_pts_hm);
 
 	double h00_plus_1 = curr_warp(0, 0);
 	double h01 = curr_warp(0, 1);
@@ -275,6 +282,7 @@ void CornerHomography::cmptApproxPixJacobian(MatrixXd &jacobian_prod,
 	double h20 = curr_warp(2, 0);
 	double h21 = curr_warp(2, 1);
 
+	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
 
 		double Nx = curr_pts_hm(0, pt_id);
@@ -288,17 +296,22 @@ void CornerHomography::cmptApproxPixJacobian(MatrixXd &jacobian_prod,
 		double d = (h11_plus_1*D - h21*Ny) * D_sqr_inv;
 		double inv_det = 1.0 / (a*d - b*c);
 
-		double Ix = pix_jacobian(pt_id, 0);
-		double Iy = pix_jacobian(pt_id, 1);
+		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
 
-		jacobian_prod(pt_id, 0) = (Ix * (d*curr_jacobian(0, pt_id) - b*curr_jacobian(1, pt_id)) + Iy * (a*curr_jacobian(1, pt_id) - c*curr_jacobian(0, pt_id)))*inv_det;
-		jacobian_prod(pt_id, 1) = (Ix * (d*curr_jacobian(2, pt_id) - b*curr_jacobian(3, pt_id)) + Iy * (a*curr_jacobian(3, pt_id) - c*curr_jacobian(2, pt_id)))*inv_det;
-		jacobian_prod(pt_id, 2) = (Ix * (d*curr_jacobian(4, pt_id) - b*curr_jacobian(5, pt_id)) + Iy * (a*curr_jacobian(5, pt_id) - c*curr_jacobian(4, pt_id)))*inv_det;
-		jacobian_prod(pt_id, 3) = (Ix * (d*curr_jacobian(6, pt_id) - b*curr_jacobian(7, pt_id)) + Iy * (a*curr_jacobian(7, pt_id) - c*curr_jacobian(6, pt_id)))*inv_det;
-		jacobian_prod(pt_id, 4) = (Ix * (d*curr_jacobian(8, pt_id) - b*curr_jacobian(9, pt_id)) + Iy * (a*curr_jacobian(9, pt_id) - c*curr_jacobian(8, pt_id)))*inv_det;
-		jacobian_prod(pt_id, 5) = (Ix * (d*curr_jacobian(10, pt_id) - b*curr_jacobian(11, pt_id)) + Iy * (a*curr_jacobian(11, pt_id) - c*curr_jacobian(10, pt_id)))*inv_det;
-		jacobian_prod(pt_id, 6) = (Ix * (d*curr_jacobian(12, pt_id) - b*curr_jacobian(13, pt_id)) + Iy * (a*curr_jacobian(13, pt_id) - c*curr_jacobian(12, pt_id)))*inv_det;
-		jacobian_prod(pt_id, 7) = (Ix * (d*curr_jacobian(14, pt_id) - b*curr_jacobian(15, pt_id)) + Iy * (a*curr_jacobian(15, pt_id) - c*curr_jacobian(14, pt_id)))*inv_det;
+			double Ix = dI_dw(ch_pt_id, 0);
+			double Iy = dI_dw(ch_pt_id, 1);
+
+			dI_dp(ch_pt_id, 0) = (Ix * (d*dw_dp_t(0, pt_id) - b*dw_dp_t(1, pt_id)) + Iy * (a*dw_dp_t(1, pt_id) - c*dw_dp_t(0, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 1) = (Ix * (d*dw_dp_t(2, pt_id) - b*dw_dp_t(3, pt_id)) + Iy * (a*dw_dp_t(3, pt_id) - c*dw_dp_t(2, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 2) = (Ix * (d*dw_dp_t(4, pt_id) - b*dw_dp_t(5, pt_id)) + Iy * (a*dw_dp_t(5, pt_id) - c*dw_dp_t(4, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 3) = (Ix * (d*dw_dp_t(6, pt_id) - b*dw_dp_t(7, pt_id)) + Iy * (a*dw_dp_t(7, pt_id) - c*dw_dp_t(6, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 4) = (Ix * (d*dw_dp_t(8, pt_id) - b*dw_dp_t(9, pt_id)) + Iy * (a*dw_dp_t(9, pt_id) - c*dw_dp_t(8, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 5) = (Ix * (d*dw_dp_t(10, pt_id) - b*dw_dp_t(11, pt_id)) + Iy * (a*dw_dp_t(11, pt_id) - c*dw_dp_t(10, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 6) = (Ix * (d*dw_dp_t(12, pt_id) - b*dw_dp_t(13, pt_id)) + Iy * (a*dw_dp_t(13, pt_id) - c*dw_dp_t(12, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 7) = (Ix * (d*dw_dp_t(14, pt_id) - b*dw_dp_t(15, pt_id)) + Iy * (a*dw_dp_t(15, pt_id) - c*dw_dp_t(14, pt_id)))*inv_det;
+			
+			++ch_pt_id;
+		}
 	}
 }
 

@@ -11,13 +11,13 @@
 #define validate_ssm_state(state_vec)\
 	assert(state_vec.size() == state_size)
 
-#define validate_ssm_jacobian(jacobian_prod, pix_jacobian)\
-	assert(jacobian_prod.rows() == n_pts*n_channels && jacobian_prod.cols() == state_size);\
-	assert(pix_jacobian.rows() == n_pts*n_channels)
+#define validate_ssm_jacobian(dI_dp, dI_dw)\
+	assert(dI_dp.rows() == n_pts*n_channels && dI_dp.cols() == state_size);\
+	assert(dI_dw.rows() == n_pts*n_channels)
 
-#define validate_ssm_hessian(pix_hess_ssm, pix_hess_coord, pix_grad)\
-	assert(pix_hess_ssm.rows() == state_size*state_size && pix_hess_ssm.cols() == n_pts*n_channels);\
-	assert(pix_grad.rows() == n_pts*n_channels && pix_hess_coord.cols() == n_pts*n_channels)
+#define validate_ssm_hessian(d2I_dp2, d2I_dw2, dI_dw)\
+	assert(d2I_dp2.rows() == state_size*state_size && d2I_dp2.cols() == n_pts*n_channels);\
+	assert(dI_dw.rows() == n_pts*n_channels && d2I_dw2.cols() == n_pts*n_channels)
 
 _MTF_BEGIN_NAMESPACE
 

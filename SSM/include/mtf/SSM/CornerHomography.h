@@ -18,8 +18,7 @@ struct CornerHomographyParams : SSMParams{
 	bool debug_mode;
 
 	CornerHomographyParams(const SSMParams *ssm_params,
-		bool _normalized_init,
-		double _grad_eps, bool _debug_mode);
+		bool _normalized_init, double _grad_eps, bool _debug_mode);
 	CornerHomographyParams(const CornerHomographyParams *params = nullptr);
 };
 
@@ -62,7 +61,7 @@ private:
 	Matrix3d warp_update_mat;
 	Matrix3d warp_mat;
 	RowVectorXdM hom_den;
-	MatrixXd init_jacobian, curr_jacobian;
+	MatrixXd dw_dp_0, dw_dp_t;
 
 	Matrix24d inc_corners, dec_corners;
 	Matrix2Xd inc_pts, dec_pts;

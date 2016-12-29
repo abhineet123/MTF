@@ -4,25 +4,30 @@
 #include "mtf/Utilities/miscUtils.h"
 #include <unsupported/Eigen/MatrixFunctions>
 
-#define MAX_VALID_VAL 1e50
+#define MAX_VALID_VAL 1e10
 #define is_unbounded(eig_mat) (eig_mat.array().cwiseAbs().eval() > MAX_VALID_VAL).any()
 
 _MTF_BEGIN_NAMESPACE
 
 //! value constructor
-LieHomographyParams::LieHomographyParams(const SSMParams *ssm_params,
-bool _init_as_basis, bool _debug_mode) :
+LieHomographyParams::LieHomographyParams(
+const SSMParams *ssm_params,
+bool _normalized_init, double _grad_eps,
+bool _debug_mode) :
 SSMParams(ssm_params),
-normalized_init(_init_as_basis),
+normalized_init(_normalized_init),
+grad_eps(_grad_eps),
 debug_mode(_debug_mode){}
 
 //! copy/default constructor
 LieHomographyParams::LieHomographyParams(const LieHomographyParams *params) :
 SSMParams(params),
-normalized_init(LHOM_NORMALIZED_BASIS),
+normalized_init(LHOM_NORMALIZED_INIT),
+grad_eps(LHOM_GRAD_EPS),
 debug_mode(LHOM_DEBUG_MODE){
 	if(params){
 		normalized_init = params->normalized_init;
+		grad_eps = params->grad_eps;
 		debug_mode = params->debug_mode;
 	}
 }
@@ -36,6 +41,7 @@ LieHomography::LieHomography(
 	printf("resx: %d\n", resx);
 	printf("resy: %d\n", resy);
 	printf("normalized_init: %d\n", params.normalized_init);
+	printf("grad_eps: %f\n", params.grad_eps);
 	printf("debug_mode: %d\n", params.debug_mode);
 
 
@@ -143,7 +149,7 @@ void LieHomography::getWarpFromState(Matrix3d &warp_mat,
 	//}
 
 	if(!ssm_state.allFinite()){
-		utils::printMatrix(ssm_state, "ssm_state");
+		utils::printMatrix(ssm_state.transpose(), "ssm_state");
 		throw mtf::utils::InvalidTrackerState("LieHomography::getWarpFromState :: Invalid state provided");
 	}
 
@@ -322,8 +328,6 @@ void LieHomography::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
 
-		//double Ix = pix_grad(pt_id, 0);
-		//double Iy = pix_grad(pt_id, 1);
 		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = (dwx_dx*dI_dw(ch_pt_id, 0) + dwy_dx*dI_dw(ch_pt_id, 1))*inv_det;
 			double Iy = (dwx_dy*dI_dw(ch_pt_id, 0) + dwy_dy*dI_dw(ch_pt_id, 1))*inv_det;
@@ -351,44 +355,64 @@ void LieHomography::cmptPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dw){
 	validate_ssm_jacobian(dI_dp, dI_dw);
 
+	MatrixXd dw_dp_t(16, n_pts);
+	computeJacobian(dw_dp_t, init_pts_hm);
+
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		Matrix2Xd dw_dp(2, 8);
-		getCurrPixGrad(dw_dp, pt_id);
+
+		//Matrix2Xd dw_dp(2, 8);
+		//getCurrPixGrad(dw_dp, pt_id);
+
 		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
-			dI_dp.row(pt_id) = dI_dw.row(ch_pt_id)*dw_dp;
+			//dI_dp.row(ch_pt_id) = dI_dw.row(ch_pt_id)*dw_dp;
 
-			//double x = init_pts(0, pt_id);
-			//double y = init_pts(1, pt_id);
-			//double Ix = pix_jacobian(pt_id, 0);
-			//double Iy = pix_jacobian(pt_id, 1);
+			double Ix = dI_dw(ch_pt_id, 0);
+			double Iy = dI_dw(ch_pt_id, 1);
 
-			//double curr_x = curr_pts(0, pt_id);
-			//double curr_y = curr_pts(1, pt_id);
-			//double inv_d = 1.0 / curr_pts_hm(2, pt_id);
+			dI_dp(ch_pt_id, 0) = Ix * dw_dp_t(0, pt_id) + Iy * dw_dp_t(1, pt_id);
+			dI_dp(ch_pt_id, 1) = Ix * dw_dp_t(2, pt_id) + Iy * dw_dp_t(3, pt_id);
+			dI_dp(ch_pt_id, 2) = Ix * dw_dp_t(4, pt_id) + Iy * dw_dp_t(5, pt_id);
+			dI_dp(ch_pt_id, 3) = Ix * dw_dp_t(6, pt_id) + Iy * dw_dp_t(7, pt_id);
+			dI_dp(ch_pt_id, 4) = Ix * dw_dp_t(8, pt_id) + Iy * dw_dp_t(9, pt_id);
+			dI_dp(ch_pt_id, 5) = Ix * dw_dp_t(10, pt_id) + Iy * dw_dp_t(11, pt_id);
+			dI_dp(ch_pt_id, 6) = Ix * dw_dp_t(12, pt_id) + Iy * dw_dp_t(13, pt_id);
+			dI_dp(ch_pt_id, 7) = Ix * dw_dp_t(14, pt_id) + Iy * dw_dp_t(15, pt_id);
 
-			//double Ixx = Ix * x;
-			//double Iyy = Iy * y;
-			//double Ixy = Ix * y;
-			//double Iyx = Iy * x;
-
-			//dI_dp(pt_id, 0) = (Ixx - Iyy) * inv_d;
-			//dI_dp(pt_id, 1) = Ixy * inv_d;
-			//dI_dp(pt_id, 2) = Ix * inv_d;
-			//dI_dp(pt_id, 3) = Iyx * inv_d;
-			//dI_dp(pt_id, 4) = (Ix*curr_x + Iy*(y + curr_y)) * inv_d;
-			//dI_dp(pt_id, 5) = Iy * inv_d;
-			//dI_dp(pt_id, 6) = (-Ixx*curr_x - Iyx*curr_y) * inv_d;
-			//dI_dp(pt_id, 7) = (-Ixy*curr_x - Iyy*curr_y) * inv_d;
 			++ch_pt_id;
 		}
 	}
 	//jacobian_prod.array().colwise() /= curr_pts_hm.array().row(2).transpose();
 }
 
-void LieHomography::cmptApproxPixJacobian(MatrixXd &jacobian_prod,
-	const PixGradT &pix_jacobian) {
-	validate_ssm_jacobian(jacobian_prod, pix_jacobian);
+// numerically compute the jacobian of the grid points w.r.t. x, y coordinates of the grid corners
+void LieHomography::computeJacobian(MatrixXd &dw_dp, Matrix3Xd &pts_hm){
+	VectorXd inc_state(8), dec_state(8);
+	Matrix3d inc_warp, dec_warp;
+	Matrix2Xd inc_pts(2, n_pts), dec_pts(2, n_pts);
+	inc_state = dec_state = curr_state;
+	for(int state_id = 0; state_id < 8; ++state_id){
+		inc_state(state_id) += params.grad_eps;
+		getWarpFromState(inc_warp, inc_state);
+		utils::dehomogenize(inc_warp * pts_hm, inc_pts);
+		inc_state(state_id) = curr_state(state_id);
+
+		dec_state(state_id) -= params.grad_eps;
+		getWarpFromState(dec_warp, dec_state);
+		utils::dehomogenize(dec_warp * pts_hm, dec_pts);
+		dec_state(state_id) = curr_state(state_id);
+
+		dw_dp.middleRows(state_id * 2, 2) = (inc_pts - dec_pts) / (2 * params.grad_eps);
+	}
+}
+
+
+void LieHomography::cmptApproxPixJacobian(MatrixXd &dI_dp,
+	const PixGradT &dI_dw) {
+	validate_ssm_jacobian(dI_dp, dI_dw);
+
+	MatrixXd dw_dp_t(16, n_pts);
+	computeJacobian(dw_dp_t, init_pts_hm);
 
 	curr_warp /= curr_warp(2, 2);
 
@@ -413,32 +437,52 @@ void LieHomography::cmptApproxPixJacobian(MatrixXd &jacobian_prod,
 		double d = (h11_plus_1*D - h21*Ny) * D_sqr_inv;
 		double inv_det = 1.0 / ((a*d - b*c)*D);
 
-		double x = init_pts(0, pt_id);
-		double y = init_pts(1, pt_id);
+		//double x = init_pts(0, pt_id);
+		//double y = init_pts(1, pt_id);
 
-		double curr_x = curr_pts(0, pt_id);
-		double curr_y = curr_pts(1, pt_id);
+		//double curr_x = curr_pts(0, pt_id);
+		//double curr_y = curr_pts(1, pt_id);
 
 		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
-			double Ix = pix_jacobian(ch_pt_id, 0);
-			double Iy = pix_jacobian(ch_pt_id, 1);
 
-			double Ixx = Ix * x;
-			double Ixy = Ix * y;
-			double Iyy = Iy * y;
-			double Iyx = Iy * x;
+			double Ix = dI_dw(ch_pt_id, 0);
+			double Iy = dI_dw(ch_pt_id, 1);
 
-			double factor1 = b*curr_y - d*curr_x;
-			double factor2 = c*curr_x - a*curr_y;
 
-			jacobian_prod(ch_pt_id, 0) = (Ixx*d + Ixy*b - Iyx*c - Iyy*a) * inv_det;
-			jacobian_prod(ch_pt_id, 1) = (Ixy*d - Iyy*c) * inv_det;
-			jacobian_prod(ch_pt_id, 2) = (Ix*d - Iy*c) * inv_det;
-			jacobian_prod(ch_pt_id, 3) = (Iyx*a - Ixx*b) * inv_det;
-			jacobian_prod(ch_pt_id, 4) = (Iyy*a - Ix*factor1 - Ixy*b - Iy*factor2) * inv_det;
-			jacobian_prod(ch_pt_id, 5) = (Iy*a - Ix*b) * inv_det;
-			jacobian_prod(ch_pt_id, 6) = (Ixx*factor1 + Iyx*factor2) * inv_det;
-			jacobian_prod(ch_pt_id, 7) = (Ixy*factor1 + Iyy*factor2) * inv_det;
+			dI_dp(ch_pt_id, 0) = (Ix * (d*dw_dp_t(0, pt_id) - b*dw_dp_t(1, pt_id)) + 
+				Iy * (a*dw_dp_t(1, pt_id) - c*dw_dp_t(0, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 1) = (Ix * (d*dw_dp_t(2, pt_id) - b*dw_dp_t(3, pt_id)) + 
+				Iy * (a*dw_dp_t(3, pt_id) - c*dw_dp_t(2, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 2) = (Ix * (d*dw_dp_t(4, pt_id) - b*dw_dp_t(5, pt_id)) + 
+				Iy * (a*dw_dp_t(5, pt_id) - c*dw_dp_t(4, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 3) = (Ix * (d*dw_dp_t(6, pt_id) - b*dw_dp_t(7, pt_id)) + 
+				Iy * (a*dw_dp_t(7, pt_id) - c*dw_dp_t(6, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 4) = (Ix * (d*dw_dp_t(8, pt_id) - b*dw_dp_t(9, pt_id)) +
+				Iy * (a*dw_dp_t(9, pt_id) - c*dw_dp_t(8, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 5) = (Ix * (d*dw_dp_t(10, pt_id) - b*dw_dp_t(11, pt_id)) + 
+				Iy * (a*dw_dp_t(11, pt_id) - c*dw_dp_t(10, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 6) = (Ix * (d*dw_dp_t(12, pt_id) - b*dw_dp_t(13, pt_id)) + 
+				Iy * (a*dw_dp_t(13, pt_id) - c*dw_dp_t(12, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 7) = (Ix * (d*dw_dp_t(14, pt_id) - b*dw_dp_t(15, pt_id)) + 
+				Iy * (a*dw_dp_t(15, pt_id) - c*dw_dp_t(14, pt_id)))*inv_det;
+
+
+			//double Ixx = Ix * x;
+			//double Ixy = Ix * y;
+			//double Iyy = Iy * y;
+			//double Iyx = Iy * x;
+
+			//double factor1 = b*curr_y - d*curr_x;
+			//double factor2 = c*curr_x - a*curr_y;
+
+			//dI_dp(ch_pt_id, 0) = (Ixx*d + Ixy*b - Iyx*c - Iyy*a) * inv_det;
+			//dI_dp(ch_pt_id, 1) = (Ixy*d - Iyy*c) * inv_det;
+			//dI_dp(ch_pt_id, 2) = (Ix*d - Iy*c) * inv_det;
+			//dI_dp(ch_pt_id, 3) = (Iyx*a - Ixx*b) * inv_det;
+			//dI_dp(ch_pt_id, 4) = (Iyy*a - Ix*factor1 - Ixy*b - Iy*factor2) * inv_det;
+			//dI_dp(ch_pt_id, 5) = (Iy*a - Ix*b) * inv_det;
+			//dI_dp(ch_pt_id, 6) = (Ixx*factor1 + Iyx*factor2) * inv_det;
+			//dI_dp(ch_pt_id, 7) = (Ixy*factor1 + Iyy*factor2) * inv_det;
 
 			//jacobian_prod(i, 0) = (Ix*(d*x + b*y) - Iy*(c*x + a*y)) * inv_det;
 			//jacobian_prod(i, 1) = (Ix*d*y - Iy*c*y) * inv_det;

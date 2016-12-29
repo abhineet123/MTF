@@ -243,6 +243,7 @@ namespace mtf{
 
 		//! Lie Homograhy
 		int lhom_normalized_init = 0;
+		double lhom_grad_eps = 1e-8;
 
 		//! Corner based Homograhy
 		int chom_normalized_init = 0;
@@ -1206,6 +1207,8 @@ namespace mtf{
 			//! Lie Homography
 			else if(!strcmp(arg_name, "lhom_normalized_init")){
 				lhom_normalized_init = atoi(arg_val);
+			}else if(!strcmp(arg_name, "lhom_grad_eps")){
+				lhom_grad_eps = atof(arg_val);
 			}
 			//! Similitude
 			else if(!strcmp(arg_name, "sim_normalized_init")){
