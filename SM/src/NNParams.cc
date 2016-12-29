@@ -102,18 +102,26 @@ bool NNParams::processDistributions(vector<VectorXd> &state_sigma,
 		}
 		int sampler_id = 0, sigma_id = 0, mean_id = 0;
 		while(sampler_id < n_distr){
-			if(ssm_sigma[sigma_id].size() < ssm_state_size){
+			if(ssm_sigma[sigma_id].size() == 1){
+				state_sigma[sampler_id].resize(ssm_state_size);
+				state_sigma[sampler_id].fill(ssm_sigma[sigma_id][0]);
+			} else if(ssm_sigma[sigma_id].size() < ssm_state_size){
 				throw std::invalid_argument(
 					cv::format("NNParams :: SSM sigma for distribution %d has invalid size: %d",
 					sampler_id, ssm_sigma[sigma_id].size()));
+			} else{
+				state_sigma[sampler_id] = Map<const VectorXd>(ssm_sigma[sigma_id].data(), ssm_state_size);
 			}
-			if(ssm_mean[mean_id].size() < ssm_state_size){
+			if(ssm_mean[mean_id].size() == 1){
+				state_mean[sampler_id].resize(ssm_state_size);
+				state_mean[sampler_id].fill(ssm_mean[mean_id][0]);
+			} else if(ssm_mean[mean_id].size() < ssm_state_size){
 				throw std::invalid_argument(
 					cv::format("NNParams :: SSM mean for distribution %d has invalid size: %d",
 					sampler_id, ssm_mean[mean_id].size()));
-			}
-			state_sigma[sampler_id] = Map<const VectorXd>(ssm_sigma[sigma_id].data(), ssm_state_size);
-			state_mean[sampler_id] = Map<const VectorXd>(ssm_mean[mean_id].data(), ssm_state_size);
+			} else{
+				state_mean[sampler_id] = Map<const VectorXd>(ssm_mean[mean_id].data(), ssm_state_size);
+			}			
 			++sampler_id;
 			if(sampler_id < ssm_sigma.size()){ ++sigma_id; }
 			if(sampler_id < ssm_mean.size()){ ++mean_id; }
