@@ -36,6 +36,7 @@ public:
 	void compositionalUpdate(const VectorXd& state_update) override;
 
 	void cmptInitPixJacobian(MatrixXd &jacobian_prod, const PixGradT &am_jacobian) override;
+	void cmptWarpedPixJacobian(MatrixXd &dI_dp, const PixGradT &dI_dw) override;
 	void cmptPixJacobian(MatrixXd &jacobian_prod, const PixGradT &am_jacobian) override;
 	void cmptApproxPixJacobian(MatrixXd &jacobian_prod,
 		const PixGradT &pix_jacobian) override;

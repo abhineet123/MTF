@@ -200,6 +200,48 @@ void CornerHomography::cmptInitPixJacobian(MatrixXd &jacobian_prod,
 	//utils::printMatrixToFile(jacobian_prod, "ssm jacobian_prod", "log/mtf_log.txt", "%15.9f", "a");
 }
 
+void CornerHomography::cmptWarpedPixJacobian(MatrixXd &dI_dp,
+	const PixGradT &dI_dw) {
+	validate_ssm_jacobian(dI_dp, dI_dw);
+
+	double a00 = curr_warp(0, 0);
+	double a01 = curr_warp(0, 1);
+	double a10 = curr_warp(1, 0);
+	double a11 = curr_warp(1, 1);
+	double a20 = curr_warp(2, 0);
+	double a21 = curr_warp(2, 1);
+
+	int ch_pt_id = 0;
+	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+		double w_x = curr_pts(0, pt_id);
+		double w_y = curr_pts(1, pt_id);
+
+		double D = curr_pts_hm(2, pt_id);
+		double inv_det = 1.0 / D;
+
+		double dwx_dx = (a00 - a20*w_x);
+		double dwx_dy = (a01 - a21*w_x);
+		double dwy_dx = (a10 - a20*w_y);
+		double dwy_dy = (a11 - a21*w_y);
+
+		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+			double Ix = (dwx_dx*dI_dw(ch_pt_id, 0) + dwy_dx*dI_dw(ch_pt_id, 1))*inv_det;
+			double Iy = (dwx_dy*dI_dw(ch_pt_id, 0) + dwy_dy*dI_dw(ch_pt_id, 1))*inv_det;
+
+			dI_dp(pt_id, 0) = Ix * init_jacobian(0, pt_id) + Iy * init_jacobian(1, pt_id);
+			dI_dp(pt_id, 1) = Ix * init_jacobian(2, pt_id) + Iy * init_jacobian(3, pt_id);
+			dI_dp(pt_id, 2) = Ix * init_jacobian(4, pt_id) + Iy * init_jacobian(5, pt_id);
+			dI_dp(pt_id, 3) = Ix * init_jacobian(6, pt_id) + Iy * init_jacobian(7, pt_id);
+			dI_dp(pt_id, 4) = Ix * init_jacobian(8, pt_id) + Iy * init_jacobian(9, pt_id);
+			dI_dp(pt_id, 5) = Ix * init_jacobian(10, pt_id) + Iy * init_jacobian(11, pt_id);
+			dI_dp(pt_id, 6) = Ix * init_jacobian(12, pt_id) + Iy * init_jacobian(13, pt_id);
+			dI_dp(pt_id, 7) = Ix * init_jacobian(14, pt_id) + Iy * init_jacobian(15, pt_id);
+
+			++ch_pt_id;
+		}
+	}
+}
+
 void CornerHomography::cmptPixJacobian(MatrixXd &jacobian_prod,
 	const PixGradT &pix_jacobian){
 	validate_ssm_jacobian(jacobian_prod, pix_jacobian);

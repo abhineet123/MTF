@@ -770,6 +770,12 @@ TrackerBase *getTracker(const char *sm_type,
 			_ssm_params.resy = grid_params.getResY();
 			return new GridTracker<SSMType>(trackers, &grid_params, getSSMEstParams().get(), &_ssm_params);
 		}
+	} else if(!strcmp(sm_type, "lms")){
+		est_method = 1;
+		return getTracker<AMType, SSMType>("grid", am_params, ssm_params);
+	} else if(!strcmp(sm_type, "ransac") || !strcmp(sm_type, "rnsc")){
+		est_method = 0;
+		return getTracker<AMType, SSMType>("grid", am_params, ssm_params);
 	}
 #endif
 	printf("Invalid search method provided: %s\n", sm_type);
