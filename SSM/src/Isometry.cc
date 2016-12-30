@@ -8,15 +8,15 @@
 _MTF_BEGIN_NAMESPACE
 
 IsometryParams::IsometryParams(const SSMParams *ssm_params, 
-bool _debug_mode) :
+int _pt_based_sampling) :
 SSMParams(ssm_params),
-debug_mode(_debug_mode){}
+pt_based_sampling(_pt_based_sampling){}
 
 IsometryParams::IsometryParams(const IsometryParams *params) :
 SSMParams(params),
-debug_mode(ISO_DEBUG_MODE){
+pt_based_sampling(ISO_PT_BASED_SAMPLING){
 	if(params){
-		debug_mode = params->debug_mode;
+		pt_based_sampling = params->pt_based_sampling;
 	}
 }
 
@@ -27,7 +27,7 @@ ProjectiveBase(_params), params(_params){
 	printf("Using Isometry SSM with:\n");
 	printf("resx: %d\n", resx);
 	printf("resy: %d\n", resy);
-	printf("debug_mode: %d\n", params.debug_mode);
+	printf("pt_based_sampling: %d\n", params.pt_based_sampling);
 
 	name = "isometry";
 	state_size = 3;
@@ -411,6 +411,34 @@ void Isometry::applyWarpToPts(Matrix2Xd &warped_pts, const Matrix2Xd &orig_pts,
 			warp_mat(0, 2);
 		warped_pts(1, pt_id) = warp_mat(1, 0)*orig_pts(0, pt_id) + warp_mat(1, 1)*orig_pts(1, pt_id) +
 			warp_mat(1, 2);
+	}
+}
+
+void Isometry::generatePerturbation(VectorXd &perturbation){
+	assert(perturbation.size() == state_size);
+	 if(params.pt_based_sampling){
+		PtsT orig_pts, perturbed_pts;
+		orig_pts.resize(Eigen::NoChange, 2);
+		perturbed_pts.resize(Eigen::NoChange, 2);
+		orig_pts.col(0) = init_corners.col(0);
+		orig_pts.col(1) = init_corners.col(2);
+		if(params.pt_based_sampling == 1){
+			perturbed_pts(0, 0) = orig_pts(0, 0) + rand_dist[0](rand_gen[0]);
+			perturbed_pts(1, 0) = orig_pts(1, 0) + rand_dist[0](rand_gen[0]);
+			perturbed_pts(0, 1) = orig_pts(0, 1) + rand_dist[0](rand_gen[0]);
+			perturbed_pts(1, 1) = orig_pts(1, 1) + rand_dist[0](rand_gen[0]);
+		} else {
+			//! different perturbation for x,y coordinates of each corner
+			//! followed by consistent translational perturbation to all corners
+			perturbed_pts(0, 0) = orig_pts(0, 0) + rand_dist[1](rand_gen[1]);
+			perturbed_pts(1, 0) = orig_pts(1, 0) + rand_dist[1](rand_gen[1]);
+			perturbed_pts(0, 1) = orig_pts(0, 1) + rand_dist[1](rand_gen[1]);
+			perturbed_pts(1, 1) = orig_pts(1, 1) + rand_dist[1](rand_gen[1]);
+			perturbed_pts = perturbed_pts.colwise() + Vector2d(rand_dist[0](rand_gen[0]), rand_dist[0](rand_gen[0]));
+		}
+		perturbation = utils::computeIsometryDLT(orig_pts, perturbed_pts);
+	} else{
+		ProjectiveBase::generatePerturbation(perturbation);
 	}
 }
 

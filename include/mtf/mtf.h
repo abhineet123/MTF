@@ -926,7 +926,7 @@ inline SSMParams_ getSSMParams(const char *ssm_type){
 		return SSMParams_(new SimilitudeParams(ssm_params.get(), sim_normalized_init,
 			sim_geom_sampling, sim_pt_based_sampling, sim_n_model_pts, debug_mode));
 	} else if(!strcmp(ssm_type, "iso") || !strcmp(ssm_type, "3")){
-		return SSMParams_(new IsometryParams(ssm_params.get(), debug_mode));
+		return SSMParams_(new IsometryParams(ssm_params.get(), iso_pt_based_sampling));
 	} else if(!strcmp(ssm_type, "trs") || !strcmp(ssm_type, "3s")){
 		return SSMParams_(new TranscalingParams(ssm_params.get(), debug_mode));
 	} else if(!strcmp(ssm_type, "trans") || !strcmp(ssm_type, "2")){

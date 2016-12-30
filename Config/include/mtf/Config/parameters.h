@@ -255,6 +255,9 @@ namespace mtf{
 		int sim_pt_based_sampling = 0;
 		int sim_n_model_pts = 2;
 
+		//! Isometry
+		int iso_pt_based_sampling = 0;
+
 		//! SL3
 		int sl3_normalized_init = 0;
 		bool sl3_iterative_sample_mean = true;
@@ -1219,6 +1222,10 @@ namespace mtf{
 				sim_geom_sampling = atoi(arg_val);
 			} else if(!strcmp(arg_name, "sim_pt_based_sampling")){
 				sim_pt_based_sampling = atoi(arg_val);
+			}			
+			//! Isometry
+			else if(!strcmp(arg_name, "iso_pt_based_sampling")){
+				iso_pt_based_sampling = atoi(arg_val);
 			}
 			//! SL3
 			else if(!strcmp(arg_name, "sl3_normalized_init")){

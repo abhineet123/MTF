@@ -411,8 +411,6 @@ void Similitude::generatePerturbation(VectorXd &perturbation){
 			perturbed_pts(1, 0) = orig_pts(1, 0) + rand_dist[1](rand_gen[1]);
 			perturbed_pts(0, 1) = orig_pts(0, 1) + rand_dist[2](rand_gen[2]);
 			perturbed_pts(1, 1) = orig_pts(1, 1) + rand_dist[3](rand_gen[3]);
-			Matrix3d sim_warp = utils::computeSimilitudeDLT(orig_pts, perturbed_pts);
-			getStateFromWarp(perturbation, sim_warp);
 		} else {
 			//! different perturbation for x,y coordinates of each corner
 			//! followed by consistent translational perturbation to all corners
@@ -422,10 +420,11 @@ void Similitude::generatePerturbation(VectorXd &perturbation){
 			perturbed_pts(1, 1) = orig_pts(1, 1) + rand_dist[1](rand_gen[1]);
 			perturbed_pts = perturbed_pts.colwise() + Vector2d(rand_dist[0](rand_gen[0]), rand_dist[0](rand_gen[0]));
 		}
+		Matrix3d sim_warp = utils::computeSimilitudeDLT(orig_pts, perturbed_pts);
+		getStateFromWarp(perturbation, sim_warp);
 	} else{
 		ProjectiveBase::generatePerturbation(perturbation);
 	}
-
 }
 
 // use Random Walk model to generate perturbed sample

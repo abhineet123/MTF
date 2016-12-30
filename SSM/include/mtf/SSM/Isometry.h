@@ -13,16 +13,15 @@
 #define validate_iso_state(state) \
 	assert(state.size() == 3)
 
-#define ISO_C 0.5
-#define ISO_DEBUG_MODE 0
+#define ISO_PT_BASED_SAMPLING true
 
 #include "ProjectiveBase.h"
 
 _MTF_BEGIN_NAMESPACE
 
 struct IsometryParams : SSMParams{
-	bool debug_mode;
-	IsometryParams(const SSMParams *ssm_params, bool _debug_mode);
+	int pt_based_sampling;
+	IsometryParams(const SSMParams *ssm_params, int _pt_based_sampling);
 	IsometryParams(const IsometryParams *params = nullptr);
 };
 
@@ -66,6 +65,7 @@ public:
 		const VectorXd &state_update) override;
 	void applyWarpToPts(Matrix2Xd &warped_pts, const Matrix2Xd &orig_pts,
 		const VectorXd &state_update) override;
+	void generatePerturbation(VectorXd &perturbation) override;
 
 #ifndef DISABLE_SPI
 	bool supportsSPI() override{ return true; }
