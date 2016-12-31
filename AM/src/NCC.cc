@@ -365,7 +365,7 @@ void NCC::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jacob
 	assert(init_pix_hessian.rows() == ssm_state_size * ssm_state_size);
 	cmptInitHessian(init_hessian, init_pix_jacobian);
 	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		spi_pt_ckeck(pix_id);
+		spi_pt_ckeck(spi_mask, pix_id);
 		init_hessian += Map<const MatrixXd>(init_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size) * df_dI0(pix_id);;
 	}
 }
@@ -375,7 +375,7 @@ void NCC::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacob
 	assert(curr_pix_hessian.rows() == ssm_state_size * ssm_state_size);
 	cmptCurrHessian(curr_hessian, curr_pix_jacobian);
 	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		spi_pt_ckeck(pix_id);
+		spi_pt_ckeck(spi_mask, pix_id);
 		curr_hessian += Map<const MatrixXd>(curr_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size) * df_dIt(pix_id);;
 	}
 }
