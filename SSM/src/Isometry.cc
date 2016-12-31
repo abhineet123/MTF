@@ -118,6 +118,7 @@ void Isometry::cmptPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dx){
 	validate_ssm_jacobian(dI_dp, dI_dx);
 
+	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 		//double x = init_pts(0, i);
@@ -126,7 +127,6 @@ void Isometry::cmptPixJacobian(MatrixXd &dI_dp,
 		double curr_x = curr_pts(0, pt_id);
 		double curr_y = curr_pts(1, pt_id);
 
-		int ch_pt_id = 0;
 		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dx(ch_pt_id, 0);
 			double Iy = dI_dx(ch_pt_id, 1);
