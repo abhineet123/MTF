@@ -8,7 +8,7 @@
 _MTF_BEGIN_NAMESPACE
 
 AffineParams::AffineParams(const SSMParams *ssm_params,
-bool _normalized_init, int _pt_based_sampling, 
+bool _normalized_init, int _pt_based_sampling,
 bool _debug_mode) :
 SSMParams(ssm_params),
 normalized_init(_normalized_init),
@@ -42,7 +42,7 @@ Affine::Affine(
 	state_size = 6;
 	curr_state.resize(state_size);
 
-	utils::getNormUnitSquarePts(norm_pts, norm_corners, resx, resy, 
+	utils::getNormUnitSquarePts(norm_pts, norm_corners, resx, resy,
 		1 - resx / 2.0, 1 - resy / 2.0, resx / 2.0, resy / 2.0);
 	utils::homogenize(norm_pts, norm_pts_hm);
 	utils::homogenize(norm_corners, norm_corners_hm);
@@ -154,7 +154,7 @@ void Affine::cmptInitPixJacobian(MatrixXd &dI_dp,
 	validate_ssm_jacobian(dI_dp, dI_dx);
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -180,7 +180,7 @@ void Affine::cmptApproxPixJacobian(MatrixXd &dI_dp,
 	double inv_det = 1.0 / (a*d - b*c);
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -210,7 +210,7 @@ void Affine::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -238,7 +238,7 @@ void Affine::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -265,7 +265,7 @@ void Affine::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -287,7 +287,7 @@ void Affine::updateGradPts(double grad_eps){
 	Vector2d diff_vec_y_warped = curr_warp.topRows<2>().col(1) * grad_eps;
 
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id); 
+		spi_pt_check(spi_mask, pt_id);
 
 		grad_pts(0, pt_id) = curr_pts(0, pt_id) + diff_vec_x_warped(0);
 		grad_pts(1, pt_id) = curr_pts(1, pt_id) + diff_vec_x_warped(1);
@@ -313,7 +313,7 @@ void Affine::updateHessPts(double hess_eps){
 	Vector2d diff_vec_yx_warped = (curr_warp.topRows<2>().col(0) - curr_warp.topRows<2>().col(1)) * hess_eps;
 
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check(spi_mask, pt_id);
 
 		hess_pts(0, pt_id) = curr_pts(0, pt_id) + diff_vec_xx_warped(0);
 		hess_pts(1, pt_id) = curr_pts(1, pt_id) + diff_vec_xx_warped(1);
@@ -424,7 +424,7 @@ Vector6d Affine::stateToGeom(const Vector6d &est){
 	Vector6d q;
 	q[0] = est[0];
 	q[1] = est[1];
-	q[3] = atan2(U(1, 0) * V(0, 0) + U(1, 1) * V(0, 1), 
+	q[3] = atan2(U(1, 0) * V(0, 0) + U(1, 1) * V(0, 1),
 		U(0, 0) * V(0, 0) + U(0, 1) * V(0, 1));
 
 	double phi = atan2(V(0, 1), V(0, 0));
@@ -454,7 +454,7 @@ Vector6d Affine::stateToGeom(const Vector6d &est){
 
 
 void Affine::generatePerturbation(VectorXd &perturbation){
-	assert(perturbation.size() == state_size);	
+	assert(perturbation.size() == state_size);
 	if(params.pt_based_sampling){
 		//! perturb three canonical points and estimate affine transformation using DLT
 		Matrix23d orig_pts, perturbed_pts;

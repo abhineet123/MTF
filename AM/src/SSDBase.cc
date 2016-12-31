@@ -83,7 +83,7 @@ void SSDBase::updateSimilarity(bool prereq_only){
 	if(prereq_only){ return; }
 #ifndef DISABLE_SPI
 	if(spi_mask){
-		VectorXd masked_err_vec = Map<const VectorXb>(spi_mask, patch_size).select(I_diff, 0);
+		VectorXd masked_err_vec = Map<const VectorXb>(spi_mask, n_pix).select(I_diff, 0);
 		f = -masked_err_vec.squaredNorm() / 2;
 	} else{
 #endif
@@ -333,7 +333,7 @@ void SSDBase::cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dpssm,
 	}
 	int ch_pix_id = 0;
 	for(int pix_id = 0; pix_id < n_pix; pix_id++){
-		spi_pt_ckeck(pix_id);
+		spi_pt_check_mc(spi_mask, pix_id, ch_pix_id);
 		for(int channel_id = 0; channel_id < n_channels; ++channel_id){
 			d2f_dp2 += Map<const MatrixXd>(d2I0_dpssm2.col(ch_pix_id).data(), ssm_state_size, ssm_state_size) * df_dI0(ch_pix_id);
 			++ch_pix_id;
@@ -365,7 +365,7 @@ void SSDBase::cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dpssm,
 	}
 	int ch_pix_id = 0;
 	for(int pix_id = 0; pix_id < n_pix; ++pix_id){
-		spi_pt_ckeck(pix_id);
+		spi_pt_check_mc(spi_mask, pix_id, ch_pix_id);
 		for(int channel_id = 0; channel_id < n_channels; ++channel_id){
 			d2f_dp2 += Map<const MatrixXd>(d2It_dpssm2.col(ch_pix_id).data(), ssm_state_size, ssm_state_size) * df_dIt(ch_pix_id);
 			++ch_pix_id;
@@ -404,7 +404,7 @@ void SSDBase::cmptSumOfHessians(MatrixXd &d2f_dp2_sum,
 
 	int ch_pix_id = 0;
 	for(int pix_id = 0; pix_id < n_pix; pix_id++){
-		spi_pt_ckeck(pix_id);
+		spi_pt_check_mc(spi_mask, pix_id, ch_pix_id);
 		for(int channel_id = 0; channel_id < n_channels; ++channel_id){
 			d2f_dp2_sum += df_dI0(pix_id)*
 				(Map<const MatrixXd>(d2I0_dpssm2.col(ch_pix_id).data(), ssm_state_size, ssm_state_size)
@@ -420,7 +420,7 @@ void SSDBase::getJacobian(RowVectorXd &jacobian, const bool *pix_mask,
 	jacobian.setZero();
 	int ch_pix_id = 0;
 	for(int pix_id = 0; pix_id < n_pix; pix_id++){
-		if(!pix_mask[pix_id]){ continue; }
+		spi_check_mc(pix_mask, pix_id, ch_pix_id);
 		for(int channel_id = 0; channel_id < n_channels; ++channel_id){
 			jacobian += df_dI[ch_pix_id] * dI_dpssm.row(ch_pix_id);
 			++ch_pix_id;
@@ -437,7 +437,7 @@ void SSDBase::getDifferenceOfJacobians(RowVectorXd &diff_of_jacobians, const boo
 	diff_of_jacobians.setZero();
 	int ch_pix_id = 0;
 	for(int pix_id = 0; pix_id < n_pix; pix_id++){
-		if(!pix_mask[pix_id]){ continue; }
+		spi_check_mc(pix_mask, pix_id, ch_pix_id);
 		for(int channel_id = 0; channel_id < n_channels; ++channel_id){
 			diff_of_jacobians += df_dIt[pix_id] *
 				(dI0_dpssm.row(ch_pix_id) + dIt_dpssm.row(ch_pix_id));
@@ -453,7 +453,7 @@ void SSDBase::getHessian(MatrixXd &d2f_dp2, const bool *pix_mask, const MatrixXd
 	d2f_dp2.setZero();
 	int ch_pix_id = 0;
 	for(int pix_id = 0; pix_id < n_pix; pix_id++){
-		if(!pix_mask[pix_id]){ continue; }
+		spi_check_mc(pix_mask, pix_id, ch_pix_id);
 		for(int channel_id = 0; channel_id < n_channels; ++channel_id){
 			d2f_dp2 -= dI_dpssm.row(ch_pix_id).transpose()*dI_dpssm.row(ch_pix_id);
 			++ch_pix_id;
@@ -469,7 +469,7 @@ void SSDBase::getSumOfHessians(MatrixXd &d2f_dp2, const bool *pix_mask,
 	d2f_dp2.setZero();
 	int ch_pix_id = 0;
 	for(int pix_id = 0; pix_id < n_pix; pix_id++){
-		if(!pix_mask[pix_id]){ continue; }
+		spi_check_mc(pix_mask, pix_id, ch_pix_id);
 		for(int channel_id = 0; channel_id < n_channels; ++channel_id){
 			d2f_dp2 -= dI0_dpssm.row(ch_pix_id).transpose()*dI0_dpssm.row(ch_pix_id)
 				+ dIt_dpssm.row(ch_pix_id).transpose()*dIt_dpssm.row(ch_pix_id);

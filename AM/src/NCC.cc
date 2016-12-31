@@ -306,10 +306,12 @@ void NCC::cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp){
 #endif
 }
 void NCC::cmptSelfHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp){
-	assert(d2f_dp2.cols() == d2f_dp2.rows());
-	MatrixXd dIt_dp_cntr = (dIt_dp.rowwise() - dIt_dp.colwise().mean()).array() / b;
+	assert(d2f_dp2.cols() == d2f_dp2.rows());	
 #ifndef DISABLE_SPI
 	if(spi_mask){
+		RowVectorXd dIt_dp_mean(dIt_dp.cols());
+		utils::getMean(dIt_dp_mean, spi_mask, dIt_dp, patch_size);
+		MatrixXd dIt_dp_cntr = (dIt_dp.rowwise() - dIt_dp_mean).array() / b;
 		if(params.fast_hess){
 			d2f_dp2.setZero();
 			for(int patch_id = 0; patch_id < patch_size; patch_id++){
@@ -332,6 +334,7 @@ void NCC::cmptSelfHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp){
 		}
 	} else{
 #endif	
+		MatrixXd dIt_dp_cntr = (dIt_dp.rowwise() - dIt_dp.colwise().mean()).array() / b;
 		//printf("curr_pix_jacobian size: %ld, %ld\t", curr_pix_jacobian.rows(), curr_pix_jacobian.cols());
 		//printf("curr_pix_jacobian_cntr size: %ld, %ld\t", curr_pix_jacobian_cntr.rows(), curr_pix_jacobian_cntr.cols());
 		//printf("curr_pix_vals_cntr_b size: %ld, %ld\n", curr_pix_vals_cntr_b.rows(), curr_pix_vals_cntr_b.cols());

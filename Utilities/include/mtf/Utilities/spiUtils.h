@@ -7,6 +7,12 @@ _MTF_BEGIN_NAMESPACE
 namespace utils{
 	double getMean(const bool *spi_mask, const VectorXd &vec,
 		int vec_size);
+	//! columnwise mean
+	void getMean(RowVectorXd &mean_vec, const bool *spi_mask,
+		const MatrixXd &mat, int n_rows);
+	//! rowwise mean
+	void getMean(VectorXd &mean_vec, const bool *spi_mask,
+		const MatrixXd &mat, int n_cols);
 	void getProd(RowVectorXd &df_dp, const bool *spi_mask,
 		const RowVectorXd &df_dI, const MatrixXd &dI_dp,
 		int n_pix, int n_channels);

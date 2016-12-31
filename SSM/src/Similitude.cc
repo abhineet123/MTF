@@ -153,7 +153,7 @@ void Similitude::cmptInitPixJacobian(MatrixXd &dI_dp,
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -178,7 +178,7 @@ void Similitude::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -203,7 +203,7 @@ void Similitude::cmptApproxPixJacobian(MatrixXd &dI_dp, const PixGradT &dI_dx) {
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -226,7 +226,7 @@ void Similitude::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 	
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -252,7 +252,7 @@ void Similitude::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -294,7 +294,7 @@ void Similitude::updateGradPts(double grad_eps){
 	Vector2d diff_vec_y_warped = curr_warp.topRows<2>().col(1) * grad_eps;
 
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check(spi_mask, pt_id);
 
 		grad_pts(0, pt_id) = curr_pts(0, pt_id) + diff_vec_x_warped(0);
 		grad_pts(1, pt_id) = curr_pts(1, pt_id) + diff_vec_x_warped(1);
@@ -321,7 +321,7 @@ void Similitude::updateHessPts(double hess_eps){
 
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
 
-		spi_pt_ckeck(pt_id);
+		spi_pt_check(spi_mask, pt_id);
 
 		hess_pts(0, pt_id) = curr_pts(0, pt_id) + diff_vec_xx_warped(0);
 		hess_pts(1, pt_id) = curr_pts(1, pt_id) + diff_vec_xx_warped(1);

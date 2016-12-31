@@ -157,8 +157,8 @@ void Homography::cmptInitPixJacobian(MatrixXd &dI_dp,
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 
-		spi_pt_ckeck(pt_id);
-
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
+		
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
 
@@ -191,7 +191,7 @@ void Homography::cmptPixJacobian(MatrixXd &dI_dp,
 	validate_ssm_jacobian(dI_dp, dI_dw);
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -237,7 +237,7 @@ void Homography::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double w_x = curr_pts(0, pt_id);
 		double w_y = curr_pts(1, pt_id);
@@ -302,7 +302,7 @@ void Homography::cmptApproxPixJacobian(MatrixXd &dI_dp,
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double curr_x = curr_pts(0, pt_id);
 		double curr_y = curr_pts(1, pt_id);
@@ -358,7 +358,7 @@ void Homography::cmptInitPixHessian(MatrixXd &_d2I_dp2, const PixHessT &d2I_dw2,
 	validate_ssm_hessian(_d2I_dp2, d2I_dw2, dI_dw);
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -424,7 +424,7 @@ void Homography::cmptPixHessian(MatrixXd &_d2I_dp2, const PixHessT &d2I_dw2,
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -522,7 +522,7 @@ void Homography::cmptWarpedPixHessian(MatrixXd &_d2I_dp2, const PixHessT &d2I_dw
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		Matrix2d dw_dX, d2wx_dX2, d2wy_dX2;
 
@@ -626,7 +626,7 @@ void Homography::cmptWarpedPixHessian2(MatrixXd &d2I_dp2, const PixHessT &d2I_dw
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double curr_x = curr_pts(0, pt_id);
 		double curr_y = curr_pts(1, pt_id);
@@ -702,7 +702,7 @@ void Homography::cmptApproxPixHessian(MatrixXd &pix_hess_ssm, const PixHessT &pi
 	
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double curr_x = curr_pts(0, pt_id);
 		double curr_y = curr_pts(1, pt_id);
@@ -802,7 +802,7 @@ void Homography::updateGradPts(double grad_eps){
 
 	Vector3d pt_inc_warped, pt_dec_warped;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check(spi_mask, pt_id);
 
 		pt_inc_warped = curr_pts_hm.col(pt_id) + diff_vec_x_warped;
 		grad_pts(0, pt_id) = pt_inc_warped(0) / pt_inc_warped(2);
@@ -834,7 +834,7 @@ void Homography::updateHessPts(double hess_eps){
 
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 
-		spi_pt_ckeck(pt_id);
+		spi_pt_check(spi_mask, pt_id);
 
 		pt_inc_warped = curr_pts_hm.col(pt_id) + diff_vec_xx_warped;
 		hess_pts(0, pt_id) = pt_inc_warped(0) / pt_inc_warped(2);

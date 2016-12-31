@@ -15,6 +15,31 @@ namespace utils{
 		mean /= valid_vec_size;
 		return mean;
 	}
+	void getMean(RowVectorXd &mean_vec, const bool *spi_mask, 
+		const MatrixXd &mat, int n_rows){
+		assert(mat.rows() == n_rows && mat.cols() == mean_vec.size());
+		mean_vec.setZero();
+		int valid_vec_size = 0;
+		for(int row_id = 0; row_id < n_rows; row_id++){
+			if(!spi_mask[row_id]){ continue; }
+			++valid_vec_size;
+			mean_vec += mat.row(row_id);
+		}
+		mean_vec /= valid_vec_size;
+	}
+	void getMean(VectorXd &mean_vec, const bool *spi_mask, 
+		const MatrixXd &mat, int n_cols){
+		assert(mat.cols() == n_cols && mat.rows() == mean_vec.size());
+
+		mean_vec.setZero();
+		int valid_vec_size = 0;
+		for(int col_id = 0; col_id < n_cols; col_id++){
+			if(!spi_mask[col_id]){ continue; }
+			++valid_vec_size;
+			mean_vec += mat.col(col_id);
+		}
+		mean_vec /= valid_vec_size;
+	}
 	void getProd(RowVectorXd &df_dp, const bool *spi_mask,
 		const RowVectorXd &df_dI, const MatrixXd &dI_dp,
 		int n_pix, int n_channels){
@@ -22,7 +47,7 @@ namespace utils{
 		df_dp.setZero();
 		int ch_pix_id = 0;
 		for(int pix_id = 0; pix_id < n_pix; pix_id++){
-			if(!spi_mask[pix_id]){ continue; }
+			if(!spi_mask[pix_id]){ ch_pix_id += n_channels;  continue; }
 			for(int channel_id = 0; channel_id < n_channels; ++channel_id){
 				df_dp += df_dI[ch_pix_id] * dI_dp.row(ch_pix_id);
 				++ch_pix_id;
@@ -38,7 +63,7 @@ namespace utils{
 		df_dp.setZero();
 		int ch_pix_id = 0;
 		for(int pix_id = 0; pix_id < n_pix; pix_id++){
-			if(!spi_mask[pix_id]){ continue; }
+			if(!spi_mask[pix_id]){ ch_pix_id += n_channels;  continue; }
 			for(int channel_id = 0; channel_id < n_channels; ++channel_id){
 				df_dp += df_dIt[ch_pix_id] * dIt_dp.row(ch_pix_id) - 
 					df_dI0[ch_pix_id] * dI0_dp.row(ch_pix_id);

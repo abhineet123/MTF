@@ -86,7 +86,7 @@ void Transcaling::cmptInitPixJacobian(MatrixXd &dI_dp,
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -108,7 +108,7 @@ void Transcaling::cmptApproxPixJacobian(MatrixXd &dI_dp,
 	double s_plus_1_inv = 1.0 / (curr_state(2) + 1);
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -132,7 +132,7 @@ void Transcaling::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -156,7 +156,7 @@ void Transcaling::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -178,7 +178,7 @@ void Transcaling::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw
 
 	int ch_pt_id = 0;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
-		spi_pt_ckeck(pt_id);
+		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
@@ -215,7 +215,7 @@ void Transcaling::estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mas
 void Transcaling::updateGradPts(double grad_eps){
 	double scaled_eps = curr_warp(0, 0) * grad_eps;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		spi_pt_ckeck(pt_id);
+		spi_pt_check(spi_mask, pt_id);
 
 		grad_pts(0, pt_id) = curr_pts(0, pt_id) + scaled_eps;
 		grad_pts(1, pt_id) = curr_pts(1, pt_id);
@@ -238,7 +238,7 @@ void Transcaling::updateHessPts(double hess_eps){
 
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
 
-		spi_pt_ckeck(pt_id);
+		spi_pt_check(spi_mask, pt_id);
 
 		hess_pts(0, pt_id) = curr_pts(0, pt_id) + scaled_eps2;
 		hess_pts(1, pt_id) = curr_pts(1, pt_id);

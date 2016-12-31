@@ -114,9 +114,19 @@
 //#define CV_TO_EIG_CORNERS(cv_mat) Map<const  Matrix24d, Aligned>((double*)cv_mat.data, cv_mat.rows, cv_mat.cols);
 
 #ifndef DISABLE_SPI
-#define spi_pt_ckeck(pt_id) if(spi_mask && !spi_mask[pt_id]) continue
+#define spi_pt_check_mc(mask, id, ch_id) \
+	if(mask && !mask[id]){ ch_id += n_channels; continue;}
+#define spi_pt_check(mask, id) \
+	if(mask && !mask[id]){ continue;}
+#define spi_check_mc(mask, id, ch_id) \
+	if(!mask[id]){ ch_id += n_channels; continue;}
+#define spi_check(mask, id) \
+	if(!mask[id]){continue;}
 #else
-#define spi_pt_ckeck(pt_id) 
+#define spi_pt_check(mask, id)
+#define spi_pt_check_mc(mask, id, ch_id) 
+#define spi_check_mc(mask, id, ch_id) 
+#define spi_check(mask, id)
 #endif
 
 #define HETEROGENEOUS_INPUT -1
