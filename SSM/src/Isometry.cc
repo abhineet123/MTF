@@ -73,7 +73,8 @@ void Isometry::getStateFromWarp(VectorXd &state_vec,
 
 	state_vec(0) = iso_mat(0, 2);
 	state_vec(1) = iso_mat(1, 2);
-	state_vec(2) = getAngleOfRotation(iso_mat(1, 0), iso_mat(0, 0));
+	//state_vec(2) = getAngleOfRotation(iso_mat(1, 0), iso_mat(0, 0));
+	state_vec(2) = atan2(iso_mat(1, 0), iso_mat(0, 0));
 }
 
 void Isometry::getInitPixGrad(Matrix2Xd &ssm_grad, int pt_id) {
@@ -285,7 +286,8 @@ void Isometry::estimateWarpFromCorners(VectorXd &state_update, const Matrix24d &
 	double cos_theta = a_plus_1 / s_plus_1;
 	double sin_theta = b / s_plus_1;
 
-	double theta = getAngleOfRotation(sin_theta, cos_theta);
+	//double theta = getAngleOfRotation(sin_theta, cos_theta);
+	double theta = atan2(sin_theta, cos_theta);
 
 	//double cos_theta_final = cos(theta);
 	//double sin_theta_final = sin(theta);
@@ -437,6 +439,17 @@ void Isometry::generatePerturbation(VectorXd &perturbation){
 			perturbed_pts = perturbed_pts.colwise() + Vector2d(rand_dist[0](rand_gen[0]), rand_dist[0](rand_gen[0]));
 		}
 		perturbation = utils::computeIsometryDLT(orig_pts, perturbed_pts);
+
+		//PtsT perturbed_pts_rec(2, 2);
+		//applyWarpToPts(perturbed_pts_rec, orig_pts, perturbation);
+		//double perturbed_rec_norm = (perturbed_pts_rec - orig_pts).norm();
+		//double perturbed_norm = (perturbed_pts - orig_pts).norm();
+		//double rec_norm = (perturbed_pts - perturbed_pts_rec).norm();
+
+		//printf("perturbed_norm: %12.8f perturbed_rec_norm: %12.8f rec_norm: %12.8f\n",
+		//	perturbed_norm, perturbed_rec_norm, rec_norm);
+
+		//utils::printMatrix(init_corners, "init_corners");
 	} else{
 		ProjectiveBase::generatePerturbation(perturbation);
 	}

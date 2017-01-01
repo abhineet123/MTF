@@ -55,9 +55,9 @@ public:
 		const vector<cv::Point2f> &in_pts, const vector<cv::Point2f> &out_pts,
 		const EstimatorParams &est_params) override;
 
-	void invertState(VectorXd& inv_state, const VectorXd& state) override {
-		inv_state = -state;
-	}
+	//void invertState(VectorXd& inv_state, const VectorXd& state) override {
+	//	inv_state = -state;
+	//}
 	void updateGradPts(double grad_eps) override;
 	void updateHessPts(double hess_eps) override;
 

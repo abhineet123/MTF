@@ -1081,7 +1081,7 @@ namespace utils{
 				min_y = warped_pts(1, pt_id);
 			}
 		}
-		printf("min_x: %f max_x: %f min_y: %f max_y: %f\n", min_x, max_x, min_y, max_y);
+		//printf("min_x: %f max_x: %f min_y: %f max_y: %f\n", min_x, max_x, min_y, max_y);
 
 		for(int row_id = 0; row_id < img_height; ++row_id){
 			for(int col_id = 0; col_id < img_width; ++col_id){
@@ -1103,8 +1103,10 @@ namespace utils{
 					mtf::utils::getBilinearPts(neigh_pts_id, neigh_pts_dist, col_id, row_id, warped_pts, n_pts);
 
 					if(neigh_pts_id[0] < 0 || neigh_pts_id[1] < 0 || neigh_pts_id[2] < 0 || neigh_pts_id[3] < 0){
-						printf("neigh_pts_id: %d %d %d %d\n", neigh_pts_id[0], neigh_pts_id[1],
-							neigh_pts_id[2], neigh_pts_id[3]);
+
+						//printf("neigh_pts_id: %d %d %d %d\n", neigh_pts_id[0], neigh_pts_id[1],
+						//	neigh_pts_id[2], neigh_pts_id[3]);
+
 						if(warped_img.type() == CV_8UC3){
 							warped_img.at<cv::Vec3b>(row_id, col_id) =
 								orig_img.at<cv::Vec3f>(row_id, col_id);

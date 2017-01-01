@@ -213,7 +213,7 @@ int main(int argc, char * argv[]) {
 	}
 	cv::Mat warped_img(input->getHeight(), input->getWidth(), out_img_type);
 	PreProc_ pre_proc_warped;
-	if(syn_warp_entire_image && syn_am_on_obj){
+	if(using_ilm && syn_warp_entire_image && syn_am_on_obj){
 		printf("Applying AM tansformations only to the object\n");
 		pre_proc_warped = getPreProc(am->inputType(), pre_proc_type);
 		pre_proc_warped->initialize(warped_img);
@@ -295,6 +295,7 @@ int main(int argc, char * argv[]) {
 				//! reset the AM to its previous state
 				am->updateState(inv_am_perturbation);
 			}
+			//utils::printMatrix(ssm->getCorners(), "ssm_corners");
 		}		
 		if(syn_grayscale_img){
 			warped_img.setTo(cv::Scalar(0));
@@ -320,14 +321,14 @@ int main(int argc, char * argv[]) {
 			}
 
 			am->updatePixVals(ssm->getPts());	
-			if(!syn_am_on_obj && am->getStateSize()){
+			if(!syn_am_on_obj && using_ilm){
 				am->updateSimilarity();
 			}
 			if(syn_warp_entire_image){
 				mtf::utils::generateInverseWarpedImg(warped_img, am->getCurrPixVals(),
 					am->getImgWidth(), am->getImgHeight(), ssm->getNPts(),
 					syn_show_output, warped_img_win_name);
-				if(syn_am_on_obj && am->getStateSize()){
+				if(syn_am_on_obj && using_ilm){
 					mtf::PtsT warped_box_pts = mtf::utils::getPtsFromCorners(
 						warped_bounding_box, am->getResX(), am->getResY());
 					pre_proc_warped->update(warped_img);
@@ -404,7 +405,9 @@ int main(int argc, char * argv[]) {
 		corner_change_norm_avg += delta / static_cast<double>(frame_id);
 		corner_change_norm_std += delta*(corner_change_norm - corner_change_norm_avg);
 		if(frame_id % 50 == 0){
-			printf("Done %d frames\n", frame_id);
+			printf("Done %d frames\t", frame_id);
+			printf("corner_change_norm statistics: avg: %f std: %f\n",
+				corner_change_norm_avg, sqrt(corner_change_norm_std / frame_id));
 		}
 	}
 	corner_change_norm_std = sqrt(corner_change_norm_std/syn_n_frames);
