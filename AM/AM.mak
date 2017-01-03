@@ -39,7 +39,11 @@ ncctbb ?= 0
 nccomp ?= 0
 sg ?= 0
 lscd ?= 0
+ctdf ?= 0
 
+ifeq (${ctdf}, 0)
+CCRE_FLAGS += -D CCRE_DISABLE_TRUE_DIST
+endif
 
 ifeq (${dfm}, 1)
 APPEARANCE_MODELS += DFM

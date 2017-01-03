@@ -10,7 +10,7 @@ _MTF_BEGIN_NAMESPACE
 CCREParams::CCREParams(const AMParams *am_params,
 int _n_bins, bool _partition_of_unity,
 double _pre_seed, bool _symmetrical_grad,
-int _n_blocks, 
+int _n_blocks,
 bool _debug_mode) :
 AMParams(am_params),
 n_bins(_n_bins),
@@ -34,7 +34,7 @@ debug_mode(CCRE_DEBUG_MODE){
 		partition_of_unity = params->partition_of_unity;
 		pre_seed = params->pre_seed;
 		symmetrical_grad = params->symmetrical_grad;
-		n_blocks = params->n_blocks;		
+		n_blocks = params->n_blocks;
 		debug_mode = params->debug_mode;
 	}
 }
@@ -87,6 +87,7 @@ params(ccre_params){
 	preseeding each element of hist with 's' is equivalent to preseeding each element of hist_mat with s/patch_size */
 
 	hist_norm_mult = 1.0 / (static_cast<double>(patch_size)+hist_pre_seed*params.n_bins);
+
 	log_hist_norm_mult = log(hist_norm_mult);
 	/* denominator of this factor is equal to the sum of all entries in the individual histograms,
 	so multiplying hist with this factor will give the normalized hist whose entries sum to 1*/
@@ -113,6 +114,10 @@ params(ccre_params){
 		block_extents(block_id, 1) = (block_id + 1)*pix_per_block - 1;
 	}
 	block_extents(params.n_blocks - 1, 1) = patch_size - 1;
+
+#ifndef CCRE_DISABLE_TRUE_DIST
+	printf("Using true distance feature\n");
+#endif
 
 #ifdef ENABLE_TBB
 	printf(" ******* Parallelization enabled using TBB ******* \n");
@@ -301,7 +306,8 @@ void CCRE::updateSimilarity(bool prereq_only){
 			int curr_id = 0;
 			while(curr_id < _curr_bspl_ids(pix_id, 0)){
 				// curr_cum_hist_mat is unity and curr_cum_hist_grad is zero but the latter has already been zeroed
-				curr_cum_hist(curr_id) += curr_cum_hist_mat(curr_id, pix_id) = 1;
+				curr_cum_hist_mat(curr_id, pix_id) = 1;
+				++curr_cum_hist(curr_id);
 				for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
 					cum_joint_hist(curr_id, init_id) += init_hist_mat(init_id, pix_id);
 				}
@@ -327,7 +333,8 @@ void CCRE::updateSimilarity(bool prereq_only){
 			int curr_id = 0;
 			while(curr_id < _curr_bspl_ids(pix_id, 0)){
 				//! curr_cum_hist_mat is unity
-				curr_cum_hist(curr_id) += curr_cum_hist_mat(curr_id, pix_id) = 1;
+				curr_cum_hist_mat(curr_id, pix_id) = 1;
+				++curr_cum_hist(curr_id);
 				for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
 					cum_joint_hist(curr_id, init_id) += init_hist_mat(init_id, pix_id);
 				}
@@ -763,6 +770,15 @@ double CCRE::operator()(const double* hist1_mat_addr, const double* hist2_mat_ad
 		int bspl_id21 = _std_bspl_ids(pix2_floor, 0);
 		int bspl_id22 = bspl_id21 + 1, bspl_id23 = bspl_id21 + 2, bspl_id24 = bspl_id21 + 3;
 
+#ifndef CCRE_DISABLE_TRUE_DIST
+		for(int bspl_id1 = 0; bspl_id1 < bspl_id11; ++bspl_id1){
+			++cum_hist(bspl_id1);
+			cum_joint_hist(bspl_id1, bspl_id21) += hist_mat(5, patch_id);
+			cum_joint_hist(bspl_id1, bspl_id22) += hist_mat(6, patch_id);
+			cum_joint_hist(bspl_id1, bspl_id23) += hist_mat(7, patch_id);
+			cum_joint_hist(bspl_id1, bspl_id24) += hist_mat(8, patch_id);
+		}
+#endif
 		cum_hist(bspl_id11) += cum_hist_mat(1, patch_id);
 		cum_hist(bspl_id12) += cum_hist_mat(2, patch_id);
 		cum_hist(bspl_id13) += cum_hist_mat(3, patch_id);
@@ -800,7 +816,11 @@ double CCRE::operator()(const double* hist1_mat_addr, const double* hist2_mat_ad
 			result -= cum_joint_hist(id1, id2) * (log(cum_joint_hist(id1, id2) / (cum_hist(id1) * hist(id2))) - log_hist_norm_mult);
 		}
 	}
+#ifndef CCRE_DISABLE_TRUE_DIST
+	return result*hist_norm_mult;
+#else
 	return result;
+#endif
 }
 
 //----------------------------------- Second order Hessians -----------------------------------//
