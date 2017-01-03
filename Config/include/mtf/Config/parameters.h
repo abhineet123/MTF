@@ -2191,19 +2191,23 @@ namespace mtf{
 			// the name and value of each argument
 			if(argc <= 0){ return true; }
 
+			if(parse_type && argc % 2 == 0){
+				printf("Command line arguments must be specified in pairs\n");
+				return false;
+			}
 			//printf("Parsing %d argument pairs with argv=%d...\n", argc, argv);			
 			int max_arg = parse_type ? argc / 2 + 1 : argc;
 			if(print_args){
 				printf("argc: %d max_arg: %d\n", argc, max_arg);
 			}
-			for(int i = 1; i < max_arg; i++){
+			for(int arg_id = 1; arg_id < max_arg; arg_id++){
 				char arg_name[500], arg_val[500];
 				//printf("i=%d\n", i);
 				if(parse_type){
-					sscanf(argv[2 * i - 1], "%s", arg_name);
-					sscanf(argv[2 * i], "%s", arg_val);
+					sscanf(argv[2 * arg_id - 1], "%s", arg_name);
+					sscanf(argv[2 * arg_id], "%s", arg_val);
 				} else{
-					sscanf(argv[i], "%s%s", arg_name, arg_val);
+					sscanf(argv[arg_id], "%s%s", arg_name, arg_val);
 				}
 				strtok(arg_name, "\n");
 				strtok(arg_name, "\r");
@@ -2288,6 +2292,8 @@ namespace mtf{
 			//! check if a custom configuration directory has been specified
 			if(cmd_argc > 2 && !strcmp(cmd_argv[1], "config_dir")){
 				config_dir = std::string(cmd_argv[2]);
+				cmd_argv += 2;
+				cmd_argc -= 2;
 				printf("Reading configuration files from: %s\n", config_dir.c_str());
 			}
 			std::vector<char*> fargv;
