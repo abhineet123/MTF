@@ -27,7 +27,7 @@ ProjectiveBase(_params), params(_params){
 	printf("resy: %d\n", resy);
 	printf("debug_mode: %d\n", params.debug_mode);
 
-	name = "Transcaling";
+	name = "transcaling";
 	state_size = 3;
 	curr_state.resize(state_size);
 }
@@ -144,7 +144,6 @@ void Transcaling::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 			dI_dp(ch_pt_id, 0) = Ix;
 			dI_dp(ch_pt_id, 1) = Iy;
 			dI_dp(ch_pt_id, 2) = Ix*x + Iy*y;
-			dI_dp(ch_pt_id, 3) = Iy*x - Ix*y;
 			++ch_pt_id;
 		}
 	}
