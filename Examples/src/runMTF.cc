@@ -494,7 +494,8 @@ int main(int argc, char * argv[]) {
 			draw tracker positions on OpenCV window
 			*/
 			for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
-				cv::Mat drawn_corners = resized_images ? trackers[tracker_id]->getRegion() / img_resize_factor :
+				cv::Mat drawn_corners = tracker_id == 0 ? tracker_corners : 
+					resized_images ? trackers[tracker_id]->getRegion() / img_resize_factor :
 					trackers[tracker_id]->getRegion();
 				mtf::utils::drawRegion(input->getFrame(MUTABLE), drawn_corners,
 					cv_utils.getObjCol(tracker_id), line_thickness, trackers[tracker_id]->name.c_str(),

@@ -15,8 +15,7 @@
 #define GTCV_MIN_EIG_THRESH 1e-4
 #define GTCV_MAX_ITERS 30
 #define GTCV_EPSILON 0.01
-#define GTCV_SHOW_TRACKERS 0
-#define GTCV_SHOW_TRACKER_EDGES 0
+#define GTCV_SHOW_PTS 0
 #define GTCV_DEBUG_MODE 0
 
 _MTF_BEGIN_NAMESPACE
@@ -35,7 +34,7 @@ struct GridTrackerCVParams{
 	int max_iters; //! maximum iterations of the GridTrackerCV algorithm to run for each frame
 	double epsilon;
 
-	bool show_trackers;// show the locations of individual patch trackers
+	bool show_pts;// show the locations of individual patch trackers
 
 	bool debug_mode; //! decides whether logging data will be printed for debugging purposes; 
 	//! only matters if logging is enabled at compile time
@@ -46,7 +45,7 @@ struct GridTrackerCVParams{
 		bool reset_at_each_frame, bool _patch_centroid_inside,
 		int _pyramid_levels, bool _use_min_eig_vals,
 		double _min_eig_thresh, int _max_iters, 
-		double _epsilon,bool _show_trackers,
+		double _epsilon,bool _show_pts,
 		bool _debug_mode);
 	GridTrackerCVParams(const GridTrackerCVParams *params = nullptr);
 	
@@ -111,8 +110,10 @@ private:
 	MatrixXi _linear_idx;//used for indexing the sub region locations
 	int pause_seq;
 
+	void resetPts();
+
 	~GridTrackerCV(){}
-	void showTrackers();
+	void showPts();
 };
 
 _MTF_END_NAMESPACE
