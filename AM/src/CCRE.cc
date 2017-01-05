@@ -115,8 +115,8 @@ params(ccre_params){
 	}
 	block_extents(params.n_blocks - 1, 1) = patch_size - 1;
 
-#ifndef CCRE_DISABLE_TRUE_DIST
-	printf("Using true distance feature\n");
+#ifndef CCRE_DISABLE_TRUE_CUM_HIST
+	printf("Using true cumulative histograms\n");
 #endif
 
 #ifdef ENABLE_TBB
@@ -169,8 +169,12 @@ void CCRE::initializeSimilarity(){
 		for(int pix_id = 0; pix_id < patch_size; pix_id++) {
 			int cum_hist_id = 0;
 			while(cum_hist_id < _init_bspl_ids(pix_id, 0)){
+#ifndef CCRE_DISABLE_TRUE_CUM_HIST
 				init_cum_hist_grad(cum_hist_id, pix_id) = 0;
 				init_cum_hist(cum_hist_id) += init_cum_hist_mat(cum_hist_id, pix_id) = 1;
+#else
+				init_cum_hist_mat(cum_hist_id, pix_id) = init_cum_hist_grad(cum_hist_id, pix_id) = 0;
+#endif
 				++cum_hist_id;
 			}
 			double curr_diff = cum_hist_id - I0(pix_id);
@@ -207,7 +211,9 @@ void CCRE::initializeSimilarity(){
 			for(int hist_id = _init_bspl_ids(pix_id, 0); hist_id <= _init_bspl_ids(pix_id, 1); ++hist_id) {
 				int cum_hist_id = 0;
 				while(cum_hist_id < _init_bspl_ids(pix_id, 0)){
+#ifndef CCRE_DISABLE_TRUE_CUM_HIST
 					cum_joint_hist(cum_hist_id, hist_id) += init_hist_mat(hist_id, pix_id);
+#endif
 					++cum_hist_id;
 				}
 				while(cum_hist_id <= _init_bspl_ids(pix_id, 1)){
@@ -305,12 +311,16 @@ void CCRE::updateSimilarity(bool prereq_only){
 			_curr_bspl_ids.row(pix_id) = _std_bspl_ids.row(static_cast<int>(It(pix_id)));
 			int curr_id = 0;
 			while(curr_id < _curr_bspl_ids(pix_id, 0)){
+#ifndef CCRE_DISABLE_TRUE_CUM_HIST
 				// curr_cum_hist_mat is unity and curr_cum_hist_grad is zero but the latter has already been zeroed
 				curr_cum_hist_mat(curr_id, pix_id) = 1;
 				++curr_cum_hist(curr_id);
 				for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
 					cum_joint_hist(curr_id, init_id) += init_hist_mat(init_id, pix_id);
-				}
+			}
+#else
+				curr_cum_hist_mat(curr_id, pix_id) = 0;
+#endif
 				++curr_id;
 			}
 			double curr_diff = curr_id - It(pix_id);
@@ -332,12 +342,16 @@ void CCRE::updateSimilarity(bool prereq_only){
 			_curr_bspl_ids.row(pix_id) = _std_bspl_ids.row(static_cast<int>(It(pix_id)));
 			int curr_id = 0;
 			while(curr_id < _curr_bspl_ids(pix_id, 0)){
+#ifndef CCRE_DISABLE_TRUE_CUM_HIST
 				//! curr_cum_hist_mat is unity
 				curr_cum_hist_mat(curr_id, pix_id) = 1;
 				++curr_cum_hist(curr_id);
 				for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
 					cum_joint_hist(curr_id, init_id) += init_hist_mat(init_id, pix_id);
 				}
+#else
+				curr_cum_hist_mat(curr_id, pix_id) = 0;
+#endif
 				++curr_id;
 			}
 			double curr_diff = curr_id - It(pix_id);
@@ -393,10 +407,14 @@ void CCRE::updateInitGrad(){
 		for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
 			int curr_id = 0;
 			while(curr_id < _curr_bspl_ids(pix_id, 0)){
+#ifndef CCRE_DISABLE_TRUE_CUM_HIST
 				int joint_id = _linear_idx(curr_id, init_id);
 				init_cum_joint_hist_grad(joint_id, pix_id) = init_hist_grad(init_id, pix_id);
 				df_dI0(pix_id) += init_cum_joint_hist_grad(joint_id, pix_id) * (1 + ccre_log_term(curr_id, init_id))
 					- cum_joint_hist(curr_id, init_id) * init_hist_grad_ratio(init_id, pix_id);
+#else
+				df_dI0(pix_id) -= cum_joint_hist(curr_id, init_id) * init_hist_grad_ratio(init_id, pix_id);
+#endif
 				++curr_id;
 			}
 			while(curr_id <= _curr_bspl_ids(pix_id, 1)){
@@ -635,8 +653,10 @@ void CCRE::updateSymSimilarity(bool prereq_only){
 			curr_hist(curr_id) += curr_hist_mat(curr_id, pix_id);
 			int init_id = 0;
 			while(init_id < _init_bspl_ids(pix_id, 0)){
+#ifndef CCRE_DISABLE_TRUE_CUM_HIST
 				// init_cum_hist_mat is unity
 				cum_joint_hist(init_id, curr_id) += curr_hist_mat(curr_id, pix_id);
+#endif
 				++init_id;
 			}
 			while(init_id <= _init_bspl_ids(pix_id, 1)){
@@ -649,8 +669,6 @@ void CCRE::updateSymSimilarity(bool prereq_only){
 	curr_hist *= hist_norm_mult;
 	cum_joint_hist_log = cum_joint_hist.array().log();
 	curr_hist_log = curr_hist.array().log();
-
-
 
 	for(int init_id = 0; init_id < params.n_bins; init_id++){
 		for(int curr_id = 0; curr_id < params.n_bins; curr_id++){
@@ -770,7 +788,7 @@ double CCRE::operator()(const double* hist1_mat_addr, const double* hist2_mat_ad
 		int bspl_id21 = _std_bspl_ids(pix2_floor, 0);
 		int bspl_id22 = bspl_id21 + 1, bspl_id23 = bspl_id21 + 2, bspl_id24 = bspl_id21 + 3;
 
-#ifndef CCRE_DISABLE_TRUE_DIST
+#ifndef CCRE_DISABLE_TRUE_CUM_HIST
 		for(int bspl_id1 = 0; bspl_id1 < bspl_id11; ++bspl_id1){
 			++cum_hist(bspl_id1);
 			cum_joint_hist(bspl_id1, bspl_id21) += hist_mat(5, patch_id);
@@ -816,7 +834,7 @@ double CCRE::operator()(const double* hist1_mat_addr, const double* hist2_mat_ad
 			result -= cum_joint_hist(id1, id2) * (log(cum_joint_hist(id1, id2) / (cum_hist(id1) * hist(id2))) - log_hist_norm_mult);
 		}
 	}
-#ifndef CCRE_DISABLE_TRUE_DIST
+#ifndef CCRE_DISABLE_TRUE_CUM_HIST
 	return result*hist_norm_mult;
 #else
 	return result;

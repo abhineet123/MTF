@@ -219,14 +219,14 @@ void RIU::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacob
 double RIU::operator()(const double* a, const double* b, size_t size, double worst_dist) const{
 	assert(size == patch_size + 1);
 	const double* _I0, *_It;
-   if(a[0] == 1){
-	   _I0 = a + 1;
-	   _It = b + 1;
+	if(a[0] == 1){
+		_I0 = a + 1;
+		_It = b + 1;
 	} else{
-	   _I0 = b + 1;
-	   _It = a + 1;
+		_I0 = b + 1;
+		_It = a + 1;
 	}
-   VectorXd _r = Map<const VectorXd>(_It, size - 1).array() / Map<const VectorXd>(_I0, size - 1).array();
+	VectorXd _r = Map<const VectorXd>(_It, size - 1).array() / Map<const VectorXd>(_I0, size - 1).array();
 	double _r_mean = _r.mean();
 	double dist = ((_r.array() - _r_mean).matrix().squaredNorm() / size) / (_r_mean);
 	return params.dist_from_likelihood ?

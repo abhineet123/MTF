@@ -39,10 +39,10 @@ ncctbb ?= 0
 nccomp ?= 0
 sg ?= 0
 lscd ?= 0
-ctdf ?= 0
+ctch ?= 0
 
-ifeq (${ctdf}, 0)
-CCRE_FLAGS += -D CCRE_DISABLE_TRUE_DIST
+ifeq (${ctch}, 0)
+CCRE_FLAGS += -D CCRE_DISABLE_TRUE_CUM_HIST
 endif
 
 ifeq (${dfm}, 1)
