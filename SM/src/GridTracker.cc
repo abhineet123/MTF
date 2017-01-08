@@ -216,6 +216,10 @@ template<class SSM>
 void GridTracker<SSM>::initialize(const cv::Mat &corners) {
 	ssm.initialize(corners);
 	resetTrackers(true);
+	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++){
+		curr_pts[tracker_id].x = prev_pts[tracker_id].x;
+		curr_pts[tracker_id].y = prev_pts[tracker_id].y;
+	}
 	ssm.getCorners(cv_corners_mat);
 	if(params.show_trackers){ showTrackers(); }
 }
@@ -232,7 +236,6 @@ void GridTracker<SSM>::update() {
 		trackers[tracker_id]->update();
 		utils::getCentroid(curr_pts[tracker_id], trackers[tracker_id]->getRegion());
 		//patch_corners = trackers[tracker_id]->getRegion();
-
 	}
 #ifdef ENABLE_TBB
 		});

@@ -79,6 +79,11 @@ private:
 	VectorXi eig_result;
 	VectorXd eig_dists;
 
+	MatrixXdr eig_dataset_added;
+	vector<VectorXd> ssm_perturbations_added;
+	VectorXi distr_n_samples_added;
+
+
 	int best_idx;
 	double best_dist;
 
@@ -91,6 +96,8 @@ private:
 	char *log_fname;
 	char *time_fname;
 
+	void generateDataset(vector<VectorXd> &perturbations, 
+		MatrixXdr &dataset, const VectorXi &_distr_n_samples);
 	void loadDataset();
 	void saveDataset();
 };

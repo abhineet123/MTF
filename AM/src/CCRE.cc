@@ -117,6 +117,8 @@ params(ccre_params){
 
 #ifndef CCRE_DISABLE_TRUE_CUM_HIST
 	printf("Using true cumulative histograms\n");
+#else
+	printf("Using approximate cumulative histograms\n");
 #endif
 
 #ifdef ENABLE_TBB

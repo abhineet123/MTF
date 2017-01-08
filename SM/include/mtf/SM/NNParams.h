@@ -11,6 +11,7 @@
 #define NN_ADDITIVE_UPDATE 1
 #define NN_SHOW_SAMPLES 1
 #define NN_ADD_POINTS 0
+#define NN_N_SAMPLES_TO_ADD 10
 #define NN_REMOVE_POINTS 0
 #define NN_LOAD_INDEX 0
 #define NN_SAVE_INDEX 0
@@ -37,6 +38,7 @@ struct NNParams{
 	bool additive_update;
 	int show_samples;
 	int add_points;
+	int n_samples_to_add;
 	int remove_points;
 
 	bool save_index;
@@ -58,6 +60,7 @@ struct NNParams{
 		bool _additive_update,
 		int _show_samples,
 		int _add_points,
+		int _n_samples_to_add,
 		int _remove_points,
 		bool load_index,
 		bool _save_index,

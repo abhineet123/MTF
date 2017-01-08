@@ -350,6 +350,7 @@ namespace mtf{
 		bool nn_additive_update = false;
 		int nn_show_samples = 0;
 		int nn_add_points = 0;
+		int nn_n_samples_to_add = 0;
 		int nn_remove_points = 0;
 		bool nn_save_index = false;
 		bool nn_load_index = false;
@@ -1468,6 +1469,8 @@ namespace mtf{
 				nn_show_samples = atoi(arg_val);
 			} else if(!strcmp(arg_name, "nn_add_points")){
 				nn_add_points = atoi(arg_val);
+			} else if(!strcmp(arg_name, "nn_n_samples_to_add")){
+				nn_n_samples_to_add = atoi(arg_val);
 			} else if(!strcmp(arg_name, "nn_remove_points")){
 				nn_remove_points = atoi(arg_val);
 			} else if(!strcmp(arg_name, "nn_ssm_sigma_ids")){

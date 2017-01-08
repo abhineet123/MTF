@@ -15,6 +15,7 @@ NNParams::NNParams(
 	bool _additive_update, 
 	int _show_samples,
 	int _add_points, 
+	int _n_samples_to_add,
 	int _remove_points,
 	bool _load_index, 
 	bool _save_index, 
@@ -30,6 +31,7 @@ NNParams::NNParams(
 	additive_update(_additive_update),
 	show_samples(_show_samples),
 	add_points(_add_points),
+	n_samples_to_add(_n_samples_to_add),
 	remove_points(_remove_points),
 	load_index(_load_index),
 	save_index(_save_index),
@@ -43,6 +45,7 @@ epsilon(NN_EPSILON),
 additive_update(NN_ADDITIVE_UPDATE),
 show_samples(NN_SHOW_SAMPLES),
 add_points(NN_ADD_POINTS),
+n_samples_to_add(NN_N_SAMPLES_TO_ADD),
 remove_points(NN_REMOVE_POINTS),
 load_index(NN_LOAD_INDEX),
 save_index(NN_SAVE_INDEX),
@@ -65,6 +68,7 @@ debug_mode(NN_DEBUG_MODE){
 		show_samples = params->show_samples;
 
 		add_points = params->add_points;
+		n_samples_to_add = params->n_samples_to_add;
 		remove_points = params->remove_points;
 
 		load_index = params->load_index;
@@ -141,6 +145,19 @@ bool NNParams::processDistributions(vector<VectorXd> &state_sigma,
 	//! distribute the residual samples evenly among the distributions;
 	for(int distr_id = 0; distr_id < residual_samples; ++distr_id){
 		++distr_n_samples[distr_id];
+	}
+
+	if(!using_pix_sigma){
+		if(n_distr > 1){
+			printf("Using a mixture of %d distributions:\n", n_distr);
+			for(int distr_id = 0; distr_id < n_distr; ++distr_id){
+				printf("%d: ", distr_id);
+				utils::printMatrix(state_sigma[distr_id].transpose(), nullptr, "%e");
+			}
+		} else{
+			printf("Using a single distribution:\n");
+			utils::printMatrix(state_sigma[0].transpose(), nullptr, "%e");
+		}
 	}
 	return using_pix_sigma;
 }

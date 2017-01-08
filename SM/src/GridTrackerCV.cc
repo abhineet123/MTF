@@ -146,6 +146,10 @@ void GridTrackerCV<SSM>::initialize(const cv::Mat &corners) {
 
 	ssm.initialize(corners);
 	resetPts();
+	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+		curr_pts[pt_id].x = prev_pts[pt_id].x;
+		curr_pts[pt_id].y = prev_pts[pt_id].y;
+	}
 	curr_img.copyTo(prev_img);
 
 	ssm.getCorners(cv_corners_mat);

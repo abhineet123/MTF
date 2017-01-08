@@ -7,16 +7,15 @@ _MTF_BEGIN_NAMESPACE
 namespace nt{
 	NN::NN(AM _am, SSM _ssm, const ParamType *nn_params) :
 		SearchMethod(_am, _ssm),
-		params(nn_params){
+		params(nn_params),
+		dataset_loaded(false){
 		printf("\n");
 		printf("Using Nearest Neighbor (NT) SM with:\n");
 		printf("max_iters: %d\n", params.max_iters);
 		printf("n_samples: %d\n", params.n_samples);
-		printf("epsilon: %f\n", params.epsilon);	
+		printf("epsilon: %f\n", params.epsilon);
 		printf("additive_update: %d\n", params.additive_update);
 		printf("show_samples: %d\n", params.show_samples);
-		printf("add_points: %d\n", params.add_points);
-		printf("remove_points: %d\n", params.remove_points);
 		printf("save_index: %d\n", params.save_index);
 		printf("debug_mode: %d\n", params.debug_mode);
 
@@ -69,17 +68,15 @@ namespace nt{
 				state_mean[sampler_id] = VectorXd::Zero(ssm_state_size);
 				ssm->estimateStateSigma(state_sigma[sampler_id], params.pix_sigma[sampler_id]);
 			}
-		}
-
-		if(params.debug_mode){
-			//! print the sigma for the SSM samplers
-			printf("state_sigma:\n");
-			for(int distr_id = 0; distr_id < n_distr; ++distr_id){
-				if(n_distr>1){ printf("%d: ", distr_id); }
-				utils::printMatrix(state_sigma[distr_id].transpose(), nullptr, "%e");
+			if(params.debug_mode){
+				//! print the sigma for the SSM samplers
+				printf("state_sigma:\n");
+				for(int distr_id = 0; distr_id < n_distr; ++distr_id){
+					if(n_distr > 1){ printf("%d: ", distr_id); }
+					utils::printMatrix(state_sigma[distr_id].transpose(), nullptr, "%e");
+				}
 			}
 		}
-
 		//! initialize SSM sampler with the first distribution
 		ssm->initializeSampler(state_sigma[0], state_mean[0]);
 
@@ -93,116 +90,28 @@ namespace nt{
 		if(params.show_samples){
 			am->getCurrImg().convertTo(curr_img_uchar, CV_8UC1);
 		}
-		bool dataset_loaded = false;
-		if(params.load_index){
-			ifstream in_file(saved_db_path, ios::in | ios::binary);
-			if(in_file.good()){
-				printf("Loading feature dataset from: %s\n", saved_db_path.c_str());
-				mtf_clock_get(db_start_time);
-				in_file.read((char*)(eig_dataset.data()), sizeof(double)*eig_dataset.size());
-				for(int sample_id = 0; sample_id < params.n_samples; ++sample_id){
-					ssm_perturbations[sample_id].resize(ssm_state_size);
-					in_file.read((char*)(ssm_perturbations[sample_id].data()), sizeof(double)*ssm_state_size);
-				}
-				in_file.close();
-				double db_time;
-				mtf_clock_get(db_end_time);
-				mtf_clock_measure(db_start_time, db_end_time, db_time);
-				printf("Time taken: %f secs\n", db_time);
-				dataset_loaded = true;
-				if(!ifstream(saved_idx_path, ios::in | ios::binary).good()){
-					// index file does not exist or is unreadable
-					params.load_index = false;
-				} else{
-					params.save_index = false;
-				}
-			} else{
-				printf("Failed to load feature dataset from: %s\n", saved_db_path.c_str());
-				// index must be rebuilt if dataset could not loaded
-				params.load_index = false;
-			}
-		}
-		if(!dataset_loaded){			
-			int pause_after_show = 1;
+
+		if(params.load_index){ loadDataset(); }
+
+		if(!dataset_loaded){
 			printf("building feature dataset...\n");
 			mtf_clock_get(db_start_time);
-			int sample_id = 0;
-			for(int sampler_id = 0; sampler_id < n_distr; ++sampler_id){
-				if(n_distr>1){
-					//! need to reset SSM sampler only if multiple samplers are in use
-					//! since it was initialized with the first one
-					ssm->setSampler(state_sigma[sampler_id], state_mean[sampler_id]);
-				}
-				for(int dist_sample_id = 0; dist_sample_id < distr_n_samples[sampler_id]; ++dist_sample_id){
-					ssm_perturbations[sample_id].resize(ssm_state_size);
-					//utils::printScalar(sample_id, "sample_id");
-					//utils::printMatrix(ssm->getCorners(), "Corners before");
-					ssm->generatePerturbation(ssm_perturbations[sample_id]);
-					//utils::printMatrix(ssm_perturbations[sample_id], "state_update");
 
-					if(params.additive_update){
-						inv_state_update = -ssm_perturbations[sample_id];
-						ssm->additiveUpdate(inv_state_update);
-					} else{
-						ssm->invertState(inv_state_update, ssm_perturbations[sample_id]);
-						ssm->compositionalUpdate(inv_state_update);
-					}
-					//utils::printMatrix(inv_state_update, "inv_state_update");
+			generateDataset();
 
-					am->updatePixVals(ssm->getPts());
-					am->updateDistFeat(eig_dataset.row(sample_id).data());
-
-					if(params.show_samples){
-						cv::Point2d sample_corners[4];
-						ssm->getCorners(sample_corners);
-						utils::drawCorners(curr_img_uchar, sample_corners,
-							cv::Scalar(0, 0, 255), to_string(sample_id + 1));
-						if((sample_id + 1) % params.show_samples == 0){
-							cv::imshow("Samples", curr_img_uchar);
-							int key = cv::waitKey(1 - pause_after_show);
-							if(key == 27){
-								cv::destroyWindow("Samples");
-								params.show_samples = 0;
-							} else if(key == 32){
-								pause_after_show = 1 - pause_after_show;
-							}
-							am->getCurrImg().convertTo(curr_img_uchar, CV_8UC1);
-						}
-					}
-					// reset SSM to previous state
-					if(params.additive_update){
-						ssm->additiveUpdate(ssm_perturbations[sample_id]);
-					} else{
-						ssm->compositionalUpdate(ssm_perturbations[sample_id]);
-					}
-					//utils::printMatrix(ssm->getCorners(), "Corners after");
-					++sample_id;
-				}
-			}
 			double db_time;
 			mtf_clock_get(db_end_time);
 			mtf_clock_measure(db_start_time, db_end_time, db_time);
 			printf("Time taken: %f secs\n", db_time);
-			if(params.save_index){
-				ofstream out_file(saved_db_path, ios::out | ios::binary);
-				if(out_file.good()){
-					printf("Saving dataset to: %s\n", saved_db_path.c_str());
-					out_file.write((char*)(eig_dataset.data()), sizeof(double)*eig_dataset.size());
-					for(sample_id = 0; sample_id < params.n_samples; ++sample_id){
-						out_file.write((char*)(ssm_perturbations[sample_id].data()), sizeof(double)*ssm_state_size);
-					}
-					out_file.close();
-				} else{
-					printf("Failed to save dataset to: %s\n", saved_db_path.c_str());
-				}
-			}
+
+			if(params.save_index){ saveDataset(); }
 		}
 		double idx_time;
 		mtf_clock_get(idx_start_time);
 		if(params.load_index){
 			gnn_index->loadGraph(saved_idx_path.c_str());
 		} else{
-			printf("building GNN graph...\n");				
+			printf("building GNN graph...\n");
 			gnn_index->buildGraph(eig_dataset.data());
 		}
 		mtf_clock_get(idx_end_time);
@@ -210,7 +119,7 @@ namespace nt{
 		printf("Time taken: %f secs\n", idx_time);
 
 		if(params.save_index){
-				gnn_index->saveGraph(saved_idx_path.c_str());
+			gnn_index->saveGraph(saved_idx_path.c_str());
 		}
 		ssm->getCorners(cv_corners_mat);
 
@@ -218,6 +127,105 @@ namespace nt{
 		write_interval(time_fname, "w");
 	}
 
+	void NN::generateDataset(){
+		int pause_after_show = 1;
+		int sample_id = 0;
+		for(int sampler_id = 0; sampler_id < n_distr; ++sampler_id){
+			if(n_distr > 1){
+				//! need to reset SSM sampler only if multiple samplers are in use
+				//! since it was initialized with the first one
+				ssm->setSampler(state_sigma[sampler_id], state_mean[sampler_id]);
+			}
+			for(int dist_sample_id = 0; dist_sample_id < distr_n_samples[sampler_id]; ++dist_sample_id){
+				ssm_perturbations[sample_id].resize(ssm_state_size);
+				//utils::printScalar(sample_id, "sample_id");
+				//utils::printMatrix(ssm->getCorners(), "Corners before");
+				ssm->generatePerturbation(ssm_perturbations[sample_id]);
+				//utils::printMatrix(ssm_perturbations[sample_id], "state_update");
+
+				if(params.additive_update){
+					inv_state_update = -ssm_perturbations[sample_id];
+					ssm->additiveUpdate(inv_state_update);
+				} else{
+					ssm->invertState(inv_state_update, ssm_perturbations[sample_id]);
+					ssm->compositionalUpdate(inv_state_update);
+				}
+				//utils::printMatrix(inv_state_update, "inv_state_update");
+
+				am->updatePixVals(ssm->getPts());
+				am->updateDistFeat(eig_dataset.row(sample_id).data());
+
+				if(params.show_samples){
+					cv::Point2d sample_corners[4];
+					ssm->getCorners(sample_corners);
+					utils::drawCorners(curr_img_uchar, sample_corners,
+						cv::Scalar(0, 0, 255), to_string(sample_id + 1));
+					if((sample_id + 1) % params.show_samples == 0){
+						cv::imshow("Samples", curr_img_uchar);
+						int key = cv::waitKey(1 - pause_after_show);
+						if(key == 27){
+							cv::destroyWindow("Samples");
+							params.show_samples = 0;
+						} else if(key == 32){
+							pause_after_show = 1 - pause_after_show;
+						}
+						am->getCurrImg().convertTo(curr_img_uchar, CV_8UC1);
+					}
+				}
+				// reset SSM to previous state
+				if(params.additive_update){
+					ssm->additiveUpdate(ssm_perturbations[sample_id]);
+				} else{
+					ssm->compositionalUpdate(ssm_perturbations[sample_id]);
+				}
+				//utils::printMatrix(ssm->getCorners(), "Corners after");
+				++sample_id;
+			}
+		}
+	}
+
+	void NN::loadDataset(){
+		ifstream in_file(saved_db_path, ios::in | ios::binary);
+		if(in_file.good()){
+			printf("Loading feature dataset from: %s\n", saved_db_path.c_str());
+			mtf_clock_get(db_start_time);
+			in_file.read((char*)(eig_dataset.data()), sizeof(double)*eig_dataset.size());
+			for(int sample_id = 0; sample_id < params.n_samples; ++sample_id){
+				ssm_perturbations[sample_id].resize(ssm_state_size);
+				in_file.read((char*)(ssm_perturbations[sample_id].data()), sizeof(double)*ssm_state_size);
+			}
+			in_file.close();
+			double db_time;
+			mtf_clock_get(db_end_time);
+			mtf_clock_measure(db_start_time, db_end_time, db_time);
+			printf("Time taken: %f secs\n", db_time);
+			dataset_loaded = true;
+			if(!ifstream(saved_idx_path, ios::in | ios::binary).good()){
+				// index file does not exist or is unreadable
+				params.load_index = false;
+			} else{
+				params.save_index = false;
+			}
+		} else{
+			printf("Failed to load feature dataset from: %s\n", saved_db_path.c_str());
+			// index must be rebuilt if dataset could not loaded
+			params.load_index = false;
+		}
+	}
+
+	void NN::saveDataset(){
+		ofstream out_file(saved_db_path, ios::out | ios::binary);
+		if(out_file.good()){
+			printf("Saving dataset to: %s\n", saved_db_path.c_str());
+			out_file.write((char*)(eig_dataset.data()), sizeof(double)*eig_dataset.size());
+			for(int sample_id = 0; sample_id < params.n_samples; ++sample_id){
+				out_file.write((char*)(ssm_perturbations[sample_id].data()), sizeof(double)*ssm_state_size);
+			}
+			out_file.close();
+		} else{
+			printf("Failed to save dataset to: %s\n", saved_db_path.c_str());
+		}
+	}
 
 	void NN::update(){
 		++frame_id;
@@ -260,7 +268,7 @@ namespace nt{
 			am->clearFirstIter();
 		}
 		ssm->getCorners(cv_corners_mat);
-	}	
+	}
 }
 _MTF_END_NAMESPACE
 

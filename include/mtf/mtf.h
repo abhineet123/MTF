@@ -1301,7 +1301,7 @@ inline NNParams_ getNNParams(){
 		&gnn_params, nn_n_samples, nn_max_iters,
 		epsilon, nn_ssm_sigma, nn_ssm_mean, nn_pix_sigma,
 		nn_additive_update, nn_show_samples, nn_add_points,
-		nn_remove_points, nn_load_index, nn_save_index,
+		nn_n_samples_to_add, nn_remove_points, nn_load_index, nn_save_index,
 		saved_index_dir, debug_mode));
 }
 

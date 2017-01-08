@@ -53,6 +53,12 @@ namespace nt{
 		string saved_db_path, saved_idx_path;
 		cv::Mat curr_img_uchar;
 		cv::Point2d curr_corners[4];
+
+		bool dataset_loaded;
+
+		void generateDataset();
+		void loadDataset();
+		void saveDataset();
 	};
 }
 _MTF_END_NAMESPACE
