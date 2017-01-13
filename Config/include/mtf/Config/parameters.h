@@ -40,12 +40,12 @@
 	do{if(!strcmp(arg_name, #param_name)){\
 		param_name = param_func(arg_val);\
 		return;\
-			}} while(0)
+				}} while(0)
 #define parse_param_vec(param_name, param_func)\
 	do{if(!strcmp(arg_name, #param_name)){\
 		param_name.push_back(param_func(arg_val));\
 		return;\
-				}} while(0)
+					}} while(0)
 
 namespace mtf{
 	namespace params{
@@ -109,10 +109,10 @@ namespace mtf{
 		std::string record_frames_fname, record_frames_dir;
 
 		std::string db_root_path = "../../../Datasets";
-		std::string actor = "TMT";
-		std::string source_path = db_root_path + "/" + actor;
-		std::string source_name = "nl_bookI_s3";
-		std::string source_fmt = "jpg";
+		std::string actor;
+		std::string source_path;
+		std::string source_name;
+		std::string source_fmt;
 
 		//! for Xvision trackers
 		int steps_per_frame = 1;
@@ -1101,7 +1101,7 @@ namespace mtf{
 
 			else if(!strcmp(arg_name, "ssd_show_template")){
 				ssd_show_template = atoi(arg_val);
-			} 
+			}
 
 			else if(!strcmp(arg_name, "buffer_count")){
 				buffer_count = atoi(arg_val);
@@ -1209,7 +1209,7 @@ namespace mtf{
 			//! Lie Homography
 			else if(!strcmp(arg_name, "lhom_normalized_init")){
 				lhom_normalized_init = atoi(arg_val);
-			}else if(!strcmp(arg_name, "lhom_grad_eps")){
+			} else if(!strcmp(arg_name, "lhom_grad_eps")){
 				lhom_grad_eps = atof(arg_val);
 			}
 			//! Similitude
@@ -1221,7 +1221,7 @@ namespace mtf{
 				sim_geom_sampling = atoi(arg_val);
 			} else if(!strcmp(arg_name, "sim_pt_based_sampling")){
 				sim_pt_based_sampling = atoi(arg_val);
-			}			
+			}
 			//! Isometry
 			else if(!strcmp(arg_name, "iso_pt_based_sampling")){
 				iso_pt_based_sampling = atoi(arg_val);
@@ -1658,7 +1658,7 @@ namespace mtf{
 				grid_use_min_eig_vals = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_min_eig_thresh")){
 				grid_min_eig_thresh = atof(arg_val);
-			}else if(!strcmp(arg_name, "grid_backward_err_thresh")){
+			} else if(!strcmp(arg_name, "grid_backward_err_thresh")){
 				grid_backward_err_thresh = atof(arg_val);
 			} else if(!strcmp(arg_name, "grid_detect_keypoints")){
 				grid_detect_keypoints = atoi(arg_val);
@@ -1735,7 +1735,7 @@ namespace mtf{
 				pyr_scale_factor = atof(arg_val);
 			} else if(!strcmp(arg_name, "pyr_scale_res")) {
 				pyr_scale_res = atoi(arg_val);
-			}else if(!strcmp(arg_name, "pyr_show_levels")) {
+			} else if(!strcmp(arg_name, "pyr_show_levels")) {
 				pyr_show_levels = atoi(arg_val);
 			}
 			//! Gradient Descent
@@ -2275,18 +2275,26 @@ namespace mtf{
 						//! synthetic sequence
 						source_name = getSyntheticSeqName();
 					}
+					if(source_name.empty()){
+						printf("Source name must be specified if source ID is invalid\n");
+						return false;
+					}
+					source_path = db_root_path + "/" + actor;
+				} else{
+					actor = "None";
+					if(source_path.empty()){ source_path = "."; }
+					source_path = db_root_path + "/" + source_path;
 				}
-				source_path = db_root_path + "/" + actor;
-				if(source_fmt == "#"){
+				if(source_fmt.empty()){
 					source_fmt = (img_source == SRC_IMG || img_source == SRC_DISK) ? IMG_FMT : VID_FMT;
 				}
 			} else {
 				actor = "Live";
 				source_name = (img_source == SRC_USB_CAM) ? USB_DEV_NAME : FW_DEV_NAME;
-				if(source_path == "#"){
+				if(source_path.empty()){
 					source_path = (img_source == SRC_USB_CAM) ? USB_DEV_PATH : FW_DEV_PATH;
 				}
-				if(source_fmt == "#"){
+				if(source_fmt.empty()){
 					source_fmt = (img_source == SRC_USB_CAM) ? USB_DEV_FMT : FW_DEV_FMT;
 				}
 				show_tracking_error = reinit_on_failure = read_obj_from_gt = read_obj_from_file = pause_after_frame = 0;
