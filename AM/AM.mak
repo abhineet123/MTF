@@ -42,10 +42,14 @@ ncctbb ?= 0
 nccomp ?= 0
 sg ?= 0
 lscd ?= 0
-ctch ?= 0
+ctch ?= 1
+ctdf ?= 0
 
 ifeq (${ctch}, 0)
 CCRE_FLAGS += -D CCRE_DISABLE_TRUE_CUM_HIST
+endif
+ifeq (${ctdf}, 1)
+CCRE_FLAGS += -D CCRE_ENABLE_TRUE_DIST_FEAT
 endif
 
 ifeq (${dfm}, 1)

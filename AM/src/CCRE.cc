@@ -790,7 +790,7 @@ double CCRE::operator()(const double* hist1_mat_addr, const double* hist2_mat_ad
 		int bspl_id21 = _std_bspl_ids(pix2_floor, 0);
 		int bspl_id22 = bspl_id21 + 1, bspl_id23 = bspl_id21 + 2, bspl_id24 = bspl_id21 + 3;
 
-#ifndef CCRE_DISABLE_TRUE_CUM_HIST
+#ifdef CCRE_ENABLE_TRUE_DIST_FEAT
 		for(int bspl_id1 = 0; bspl_id1 < bspl_id11; ++bspl_id1){
 			++cum_hist(bspl_id1);
 			cum_joint_hist(bspl_id1, bspl_id21) += hist_mat(5, patch_id);
