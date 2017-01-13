@@ -118,9 +118,9 @@ private:
 	std::vector<cv::Point2f> est_prev_pts;
 	VectorXb backward_est_mask;
 
-	void resetPts();
-
 	~GridTrackerCV(){}
+	void resetPts();
+	void backwardEstimation();
 	void showPts();
 };
 

@@ -141,7 +141,7 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 		}
 	}
 	if(params.backward_err_thresh > 0){
-		printf("Backward estimation is enabled\n");
+		printf("Failure detection with backward estimation is enabled\n");
 		enable_backward_est = true;
 		est_prev_pts.resize(n_pts);
 		backward_est_mask.resize(n_pts);
@@ -176,44 +176,7 @@ void GridTrackerCV<SSM>::update() {
 		lk_term_criteria, lk_flags, params.min_eig_thresh);
 
 	if(enable_backward_est){
-		cv::calcOpticalFlowPyrLK(curr_img, prev_img,
-			curr_pts, est_prev_pts, lk_status, lk_error,
-			search_window, params.pyramid_levels,
-			lk_term_criteria, lk_flags, params.min_eig_thresh);
-		std::vector<cv::Point2f> prev_pts_masked, curr_pts_masked;
-		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-			double diff_x = est_prev_pts[pt_id].x - prev_pts[pt_id].x;
-			double diff_y = est_prev_pts[pt_id].y - prev_pts[pt_id].y;
-
-			if(diff_x*diff_x + diff_y*diff_y > params.backward_err_thresh){
-				backward_est_mask[pt_id] = false;
-			} else{
-				backward_est_mask[pt_id] = true;
-				prev_pts_masked.push_back(prev_pts[pt_id]);
-				curr_pts_masked.push_back(curr_pts[pt_id]);
-			}
-		}
-		if(prev_pts_masked.size() < est_params.n_model_pts){
-			for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-				if(backward_est_mask[pt_id]){ continue; }
-				prev_pts_masked.push_back(prev_pts[pt_id]);
-				curr_pts_masked.push_back(curr_pts[pt_id]);
-				backward_est_mask[pt_id] = true;
-				if(prev_pts_masked.size() == est_params.n_model_pts){
-					break;
-				}
-			}
-		}
-		std::vector<uchar> pix_mask_est(prev_pts_masked.size());
-		ssm.estimateWarpFromPts(ssm_update, pix_mask_est, prev_pts_masked,
-			curr_pts_masked, est_params);
-		if(pix_mask_needed){
-			int est_pt_id = 0;
-			for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-				pix_mask[pt_id] = backward_est_mask[pt_id] ?
-					pix_mask_est[est_pt_id++] : 0;
-			}
-		}
+		backwardEstimation();
 	} else{
 		ssm.estimateWarpFromPts(ssm_update, pix_mask, prev_pts, curr_pts, est_params);
 	}
@@ -252,6 +215,48 @@ void GridTrackerCV<SSM>::setRegion(const cv::Mat& corners) {
 	ssm.setCorners(corners);
 	resetPts();
 	ssm.getCorners(cv_corners_mat);
+}
+
+template<class SSM>
+void GridTrackerCV<SSM>::backwardEstimation(){
+	cv::calcOpticalFlowPyrLK(curr_img, prev_img,
+		curr_pts, est_prev_pts, lk_status, lk_error,
+		search_window, params.pyramid_levels,
+		lk_term_criteria, lk_flags, params.min_eig_thresh);
+	std::vector<cv::Point2f> prev_pts_masked, curr_pts_masked;
+	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+		double diff_x = est_prev_pts[pt_id].x - prev_pts[pt_id].x;
+		double diff_y = est_prev_pts[pt_id].y - prev_pts[pt_id].y;
+
+		if(diff_x*diff_x + diff_y*diff_y > params.backward_err_thresh){
+			backward_est_mask[pt_id] = false;
+		} else{
+			backward_est_mask[pt_id] = true;
+			prev_pts_masked.push_back(prev_pts[pt_id]);
+			curr_pts_masked.push_back(curr_pts[pt_id]);
+		}
+	}
+	if(prev_pts_masked.size() < est_params.n_model_pts){
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+			if(backward_est_mask[pt_id]){ continue; }
+			prev_pts_masked.push_back(prev_pts[pt_id]);
+			curr_pts_masked.push_back(curr_pts[pt_id]);
+			backward_est_mask[pt_id] = true;
+			if(prev_pts_masked.size() == est_params.n_model_pts){
+				break;
+			}
+		}
+	}
+	std::vector<uchar> pix_mask_est(prev_pts_masked.size());
+	ssm.estimateWarpFromPts(ssm_update, pix_mask_est, prev_pts_masked,
+		curr_pts_masked, est_params);
+	if(pix_mask_needed){
+		int est_pt_id = 0;
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+			pix_mask[pt_id] = backward_est_mask[pt_id] ?
+				pix_mask_est[est_pt_id++] : 0;
+		}
+	}
 }
 
 template<class SSM>

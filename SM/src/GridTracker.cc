@@ -174,6 +174,13 @@ GridTracker<SSM>::GridTracker(const vector<TrackerBase*> _trackers,
 		printf("Warning: Grid tracker used with heterogeneous patch trackers\n");
 	}
 
+	if(params.backward_err_thresh > 0){
+		printf("Failure detection with backward estimation is enabled\n");
+		enable_backward_est = true;
+		est_prev_pts.resize(n_pts);
+		backward_est_mask.resize(n_pts);
+	}
+
 	if(params.show_trackers){
 		patch_win_name = "Patch Trackers";
 		cv::namedWindow(patch_win_name);
@@ -221,6 +228,9 @@ void GridTracker<SSM>::initialize(const cv::Mat &corners) {
 		curr_pts[tracker_id].y = prev_pts[tracker_id].y;
 	}
 	ssm.getCorners(cv_corners_mat);
+	if(enable_backward_est){
+		prev_img = curr_img.clone();
+	}
 	if(params.show_trackers){ showTrackers(); }
 }
 template<class SSM>
@@ -240,7 +250,13 @@ void GridTracker<SSM>::update() {
 #ifdef ENABLE_TBB
 		});
 #endif
-		ssm.estimateWarpFromPts(ssm_update, pix_mask, prev_pts, curr_pts, est_params);
+		if(enable_backward_est){
+			backwardEstimation();
+			prev_img = curr_img.clone();
+		} else{
+			ssm.estimateWarpFromPts(ssm_update, pix_mask, prev_pts, curr_pts, est_params);
+		}
+
 		Matrix24d opt_warped_corners;
 		ssm.applyWarpToCorners(opt_warped_corners, ssm.getCorners(), ssm_update);
 		ssm.setCorners(opt_warped_corners);
@@ -260,6 +276,54 @@ void GridTracker<SSM>::setRegion(const cv::Mat& corners) {
 	ssm.setCorners(corners);
 	resetTrackers(reinit_at_each_frame);
 	ssm.getCorners(cv_corners_mat);
+}
+
+template<class SSM>
+void GridTracker<SSM>::backwardEstimation(){
+	for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
+		trackers[tracker_id]->setImage(prev_img);
+		cv::Mat tracker_location = trackers[tracker_id]->getRegion().clone();
+		trackers[tracker_id]->update();
+		utils::getCentroid(est_prev_pts[tracker_id], trackers[tracker_id]->getRegion());
+		//patch_corners = trackers[tracker_id]->getRegion();
+		trackers[tracker_id]->setImage(curr_img);
+		trackers[tracker_id]->setRegion(tracker_location);
+	}
+
+	std::vector<cv::Point2f> prev_pts_masked, curr_pts_masked;
+	for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
+		double diff_x = est_prev_pts[tracker_id].x - prev_pts[tracker_id].x;
+		double diff_y = est_prev_pts[tracker_id].y - prev_pts[tracker_id].y;
+
+		if(diff_x*diff_x + diff_y*diff_y > params.backward_err_thresh){
+			backward_est_mask[tracker_id] = false;
+		} else{
+			backward_est_mask[tracker_id] = true;
+			prev_pts_masked.push_back(prev_pts[tracker_id]);
+			curr_pts_masked.push_back(curr_pts[tracker_id]);
+		}
+	}
+	if(prev_pts_masked.size() < est_params.n_model_pts){
+		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
+			if(backward_est_mask[tracker_id]){ continue; }
+			prev_pts_masked.push_back(prev_pts[tracker_id]);
+			curr_pts_masked.push_back(curr_pts[tracker_id]);
+			backward_est_mask[tracker_id] = true;
+			if(prev_pts_masked.size() == est_params.n_model_pts){
+				break;
+			}
+		}
+	}
+	std::vector<uchar> pix_mask_est(prev_pts_masked.size());
+	ssm.estimateWarpFromPts(ssm_update, pix_mask_est, prev_pts_masked,
+		curr_pts_masked, est_params);
+	if(pix_mask_needed){
+		int est_pt_id = 0;
+		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
+			pix_mask[tracker_id] = backward_est_mask[tracker_id] ?
+				pix_mask_est[est_pt_id++] : 0;
+		}
+	}
 }
 
 template<class SSM>

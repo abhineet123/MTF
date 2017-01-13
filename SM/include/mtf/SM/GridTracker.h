@@ -32,6 +32,8 @@ struct GridTrackerParams{
 
 	bool patch_centroid_inside;
 
+	bool backward_err_thresh;
+
 	bool use_tbb;
 
 	int max_iters; //! maximum iterations of the GridTracker algorithm to run for each frame
@@ -98,7 +100,7 @@ private:
 	std::vector<uchar> pix_mask;
 	VectorXd ssm_update;
 
-	cv::Mat curr_img;
+	cv::Mat curr_img, prev_img;
 	cv::Mat curr_img_uchar;
 
 	Matrix2Xd centroid_offset;
@@ -107,11 +109,15 @@ private:
 	//! used for indexing the sub region locations
 	MatrixXi _linear_idx;
 	int pause_seq;
-
 	bool reinit_at_each_frame;
+
+	std::vector<cv::Point2f> est_prev_pts;
+	VectorXb backward_est_mask;
+	bool enable_backward_est;
 
 	~GridTracker(){}
 	void resetTrackers(bool reinit=true);
+	void backwardEstimation();
 	void showTrackers();
 
 };
