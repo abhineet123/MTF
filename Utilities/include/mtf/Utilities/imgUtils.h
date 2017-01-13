@@ -385,6 +385,17 @@ namespace utils{
 		const cv::Mat &img, const PtsT &pts, int n_pix, int h, int w,
 		double norm_mult = 1, double norm_add = 0);
 
+	//! get weighted pixel values using alpha as weighting factor 
+	//! between existing and new pixel values
+	void getWeightedPixVals(VectorXd &pix_vals, const EigImgT &img, const PtsT &pts,
+		int frame_count, double alpha, bool use_running_avg, int n_pix,
+		int h, int w, double norm_mult, double norm_add);
+	//! multi channel version
+	void getWeightedPixVals(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
+		int frame_count, double alpha, bool use_running_avg, int n_pix,
+		int h, int w, double pix_norm_mult, double pix_norm_add);
+
+
 	/*********** functions for mapping pixel values *******************/
 
 	//! map pixel values using the given intensity map
@@ -585,6 +596,7 @@ namespace utils{
 	//! add Gaussian distributed random noise to the image
 	bool addGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, 
 		int n_channels,	double Mean = 0.0, double StdDev = 10.0);
+
 
 #ifdef ENABLE_OLD_IMG_GRAD
 

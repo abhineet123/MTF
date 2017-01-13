@@ -14,9 +14,9 @@ NNParams::NNParams(
 	const vectord &_pix_sigma,
 	bool _additive_update, 
 	int _show_samples,
-	int _add_points, 
+	int _add_samples_gap,
 	int _n_samples_to_add,
-	int _remove_points,
+	int _remove_samples,
 	bool _load_index, 
 	bool _save_index, 
 	string _saved_index_dir,
@@ -30,9 +30,9 @@ NNParams::NNParams(
 	pix_sigma(_pix_sigma),
 	additive_update(_additive_update),
 	show_samples(_show_samples),
-	add_points(_add_points),
+	add_samples_gap(_add_samples_gap),
 	n_samples_to_add(_n_samples_to_add),
-	remove_points(_remove_points),
+	remove_samples(_remove_samples),
 	load_index(_load_index),
 	save_index(_save_index),
 	saved_index_dir(_saved_index_dir),
@@ -44,9 +44,9 @@ max_iters(NN_MAX_ITERS),
 epsilon(NN_EPSILON),
 additive_update(NN_ADDITIVE_UPDATE),
 show_samples(NN_SHOW_SAMPLES),
-add_points(NN_ADD_POINTS),
+add_samples_gap(NN_ADD_SAMPLES_GAP),
 n_samples_to_add(NN_N_SAMPLES_TO_ADD),
-remove_points(NN_REMOVE_POINTS),
+remove_samples(NN_REMOVE_SAMPLES),
 load_index(NN_LOAD_INDEX),
 save_index(NN_SAVE_INDEX),
 saved_index_dir(NN_INDEX_FILE_TEMPLATE),
@@ -67,9 +67,9 @@ debug_mode(NN_DEBUG_MODE){
 		additive_update = params->additive_update;
 		show_samples = params->show_samples;
 
-		add_points = params->add_points;
+		add_samples_gap = params->add_samples_gap;
 		n_samples_to_add = params->n_samples_to_add;
-		remove_points = params->remove_points;
+		remove_samples = params->remove_samples;
 
 		load_index = params->load_index;
 		save_index = params->save_index;

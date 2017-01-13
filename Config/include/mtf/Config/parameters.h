@@ -1,12 +1,20 @@
 #ifndef MTF_PARAMETERS_H
 #define MTF_PARAMETERS_H
 
+#include <cstddef>
+#include <stdio.h>
+#include <stdlib.h>
+#include <vector>
+#include "opencv2/core/core.hpp"
+#include "mtf/Macros/common.h"
+
+#include "datasets.h"
+
 #define SRC_IMG 'j'
 #define SRC_VID 'm'
 #define SRC_USB_CAM 'u'
 #define SRC_FW_CAM 'f'
 #define SRC_DISK 'd'
-
 
 #define VID_FNAME "nl_bookI_s3"
 #define VID_FMT "mpg"
@@ -38,15 +46,6 @@
 		param_name.push_back(param_func(arg_val));\
 		return;\
 				}} while(0)
-
-#include <cstddef>
-#include <stdio.h>
-#include <stdlib.h>
-#include <vector>
-#include "opencv2/core/core.hpp"
-#include "mtf/Macros/common.h"
-
-#include "datasets.h"
 
 namespace mtf{
 	namespace params{
@@ -198,10 +197,10 @@ namespace mtf{
 		double lm_delta_update = 10;
 
 		bool enable_learning = false;
+		double learning_rate = 0.5;
 
 
 		bool ssd_show_template = false;
-		double ssd_forgetting_factor = 0.5;
 
 		double nssd_norm_pix_min = 0.0;
 		double nssd_norm_pix_max = 1.0;
@@ -349,9 +348,9 @@ namespace mtf{
 		int nn_search_type = 0;
 		bool nn_additive_update = false;
 		int nn_show_samples = 0;
-		int nn_add_points = 0;
+		int nn_add_samples_gap = 0;
 		int nn_n_samples_to_add = 0;
-		int nn_remove_points = 0;
+		int nn_remove_samples = 0;
 		bool nn_save_index = false;
 		bool nn_load_index = false;
 		int nn_saved_index_fid = 0;
@@ -484,6 +483,7 @@ namespace mtf{
 		int grid_reset_at_each_frame = 1;
 		bool grid_dyn_patch_size = false;
 		bool grid_patch_centroid_inside = true;
+		double grid_backward_err_thresh = 0;
 		bool grid_show_trackers = false;
 		bool grid_show_tracker_edges = false;
 		bool grid_use_tbb = true;
@@ -1101,9 +1101,7 @@ namespace mtf{
 
 			else if(!strcmp(arg_name, "ssd_show_template")){
 				ssd_show_template = atoi(arg_val);
-			} else if(!strcmp(arg_name, "ssd_forgetting_factor")){
-				ssd_forgetting_factor = atof(arg_val);
-			}
+			} 
 
 			else if(!strcmp(arg_name, "buffer_count")){
 				buffer_count = atoi(arg_val);
@@ -1343,6 +1341,8 @@ namespace mtf{
 			//! Online learning in AM
 			else if(!strcmp(arg_name, "enable_learning")){
 				enable_learning = atof(arg_val);
+			} else if(!strcmp(arg_name, "learning_rate")){
+				learning_rate = atof(arg_val);
 			}
 			//! ESM
 			else if(!strcmp(arg_name, "esm_hess_type")){
@@ -1467,12 +1467,12 @@ namespace mtf{
 				nn_additive_update = atoi(arg_val);
 			} else if(!strcmp(arg_name, "nn_show_samples")){
 				nn_show_samples = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_add_points")){
-				nn_add_points = atoi(arg_val);
+			} else if(!strcmp(arg_name, "nn_add_samples_gap")){
+				nn_add_samples_gap = atoi(arg_val);
 			} else if(!strcmp(arg_name, "nn_n_samples_to_add")){
 				nn_n_samples_to_add = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_remove_points")){
-				nn_remove_points = atoi(arg_val);
+			} else if(!strcmp(arg_name, "nn_remove_samples")){
+				nn_remove_samples = atoi(arg_val);
 			} else if(!strcmp(arg_name, "nn_ssm_sigma_ids")){
 				nn_ssm_sigma_ids = atoi_arr(arg_val);
 			} else if(!strcmp(arg_name, "nn_ssm_mean_ids")){
@@ -1658,6 +1658,8 @@ namespace mtf{
 				grid_use_min_eig_vals = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_min_eig_thresh")){
 				grid_min_eig_thresh = atof(arg_val);
+			}else if(!strcmp(arg_name, "grid_backward_err_thresh")){
+				grid_backward_err_thresh = atof(arg_val);
 			} else if(!strcmp(arg_name, "grid_detect_keypoints")){
 				grid_detect_keypoints = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_rebuild_index")){

@@ -473,16 +473,66 @@ namespace utils{
 		double norm_mult, double norm_add){
 		//printf("n_pix: %d\t pix_vals.size(): %l\t pts.cols(): %l", n_pix, pix_vals.size(),  pts.cols());
 		assert(pix_vals.size() == 3 * n_pix && pts.cols() == n_pix);
-		double *pix_vals_data = pix_vals.data();
+		double *pix_data = pix_vals.data();
 		for(int pix_id = 0; pix_id < n_pix; ++pix_id){
-			getPixVal<PIX_INTERP_TYPE, PIX_BORDER_TYPE>(pix_vals_data, img,
+			getPixVal<PIX_INTERP_TYPE, PIX_BORDER_TYPE>(pix_data, img,
 				pts(0, pix_id), pts(1, pix_id), h, w);
-			pix_vals_data[0] = norm_mult*pix_vals_data[0] + norm_add;
-			pix_vals_data[1] = norm_mult*pix_vals_data[1] + norm_add;
-			pix_vals_data[2] = norm_mult*pix_vals_data[2] + norm_add;
-			pix_vals_data += 3;
+			pix_data[0] = norm_mult*pix_data[0] + norm_add;
+			pix_data[1] = norm_mult*pix_data[1] + norm_add;
+			pix_data[2] = norm_mult*pix_data[2] + norm_add;
+			pix_data += 3;
 		}
 	}
+
+	void getWeightedPixVals(VectorXd &pix_vals, const EigImgT &img, const PtsT &pts,
+		int frame_count, double alpha, bool use_running_avg, int n_pix,
+		int h, int w, double norm_mult, double norm_add){
+		if(use_running_avg){
+			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+				double pix_val = norm_mult * utils::getPixVal<PIX_INTERP_TYPE, PIX_BORDER_TYPE>(
+					img, pts(0, pix_id), pts(1, pix_id),
+					h, w) + norm_add;
+				pix_vals(pix_id) += (pix_val - pix_vals(pix_id)) / frame_count;
+			}
+		} else{
+			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+				double pix_val = utils::getPixVal<PIX_INTERP_TYPE, PIX_BORDER_TYPE>(
+					img, pts(0, pix_id), pts(1, pix_id), h, w);
+				pix_vals(pix_id) = alpha*pix_val + (1 - alpha)*pix_vals(pix_id);
+			}
+		}
+	}
+	void getWeightedPixVals(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
+		int frame_count, double alpha, bool use_running_avg, int n_pix,
+		int h, int w, double norm_mult, double norm_add){
+
+		double *pix_data = pix_vals.data();
+		if(use_running_avg){
+			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+				double pix_val[3];
+				utils::getPixVal<PIX_INTERP_TYPE, PIX_BORDER_TYPE>(pix_val, img,
+					pts(0, pix_id), pts(1, pix_id), h, w);
+				pix_data[0] += (norm_mult*pix_val[0] + norm_add - pix_data[0]) / frame_count;
+				pix_data[1] += (norm_mult*pix_val[1] + norm_add - pix_data[1]) / frame_count;
+				pix_data[2] += (norm_mult*pix_val[2] + norm_add - pix_data[2]) / frame_count;
+
+
+				pix_data += 3;
+			}
+		} else{
+			double alpha_mult = norm_mult*alpha, alpha_add = norm_add*alpha;
+			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+				double pix_val[3];
+				utils::getPixVal<PIX_INTERP_TYPE, PIX_BORDER_TYPE>(pix_val, img,
+					pts(0, pix_id), pts(1, pix_id), h, w);
+				pix_data[0] = alpha_mult*pix_val[0] + alpha_add + (1 - alpha)*pix_data[0];
+				pix_data[1] = alpha_mult*pix_val[1] + alpha_add + (1 - alpha)*pix_data[1];
+				pix_data[2] = alpha_mult*pix_val[2] + alpha_add + (1 - alpha)*pix_data[2];
+				pix_data += 3;
+			}
+		}
+	}
+
 	void getWarpedImgGrad(PixGradT &warped_img_grad,
 		const cv::Mat &img, const Matrix8Xd &warped_offset_pts,
 		double grad_eps, int n_pix,
@@ -1333,7 +1383,6 @@ namespace utils{
 		mSrc_16SC.convertTo(mDst, mSrc.type());
 		return true;
 	}
-
 
 	/******************** Explicit Template Specializations ******************/
 

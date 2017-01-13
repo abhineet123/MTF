@@ -10,9 +10,9 @@
 #define NN_N_TREES 6
 #define NN_ADDITIVE_UPDATE 1
 #define NN_SHOW_SAMPLES 1
-#define NN_ADD_POINTS 0
+#define NN_ADD_SAMPLES_GAP 0
 #define NN_N_SAMPLES_TO_ADD 10
-#define NN_REMOVE_POINTS 0
+#define NN_REMOVE_SAMPLES 0
 #define NN_LOAD_INDEX 0
 #define NN_SAVE_INDEX 0
 #define NN_INDEX_FILE_TEMPLATE "nn_saved_index"
@@ -37,9 +37,14 @@ struct NNParams{
 
 	bool additive_update;
 	int show_samples;
-	int add_points;
+
+	//! gap between frames at which the index is updated with new samples 
+	//! 0 disables the addition of samples
+	int add_samples_gap;
+	//! no. of samples added to the index at each update
 	int n_samples_to_add;
-	int remove_points;
+
+	int remove_samples;
 
 	bool save_index;
 	bool load_index;
@@ -59,9 +64,9 @@ struct NNParams{
 		const vectord &_pix_sigma,
 		bool _additive_update,
 		int _show_samples,
-		int _add_points,
+		int _add_samples_gap,
 		int _n_samples_to_add,
-		int _remove_points,
+		int _remove_samples,
 		bool load_index,
 		bool _save_index,
 		std::string _saved_index_dir,

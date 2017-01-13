@@ -29,9 +29,9 @@ NN<AM, SSM >::NN(const ParamType *nn_params,
 		FLANNParams::toString(flann_params.search_type));
 	printf("additive_update: %d\n", params.additive_update);
 	printf("show_samples: %d\n", params.show_samples);
-	printf("add_points: %d\n", params.add_points);
+	printf("add_samples_gap: %d\n", params.add_samples_gap);
 	printf("n_samples_to_add: %d\n", params.n_samples_to_add);
-	printf("remove_points: %d\n", params.remove_points);
+	printf("remove_samples: %d\n", params.remove_samples);
 	printf("save_index: %d\n", params.save_index);
 	printf("debug_mode: %d\n", params.debug_mode);
 
@@ -63,9 +63,9 @@ NN<AM, SSM >::NN(const ParamType *nn_params,
 	ssm_perturbations.resize(params.n_samples);
 	inv_state_update.resize(ssm_state_size);
 	
-	if(params.add_points){
+	if(params.add_samples_gap){
 		printf("Adding %d samples every %d frames\n", 
-			params.n_samples_to_add, params.add_points);
+			params.n_samples_to_add, params.add_samples_gap);
 		eig_dataset_added.resize(params.n_samples_to_add, am_dist_size);
 		ssm_perturbations_added.resize(params.n_samples_to_add);
 		distr_n_samples_added.resize(n_distr);
@@ -270,18 +270,21 @@ void NN<AM, SSM >::update(){
 		}
 		am.clearFirstIter();
 	}
-	if(params.remove_points){
+	if(params.remove_samples){
 		if(flann_params.index_type == IdxType::GNN){
 			throw utils::FunctonNotImplemented("NN :: GNN does not currently support removing points");
 		} else{
 			flann_index->removePoint(best_idx);
 		}
 	}
-	if(params.add_points && frame_id % params.add_points == 0){
+	if(params.add_samples_gap && frame_id % params.add_samples_gap == 0){
 		if(flann_params.index_type == IdxType::GNN){
 			throw utils::FunctonNotImplemented("NN :: GNN does not currently support adding points");
 		} else{
 			generateDataset(ssm_perturbations_added, eig_dataset_added, distr_n_samples_added);
+			//utils::printMatrix(distr_n_samples_added, "distr_n_samples_added", "%d");
+			//utils::printScalar(eig_dataset_added.rows(), "eig_dataset_added rows", "%d");
+			//utils::printScalar(eig_dataset_added.cols(), "eig_dataset_added cols", "%d");
 			flannMatT flann_dataset_added(const_cast<double*>(eig_dataset_added.data()),
 				eig_dataset_added.rows(), eig_dataset_added.cols());
 			flann_index->addPoints(flann_dataset_added);

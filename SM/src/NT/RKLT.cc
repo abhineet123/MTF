@@ -66,6 +66,9 @@ namespace nt{
 
 	void  RKLT::initialize(const cv::Mat &corners){
 		grid_tracker->initialize(corners);
+		if(params.enable_spi){
+			grid_tracker->initPixMask();
+		}
 		templ_tracker->initialize(corners);
 		cv_corners_mat = templ_tracker->getRegion();
 	}

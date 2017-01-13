@@ -407,6 +407,16 @@ MTF Tracker specific parameters:
 			set the horizontal and vertical sampling resolutions equal to the actual size of the object selected for tracking;
 			overrides the last two parameters;
 			
+	 Parameter:	'enable_learning'
+		Description:
+			enable online learning in AMs that support it - only SSD and NCC currently do;
+			
+	 Parameter:	'learning_rate'
+		Description:
+			rate at which the template is updated;
+			varies between 0 and 1 - 0 means that there is no learning; 1 means that the template is updated to the latest patch in each frame;
+			
+			
 Efficient Second order Minimization:
 ====================================
 	 Parameter:	'esm_jac_type'
@@ -436,8 +446,8 @@ Efficient Second order Minimization:
 			Fraction of the maximum residual used as threshold for rejecting pixels;
 			only matters if esm_spi_enable	is enabled;	
 
-For Nearest Neighbour (NN) search method:
-=========================================
+Nearest Neighbour (NN) SM:
+==========================
 	 Parameter:	'nn_max_iters'
 		Description:
 			maximum no. of iterations per frame 
@@ -492,11 +502,16 @@ For Nearest Neighbour (NN) search method:
 			non zero values for it specify the no. of samples to be shown simultaneously while zero disables it; 
 			program execution will be paused after drawing these many samples and can be continued by pressing any key; 
 			pressing space will disable the pausing after each time these many samples are drawn while escape will turn off the showing samples option;
-	 Parameter:	'nn_add_points'
+	 Parameter:	'nn_add_samples_gap'
 		Description:
-			add the searched sample in each frame to the dataset indexed with the SSM parameters corresponding to its nearest neighbour;
+			gap between frames at which the index is updated with new samples;
+			setting this to  0 disables the addition of samples;
 			does not work with GNN at present;
-	 Parameter:	'nn_remove_points'
+	 Parameter:	'nn_n_samples_to_add'
+		Description:
+			no. of samples added to the index at each update;
+			only matters if nn_add_samples_gap > 0;
+	 Parameter:	'nn_remove_samples'
 		Description:
 			remove the sample corresponding to the nearest neighbour found in each frame;
 			does not work with GNN at present;
@@ -510,8 +525,8 @@ Multi Layer NN:
 		Description:
 			similar to nn_ssm_sigma_ids except it must be provided for each layer of the tracker separately;
 
-For Particle Filter (PF) search method:
-=======================================
+Particle Filter (PF) SM:
+========================
 	 Parameter:	'pf_max_iters'
 		Description:
 			maximum no. of iterations per frame 
@@ -612,8 +627,8 @@ Multi Layer PF:
 		Description:
 			similar to 'pf_ssm_sigma_ids' except it must be provided for each layer of the tracker separately;
 			
-For GridTracker and RKLT:
-========================= 
+GridTracker and RKLT:
+===================== 
 	 Parameter:	'grid_sm' / 'grid_am' / 'grid_ssm'
 		Description:
 			Search method, appearance model and state space model for the individual patch trackers used by the Grid Tracker
@@ -647,6 +662,14 @@ For GridTracker and RKLT:
 			set to 1 to initialize/reset all patch trackers such that their centroids lie completely inside the larger bounding box;
 			if set to 0, centroids of some of the trackers will lie on the edges of the bounding box so that part of the corresponding patches will be outside it;
 			
+	 Parameter:	'grid_backward_err_thresh'
+		Description:
+			error threshold for deciding tracking failures using the forward/backward method;
+			first the points are tracked from the previous to the current frame;
+			results of this are then tracked back to the previous frame;
+			error is measured between the initial points during forward tracking and the final points during backward tracking;
+			setting this threshold to <=0 disables this method of failure detection;		
+			
 	 Parameter:	'grid_show_trackers'
 		Description:
 			set to 1 to show the locations of all the patch trackers within the larger object patch	where each is marked by the location of its centroid
@@ -659,8 +682,8 @@ For GridTracker and RKLT:
 		Description:
 			set to 1 to enable parallelization 	of the patch trackers using Intel TBB library
 			
-For RKLT:
-=========
+RKLT:
+=====
 	 Parameter:	'rkl_sm'
 		Description:
 			SM for the template tracker used by RKLT; the corresponding AM and SSM are specified by 'mtf_am' and 'mtf_ssm' respectively;
@@ -686,8 +709,8 @@ For RKLT:
 			
 In addition to these parameters, the performance of GridTracker/RKLT is also affected by the following SSM estimator parameters.
 		
-For SSM Estimator:
-==================
+SSM Estimator:
+==============
 	 Parameter:	'est_method'
 		Description:
 			method used to estimate the best fit SSM parameters between the two sets of points representing the centroids of the locations of the patch trackers in two consecutive frames
@@ -731,39 +754,8 @@ For SSM Estimator:
 			no. of iterations to use for the optional Levenberg Marquardt refinement step if it is enabled; 
 
 			
-For NSSD AM:
-============
-	 Parameter:	'norm_pix_min' / 'norm_pix_max'
-		Description:
-			minimum and maximum values within which to normalize the pixel values
-
-For SCV/RSCV/LSCV/LRSCV AMs:
-=========================== 
-	 Parameter:	'scv_use_bspl'
-		Description:
-			use BSpline kernel of order 3 while computing the joint histogram that is used for computing the sum of conditional variance; the Dirac Delta function is used otherwise;
-			
-	 Parameter:	'scv_n_bins'
-		Description:
-			number of bins in the joint histogram
-			
-	 Parameter:	'scv_preseed'
-		Description:
-			value with which to preseed the histograms; this can be set to non zero values while using BSpline histograms to avoid some numerical issues associated with empty bins that can sometimes occur;
-			
-	 Parameter:	'scv_pou'
-		Description:
-			strictly enforce the partition of unity constraint for border bins while computing the BSpline joint histogram
-			
-For MI AM:
-==========
-	 Parameter:	'mi_n_bins' / 'mi_preseed' / 'mi_pou'
-		Description:
-			only for MI appearance model; 
-			meaning is same as the corresponding parameters for SCV;
-			
-For Pyramidal Tracker:
-======================
+Pyramidal Tracker:
+==================
 	 Parameter:	'pyr_sm'
 		Description:
 			SM for the underlying tracker; its AM and SSM are taken from mtf_am and mtf_ssm respectively;
@@ -783,8 +775,38 @@ For Pyramidal Tracker:
 	 
 	 Parameter:	'pyr_show_levels'
 		Description:
-			show the image for each level in the pyramid annotated with th tracker's location;	 
+			show the image for each level in the pyramid annotated with the tracker's location;	 
 			
+NSSD AM:
+========
+	 Parameter:	'norm_pix_min' / 'norm_pix_max'
+		Description:
+			minimum and maximum values within which to normalize the pixel values
+
+SCV/RSCV/LSCV/LRSCV AMs:
+======================== 
+	 Parameter:	'scv_use_bspl'
+		Description:
+			use BSpline kernel of order 3 while computing the joint histogram that is used for computing the sum of conditional variance; the Dirac Delta function is used otherwise;
+			
+	 Parameter:	'scv_n_bins'
+		Description:
+			number of bins in the joint histogram
+			
+	 Parameter:	'scv_preseed'
+		Description:
+			value with which to preseed the histograms; this can be set to non zero values while using BSpline histograms to avoid some numerical issues associated with empty bins that can sometimes occur;
+			
+	 Parameter:	'scv_pou'
+		Description:
+			strictly enforce the partition of unity constraint for border bins while computing the BSpline joint histogram
+			
+MI AM:
+======
+	 Parameter:	'mi_n_bins' / 'mi_preseed' / 'mi_pou'
+		Description:
+			only for MI appearance model; 
+			meaning is same as the corresponding parameters for SCV;
 			
 	 
 	

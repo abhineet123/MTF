@@ -704,7 +704,7 @@ TrackerBase *getTracker(const char *sm_type,
 			GridTrackerCVParams grid_params(
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
 				grid_reset_at_each_frame, grid_patch_centroid_inside,
-				grid_pyramid_levels, grid_use_min_eig_vals,
+				grid_backward_err_thresh, grid_pyramid_levels, grid_use_min_eig_vals,
 				grid_min_eig_thresh, max_iters, epsilon, grid_show_trackers, debug_mode);
 			typename SSMType::ParamType _ssm_params(ssm_params);
 			_ssm_params.resx = grid_params.getResX();
@@ -992,9 +992,10 @@ inline IlluminationModel *getILM(const char *ilm_type){
 
 inline AMParams_ getAMParams(const char *am_type, const char *ilm_type){
 	AMParams_ am_params(new AMParams(resx, resy, grad_eps, hess_eps,
-		likelihood_alpha, likelihood_beta, dist_from_likelihood, getILM(ilm_type)));
+		likelihood_alpha, likelihood_beta, dist_from_likelihood, 
+		learning_rate, getILM(ilm_type)));
 	if(!strcmp(am_type, "ssd") || !strcmp(am_type, "mcssd") || !strcmp(am_type, "ssd3")){
-		return AMParams_(new SSDParams(am_params.get(), ssd_show_template, ssd_forgetting_factor));
+		return AMParams_(new SSDParams(am_params.get(), ssd_show_template));
 	} else if(!strcmp(am_type, "sad") || !strcmp(am_type, "mcsad") || !strcmp(am_type, "sad3")){
 		return am_params;
 	} else if(!strcmp(am_type, "nssd")){
@@ -1300,8 +1301,8 @@ inline NNParams_ getNNParams(){
 	return NNParams_(new NNParams(
 		&gnn_params, nn_n_samples, nn_max_iters,
 		epsilon, nn_ssm_sigma, nn_ssm_mean, nn_pix_sigma,
-		nn_additive_update, nn_show_samples, nn_add_points,
-		nn_n_samples_to_add, nn_remove_points, nn_load_index, nn_save_index,
+		nn_additive_update, nn_show_samples, nn_add_samples_gap,
+		nn_n_samples_to_add, nn_remove_samples, nn_load_index, nn_save_index,
 		saved_index_dir, debug_mode));
 }
 

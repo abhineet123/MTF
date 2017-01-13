@@ -37,6 +37,7 @@ AppearanceModel(ncc_params, _n_channels), params(ncc_params){
 	printf("Using Normalized Cross Correlation AM with...\n");
 	printf("fast_hess: %d\n", params.fast_hess);
 	printf("likelihood_alpha: %f\n", params.likelihood_alpha);
+	printf("learning_rate: %f\n", params.learning_rate);
 	printf("grad_eps: %e\n", params.grad_eps);
 	printf("hess_eps: %e\n", params.hess_eps);
 
@@ -561,6 +562,28 @@ double NCC::operator()(const double* a, const double* b,
 		b++;
 	}
 	return -num;
+}
+
+
+void NCC::updateModel(const Matrix2Xd& curr_pts){
+	assert(curr_pts.cols() == n_pix);
+	++frame_count;
+	//! update the template, aka I0 with the running or weighted average of
+	//! the patch corresponding to the provided points
+	switch(n_channels){
+	case 1:
+		utils::getWeightedPixVals(I0, curr_img, curr_pts, frame_count, params.learning_rate,
+			use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
+		break;
+	case 3:
+		utils::getWeightedPixVals(I0, curr_img_cv, curr_pts, frame_count, params.learning_rate,
+			use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
+		break;
+	default:
+		throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+	}
+	//! re initialize any quantities that depend on the template
+	reinitialize();
 }
 
 _MTF_END_NAMESPACE

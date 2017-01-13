@@ -12,6 +12,7 @@ GridTrackerCVParams::GridTrackerCVParams(
 int _grid_size_x, int _grid_size_y,
 int _search_window_x, int _search_window_y,
 bool _reset_at_each_frame, bool _patch_centroid_inside,
+double _backward_err_thresh,
 int _pyramid_levels, bool _use_min_eig_vals,
 double _min_eig_thresh, int _max_iters,
 double _epsilon, bool _show_pts,
@@ -22,6 +23,7 @@ search_window_x(_search_window_x),
 search_window_y(_search_window_y),
 reset_at_each_frame(_reset_at_each_frame),
 patch_centroid_inside(_patch_centroid_inside),
+backward_err_thresh(_backward_err_thresh),
 pyramid_levels(_pyramid_levels),
 use_min_eig_vals(_use_min_eig_vals),
 min_eig_thresh(_min_eig_thresh),
@@ -39,6 +41,7 @@ search_window_x(GTCV_SEARCH_WINDOW_X),
 search_window_y(GTCV_SEARCH_WINDOW_Y),
 reset_at_each_frame(GTCV_RESET_AT_EACH_FRAME),
 patch_centroid_inside(GTCV_PATCH_CENTROID_INSIDE),
+backward_err_thresh(GTCV_BACKWARD_EST_THRESH),
 pyramid_levels(GTCV_PYRAMID_LEVELS),
 use_min_eig_vals(GTCV_USE_MIN_EIG_VALS),
 min_eig_thresh(GTCV_MIN_EIG_THRESH),
@@ -52,6 +55,7 @@ debug_mode(GTCV_DEBUG_MODE){
 		search_window_y = params->search_window_y;
 		reset_at_each_frame = params->reset_at_each_frame;
 		patch_centroid_inside = params->patch_centroid_inside;
+		backward_err_thresh = params->backward_err_thresh;
 		pyramid_levels = params->pyramid_levels;
 		use_min_eig_vals = params->use_min_eig_vals;
 		min_eig_thresh = params->min_eig_thresh;
@@ -75,13 +79,15 @@ void GridTrackerCVParams::updateRes(){
 template<class SSM>
 GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 	const EstimatorParams *_est_params, const SSMParams *_ssm_params) :
-	GridBase(), ssm(_ssm_params), params(grid_params), est_params(_est_params){
+	GridBase(), ssm(_ssm_params), params(grid_params),
+	est_params(_est_params), enable_backward_est(false){
 	printf("\n");
 	printf("Using OpenCV Grid tracker with:\n");
 	printf("grid_size: %d x %d\n", params.grid_size_x, params.grid_size_y);
 	printf("search window size: %d x %d\n", params.search_window_x, params.search_window_y);
 	printf("reset_at_each_frame: %d\n", params.reset_at_each_frame);
 	printf("patch_centroid_inside: %d\n", params.patch_centroid_inside);
+	printf("backward_err_thresh: %f\n", params.backward_err_thresh);
 	printf("pyramid_levels: %d\n", params.pyramid_levels);
 	printf("use_min_eig_vals: %d\n", params.use_min_eig_vals);
 	printf("min_eig_thresh: %f\n", params.min_eig_thresh);
@@ -103,7 +109,7 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 
 	n_pts = params.grid_size_x *params.grid_size_y;
 	search_window = cv::Size(params.search_window_x, params.search_window_x);
-	lk_termination_criteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS,
+	lk_term_criteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS,
 		params.max_iters, params.epsilon);
 
 	patch_corners.create(2, 4, CV_64FC1);
@@ -134,6 +140,12 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 			_linear_idx(idy, idx) = idy * sub_regions_x + idx;
 		}
 	}
+	if(params.backward_err_thresh > 0){
+		printf("Backward estimation is enabled\n");
+		enable_backward_est = true;
+		est_prev_pts.resize(n_pts);
+		backward_est_mask.resize(n_pts);
+	}
 	if(params.show_pts){
 		patch_win_name = "Optical Flow Points";
 		cv::namedWindow(patch_win_name);
@@ -160,11 +172,51 @@ void GridTrackerCV<SSM>::update() {
 	curr_img_float.convertTo(curr_img, curr_img.type());
 	cv::calcOpticalFlowPyrLK(prev_img, curr_img,
 		prev_pts, curr_pts, lk_status, lk_error,
-		search_window,
-		params.pyramid_levels, lk_termination_criteria,
-		lk_flags, params.min_eig_thresh);
+		search_window, params.pyramid_levels,
+		lk_term_criteria, lk_flags, params.min_eig_thresh);
 
-	ssm.estimateWarpFromPts(ssm_update, pix_mask, prev_pts, curr_pts, est_params);
+	if(enable_backward_est){
+		cv::calcOpticalFlowPyrLK(curr_img, prev_img,
+			curr_pts, est_prev_pts, lk_status, lk_error,
+			search_window, params.pyramid_levels,
+			lk_term_criteria, lk_flags, params.min_eig_thresh);
+		std::vector<cv::Point2f> prev_pts_masked, curr_pts_masked;
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+			double diff_x = est_prev_pts[pt_id].x - prev_pts[pt_id].x;
+			double diff_y = est_prev_pts[pt_id].y - prev_pts[pt_id].y;
+
+			if(diff_x*diff_x + diff_y*diff_y > params.backward_err_thresh){
+				backward_est_mask[pt_id] = false;
+			} else{
+				backward_est_mask[pt_id] = true;
+				prev_pts_masked.push_back(prev_pts[pt_id]);
+				curr_pts_masked.push_back(curr_pts[pt_id]);
+			}
+		}
+		if(prev_pts_masked.size() < est_params.n_model_pts){
+			for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+				if(backward_est_mask[pt_id]){ continue; }
+				prev_pts_masked.push_back(prev_pts[pt_id]);
+				curr_pts_masked.push_back(curr_pts[pt_id]);
+				backward_est_mask[pt_id] = true;
+				if(prev_pts_masked.size() == est_params.n_model_pts){
+					break;
+				}
+			}
+		}
+		std::vector<uchar> pix_mask_est(prev_pts_masked.size());
+		ssm.estimateWarpFromPts(ssm_update, pix_mask_est, prev_pts_masked,
+			curr_pts_masked, est_params);
+		if(pix_mask_needed){
+			int est_pt_id = 0;
+			for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+				pix_mask[pt_id] = backward_est_mask[pt_id] ?
+					pix_mask_est[est_pt_id++] : 0;
+			}
+		}
+	} else{
+		ssm.estimateWarpFromPts(ssm_update, pix_mask, prev_pts, curr_pts, est_params);
+	}
 
 	Matrix24d opt_warped_corners;
 	ssm.applyWarpToCorners(opt_warped_corners, ssm.getCorners(), ssm_update);
@@ -178,7 +230,6 @@ void GridTrackerCV<SSM>::update() {
 			prev_pts[pt_id].y = curr_pts[pt_id].y;
 		}
 	}
-
 	ssm.getCorners(cv_corners_mat);
 	curr_img.copyTo(prev_img);
 
@@ -236,8 +287,14 @@ void GridTrackerCV<SSM>::showPts(){
 	cv::cvtColor(curr_img_uchar, curr_img_uchar, CV_GRAY2BGR);
 	utils::drawRegion(curr_img_uchar, cv_corners_mat, CV_RGB(0, 0, 255), 2);
 	for(int pt_id = 0; pt_id < n_pts; pt_id++) {
-		cv::Scalar pt_color = pix_mask[pt_id] ? cv::Scalar(0, 255, 0) : 
-			cv::Scalar(0, 0, 255);
+		cv::Scalar pt_color;
+		if(enable_backward_est){
+			pt_color = backward_est_mask[pt_id] ?
+				pix_mask[pt_id] ? CV_RGB(0, 255, 0) : CV_RGB(255, 0, 0) :
+				CV_RGB(0, 0, 255);
+		} else{
+			pt_color = pix_mask[pt_id] ? CV_RGB(0, 255, 0) : CV_RGB(255, 0, 0);
+		}
 		circle(curr_img_uchar, curr_pts[pt_id], 2, pt_color, 2);
 	}
 	imshow(patch_win_name, curr_img_uchar);

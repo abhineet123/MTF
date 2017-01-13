@@ -7,11 +7,9 @@ _MTF_BEGIN_NAMESPACE
 
 struct SSDParams : AMParams{
 	bool show_template;
-	double forgetting_factor;
 	//! value constructor
 	SSDParams(const AMParams *am_params,
-		bool _show_template,
-		double _forgetting_factor);
+		bool _show_template);
 	//! default/copy constructor
 	SSDParams(const SSDParams *params = nullptr);
 };

@@ -1,55 +1,15 @@
 #ifndef MTF_APPEARANCE_MODEL_H
 #define MTF_APPEARANCE_MODEL_H
 
-#define am_not_implemeted(func_name) \
+#define am_func_not_implemeted(func_name) \
 	throw mtf::utils::FunctonNotImplemented(cv::format("%s :: %s :: Not implemented Yet", name.c_str(), #func_name))
 
-#define AM_LIKELIHOOD_ALPHA 1
-#define AM_LIKELIHOOD_BETA 0
-#define AM_DIST_FROM_LIKELIHOOD false
-
 #include "ImageBase.h"
-#include "IlluminationModel.h"
+#include "AMParams.h"
 #include "mtf/Utilities/excpUtils.h"
 #include <memory>
 
 _MTF_BEGIN_NAMESPACE
-
-struct AMParams : ImgParams{
-	typedef shared_ptr<IlluminationModel> ILM;
-	//! multiplicative and additive factors for the exponent in the likelihood
-	double likelihood_alpha, likelihood_beta;
-	//! use negative of likelihood as the distance measure
-	bool dist_from_likelihood;
-	//! optional parametric function of pixel values that can account for lighting changes
-	ILM ilm;
-	AMParams(int _resx, int _resy,
-		double _grad_eps = GRAD_EPS,
-		double _hess_eps = HESS_EPS,
-		double _likelihood_alpha = AM_LIKELIHOOD_ALPHA,
-		double _likelihood_beta = AM_LIKELIHOOD_BETA,
-		bool _dist_from_likelihood = AM_DIST_FROM_LIKELIHOOD,
-		IlluminationModel *_ilm = nullptr) :
-		ImgParams(_resx, _resy, _grad_eps, _hess_eps),
-		likelihood_alpha(_likelihood_alpha),
-		likelihood_beta(_likelihood_beta),
-		dist_from_likelihood(_dist_from_likelihood),
-		ilm(_ilm){}
-
-	AMParams(const AMParams *am_params = nullptr) :
-		ImgParams(am_params), 
-		likelihood_alpha(AM_LIKELIHOOD_ALPHA), 
-		likelihood_beta(AM_LIKELIHOOD_BETA),
-		dist_from_likelihood(AM_DIST_FROM_LIKELIHOOD),
-		ilm(nullptr){
-		if(am_params){
-			likelihood_alpha = am_params->likelihood_alpha;
-			likelihood_beta = am_params->likelihood_beta;
-			dist_from_likelihood = am_params->dist_from_likelihood;
-			ilm = am_params->ilm;
-		}
-	}
-};
 
 /**
 set of indicator variables to keep track of which dependent state variables need updating and executing
@@ -169,7 +129,7 @@ public:
 	and can be interpreted as the likelihood that the current patch represents 
 	the same object as the initial patch
 	*/
-	virtual double getLikelihood() const{ am_not_implemeted(getLikelihood); }
+	virtual double getLikelihood() const{ am_func_not_implemeted(getLikelihood); }
 	virtual const VectorXd& getState(){ return p_am; }
 	virtual const RowVectorXd& getInitGrad() const{ return df_dI0; }
 	virtual const RowVectorXd& getCurrGrad() const{ return df_dIt; }
@@ -195,14 +155,20 @@ public:
 	if they are called only to update the internal state to take into account any changes to the initial template, i.e. if they are called
 	again after the first call to initialize the state (when it should be left to true)
 	*/
-	virtual void initializeSimilarity(){ am_not_implemeted(initializeSimilarity); }
-	virtual void initializeGrad() { am_not_implemeted(initializeGrad); }
+	virtual void initializeSimilarity(){ am_func_not_implemeted(initializeSimilarity); }
+	virtual void initializeGrad() { am_func_not_implemeted(initializeGrad); }
 	/**
 	// even though the Hessian of the error norm w.r.t. pixel values is not a state variable (since it does not need
 	// to be computed separately to get the Hessian w.r.t SSM), this function is provided as a place to perform
 	// any one-time computations that may help to decrease the runtime cost of the interfacing function that computes this Hessian
 	*/
-	virtual void initializeHess(){ am_not_implemeted(initializeHess); }
+	virtual void initializeHess(){ am_func_not_implemeted(initializeHess); }
+
+	virtual void reinitialize(){
+		if(is_initialized.similarity){ initializeSimilarity(); }
+		if(is_initialized.grad){ initializeGrad(); }
+		if(is_initialized.hess){ initializeHess(); }
+	}
 
 	/**
 	functions for updating state variables when a new image arrives
@@ -211,12 +177,12 @@ public:
 	prereq_only should be left to true if update is only called to compute the prerequisites
 	for the two gradient functions and the actual value of similarity is not needed
 	*/
-	virtual void updateSimilarity(bool prereq_only = true){ am_not_implemeted(updateSimilarity); }
+	virtual void updateSimilarity(bool prereq_only = true){ am_func_not_implemeted(updateSimilarity); }
 	virtual void updateState(const VectorXd& state_update){}
 	virtual void invertState(VectorXd& inv_p, const VectorXd& p){}
-	virtual void updateInitGrad(){ am_not_implemeted(updateInitGrad); }
-	virtual void updateCurrGrad() { am_not_implemeted(updateCurrGrad); }
-	virtual void updateParamGrad() { am_not_implemeted(updateParamGrad); }
+	virtual void updateInitGrad(){ am_func_not_implemeted(updateInitGrad); }
+	virtual void updateCurrGrad() { am_func_not_implemeted(updateCurrGrad); }
+	virtual void updateParamGrad() { am_func_not_implemeted(updateParamGrad); }
 
 	//virtual void updateInitHess() { throw std::domain_error("updateInitHess :: Not implemented Yet"); }
 	//virtual void updateCurrHess() { throw std::domain_error("updateCurrHess :: Not implemented Yet"); }
@@ -250,26 +216,26 @@ public:
 	compute the approximate Hessian by ignoring the second order terms
 	*/
 	virtual void cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dpssm){
-		am_not_implemeted(cmptInitHessian(first order));
+		am_func_not_implemeted(cmptInitHessian(first order));
 	}
 	virtual void cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dpssm){
-		am_not_implemeted(cmptCurrHessian(first order));
+		am_func_not_implemeted(cmptCurrHessian(first order));
 	}
 	virtual void cmptSelfHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dpssm) {
-		am_not_implemeted(cmptSelfHessian(first order));
+		am_func_not_implemeted(cmptSelfHessian(first order));
 	}
 
 	/** compute the exact Hessian by considering the second order terms too */
 	virtual void cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dpssm, const MatrixXd &d2I0_dpssm2){
-		am_not_implemeted(cmptInitHessian(second order));
+		am_func_not_implemeted(cmptInitHessian(second order));
 	}
 	virtual void cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dpssm,
 		const MatrixXd &d2It_dpssm2){
-		am_not_implemeted(cmptCurrHessian(second order));
+		am_func_not_implemeted(cmptCurrHessian(second order));
 	}
 	virtual void cmptSelfHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dpssm,
 		const MatrixXd &d2I_dpssm2) {
-		am_not_implemeted(cmptSelfHessian(second order));
+		am_func_not_implemeted(cmptSelfHessian(second order));
 	}
 
 	/** analogous to cmptDifferenceOfJacobians except for computing the mean of the current and initial Hessians */
@@ -302,7 +268,7 @@ public:
 	virtual void estimateOpticalFlow(std::vector<cv::Point2f> &out_pts, const cv::Mat &prev_img,
 		const std::vector<cv::Point2f> &prev_pts, cv::Size search_window, int n_pts,
 		int max_iters, double term_eps, bool const_grad = true) const{
-		am_not_implemeted(estimateOpticalFlow);
+		am_func_not_implemeted(estimateOpticalFlow);
 	}
 
 	virtual void setSPIMask(const bool *_spi_mask){ spi_mask = _spi_mask; }
@@ -338,7 +304,7 @@ public:
 	the appearance  of the object being tracked
 	this should be called with the final location of the object (obtained by the search process) in each frame
 	*/
-	virtual void updateModel(const PtsT& curr_pts){}
+	virtual void updateModel(const PtsT& curr_pts){ am_func_not_implemeted(updateModel); }
 
 	// ------------------------ Distance Feature ------------------------ //
 
@@ -351,12 +317,12 @@ public:
 	*/
 	virtual double operator()(const double* a, const double* b,
 		size_t dist_size, double worst_dist = -1) const {
-		am_not_implemeted(distance functor);
+		am_func_not_implemeted(distance functor);
 	}
 
 	/** to be called once during initialization if any of the distance feature functionality is to be used */
 	virtual void initializeDistFeat() {
-		am_not_implemeted(initializeDistFeat);
+		am_func_not_implemeted(initializeDistFeat);
 	}
 	/**
 	 computes a "distance" vector using the current image patch such that,
@@ -368,21 +334,21 @@ public:
 	 where they will be decoded and used to compute the distance measure
 	 */
 	virtual void updateDistFeat() {
-		am_not_implemeted(updateDistFeat);
+		am_func_not_implemeted(updateDistFeat);
 	}
 	virtual const double* getDistFeat(){
-		am_not_implemeted(getDistFeat);
+		am_func_not_implemeted(getDistFeat);
 	}
 	/**
 	overloaded version to write the distance feature directly to a row (or column) of a matrix
 	storing the distance features corresponding to several patches;
 	*/
 	virtual void updateDistFeat(double* feat_addr) {
-		am_not_implemeted(updateDistFeat);
+		am_func_not_implemeted(updateDistFeat);
 	}
 	/** returns the size of the distance vector */
 	virtual int getDistFeatSize() {
-		am_not_implemeted(getDistFeatSize);
+		am_func_not_implemeted(getDistFeatSize);
 	}
 
 	// -------------------------------------------------------------------------- //
@@ -391,26 +357,26 @@ public:
 
 	virtual void initializeSampler(const VectorXd &state_sigma,
 		const VectorXd &state_mean){
-		am_not_implemeted(initializeSampler(VectorXd, VectorXd));
+		am_func_not_implemeted(initializeSampler(VectorXd, VectorXd));
 	}
 	virtual void setSampler(const VectorXd &state_sigma,
 		const VectorXd &state_mean){
-		am_not_implemeted(setSampler);
+		am_func_not_implemeted(setSampler);
 	}
 	virtual void setSamplerMean(const VectorXd &mean){
-		am_not_implemeted(setSamplerMean(VectorXd));
+		am_func_not_implemeted(setSamplerMean(VectorXd));
 	}
 	virtual void setSamplerSigma(const VectorXd &std){
-		am_not_implemeted(setSamplerSigma(VectorXd));
+		am_func_not_implemeted(setSamplerSigma(VectorXd));
 	}
 	virtual void getSamplerMean(VectorXd &mean){
-		am_not_implemeted(getSamplerMean);
+		am_func_not_implemeted(getSamplerMean);
 	}
 	virtual void getSamplerSigma(VectorXd &std){
-		am_not_implemeted(getSamplerMean);
+		am_func_not_implemeted(getSamplerMean);
 	}
 	virtual void generatePerturbation(VectorXd &perturbation){
-		am_not_implemeted(generatePerturbation);
+		am_func_not_implemeted(generatePerturbation);
 	}
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW

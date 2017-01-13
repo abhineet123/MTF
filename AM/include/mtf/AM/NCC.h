@@ -58,6 +58,7 @@ public:
 	void estimateOpticalFlow(std::vector<cv::Point2f> &out_pts, const cv::Mat &prev_img,
 		const std::vector<cv::Point2f> &prev_pts, cv::Size search_window, int n_pts,
 		int max_iters, double term_eps, bool const_grad=true) const override;
+	void updateModel(const Matrix2Xd& curr_pts) override;
 
 	/*Support for FLANN library*/
 	VectorXd curr_feat_vec;
@@ -93,7 +94,7 @@ private:
 	VectorXd I0_cntr_c, It_cntr_b;
 	VectorXd df_dI0_ncntr, df_dIt_ncntr;
 	double df_dI0_ncntr_mean, df_dIt_ncntr_mean;
-
+	bool use_running_avg;
 };
 
 _MTF_END_NAMESPACE
