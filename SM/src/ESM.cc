@@ -20,6 +20,7 @@ ESM<AM, SSM >::ESM(const ParamType *esm_params,
 		printf("lm_delta_init: %f\n", params.lm_delta_init);
 		printf("lm_delta_update: %f\n", params.lm_delta_update);
 	}
+	printf("enable_learning: %d\n", params.enable_learning);
 	printf("debug_mode: %d\n", params.debug_mode);
 
 	printf("appearance model: %s\n", am.name.c_str());
@@ -283,6 +284,9 @@ void ESM<AM, SSM >::update(){
 		if(update_norm < params.epsilon){ break; }
 
 		am.clearFirstIter();
+	}
+	if(params.enable_learning){
+		am.updateModel(ssm.getPts());
 	}
 	ssm.getCorners(cv_corners_mat);
 }

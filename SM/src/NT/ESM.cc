@@ -23,6 +23,7 @@ namespace nt{
 			printf("lm_delta_init: %f\n", params.lm_delta_init);
 			printf("lm_delta_update: %f\n", params.lm_delta_update);
 		}
+		printf("enable_learning: %d\n", params.enable_learning);
 		printf("enable_spi: %d\n", params.enable_spi);
 		printf("spi_thresh: %f\n", params.spi_thresh);
 		printf("debug_mode: %d\n", params.debug_mode);
@@ -252,6 +253,9 @@ namespace nt{
 			if(params.enable_spi){ showSPIMask(); }
 
 			am->clearFirstIter();
+		}
+		if(params.enable_learning){
+			am->updateModel(ssm->getPts());
 		}
 		ssm->getCorners(cv_corners_mat);
 	}

@@ -385,7 +385,14 @@ void GridTracker<SSM>::showTrackers(){
 	cv::cvtColor(curr_img_uchar, curr_img_uchar, CV_GRAY2BGR);
 	utils::drawRegion(curr_img_uchar, cv_corners_mat, CV_RGB(0, 0, 255), 2);
 	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++) {
-		cv::Scalar tracker_color = pix_mask[tracker_id] ? CV_RGB(0, 255, 0) : CV_RGB(255, 0, 0);
+		cv::Scalar tracker_color;
+		if(enable_backward_est){
+			tracker_color = backward_est_mask[tracker_id] ?
+				pix_mask[tracker_id] ? CV_RGB(0, 255, 0) : CV_RGB(255, 0, 0) :
+				CV_RGB(0, 0, 255);
+		} else{
+			tracker_color = pix_mask[tracker_id] ? CV_RGB(0, 255, 0) : CV_RGB(255, 0, 0);
+		}
 		circle(curr_img_uchar, curr_pts[tracker_id], 2, tracker_color, 2);
 		if(params.show_tracker_edges){
 			utils::drawRegion(curr_img_uchar, trackers[tracker_id]->getRegion(), tracker_color, 1);

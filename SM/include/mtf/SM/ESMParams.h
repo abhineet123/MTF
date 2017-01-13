@@ -25,6 +25,8 @@ struct ESMParams{
 	double lm_delta_init;
 	double lm_delta_update;
 
+	bool enable_learning;
+
 	bool enable_spi;
 	double spi_thresh;
 	bool debug_mode; //! decides whether logging data will be printed for debugging purposes; 
@@ -34,8 +36,8 @@ struct ESMParams{
 	ESMParams(int _max_iters, double _epsilon,
 		JacType _jac_type, HessType _hess_type, bool _sec_ord_hess,
 		bool _chained_warp,	bool _leven_marq, double _lm_delta_init,
-		double _lm_delta_update, bool _enable_spi, double _spi_thresh,
-		bool _debug_mode);
+		double _lm_delta_update, bool _enable_learning, 
+		bool _enable_spi, double _spi_thresh, bool _debug_mode);
 	// default and copy constructor
 	ESMParams(const ESMParams *params = nullptr);
 	static const char* toString(JacType _jac_type);

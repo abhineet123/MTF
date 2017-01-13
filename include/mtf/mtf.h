@@ -1231,7 +1231,8 @@ inline ESMParams_ getESMParams(){
 		static_cast<ESMParams::JacType>(esm_jac_type),
 		static_cast<ESMParams::HessType>(esm_hess_type),
 		sec_ord_hess, esm_chained_warp, leven_marq, lm_delta_init,
-		lm_delta_update, esm_spi_enable, esm_spi_thresh, debug_mode));
+		lm_delta_update, enable_learning, esm_spi_enable, esm_spi_thresh, 
+		debug_mode));
 }
 inline FCLKParams_ getFCLKParams(){
 	return 	FCLKParams_(new FCLKParams(max_iters, epsilon,

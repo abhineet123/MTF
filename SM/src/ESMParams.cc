@@ -9,6 +9,7 @@
 #define ESM_LEVEN_MARQ false
 #define ESM_LM_DELTA_INIT 0.01
 #define ESM_LM_DELTA_UPDATE 10
+#define ESM_ENABLE_LEARNING false
 #define ESM_ENABLE_SPI false
 #define ESM_SPI_THRESH 10
 #define ESM_DEBUG_MODE false
@@ -18,8 +19,8 @@ _MTF_BEGIN_NAMESPACE
 ESMParams::ESMParams(int _max_iters, double _epsilon,
 JacType _jac_type, HessType _hess_type, bool _sec_ord_hess,
 bool _chained_warp, bool _leven_marq, double _lm_delta_init,
-double _lm_delta_update, bool _enable_spi, double _spi_thresh,
-bool _debug_mode) :
+double _lm_delta_update, bool _enable_learning, 
+bool _enable_spi, double _spi_thresh, bool _debug_mode) :
 max_iters(_max_iters),
 epsilon(_epsilon),
 jac_type(_jac_type),
@@ -29,6 +30,7 @@ chained_warp(_chained_warp),
 leven_marq(_leven_marq),
 lm_delta_init(_lm_delta_init),
 lm_delta_update(_lm_delta_update),
+enable_learning(_enable_learning),
 enable_spi(_enable_spi),
 spi_thresh(_spi_thresh),
 debug_mode(_debug_mode){}
@@ -43,6 +45,7 @@ chained_warp(ESM_CHAINED_WARP),
 leven_marq(ESM_LEVEN_MARQ),
 lm_delta_init(ESM_LM_DELTA_INIT),
 lm_delta_update(ESM_LM_DELTA_UPDATE),
+enable_learning(ESM_ENABLE_LEARNING),
 enable_spi(ESM_ENABLE_SPI),
 spi_thresh(ESM_SPI_THRESH),
 debug_mode(ESM_DEBUG_MODE){
@@ -56,6 +59,7 @@ debug_mode(ESM_DEBUG_MODE){
 		leven_marq = params->leven_marq;
 		lm_delta_init = params->lm_delta_init;
 		lm_delta_update = params->lm_delta_update;
+		enable_learning = params->enable_learning;
 		enable_spi = params->enable_spi;
 		spi_thresh = params->spi_thresh;
 		debug_mode = params->debug_mode;
