@@ -22,10 +22,10 @@ GridTrackerParams::GridTrackerParams(
 int _grid_size_x, int _grid_size_y,
 int _patch_size_x, int _patch_size_y,
 int _reset_at_each_frame, bool _dyn_patch_size,
-bool _patch_centroid_inside, bool _use_tbb,
-int _max_iters, double _epsilon, bool _enable_pyr,
-bool _show_trackers, bool _show_tracker_edges,
-bool _debug_mode) :
+bool _patch_centroid_inside, double _backward_err_thresh,
+bool _use_tbb, int _max_iters, double _epsilon,
+bool _enable_pyr, bool _show_trackers,
+bool _show_tracker_edges, bool _debug_mode) :
 grid_size_x(_grid_size_x),
 grid_size_y(_grid_size_y),
 patch_size_x(_patch_size_x),
@@ -33,6 +33,7 @@ patch_size_y(_patch_size_y),
 reset_at_each_frame(_reset_at_each_frame),
 dyn_patch_size(_dyn_patch_size),
 patch_centroid_inside(_patch_centroid_inside),
+backward_err_thresh(_backward_err_thresh),
 use_tbb(_use_tbb),
 max_iters(_max_iters),
 epsilon(_epsilon),
@@ -51,6 +52,7 @@ patch_size_y(GT_PATCH_SIZE_Y),
 reset_at_each_frame(GT_RESET_AT_EACH_FRAME),
 dyn_patch_size(GT_DYN_PATCH_SIZE),
 patch_centroid_inside(GT_PATCH_CENTROID_INSIDE),
+backward_err_thresh(GT_BACKWARD_ERR_THRESH),
 use_tbb(GT_USE_TBB),
 max_iters(GT_MAX_ITERS),
 epsilon(GT_EPSILON),
@@ -66,6 +68,7 @@ debug_mode(GT_DEBUG_MODE){
 		reset_at_each_frame = params->reset_at_each_frame;
 		dyn_patch_size = params->dyn_patch_size;
 		patch_centroid_inside = params->patch_centroid_inside;
+		backward_err_thresh = params->backward_err_thresh;
 		use_tbb = params->use_tbb;
 		max_iters = params->max_iters;
 		epsilon = params->epsilon;
@@ -91,13 +94,15 @@ GridTracker<SSM>::GridTracker(const vector<TrackerBase*> _trackers,
 	const ParamType *grid_params, const EstimatorParams *_est_params,
 	const SSMParams *_ssm_params) :
 	GridBase(_trackers), ssm(_ssm_params),
-	params(grid_params), est_params(_est_params){
+	params(grid_params), est_params(_est_params), 
+	enable_backward_est(false){
 	printf("\n");
 	printf("Using Grid tracker with:\n");
 	printf("grid_size: %d x %d\n", params.grid_size_x, params.grid_size_y);
 	printf("patch_size: %d x %d\n", params.patch_size_x, params.patch_size_y);
 	printf("reset_at_each_frame: %d\n", params.reset_at_each_frame);
 	printf("patch_centroid_inside: %d\n", params.patch_centroid_inside);
+	printf("backward_err_thresh: %f\n", params.backward_err_thresh);
 	printf("use_tbb: %d\n", params.use_tbb);
 	printf("max_iters: %d\n", params.max_iters);
 	printf("epsilon: %f\n", params.epsilon);
@@ -177,8 +182,8 @@ GridTracker<SSM>::GridTracker(const vector<TrackerBase*> _trackers,
 	if(params.backward_err_thresh > 0){
 		printf("Failure detection with backward estimation is enabled\n");
 		enable_backward_est = true;
-		est_prev_pts.resize(n_pts);
-		backward_est_mask.resize(n_pts);
+		est_prev_pts.resize(n_trackers);
+		backward_est_mask.resize(n_trackers);
 	}
 
 	if(params.show_trackers){

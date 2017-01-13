@@ -763,8 +763,8 @@ TrackerBase *getTracker(const char *sm_type,
 			GridTrackerParams grid_params(
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
 				grid_reset_at_each_frame, grid_dyn_patch_size, grid_patch_centroid_inside,
-				grid_use_tbb, max_iters, epsilon, enable_pyr, grid_show_trackers,
-				grid_show_tracker_edges, debug_mode);
+				grid_backward_err_thresh, grid_use_tbb, max_iters, epsilon, enable_pyr,
+				grid_show_trackers,	grid_show_tracker_edges, debug_mode);
 			typename SSMType::ParamType _ssm_params(ssm_params);
 			_ssm_params.resx = grid_params.getResX();
 			_ssm_params.resy = grid_params.getResY();
