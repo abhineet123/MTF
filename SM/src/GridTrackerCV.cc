@@ -12,7 +12,7 @@ GridTrackerCVParams::GridTrackerCVParams(
 int _grid_size_x, int _grid_size_y,
 int _search_window_x, int _search_window_y,
 bool _reset_at_each_frame, bool _patch_centroid_inside,
-double _backward_err_thresh,
+double _fb_err_thresh,
 int _pyramid_levels, bool _use_min_eig_vals,
 double _min_eig_thresh, int _max_iters,
 double _epsilon, bool _show_pts,
@@ -23,7 +23,7 @@ search_window_x(_search_window_x),
 search_window_y(_search_window_y),
 reset_at_each_frame(_reset_at_each_frame),
 patch_centroid_inside(_patch_centroid_inside),
-backward_err_thresh(_backward_err_thresh),
+fb_err_thresh(_fb_err_thresh),
 pyramid_levels(_pyramid_levels),
 use_min_eig_vals(_use_min_eig_vals),
 min_eig_thresh(_min_eig_thresh),
@@ -41,7 +41,7 @@ search_window_x(GTCV_SEARCH_WINDOW_X),
 search_window_y(GTCV_SEARCH_WINDOW_Y),
 reset_at_each_frame(GTCV_RESET_AT_EACH_FRAME),
 patch_centroid_inside(GTCV_PATCH_CENTROID_INSIDE),
-backward_err_thresh(GTCV_BACKWARD_EST_THRESH),
+fb_err_thresh(GTCV_FB_ERR_THRESH),
 pyramid_levels(GTCV_PYRAMID_LEVELS),
 use_min_eig_vals(GTCV_USE_MIN_EIG_VALS),
 min_eig_thresh(GTCV_MIN_EIG_THRESH),
@@ -55,7 +55,7 @@ debug_mode(GTCV_DEBUG_MODE){
 		search_window_y = params->search_window_y;
 		reset_at_each_frame = params->reset_at_each_frame;
 		patch_centroid_inside = params->patch_centroid_inside;
-		backward_err_thresh = params->backward_err_thresh;
+		fb_err_thresh = params->fb_err_thresh;
 		pyramid_levels = params->pyramid_levels;
 		use_min_eig_vals = params->use_min_eig_vals;
 		min_eig_thresh = params->min_eig_thresh;
@@ -80,14 +80,14 @@ template<class SSM>
 GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 	const EstimatorParams *_est_params, const SSMParams *_ssm_params) :
 	GridBase(), ssm(_ssm_params), params(grid_params),
-	est_params(_est_params), enable_backward_est(false){
+	est_params(_est_params), enable_fb_err_est(false){
 	printf("\n");
 	printf("Using OpenCV Grid tracker with:\n");
 	printf("grid_size: %d x %d\n", params.grid_size_x, params.grid_size_y);
 	printf("search window size: %d x %d\n", params.search_window_x, params.search_window_y);
 	printf("reset_at_each_frame: %d\n", params.reset_at_each_frame);
 	printf("patch_centroid_inside: %d\n", params.patch_centroid_inside);
-	printf("backward_err_thresh: %f\n", params.backward_err_thresh);
+	printf("fb_err_thresh: %f\n", params.fb_err_thresh);
 	printf("pyramid_levels: %d\n", params.pyramid_levels);
 	printf("use_min_eig_vals: %d\n", params.use_min_eig_vals);
 	printf("min_eig_thresh: %f\n", params.min_eig_thresh);
@@ -140,11 +140,11 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 			_linear_idx(idy, idx) = idy * sub_regions_x + idx;
 		}
 	}
-	if(params.backward_err_thresh > 0){
-		printf("Failure detection with backward estimation is enabled\n");
-		enable_backward_est = true;
-		est_prev_pts.resize(n_pts);
-		backward_est_mask.resize(n_pts);
+	if(params.fb_err_thresh > 0){
+		printf("Forward backward error estimation is enabled\n");
+		enable_fb_err_est = true;
+		fb_prev_pts.resize(n_pts);
+		fb_err_mask.resize(n_pts);
 	}
 	if(params.show_pts){
 		patch_win_name = "Optical Flow Points";
@@ -175,7 +175,7 @@ void GridTrackerCV<SSM>::update() {
 		search_window, params.pyramid_levels,
 		lk_term_criteria, lk_flags, params.min_eig_thresh);
 
-	if(enable_backward_est){
+	if(enable_fb_err_est){
 		backwardEstimation();
 	} else{
 		ssm.estimateWarpFromPts(ssm_update, pix_mask, prev_pts, curr_pts, est_params);
@@ -220,28 +220,28 @@ void GridTrackerCV<SSM>::setRegion(const cv::Mat& corners) {
 template<class SSM>
 void GridTrackerCV<SSM>::backwardEstimation(){
 	cv::calcOpticalFlowPyrLK(curr_img, prev_img,
-		curr_pts, est_prev_pts, lk_status, lk_error,
+		curr_pts, fb_prev_pts, lk_status, lk_error,
 		search_window, params.pyramid_levels,
 		lk_term_criteria, lk_flags, params.min_eig_thresh);
 	std::vector<cv::Point2f> prev_pts_masked, curr_pts_masked;
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-		double diff_x = est_prev_pts[pt_id].x - prev_pts[pt_id].x;
-		double diff_y = est_prev_pts[pt_id].y - prev_pts[pt_id].y;
+		double diff_x = fb_prev_pts[pt_id].x - prev_pts[pt_id].x;
+		double diff_y = fb_prev_pts[pt_id].y - prev_pts[pt_id].y;
 
-		if(diff_x*diff_x + diff_y*diff_y > params.backward_err_thresh){
-			backward_est_mask[pt_id] = false;
+		if(diff_x*diff_x + diff_y*diff_y > params.fb_err_thresh){
+			fb_err_mask[pt_id] = false;
 		} else{
-			backward_est_mask[pt_id] = true;
+			fb_err_mask[pt_id] = true;
 			prev_pts_masked.push_back(prev_pts[pt_id]);
 			curr_pts_masked.push_back(curr_pts[pt_id]);
 		}
 	}
 	if(prev_pts_masked.size() < est_params.n_model_pts){
 		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-			if(backward_est_mask[pt_id]){ continue; }
+			if(fb_err_mask[pt_id]){ continue; }
 			prev_pts_masked.push_back(prev_pts[pt_id]);
 			curr_pts_masked.push_back(curr_pts[pt_id]);
-			backward_est_mask[pt_id] = true;
+			fb_err_mask[pt_id] = true;
 			if(prev_pts_masked.size() == est_params.n_model_pts){
 				break;
 			}
@@ -253,7 +253,7 @@ void GridTrackerCV<SSM>::backwardEstimation(){
 	if(pix_mask_needed){
 		int est_pt_id = 0;
 		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-			pix_mask[pt_id] = backward_est_mask[pt_id] ?
+			pix_mask[pt_id] = fb_err_mask[pt_id] ?
 				pix_mask_est[est_pt_id++] : 0;
 		}
 	}
@@ -293,8 +293,8 @@ void GridTrackerCV<SSM>::showPts(){
 	utils::drawRegion(curr_img_uchar, cv_corners_mat, CV_RGB(0, 0, 255), 2);
 	for(int pt_id = 0; pt_id < n_pts; pt_id++) {
 		cv::Scalar pt_color;
-		if(enable_backward_est){
-			pt_color = backward_est_mask[pt_id] ?
+		if(enable_fb_err_est){
+			pt_color = fb_err_mask[pt_id] ?
 				pix_mask[pt_id] ? CV_RGB(0, 255, 0) : CV_RGB(255, 0, 0) :
 				CV_RGB(0, 0, 255);
 		} else{

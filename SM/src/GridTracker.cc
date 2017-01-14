@@ -22,7 +22,7 @@ GridTrackerParams::GridTrackerParams(
 int _grid_size_x, int _grid_size_y,
 int _patch_size_x, int _patch_size_y,
 int _reset_at_each_frame, bool _dyn_patch_size,
-bool _patch_centroid_inside, double _backward_err_thresh,
+bool _patch_centroid_inside, double _fb_err_thresh,
 bool _use_tbb, int _max_iters, double _epsilon,
 bool _enable_pyr, bool _show_trackers,
 bool _show_tracker_edges, bool _debug_mode) :
@@ -33,7 +33,7 @@ patch_size_y(_patch_size_y),
 reset_at_each_frame(_reset_at_each_frame),
 dyn_patch_size(_dyn_patch_size),
 patch_centroid_inside(_patch_centroid_inside),
-backward_err_thresh(_backward_err_thresh),
+fb_err_thresh(_fb_err_thresh),
 use_tbb(_use_tbb),
 max_iters(_max_iters),
 epsilon(_epsilon),
@@ -52,7 +52,7 @@ patch_size_y(GT_PATCH_SIZE_Y),
 reset_at_each_frame(GT_RESET_AT_EACH_FRAME),
 dyn_patch_size(GT_DYN_PATCH_SIZE),
 patch_centroid_inside(GT_PATCH_CENTROID_INSIDE),
-backward_err_thresh(GT_BACKWARD_ERR_THRESH),
+fb_err_thresh(GT_BACKWARD_ERR_THRESH),
 use_tbb(GT_USE_TBB),
 max_iters(GT_MAX_ITERS),
 epsilon(GT_EPSILON),
@@ -68,7 +68,7 @@ debug_mode(GT_DEBUG_MODE){
 		reset_at_each_frame = params->reset_at_each_frame;
 		dyn_patch_size = params->dyn_patch_size;
 		patch_centroid_inside = params->patch_centroid_inside;
-		backward_err_thresh = params->backward_err_thresh;
+		fb_err_thresh = params->fb_err_thresh;
 		use_tbb = params->use_tbb;
 		max_iters = params->max_iters;
 		epsilon = params->epsilon;
@@ -95,14 +95,14 @@ GridTracker<SSM>::GridTracker(const vector<TrackerBase*> _trackers,
 	const SSMParams *_ssm_params) :
 	GridBase(_trackers), ssm(_ssm_params),
 	params(grid_params), est_params(_est_params), 
-	enable_backward_est(false){
+	enable_fb_err_est(false){
 	printf("\n");
 	printf("Using Grid tracker with:\n");
 	printf("grid_size: %d x %d\n", params.grid_size_x, params.grid_size_y);
 	printf("patch_size: %d x %d\n", params.patch_size_x, params.patch_size_y);
 	printf("reset_at_each_frame: %d\n", params.reset_at_each_frame);
 	printf("patch_centroid_inside: %d\n", params.patch_centroid_inside);
-	printf("backward_err_thresh: %f\n", params.backward_err_thresh);
+	printf("fb_err_thresh: %f\n", params.fb_err_thresh);
 	printf("use_tbb: %d\n", params.use_tbb);
 	printf("max_iters: %d\n", params.max_iters);
 	printf("epsilon: %f\n", params.epsilon);
@@ -179,11 +179,11 @@ GridTracker<SSM>::GridTracker(const vector<TrackerBase*> _trackers,
 		printf("Warning: Grid tracker used with heterogeneous patch trackers\n");
 	}
 
-	if(params.backward_err_thresh > 0){
-		printf("Failure detection with backward estimation is enabled\n");
-		enable_backward_est = true;
-		est_prev_pts.resize(n_trackers);
-		backward_est_mask.resize(n_trackers);
+	if(params.fb_err_thresh > 0){
+		printf("Forward backward error estimation is enabled\n");
+		enable_fb_err_est = true;
+		fb_prev_pts.resize(n_trackers);
+		fb_err_mask.resize(n_trackers);
 	}
 
 	if(params.show_trackers){
@@ -233,7 +233,7 @@ void GridTracker<SSM>::initialize(const cv::Mat &corners) {
 		curr_pts[tracker_id].y = prev_pts[tracker_id].y;
 	}
 	ssm.getCorners(cv_corners_mat);
-	if(enable_backward_est){
+	if(enable_fb_err_est){
 		prev_img = curr_img.clone();
 	}
 	if(params.show_trackers){ showTrackers(); }
@@ -255,7 +255,7 @@ void GridTracker<SSM>::update() {
 #ifdef ENABLE_TBB
 		});
 #endif
-		if(enable_backward_est){
+		if(enable_fb_err_est){
 			backwardEstimation();
 			prev_img = curr_img.clone();
 		} else{
@@ -289,7 +289,7 @@ void GridTracker<SSM>::backwardEstimation(){
 		trackers[tracker_id]->setImage(prev_img);
 		cv::Mat tracker_location = trackers[tracker_id]->getRegion().clone();
 		trackers[tracker_id]->update();
-		utils::getCentroid(est_prev_pts[tracker_id], trackers[tracker_id]->getRegion());
+		utils::getCentroid(fb_prev_pts[tracker_id], trackers[tracker_id]->getRegion());
 		//patch_corners = trackers[tracker_id]->getRegion();
 		trackers[tracker_id]->setImage(curr_img);
 		trackers[tracker_id]->setRegion(tracker_location);
@@ -297,23 +297,23 @@ void GridTracker<SSM>::backwardEstimation(){
 
 	std::vector<cv::Point2f> prev_pts_masked, curr_pts_masked;
 	for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
-		double diff_x = est_prev_pts[tracker_id].x - prev_pts[tracker_id].x;
-		double diff_y = est_prev_pts[tracker_id].y - prev_pts[tracker_id].y;
+		double diff_x = fb_prev_pts[tracker_id].x - prev_pts[tracker_id].x;
+		double diff_y = fb_prev_pts[tracker_id].y - prev_pts[tracker_id].y;
 
-		if(diff_x*diff_x + diff_y*diff_y > params.backward_err_thresh){
-			backward_est_mask[tracker_id] = false;
+		if(diff_x*diff_x + diff_y*diff_y > params.fb_err_thresh){
+			fb_err_mask[tracker_id] = false;
 		} else{
-			backward_est_mask[tracker_id] = true;
+			fb_err_mask[tracker_id] = true;
 			prev_pts_masked.push_back(prev_pts[tracker_id]);
 			curr_pts_masked.push_back(curr_pts[tracker_id]);
 		}
 	}
 	if(prev_pts_masked.size() < est_params.n_model_pts){
 		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
-			if(backward_est_mask[tracker_id]){ continue; }
+			if(fb_err_mask[tracker_id]){ continue; }
 			prev_pts_masked.push_back(prev_pts[tracker_id]);
 			curr_pts_masked.push_back(curr_pts[tracker_id]);
-			backward_est_mask[tracker_id] = true;
+			fb_err_mask[tracker_id] = true;
 			if(prev_pts_masked.size() == est_params.n_model_pts){
 				break;
 			}
@@ -325,7 +325,7 @@ void GridTracker<SSM>::backwardEstimation(){
 	if(pix_mask_needed){
 		int est_pt_id = 0;
 		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
-			pix_mask[tracker_id] = backward_est_mask[tracker_id] ?
+			pix_mask[tracker_id] = fb_err_mask[tracker_id] ?
 				pix_mask_est[est_pt_id++] : 0;
 		}
 	}
@@ -386,8 +386,8 @@ void GridTracker<SSM>::showTrackers(){
 	utils::drawRegion(curr_img_uchar, cv_corners_mat, CV_RGB(0, 0, 255), 2);
 	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++) {
 		cv::Scalar tracker_color;
-		if(enable_backward_est){
-			tracker_color = backward_est_mask[tracker_id] ?
+		if(enable_fb_err_est){
+			tracker_color = fb_err_mask[tracker_id] ?
 				pix_mask[tracker_id] ? CV_RGB(0, 255, 0) : CV_RGB(255, 0, 0) :
 				CV_RGB(0, 0, 255);
 		} else{

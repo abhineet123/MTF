@@ -662,13 +662,13 @@ GridTracker and RKLT:
 			set to 1 to initialize/reset all patch trackers such that their centroids lie completely inside the larger bounding box;
 			if set to 0, centroids of some of the trackers will lie on the edges of the bounding box so that part of the corresponding patches will be outside it;
 			
-	 Parameter:	'grid_backward_err_thresh'
+	 Parameter:	'grid_fb_err_thresh'
 		Description:
-			error threshold for deciding tracking failures using the forward/backward method;
+			error threshold for deciding tracking failures using the forward backward method;
 			first the points are tracked from the previous to the current frame;
 			results of this are then tracked back to the previous frame;
 			error is measured between the initial points during forward tracking and the final points during backward tracking;
-			setting this threshold to <=0 disables this method of failure detection;		
+			setting this to <=0 disables this method of failure detection;		
 			
 	 Parameter:	'grid_show_trackers'
 		Description:

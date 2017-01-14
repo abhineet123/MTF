@@ -12,7 +12,7 @@
 #define GT_RESET_AT_EACH_FRAME 1
 #define GT_DYN_PATCH_SIZE 0
 #define GT_PATCH_CENTROID_INSIDE true
-#define GT_BACKWARD_ERR_THRESH 0
+#define GT_FB_ERR_THRESH 0
 #define GT_USE_TBB true
 #define GT_MAX_ITERS 1
 #define GT_EPSILON 0.01
@@ -33,7 +33,7 @@ struct GridTrackerParams{
 
 	bool patch_centroid_inside;
 
-	double backward_err_thresh;
+	double fb_err_thresh;
 
 	bool use_tbb;
 
@@ -51,7 +51,7 @@ struct GridTrackerParams{
 		int _grid_size_x, int _grid_size_y,
 		int _patch_size_x, int _patch_size_y,
 		int _reset_at_each_frame, bool _dyn_patch_size,
-		bool _patch_centroid_inside, double backward_err_thresh,
+		bool _patch_centroid_inside, double fb_err_thresh,
 		bool _use_tbb,	int _max_iters, double _epsilon, 
 		bool _enable_pyr,bool _show_trackers, 
 		bool _show_tracker_edges,bool _debug_mode);
@@ -112,9 +112,9 @@ private:
 	int pause_seq;
 	bool reinit_at_each_frame;
 
-	std::vector<cv::Point2f> est_prev_pts;
-	VectorXb backward_est_mask;
-	bool enable_backward_est;
+	std::vector<cv::Point2f> fb_prev_pts;
+	VectorXb fb_err_mask;
+	bool enable_fb_err_est;
 
 	~GridTracker(){}
 	void resetTrackers(bool reinit=true);

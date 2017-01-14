@@ -10,7 +10,7 @@
 #define GTCV_SEARCH_WINDOW_Y 10
 #define GTCV_RESET_AT_EACH_FRAME 1
 #define GTCV_PATCH_CENTROID_INSIDE 0
-#define GTCV_BACKWARD_EST_THRESH 0
+#define GTCV_FB_ERR_THRESH 0
 #define GTCV_PYRAMID_LEVELS 0
 #define GTCV_USE_MIN_EIG_VALS 0
 #define GTCV_MIN_EIG_THRESH 1e-4
@@ -28,7 +28,7 @@ struct GridTrackerCVParams{
 	bool reset_at_each_frame;
 	bool patch_centroid_inside;
 
-	double backward_err_thresh;
+	double fb_err_thresh;
 
 	int pyramid_levels;
 	bool use_min_eig_vals;
@@ -46,7 +46,7 @@ struct GridTrackerCVParams{
 		int _grid_size_x, int _grid_size_y,
 		int _search_window_x, int _search_window_y,
 		bool reset_at_each_frame, bool _patch_centroid_inside,
-		double _backward_err_thresh,
+		double _fb_err_thresh,
 		int _pyramid_levels, bool _use_min_eig_vals,
 		double _min_eig_thresh, int _max_iters, 
 		double _epsilon,bool _show_pts,
@@ -114,9 +114,9 @@ private:
 	MatrixXi _linear_idx;//used for indexing the sub region locations
 	int pause_seq;
 
-	bool enable_backward_est;
-	std::vector<cv::Point2f> est_prev_pts;
-	VectorXb backward_est_mask;
+	bool enable_fb_err_est;
+	std::vector<cv::Point2f> fb_prev_pts;
+	VectorXb fb_err_mask;
 
 	~GridTrackerCV(){}
 	void resetPts();
