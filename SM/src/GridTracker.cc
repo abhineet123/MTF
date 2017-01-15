@@ -191,6 +191,7 @@ GridTracker<SSM>::GridTracker(const vector<TrackerBase*> _trackers,
 	}
 
 	if(params.show_trackers){
+		pix_mask_needed = true;
 		patch_win_name = "Patch Trackers";
 		cv::namedWindow(patch_win_name);
 	}

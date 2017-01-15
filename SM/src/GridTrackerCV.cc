@@ -147,6 +147,7 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 		fb_err_mask.resize(n_pts);
 	}
 	if(params.show_pts){
+		pix_mask_needed = true;
 		patch_win_name = "Optical Flow Points";
 		cv::namedWindow(patch_win_name);
 	}
