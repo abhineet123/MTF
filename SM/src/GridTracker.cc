@@ -23,8 +23,8 @@ int _grid_size_x, int _grid_size_y,
 int _patch_size_x, int _patch_size_y,
 int _reset_at_each_frame, bool _dyn_patch_size,
 bool _patch_centroid_inside, double _fb_err_thresh,
-bool _use_tbb, int _max_iters, double _epsilon,
-bool _enable_pyr, bool _show_trackers,
+bool _fb_reinit, bool _use_tbb, int _max_iters, 
+double _epsilon, bool _enable_pyr, bool _show_trackers,
 bool _show_tracker_edges, bool _debug_mode) :
 grid_size_x(_grid_size_x),
 grid_size_y(_grid_size_y),
@@ -34,6 +34,7 @@ reset_at_each_frame(_reset_at_each_frame),
 dyn_patch_size(_dyn_patch_size),
 patch_centroid_inside(_patch_centroid_inside),
 fb_err_thresh(_fb_err_thresh),
+fb_reinit(_fb_reinit),
 use_tbb(_use_tbb),
 max_iters(_max_iters),
 epsilon(_epsilon),
@@ -53,6 +54,7 @@ reset_at_each_frame(GT_RESET_AT_EACH_FRAME),
 dyn_patch_size(GT_DYN_PATCH_SIZE),
 patch_centroid_inside(GT_PATCH_CENTROID_INSIDE),
 fb_err_thresh(GT_FB_ERR_THRESH),
+fb_reinit(GT_FB_REINIT),
 use_tbb(GT_USE_TBB),
 max_iters(GT_MAX_ITERS),
 epsilon(GT_EPSILON),
@@ -69,6 +71,7 @@ debug_mode(GT_DEBUG_MODE){
 		dyn_patch_size = params->dyn_patch_size;
 		patch_centroid_inside = params->patch_centroid_inside;
 		fb_err_thresh = params->fb_err_thresh;
+		fb_reinit = params->fb_reinit;
 		use_tbb = params->use_tbb;
 		max_iters = params->max_iters;
 		epsilon = params->epsilon;
@@ -103,6 +106,7 @@ GridTracker<SSM>::GridTracker(const vector<TrackerBase*> _trackers,
 	printf("reset_at_each_frame: %d\n", params.reset_at_each_frame);
 	printf("patch_centroid_inside: %d\n", params.patch_centroid_inside);
 	printf("fb_err_thresh: %f\n", params.fb_err_thresh);
+	printf("fb_reinit: %d\n", params.fb_reinit);
 	printf("use_tbb: %d\n", params.use_tbb);
 	printf("max_iters: %d\n", params.max_iters);
 	printf("epsilon: %f\n", params.epsilon);
@@ -286,8 +290,11 @@ void GridTracker<SSM>::setRegion(const cv::Mat& corners) {
 template<class SSM>
 void GridTracker<SSM>::backwardEstimation(){
 	for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
-		trackers[tracker_id]->setImage(prev_img);
 		cv::Mat tracker_location = trackers[tracker_id]->getRegion().clone();
+		if(params.fb_reinit){
+			trackers[tracker_id]->initialize(tracker_location);
+		}
+		trackers[tracker_id]->setImage(prev_img);
 		trackers[tracker_id]->update();
 		utils::getCentroid(fb_prev_pts[tracker_id], trackers[tracker_id]->getRegion());
 		//patch_corners = trackers[tracker_id]->getRegion();

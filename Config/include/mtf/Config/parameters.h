@@ -484,6 +484,7 @@ namespace mtf{
 		bool grid_dyn_patch_size = false;
 		bool grid_patch_centroid_inside = true;
 		double grid_fb_err_thresh = 0;
+		bool grid_fb_reinit = 0;
 		bool grid_show_trackers = false;
 		bool grid_show_tracker_edges = false;
 		bool grid_use_tbb = true;
@@ -1660,6 +1661,8 @@ namespace mtf{
 				grid_min_eig_thresh = atof(arg_val);
 			} else if(!strcmp(arg_name, "grid_fb_err_thresh")){
 				grid_fb_err_thresh = atof(arg_val);
+			}else if(!strcmp(arg_name, "grid_fb_reinit")){
+				grid_fb_reinit = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_detect_keypoints")){
 				grid_detect_keypoints = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_rebuild_index")){

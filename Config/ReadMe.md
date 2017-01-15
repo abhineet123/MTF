@@ -670,6 +670,11 @@ GridTracker and RKLT:
 			error is measured between the initial points during forward tracking and the final points during backward tracking;
 			setting this to <=0 disables this method of failure detection;		
 			
+	 Parameter:	'grid_fb_reinit'
+		Description:
+			reinitialize trackers in the current frame before tracking backwards to the last one;
+			does not apply to OpenCV grid tracker;		
+			
 	 Parameter:	'grid_show_trackers'
 		Description:
 			set to 1 to show the locations of all the patch trackers within the larger object patch	where each is marked by the location of its centroid
@@ -677,6 +682,7 @@ GridTracker and RKLT:
 	 Parameter:	'grid_show_tracker_edges'
 		Description:
 			set to 1 to also show the edges of the bounding box representing each patch tracker (in addition to its centroid)
+			does not apply to OpenCV grid tracker;
 			
 	 Parameter:	'grid_use_tbb'
 		Description:
