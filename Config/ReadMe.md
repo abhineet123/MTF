@@ -253,7 +253,7 @@ MTF Tracker specific parameters:
 ================================
 	 Parameter:	'mtf_sm'
 		Description:
-			Search method to use for the MTF tracker or the name of the detection based tracker
+			Search method to use for the MTF tracker or the name of the third party tracker
 		Possible Values:
 			ic/iclk:	Inverse Compositional Lucas Kanade
 				icl/iclm:	use Levenberg Marquardt (LM) formulation
@@ -303,7 +303,7 @@ MTF Tracker specific parameters:
 				setting grid_sm in modules.cfg to cv will run the OpenCV version of this tracker
 			rkl/rklt:	RKLT (Grid tracker + template tracker with SPI and failure detection)
 			hrch:	Hierarchical SSM tracker - uses same SM ('hrch_sm') and AM with four different SSMs - 2, 4, 6 and 8 dof that are run in a cascade
-			if learning based trackers are not disabled during compilation:
+			if third party trackers are not disabled during compilation:
 				dsst:	Discriminative Scale Space Tracker 
 				kcf:	Kernelized Correlation Filter Tracker 
 				cmt:	Consensus-based Tracker 
@@ -315,7 +315,8 @@ MTF Tracker specific parameters:
 				frg:	Fragments based tracker (or FragTrack)
 			if ViSP template tracker module is enabled during compilation:
 				visp:	ViSP template tracker
-			if PFSL3 template tracker module is enabled during compilation:
+			if PFSL3 is enabled during compilation:
+				pfsl3: 8 DOF PF based tracker that uses SL3 parameterization
 			If Xvision is enabled during compilation:			
 				xv1 / xv1p:	XVSSD Rotate / Pyramidal version
 				xv2 / xv1p:	XVSSD Translation / Pyramidal version
@@ -325,8 +326,7 @@ MTF Tracker specific parameters:
 				xvc:	XVColor tracker
 				xve:	XVEdge tracker
 				xvg:	XV Grid tracker			
-				xvgl:	XV Grid Line tracker			
-			Note: tracker specific parameters including those for the learning based trackers are specified in modules.cfg		
+				xvgl:	XV Grid Line tracker		
 			
 	 Parameter:	'mtf_am'
 		Description:
