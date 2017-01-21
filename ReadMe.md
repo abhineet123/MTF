@@ -121,11 +121,11 @@ Some **preconfigured cfg files** are provided here to get the system up and runn
 
 * [RKLT](http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7158323&url=http%3A%2F%2Fieeexplore.ieee.org%2Fiel7%2F7158225%2F7158304%2F07158323.pdf%3Farnumber%3D7158323) with a 10x10 grid of trackers using [Forward Compositional](http://link.springer.com/article/10.1023%2FA%3A1008195814169) [Levenberg Marquardt](https://en.wikipedia.org/wiki/Levenberg%E2%80%93Marquardt_algorithm) SM, [Normalized Cross Correlation](http://link.springer.com/chapter/10.1007%2F978-3-642-33783-3_32) AM and 2 DOF (translation) SSM followed by an 8 DOF (homography) tracker with the same SM and AM - this is the current state of the art in 8 DOF tracking to the best of our knowledge
     * [live sequence from USB or Firewire camera](http://webdocs.cs.ualberta.ca/~vis/mtf/rkl_fclm_ncc_10r_25p_usb.zip)
-    * [`nl_cereal_s3` sequence from [TMT]() dataset](http://webdocs.cs.ualberta.ca/~vis/mtf/rkl_fclm_ncc_10r_25p_tmt_3.zip)
+    * [`nl_cereal_s3` sequence from TMT dataset](http://webdocs.cs.ualberta.ca/~vis/mtf/rkl_fclm_ncc_10r_25p_tmt_3.zip)
 * [Nearest Neighbour](http://www.comp.nus.edu.sg/~haoyu/rss/rss09/p44.html) with 1000 samples followed by [Inverse Compositional](http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=990652&url=http%3A%2F%2Fieeexplore.ieee.org%2Fiel5%2F7768%2F21353%2F00990652.pdf%3Farnumber%3D990652) [Levenberg Marquardt](https://en.wikipedia.org/wiki/Levenberg%E2%80%93Marquardt_algorithm) SM with [Mutual Information](https://www.irisa.fr/lagadic/pdf/2010_ismar_dame.pdf) AM and 8 DOF (homography) SSM 
     * [live sequence from USB or Firewire camera](http://webdocs.cs.ualberta.ca/~vis/mtf/nniclm_1k_mi_usb.zip)	
 * [Particle Filter](http://cv.snu.ac.kr/jhkwon/PAMI14_tracking/index.htm) with 500 particles followed by [Forward Compositional](http://link.springer.com/article/10.1023%2FA%3A1008195814169) [Levenberg Marquardt](https://en.wikipedia.org/wiki/Levenberg%E2%80%93Marquardt_algorithm) SM with [Structural Similarity](http://link.springer.com/article/10.1007/s00138-007-0107-x) AM and 8 DOF (homography) SSM 
-    * [`towel` sequence from [LinTrack](http://cmp.felk.cvut.cz/cmp/demos/Tracking/linTrack//data/index.html) dataset](http://webdocs.cs.ualberta.ca/~vis/mtf/pffclm_500_ncc_lintrack_2.zip)
+    * [`towel` sequence from LinTrack dataset](http://webdocs.cs.ualberta.ca/~vis/mtf/pffclm_500_ncc_lintrack_2.zip)
 
 Running the demo application:
 -----------------------------
