@@ -4,6 +4,7 @@
 #include "StateSpaceModel.h"
 
 #include <boost/random/linear_congruential.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
 
 _MTF_BEGIN_NAMESPACE
@@ -70,7 +71,7 @@ public:
 	// --------------------------- Stochastic Sampler --------------------------- //
 	// -------------------------------------------------------------------------- //
 
-	typedef boost::minstd_rand SampleGenT;
+	typedef boost::mt11213b SampleGenT;
 	typedef boost::normal_distribution<double> SampleDistT;
 	typedef SampleDistT::param_type DistParamT;
 
