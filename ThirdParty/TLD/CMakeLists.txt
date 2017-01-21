@@ -28,7 +28,8 @@ cmake_minimum_required(VERSION 2.6)
 set(CV_BLOBS_LIB_NAME cvblobs CACHE STRING "CV_BLOBS_LIB_NAME")
 set(TLD_LIB_NAME opentld CACHE STRING "TLD_LIB_NAME")
 set(TLD_LIB_INSTALL_DIR /usr/local/lib CACHE PATH "Directory to install OpenTLD tracker library")
-
+# link_directories(3rdparty/cvblobs ${OpenCV_LIB_DIR})
+find_library(CV_BLOBS_LIB ${CV_BLOBS_LIB_NAME} HINTS ${CMAKE_SOURCE_DIR}/3rdparty/cvblobs)
 find_package(OpenCV REQUIRED)
 # add_subdirectory(3rdparty/cvblobs)
 add_library(${TLD_LIB_NAME} SHARED
@@ -46,8 +47,7 @@ add_library(${TLD_LIB_NAME} SHARED
     src/NNClassifier.cpp
     src/TLDUtil.cpp
     src/VarianceFilter.cpp)	
-#link_directories()
-target_link_libraries(${TLD_LIB_NAME} ${CV_BLOBS_LIB_NAME} ${OpenCV_LIBS}  -L{CMAKE_CURRENT_SOURCE_DIR}/3rdparty/cvblobs -L${OpenCV_LIB_DIR})
+target_link_libraries(${TLD_LIB_NAME} ${CV_BLOBS_LIB} ${OpenCV_LIBS})
 target_include_directories(${TLD_LIB_NAME} PUBLIC include 3rdparty/cvblobs ${OpenCV_INCLUDE_DIRS})
 
 # set_target_properties(${LIB_NAME} PROPERTIES OUTPUT_NAME ${LIB_NAME})
