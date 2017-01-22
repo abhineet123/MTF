@@ -2,7 +2,7 @@
 #define MTF_PF_H
 
 #include "SearchMethod.h"
-#include <boost/random/linear_congruential.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include "PFParams.h"
@@ -43,7 +43,7 @@ public:
 	typedef ParamType::ResamplingType ResamplingType;
 	typedef ParamType::MeanType MeanType;
 
-	typedef boost::minstd_rand RandGenT;
+	typedef boost::mt11213b RandGenT;
 	typedef boost::normal_distribution<double> MeasureDistT;
 	//typedef boost::variate_generator<RandGenT&, MeasureDistT> MeasureGenT;
 	typedef boost::random::uniform_real_distribution<double> ResampleDistT;

@@ -1677,15 +1677,15 @@ inline TrackerBase *getTracker(const char *tracker_type){
 #endif
 #ifndef DISABLE_VISP
 	else if(!strcmp(tracker_type, "visp")){
-		ViSPParams::SMType vp_tracker_type = ViSPParams::SMType::FCLK;
+		ViSPParams::SMType vp_sm_type = ViSPParams::SMType::FCLK;
 		if(!strcmp(visp_sm, "fclk")){
-			vp_tracker_type = ViSPParams::SMType::FCLK;
+			vp_sm_type = ViSPParams::SMType::FCLK;
 		} else if(!strcmp(visp_sm, "iclk")){
-			vp_tracker_type = ViSPParams::SMType::ICLK;
+			vp_sm_type = ViSPParams::SMType::ICLK;
 		} else if(!strcmp(visp_sm, "falk")){
-			vp_tracker_type = ViSPParams::SMType::FALK;
+			vp_sm_type = ViSPParams::SMType::FALK;
 		} else if(!strcmp(visp_sm, "esm")){
-			vp_tracker_type = ViSPParams::SMType::ESM;
+			vp_sm_type = ViSPParams::SMType::ESM;
 		}
 		ViSPParams::AMType vp_am_type = ViSPParams::AMType::SSD;
 		if(!strcmp(visp_am, "ssd")){
@@ -1696,23 +1696,23 @@ inline TrackerBase *getTracker(const char *tracker_type){
 			vp_am_type = ViSPParams::AMType::MI;
 		}
 
-		ViSPParams::SSMType vp_stracker_type = ViSPParams::SSMType::Homography;
+		ViSPParams::SSMType vp_ssm_type = ViSPParams::SSMType::Homography;
 		if(!strcmp(visp_ssm, "8")){
-			vp_stracker_type = ViSPParams::SSMType::Homography;
+			vp_ssm_type = ViSPParams::SSMType::Homography;
 		} else if(!strcmp(visp_ssm, "l8") || !strcmp(visp_ssm, "sl3")){
-			vp_stracker_type = ViSPParams::SSMType::SL3;
+			vp_ssm_type = ViSPParams::SSMType::SL3;
 		} else if(!strcmp(visp_ssm, "6")){
-			vp_stracker_type = ViSPParams::SSMType::Affine;
+			vp_ssm_type = ViSPParams::SSMType::Affine;
 		} else if(!strcmp(visp_ssm, "4")){
-			vp_stracker_type = ViSPParams::SSMType::Similarity;
+			vp_ssm_type = ViSPParams::SSMType::Similarity;
 		} else if(!strcmp(visp_ssm, "3")){
-			vp_stracker_type = ViSPParams::SSMType::Isometry;
+			vp_ssm_type = ViSPParams::SSMType::Isometry;
 		} else if(!strcmp(visp_ssm, "2")){
-			vp_stracker_type = ViSPParams::SSMType::Translation;
+			vp_ssm_type = ViSPParams::SSMType::Translation;
 		}
 
 		ViSPParams visp_params(
-			vp_tracker_type, vp_am_type, vp_stracker_type,
+			vp_sm_type, vp_am_type, vp_ssm_type,
 			visp_max_iters, visp_res, visp_res, visp_lambda,
 			visp_thresh_grad, visp_pyr_n_levels,
 			visp_pyr_level_to_stop

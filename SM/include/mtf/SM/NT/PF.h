@@ -2,7 +2,7 @@
 #define MTF_PF_NT_H
 
 #include "SearchMethod.h"
-#include <boost/random/linear_congruential.hpp>
+#include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/discrete_distribution.hpp>
@@ -21,7 +21,7 @@ namespace nt{
 		typedef ParamType::ResamplingType ResamplingType;
 		typedef ParamType::MeanType MeanType;
 
-		typedef boost::minstd_rand RandGenT;
+		typedef boost::mt11213b RandGenT;
 		typedef boost::normal_distribution<double> MeasureDistT;
 		typedef boost::random::discrete_distribution<unsigned int> DistrDistT;
 		//typedef boost::variate_generator<RandGenT&, MeasureDistT> MeasureGenT;
