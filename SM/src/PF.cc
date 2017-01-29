@@ -21,8 +21,8 @@ PF<AM, SSM >::PF(const ParamType *pf_params,
 	printf("max_iters: %d\n", params.max_iters);
 	printf("n_particles: %d\n", params.n_particles);
 	printf("epsilon: %f\n", params.epsilon);
-	printf("dyn_model: %s\n", PFParams::toString(params.dynamic_model));
-	printf("upd_type: %s\n", PFParams::toString(params.update_type));
+	printf("dynamic_model: %s\n", PFParams::toString(params.dynamic_model));
+	printf("update_type: %s\n", PFParams::toString(params.update_type));
 	printf("likelihood_func: %s\n", PFParams::toString(params.likelihood_func));
 	printf("resampling_type: %s\n", PFParams::toString(params.resampling_type));
 	printf("mean_type: %s\n", PFParams::toString(params.mean_type));
