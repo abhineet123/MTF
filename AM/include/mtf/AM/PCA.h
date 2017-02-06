@@ -6,7 +6,7 @@
 // Default parameters
 #define PCA_N_EIGENVEC 16 // same as in ivt paper
 #define PCA_BATCHSIZE 5
-#define PCA_F_FACTOR 1
+#define PCA_F_FACTOR 0.95
 #define PCA_SHOW_BASIS 0
 
 _MTF_BEGIN_NAMESPACE
@@ -33,6 +33,30 @@ class PCA : public SSDBase{
 public:
 
 	typedef PCAParams ParamType;
+
+	PCA(const ParamType *pca_params = nullptr, const int _n_channels = 1);
+
+	// Returns a normalized version of the similarity that lies between 0 and 1
+	double getLikelihood() const override;
+
+	// Initialize the features
+	void initializeSimilarity() override;
+
+	// Update the similarity
+	void updateSimilarity(bool prereq_only = true) override;
+	void updateModel(const Matrix2Xd& curr_pts) override;
+
+	// Defined in Appearance Model,
+	// It is called before performing the first iteration on a new image
+	// to indicate that the image has changed since the last time the
+	// update functions were called
+	virtual void setFirstIter() override;
+
+	// It is called after performing the last iteration on a new image
+	virtual void clearFirstIter() override;
+
+protected:
+
 	ParamType params;
 
 	// *****************************
@@ -54,27 +78,7 @@ public:
 	//! flag to indicate whether the basis U is available
 	bool U_available;
 
-
-	PCA(const ParamType *PCA_params);
-
-	// Returns a normalized version of the similarity that lies between 0 and 1
-	double getLikelihood() const override;
-
-	// Initialize the features
-	void initializeSimilarity() override;
-
-	// Update the similarity
-	void updateSimilarity(bool prereq_only = true) override;
-	void updateModel(const Matrix2Xd& curr_pts) override;
-
-	// Defined in Appearance Model,
-	// It is called before performing the first iteration on a new image
-	// to indicate that the image has changed since the last time the
-	// update functions were called
-	virtual void setFirstIter() override;
-
-	// It is called after performing the last iteration on a new image
-	virtual void clearFirstIter() override;
+	int cv_img_type_uchar, cv_img_type_float;
 
 	// update the basis U and eigen values sigma
 	void updateBasis();
@@ -90,6 +94,7 @@ public:
 	void display_images(const VectorXd &curr_image,
 		const VectorXdM &error_image);
 	void display_basis();
+
 };
 
 _MTF_END_NAMESPACE

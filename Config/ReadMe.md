@@ -363,6 +363,7 @@ MTF Tracker specific parameters:
 			lkld:	Localized KLD (incomplete/does not work well yet)
 			if enabled during compilation:
 				pca: Principal Components Analysis
+			        mcpca/pca3: RGB variant
 				dfm: Deep Feature Maps
 				
 			

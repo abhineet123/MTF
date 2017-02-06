@@ -104,6 +104,9 @@
 #include "mtf/AM/MCCCRE.h"
 #include "mtf/AM/MCRIU.h"
 #include "mtf/AM/MCSAD.h"
+#ifndef DISABLE_PCA
+#include "mtf/AM/MCPCA.h"
+#endif
 //! composite AMs
 #include "mtf/AM/SumOfAMs.h"
 //! illumination models
@@ -899,6 +902,9 @@ inline TrackerBase *getTracker(const char *sm_type, const char *am_type,
 	else if(!strcmp(am_type, "pca")){
 		enable_learning = true;
 		return getTracker<PCA>(sm_type, ssm_type, cast_params(PCA));
+	} else if(!strcmp(am_type, "mcpca") || !strcmp(am_type, "pca3")){
+		enable_learning = true;
+		return getTracker<MCPCA>(sm_type, ssm_type, cast_params(MCPCA));
 	}
 #endif	
 	else{
@@ -1047,7 +1053,7 @@ inline AMParams_ getAMParams(const char *am_type, const char *ilm_type){
 	}
 #endif	
 #ifndef DISABLE_PCA
-	else if(!strcmp(am_type, "pca")){
+	else if(!strcmp(am_type, "pca") || !strcmp(am_type, "mcpca") || !strcmp(am_type, "pca3")){
 		return AMParams_(new PCAParams(am_params.get(), pca_n_eigenvec,
 			pca_batchsize, pca_f_factor, pca_show_basis));
 	}
@@ -1138,6 +1144,9 @@ inline AppearanceModel *getAM(const char *am_type, const char *ilm_type){
 	else if(!strcmp(am_type, "pca")){
 		enable_learning = true;
 		return new PCA(cast_params(PCA));
+	} else if(!strcmp(am_type, "mcpca") || !strcmp(am_type, "pca3")){
+		enable_learning = true;
+		return new MCPCA(cast_params(MCPCA));
 	}
 #endif	
 	else{

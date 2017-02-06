@@ -37,21 +37,34 @@ show_basis(PCA_SHOW_BASIS){
 	}
 }
 
-PCA::PCA(const ParamType *PCA_params) :
-SSDBase(PCA_params), params(PCA_params){
+PCA::PCA(const ParamType *pca_params, const int _n_channels) :
+SSDBase(pca_params, _n_channels), params(pca_params){
 	printf("\nInitializing PCA AM with...\n");
 	printf("n_eigenvec: %d\n", params.n_eigenvec);
 	printf("batch_size: %d\n", params.batch_size);
 	printf("f_factor: %f\n", params.f_factor);
 	printf("show_basis: %d\n", params.show_basis);
-	name = "PCA";
+	printf("likelihood_alpha: %f\n", params.likelihood_alpha);
+	name = "pca";
 	batch_size = params.batch_size;
+	switch(n_channels){
+	case 1:
+		cv_img_type_uchar = CV_8UC1;
+		cv_img_type_float = CV_64FC1;
+		break;
+	case 3:
+		cv_img_type_uchar = CV_8UC3;
+		cv_img_type_float = CV_64FC3;
+		break;
+	default:
+		throw std::domain_error(cv::format("PCA :: %d channel images are not supported yet", n_channels));
+	}
 }
 
 double PCA::getLikelihood() const{
 	// Convert to likelihood for particle filters.
 	// Normalize over the number of pixels
-	double result = exp(-sqrt(-f / static_cast<double>(n_pix)));
+	double result = exp(-params.likelihood_alpha * sqrt(-f / static_cast<double>(patch_size)));
 #ifdef DEBUG
 	std::cout << "The likelihood at frame " << frame_count << " is " << result << std::endl;
 #endif
@@ -68,16 +81,17 @@ void PCA::initializeSimilarity() {
 	if(params.show_basis){
 		cv::Scalar gt_color(0, 255, 0);
 		VectorXd init_patch = addi_patches.col(0);
-		cv::Mat template_cv = cv::Mat(getResY(), getResX(), CV_64FC1, init_patch.data());
+		cv::Mat template_cv, template_cv_uchar, template_cv_uchar_bigger;
+		template_cv = cv::Mat(getResY(), getResX(), cv_img_type_float, init_patch.data());
 		// Construct Mat object for the uint8 gray scale patch
-		cv::Mat template_cv_uchar(getResY(), getResX(), CV_8UC1);
+		template_cv_uchar.create(getResY(), getResX(), cv_img_type_uchar);
+		template_cv_uchar_bigger.create(5 * getResY(), 5 * getResX(), cv_img_type_uchar);
 		// Convert the RGB patch to grayscale
 		double min_val = init_patch.minCoeff();
 		double max_val = init_patch.maxCoeff();
 		double range = max_val - min_val;
 		template_cv.convertTo(template_cv_uchar, template_cv_uchar.type(), 255. / range, -255.*min_val / range);
-		// Make a bigger image
-		cv::Mat template_cv_uchar_bigger(5 * getResY(), 5 * getResX(), CV_8UC1);
+		// Make a bigger image		
 		cv::resize(template_cv_uchar, template_cv_uchar_bigger, template_cv_uchar_bigger.size());
 		cv::putText(template_cv_uchar_bigger, "Template", cv::Point2d(5, 15),
 			cv::FONT_HERSHEY_SIMPLEX, 0.5, gt_color);
@@ -126,7 +140,7 @@ void PCA::updateModel(const Matrix2Xd& curr_pts){
 			pix_norm_mult, pix_norm_add);
 		break;
 	default:
-		throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		throw std::domain_error(cv::format("PCA :: updateModel : %d channel images are not supported yet", n_channels));
 	}
 	//! update the basis
 	updateBasis();
@@ -272,13 +286,16 @@ void PCA::display_basis() {
 	double min_val; // for computing the normalization parameters
 	double max_val;
 	double range;
-	cv::Mat dst(row, col, CV_64FC1, cv::Scalar(0));
-	MatrixXd U_tmp = U;
-	MatrixXd mean_tmp = mean_prev_patches;
 
-	cv::Mat mean_img(m, m, CV_64FC1, mean_tmp.data());
-	cv::Mat mean_uchar(m, m, CV_8UC1);
-	cv::Mat mean_uchar_bigger(5 * m, 5 * m, CV_8UC1);
+	MatrixXd mean_tmp = mean_prev_patches;
+	cv::Mat mean_img, mean_uchar, mean_uchar_bigger, dst, dst_uchar, dst_bigger;
+	mean_img = cv::Mat(m, m, cv_img_type_float, mean_tmp.data());
+	mean_uchar.create(m, m, cv_img_type_uchar);
+	mean_uchar_bigger.create(5 * m, 5 * m, cv_img_type_uchar);
+	dst = cv::Mat(row, col, cv_img_type_float, cv::Scalar(0));
+	dst_uchar.create(row, col, cv_img_type_uchar);
+	dst_bigger.create(5 * row, 5 * col, cv_img_type_uchar);
+
 	min_val = mean_tmp.colwise().minCoeff().minCoeff();
 	max_val = mean_tmp.colwise().maxCoeff().maxCoeff();
 	range = max_val - min_val;
@@ -286,24 +303,23 @@ void PCA::display_basis() {
 	cv::resize(mean_uchar, mean_uchar_bigger, mean_uchar_bigger.size());
 	imshow("mean image", mean_uchar_bigger);
 	// Reshape the basis images into a 'row' by 'col' grid
-	for(int i = 0; i < U_tmp.cols(); i++){
-		cv::Mat sub_img(m, m, CV_64FC1, U_tmp.col(i).data());
+	for(int i = 0; i < U.cols(); i++){
+		cv::Mat sub_img(m, m, cv_img_type_float, U.col(i).data());
 		sub_img.copyTo(dst(cv::Rect((i%n)*m, (i / n)*m, m, m)));
 	}
 
 	minMaxLoc(dst, &min_val, &max_val);
 	range = max_val - min_val;
 	// Construct Mat object for the uint8 gray scale patch
-	cv::Mat dst_uchar(row, col, CV_8UC1);
+	
 	// Convert the RGB patch to grayscale
 	dst.convertTo(dst_uchar, dst_uchar.type(), 255. / range, -255.*min_val / range);
 	// set the empty basis back to zeros after the conversion
-	if(U_tmp.cols() < params.n_eigenvec) {
-		for(int i = U_tmp.cols(); i < params.n_eigenvec; i++){
+	if(U.cols() < params.n_eigenvec) {
+		for(int i = U.cols(); i < params.n_eigenvec; i++){
 			dst_uchar(cv::Rect((i%n)*m, (i / n)*m, m, m)).setTo(0);
 		}
 	}
-	cv::Mat dst_bigger(5 * row, 5 * col, CV_8UC1);
 	cv::resize(dst_uchar, dst_bigger, dst_bigger.size());
 	imshow("Basis Images", dst_bigger);
 }
@@ -320,16 +336,13 @@ void PCA::display_basis() {
  */
 void PCA::display_images(const VectorXd &curr_image,
 	const VectorXdM &error_image) {
-	double min_val;
-	double max_val;
-	double range;
-
+	double min_val, max_val, range;
 	// Visualize the current image
 	cv::Scalar gt_color(0, 255, 0);
 	VectorXd curr_image_full = curr_image + mean_prev_patches;
-	cv::Mat curr_cv = cv::Mat(getResY(), getResX(), CV_64FC1, curr_image_full.data());
+	cv::Mat curr_cv = cv::Mat(getResY(), getResX(), cv_img_type_float, curr_image_full.data());
 	// Construct Mat object for the uint8 gray scale patch
-	cv::Mat curr_unchar(getResY(), getResX(), CV_8UC1);
+	cv::Mat curr_unchar(getResY(), getResX(), cv_img_type_uchar);
 	min_val = curr_image_full.colwise().minCoeff().minCoeff();
 	max_val = curr_image_full.colwise().maxCoeff().maxCoeff();
 	range = max_val - min_val;
@@ -337,7 +350,7 @@ void PCA::display_images(const VectorXd &curr_image,
 	curr_cv.convertTo(curr_unchar, curr_unchar.type(), 255. / range, -255.*min_val / range); // normalize the data to [0,255]
 	//minMaxLoc(curr_unchar, &min_val, &max_val);
 	//range = max_val - min_val;
-	cv::Mat curr_unchar_bigger(5 * getResY(), 5 * getResX(), CV_8UC1); // why 5?
+	cv::Mat curr_unchar_bigger(5 * getResY(), 5 * getResX(), cv_img_type_uchar); // why 5?
 	cv::resize(curr_unchar, curr_unchar_bigger, curr_unchar_bigger.size());
 	cv::putText(curr_unchar_bigger, "Current Image", cv::Point2d(5, 15),
 		cv::FONT_HERSHEY_SIMPLEX, 0.5, gt_color);
@@ -345,10 +358,10 @@ void PCA::display_images(const VectorXd &curr_image,
 
 	// Visualize the reconstructed image
 	VectorXd recon_image = U*(U.transpose()*curr_image) + mean_prev_patches;
-	cv::Mat curr_recon_cv = cv::Mat(getResY(), getResX(), CV_64FC1, recon_image.data());
+	cv::Mat curr_recon_cv = cv::Mat(getResY(), getResX(), cv_img_type_float, recon_image.data());
 	// Construct Mat object for the uint8 gray scale patch
-	cv::Mat curr_recon_cv_uchar(getResY(), getResX(), CV_8UC1);
-	cv::Mat curr_recon_cv_uchar_bigger(5 * getResY(), 5 * getResX(), CV_8UC1);
+	cv::Mat curr_recon_cv_uchar(getResY(), getResX(), cv_img_type_uchar);
+	cv::Mat curr_recon_cv_uchar_bigger(5 * getResY(), 5 * getResX(), cv_img_type_uchar);
 	// Convert the RGB patch to grayscale
 	min_val = curr_image_full.colwise().minCoeff().minCoeff();
 	max_val = curr_image_full.colwise().maxCoeff().maxCoeff();
@@ -361,10 +374,10 @@ void PCA::display_images(const VectorXd &curr_image,
 
 	// Visualize the error image
 	VectorXd err_img = error_image;
-	cv::Mat err_cv = cv::Mat(getResY(), getResX(), CV_64FC1, err_img.data());
+	cv::Mat err_cv = cv::Mat(getResY(), getResX(), cv_img_type_float, err_img.data());
 	// Construct Mat object for the uint8 gray scale patch
-	cv::Mat err_cv_uchar(getResY(), getResX(), CV_8UC1);
-	cv::Mat err_cv_uchar_bigger(5 * getResY(), 5 * getResX(), CV_8UC1);
+	cv::Mat err_cv_uchar(getResY(), getResX(), cv_img_type_uchar);
+	cv::Mat err_cv_uchar_bigger(5 * getResY(), 5 * getResX(), cv_img_type_uchar);
 	// Convert the RGB patch to grayscale
 	// normalize to [0,255]
 	min_val = err_img.colwise().minCoeff().minCoeff();

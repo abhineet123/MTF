@@ -39,6 +39,7 @@
 #endif
 #ifndef DISABLE_PCA
 #include "mtf/AM/PCA.h"
+#include "mtf/AM/MCPCA.h"
 #endif
 
 //! State Space Models
@@ -65,9 +66,13 @@
 
 #ifndef DISABLE_PCA
 #define _REGISTER_TRACKERS_PCA(SM, SSM) \
-	template class mtf::SM< mtf::PCA, mtf::SSM >;
+	template class mtf::SM< mtf::PCA, mtf::SSM >;\
+	template class mtf::SM< mtf::MCPCA, mtf::SSM >;
+
 #define _REGISTER_AM_TRACKERS_PCA(SM) \
-	template class mtf::SM< mtf::PCA >;
+	template class mtf::SM< mtf::PCA >;\
+	template class mtf::SM< mtf::MCPCA >;
+
 #else
 #define _REGISTER_TRACKERS_PCA(SM, SSM)
 #define _REGISTER_AM_TRACKERS_PCA(SM)
