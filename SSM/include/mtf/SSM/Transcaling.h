@@ -25,7 +25,7 @@ public:
 	typedef TranscalingParams ParamType;
 	ParamType params;
 
-	Transcaling( const ParamType *params_in = nullptr);
+	Transcaling(const ParamType *params_in = nullptr);
 
 	void setState(const VectorXd &ssm_state) override;
 	void compositionalUpdate(const VectorXd& state_update) override;
@@ -68,13 +68,13 @@ public:
 	void applyWarpToPts(Matrix2Xd &warped_pts, const Matrix2Xd &orig_pts,
 		const VectorXd &state_update) override;
 
+	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
+	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
+
 #ifndef DISABLE_SPI
 	bool supportsSPI() override{ return true; }
 #endif
 
-private:
-	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
-	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
 };
 
 

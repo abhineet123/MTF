@@ -63,9 +63,11 @@ public:
 	}
 	void cmptInitPixHessian(MatrixXd &pix_hess_ssm, const PixHessT &pix_hess_coord,
 		const PixGradT &pix_grad) override;
-private:
+
 	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
 	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
+
+private:
 	void computeJacobian(MatrixXd &jacobian, Matrix3Xd &basis_pts_hm);
 
 

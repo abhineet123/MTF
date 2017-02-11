@@ -65,31 +65,33 @@ PFParams::PFParams(int _max_iters, int _n_particles, double _epsilon,
 	DynamicModel _dynamic_model, UpdateType _update_type,
 	LikelihoodFunc _likelihood_func,
 	ResamplingType _resampling_type,
-	MeanType _mean_type, bool _reset_to_mean, 
+	MeanType _mean_type, bool _reset_to_mean,
 	const vectorvd &_ssm_sigma, const vectorvd &_ssm_mean,
 	bool _update_distr_wts, double _min_distr_wt,
+	double _adaptive_resampling_thresh,
 	const vectord &_pix_sigma, double _measurement_sigma,
 	int _show_particles, bool _enable_learning,
-	bool _jacobian_as_sigma, bool _debug_mode){
-	max_iters = _max_iters;
-	n_particles = _n_particles;
-	epsilon = _epsilon;
-	dynamic_model = _dynamic_model;
-	update_type = _update_type;
-	likelihood_func = _likelihood_func;
-	resampling_type = _resampling_type;
-	reset_to_mean = _reset_to_mean;
-	mean_type = _mean_type;
+	bool _jacobian_as_sigma, bool _debug_mode) :
+	max_iters(_max_iters),
+	n_particles(_n_particles),
+	epsilon(_epsilon),
+	dynamic_model(_dynamic_model),
+	update_type(_update_type),
+	likelihood_func(_likelihood_func),
+	resampling_type(_resampling_type),
+	reset_to_mean(_reset_to_mean),
+	mean_type(_mean_type),
+	ssm_mean(_ssm_mean),
+	update_distr_wts(_update_distr_wts),
+	min_distr_wt(_min_distr_wt),
+	adaptive_resampling_thresh(_adaptive_resampling_thresh),
+	measurement_sigma(_measurement_sigma),
+	show_particles(_show_particles),
+	enable_learning(_enable_learning),
+	jacobian_as_sigma(_jacobian_as_sigma),
+	debug_mode(_debug_mode){
 	ssm_sigma = _ssm_sigma;
-	ssm_mean = _ssm_mean;
-	update_distr_wts = _update_distr_wts;
-	min_distr_wt = _min_distr_wt;
 	pix_sigma = _pix_sigma;
-	measurement_sigma = _measurement_sigma;
-	show_particles = _show_particles;
-	enable_learning = _enable_learning;
-	jacobian_as_sigma = _jacobian_as_sigma;
-	debug_mode = _debug_mode;
 }
 
 PFParams::PFParams(const PFParams *params) :
@@ -104,6 +106,7 @@ mean_type(static_cast<MeanType>(PF_MEAN_TYPE)),
 reset_to_mean(PF_RESET_TO_MEAN),
 update_distr_wts(PF_UPDATE_SAMPLER_WTS),
 min_distr_wt(PF_MIN_DISTR_WT),
+adaptive_resampling_thresh(PF_ADAPTIVE_RESAMPLING_THRESH),
 pix_sigma(PF_PIX_SIGMA),
 measurement_sigma(PF_MEASUREMENT_SIGMA),
 show_particles(PF_SHOW_PARTICLES),
@@ -124,6 +127,7 @@ debug_mode(PF_DEBUG_MODE){
 		ssm_mean = params->ssm_mean;
 		update_distr_wts = params->update_distr_wts;
 		min_distr_wt = params->min_distr_wt;
+		adaptive_resampling_thresh = params->adaptive_resampling_thresh;
 		pix_sigma = params->pix_sigma;
 		show_particles = params->show_particles;
 		enable_learning = params->enable_learning;

@@ -52,15 +52,16 @@ public:
 
 	void estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mask,
 		const vector<cv::Point2f> &in_pts, const vector<cv::Point2f> &out_pts,
-		int estimation_method, double ransac_reproj_thresh) override;
+		int estimation_method, double ransac_reproj_thresh);
 
 	void invertState(VectorXd& inv_state, const VectorXd& state) override{
 		inv_state = -state;
 	}
 
-private:
 	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
 	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
+
+
 
 
 

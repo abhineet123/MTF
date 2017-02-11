@@ -90,13 +90,14 @@ public:
 	void compositionalRandomWalk(VectorXd &perturbed_state,
 		const VectorXd &base_state) override;
 
+	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
+	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
+
 #ifndef DISABLE_SPI
 	bool supportsSPI() override{ return true; }
 #endif
 
 private:
-	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
-	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
 	Vector4d geomToState(const Vector4d &geom);
 	Vector4d stateToGeom(const Vector4d &est);
 

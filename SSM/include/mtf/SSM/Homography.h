@@ -73,17 +73,18 @@ public:
 		const VectorXd &base_state) override;
 	void compositionalAutoRegression1(VectorXd &perturbed_state, VectorXd &perturbed_ar,
 		const VectorXd &base_state, const VectorXd &base_ar, double a = 0.5) override;
-#ifndef DISABLE_SPI
-	bool supportsSPI() override{ return true; }
-#endif
-private:
-	CornersT rand_d;
-	Vector2d rand_t;
-	CornersT disturbed_corners;
 
 	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
 	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
 
+#ifndef DISABLE_SPI
+	bool supportsSPI() override{ return true; }
+#endif
+
+private:
+	CornersT rand_d;
+	Vector2d rand_t;
+	CornersT disturbed_corners;
 };
 
 _MTF_END_NAMESPACE

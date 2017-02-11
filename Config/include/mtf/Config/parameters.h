@@ -443,6 +443,7 @@ namespace mtf{
 		vectori pf_ssm_mean_ids;
 		bool pf_update_distr_wts = false;
 		double pf_min_distr_wt = 0.1;
+		double pf_adaptive_resampling_thresh = 0;
 		double pf_measurement_sigma = 0.1;
 		vectord pf_pix_sigma;
 		int pf_show_particles = 0;
@@ -1790,6 +1791,8 @@ namespace mtf{
 				pf_update_distr_wts = atoi(arg_val);
 			} else if(!strcmp(arg_name, "pf_min_distr_wt")){
 				pf_min_distr_wt = atof(arg_val);
+			}else if(!strcmp(arg_name, "pf_adaptive_resampling_thresh")){
+				pf_adaptive_resampling_thresh = atof(arg_val);
 			} else if(!strcmp(arg_name, "pf_measurement_sigma")){
 				pf_measurement_sigma = atof(arg_val);
 			} else if(!strcmp(arg_name, "pf_pix_sigma")){

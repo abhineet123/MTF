@@ -76,14 +76,13 @@ public:
 
 	void generatePerturbation(VectorXd &state_update) override;
 
+	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
+	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
+
 private:
 	CornersT rand_d;
 	Vector2d rand_t;
 	CornersT disturbed_corners;
-
-	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
-	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
-
 };
 
 _MTF_END_NAMESPACE

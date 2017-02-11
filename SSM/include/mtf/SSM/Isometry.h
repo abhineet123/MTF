@@ -67,15 +67,15 @@ public:
 		const VectorXd &state_update) override;
 	void generatePerturbation(VectorXd &perturbation) override;
 
+	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
+	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
+
 #ifndef DISABLE_SPI
 	bool supportsSPI() override{ return true; }
 #endif
 
 private:
 	ParamType params;
-
-	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
-	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
 	double getAngleOfRotation(double sin_theta, double cos_theta);
 
 };

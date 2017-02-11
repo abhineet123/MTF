@@ -66,8 +66,6 @@ public:
 	void applyWarpToPts(Matrix2Xd &warped_pts, const Matrix2Xd &orig_pts,
 		const VectorXd &state_update) override;
 
-private:
-
 	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
 	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
 };

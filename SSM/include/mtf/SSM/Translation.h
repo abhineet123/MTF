@@ -105,11 +105,13 @@ public:
 	void estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mask,
 		const vector<cv::Point2f> &in_pts, const vector<cv::Point2f> &out_pts,
 		const EstimatorParams &est_params) override;
-private:
-	ParamType params;
 
 	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
 	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
+
+protected:
+
+	ParamType params;
 };
 
 _MTF_END_NAMESPACE

@@ -14,6 +14,7 @@
 #define PF_MEAN_TYPE 1
 #define PF_UPDATE_SAMPLER_WTS 0
 #define PF_MIN_DISTR_WT 0.5
+#define PF_ADAPTIVE_RESAMPLING_THRESH 0
 #define PF_CORNER_SIGMA_D 0.06
 #define PF_PIX_SIGMA 0.04
 #define PF_MEASUREMENT_SIGMA 0.1
@@ -92,6 +93,12 @@ struct PFParams{
 	distributed between the samplers;
 	*/
 	double min_distr_wt;
+	/**
+	maximum ratio between the number of effective particles and the
+	total particles for resampling to be performed;
+	setting it to <=0 or >1 disables adaptive resampling 
+	*/
+	double adaptive_resampling_thresh;
 	vectord pix_sigma;
 	double measurement_sigma;
 	int show_particles;
@@ -106,6 +113,7 @@ struct PFParams{
 		MeanType _mean_type, bool _reset_to_mean,
 		const vectorvd &_ssm_sigma, const vectorvd &_ssm_mean,
 		bool _update_distr_wts, double _min_distr_wt,
+		double _adaptive_resampling_thresh,
 		const vectord &_pix_sigma, double _measurement_sigma,
 		int _show_particles, bool _enable_learning,
 		bool _jacobian_as_sigma, bool _debug_mode);

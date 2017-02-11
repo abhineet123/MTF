@@ -54,6 +54,9 @@ public:
 		getPixGrad(ssm_grad, pt_id, curr_pts, curr_corners);
 	}
 
+	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
+	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
+
 private:
 
 	ParamType params;
@@ -68,8 +71,7 @@ private:
 	Matrix3d inc_warp, dec_warp;
 
 	Matrix24d updated_corners;
-	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
-	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
+
 	void computeJacobian(MatrixXd &jacobian, Matrix24d &basis_corners,
 		Matrix3Xd &basis_pts_hm);
 	void getPixGrad(Matrix2Xd &ssm_grad, int pt_id,	const PtsT &pts, const CornersT &corners);

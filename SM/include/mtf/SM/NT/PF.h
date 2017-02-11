@@ -44,6 +44,7 @@ namespace nt{
 		void setRegion(const cv::Mat& corners) override;
 
 	private:
+
 		ParamType params;
 
 		//! similarity of the initial patch (or template) with itself
@@ -112,6 +113,9 @@ namespace nt{
 		//! N x S jacobians of the pix values w.r.t the SSM state vector 
 		MatrixXd dI_dp;
 		MatrixXd d2f_dp2;
+
+		bool enable_adaptive_resampling;
+		double min_eff_particles;
 
 		char *log_fname, *time_fname;
 		char *wts_fname, *cum_wts_fname;

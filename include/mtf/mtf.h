@@ -1288,7 +1288,8 @@ inline PFParams_ getPFParams(){
 		static_cast<PFParams::MeanType>(pf_mean_type),
 		pf_reset_to_mean, pf_ssm_sigma, pf_ssm_mean,
 		pf_update_distr_wts, pf_min_distr_wt,
-		pf_pix_sigma, pf_measurement_sigma, pf_show_particles,
+		pf_adaptive_resampling_thresh, pf_pix_sigma, 
+		pf_measurement_sigma, pf_show_particles,
 		enable_learning, pf_jacobian_as_sigma, pf_debug_mode));
 }
 inline NNParams_ getNNParams(){
