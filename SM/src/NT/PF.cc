@@ -14,9 +14,8 @@
 _MTF_BEGIN_NAMESPACE
 namespace nt{
 	PF::PF(AM _am, SSM _ssm, const ParamType *pf_params) :
-		SearchMethod(_am, _ssm), params(pf_params),
-		max_wt_id(0), enable_adaptive_resampling(false),
-		min_eff_particles(0){
+		SearchMethod(_am, _ssm), params(pf_params), max_wt_id(0), 
+		enable_adaptive_resampling(false), min_eff_particles(0){
 		printf("\n");
 		printf("Using Particle Filter (NT) SM with:\n");
 		printf("max_iters: %d\n", params.max_iters);
@@ -26,11 +25,11 @@ namespace nt{
 		printf("update_type: %s\n", PFParams::toString(params.update_type));
 		printf("likelihood_func: %s\n", PFParams::toString(params.likelihood_func));
 		printf("resampling_type: %s\n", PFParams::toString(params.resampling_type));
+		printf("adaptive_resampling_thresh: %f\n", params.adaptive_resampling_thresh);
 		printf("mean_type: %s\n", PFParams::toString(params.mean_type));
 		printf("reset_to_mean: %d\n", params.reset_to_mean);
 		printf("update_distr_wts: %d\n", params.update_distr_wts);
 		printf("min_distr_wt: %f\n", params.min_distr_wt);
-		printf("adaptive_resampling_thresh: %f\n", params.adaptive_resampling_thresh);
 		printf("measurement_sigma: %f\n", params.measurement_sigma);
 		printf("show_particles: %d\n", params.show_particles);
 		printf("enable_learning: %d\n", params.enable_learning);
@@ -112,6 +111,7 @@ namespace nt{
 
 
 		if(params.adaptive_resampling_thresh > 0 && params.adaptive_resampling_thresh <= 1){
+			printf("Using adaptive resampling\n");
 			enable_adaptive_resampling = true;
 			min_eff_particles = params.adaptive_resampling_thresh*params.n_particles;
 		}

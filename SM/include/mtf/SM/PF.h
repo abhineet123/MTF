@@ -121,6 +121,9 @@ protected:
 	double measurement_factor;
 	cv::Mat curr_img_uchar;
 
+	bool enable_adaptive_resampling;
+	double min_eff_particles;
+
 	char *log_fname;
 	char *time_fname;
 

@@ -592,7 +592,8 @@ Particle Filter (PF) SM:
 	 Parameter:	'pf_resampling_type'
 		Description:
 			method used for re sampling the particles to avoid degeneration
-			refer this paper for more details on these methods: R. Douc and O. Cappe, "Comparison of resampling schemes for particle filtering," ISPA 2005. Proceedings of the 4th International Symposium on Image and Signal Processing and Analysis, 2005., 2005, pp. 64-69. 
+			refer this paper for more details on these methods:
+			R. Douc and O. Cappe, "Comparison of resampling schemes for particle filtering," ISPA 2005. Proceedings of the 4th International Symposium on Image and Signal Processing and Analysis, 2005., 2005, pp. 64-69. 
 		Possible Values:
 			0:	Disable re sampling
 			1:	Binary Multinomial
@@ -602,7 +603,8 @@ Particle Filter (PF) SM:
 		Description:
 				maximum ratio between the number of effective particles and the	total particles for resampling to be performed;
 				setting it to <=0 or >1 disables adaptive resampling;
-				refer to this book for details about computing the number of effective particles: A. Doucet, N. de Freitas, and N. Gordan, editors. Sequential Monte-Carlo Methods in Practice. Springer Verlag, 2001			
+				refer section III.D of this paper for details about adaptive resampling:
+				Grisetti, Giorgio, Stachniss, Cyrill, and Burgard, Wolfram. “Improved techniques for grid mapping with Rao-Blackwellized particle filters.” IEEE transactions on Robotics 23.1 (2007): 34-46			
 	 Parameter:	'pf_mean_type'
 		Description:
 			method used for generating the weighted mean of all the particles which serves as the overall state of the tracker;

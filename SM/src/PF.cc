@@ -15,7 +15,8 @@ template <class AM, class SSM>
 PF<AM, SSM >::PF(const ParamType *pf_params,
 	const AMParams *am_params, const SSMParams *ssm_params) :
 	SearchMethod<AM, SSM>(am_params, ssm_params),
-	params(pf_params), max_wt_id(0){
+	params(pf_params), max_wt_id(0),
+	enable_adaptive_resampling(false), min_eff_particles(0){
 	printf("\n");
 	printf("Using Particle Filter SM with:\n");
 	printf("max_iters: %d\n", params.max_iters);
@@ -25,6 +26,7 @@ PF<AM, SSM >::PF(const ParamType *pf_params,
 	printf("update_type: %s\n", PFParams::toString(params.update_type));
 	printf("likelihood_func: %s\n", PFParams::toString(params.likelihood_func));
 	printf("resampling_type: %s\n", PFParams::toString(params.resampling_type));
+	printf("adaptive_resampling_thresh: %f\n", params.adaptive_resampling_thresh);
 	printf("mean_type: %s\n", PFParams::toString(params.mean_type));
 	printf("reset_to_mean: %d\n", params.reset_to_mean);
 	ssm_state_size = ssm.getStateSize();
@@ -101,6 +103,12 @@ PF<AM, SSM >::PF(const ParamType *pf_params,
 	boost::random::seed_seq resample_seed{ r(), r(), r(), r(), r(), r(), r(), r() };
 	resample_gen = RandGenT(resample_seed);
 	resample_dist = ResampleDistT(0, 1);
+
+	if(params.adaptive_resampling_thresh > 0 && params.adaptive_resampling_thresh <= 1){
+		printf("Using adaptive resampling\n");
+		enable_adaptive_resampling = true;
+		min_eff_particles = params.adaptive_resampling_thresh*params.n_particles;
+	}
 
 	if(params.debug_mode){
 		fclose(fopen(log_fname, "w"));
@@ -270,18 +278,29 @@ void PF<AM, SSM >::update(){
 			utils::printMatrixToFile(particle_wts.transpose(), "particle_wts", log_fname, "%e");
 			utils::printMatrixToFile(particle_cum_wts.transpose(), "particle_cum_wts", log_fname, "%e");
 		}
-		switch(params.resampling_type){
-		case ResamplingType::None:
-			break;
-		case ResamplingType::BinaryMultinomial:
-			binaryMultinomialResampling();
-			break;
-		case ResamplingType::LinearMultinomial:
-			linearMultinomialResampling();
-			break;
-		case ResamplingType::Residual:
-			residualResampling();
-			break;
+		bool perform_resampling = true;
+		if(enable_adaptive_resampling){
+			double n_eff_particles = (particle_wts / particle_wts.sum()).squaredNorm();
+			n_eff_particles = n_eff_particles == 0 ? 0 :
+				1.0 / n_eff_particles;
+			if(n_eff_particles > min_eff_particles){
+				perform_resampling = false;
+			}
+		}
+		if(perform_resampling){
+			switch(params.resampling_type){
+			case ResamplingType::None:
+				break;
+			case ResamplingType::BinaryMultinomial:
+				binaryMultinomialResampling();
+				break;
+			case ResamplingType::LinearMultinomial:
+				linearMultinomialResampling();
+				break;
+			case ResamplingType::Residual:
+				residualResampling();
+				break;
+			}
 		}
 		switch(params.mean_type){
 		case MeanType::None:
