@@ -598,6 +598,11 @@ Particle Filter (PF) SM:
 			1:	Binary Multinomial
 			2:	Linear Multinomial			
 			3:	Residual	
+	 Parameter:	'pf_adaptive_resampling_thresh'
+		Description:
+				maximum ratio between the number of effective particles and the	total particles for resampling to be performed;
+				setting it to <=0 or >1 disables adaptive resampling;
+				refer to this book for details about computing the number of effective particles: A. Doucet, N. de Freitas, and N. Gordan, editors. Sequential Monte-Carlo Methods in Practice. Springer Verlag, 2001			
 	 Parameter:	'pf_mean_type'
 		Description:
 			method used for generating the weighted mean of all the particles which serves as the overall state of the tracker;

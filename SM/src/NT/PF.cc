@@ -111,7 +111,7 @@ namespace nt{
 		distr_id_gen = RandGenT(r());
 
 
-		if(params.adaptive_resampling_thresh > 0){
+		if(params.adaptive_resampling_thresh > 0 && params.adaptive_resampling_thresh <= 1){
 			enable_adaptive_resampling = true;
 			min_eff_particles = params.adaptive_resampling_thresh*params.n_particles;
 		}
