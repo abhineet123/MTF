@@ -25,6 +25,10 @@ namespace nt{
 
 		void initialize(const cv::Mat &corners) override;
 		void update() override;
+		
+		using CompositeBase::initialize;
+		using CompositeBase::update;
+		
 		void setImage(const cv::Mat &cv_img) override;
 		void setRegion(const cv::Mat &corners) override;
 

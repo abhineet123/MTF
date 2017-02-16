@@ -87,8 +87,11 @@ int main(int argc, char * argv[]){
 
 	mos_ssm->setCorners(mtf::CornersT(prev_location_norm.array() + mos_border));
 
-	mtf::utils::writePixelsToImage(mosaic_img, mos_am->getPatch(init_pts),
+	int img_size = input->getFrame().cols * input->getFrame().rows *  mos_am->getNChannels();
+	mtf::PixValT eig_patch = Map<VectorXc>(input->getFrame().data, img_size).cast<double>();
+	mtf::utils::writePixelsToImage(mosaic_img, eig_patch,
 		mos_ssm->getPts(), mos_am->getNChannels(), write_mask);
+
 
 	while(input->update()){
 
@@ -109,7 +112,9 @@ int main(int argc, char * argv[]){
 
 		//! extract current patch
 		mos_pre_proc.update(input->getFrame());
-		mtf::PixValT eig_patch = mos_am->getPatch(init_pts);
+		//mtf::PixValT eig_patch = mos_am->getPatch(init_pts);
+		eig_patch = Map<VectorXc>(input->getFrame().data, img_size).cast<double>();
+
 		//! write the patch to the image at the warped locations given by the tracker
 		mtf::utils::writePixelsToImage(mosaic_img, eig_patch,
 			mos_ssm->getPts(), mos_am->getNChannels(), write_mask);
@@ -141,6 +146,7 @@ int main(int argc, char * argv[]){
 		if(cv::waitKey(1) == 27){ break; }
 	}
 	cv::destroyAllWindows();
+	if(mos_save_img){ cv::imwrite("mosaic.bmp", mosaic_img); }
 	return 0;
 }
 

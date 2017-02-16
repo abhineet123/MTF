@@ -62,6 +62,9 @@ public:
 		}
 		return true;
 	}
+	
+	virtual AM& getAM() { return trackers.back()->getAM(); }
+	virtual SSM& getSSM() { return trackers.back()->getSSM(); }
 
 protected:
 	const vector<SM*> trackers;

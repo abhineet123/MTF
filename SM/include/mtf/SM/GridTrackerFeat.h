@@ -84,6 +84,24 @@ public:
 	typedef std::shared_ptr<flannMatT> FlannMatPtr;
 	typedef std::shared_ptr<flannIdxT> FlannIdxPtr;
 
+	GridTrackerFeat(
+		const ParamType *grid_params = nullptr,
+		const SIFTParams *_sift_params = nullptr,
+		const FLANNParams *_flann_params = nullptr,
+		const EstimatorParams *_est_params = nullptr,
+		const SSMParams *ssm_params = nullptr);
+
+	void initialize(const cv::Mat &corners) override;
+	void update() override;
+	void setImage(const cv::Mat &img) override;
+	void setRegion(const cv::Mat& corners) override;
+	const uchar* getPixMask() override{ return pix_mask.data(); }
+	int getResX() override{ return params.grid_size_x; }
+	int getResY() override{ return params.grid_size_y; }
+	const cv::Mat& getRegion() override{ return cv_corners_mat; }
+	int inputType() const override{ return CV_32FC1; }
+	SSM& getSSM() { return ssm; }
+
 private:
 
 	SSM ssm;
@@ -122,24 +140,6 @@ private:
 	~GridTrackerFeat(){}
 	void showKeyPoints();
 
-public:
-
-	GridTrackerFeat(
-		const ParamType *grid_params = nullptr,
-		const SIFTParams *_sift_params = nullptr,
-		const FLANNParams *_flann_params = nullptr,
-		const EstimatorParams *_est_params = nullptr,
-		const SSMParams *ssm_params = nullptr);
-
-	void initialize(const cv::Mat &corners) override;
-	void update() override;
-	void setImage(const cv::Mat &img) override;
-	void setRegion(const cv::Mat& corners) override;
-	const uchar* getPixMask() override{ return pix_mask.data(); }
-	int getResX() override{ return params.grid_size_x; }
-	int getResY() override{ return params.grid_size_y; }
-	const cv::Mat& getRegion() override{ return cv_corners_mat; }
-	int inputType() const override{ return CV_32FC1; }
 };
 
 _MTF_END_NAMESPACE

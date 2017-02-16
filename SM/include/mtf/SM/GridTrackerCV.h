@@ -82,6 +82,7 @@ public:
 	int getResY() override{ return params.grid_size_y; }
 	const cv::Mat& getRegion() override{ return cv_corners_mat; }
 	int inputType() const override{ return CV_32FC1; }
+	SSM& getSSM() { return ssm; }
 
 private:
 

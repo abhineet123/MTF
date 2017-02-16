@@ -87,6 +87,7 @@ public:
 	const uchar* getPixMask() override{ return pix_mask.data(); }
 	int getResX() override{ return params.grid_size_x; }
 	int getResY() override{ return params.grid_size_y; }
+	SSM& getSSM() { return ssm; }
 
 private:
 

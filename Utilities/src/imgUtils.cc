@@ -1335,6 +1335,31 @@ namespace utils{
 		return pix < 0 ? 0 : pix > 255 ? 255 : static_cast<uchar>(pix);
 	}
 
+	inline void writePixelToImage(cv::Mat &img, MatrixXd &min_dist,
+		int x, int y, const PixValT &pix_vals, int pt_id, double dist, 
+		cv::Mat &mask, bool use_mask, int n_channels){
+		if(checkOverflow(x, y, img.rows, img.cols)){ return; }
+
+		if(dist > min_dist(y, x)){ return; }
+		if(use_mask && mask.at<uchar>(y, x)){ return; }
+		//printf("here we are\n");
+		min_dist(y, x) = dist;
+
+		switch(n_channels){
+		case 1:
+			img.at<uchar>(y, x) = clamp(pix_vals(pt_id));
+			break;
+		case 3:
+			img.at<cv::Vec3b>(y, x) = cv::Vec3b(pix_vals(pt_id*n_channels),
+				pix_vals(pt_id*n_channels + 1), pix_vals(pt_id*n_channels + 2));
+			break;
+		default:
+			throw std::invalid_argument(
+				cv::format("Invalid channel count provided: %d", n_channels));
+		}
+		if(use_mask){ mask.at<uchar>(y, x) = 255; }		
+	}
+
 	void writePixelsToImage(cv::Mat &img, 
 		const PixValT &pix_vals, const mtf::PtsT &pts, 
 		int n_channels, cv::Mat &mask){
@@ -1342,29 +1367,25 @@ namespace utils{
 		assert(pix_vals.size() == n_pts*n_channels);
 
 		bool use_mask = !mask.empty();
+		MatrixXd min_dist(img.rows, img.cols);
+		min_dist.fill(std::numeric_limits<double>::infinity());
 
 		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-			int x = round(pts(0, pt_id));
-			int y = round(pts(1, pt_id));
-
-			if(checkOverflow(x, y, img.rows, img.cols)){ continue; }
-
-			if(use_mask && mask.at<uchar>(y, x)){ continue; }
-
-			switch(n_channels){
-			case 1:
-				img.at<uchar>(y, x) = clamp(pix_vals(pt_id));
-				break;
-			case 3:
-				img.at<cv::Vec3b>(y, x) = cv::Vec3b(pix_vals(pt_id*n_channels),
-					pix_vals(pt_id*n_channels + 1), pix_vals(pt_id*n_channels + 2));
-				break;
-			default:
-				throw std::invalid_argument(
-					cv::format("Invalid channel count provided: %d", n_channels));			
-			}
-			if(use_mask){ mask.at<uchar>(y, x) = 255; }
-
+			int min_x = static_cast<int>(pts(0, pt_id));
+			int min_y = static_cast<int>(pts(1, pt_id));
+			int max_x = min_x + 1;
+			int max_y = min_y + 1;
+			double dx = pts(0, pt_id) - min_x, dy = pts(1, pt_id) - min_y;
+			double dist_x_min = dx*dx, dist_x_max = (1 - dx)*(1 - dx);
+			double dist_y_min = dy*dy, dist_y_max = (1 - dy)*(1 - dy);
+			writePixelToImage(img, min_dist, min_x, min_y, pix_vals, pt_id,
+				dist_x_min + dist_y_min, mask, use_mask, n_channels);
+			writePixelToImage(img, min_dist, max_x, min_y, pix_vals, pt_id,
+				dist_x_max + dist_y_min, mask, use_mask, n_channels);
+			writePixelToImage(img, min_dist, max_x, max_y, pix_vals, pt_id,
+				dist_x_max + dist_y_max, mask, use_mask, n_channels);
+			writePixelToImage(img, min_dist, min_x, max_y, pix_vals, pt_id,
+				dist_x_min + dist_y_max, mask, use_mask, n_channels);
 		}
 	}
 	//! adapted from http://answers.opencv.org/question/68589/adding-noise-to-image-opencv/

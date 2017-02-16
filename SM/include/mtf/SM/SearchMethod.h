@@ -113,7 +113,7 @@ public:
 		ssm.clearSPIMask();
 	}
 	virtual bool supportsSPI(){ return ssm.supportsSPI(); }
-	virtual SSM& getSSM() const { return ssm; }
+	virtual SSM& getSSM() { return ssm; }
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };

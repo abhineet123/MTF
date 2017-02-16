@@ -772,6 +772,7 @@ namespace mtf{
 		int mos_disp_height = 200;
 		bool mos_show_grid = false;
 		bool mos_use_write_mask = false;
+		bool mos_save_img = true;
 
 		inline void split(const std::string &s, char delim, std::vector<std::string> &elems) {
 			stringstream ss(s);
@@ -2151,6 +2152,8 @@ namespace mtf{
 				mos_show_grid = atoi(arg_val);
 			} else if(!strcmp(arg_name, "mos_use_write_mask")){
 				mos_use_write_mask = atoi(arg_val);
+			}else if(!strcmp(arg_name, "mos_save_img")){
+				mos_save_img = atoi(arg_val);
 			}
 		}
 

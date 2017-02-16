@@ -6,13 +6,24 @@
 #include <mtf/Tools/cvUtils.h>
 #include <mtf/Utilities/miscUtils.h>
 
-typedef mtf::RKLT<mtf::NCC, mtf::Homography> TrackerType;
+// typedef mtf::RKLT<mtf::NCC, mtf::Homography> TrackerType;
+typedef mtf::CompositeSM<mtf::NCC, mtf::Homography> TrackerType;
 
 int main(int argc, char * argv[]){
 	if(!readParams(argc, argv)){ return EXIT_FAILURE; }
+	enable_nt = 0;
 	//ESM<NCC, Homography> tracker;
-	TrackerType *tracker = static_cast<TrackerType*>(mtf::getTracker("rklt", "ncc", "8", "0"));
-	mtf::Homography &ssm = tracker->templ_tracker->getSSM();
+	// TrackerType *tracker = static_cast<TrackerType*>(mtf::getTracker("rklt", "ncc", "8", "0"));
+	TrackerType *tracker = dynamic_cast<TrackerType*>(mtf::getTracker("nnic", "ncc", "8", "0"));
+	// TrackerType *tracker = static_cast<TrackerType*>(mtf::getTracker("pffc", "ncc", "8", "0"));
+
+	if(!tracker){
+		printf("Dynamic casting failed.\n");
+		return EXIT_FAILURE;
+	}
+
+	// mtf::Homography &ssm = tracker->templ_tracker->getSSM();
+	mtf::Homography &ssm = tracker->getSSM();
 	InputCV input('u');
 	GaussianSmoothing pre_proc(tracker->inputType());
 	input.initialize();
