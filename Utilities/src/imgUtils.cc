@@ -1341,7 +1341,9 @@ namespace utils{
 		if(checkOverflow(x, y, img.rows, img.cols)){ return; }
 
 		if(dist > min_dist(y, x)){ return; }
+
 		if(use_mask && mask.at<uchar>(y, x)){ return; }
+
 		//printf("here we are\n");
 		min_dist(y, x) = dist;
 

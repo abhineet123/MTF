@@ -766,6 +766,8 @@ namespace mtf{
 		int syn_jpg_quality = 100;
 		bool syn_show_output = true;
 
+		bool mos_inv_tracking = true;
+		int mos_use_norm_corners = true;
 		int mos_track_border = 100;
 		int mos_border = 200;
 		int mos_disp_width = 200;
@@ -2139,8 +2141,12 @@ namespace mtf{
 			} else if(!strcmp(arg_name, "syn_show_output")){
 				syn_show_output = atoi(arg_val);
 			}
-
-			else if(!strcmp(arg_name, "mos_track_border")){
+			//! online image mosaicing
+			else if(!strcmp(arg_name, "mos_inv_tracking")){
+				mos_inv_tracking = atoi(arg_val);
+			} else if(!strcmp(arg_name, "mos_use_norm_corners")){
+				mos_use_norm_corners = atoi(arg_val);
+			} else if(!strcmp(arg_name, "mos_track_border")){
 				mos_track_border = atoi(arg_val);
 			} else if(!strcmp(arg_name, "mos_border")){
 				mos_border = atoi(arg_val);

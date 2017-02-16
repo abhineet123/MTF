@@ -14,6 +14,9 @@
 *.so
 *.pyd
 *.log
+*.jpg
+*.png
+*.bmp
 batch/
 Build/
 Backup/
