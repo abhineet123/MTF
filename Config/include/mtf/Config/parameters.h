@@ -769,7 +769,10 @@ namespace mtf{
 		bool mos_inv_tracking = true;
 		int mos_use_norm_corners = true;
 		int mos_track_border = 100;
-		int mos_border = 200;
+		int mos_border_width = 200;
+		int mos_border_height = 200;
+		int mos_init_offset_x = 0;
+		int mos_init_offset_y = 0;
 		int mos_disp_width = 200;
 		int mos_disp_height = 200;
 		bool mos_show_grid = false;
@@ -2148,8 +2151,14 @@ namespace mtf{
 				mos_use_norm_corners = atoi(arg_val);
 			} else if(!strcmp(arg_name, "mos_track_border")){
 				mos_track_border = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_border")){
-				mos_border = atoi(arg_val);
+			} else if(!strcmp(arg_name, "mos_border_width")){
+				mos_border_width = atoi(arg_val);
+			}else if(!strcmp(arg_name, "mos_border_height")){
+				mos_border_height = atoi(arg_val);
+			} else if(!strcmp(arg_name, "mos_init_offset_x")){
+				mos_init_offset_x = atoi(arg_val);
+			} else if(!strcmp(arg_name, "mos_init_offset_y")){
+				mos_init_offset_y = atoi(arg_val);
 			} else if(!strcmp(arg_name, "mos_disp_width")){
 				mos_disp_width = atoi(arg_val);
 			} else if(!strcmp(arg_name, "mos_disp_height")){

@@ -61,14 +61,13 @@ int main(int argc, char * argv[]){
 
 	tracker->initialize(init_corners);
 
-	int mos_width = input->getFrame().cols + 2 * mos_border;
-	int mos_height = input->getFrame().rows + 2 * mos_border;
-
+	int mos_width = input->getFrame().cols + 2 * mos_border_width;
+	int mos_height = input->getFrame().rows + 2 * mos_border_height;
 
 	cv::Mat mos_img(mos_height, mos_width, mos_img_type, CV_RGB(0, 0, 0));
 	double resize_factor_x = static_cast<double>(mos_disp_width) / static_cast<double>(mos_img.cols);
 	double resize_factor_y = static_cast<double>(mos_disp_height) / static_cast<double>(mos_img.rows);
-	double mos_resize_factor = resize_factor_x > resize_factor_y ? resize_factor_x : resize_factor_y;
+	double mos_resize_factor = resize_factor_x < resize_factor_y ? resize_factor_x : resize_factor_y;
 	cv::Mat mos_disp_img(mos_img.rows*mos_resize_factor, mos_img.cols*mos_resize_factor, mos_img_type, CV_RGB(0, 0, 0));
 	cv::Mat mos_mask, mos_mask_disp;
 	if(mos_use_write_mask){
@@ -78,26 +77,25 @@ int main(int argc, char * argv[]){
 		mos_mask_disp.setTo(cv::Scalar(0));
 	}
 
-	std::string mos_disp_win = "Mosaic", mos_mask_win = "Mask", 
+	std::string mos_disp_win = "Mosaic", mos_mask_win = "Mask",
 		mos_patch_win = "Current Patch", img_win = "Current Image";
-	if(mos_use_write_mask){
-		cv::namedWindow(mos_mask_win);
-	}
+	if(mos_use_write_mask){ cv::namedWindow(mos_mask_win); }
 	cv::namedWindow(mos_patch_win);
 	cv::namedWindow(img_win);
 	cv::namedWindow(mos_disp_win);
 
 	printf("Using displayed image of size: %d x %d\n", mos_disp_img.cols, mos_disp_img.rows);
 
-
 	mtf::CornersT init_mos_location_norm(mtf::utils::Corners(init_corners).eig());
 	// mtf::CornersT prev_mos_location_norm(mtf::utils::Corners(
 	// mtf::utils::getFrameCorners(input->getFrame(), 0)).eig());
 	mtf::CornersT init_mos_location(mtf::utils::Corners(
-		mtf::utils::getFrameCorners(input->getFrame(), 0) + mos_border).eig());
-	if(mos_use_norm_corners == 1){
-		mos_ssm->setCorners(init_mos_location);
-	}
+		mtf::utils::getFrameCorners(input->getFrame(), 0)).eig());
+
+	init_mos_location.row(0).array() += mos_border_width + mos_init_offset_x;
+	init_mos_location.row(1).array() += mos_border_height + mos_init_offset_y;
+
+	if(mos_use_norm_corners == 1){ mos_ssm->setCorners(init_mos_location); }
 
 	VectorXd norm_warp(mos_ssm->getStateSize());
 	mos_ssm->estimateWarpFromCorners(norm_warp, init_mos_location_norm, init_mos_location);
@@ -186,7 +184,8 @@ int main(int argc, char * argv[]){
 	}
 	cv::destroyAllWindows();
 	if(mos_save_img){
-		std::string mos_out_fname = cv_format("mosaic_%s_%s_%s_%ld.bmp", mtf_sm, mtf_am , mtf_ssm, time(0));
+		std::string mos_out_fname = cv_format("mosaic_%s_%s_%s_%s_%ld.bmp", 
+			source_name.c_str(), mtf_sm, mtf_am , mtf_ssm, time(0));
 		printf("Writing mosaic image to %s\n", mos_out_fname.c_str());
 		cv::imwrite(mos_out_fname, mos_img);
 	}
