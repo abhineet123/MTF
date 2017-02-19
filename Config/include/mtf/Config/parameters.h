@@ -40,12 +40,12 @@
 	do{if(!strcmp(arg_name, #param_name)){\
 		param_name = param_func(arg_val);\
 		return;\
-				}} while(0)
+					}} while(0)
 #define parse_param_vec(param_name, param_func)\
 	do{if(!strcmp(arg_name, #param_name)){\
 		param_name.push_back(param_func(arg_val));\
 		return;\
-					}} while(0)
+						}} while(0)
 
 namespace mtf{
 	namespace params{
@@ -778,6 +778,7 @@ namespace mtf{
 		bool mos_show_grid = false;
 		bool mos_use_write_mask = false;
 		bool mos_save_img = true;
+		std::string mos_out_fname;
 
 		inline void split(const std::string &s, char delim, std::vector<std::string> &elems) {
 			stringstream ss(s);
@@ -1668,7 +1669,7 @@ namespace mtf{
 				grid_min_eig_thresh = atof(arg_val);
 			} else if(!strcmp(arg_name, "grid_fb_err_thresh")){
 				grid_fb_err_thresh = atof(arg_val);
-			}else if(!strcmp(arg_name, "grid_fb_reinit")){
+			} else if(!strcmp(arg_name, "grid_fb_reinit")){
 				grid_fb_reinit = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_detect_keypoints")){
 				grid_detect_keypoints = atoi(arg_val);
@@ -1797,7 +1798,7 @@ namespace mtf{
 				pf_update_distr_wts = atoi(arg_val);
 			} else if(!strcmp(arg_name, "pf_min_distr_wt")){
 				pf_min_distr_wt = atof(arg_val);
-			}else if(!strcmp(arg_name, "pf_adaptive_resampling_thresh")){
+			} else if(!strcmp(arg_name, "pf_adaptive_resampling_thresh")){
 				pf_adaptive_resampling_thresh = atof(arg_val);
 			} else if(!strcmp(arg_name, "pf_measurement_sigma")){
 				pf_measurement_sigma = atof(arg_val);
@@ -2153,7 +2154,7 @@ namespace mtf{
 				mos_track_border = atoi(arg_val);
 			} else if(!strcmp(arg_name, "mos_border_width")){
 				mos_border_width = atoi(arg_val);
-			}else if(!strcmp(arg_name, "mos_border_height")){
+			} else if(!strcmp(arg_name, "mos_border_height")){
 				mos_border_height = atoi(arg_val);
 			} else if(!strcmp(arg_name, "mos_init_offset_x")){
 				mos_init_offset_x = atoi(arg_val);
@@ -2167,8 +2168,10 @@ namespace mtf{
 				mos_show_grid = atoi(arg_val);
 			} else if(!strcmp(arg_name, "mos_use_write_mask")){
 				mos_use_write_mask = atoi(arg_val);
-			}else if(!strcmp(arg_name, "mos_save_img")){
+			} else if(!strcmp(arg_name, "mos_save_img")){
 				mos_save_img = atoi(arg_val);
+			} else if(!strcmp(arg_name, "mos_out_fname")){
+				mos_out_fname = std::string(arg_val);
 			}
 		}
 
@@ -2438,7 +2441,5 @@ namespace mtf{
 		inline void freeParams(){}
 	}
 }
-
-
 
 #endif

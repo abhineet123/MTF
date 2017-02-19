@@ -1336,13 +1336,13 @@ namespace utils{
 	}
 
 	inline void writePixelToImage(cv::Mat &img, MatrixXd &min_dist,
-		int x, int y, const PixValT &pix_vals, int pt_id, double dist, 
+		int x, int y, const PixValT &pix_vals, int pt_id, double dist,
 		cv::Mat &mask, bool use_mask, int n_channels){
 		if(checkOverflow(x, y, img.rows, img.cols)){ return; }
 
-		if(dist > min_dist(y, x)){ return; }
+		if(min_dist(y, x) >= 0 && min_dist(y, x) < dist){ return; }
 
-		if(use_mask && mask.at<uchar>(y, x)){ return; }
+		if(use_mask && mask.at<uchar>(y, x) && min_dist(y, x) < 0){ return; }
 
 		//printf("here we are\n");
 		min_dist(y, x) = dist;
@@ -1370,7 +1370,7 @@ namespace utils{
 
 		bool use_mask = !mask.empty();
 		MatrixXd min_dist(img.rows, img.cols);
-		min_dist.fill(std::numeric_limits<double>::infinity());
+		min_dist.fill(-1);
 
 		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 			int min_x = static_cast<int>(pts(0, pt_id));

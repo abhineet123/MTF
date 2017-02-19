@@ -11,6 +11,17 @@ int main(int argc, char * argv[]){
 
 	if(!readParams(argc, argv)){ return EXIT_FAILURE; }
 
+	printf("Starting online mosaicing with:\n");
+	printf("mos_inv_tracking: %d\n", mos_inv_tracking);
+	printf("mos_use_norm_corners: %d\n", mos_use_norm_corners);
+	printf("mos_track_border: %d\n", mos_track_border);
+	printf("mos_border_size: %d x %d\n", mos_border_width, mos_border_height);
+	printf("mos_init_offset: %d, %d\n", mos_init_offset_x, mos_init_offset_y);
+	printf("mos_disp_size: %d x %d\n", mos_disp_width, mos_disp_height);
+	printf("mos_show_grid: %d\n", mos_show_grid);
+	printf("mos_use_write_mask: %d\n", mos_use_write_mask);
+	printf("mos_save_img: %d\n", mos_save_img);
+
 	Input_ input(getInput(pipeline));
 	if(!input->initialize()){ return EXIT_FAILURE; };
 
@@ -26,7 +37,6 @@ int main(int argc, char * argv[]){
 	}
 	Tracker_ tracker(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
 	if(!tracker){ return EXIT_FAILURE; }
-
 
 	resx = input->getFrame().cols;
 	resy = input->getFrame().rows;
@@ -46,8 +56,6 @@ int main(int argc, char * argv[]){
 	int n_channels = mos_am->getNChannels();
 	int mos_img_type = n_channels == 1 ? CV_8UC1 : CV_8UC3;
 	int img_size = input->getFrame().cols * input->getFrame().rows * n_channels;
-
-	cv::Mat curr_patch(mos_am->getResY(), mos_am->getResX(), mos_img_type);
 
 	GaussianSmoothing pre_proc(tracker->inputType());
 	pre_proc.initialize(input->getFrame());
@@ -77,14 +85,15 @@ int main(int argc, char * argv[]){
 		mos_mask_disp.setTo(cv::Scalar(0));
 	}
 
-	std::string mos_disp_win = "Mosaic", mos_mask_win = "Mask",
+	std::string mos_disp_win = cv_format("Mosaic :: %s", source_name.c_str()), mos_mask_win = "Mask",
 		mos_patch_win = "Current Patch", img_win = "Current Image";
-	if(mos_use_write_mask){ cv::namedWindow(mos_mask_win); }
-	cv::namedWindow(mos_patch_win);
-	cv::namedWindow(img_win);
-	cv::namedWindow(mos_disp_win);
-
-	printf("Using displayed image of size: %d x %d\n", mos_disp_img.cols, mos_disp_img.rows);
+	if(show_cv_window){
+		if(mos_use_write_mask){ cv::namedWindow(mos_mask_win); }
+		cv::namedWindow(mos_patch_win);
+		cv::namedWindow(img_win);
+		cv::namedWindow(mos_disp_win);
+		printf("Using displayed image of size: %d x %d\n", mos_disp_img.cols, mos_disp_img.rows);
+	}
 
 	mtf::CornersT init_mos_location_norm(mtf::utils::Corners(init_corners).eig());
 	// mtf::CornersT prev_mos_location_norm(mtf::utils::Corners(
@@ -156,36 +165,42 @@ int main(int argc, char * argv[]){
 		//! write the patch to the image at the warped locations given by the tracker
 		mtf::utils::writePixelsToImage(mos_img, mos_patch, mos_pts, n_channels, mos_mask);
 
-		//! resize the mosaic image to display on screen
-		cv::resize(mos_img, mos_disp_img, mos_disp_img.size());
-		//! draw the location of the current warped bounding box given by the tracker
-		mtf::utils::drawRegion(mos_disp_img, mtf::utils::Corners(curr_mos_location).mat()*mos_resize_factor,
-			CV_RGB(0, 255, 0), 2);
-		if(mos_show_grid){
-			mtf::utils::drawGrid(mos_disp_img, mtf::PtsT(mos_pts*mos_resize_factor),
-				mos_ssm->getResX(), mos_ssm->getResY());
-		}
-		mtf::utils::drawRegion(input->getFrame(MUTABLE), tracker->getRegion(), CV_RGB(255, 0, 0), 2);
-		cv::imshow(mos_disp_win, mos_disp_img);
-
-		if(mos_use_write_mask){
-			cv::resize(mos_mask, mos_mask_disp, mos_mask_disp.size());
-			cv::imshow(mos_mask_win, mos_mask_disp);
-		}
-
-		cv::imshow(img_win, input->getFrame());
-		cv::imshow(mos_patch_win, mtf::utils::reshapePatch(mos_patch, mos_am->getResY(), mos_am->getResX(),
-			n_channels));
-
 		prev_mos_location = curr_mos_location;
 		prev_mos_location_norm = curr_mos_location_norm;
 
-		if(cv::waitKey(1) == 27){ break; }
+		if(show_cv_window){
+			//! resize the mosaic image to display on screen
+			cv::resize(mos_img, mos_disp_img, mos_disp_img.size());
+			//! draw the location of the current warped bounding box given by the tracker
+			mtf::utils::drawRegion(mos_disp_img, mtf::utils::Corners(curr_mos_location).mat()*mos_resize_factor,
+				CV_RGB(0, 255, 0), 2);
+			if(mos_show_grid){
+				mtf::utils::drawGrid(mos_disp_img, mtf::PtsT(mos_pts*mos_resize_factor),
+					mos_ssm->getResX(), mos_ssm->getResY());
+			}
+			mtf::utils::drawRegion(input->getFrame(MUTABLE), tracker->getRegion(), CV_RGB(255, 0, 0), 2);
+			cv::imshow(mos_disp_win, mos_disp_img);
+
+			if(mos_use_write_mask){
+				cv::resize(mos_mask, mos_mask_disp, mos_mask_disp.size());
+				cv::imshow(mos_mask_win, mos_mask_disp);
+			}
+			cv::imshow(img_win, input->getFrame());
+			cv::imshow(mos_patch_win, mtf::utils::reshapePatch(mos_patch, mos_am->getResY(), mos_am->getResX(),
+				n_channels));
+
+			if(cv::waitKey(1) == 27){ break; }
+		} else if(input->getFrameID() % 100 == 0){
+			printf("Done %d frames\n", input->getFrameID());
+		}
 	}
-	cv::destroyAllWindows();
+	if(show_cv_window){ cv::destroyAllWindows(); }
 	if(mos_save_img){
-		std::string mos_out_fname = cv_format("mosaic_%s_%s_%s_%s_%ld.bmp", 
-			source_name.c_str(), mtf_sm, mtf_am , mtf_ssm, time(0));
+		if(mos_out_fname.empty()){
+			mos_out_fname = cv_format("mosaic_%s_%s_%s_%s_inv%d_norm%d_mask%d_%ld.bmp",
+				source_name.c_str(), mtf_sm, mtf_am, mtf_ssm, mos_inv_tracking,
+				mos_use_norm_corners, mos_use_write_mask, time(0));
+		}
 		printf("Writing mosaic image to %s\n", mos_out_fname.c_str());
 		cv::imwrite(mos_out_fname, mos_img);
 	}
