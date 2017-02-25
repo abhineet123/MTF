@@ -79,7 +79,7 @@ int main(int argc, char * argv[]) {
 	CVUtils cv_utils;
 	//! need to read only one object
 	n_trackers = 1;
-	if(!gerObjectsToTrack(cv_utils, input.get())){
+	if(!getObjectsToTrack(cv_utils, input.get())){
 		printf("Object(s) to be tracked could not be read\n");
 		return EXIT_FAILURE;
 	}

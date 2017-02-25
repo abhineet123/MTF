@@ -113,8 +113,9 @@ inline PreProc_ getPreProc(int output_type,
 
 }
 
-inline bool gerObjectsToTrack(CVUtils &cv_utils, InputBase *input){
+inline bool getObjectsToTrack(CVUtils &cv_utils, InputBase *input){
 	bool init_obj_read = false;
+	int n_objs_to_get = track_single_obj ? 1 : n_trackers;
 	if(read_obj_from_gt){
 		init_obj_read = cv_utils.readObjectFromGT(source_name, source_path, input->n_frames,
 			init_frame_id, use_opt_gt, opt_gt_ssm, use_reinit_gt, debug_mode);
@@ -124,17 +125,17 @@ inline bool gerObjectsToTrack(CVUtils &cv_utils, InputBase *input){
 		}
 	}
 	if(!init_obj_read && read_obj_from_file) {
-		init_obj_read = cv_utils.readObjectsFromFile(n_trackers, read_obj_fname.c_str(), debug_mode);
+		init_obj_read = cv_utils.readObjectsFromFile(n_objs_to_get, read_obj_fname.c_str(), debug_mode);
 		if(!init_obj_read){
 			printf("Failed to read initial object location from file; using manual selection...\n");
 		}
 	}
 	if(!init_obj_read){
 		if(img_source == SRC_IMG || img_source == SRC_DISK || img_source == SRC_VID){
-			init_obj_read = cv_utils.selectObjects(input->getFrame(), n_trackers,
+			init_obj_read = cv_utils.selectObjects(input->getFrame(), n_objs_to_get,
 				patch_size, line_thickness, write_objs, sel_quad_obj, write_obj_fname.c_str());
 		} else{
-			init_obj_read = cv_utils.selectObjects(input, n_trackers,
+			init_obj_read = cv_utils.selectObjects(input, n_objs_to_get,
 				patch_size, line_thickness, write_objs, sel_quad_obj, write_obj_fname.c_str());
 		}
 	}

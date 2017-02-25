@@ -206,7 +206,7 @@ namespace utils{
 	inline void printMatrixToFile(const cv::Mat &cv_mat, const char* mat_name,
 		const char* fname, const char* fmt = "%15.9f", const char* mode = "a",
 		const char *coeff_sep = "\t", const char *row_sep = "\n",
-		const char **row_labels = NULL, const char **mat_header = NULL,
+		const char **row_labels = nullptr, const char **mat_header = nullptr,
 		const char* header_fmt = "%15s"){
 		//typedef typename ImageT::RealScalar ScalarT;
 		//printf("Opening file: %s to write %s\n", fname, mat_name);
@@ -387,7 +387,7 @@ namespace utils{
 	//! draw the boundary of the image region represented by the polygon formed by the specified vertices
 	void drawRegion(cv::Mat &img, const cv::Mat &vertices, cv::Scalar col = cv::Scalar(0, 255, 0),
 		int line_thickness = 2, const char *label = nullptr, double font_size = 0.50,
-		bool show_corner_ids = false, bool show_label = false);
+		bool show_corner_ids = false, bool show_label = false, int line_type = 0);
 	void drawGrid(cv::Mat &img, const PtsT &grid_pts, int res_x, int res_y,
 		cv::Scalar col = cv::Scalar(0, 255, 0), int thickness = 1);
 	template<typename ImgValT, typename PatchValT>
@@ -435,8 +435,6 @@ namespace utils{
 			+ corners.at<double>(1, 2) + corners.at<double>(1, 3)) / 4.0;
 
 	}
-	cv::Mat reshapePatch(const VectorXd &curr_patch,
-		int img_height, int img_width, int n_channels = 1);
 }
 _MTF_END_NAMESPACE
 #endif

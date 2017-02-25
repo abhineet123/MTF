@@ -129,6 +129,21 @@
 #define spi_check(mask, id)
 #endif
 
+#define corners_to_cv(cv_corners, eig_corners)\
+	for(int corner_id = 0; corner_id < 4; ++corner_id){\
+		cv_corners.at<double>(0, corner_id) = eig_corners(0, corner_id);\
+		cv_corners.at<double>(1, corner_id) = eig_corners(1, corner_id);\
+	}
+#define corners_from_cv(eig_corners, cv_corners)\
+	for(int corner_id = 0; corner_id < 4; ++corner_id){\
+		eig_corners(0, corner_id) = cv_corners.at<double>(0, corner_id);\
+		eig_corners(1, corner_id) = cv_corners.at<double>(1, corner_id);\
+	}
+#define corners_to_points(points, eig_corners)\
+	for(int corner_id = 0; corner_id < 4; ++corner_id){\
+		points[corner_id].x = curr_corners(0, corner_id);\
+		points[corner_id].y = curr_corners(1, corner_id);\
+	}
 #define HETEROGENEOUS_INPUT -1
 
 #define _MTF_BEGIN_NAMESPACE namespace mtf {

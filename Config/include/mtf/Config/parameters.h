@@ -56,6 +56,7 @@ namespace mtf{
 		int source_id = 0;
 		int actor_id = 0;
 		int n_trackers = 1;
+		bool track_single_obj = false;
 		char pipeline = 'c';
 		char img_source = 'j';
 		double img_resize_factor = 1.0;
@@ -87,6 +88,7 @@ namespace mtf{
 		char rec_source = 'u';
 		std::string rec_seq_suffix;
 		int rec_fps = 24;
+		std::vector<std::string> tracker_labels;
 
 
 		bool reinit_at_each_frame = false;
@@ -733,7 +735,7 @@ namespace mtf{
 		float pca_f_factor = 0.95;
 		bool pca_show_basis = false;
 
-		//! FMaps
+		//! DFM
 		int dfm_nfmaps = 1;
 		char* dfm_layer_name = "conv1";
 		int dfm_vis = 0;
@@ -742,7 +744,7 @@ namespace mtf{
 		char *dfm_params_f_name = "../../../VGG_Models/VGG_CNN_F.caffemodel";
 		char *dfm_mean_f_name = "../../../VGG_Models/VGG_mean.binaryproto";
 
-		//! HACLK
+		//! Synthetic sequence generator
 		//std::vector<cv::Mat> conv_corners;
 		std::string  syn_ssm = "c8";
 		std::string  syn_ilm = "0";
@@ -765,7 +767,7 @@ namespace mtf{
 		int syn_video_fps = 24;
 		int syn_jpg_quality = 100;
 		bool syn_show_output = true;
-
+		//! Online mosaic creator
 		bool mos_inv_tracking = true;
 		int mos_use_norm_corners = true;
 		int mos_track_border = 100;
@@ -776,9 +778,13 @@ namespace mtf{
 		int mos_disp_width = 200;
 		int mos_disp_height = 200;
 		bool mos_show_grid = false;
+		bool mos_show_tracked_img = false;
+		bool mos_show_patch = false;
+		bool mos_show_mask = false;
 		bool mos_use_write_mask = false;
 		bool mos_save_img = true;
 		std::string mos_out_fname;
+		std::string mos_out_fmt = "jpg";
 
 		inline void split(const std::string &s, char delim, std::vector<std::string> &elems) {
 			stringstream ss(s);
@@ -929,6 +935,8 @@ namespace mtf{
 
 			if(!strcmp(arg_name, "n_trackers")){
 				n_trackers = atoi(arg_val);
+			} else if(!strcmp(arg_name, "track_single_obj")){
+				track_single_obj = atoi(arg_val);
 			} else if(!strcmp(arg_name, "source_id")){
 				source_id = atoi(arg_val);
 			} else if(!strcmp(arg_name, "actor_id")){
@@ -969,6 +977,8 @@ namespace mtf{
 				write_pts = arg_val[0] - '0';
 			} else if(!strcmp(arg_name, "show_corner_ids")){
 				show_corner_ids = arg_val[0] - '0';
+			} else if(!strcmp(arg_name, "tracker_labels")){
+				tracker_labels.push_back(std::string(arg_val));
 			} else if(!strcmp(arg_name, "show_cv_window")){
 				show_cv_window = arg_val[0] - '0';
 			} else if(!strcmp(arg_name, "show_ground_truth")){
@@ -2166,12 +2176,20 @@ namespace mtf{
 				mos_disp_height = atoi(arg_val);
 			} else if(!strcmp(arg_name, "mos_show_grid")){
 				mos_show_grid = atoi(arg_val);
+			} else if(!strcmp(arg_name, "mos_show_tracked_img")){
+				mos_show_tracked_img = atoi(arg_val);
+			} else if(!strcmp(arg_name, "mos_show_patch")){
+				mos_show_patch = atoi(arg_val);
+			} else if(!strcmp(arg_name, "mos_show_mask")){
+				mos_show_mask = atoi(arg_val);
 			} else if(!strcmp(arg_name, "mos_use_write_mask")){
 				mos_use_write_mask = atoi(arg_val);
 			} else if(!strcmp(arg_name, "mos_save_img")){
 				mos_save_img = atoi(arg_val);
 			} else if(!strcmp(arg_name, "mos_out_fname")){
 				mos_out_fname = std::string(arg_val);
+			} else if(!strcmp(arg_name, "mos_out_fmt")){
+				mos_out_fmt = std::string(arg_val);
 			}
 		}
 

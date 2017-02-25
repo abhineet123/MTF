@@ -1407,6 +1407,40 @@ namespace utils{
 		return true;
 	}
 
+	cv::Mat reshapePatch(const VectorXd &curr_patch, int img_height, int img_width, int n_channels){
+		cv::Mat  out_img_uchar(img_height, img_width, n_channels == 1 ? CV_8UC1 : CV_8UC3);
+		cv::Mat(img_height, img_width, n_channels == 1 ? CV_64FC1 : CV_64FC3,
+			const_cast<double*>(curr_patch.data())).convertTo(out_img_uchar, out_img_uchar.type());
+		return out_img_uchar;
+	}
+
+	VectorXd reshapePatch(const cv::Mat &cv_patch, int start_x, int start_y,
+		int end_x, int end_y){
+		int n_channels = cv_patch.type() == CV_8UC1 || cv_patch.type() == CV_32FC1 ? 1 : 3;
+		if(end_x < 0){ end_x = cv_patch.cols - 1; }
+		if(end_y < 0){ end_y = cv_patch.rows - 1; }
+		int n_pix = (end_x - start_x + 1)* (end_y - start_y + 1);
+		VectorXd eig_patch(n_pix);
+		int pix_id = -1;
+		if(n_channels == 1){
+			for(int y = start_y; y <= end_y; ++y){
+				for(int x = start_x; x <= end_x; ++x){
+					eig_patch(++pix_id) = cv_patch.at<uchar>(y, x);
+				}
+			}
+		} else{
+			for(int y = start_y; y <= end_y; ++y){
+				for(int x = start_x; x <= end_x; ++x){
+					cv::Vec3b pix = cv_patch.at<cv::Vec3b>(y, x);
+					eig_patch(++pix_id) = pix[0];
+					eig_patch(++pix_id) = pix[1];
+					eig_patch(++pix_id) = pix[2];
+				}
+			}
+		}
+		return eig_patch;
+	}
+
 	/******************** Explicit Template Specializations ******************/
 
 	template

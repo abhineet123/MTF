@@ -110,7 +110,7 @@ int main(int argc, char * argv[]) {
 	// **************************************************************************************************** //
 
 	CVUtils cv_utils(img_resize_factor);
-	if(!gerObjectsToTrack(cv_utils, input.get())){
+	if(!getObjectsToTrack(cv_utils, input.get())){
 		printf("Object(s) to be tracked could not be read\n");
 		return EXIT_FAILURE;
 	}
@@ -205,7 +205,7 @@ int main(int argc, char * argv[]) {
 	nor is it possible to reinitialize the object from ground truth
 	*/
 	if(!read_obj_from_gt){
-		reset_at_each_frame = reinit_at_each_frame = reinit_on_failure = 
+		reset_at_each_frame = reinit_at_each_frame = reinit_on_failure =
 			show_tracking_error = write_tracking_error = show_ground_truth = 0;
 	}
 	/**
@@ -221,7 +221,7 @@ int main(int argc, char * argv[]) {
 		printf("Reinitializing tracker at each frame...\n");
 		reinit_on_failure = false;
 	} else if(reset_at_each_frame){
-		printf("Resetting tracker at each frame...\n");		
+		printf("Resetting tracker at each frame...\n");
 		reinit_on_failure = false;
 	}
 
@@ -235,7 +235,7 @@ int main(int argc, char * argv[]) {
 			} else{
 				printf("Disabling tracking error computation since ground truth is not available\n");
 			}
-			reset_at_each_frame = reinit_at_each_frame = reinit_on_failure = 
+			reset_at_each_frame = reinit_at_each_frame = reinit_on_failure =
 				show_tracking_error = write_tracking_error = show_ground_truth = 0;
 		} else{
 			printf("Using %s error to measure tracking accuracy\n",
@@ -246,7 +246,7 @@ int main(int argc, char * argv[]) {
 	if(write_tracking_data){
 		string tracking_data_dir, tracking_data_path;
 		if(tracking_data_fname.empty()){
-			tracking_data_fname = cv_format("%s_%s_%s_%d_%ld", mtf_sm, mtf_am, mtf_ssm, 
+			tracking_data_fname = cv_format("%s_%s_%s_%d_%ld", mtf_sm, mtf_am, mtf_ssm,
 				1 - hom_normalized_init, time(nullptr));
 		} else{
 			//! externally specified tracking_data_fname is assumed to indicate batch mode 
@@ -264,7 +264,7 @@ int main(int argc, char * argv[]) {
 				tracking_data_dir = cv_format("log/tracking_data/%s/%s/%s",
 					reset_to_init ? "reset_to_init" : "reset",
 					actor.c_str(), source_name.c_str());
-			}else if(reinit_on_failure){
+			} else if(reinit_on_failure){
 				std::string reinit_data_dir = std::floor(reinit_err_thresh) == reinit_err_thresh ?
 					//! reinit_err_thresh is an integer
 					cv_format("reinit_%d_%d", static_cast<int>(reinit_err_thresh), reinit_frame_skip) :
@@ -320,12 +320,20 @@ int main(int argc, char * argv[]) {
 			fs::create_directories(record_frames_dir);
 		}
 		if(record_frames_fname.empty()){
-			record_frames_fname = write_tracking_data ?	tracking_data_fname :
+			record_frames_fname = write_tracking_data ? tracking_data_fname :
 				cv_format("%s_%s_%s_%d", mtf_sm, mtf_am, mtf_ssm, 1 - hom_normalized_init);
 		}
 		std::string record_frames_path = cv_format("%s/%s.avi", record_frames_dir.c_str(), tracking_data_fname.c_str());
 		printf("Recording tracking video to: %s\n", record_frames_path.c_str());
 		output.open(record_frames_path, CV_FOURCC('M', 'J', 'P', 'G'), 24, input->getFrame().size());
+	}
+
+	if(show_cv_window){
+		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
+			if(tracker_labels.size() < tracker_id + 1){
+				tracker_labels.push_back(trackers[tracker_id]->name);
+			}
+		}
 	}
 	double fps = 0, fps_win = 0;
 	double tracking_time, tracking_time_with_input;
@@ -476,7 +484,7 @@ int main(int argc, char * argv[]) {
 				trackers[0]->setRegion(cv_utils.getGT(init_frame_id));
 			} else{
 				trackers[0]->setRegion(cv_utils.getGT(input->getFrameID()));
-			}			
+			}
 			invalid_tracker_state = tracker_failed = false;
 		}
 		if(invalid_tracker_state){
@@ -494,11 +502,11 @@ int main(int argc, char * argv[]) {
 			draw tracker positions on OpenCV window
 			*/
 			for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
-				cv::Mat drawn_corners = tracker_id == 0 ? tracker_corners : 
+				cv::Mat drawn_corners = tracker_id == 0 ? tracker_corners :
 					resized_images ? trackers[tracker_id]->getRegion() / img_resize_factor :
 					trackers[tracker_id]->getRegion();
 				mtf::utils::drawRegion(input->getFrame(MUTABLE), drawn_corners,
-					cv_utils.getObjCol(tracker_id), line_thickness, trackers[tracker_id]->name.c_str(),
+					cv_utils.getObjCol(tracker_id), line_thickness, tracker_labels[tracker_id].c_str(),
 					fps_font_size, show_corner_ids, 1 - show_corner_ids);
 			}
 			/**

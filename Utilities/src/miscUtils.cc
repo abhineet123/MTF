@@ -5,10 +5,14 @@
 #endif
 #include <fstream>
 
+#define mat_to_pt(vert, id) cv::Point2d(vert.at<double>(0, id), vert.at<double>(1, id))
+#define eig_to_pt(vert, id) cv::Point2d(vert(0, id), vert(1, id))
+	
+
 _MTF_BEGIN_NAMESPACE
 
 namespace utils{
-	
+
 	void drawCorners(cv::Mat &img, const cv::Point2d(&corners)[4],
 		const cv::Scalar corners_col, const std::string label){
 		line(img, corners[0], corners[1], corners_col, 2);
@@ -150,14 +154,15 @@ namespace utils{
 
 	void drawRegion(cv::Mat &img, const cv::Mat &vertices, cv::Scalar col,
 		int line_thickness, const char *label, double font_size,
-		bool show_corner_ids, bool show_label){
-		std::vector<cv::Point2d> vertices_p2d;
+		bool show_corner_ids, bool show_label, int line_type){
+		std::vector<cv::Point2d> vertices_p2d(vertices.cols);
 		for(int vert_id = 0; vert_id < vertices.cols; ++vert_id) {
-			vertices_p2d.push_back(cv::Point2d(vertices.at<double>(0, vert_id), vertices.at<double>(1, vert_id)));
+			vertices_p2d[vert_id] = cv::Point2d(vertices.at<double>(0, vert_id), vertices.at<double>(1, vert_id));
 		}
+		if(line_type == 0){ line_type = CV_AA; }
 		for(int vert_id = 0; vert_id < vertices.cols; ++vert_id) {
 			cv::line(img, vertices_p2d[vert_id], vertices_p2d[(vert_id + 1) % vertices.cols],
-				col, line_thickness);
+				col, line_thickness, line_type);
 			if(show_corner_ids){
 				putText(img, to_string(vert_id), vertices_p2d[vert_id],
 					cv::FONT_HERSHEY_SIMPLEX, font_size, col);
@@ -245,7 +250,7 @@ namespace utils{
 				cv::format("Invalid tracking error type provided: %d\n",
 				_er_type));
 		}
-	}	
+	}
 	template<>
 	double getTrackingError<TrackErrT::MCD>(const cv::Mat &gt_corners, const cv::Mat &tracker_corners){
 		// compute the mean corner distance between the tracking result and the ground truth
@@ -312,7 +317,7 @@ namespace utils{
 		cv::Point2i gt_corners_int[4], tracker_corners_int[4];
 		Corners(gt_corners, border_size - min_x, border_size - min_y).points(gt_corners_int);
 		Corners(tracker_corners, border_size - min_x, border_size - min_y).points(tracker_corners_int);
-		
+
 		cv::Mat gt_img(img_height, img_width, CV_8UC1, cv::Scalar(0));
 		cv::Mat tracker_img(img_height, img_width, CV_8UC1, cv::Scalar(0));
 		fillConvexPoly(gt_img, gt_corners_int, 4, cv::Scalar(255), CV_AA);
@@ -472,13 +477,6 @@ namespace utils{
 		//printMatrix<double>(corners, "getCentroid :: corners");
 		//printMatrix<double>(centroid, "getCentroid :: centroid");
 		return cv::Point2d(centroid.at<double>(0, 0), centroid.at<double>(1, 0));
-	}
-
-	cv::Mat reshapePatch(const VectorXd &curr_patch, int img_height, int img_width, int n_channels){
-		cv::Mat  out_img_uchar(img_height, img_width,	n_channels == 1 ? CV_8UC1 : CV_8UC3);
-		cv::Mat(img_height, img_width, n_channels == 1 ? CV_64FC1 : CV_64FC3,
-			const_cast<double*>(curr_patch.data())).convertTo(out_img_uchar, out_img_uchar.type());
-		return out_img_uchar;	
 	}
 }
 _MTF_END_NAMESPACE

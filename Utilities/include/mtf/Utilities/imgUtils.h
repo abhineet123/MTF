@@ -596,6 +596,11 @@ namespace utils{
 	//! add Gaussian distributed random noise to the image
 	bool addGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, 
 		int n_channels,	double Mean = 0.0, double StdDev = 10.0);
+	cv::Mat reshapePatch(const VectorXd &curr_patch,
+		int img_height, int img_width, int n_channels = 1);
+	VectorXd reshapePatch(const cv::Mat &cv_patch,
+		int start_x = 0, int start_y = 0,
+		int end_x = -1, int end_y = -1);
 
 
 #ifdef ENABLE_OLD_IMG_GRAD
