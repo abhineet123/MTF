@@ -593,6 +593,12 @@ namespace utils{
 	//! write pixel values in the given image at the given locations
 	void writePixelsToImage(cv::Mat &img, const PixValT &pix_vals,
 		const mtf::PtsT &pts, int n_channels, cv::Mat &mask);
+	void writePixelsToImage(cv::Mat &img, const cv::Mat &pix_vals,
+		const mtf::PtsT &pts, int n_channels, cv::Mat &mask);
+	void writePixelsToImage(cv::Mat &img, const cv::Mat &pix_vals,
+		const mtf::CornersT &corners, int n_channels, cv::Mat &mask);
+	void writePixelsToImage(cv::Mat &img, const cv::Mat &pix_vals,
+		const cv::Mat &corners, int n_channels, cv::Mat &mask);
 	//! add Gaussian distributed random noise to the image
 	bool addGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, 
 		int n_channels,	double Mean = 0.0, double StdDev = 10.0);

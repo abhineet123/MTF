@@ -47,7 +47,7 @@ int main(int argc, char * argv[]){
 	mtf::SSM mos_ssm(mtf::getSSM("8"));
 	//! dummy AM - 3 channel SSD - to extract pixel values from the current image
 	mtf::AM mos_am(mtf::getAM("ssd3", "0"));
-	NoProcessing mos_pre_proc(mos_am->inputType());
+	NoFiltering mos_pre_proc(mos_am->inputType());
 	mos_pre_proc.initialize(input->getFrame());
 	mos_am->setCurrImg(mos_pre_proc.getFrame());
 

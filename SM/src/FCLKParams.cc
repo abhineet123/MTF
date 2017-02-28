@@ -1,11 +1,11 @@
 #include "mtf/SM/FCLKParams.h"
 
-#define FC_MAX_ITERS 10
-#define FC_EPSILON 0.01
+#define FC_MAX_ITERS 30
+#define FC_EPSILON 1e-4
 #define FC_HESS_TYPE 1
 #define FC_SECOND_ORDER_HESS false
-#define FC_CHAINED_WARP false
-#define FC_LEVEN_MARQ false
+#define FC_CHAINED_WARP true
+#define FC_LEVEN_MARQ true
 #define FC_LM_DELTA_INIT 0.01
 #define FC_LM_DELTA_UPDATE 10
 #define FC_ENABLE_LEARNING false

@@ -62,7 +62,7 @@ int main(int argc, char * argv[]) {
 
 
 	mtf::AMParams am_params(resx, resy);
-	mtf::SSDParams ssd_params(&am_params, ssd_show_template, ssd_forgetting_factor);
+	mtf::SSDParams ssd_params(&am_params, ssd_show_template);
 	mtf::SSD patch_extractor_am(&ssd_params);
 	mtf::SSMParams ssm_params(resx, resy);
 	mtf::TranslationParams trans_params(&ssm_params, debug_mode);
@@ -79,7 +79,7 @@ int main(int argc, char * argv[]) {
 
 	// Define matrix for extracted patches
 	MatrixXd extracted_patches(patch_size, n_extracted_patches);
-	NoProcessing no_proc;
+	NoFiltering no_proc;
 
 	for(int patch_id = 0; patch_id < n_extracted_patches; patch_id++){
 		int frame_id;

@@ -1,12 +1,12 @@
 #include "mtf/SM/ICLKParams.h"
 
-#define IC_MAX_ITERS 10
-#define IC_EPSILON 0.01
+#define IC_MAX_ITERS 30
+#define IC_EPSILON 1e-4
 #define IC_HESS_TYPE 0
 #define IC_SEC_ORD_HESS false
 #define IC_UPDATE_SSM false
-#define IC_CHAINED_WARP false
-#define IC_LEVEN_MARQ false
+#define IC_CHAINED_WARP true
+#define IC_LEVEN_MARQ true
 #define IC_LM_DELTA_INIT 0.01
 #define IC_LM_DELTA_UPDATE 10
 #define IC_ENABLE_LEARNING 0

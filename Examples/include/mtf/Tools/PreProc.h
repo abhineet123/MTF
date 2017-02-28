@@ -2,8 +2,8 @@
 #define MTF_PRE_PROC_H
 
 /**
-basic functions for preprocessing the raw input image 
-using filtering, resizing and histogram equalization  
+basic functions for preprocessing the raw input image
+using filtering, resizing and histogram equalization
 before using it for tracking
 */
 
@@ -17,19 +17,16 @@ struct PreProcBase{
 
 public:
 	typedef std::shared_ptr<PreProcBase> Ptr;
-	/**	
-	linked list of shared PreProc pointers to deal with heterogeneous output types 
+	/**
+	linked list of shared PreProc pointers to deal with heterogeneous output types
 	and multiple trackers efficiently
 	*/
 	Ptr next;
 	PreProcBase(int _output_type = CV_32FC1, double _resize_factor = 1,
 		bool _hist_eq = false) : next(nullptr), output_type(_output_type),
-		frame_id(-1), rgb_input(true), rgb_output(false), 
-		resize_factor(_resize_factor),	resize_images(false), 
-		hist_eq(_hist_eq){
-		rgb_output = output_type == CV_32FC3 || output_type == CV_8UC3;
-		if(resize_factor != 1){ resize_images = true; }
-	}
+		frame_id(-1), rgb_input(true), rgb_output(_output_type == CV_32FC3 || _output_type == CV_8UC3),
+		resize_factor(_resize_factor), resize_images(_resize_factor != 1),
+		hist_eq(_hist_eq){}
 	virtual ~PreProcBase(){
 		release();
 	}
@@ -39,7 +36,7 @@ public:
 		frame_rgb_uchar.release();
 		if(next.get()){ next->release(); }
 	}
-	void initialize(const cv::Mat &frame_raw, int _frame_id = -1){
+	void initialize(const cv::Mat &frame_raw, int _frame_id = -1, bool print_types = true){
 		if(_frame_id > 0 && frame_id == _frame_id){
 			//! this frame has already been processed
 			return;
@@ -47,10 +44,10 @@ public:
 		frame_id = _frame_id;
 		switch(frame_raw.type()){
 		case CV_8UC3:
-			printf("PreProc::Input type: CV_8UC3 ");
+			if(print_types){ printf("PreProc::Input type: CV_8UC3 "); }
 			break;
 		case CV_8UC1:
-			printf("PreProc::Input type: CV_8UC1 ");
+			if(print_types){ printf("PreProc::Input type: CV_8UC1 "); }
 			rgb_input = false;
 			break;
 		default:
@@ -59,7 +56,7 @@ public:
 		}
 		switch(output_type){
 		case CV_32FC1:
-			printf("Output type: CV_32FC1\n");
+			if(print_types){ printf("Output type: CV_32FC1\n"); }
 			if(rgb_input){
 				frame_rgb.create(frame_raw.rows, frame_raw.cols, CV_32FC3);
 			}
@@ -69,14 +66,14 @@ public:
 			}
 			break;
 		case CV_8UC1:
-			printf("Output type: CV_8UC1\n");
+			if(print_types){ printf("Output type: CV_8UC1\n"); }
 			frame_gs.create(frame_raw.rows, frame_raw.cols, CV_8UC1);
 			if(resize_images){
 				frame_resized.create(frame_raw.rows*resize_factor, frame_raw.cols*resize_factor, CV_8UC1);
 			}
 			break;
 		case CV_32FC3:
-			printf("Output type: CV_32FC3\n");
+			if(print_types){ printf("Output type: CV_32FC3\n"); }
 			if(!rgb_input){
 				frame_rgb_uchar.create(frame_raw.rows, frame_raw.cols, CV_8UC3);
 			}
@@ -86,7 +83,7 @@ public:
 			}
 			break;
 		case CV_8UC3:
-			printf("Output type: CV_8UC3\n");
+			if(print_types){ printf("Output type: CV_8UC3\n"); }
 			frame_rgb.create(frame_raw.rows, frame_raw.cols, CV_8UC3);
 			if(resize_images){
 				frame_resized.create(frame_raw.rows*resize_factor, frame_raw.cols*resize_factor, CV_8UC3);
@@ -109,6 +106,10 @@ public:
 	}
 	const cv::Mat& getFrame(){
 		return resize_images ? frame_resized : rgb_output ? frame_rgb : frame_gs;
+	}
+	const cv::Mat& getFrame(const cv::Mat &frame_raw, int _frame_id = -1){
+		update(frame_raw, _frame_id);
+		return getFrame();
 	}
 	void showFrame(std::string window_name){
 		cv::Mat  disp_img;
@@ -298,10 +299,15 @@ public:
 		cv::bilateralFilter(orig_img, img_gs, diameter, sigma_col, sigma_space);
 	}
 };
-struct NoProcessing : public PreProcBase{
-	NoProcessing(int _output_type = CV_32FC1,
-		double _resize_factor = 1, bool _hist_eq = false) : 
+struct NoFiltering : public PreProcBase{
+	NoFiltering(int _output_type = CV_32FC1,
+		double _resize_factor = 1, bool _hist_eq = false) :
 		PreProcBase(_output_type, _resize_factor, _hist_eq){}
+	NoFiltering(const cv::Mat &frame_raw, int _output_type = CV_32FC1,
+		double _resize_factor = 1, bool _hist_eq = false, int _frame_id = -1) :
+		PreProcBase(_output_type, _resize_factor, _hist_eq){
+		initialize(frame_raw, _frame_id, false);
+	}
 	void apply(cv::Mat &img_gs) const override{}
 };
 

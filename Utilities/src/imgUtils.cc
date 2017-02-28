@@ -1390,9 +1390,27 @@ namespace utils{
 				dist_x_min + dist_y_max, mask, use_mask, n_channels);
 		}
 	}
+	void writePixelsToImage(cv::Mat &img, const cv::Mat &pix_vals,
+		const mtf::PtsT &pts, int n_channels, cv::Mat &mask){
+		int img_size = pix_vals.rows*pix_vals.cols*n_channels;
+		writePixelsToImage(img, PixValT(Map<VectorXc>(pix_vals.data, img_size).cast<double>()),
+			pts, n_channels, mask);
+	}
+	void writePixelsToImage(cv::Mat &img, const cv::Mat &pix_vals,
+		const mtf::CornersT &corners, int n_channels, cv::Mat &mask){
+		int img_size = pix_vals.rows*pix_vals.cols*n_channels;
+		writePixelsToImage(img, PixValT(Map<VectorXc>(pix_vals.data, img_size).cast<double>()),
+			getPtsFromCorners(corners, pix_vals.cols, pix_vals.rows), n_channels, mask);		
+	}
+	void writePixelsToImage(cv::Mat &img, const cv::Mat &pix_vals,
+		const cv::Mat &corners, int n_channels, cv::Mat &mask){
+		int img_size = pix_vals.rows*pix_vals.cols*n_channels;
+		writePixelsToImage(img, PixValT(Map<VectorXc>(pix_vals.data, img_size).cast<double>()),
+			getPtsFromCorners(corners, pix_vals.cols, pix_vals.rows), n_channels, mask);		
+	}
 	//! adapted from http://answers.opencv.org/question/68589/adding-noise-to-image-opencv/
 	bool addGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst,
-		int n_channels,	double Mean, double StdDev){
+		int n_channels, double Mean, double StdDev){
 		if(mSrc.empty()){
 			printf("addGaussianNoise:: Error: Input Image is empty!");
 			return false;

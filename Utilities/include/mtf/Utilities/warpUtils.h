@@ -106,6 +106,9 @@ namespace utils{
 		double max_x = 0.5, double max_y = 0.5);
 	void getPtsFromCorners(PtsT &pts, const CornersT &corners,
 		int resx, int resy);
+	//! returning variant
+	PtsT getPtsFromCorners(const CornersT &corners,
+		int resx, int resy);
 	//! overload for OpenCV corners
 	PtsT getPtsFromCorners(const cv::Mat &corners_cv,int resx, int resy);
 	void getPtsFromCorners(PtsT &pts, const CornersT &corners,

@@ -62,7 +62,7 @@ inline InputBase* getInput(char _pipeline_type){
 
 inline PreProcBase* createPreProc(int output_type, const std::string &_pre_proc_type){
 	if(_pre_proc_type == "-1" || _pre_proc_type == "none"){
-		return new NoProcessing(output_type, img_resize_factor, pre_proc_hist_eq);
+		return new NoFiltering(output_type, img_resize_factor, pre_proc_hist_eq);
 	} else if(_pre_proc_type == "0" || _pre_proc_type == "gauss"){
 		return new GaussianSmoothing(output_type, img_resize_factor, pre_proc_hist_eq,
 			gauss_kernel_size, gauss_sigma_x, gauss_sigma_y);

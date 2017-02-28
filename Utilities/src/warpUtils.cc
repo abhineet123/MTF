@@ -40,15 +40,17 @@ namespace utils{
 		getNormUnitSquarePts(basis_pts, basis_corners, resx, resy);
 		getPtsFromCorners(pts, corners, basis_pts, basis_corners);
 	}
-	//! overload for OpenCV corners
-	PtsT getPtsFromCorners(const cv::Mat &corners_cv, int resx, int resy){
-		assert(corners_cv.rows == 2 && corners_cv.cols == 4);
-		CornersT corners_eig;
-		copyCVToEigen<double>(corners_eig, corners_cv);
+	//! returning variant
+	PtsT getPtsFromCorners(const CornersT &corners_eig, int resx, int resy){
 		PtsT pts;
 		pts.resize(Eigen::NoChange, resx*resy);
 		getPtsFromCorners(pts, corners_eig, resx, resy);
 		return pts;
+	}
+	//! overload for OpenCV corners
+	PtsT getPtsFromCorners(const cv::Mat &corners_cv, int resx, int resy){
+		assert(corners_cv.rows == 2 && corners_cv.cols == 4);
+		return getPtsFromCorners(Corners(corners_cv).eig(), resx, resy);
 	}
 	//! overload for precomputed basis corners and points
 	void getPtsFromCorners(PtsT &pts, const CornersT &corners,

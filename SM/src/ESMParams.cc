@@ -1,12 +1,12 @@
 #include "mtf/SM/ESMParams.h"
 
-#define ESM_MAX_ITERS 10
-#define ESM_EPSILON 0.01
-#define ESM_JAC_TYPE 0
-#define ESM_HESS_TYPE 0
+#define ESM_MAX_ITERS 30
+#define ESM_EPSILON 1e-4
+#define ESM_JAC_TYPE 1
+#define ESM_HESS_TYPE 2
 #define ESM_SEC_ORD_HESS false
-#define ESM_CHAINED_WARP false
-#define ESM_LEVEN_MARQ false
+#define ESM_CHAINED_WARP true
+#define ESM_LEVEN_MARQ true
 #define ESM_LM_DELTA_INIT 0.01
 #define ESM_LM_DELTA_UPDATE 10
 #define ESM_ENABLE_LEARNING false
