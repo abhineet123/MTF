@@ -1,6 +1,13 @@
+ifeq ($(OS),Windows_NT)
+MTF_LIB_INSTALL_DIR ?= Build
+MTF_HEADER_INSTALL_DIR ?= Build
+EIGEN_INCLUDE_DIRS ?= E:\Programming\Eigen\eigen-eigen-bf9c5810c7d6
+else
 MTF_LIB_INSTALL_DIR ?= /usr/local/lib
 MTF_HEADER_INSTALL_DIR ?= /usr/local/include
 EIGEN_INCLUDE_DIRS ?= /usr/local/include/eigen3 /usr/include/eigen3
+endif
+
 
 
 # enable optimization (or Release build)
@@ -88,6 +95,10 @@ endif
 ifeq (${spi}, 0)
 MTF_COMPILETIME_FLAGS += -D DISABLE_SPI
 MTF_RUNTIME_FLAGS += -D DISABLE_SPI
+endif
+
+ifeq ($(OS),Windows_NT)
+MTF_COMPILETIME_FLAGS += -I C:\OpenCV\build\include -I E:\Programming\C\boost_1_58_0
 endif
 
 ROOT_INCLUDE_DIR = include

@@ -7,6 +7,8 @@
 #define WARPED_GRAD_EPS 1e-8
 #define GRAD_EPS 1e-8
 #define HESS_EPS 1
+#define USE_UCHAR_INPUT false
+
 
 #define PIX_MAX 255.0
 #define PIX_MIN 0.0
@@ -22,9 +24,11 @@ struct ImgParams{
 	//! numerical increment/decrement used for computing image hessian and gradient
 	//! using the method of finite differences
 	double grad_eps, hess_eps;
+	bool use_uchar_input;
 	ImgParams(int _resx, int _resy,
 		double _grad_eps = GRAD_EPS,
-		double _hess_eps = HESS_EPS);
+		double _hess_eps = HESS_EPS,
+		bool use_uchar_input = USE_UCHAR_INPUT);
 	ImgParams(const ImgParams *img_params = nullptr);
 };
 
@@ -79,6 +83,8 @@ protected:
 	int frame_count;
 	//! offsets to use for computing the numerical image gradient and hessian
 	double grad_eps, hess_eps;
+	//! use 8 bit unsigned integral images as input
+	bool use_uchar_input;
 
 public:
 	/** convenience type if grayscale image is used as input by the AM */
@@ -90,7 +96,11 @@ public:
 
 	//! return the type of OpenCV Mat image the AM requires as input; 
 	//! typically either CV_32FC3 or CV_32FC1
-	virtual int inputType() const { return n_channels == 1 ? CV_32FC1 : CV_32FC3; }
+	virtual int inputType() const {
+		return use_uchar_input ?
+			n_channels == 1 ? CV_8UC1 : CV_8UC3 :
+			n_channels == 1 ? CV_32FC1 : CV_32FC3;
+	}
 
 	//! accessor methods; these are not defined as 'const' since an appearance model may like to
 	//! make some last moment changes to the variable being accessed before returning it to can avoid any 

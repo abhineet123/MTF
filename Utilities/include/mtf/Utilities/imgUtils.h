@@ -147,242 +147,6 @@ namespace utils{
 	template<typename PtsT>
 	void getPixVals(VectorXd &pix_vals,
 		const EigImgT &img, const PtsT &pts, int n_pix, int h, int w,
-		double norm_mult=1, double norm_add=0);
-
-	// *************************************************************************************** //
-	// ***** functions for single channel images that work directly on OpenCV Mat images ***** //
-	// *************************************************************************************** //
-	template<InterpType interp_type, BorderType border_type>
-	inline double getPixVal(const cv::Mat &img, double x, double y,
-		int h, int w, double overflow_val = 128.0){
-		throw std::invalid_argument(
-			cv::format("getPixVal :: Invalid interpolation type specified: %d",
-			interp_type));
-	}
-	// using nearest neighbor interpolation with constant border
-	template<>
-	inline double getPixVal<InterpType::Nearest, BorderType::Constant>(
-		const cv::Mat &img, double x, double y,
-		int h, int w, double overflow_val){
-		assert(img.rows == h && img.cols == w);
-
-		if(checkOverflow(x, y, h, w)){
-			return overflow_val;
-		}
-		int nx = static_cast<int>(rint(x));
-		int ny = static_cast<int>(rint(y));
-		return checkOverflow(nx, ny, h, w) ? overflow_val : img.at<float>(ny, nx);
-	}
-	// using nearest neighbor interpolation with replicated border
-	template<>
-	inline double getPixVal<InterpType::Nearest, BorderType::Replicate>(
-		const cv::Mat &img, double x, double y,
-		int h, int w, double overflow_val){
-		assert(img.rows == h && img.cols == w);
-
-		if(x > w - 1){ x = w - 1; } else if(x < 0){ x = 0; }
-		if(y > h - 1){ y = h - 1; } else if(y < 0){ y = 0; }
-
-		int nx = static_cast<int>(rint(x));
-		int ny = static_cast<int>(rint(y));
-		return checkOverflow(nx, ny, h, w) ? overflow_val : img.at<float>(ny, nx);
-	}
-	// using bilinear interpolation with constant border
-	template<>
-	inline double getPixVal<InterpType::Linear, BorderType::Constant>(
-		const cv::Mat &img, double x, double y,
-		int h, int w, double overflow_val){
-		assert(img.rows == h && img.cols == w);
-		if(checkOverflow(x, y, h, w)){
-			return overflow_val;
-		}
-		int lx = static_cast<int>(x);
-		int ly = static_cast<int>(y);
-		double dx = x - lx;
-		double dy = y - ly;
-		int ux = dx == 0 ? lx : lx + 1;
-		int uy = dy == 0 ? ly : ly + 1;
-
-		if(checkOverflow(lx, ly, h, w) || checkOverflow(ux, uy, h, w)){
-			return overflow_val;
-		}
-		return 	img.at<float>(ly, lx) * (1 - dx)*(1 - dy) +
-			img.at<float>(ly, ux) * dx*(1 - dy) +
-			img.at<float>(uy, lx) * (1 - dx)*dy +
-			img.at<float>(uy, ux) * dx*dy;
-	}
-	// using bilinear interpolation with replicated border
-	template<>
-	inline double getPixVal<InterpType::Linear, BorderType::Replicate>(
-		const cv::Mat &img, double x, double y,
-		int h, int w, double overflow_val){
-		assert(img.rows == h && img.cols == w);
-
-		if(x > w - 1){ x = w - 1; } else if(x < 0){ x = 0; }
-		if(y > h - 1){ y = h - 1; } else if(y < 0){ y = 0; }
-
-		int lx = static_cast<int>(x);
-		int ly = static_cast<int>(y);
-		double dx = x - lx;
-		double dy = y - ly;
-		int ux = dx == 0 ? lx : lx + 1;
-		int uy = dy == 0 ? ly : ly + 1;
-
-		return 	img.at<float>(ly, lx) * (1 - dx)*(1 - dy) +
-			img.at<float>(ly, ux) * dx*(1 - dy) +
-			img.at<float>(uy, lx) * (1 - dx)*dy +
-			img.at<float>(uy, ux) * dx*dy;
-	}	
-	template<typename PtsT>
-	void getPixValsSC(VectorXd &pix_vals,
-		const cv::Mat &img, const PtsT &pts, int n_pix, int h, int w,
-		double norm_mult = 1, double norm_add = 0);
-
-	// ************************************************************************************** //
-	// ***** functions for multi channel images that work directly on OpenCV Mat images ***** //
-	// ************************************************************************************** //
-
-	template<InterpType interp_type, BorderType border_type>
-	inline void getPixVal(double *pix_val, const cv::Mat &img, double x, double y,
-		int h, int w, double overflow_val = 128.0){
-		throw std::invalid_argument(
-			cv::format("getPixVal :: Invalid interpolation type specified: %d", 
-			interp_type));
-	}	
-	// using nearest neighbor interpolation with constant border
-	template<>
-	inline void getPixVal<InterpType::Nearest, BorderType::Constant>(
-		double *pix_val, const cv::Mat &img, double x, double y,
-		int h, int w, double overflow_val){
-		assert(img.rows == h && img.cols == w && img.type() == CV_32FC3);
-
-		if(checkOverflow(x, y, h, w)){
-			pix_val[0] = pix_val[1] = pix_val[2] = overflow_val;
-			return;
-		}
-		int nx = static_cast<int>(rint(x));
-		int ny = static_cast<int>(rint(y));
-		if(checkOverflow(nx, ny, h, w)){
-			pix_val[0] = pix_val[1] = pix_val[2] = overflow_val;
-		} else{
-			const float *pix_data = img.ptr<float>(ny);
-			pix_val[0] = pix_data[nx];
-			pix_val[1] = pix_data[nx + 1];
-			pix_val[2] = pix_data[nx + 2];
-		}
-	}
-	// using nearest neighbor interpolation with replicated border
-	template<>
-	inline void getPixVal<InterpType::Nearest, BorderType::Replicate>(
-		double *pix_val, const cv::Mat &img, double x, double y,
-		int h, int w, double overflow_val){
-		assert(img.rows == h && img.cols == w && img.type() == CV_32FC3);
-
-		if(x > w - 1){ x = w - 1; } else if(x < 0){ x = 0; }
-		if(y > h - 1){ y = h - 1; } else if(y < 0){ y = 0; }
-
-		int nx = static_cast<int>(rint(x));
-		int ny = static_cast<int>(rint(y));
-
-		if(checkOverflow(nx, ny, h, w)){
-			pix_val[0] = pix_val[1] = pix_val[2] = overflow_val;
-		} else{
-			const float *pix_data = img.ptr<float>(ny);
-			pix_val[0] = pix_data[nx];
-			pix_val[1] = pix_data[nx + 1];
-			pix_val[2] = pix_data[nx + 2];
-		}
-	}
-	// using bilinear interpolation with constant border
-	template<>
-	inline void getPixVal<InterpType::Linear, BorderType::Constant>(
-		double *pix_val, const cv::Mat &img, double x, double y,
-		int h, int w, double overflow_val){
-		assert(img.rows == h && img.cols == w && img.type() == CV_32FC3);
-
-		if(checkOverflow(x, y, h, w)){
-			pix_val[0] = pix_val[1] = pix_val[2] = overflow_val;
-			return;
-		}
-		int lx = static_cast<int>(x);
-		int ly = static_cast<int>(y);
-		double dx = x - lx;
-		double dy = y - ly;
-		int ux = dx == 0 ? lx : lx + 1;
-		int uy = dy == 0 ? ly : ly + 1;
-
-		if(checkOverflow(lx, ly, h, w) || checkOverflow(ux, uy, h, w)){
-			pix_val[0] = pix_val[1] = pix_val[2] = overflow_val;
-		} else{
-			double ly_lx = (1 - dx)*(1 - dy), ly_ux = dx*(1 - dy), uy_lx = (1 - dx)*dy, uy_ux = dx*dy;
-			const cv::Vec3f& pix_ly_lx = img.at<cv::Vec3f>(ly, lx);
-			const cv::Vec3f& pix_ly_ux = img.at<cv::Vec3f>(ly, ux);
-			const cv::Vec3f& pix_uy_lx = img.at<cv::Vec3f>(uy, lx);
-			const cv::Vec3f& pix_uy_ux = img.at<cv::Vec3f>(uy, ux);
-			pix_val[0] =
-				pix_ly_lx[0] * ly_lx +
-				pix_ly_ux[0] * ly_ux +
-				pix_uy_lx[0] * uy_lx +
-				pix_uy_ux[0] * uy_ux;
-			pix_val[1] =
-				pix_ly_lx[1] * ly_lx +
-				pix_ly_ux[1] * ly_ux +
-				pix_uy_lx[1] * uy_lx +
-				pix_uy_ux[1] * uy_ux;
-			pix_val[2] =
-				pix_ly_lx[2] * ly_lx +
-				pix_ly_ux[2] * ly_ux +
-				pix_uy_lx[2] * uy_lx +
-				pix_uy_ux[2] * uy_ux;
-		}
-	}
-	// using bilinear interpolation with replicated border
-	template<>
-	inline void getPixVal<InterpType::Linear, BorderType::Replicate>(
-		double *pix_val, const cv::Mat &img, double x, double y,
-		int h, int w, double overflow_val){
-		assert(img.rows == h && img.cols == w && img.type() == CV_32FC3);
-
-		if(x > w - 1){ x = w - 1; } else if(x < 0){ x = 0; }
-		if(y > h - 1){ y = h - 1; } else if(y < 0){ y = 0; }
-
-		int lx = static_cast<int>(x);
-		int ly = static_cast<int>(y);
-		double dx = x - lx;
-		double dy = y - ly;
-		int ux = dx == 0 ? lx : lx + 1;
-		int uy = dy == 0 ? ly : ly + 1;
-
-		if(checkOverflow(lx, ly, h, w) || checkOverflow(ux, uy, h, w)){
-			pix_val[0] = pix_val[1] = pix_val[2] = overflow_val;
-			return;
-		} else{
-			const cv::Vec3f& pix_ly_lx = img.at<cv::Vec3f>(ly, lx);
-			const cv::Vec3f& pix_ly_ux = img.at<cv::Vec3f>(ly, ux);
-			const cv::Vec3f& pix_uy_lx = img.at<cv::Vec3f>(uy, lx);
-			const cv::Vec3f& pix_uy_ux = img.at<cv::Vec3f>(uy, ux);
-			double ly_lx = (1 - dx)*(1 - dy), ly_ux = dx*(1 - dy), uy_lx = (1 - dx)*dy, uy_ux = dx*dy;
-
-			pix_val[0] =
-				pix_ly_lx[0] * ly_lx +
-				pix_ly_ux[0] * ly_ux +
-				pix_uy_lx[0] * uy_lx +
-				pix_uy_ux[0] * uy_ux;
-			pix_val[1] =
-				pix_ly_lx[1] * ly_lx +
-				pix_ly_ux[1] * ly_ux +
-				pix_uy_lx[1] * uy_lx +
-				pix_uy_ux[1] * uy_ux;
-			pix_val[2] =
-				pix_ly_lx[2] * ly_lx +
-				pix_ly_ux[2] * ly_ux +
-				pix_uy_lx[2] * uy_lx +
-				pix_uy_ux[2] * uy_ux;
-		}
-	}
-	template<typename PtsT>
-	void getPixVals(VectorXd &pix_vals,
-		const cv::Mat &img, const PtsT &pts, int n_pix, int h, int w,
 		double norm_mult = 1, double norm_add = 0);
 
 	//! get weighted pixel values using alpha as weighting factor 
@@ -390,12 +154,459 @@ namespace utils{
 	void getWeightedPixVals(VectorXd &pix_vals, const EigImgT &img, const PtsT &pts,
 		int frame_count, double alpha, bool use_running_avg, int n_pix,
 		int h, int w, double norm_mult, double norm_add);
-	//! multi channel version
-	void getWeightedPixVals(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-		int frame_count, double alpha, bool use_running_avg, int n_pix,
-		int h, int w, double pix_norm_mult, double pix_norm_add);
 
+	/************ functions for image gradient and Hessian ************/
+	void getWarpedImgGrad(PixGradT &warped_img_grad,
+		const EigImgT &img, const Matrix8Xd &warped_offset_pts,
+		double grad_eps, int n_pix,
+		int h, int w, double pix_mult_factor = 1.0);
+	template<InterpType mapping_type>
+	void getWarpedImgGrad(PixGradT &warped_img_grad,
+		const EigImgT &img, const VectorXd &intensity_map,
+		const Matrix8Xd &warped_offset_pts,
+		double grad_eps, int n_pix, int h, int w,
+		double pix_mult_factor = 1.0);
+	void getWarpedImgGrad(PixGradT &warped_img_grad, const EigImgT &img, bool weighted_mapping,
+		const VectorXd &intensity_map, const Matrix8Xd &warped_offset_pts,
+		double grad_eps, int n_pix, int h, int w, double pix_mult_factor = 1.0);
+	void getImgGrad(PixGradT &img_grad,
+		const EigImgT &img, const PtsT &pts,
+		double grad_eps, int n_pix, int h, int w,
+		double pix_mult_factor = 1.0);
+	// mapping enabled version
+	template<InterpType mapping_type>
+	void getImgGrad(PixGradT &img_grad, const EigImgT &img,
+		const VectorXd &intensity_map, const PtsT &pts,
+		double grad_eps, int n_pix, int h, int w,
+		double pix_mult_factor = 1.0);
+	void getImgGrad(PixGradT &img_grad, const EigImgT &img,
+		bool weighted_mapping, const VectorXd &intensity_map,
+		const PtsT &pts, double grad_eps, int n_pix, int h, int w,
+		double pix_mult_factor = 1.0);
+	void getWarpedImgHess(PixHessT &warped_img_hess,
+		const EigImgT &img, const PtsT &warped_pts,
+		const Matrix16Xd &warped_offset_pts, double hess_eps, int n_pix,
+		int h, int w, double pix_mult_factor = 1.0);
+	// mapped version
+	template<InterpType mapping_type>
+	void getWarpedImgHess(PixHessT &warped_img_hess,
+		const EigImgT &img, const VectorXd &intensity_map,
+		const PtsT &warped_pts, const Matrix16Xd &warped_offset_pts,
+		double hess_eps, int n_pix, int h, int w, double pix_mult_factor = 1.0);
+	void getWarpedImgHess(PixHessT &warped_img_hess, const EigImgT &img,
+		bool weighted_mapping, const VectorXd &intensity_map,
+		const PtsT &warped_pts, const Matrix16Xd &warped_offset_pts,
+		double hess_eps, int n_pix, int h, int w, double pix_mult_factor = 1.0);
+	void getImgHess(PixHessT &img_hess, const EigImgT &img,
+		const PtsT &pts, double hess_eps,
+		int n_pix, int h, int w, double pix_mult_factor = 1.0);
+	template<InterpType mapping_type>
+	void getImgHess(PixHessT &img_hess, const EigImgT &img, const VectorXd &intensity_map,
+		const PtsT &pts, double hess_eps, int n_pix, int h, int w,
+		double pix_mult_factor = 1.0);
+	void getImgHess(PixHessT &img_hess, const EigImgT &img, bool weighted_mapping,
+		const VectorXd &intensity_map, const PtsT &pts, double hess_eps, int n_pix,
+		int h, int w, double pix_mult_factor = 1.0);
+	// fits a bi cubic polynomial surface at each pixel location and computes the analytical hessian
+	// of this surface thus eliminating the need for finite difference approximations
+	void getImgHess(PixHessT &img_hess, const EigImgT &img,
+		const PtsT &pts, int n_pix, int h, int w);
 
+	namespace sc{
+
+		// *************************************************************************************** //
+		// ***** functions for single channel images that work directly on OpenCV Mat images ***** //
+		// *************************************************************************************** //
+
+		template<typename ScalarType, InterpType interp_type, BorderType border_type>
+		struct PixVal{
+			static inline double get(const cv::Mat &img, double x, double y,
+				int h, int w, double overflow_val = 128.0){
+				throw std::invalid_argument(
+					cv::format("get :: Invalid interpolation type specified: %d",
+					interp_type));
+			}
+		};
+		// using nearest neighbor interpolation with constant border
+		template<typename ScalarType>
+		struct PixVal < ScalarType, InterpType::Nearest, BorderType::Constant > {
+			static inline double get(
+				const cv::Mat &img, double x, double y,
+				int h, int w, double overflow_val = 128.0){
+				assert(img.rows == h && img.cols == w);
+
+				if(checkOverflow(x, y, h, w)){
+					return overflow_val;
+				}
+				int nx = static_cast<int>(rint(x));
+				int ny = static_cast<int>(rint(y));
+				return checkOverflow(nx, ny, h, w) ? overflow_val : img.at<ScalarType>(ny, nx);
+			}
+		};
+		// using nearest neighbor interpolation with replicated border
+		template<typename ScalarType>
+		struct PixVal < ScalarType, InterpType::Nearest, BorderType::Replicate > {
+			static inline double get(
+				const cv::Mat &img, double x, double y,
+				int h, int w, double overflow_val = 128.0){
+				assert(img.rows == h && img.cols == w);
+
+				if(x > w - 1){ x = w - 1; } else if(x < 0){ x = 0; }
+				if(y > h - 1){ y = h - 1; } else if(y < 0){ y = 0; }
+
+				int nx = static_cast<int>(rint(x));
+				int ny = static_cast<int>(rint(y));
+				return checkOverflow(nx, ny, h, w) ? overflow_val : img.at<ScalarType>(ny, nx);
+			}
+		};
+		// using bilinear interpolation with constant border
+		template<typename ScalarType>
+		struct PixVal < ScalarType, InterpType::Linear, BorderType::Constant > {
+			static inline double get(
+				const cv::Mat &img, double x, double y,
+				int h, int w, double overflow_val = 128.0){
+				assert(img.rows == h && img.cols == w);
+				if(checkOverflow(x, y, h, w)){
+					return overflow_val;
+				}
+				int lx = static_cast<int>(x);
+				int ly = static_cast<int>(y);
+				double dx = x - lx;
+				double dy = y - ly;
+				int ux = dx == 0 ? lx : lx + 1;
+				int uy = dy == 0 ? ly : ly + 1;
+
+				if(checkOverflow(lx, ly, h, w) || checkOverflow(ux, uy, h, w)){
+					return overflow_val;
+				}
+				return 	img.at<ScalarType>(ly, lx) * (1 - dx)*(1 - dy) +
+					img.at<ScalarType>(ly, ux) * dx*(1 - dy) +
+					img.at<ScalarType>(uy, lx) * (1 - dx)*dy +
+					img.at<ScalarType>(uy, ux) * dx*dy;
+			}
+		};
+		// using bilinear interpolation with replicated border
+		template<typename ScalarType>
+		struct PixVal < ScalarType, InterpType::Linear, BorderType::Replicate > {
+			static inline double get(
+				const cv::Mat &img, double x, double y,
+				int h, int w, double overflow_val = 128.0){
+				assert(img.rows == h && img.cols == w);
+
+				if(x > w - 1){ x = w - 1; } else if(x < 0){ x = 0; }
+				if(y > h - 1){ y = h - 1; } else if(y < 0){ y = 0; }
+
+				int lx = static_cast<int>(x);
+				int ly = static_cast<int>(y);
+				double dx = x - lx;
+				double dy = y - ly;
+				int ux = dx == 0 ? lx : lx + 1;
+				int uy = dy == 0 ? ly : ly + 1;
+
+				return 	img.at<ScalarType>(ly, lx) * (1 - dx)*(1 - dy) +
+					img.at<ScalarType>(ly, ux) * dx*(1 - dy) +
+					img.at<ScalarType>(uy, lx) * (1 - dx)*dy +
+					img.at<ScalarType>(uy, ux) * dx*dy;
+			}
+		};
+		template<typename ScalarType, typename PtsT>
+		void getPixVals(VectorXd &pix_vals,
+			const cv::Mat &img, const PtsT &pts, int n_pix, int h, int w,
+			double norm_mult = 1, double norm_add = 0);
+
+		/************ functions for image gradient and Hessian ************/
+
+		template<typename ScalarType = float>
+		void getWarpedImgGrad(PixGradT &warped_img_grad,
+			const cv::Mat &img, const Matrix8Xd &warped_offset_pts,
+			double grad_eps, int n_pix,
+			int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getImgGrad(PixGradT &img_grad,
+			const  cv::Mat &img, const PtsT &pts,
+			double grad_eps, int n_pix, int h, int w,
+			double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getWarpedImgHess(PixHessT &warped_img_hess,
+			const cv::Mat &img, const PtsT &warped_pts,
+			const Matrix16Xd &warped_offset_pts, double hess_eps, int n_pix,
+			int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getImgHess(PixHessT &img_hess, const cv::Mat &img,
+			const PtsT &pts, double hess_eps,
+			int n_pix, int h, int w, double pix_mult_factor = 1.0);
+		// mapped versions
+		template<typename ScalarType = float, InterpType mapping_type>
+		void getWarpedImgGrad(PixGradT &warped_img_grad,
+			const cv::Mat &img, const VectorXd &intensity_map,
+			const Matrix8Xd &warped_offset_pts, double grad_eps,
+			int n_pix, int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getWarpedImgGrad(PixGradT &warped_img_grad, const cv::Mat &img,
+			bool weighted_mapping, const VectorXd &intensity_map,
+			const Matrix8Xd &warped_offset_pts, double grad_eps,
+			int n_pix, int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float, InterpType mapping_type>
+		void getImgGrad(PixGradT &img_grad, const cv::Mat &img,
+			const VectorXd &intensity_map, const PtsT &pts,
+			double grad_eps, int n_pix, int h, int w,
+			double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getImgGrad(PixGradT &img_grad, const cv::Mat &img,
+			bool weighted_mapping, const VectorXd &intensity_map,
+			const PtsT &pts, double grad_eps, int n_pix, int h, int w,
+			double pix_mult_factor = 1.0);
+		template<typename ScalarType = float, InterpType mapping_type>
+		void getWarpedImgHess(PixHessT &warped_img_hess,
+			const cv::Mat &img, const VectorXd &intensity_map,
+			const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
+			double hess_eps, int n_pix, int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getWarpedImgHess(PixHessT &warped_img_hess,
+			const cv::Mat &img, bool weighted_mapping, const VectorXd &intensity_map,
+			const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
+			double hess_eps, int n_pix, int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float, InterpType mapping_type>
+		void getImgHess(PixHessT &img_hess, const cv::Mat &img,
+			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
+			int n_pix, int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getImgHess(PixHessT &img_hess, const cv::Mat &img, bool weighted_mapping,
+			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
+			int n_pix, int h, int w, double pix_mult_factor = 1.0);
+	}
+
+	namespace mc{
+
+		// ************************************************************************************** //
+		// ***** functions for multi channel images that work directly on OpenCV Mat images ***** //
+		// ************************************************************************************** //
+
+		template<typename ScalarType, InterpType interp_type, BorderType border_type>
+		struct PixVal{
+			static inline void get(double *pix_val, const cv::Mat &img, double x, double y,
+				int h, int w, double overflow_val = 128.0){
+				throw std::invalid_argument(
+					cv::format("get :: Invalid interpolation type specified: %d",
+					interp_type));
+			}
+		};
+		// using nearest neighbor interpolation with constant border
+		template<typename ScalarType>
+		struct PixVal < ScalarType, InterpType::Nearest, BorderType::Constant > {
+			static inline void get(
+				double *pix_val, const cv::Mat &img, double x, double y,
+				int h, int w, double overflow_val = 128.0){
+				assert(img.rows == h && img.cols == w && img.type() == CV_32FC3);
+
+				if(checkOverflow(x, y, h, w)){
+					pix_val[0] = pix_val[1] = pix_val[2] = overflow_val;
+					return;
+				}
+				int nx = static_cast<int>(rint(x));
+				int ny = static_cast<int>(rint(y));
+				if(checkOverflow(nx, ny, h, w)){
+					pix_val[0] = pix_val[1] = pix_val[2] = overflow_val;
+				} else{
+					const ScalarType *pix_data = img.ptr<ScalarType>(ny);
+					pix_val[0] = pix_data[nx];
+					pix_val[1] = pix_data[nx + 1];
+					pix_val[2] = pix_data[nx + 2];
+				}
+			}
+		};
+		// using nearest neighbor interpolation with replicated border
+		template<typename ScalarType>
+		struct PixVal < ScalarType, InterpType::Nearest, BorderType::Replicate > {
+			static inline void get(
+				double *pix_val, const cv::Mat &img, double x, double y,
+				int h, int w, double overflow_val = 128.0){
+				assert(img.rows == h && img.cols == w && img.type() == CV_32FC3);
+
+				if(x > w - 1){ x = w - 1; } else if(x < 0){ x = 0; }
+				if(y > h - 1){ y = h - 1; } else if(y < 0){ y = 0; }
+
+				int nx = static_cast<int>(rint(x));
+				int ny = static_cast<int>(rint(y));
+
+				if(checkOverflow(nx, ny, h, w)){
+					pix_val[0] = pix_val[1] = pix_val[2] = overflow_val;
+				} else{
+					const ScalarType *pix_data = img.ptr<ScalarType>(ny);
+					pix_val[0] = pix_data[nx];
+					pix_val[1] = pix_data[nx + 1];
+					pix_val[2] = pix_data[nx + 2];
+				}
+			}
+		};
+		// using bilinear interpolation with constant border
+		template<typename ScalarType>
+		struct PixVal < ScalarType, InterpType::Linear, BorderType::Constant > {
+			static inline void get(
+				double *pix_val, const cv::Mat &img, double x, double y,
+				int h, int w, double overflow_val = 128.0){
+				assert(img.rows == h && img.cols == w && img.type() == CV_32FC3);
+
+				typedef cv::Vec<ScalarType, 3> Vec;
+
+				if(checkOverflow(x, y, h, w)){
+					pix_val[0] = pix_val[1] = pix_val[2] = overflow_val;
+					return;
+				}
+				int lx = static_cast<int>(x);
+				int ly = static_cast<int>(y);
+				double dx = x - lx;
+				double dy = y - ly;
+				int ux = dx == 0 ? lx : lx + 1;
+				int uy = dy == 0 ? ly : ly + 1;
+
+				if(checkOverflow(lx, ly, h, w) || checkOverflow(ux, uy, h, w)){
+					pix_val[0] = pix_val[1] = pix_val[2] = overflow_val;
+				} else{
+					double ly_lx = (1 - dx)*(1 - dy), ly_ux = dx*(1 - dy), uy_lx = (1 - dx)*dy, uy_ux = dx*dy;
+					const Vec& pix_ly_lx = img.at<Vec>(ly, lx);
+					const Vec& pix_ly_ux = img.at<Vec>(ly, ux);
+					const Vec& pix_uy_lx = img.at<Vec>(uy, lx);
+					const Vec& pix_uy_ux = img.at<Vec>(uy, ux);
+					pix_val[0] =
+						pix_ly_lx[0] * ly_lx +
+						pix_ly_ux[0] * ly_ux +
+						pix_uy_lx[0] * uy_lx +
+						pix_uy_ux[0] * uy_ux;
+					pix_val[1] =
+						pix_ly_lx[1] * ly_lx +
+						pix_ly_ux[1] * ly_ux +
+						pix_uy_lx[1] * uy_lx +
+						pix_uy_ux[1] * uy_ux;
+					pix_val[2] =
+						pix_ly_lx[2] * ly_lx +
+						pix_ly_ux[2] * ly_ux +
+						pix_uy_lx[2] * uy_lx +
+						pix_uy_ux[2] * uy_ux;
+				}
+			}
+		};
+		// using bilinear interpolation with replicated border
+		template<typename ScalarType>
+		struct PixVal < ScalarType, InterpType::Linear, BorderType::Replicate > {
+			static inline void get(
+				double *pix_val, const cv::Mat &img, double x, double y,
+				int h, int w, double overflow_val = 128.0){
+				assert(img.rows == h && img.cols == w && img.type() == CV_32FC3);
+
+				typedef cv::Vec<ScalarType, 3> Vec;
+
+				if(x > w - 1){ x = w - 1; } else if(x < 0){ x = 0; }
+				if(y > h - 1){ y = h - 1; } else if(y < 0){ y = 0; }
+
+				int lx = static_cast<int>(x);
+				int ly = static_cast<int>(y);
+				double dx = x - lx;
+				double dy = y - ly;
+				int ux = dx == 0 ? lx : lx + 1;
+				int uy = dy == 0 ? ly : ly + 1;
+
+				if(checkOverflow(lx, ly, h, w) || checkOverflow(ux, uy, h, w)){
+					pix_val[0] = pix_val[1] = pix_val[2] = overflow_val;
+					return;
+				} else{
+					const Vec& pix_ly_lx = img.at<Vec>(ly, lx);
+					const Vec& pix_ly_ux = img.at<Vec>(ly, ux);
+					const Vec& pix_uy_lx = img.at<Vec>(uy, lx);
+					const Vec& pix_uy_ux = img.at<Vec>(uy, ux);
+					double ly_lx = (1 - dx)*(1 - dy), ly_ux = dx*(1 - dy), uy_lx = (1 - dx)*dy, uy_ux = dx*dy;
+
+					pix_val[0] =
+						pix_ly_lx[0] * ly_lx +
+						pix_ly_ux[0] * ly_ux +
+						pix_uy_lx[0] * uy_lx +
+						pix_uy_ux[0] * uy_ux;
+					pix_val[1] =
+						pix_ly_lx[1] * ly_lx +
+						pix_ly_ux[1] * ly_ux +
+						pix_uy_lx[1] * uy_lx +
+						pix_uy_ux[1] * uy_ux;
+					pix_val[2] =
+						pix_ly_lx[2] * ly_lx +
+						pix_ly_ux[2] * ly_ux +
+						pix_uy_lx[2] * uy_lx +
+						pix_uy_ux[2] * uy_ux;
+				}
+			}
+		};
+		template<typename ScalarType = float, typename PtsT>
+		void getPixVals(VectorXd &pix_vals,
+			const cv::Mat &img, const PtsT &pts, int n_pix, int h, int w,
+			double norm_mult = 1, double norm_add = 0);
+
+		//! get weighted pixel values using alpha as weighting factor 
+		//! between existing and new pixel values
+		template<typename ScalarType = float>
+		void getWeightedPixVals(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
+			int frame_count, double alpha, bool use_running_avg, int n_pix,
+			int h, int w, double pix_norm_mult, double pix_norm_add);
+		
+		/************ functions for image gradient and Hessian ************/
+
+		template<typename ScalarType = float>
+		void getWarpedImgGrad(PixGradT &warped_img_grad,
+			const cv::Mat &img, const Matrix8Xd &warped_offset_pts,
+			double grad_eps, int n_pix,
+			int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getImgGrad(PixGradT &img_grad,
+			const  cv::Mat &img, const PtsT &pts,
+			double grad_eps, int n_pix, int h, int w,
+			double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getWarpedImgHess(PixHessT &warped_img_hess,
+			const cv::Mat &img, const PtsT &warped_pts,
+			const Matrix16Xd &warped_offset_pts, double hess_eps, int n_pix,
+			int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getImgHess(PixHessT &img_hess, const cv::Mat &img,
+			const PtsT &pts, double hess_eps,
+			int n_pix, int h, int w, double pix_mult_factor = 1.0);
+		// mapped versions
+		template<typename ScalarType = float, InterpType mapping_type>
+		void getWarpedImgGrad(PixGradT &warped_img_grad,
+			const cv::Mat &img, const VectorXd &intensity_map,
+			const Matrix8Xd &warped_offset_pts, double grad_eps,
+			int n_pix, int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getWarpedImgGrad(PixGradT &warped_img_grad, const cv::Mat &img,
+			bool weighted_mapping, const VectorXd &intensity_map,
+			const Matrix8Xd &warped_offset_pts, double grad_eps,
+			int n_pix, int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float, InterpType mapping_type>
+		void getImgGrad(PixGradT &img_grad, const cv::Mat &img,
+			const VectorXd &intensity_map, const PtsT &pts,
+			double grad_eps, int n_pix, int h, int w,
+			double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getImgGrad(PixGradT &img_grad, const cv::Mat &img,
+			bool weighted_mapping, const VectorXd &intensity_map,
+			const PtsT &pts, double grad_eps, int n_pix, int h, int w,
+			double pix_mult_factor = 1.0);
+		template<typename ScalarType = float, InterpType mapping_type>
+		void getWarpedImgHess(PixHessT &warped_img_hess,
+			const cv::Mat &img, const VectorXd &intensity_map,
+			const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
+			double hess_eps, int n_pix, int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getWarpedImgHess(PixHessT &warped_img_hess,
+			const cv::Mat &img, bool weighted_mapping, const VectorXd &intensity_map,
+			const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
+			double hess_eps, int n_pix, int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float, InterpType mapping_type>
+		void getImgHess(PixHessT &img_hess, const cv::Mat &img,
+			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
+			int n_pix, int h, int w, double pix_mult_factor = 1.0);
+		template<typename ScalarType = float>
+		void getImgHess(PixHessT &img_hess, const cv::Mat &img, bool weighted_mapping,
+			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
+			int n_pix, int h, int w, double pix_mult_factor = 1.0);
+	}
 	/*********** functions for mapping pixel values *******************/
 
 	//! map pixel values using the given intensity map
@@ -421,7 +632,7 @@ namespace utils{
 	}
 	// maps a vector of pixel values using the given intensity map; templated on the type of mapping to be done
 	template<InterpType interp_type>
-	inline void mapPixVals(VectorXd &dst_pix_vals, const VectorXd &src_pix_vals, 
+	inline void mapPixVals(VectorXd &dst_pix_vals, const VectorXd &src_pix_vals,
 		const VectorXd &intensity_map, int n_pix){
 		for(int i = 0; i < n_pix; i++){
 			dst_pix_vals(i) = mapPixVal<interp_type>(src_pix_vals(i), intensity_map);
@@ -461,134 +672,20 @@ namespace utils{
 	double biCubicHessYX(const Matrix4d &bicubic_coeff, double x, double y);
 	double biCubicHessXY(const Matrix4d &bicubic_coeff, double x, double y);
 
-
-	/************ functions defined in img_utils.cc ************/
-
-	void getWarpedImgGrad(PixGradT &warped_img_grad,
-		const EigImgT &img, const Matrix8Xd &warped_offset_pts,
-		double grad_eps, int n_pix,
-		int h, int w, double pix_mult_factor = 1.0);
-
-	template<InterpType mapping_type>
-	void getWarpedImgGrad(PixGradT &warped_img_grad,
-		const EigImgT &img, const VectorXd &intensity_map,
-		const Matrix8Xd &warped_offset_pts,
-		double grad_eps, int n_pix, int h, int w,
-		double pix_mult_factor=1.0);
-	void getWarpedImgGrad(PixGradT &warped_img_grad,const EigImgT &img, bool weighted_mapping,
-		const VectorXd &intensity_map, const Matrix8Xd &warped_offset_pts,
-		double grad_eps, int n_pix, int h, int w, double pix_mult_factor = 1.0);
-	void getImgGrad(PixGradT &img_grad,
-		const EigImgT &img, const PtsT &pts,
-		double grad_eps, int n_pix, int h, int w,
-		double pix_mult_factor = 1.0);
-	// mapping enabled version
-	template<InterpType mapping_type>
-	void getImgGrad(PixGradT &img_grad, const EigImgT &img,
-		const VectorXd &intensity_map, const PtsT &pts,
-		double grad_eps, int n_pix, int h, int w,
-		double pix_mult_factor = 1.0);
-	void getImgGrad(PixGradT &img_grad, const EigImgT &img,
-		bool weighted_mapping, const VectorXd &intensity_map,
-		const PtsT &pts, double grad_eps, int n_pix, int h, int w,
-		double pix_mult_factor = 1.0);
-	void getWarpedImgHess(PixHessT &warped_img_hess,
-		const EigImgT &img, const PtsT &warped_pts,
-		const Matrix16Xd &warped_offset_pts, double hess_eps, int n_pix,
-		int h, int w, double pix_mult_factor = 1.0);
-	// mapped version
-	template<InterpType mapping_type>
-	void getWarpedImgHess(PixHessT &warped_img_hess,
-		const EigImgT &img, const VectorXd &intensity_map,
-		const PtsT &warped_pts, const Matrix16Xd &warped_offset_pts,
-		double hess_eps, int n_pix, int h, int w, double pix_mult_factor=1.0);
-	void getWarpedImgHess(PixHessT &warped_img_hess, const EigImgT &img, 
-		bool weighted_mapping, const VectorXd &intensity_map,
-		const PtsT &warped_pts, const Matrix16Xd &warped_offset_pts,
-		double hess_eps, int n_pix, int h, int w, double pix_mult_factor = 1.0);
-	void getImgHess(PixHessT &img_hess, const EigImgT &img,
-		const PtsT &pts, double hess_eps,
-		int n_pix, int h, int w, double pix_mult_factor = 1.0);
-	template<InterpType mapping_type>
-	void getImgHess(PixHessT &img_hess, const EigImgT &img, const VectorXd &intensity_map,
-		const PtsT &pts, double hess_eps,int n_pix, int h, int w, 
-		double pix_mult_factor = 1.0);
-	void getImgHess(PixHessT &img_hess, const EigImgT &img, bool weighted_mapping,
-		const VectorXd &intensity_map, const PtsT &pts, double hess_eps, int n_pix,
-		int h, int w, double pix_mult_factor = 1.0);
-	// fits a bi cubic polynomial surface at each pixel location and computes the analytical hessian
-	// of this surface thus eliminating the need for finite difference approximations
-	void getImgHess(PixHessT &img_hess, const EigImgT &img,
-		const PtsT &pts, int n_pix, int h, int w);
-
-	//----------------------------------------------------------- //
-	// ---------------- for multi channel images ---------------- //
-	//----------------------------------------------------------- //
-
-	void getWarpedImgGrad(PixGradT &warped_img_grad,
-		const cv::Mat &img, const Matrix8Xd &warped_offset_pts,
-		double grad_eps, int n_pix,
-		int h, int w, double pix_mult_factor = 1.0);
-	void getImgGrad(PixGradT &img_grad,
-		const  cv::Mat &img, const PtsT &pts,
-		double grad_eps, int n_pix, int h, int w,
-		double pix_mult_factor = 1.0);
-	void getWarpedImgHess(PixHessT &warped_img_hess,
-		const cv::Mat &img, const PtsT &warped_pts,
-		const Matrix16Xd &warped_offset_pts, double hess_eps, int n_pix,
-		int h, int w, double pix_mult_factor = 1.0);
-	void getImgHess(PixHessT &img_hess, const cv::Mat &img,
-		const PtsT &pts, double hess_eps,
-		int n_pix, int h, int w, double pix_mult_factor = 1.0);
-	// mapped versions
-	template<InterpType mapping_type>
-	void getWarpedImgGrad(PixGradT &warped_img_grad,
-		const cv::Mat &img, const VectorXd &intensity_map,
-		const Matrix8Xd &warped_offset_pts, double grad_eps,
-		int n_pix, int h, int w, double pix_mult_factor = 1.0);
-	void getWarpedImgGrad(PixGradT &warped_img_grad, const cv::Mat &img, 
-		bool weighted_mapping, const VectorXd &intensity_map,
-		const Matrix8Xd &warped_offset_pts, double grad_eps,
-		int n_pix, int h, int w, double pix_mult_factor = 1.0);
-	template<InterpType mapping_type>
-	void getImgGrad(PixGradT &img_grad, const cv::Mat &img,
-		const VectorXd &intensity_map, const PtsT &pts,
-		double grad_eps, int n_pix, int h, int w,
-		double pix_mult_factor = 1.0);
-	void getImgGrad(PixGradT &img_grad, const cv::Mat &img,
-		bool weighted_mapping, const VectorXd &intensity_map,
-		const PtsT &pts, double grad_eps, int n_pix, int h, int w,
-		double pix_mult_factor = 1.0);
-	template<InterpType mapping_type>
-	void getWarpedImgHess(PixHessT &warped_img_hess,
-		const cv::Mat &img, const VectorXd &intensity_map,
-		const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
-		double hess_eps, int n_pix, int h, int w, double pix_mult_factor = 1.0);
-	void getWarpedImgHess(PixHessT &warped_img_hess,
-		const cv::Mat &img, bool weighted_mapping, const VectorXd &intensity_map,
-		const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
-		double hess_eps, int n_pix, int h, int w, double pix_mult_factor = 1.0);
-	template<InterpType mapping_type>
-	void getImgHess(PixHessT &img_hess, const cv::Mat &img,
-		const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
-		int n_pix, int h, int w, double pix_mult_factor = 1.0);
-	void getImgHess(PixHessT &img_hess, const cv::Mat &img, bool weighted_mapping,
-		const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
-		int n_pix, int h, int w, double pix_mult_factor=1.0);
-
 	//! Miscellaneous image related utility functions
 	cv::Mat convertFloatImgToUchar(cv::Mat &img, int nchannels);
 	void generateWarpedImg(cv::Mat &warped_img, const cv::Mat &warped_corners,
 		const mtf::PtsT &warped_pts, const mtf::PixValT orig_patch,
 		const cv::Mat &orig_img, int img_width, int img_height,
-		int n_pts, int background_type, bool show_warped_img=false, 
-		const char* win_name="warped_img");
+		int n_pts, int background_type, bool show_warped_img = false,
+		const char* win_name = "warped_img");
+	template<typename ScalarType = float>
 	void generateInverseWarpedImg(cv::Mat &warped_img, const mtf::PtsT &warped_pts,
 		const cv::Mat &orig_img, const mtf::PtsT &orig_pts,
 		int img_width, int img_height, int n_pts, bool show_warped_img = false,
-		const char* win_name="warped_img");
-	void generateInverseWarpedImg(cv::Mat &warped_img, const PixValT &pix_vals, 
-		int img_width, int img_height,	int n_pts, bool show_warped_img, 
+		const char* win_name = "warped_img");
+	void generateInverseWarpedImg(cv::Mat &warped_img, const PixValT &pix_vals,
+		int img_width, int img_height, int n_pts, bool show_warped_img,
 		const char* win_name = "warped_img");
 	//! write pixel values in the given image at the given locations
 	void writePixelsToImage(cv::Mat &img, const PixValT &pix_vals,
@@ -600,8 +697,8 @@ namespace utils{
 	void writePixelsToImage(cv::Mat &img, const cv::Mat &pix_vals,
 		const cv::Mat &corners, int n_channels, cv::Mat &mask);
 	//! add Gaussian distributed random noise to the image
-	bool addGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst, 
-		int n_channels,	double Mean = 0.0, double StdDev = 10.0);
+	bool addGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst,
+		int n_channels, double Mean = 0.0, double StdDev = 10.0);
 	cv::Mat reshapePatch(const VectorXd &curr_patch,
 		int img_height, int img_width, int n_channels = 1);
 	VectorXd reshapePatch(const cv::Mat &cv_patch,

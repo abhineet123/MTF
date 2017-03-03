@@ -13,9 +13,12 @@ public:
 	typedef CascadeParams ParamType;
 	ParamType params;
 
-	CascadeTracker(const vector<TrackerBase*> _trackers, const ParamType *casc_params);
+	CascadeTracker(const vector<TrackerBase*> _trackers,
+		const ParamType *casc_params=nullptr);
 	void initialize(const cv::Mat &corners) override;
 	void update() override;
+	using CompositeBase::update;
+	using CompositeBase::initialize;
 	void setRegion(const cv::Mat& corners)  override;
 	const cv::Mat& getRegion()  override{ return trackers[n_trackers - 1]->getRegion(); }
 	void setImage(const cv::Mat &img) override;

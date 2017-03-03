@@ -40,18 +40,36 @@ void ZNCC::initializePixVals(const Matrix2Xd& init_pts) {
 		It.resize(patch_size);
 	}
 	++frame_count;
-	switch(n_channels){
-	case 1:
-		utils::getPixVals(I0, curr_img, init_pts, n_pix,
-			img_height, img_width);
-		break;
-	case 3:
-		utils::getPixVals(I0, curr_img_cv, init_pts, n_pix,
-			img_height, img_width);
-		break;
-	default:
-		mc_not_implemeted(ZNCC::initializePixVals, n_channels);
+
+	if(use_uchar_input){
+		switch(n_channels){
+		case 1:
+			utils::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+				img_height, img_width);
+			break;
+		case 3:
+			utils::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+				img_height, img_width);
+			break;
+		default:
+			mc_not_implemeted(ZNCC::initializePixVals, n_channels);
+		}
+	} else{
+		switch(n_channels){
+		case 1:
+			utils::getPixVals(I0, curr_img, init_pts, n_pix,
+				img_height, img_width);
+			break;
+		case 3:
+			utils::getPixVals<float>(I0, curr_img_cv, init_pts, n_pix,
+				img_height, img_width);
+			break;
+		default:
+			mc_not_implemeted(ZNCC::initializePixVals, n_channels);
+		}
 	}
+
+
 	I0_mean = I0.mean();
 	I0 = (I0.array() - I0_mean);
 
@@ -73,16 +91,31 @@ void ZNCC::initializePixVals(const Matrix2Xd& init_pts) {
 
 void ZNCC::updatePixVals(const Matrix2Xd& curr_pts) {
 	assert(curr_pts.cols() == n_pix);
-	switch(n_channels){
-	case 1:
-		utils::getPixVals(It, curr_img, curr_pts, n_pix, img_height, img_width); 
-		break;
-	case 3:
-		utils::getPixVals(It, curr_img_cv, curr_pts, n_pix, img_height, img_width); 
-		break;
-	default:
-		mc_not_implemeted(ZNCC::updatePixVals, n_channels);
+
+	if(use_uchar_input){
+		switch(n_channels){
+		case 1:
+			utils::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width);
+			break;
+		case 3:
+			utils::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width);
+			break;
+		default:
+			mc_not_implemeted(ZNCC::updatePixVals, n_channels);
+		}
+	} else{
+		switch(n_channels){
+		case 1:
+			utils::getPixVals(It, curr_img, curr_pts, n_pix, img_height, img_width);
+			break;
+		case 3:
+			utils::getPixVals<float>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width);
+			break;
+		default:
+			mc_not_implemeted(ZNCC::updatePixVals, n_channels);
+		}
 	}
+
 	It_mean = It.mean();
 	It = (It.array() - It_mean);
 

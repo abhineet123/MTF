@@ -117,23 +117,7 @@ SSDBase(scv_params, _n_channels), params(scv_params), init_img(0, 0, 0){
 }
 
 void SCV::initializePixVals(const Matrix2Xd& init_pts){
-	assert(init_pts.cols() == n_pix);
-	if(!is_initialized.pix_vals){
-		I0.resize(patch_size);
-		It.resize(patch_size);
-	}
-	switch(n_channels){
-	case 1:
-		utils::getPixVals(I0, curr_img, init_pts, n_pix,
-			img_height, img_width, pix_norm_mult, pix_norm_add);
-		break;
-	case 3:
-		utils::getPixVals(I0, curr_img_cv, init_pts, n_pix,
-			img_height, img_width, pix_norm_mult, pix_norm_add);
-		break;
-	default:
-		mc_not_implemeted(SCV::initializePixVals, n_channels);
-	}
+	ImageBase::initializePixVals(init_pts);
 	//if (pix_norm_mult != 1.0){ init_pix_vals /= pix_norm_mult; }
 	//if (pix_norm_add != 0.0){ init_pix_vals = init_pix_vals.array() + pix_norm_add; }
 	if(params.hist_type == HistType::BSpline){
@@ -153,81 +137,31 @@ void SCV::initializePixVals(const Matrix2Xd& init_pts){
 	if(params.mapped_gradient){
 		// save a copy of the initial image to recompute the mapped image gradient when the intensity
 		// map is updated with a new image
-		switch(n_channels){
-		case 1:
+
+		if(!use_uchar_input && n_channels == 1){
 			_init_img = curr_img;
 			new (&init_img) EigImgT(_init_img.data(), _init_img.rows(), _init_img.cols());
-			break;
-		case 3:
+		} else{
 			init_img_cv = curr_img_cv.clone();
-			break;
-		default:
-			mc_not_implemeted(SCV::initializePixVals, n_channels);
 		}
-	}
-	if(!is_initialized.pix_vals){
-		It = I0;
-		is_initialized.pix_vals = true;
 	}
 }
 
 void SCV::initializePixGrad(const Matrix2Xd &_init_pts){
-	assert(_init_pts.cols() == n_pix);
-	if(!is_initialized.pix_grad){
-		dI0_dx.resize(patch_size, Eigen::NoChange);
-		dIt_dx.resize(patch_size, Eigen::NoChange);
-	}
-	switch(n_channels){
-	case 1:
-		utils::getImgGrad(dI0_dx, curr_img, _init_pts, grad_eps, n_pix,
-			img_height, img_width, pix_norm_mult);
-		break;
-	case 3:
-		utils::getImgGrad(dI0_dx, curr_img_cv, _init_pts, grad_eps, n_pix,
-			img_height, img_width, pix_norm_mult);
-		break;
-	default:
-		mc_not_implemeted(SCV::initializePixGrad, n_channels);
-	}
+	ImageBase::initializePixGrad(_init_pts);
 	if(params.mapped_gradient){
 		// save a copy of the initial points to recompute the mapped gradient of the initial image
 		// when the intensity map is updated with a new image
 		init_pts = _init_pts;
 	}
-	if(!is_initialized.pix_grad){
-		setCurrPixGrad(getInitPixGrad());
-		is_initialized.pix_grad = true;
-	}
 }
 
 void SCV::initializePixGrad(const Matrix8Xd &warped_offset_pts){
-	assert(warped_offset_pts.cols() == n_pix);
-	if(!is_initialized.pix_grad){
-		dI0_dx.resize(patch_size, Eigen::NoChange);
-		dIt_dx.resize(patch_size, Eigen::NoChange);
-	}
-	switch(n_channels){
-	case 1:
-		utils::getWarpedImgGrad(dI0_dx,
-			curr_img, warped_offset_pts, grad_eps, n_pix,
-			img_height, img_width, pix_norm_mult);
-		break;
-	case 3:
-		utils::getWarpedImgGrad(dI0_dx,
-			curr_img_cv, warped_offset_pts, grad_eps, n_pix,
-			img_height, img_width, pix_norm_mult);
-		break;
-	default:
-		mc_not_implemeted(SCV::initializePixGrad, n_channels);
-	}
+	ImageBase::initializePixGrad(warped_offset_pts);
 	if(params.mapped_gradient){
 		// save a copy of the initial warped offset pts to recompute the mapped gradient of the initial image
 		// when the intensity map is updated with a new image
 		init_warped_offset_pts = warped_offset_pts;
-	}
-	if(!is_initialized.pix_grad){
-		setCurrPixGrad(getInitPixGrad());
-		is_initialized.pix_grad = true;
 	}
 }
 
@@ -273,19 +207,7 @@ void SCV::updateSimilarity(bool prereq_only){
 }
 
 void SCV::updatePixGrad(const Matrix2Xd &curr_pts){
-	assert(curr_pts.cols() == n_pix);
-	switch(n_channels){
-	case 1:
-		utils::getImgGrad(dIt_dx, curr_img, curr_pts,
-			grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-		break;
-	case 3:
-		utils::getImgGrad(dIt_dx, curr_img_cv, curr_pts,
-			grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-		break;
-	default:
-		throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-	}
+	ImageBase::updatePixGrad(curr_pts);
 	if(params.mapped_gradient){
 		switch(n_channels){
 		case 1:
