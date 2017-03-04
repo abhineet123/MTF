@@ -8,18 +8,18 @@ double _grad_eps, double _hess_eps,
 bool _use_uchar_input) :
 resx(_resx), resy(_resy),
 grad_eps(_grad_eps), hess_eps(_hess_eps),
-use_uchar_input(_use_uchar_input){}
+uchar_input(_use_uchar_input){}
 
 ImgParams::ImgParams(const ImgParams *img_params) :
 resx(MTF_RES), resy(MTF_RES),
 grad_eps(GRAD_EPS), hess_eps(HESS_EPS),
-use_uchar_input(USE_UCHAR_INPUT){
+uchar_input(UCHAR_INPUT){
 	if(img_params){
 		resx = img_params->resx;
 		resy = img_params->resy;
 		grad_eps = img_params->grad_eps;
 		hess_eps = img_params->hess_eps;
-		use_uchar_input = img_params->use_uchar_input;
+		uchar_input = img_params->uchar_input;
 	}
 }
 
@@ -28,7 +28,7 @@ curr_img(nullptr, 0, 0), img_height(0), img_width(0),
 resx(MTF_RES), resy(MTF_RES), n_pix(MTF_RES*MTF_RES), n_channels(_n_channels),
 pix_norm_add(0.0), pix_norm_mult(1.0), frame_count(0),
 grad_eps(GRAD_EPS), hess_eps(HESS_EPS),
-use_uchar_input(USE_UCHAR_INPUT){
+uchar_input(UCHAR_INPUT){
 	if(img_params) {
 		if(img_params->resx <= 0 || img_params->resy <= 0) {
 			throw std::invalid_argument("ImageBase::Invalid sampling resolution provided");
@@ -38,7 +38,7 @@ use_uchar_input(USE_UCHAR_INPUT){
 		n_pix = resx*resy;
 		grad_eps = img_params->grad_eps;
 		hess_eps = img_params->hess_eps;
-		use_uchar_input = img_params->use_uchar_input;
+		uchar_input = img_params->uchar_input;
 	}
 	patch_size = n_pix*n_channels;
 }
@@ -48,7 +48,7 @@ void ImageBase::setCurrImg(const cv::Mat &cv_img){
 	img_height = cv_img.rows;
 	img_width = cv_img.cols;
 	curr_img_cv = cv_img;
-	if(!use_uchar_input && n_channels == 1){
+	if(!uchar_input && n_channels == 1){
 		// single channel image can share data with an Eigen matrix
 		// not really necessary but remains as a relic from the past
 		new (&curr_img) EigImgT((EigPixT*)(cv_img.data), img_height, img_width);
@@ -68,7 +68,7 @@ void ImageBase::initializePixVals(const Matrix2Xd& init_pts){
 #endif
 	}
 	++frame_count;
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
@@ -108,7 +108,7 @@ void ImageBase::initializePixGrad(const Matrix2Xd &init_pts){
 		dI0_dx.resize(patch_size, Eigen::NoChange);
 		dIt_dx.resize(patch_size, Eigen::NoChange);
 	}
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getImgGrad<uchar>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
@@ -152,7 +152,7 @@ void ImageBase::initializePixGrad(const Matrix8Xd &warped_offset_pts){
 		dIt_dx.resize(patch_size, Eigen::NoChange);
 	}
 
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getWarpedImgGrad<uchar>(dI0_dx,
@@ -197,7 +197,7 @@ void ImageBase::initializePixHess(const Matrix2Xd& init_pts,
 		d2It_dx2.resize(Eigen::NoChange, patch_size);
 	}
 
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getWarpedImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
@@ -240,7 +240,7 @@ void ImageBase::initializePixHess(const Matrix2Xd &init_pts){
 		d2It_dx2.resize(Eigen::NoChange, patch_size);
 	}
 
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts,
@@ -276,7 +276,7 @@ void ImageBase::initializePixHess(const Matrix2Xd &init_pts){
 void ImageBase::extractPatch(VectorXd &pix_vals, const Matrix2Xd& pts){
 	assert(pix_vals.size() == patch_size && pts.cols() == n_pix);
 
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getPixVals<uchar>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
@@ -310,7 +310,7 @@ VectorXd ImageBase::getPatch(const PtsT& curr_pts){
 void ImageBase::updatePixVals(const Matrix2Xd& curr_pts){
 	assert(curr_pts.cols() == n_pix);
 
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
@@ -342,7 +342,7 @@ void ImageBase::updatePixVals(const Matrix2Xd& curr_pts){
 void ImageBase::updatePixGrad(const Matrix2Xd &curr_pts){
 	assert(curr_pts.cols() == n_pix);
 
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getImgGrad<uchar>(dIt_dx, curr_img_cv, curr_pts,
@@ -373,7 +373,7 @@ void ImageBase::updatePixGrad(const Matrix2Xd &curr_pts){
 
 void ImageBase::updatePixHess(const Matrix2Xd &curr_pts){
 	assert(curr_pts.cols() == n_pix);
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts,
@@ -405,7 +405,7 @@ void ImageBase::updatePixHess(const Matrix2Xd &curr_pts){
 void ImageBase::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 	assert(warped_offset_pts.cols() == n_pix);
 
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getWarpedImgGrad<uchar>(dIt_dx, curr_img_cv, warped_offset_pts,
@@ -439,7 +439,7 @@ void ImageBase::updatePixHess(const Matrix2Xd& curr_pts,
 	const Matrix16Xd &warped_offset_pts){
 	assert(curr_pts.cols() == n_pix && warped_offset_pts.cols() == n_pix);
 
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getWarpedImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
@@ -467,39 +467,5 @@ void ImageBase::updatePixHess(const Matrix2Xd& curr_pts,
 		}
 	}
 }
-
-#ifdef ENABLE_OLD_IMG_GRAD
-void ImageBase::initializePixGrad(const HomPtsT& init_pts_hm,
-	const ProjWarpT &init_warp){
-	assert(init_pts_hm.cols() == n_pix);
-	if(!isInitialized()->pix_grad){
-		dI0_dx.resize(n_pix, Eigen::NoChange);
-		dIt_dx.resize(n_pix, Eigen::NoChange);
-	}
-	utils::getWarpedImgGrad(dI0_dx,
-		curr_img, init_pts_hm, init_warp,
-		grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-
-	if(!isInitialized()->pix_grad){
-		setCurrPixGrad(getInitPixGrad());
-		isInitialized()->pix_grad = true;
-	}
-}
-void ImageBase::initializePixHess(const Matrix3Xd& init_pts_hm,
-	const Matrix3d &init_warp){
-	assert(init_pts_hm.cols() == n_pix);
-	if(!isInitialized()->pix_hess){
-		d2I0_dx2.resize(Eigen::NoChange, n_pix);
-		d2It_dx2.resize(Eigen::NoChange, n_pix);
-	}
-	utils::getWarpedImgHess(d2I0_dx2, curr_img, init_pts_hm,
-		init_warp, hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-
-	if(!isInitialized()->pix_hess){
-		setCurrPixHess(getInitPixHess());
-		isInitialized()->pix_hess = true;
-	}
-}
-#endif
 
 _MTF_END_NAMESPACE

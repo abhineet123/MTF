@@ -22,6 +22,7 @@ struct AMParams : ImgParams{
 	AMParams(int _resx, int _resy,
 		double _grad_eps = GRAD_EPS,
 		double _hess_eps = HESS_EPS,
+		bool _uchar_input = UCHAR_INPUT,
 		double _likelihood_alpha = AM_LIKELIHOOD_ALPHA,
 		double _likelihood_beta = AM_LIKELIHOOD_BETA,
 		bool _dist_from_likelihood = AM_DIST_FROM_LIKELIHOOD,

@@ -113,7 +113,7 @@ void RSCV::initializePixVals(const Matrix2Xd& init_pts){
 		It.resize(patch_size);
 		It_orig.resize(patch_size);
 	}
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
@@ -162,7 +162,7 @@ void RSCV::initializePixVals(const Matrix2Xd& init_pts){
 
 void RSCV::updatePixVals(const Matrix2Xd& curr_pts){
 
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getPixVals<uchar>(It_orig, curr_img_cv, curr_pts, n_pix, img_height, img_width,
@@ -241,7 +241,7 @@ void RSCV::updatePixVals(const Matrix2Xd& curr_pts){
 
 void RSCV::updatePixGrad(const Matrix2Xd &curr_pts){
 	if(params.mapped_gradient){
-		if(use_uchar_input){
+		if(uchar_input){
 			switch(n_channels){
 			case 1:
 				utils::sc::getImgGrad<uchar>(dIt_dx, curr_img_cv, params.weighted_mapping,
@@ -277,7 +277,7 @@ void RSCV::updatePixGrad(const Matrix2Xd &curr_pts){
 
 void RSCV::updatePixHess(const Matrix2Xd &curr_pts){
 	if(params.mapped_gradient){
-		if(use_uchar_input){
+		if(uchar_input){
 			switch(n_channels){
 			case 1:
 				utils::sc::getImgHess<uchar>(d2It_dx2, curr_img_cv, params.weighted_mapping, intensity_map,
@@ -310,7 +310,7 @@ void RSCV::updatePixHess(const Matrix2Xd &curr_pts){
 }
 void RSCV::updatePixHess(const Matrix2Xd& curr_pts, const Matrix16Xd &warped_offset_pts){
 	if(params.mapped_gradient){
-		if(use_uchar_input){
+		if(uchar_input){
 			switch(n_channels){
 			case 1:
 				utils::sc::getWarpedImgHess<uchar>(d2It_dx2, curr_img_cv, params.weighted_mapping, intensity_map,
@@ -344,7 +344,7 @@ void RSCV::updatePixHess(const Matrix2Xd& curr_pts, const Matrix16Xd &warped_off
 
 void RSCV::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 	if(params.mapped_gradient){
-		if(use_uchar_input){
+		if(uchar_input){
 			switch(n_channels){
 			case 1:
 				utils::sc::getWarpedImgGrad<uchar>(dIt_dx, curr_img_cv, params.weighted_mapping,

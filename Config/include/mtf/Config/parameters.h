@@ -168,7 +168,7 @@ namespace mtf{
 		bool enable_nt = false;
 		bool invalid_state_check = true;
 		double invalid_state_err_thresh = 0;
-		bool use_uchar_input = false;
+		bool uchar_input = false;
 
 		bool ic_update_ssm = true;
 		bool ic_chained_warp = true;
@@ -1078,8 +1078,8 @@ namespace mtf{
 				invalid_state_err_thresh = atof(arg_val);
 			} else if(!strcmp(arg_name, "invalid_state_check")){
 				invalid_state_check = atoi(arg_val);
-			} else if(!strcmp(arg_name, "use_uchar_input")){
-				use_uchar_input = atoi(arg_val);
+			} else if(!strcmp(arg_name, "uchar_input")){
+				uchar_input = atoi(arg_val);
 			}
 
 			//! ICLK

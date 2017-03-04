@@ -41,7 +41,7 @@ void ZNCC::initializePixVals(const Matrix2Xd& init_pts) {
 	}
 	++frame_count;
 
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
@@ -92,7 +92,7 @@ void ZNCC::initializePixVals(const Matrix2Xd& init_pts) {
 void ZNCC::updatePixVals(const Matrix2Xd& curr_pts) {
 	assert(curr_pts.cols() == n_pix);
 
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width);

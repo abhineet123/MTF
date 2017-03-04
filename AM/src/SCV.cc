@@ -138,7 +138,7 @@ void SCV::initializePixVals(const Matrix2Xd& init_pts){
 		// save a copy of the initial image to recompute the mapped image gradient when the intensity
 		// map is updated with a new image
 
-		if(!use_uchar_input && n_channels == 1){
+		if(!uchar_input && n_channels == 1){
 			_init_img = curr_img;
 			new (&init_img) EigImgT(_init_img.data(), _init_img.rows(), _init_img.cols());
 		} else{
@@ -209,7 +209,7 @@ void SCV::updateSimilarity(bool prereq_only){
 void SCV::updatePixGrad(const Matrix2Xd &curr_pts){
 	ImageBase::updatePixGrad(curr_pts);
 	if(params.mapped_gradient){
-		if(use_uchar_input){
+		if(uchar_input){
 			switch(n_channels){
 			case 1:
 				utils::sc::getImgGrad(dI0_dx, init_img_cv, params.weighted_mapping,
@@ -242,7 +242,7 @@ void SCV::updatePixGrad(const Matrix2Xd &curr_pts){
 void SCV::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 	ImageBase::updatePixGrad(warped_offset_pts);
 	if(params.mapped_gradient){
-		if(use_uchar_input){
+		if(uchar_input){
 			switch(n_channels){
 			case 1:
 				utils::sc::getWarpedImgGrad<uchar>(dI0_dx, init_img_cv, params.weighted_mapping,
@@ -279,7 +279,7 @@ void SCV::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 void SCV::updatePixHess(const Matrix2Xd &curr_pts){
 	ImageBase::updatePixHess(curr_pts);
 	if(params.mapped_gradient){
-		if(use_uchar_input){
+		if(uchar_input){
 			switch(n_channels){
 			case 1:
 				utils::sc::getImgHess<uchar>(d2I0_dx2, init_img_cv, params.weighted_mapping,

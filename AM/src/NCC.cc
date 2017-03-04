@@ -570,7 +570,7 @@ void NCC::updateModel(const Matrix2Xd& curr_pts){
 	++frame_count;
 	//! update the template, aka I0 with the running or weighted average of
 	//! the patch corresponding to the provided points
-	if(use_uchar_input){
+	if(uchar_input){
 		switch(n_channels){
 		case 1:
 			utils::sc::getWeightedPixVals<uchar>(I0, curr_img_cv, curr_pts, frame_count, params.learning_rate,

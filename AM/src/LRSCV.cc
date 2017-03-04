@@ -200,7 +200,7 @@ void LRSCV::initializePixVals(const Matrix2Xd& init_pts){
 		It.resize(n_pix);
 	}
 
-	if(use_uchar_input){
+	if(uchar_input){
 		utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
 			img_height, img_width, pix_norm_mult, pix_norm_add);
 	} else{
@@ -224,7 +224,7 @@ void LRSCV::initializePixVals(const Matrix2Xd& init_pts){
 
 void LRSCV::updatePixVals(const Matrix2Xd& curr_pts){
 
-	if(use_uchar_input){
+	if(uchar_input){
 		utils::sc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix,
 			img_height, img_width, pix_norm_mult, pix_norm_add);
 	} else{

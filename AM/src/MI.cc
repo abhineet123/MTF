@@ -115,7 +115,7 @@ void MI::initializePixVals(const Matrix2Xd& init_pts){
 		params.pix_mapper->initializePixVals(init_pts);
 		I0 = pix_norm_mult*(params.pix_mapper->getInitPixVals()).array() + pix_norm_add;
 	} else{		
-		if(use_uchar_input){
+		if(uchar_input){
 			switch(n_channels){
 			case 1:
 				utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
@@ -159,7 +159,7 @@ void MI::updatePixVals(const Matrix2Xd& curr_pts){
 		params.pix_mapper->updatePixVals(curr_pts);
 		It = pix_norm_mult*(params.pix_mapper->getCurrPixVals()).array() + pix_norm_add;
 	} else{
-		if(use_uchar_input){
+		if(uchar_input){
 			switch(n_channels){
 			case 1:
 				utils::sc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,

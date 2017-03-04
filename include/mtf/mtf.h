@@ -998,7 +998,7 @@ inline IlluminationModel *getILM(const char *ilm_type){
 
 inline AMParams_ getAMParams(const char *am_type, const char *ilm_type){
 	AMParams_ am_params(new AMParams(resx, resy, grad_eps, hess_eps,
-		likelihood_alpha, likelihood_beta, dist_from_likelihood, 
+		uchar_input, likelihood_alpha, likelihood_beta, dist_from_likelihood,
 		learning_rate, getILM(ilm_type)));
 	if(!strcmp(am_type, "ssd") || !strcmp(am_type, "mcssd") || !strcmp(am_type, "ssd3")){
 		return AMParams_(new SSDParams(am_params.get(), ssd_show_template));

@@ -45,17 +45,32 @@ void SSD::updateModel(const Matrix2Xd& curr_pts){
 	++frame_count;
 	//! update the template, aka init_pix_vals with the running or weighted average of
 	//! the patch corresponding to the provided points
-	switch(n_channels){
-	case 1:
-		utils::getWeightedPixVals(I0, curr_img, curr_pts, frame_count, params.learning_rate,
-			use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
-		break;
-	case 3:
-		utils::getWeightedPixVals(I0, curr_img_cv, curr_pts, frame_count, params.learning_rate,
-			use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
-		break;
-	default:
-		throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+	if(uchar_input){
+		switch(n_channels){
+		case 1:
+			utils::sc::getWeightedPixVals<uchar>(I0, curr_img_cv, curr_pts, frame_count, params.learning_rate,
+				use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
+			break;
+		case 3:
+			utils::mc::getWeightedPixVals<uchar>(I0, curr_img_cv, curr_pts, frame_count, params.learning_rate,
+				use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
+			break;
+		default:
+			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		}
+	} else{
+		switch(n_channels){
+		case 1:
+			utils::getWeightedPixVals(I0, curr_img, curr_pts, frame_count, params.learning_rate,
+				use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
+			break;
+		case 3:
+			utils::mc::getWeightedPixVals<float>(I0, curr_img_cv, curr_pts, frame_count, params.learning_rate,
+				use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
+			break;
+		default:
+			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		}
 	}
 	//! re initialize any quantities that depend on the template
 	reinitialize();
