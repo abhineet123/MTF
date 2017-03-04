@@ -115,17 +115,32 @@ void MI::initializePixVals(const Matrix2Xd& init_pts){
 		params.pix_mapper->initializePixVals(init_pts);
 		I0 = pix_norm_mult*(params.pix_mapper->getInitPixVals()).array() + pix_norm_add;
 	} else{		
-		switch(n_channels){
-		case 1:
-			utils::getPixVals(I0, curr_img, init_pts, n_pix,
-				img_height, img_width, pix_norm_mult, pix_norm_add);
-			break;
-		case 3:
-			utils::getPixVals(I0, curr_img_cv, init_pts, n_pix,
-				img_height, img_width, pix_norm_mult, pix_norm_add);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		if(use_uchar_input){
+			switch(n_channels){
+			case 1:
+				utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+					img_height, img_width, pix_norm_mult, pix_norm_add);
+				break;
+			case 3:
+				utils::mc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+					img_height, img_width, pix_norm_mult, pix_norm_add);
+				break;
+			default:
+				throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+			}
+		} else{
+			switch(n_channels){
+			case 1:
+				utils::getPixVals(I0, curr_img, init_pts, n_pix,
+					img_height, img_width, pix_norm_mult, pix_norm_add);
+				break;
+			case 3:
+				utils::mc::getPixVals<float>(I0, curr_img_cv, init_pts, n_pix,
+					img_height, img_width, pix_norm_mult, pix_norm_add);
+				break;
+			default:
+				throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+			}
 		}
 	}
 	if(!is_initialized.pix_vals){
@@ -144,15 +159,32 @@ void MI::updatePixVals(const Matrix2Xd& curr_pts){
 		params.pix_mapper->updatePixVals(curr_pts);
 		It = pix_norm_mult*(params.pix_mapper->getCurrPixVals()).array() + pix_norm_add;
 	} else{
-		switch(n_channels){
-		case 1:
-			utils::getPixVals(It, curr_img, curr_pts, n_pix, img_height, img_width,
-				pix_norm_mult, pix_norm_add); break;
-		case 3:
-			utils::getPixVals(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
-				pix_norm_mult, pix_norm_add); break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		if(use_uchar_input){
+			switch(n_channels){
+			case 1:
+				utils::sc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+					pix_norm_mult, pix_norm_add);
+				break;
+			case 3:
+				utils::mc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+					pix_norm_mult, pix_norm_add);
+				break;
+			default:
+				throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+			}
+		} else{
+			switch(n_channels){
+			case 1:
+				utils::getPixVals(It, curr_img, curr_pts, n_pix, img_height, img_width,
+					pix_norm_mult, pix_norm_add);
+				break;
+			case 3:
+				utils::mc::getPixVals<float>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+					pix_norm_mult, pix_norm_add);
+				break;
+			default:
+				throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+			}
 		}
 	}
 }

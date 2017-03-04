@@ -113,17 +113,32 @@ void RSCV::initializePixVals(const Matrix2Xd& init_pts){
 		It.resize(patch_size);
 		It_orig.resize(patch_size);
 	}
-	switch(n_channels){
-	case 1:
-		utils::getPixVals(I0, curr_img, init_pts, n_pix,
-			img_height, img_width, pix_norm_mult, pix_norm_add);
-		break;
-	case 3:
-		utils::getPixVals(I0, curr_img_cv, init_pts, n_pix,
-			img_height, img_width, pix_norm_mult, pix_norm_add);
-		break;
-	default:
-		throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+	if(use_uchar_input){
+		switch(n_channels){
+		case 1:
+			utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+				img_height, img_width, pix_norm_mult, pix_norm_add);
+			break;
+		case 3:
+			utils::mc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+				img_height, img_width, pix_norm_mult, pix_norm_add);
+			break;
+		default:
+			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		}
+	} else{
+		switch(n_channels){
+		case 1:
+			utils::getPixVals(I0, curr_img, init_pts, n_pix,
+				img_height, img_width, pix_norm_mult, pix_norm_add);
+			break;
+		case 3:
+			utils::mc::getPixVals<float>(I0, curr_img_cv, init_pts, n_pix,
+				img_height, img_width, pix_norm_mult, pix_norm_add);
+			break;
+		default:
+			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		}
 	}
 	//printf("here we are in RSCV::initializePixVals\n");
 	//utils::printMatrixToFile(init_pix_vals, "initializePixVals::init_pix_vals", "log/mtf_log.txt");
@@ -146,19 +161,34 @@ void RSCV::initializePixVals(const Matrix2Xd& init_pts){
 }
 
 void RSCV::updatePixVals(const Matrix2Xd& curr_pts){
-	switch(n_channels){
-	case 1:
-		utils::getPixVals(It_orig, curr_img, curr_pts, n_pix, img_height, img_width,
-			pix_norm_mult, pix_norm_add);
-		break;
-	case 3:
-		utils::getPixVals(It_orig, curr_img_cv, curr_pts, n_pix, img_height, img_width,
-			pix_norm_mult, pix_norm_add);
-		break;
-	default:
-		throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-	}
 
+	if(use_uchar_input){
+		switch(n_channels){
+		case 1:
+			utils::sc::getPixVals<uchar>(It_orig, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+				pix_norm_mult, pix_norm_add);
+			break;
+		case 3:
+			utils::mc::getPixVals<uchar>(It_orig, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+				pix_norm_mult, pix_norm_add);
+			break;
+		default:
+			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		}
+	} else{
+		switch(n_channels){
+		case 1:
+			utils::getPixVals(It_orig, curr_img, curr_pts, n_pix, img_height, img_width,
+				pix_norm_mult, pix_norm_add);
+			break;
+		case 3:
+			utils::mc::getPixVals<float>(It_orig, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+				pix_norm_mult, pix_norm_add);
+			break;
+		default:
+			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		}
+	}
 	//if (params.debug_mode){
 	//	utils::printMatrixToFile(curr_pix_vals, "orig curr_pix_vals", "log/mtf_log.txt");
 	//}
@@ -211,18 +241,34 @@ void RSCV::updatePixVals(const Matrix2Xd& curr_pts){
 
 void RSCV::updatePixGrad(const Matrix2Xd &curr_pts){
 	if(params.mapped_gradient){
-		switch(n_channels){
-		case 1:
-			utils::getImgGrad(dIt_dx, curr_img, params.weighted_mapping,
-				intensity_map, curr_pts, grad_eps, n_pix, img_height, img_width);
-			break;
-		case 3:
-			utils::getImgGrad(dIt_dx, curr_img_cv, params.weighted_mapping,
-				intensity_map, curr_pts, grad_eps, n_pix,
-				img_height, img_width);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		if(use_uchar_input){
+			switch(n_channels){
+			case 1:
+				utils::sc::getImgGrad<uchar>(dIt_dx, curr_img_cv, params.weighted_mapping,
+					intensity_map, curr_pts, grad_eps, n_pix, img_height, img_width);
+				break;
+			case 3:
+				utils::mc::getImgGrad<uchar>(dIt_dx, curr_img_cv, params.weighted_mapping,
+					intensity_map, curr_pts, grad_eps, n_pix,
+					img_height, img_width);
+				break;
+			default:
+				throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+			}
+		} else{
+			switch(n_channels){
+			case 1:
+				utils::getImgGrad(dIt_dx, curr_img, params.weighted_mapping,
+					intensity_map, curr_pts, grad_eps, n_pix, img_height, img_width);
+				break;
+			case 3:
+				utils::mc::getImgGrad<float>(dIt_dx, curr_img_cv, params.weighted_mapping,
+					intensity_map, curr_pts, grad_eps, n_pix,
+					img_height, img_width);
+				break;
+			default:
+				throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+			}
 		}
 	} else{
 		ImageBase::updatePixGrad(curr_pts);
@@ -231,17 +277,32 @@ void RSCV::updatePixGrad(const Matrix2Xd &curr_pts){
 
 void RSCV::updatePixHess(const Matrix2Xd &curr_pts){
 	if(params.mapped_gradient){
-		switch(n_channels){
-		case 1:
-			utils::getImgHess(d2It_dx2, curr_img, params.weighted_mapping, intensity_map,
-				curr_pts, hess_eps, n_pix, img_height, img_width);
-			break;
-		case 3:
-			utils::getImgHess(d2It_dx2, curr_img_cv, params.weighted_mapping, intensity_map,
-				curr_pts, hess_eps, n_pix, img_height, img_width);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		if(use_uchar_input){
+			switch(n_channels){
+			case 1:
+				utils::sc::getImgHess<uchar>(d2It_dx2, curr_img_cv, params.weighted_mapping, intensity_map,
+					curr_pts, hess_eps, n_pix, img_height, img_width);
+				break;
+			case 3:
+				utils::mc::getImgHess<uchar>(d2It_dx2, curr_img_cv, params.weighted_mapping, intensity_map,
+					curr_pts, hess_eps, n_pix, img_height, img_width);
+				break;
+			default:
+				throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+			}
+		} else{
+			switch(n_channels){
+			case 1:
+				utils::getImgHess(d2It_dx2, curr_img, params.weighted_mapping, intensity_map,
+					curr_pts, hess_eps, n_pix, img_height, img_width);
+				break;
+			case 3:
+				utils::mc::getImgHess<float>(d2It_dx2, curr_img_cv, params.weighted_mapping, intensity_map,
+					curr_pts, hess_eps, n_pix, img_height, img_width);
+				break;
+			default:
+				throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+			}
 		}
 	} else{
 		ImageBase::updatePixHess(curr_pts);
@@ -249,17 +310,32 @@ void RSCV::updatePixHess(const Matrix2Xd &curr_pts){
 }
 void RSCV::updatePixHess(const Matrix2Xd& curr_pts, const Matrix16Xd &warped_offset_pts){
 	if(params.mapped_gradient){
-		switch(n_channels){
-		case 1:
-			utils::getWarpedImgHess(d2It_dx2, curr_img, params.weighted_mapping, intensity_map,
-				curr_pts, warped_offset_pts, hess_eps, n_pix, img_height, img_width);
-			break;
-		case 3:
-			utils::getWarpedImgHess(d2It_dx2, curr_img_cv, params.weighted_mapping, intensity_map,
-				curr_pts, warped_offset_pts, hess_eps, n_pix, img_height, img_width);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		if(use_uchar_input){
+			switch(n_channels){
+			case 1:
+				utils::sc::getWarpedImgHess<uchar>(d2It_dx2, curr_img_cv, params.weighted_mapping, intensity_map,
+					curr_pts, warped_offset_pts, hess_eps, n_pix, img_height, img_width);
+				break;
+			case 3:
+				utils::mc::getWarpedImgHess<uchar>(d2It_dx2, curr_img_cv, params.weighted_mapping, intensity_map,
+					curr_pts, warped_offset_pts, hess_eps, n_pix, img_height, img_width);
+				break;
+			default:
+				throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+			}
+		} else{
+			switch(n_channels){
+			case 1:
+				utils::getWarpedImgHess(d2It_dx2, curr_img, params.weighted_mapping, intensity_map,
+					curr_pts, warped_offset_pts, hess_eps, n_pix, img_height, img_width);
+				break;
+			case 3:
+				utils::mc::getWarpedImgHess<float>(d2It_dx2, curr_img_cv, params.weighted_mapping, intensity_map,
+					curr_pts, warped_offset_pts, hess_eps, n_pix, img_height, img_width);
+				break;
+			default:
+				throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+			}
 		}
 	} else{
 		ImageBase::updatePixHess(curr_pts, warped_offset_pts);
@@ -268,18 +344,34 @@ void RSCV::updatePixHess(const Matrix2Xd& curr_pts, const Matrix16Xd &warped_off
 
 void RSCV::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 	if(params.mapped_gradient){
-		switch(n_channels){
-		case 1:
-			utils::getWarpedImgGrad(dIt_dx, curr_img, params.weighted_mapping,
-				intensity_map, warped_offset_pts,
-				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::getWarpedImgGrad(dIt_dx, curr_img_cv, params.weighted_mapping,
-				intensity_map, warped_offset_pts, grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		if(use_uchar_input){
+			switch(n_channels){
+			case 1:
+				utils::sc::getWarpedImgGrad<uchar>(dIt_dx, curr_img_cv, params.weighted_mapping,
+					intensity_map, warped_offset_pts,
+					grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+				break;
+			case 3:
+				utils::mc::getWarpedImgGrad<uchar>(dIt_dx, curr_img_cv, params.weighted_mapping,
+					intensity_map, warped_offset_pts, grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+				break;
+			default:
+				throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+			}
+		} else{
+			switch(n_channels){
+			case 1:
+				utils::getWarpedImgGrad(dIt_dx, curr_img, params.weighted_mapping,
+					intensity_map, warped_offset_pts,
+					grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+				break;
+			case 3:
+				utils::mc::getWarpedImgGrad<float>(dIt_dx, curr_img_cv, params.weighted_mapping,
+					intensity_map, warped_offset_pts, grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+				break;
+			default:
+				throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+			}
 		}
 	} else{
 		ImageBase::updatePixGrad(warped_offset_pts);

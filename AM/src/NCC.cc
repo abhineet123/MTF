@@ -411,21 +411,21 @@ void NCC::estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, const cv::Mat 
 		for(int srch_id = 0; srch_id < srch_size; ++srch_id){
 			double x = x_vals(srch_id % search_window.width), y = y_vals(srch_id / search_window.width);
 
-			_I0(srch_id) = utils::getPixVal<PIX_INTERP_TYPE, PIX_BORDER_TYPE>(prev_img,
+			_I0(srch_id) = utils::sc::PixVal<float, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(prev_img,
 				x, y, img_height, img_width);
 			_I0_mean += _I0(srch_id);
 
 			if(!const_grad){ continue; }
 
-			double pix_val_inc = utils::getPixVal<GRAD_INTERP_TYPE, PIX_BORDER_TYPE>(prev_img,
+			double pix_val_inc = utils::sc::PixVal<float, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(prev_img,
 				x + grad_eps, y, img_height, img_width);
-			double  pix_val_dec = utils::getPixVal<GRAD_INTERP_TYPE, PIX_BORDER_TYPE>(prev_img,
+			double  pix_val_dec = utils::sc::PixVal<float, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(prev_img,
 				x - grad_eps, y, img_height, img_width);
 			_dIt_dx(srch_id, 0) = (pix_val_inc - pix_val_dec)*grad_mult_factor;
 
-			pix_val_inc = utils::getPixVal<GRAD_INTERP_TYPE, PIX_BORDER_TYPE>(prev_img,
+			pix_val_inc = utils::sc::PixVal<float, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(prev_img,
 				x, y + grad_eps, img_height, img_width);
-			pix_val_dec = utils::getPixVal<GRAD_INTERP_TYPE, PIX_BORDER_TYPE>(prev_img,
+			pix_val_dec = utils::sc::PixVal<float, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(prev_img,
 				x, y - grad_eps, img_height, img_width);
 
 			_dIt_dx(srch_id, 1) = (pix_val_inc - pix_val_dec)*grad_mult_factor;
@@ -533,7 +533,7 @@ void NCC::estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, const cv::Mat 
 void NCC::updateDistFeat(double* feat_addr){
 	It_mean = It.mean();
 	double curr_pix_std = sqrt((It.array() - It_mean).matrix().squaredNorm());
-	for(size_t pix = 0; pix < patch_size; pix++) {
+	for(size_t pix = 0; pix < patch_size; ++pix) {
 		*feat_addr = (It(pix) - It_mean) / curr_pix_std;
 		feat_addr++;
 	}
@@ -570,17 +570,32 @@ void NCC::updateModel(const Matrix2Xd& curr_pts){
 	++frame_count;
 	//! update the template, aka I0 with the running or weighted average of
 	//! the patch corresponding to the provided points
-	switch(n_channels){
-	case 1:
-		utils::getWeightedPixVals(I0, curr_img, curr_pts, frame_count, params.learning_rate,
-			use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
-		break;
-	case 3:
-		utils::getWeightedPixVals(I0, curr_img_cv, curr_pts, frame_count, params.learning_rate,
-			use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
-		break;
-	default:
-		throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+	if(use_uchar_input){
+		switch(n_channels){
+		case 1:
+			utils::sc::getWeightedPixVals<uchar>(I0, curr_img_cv, curr_pts, frame_count, params.learning_rate,
+				use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
+			break;
+		case 3:
+			utils::mc::getWeightedPixVals<uchar>(I0, curr_img_cv, curr_pts, frame_count, params.learning_rate,
+				use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
+			break;
+		default:
+			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		}
+	} else{
+		switch(n_channels){
+		case 1:
+			utils::getWeightedPixVals(I0, curr_img, curr_pts, frame_count, params.learning_rate,
+				use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
+			break;
+		case 3:
+			utils::mc::getWeightedPixVals<float>(I0, curr_img_cv, curr_pts, frame_count, params.learning_rate,
+				use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
+			break;
+		default:
+			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		}
 	}
 	//! re initialize any quantities that depend on the template
 	reinitialize();

@@ -15,10 +15,13 @@ void MCLSCV::initializePixVals(const Matrix2Xd& init_pts){
 		I0.resize(patch_size);
 		It.resize(patch_size);
 	}
-
-	utils::getPixVals(I0, curr_img_cv, init_pts, n_pix,
-		img_height, img_width, pix_norm_mult, pix_norm_add);
-
+	if(use_uchar_input){
+		utils::mc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+	} else{
+		utils::mc::getPixVals<float>(I0, curr_img_cv, init_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+	}
 	/**
 	create a copy of the initial pixel values which will hold the original untampered template
 	that will be used for remapping the initial pixel values when the intensity map is updated;
@@ -34,8 +37,13 @@ void MCLSCV::initializePixVals(const Matrix2Xd& init_pts){
 }
 
 void MCLSCV::updatePixVals(const Matrix2Xd& curr_pts){
-	utils::getPixVals(It, curr_img_cv, curr_pts, n_pix,
-		img_height, img_width, pix_norm_mult, pix_norm_add);	
+	if(use_uchar_input){
+		utils::mc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+	} else{
+		utils::mc::getPixVals<float>(It, curr_img_cv, curr_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+	}	
 }
 
 void MCLSCV::updateSimilarity(bool prereq_only){

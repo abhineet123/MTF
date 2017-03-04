@@ -45,31 +45,19 @@ double SPSS::getLikelihood() const{
 }
 
 void SPSS::initializePixVals(const Matrix2Xd& init_pts){
-	if(!is_initialized.pix_vals){
-		I0.resize(patch_size);
-		It.resize(patch_size);
-	}
 	if(params.pix_mapper){
+		if(!is_initialized.pix_vals){
+			I0.resize(patch_size);
+			It.resize(patch_size);
+		}
 		params.pix_mapper->initializePixVals(init_pts);
 		I0 = params.pix_mapper->getInitPixVals();
-
-	} else{
-		switch(n_channels){
-		case 1:
-			utils::getPixVals(I0, curr_img, init_pts, n_pix,
-				img_height, img_width, pix_norm_mult, pix_norm_add);
-			break;
-		case 3:
-			utils::getPixVals(I0, curr_img_cv, init_pts, n_pix,
-				img_height, img_width, pix_norm_mult, pix_norm_add);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
+		if(!is_initialized.pix_vals){
+			It = I0;
+			is_initialized.pix_vals = true;
 		}
-	}
-	if(!is_initialized.pix_vals){
-		It = I0;
-		is_initialized.pix_vals = true;
+	} else{
+		ImageBase::initializePixVals(init_pts);
 	}
 }
 
@@ -84,16 +72,7 @@ void SPSS::updatePixVals(const Matrix2Xd& curr_pts){
 		params.pix_mapper->updatePixVals(curr_pts);
 		It = params.pix_mapper->getCurrPixVals();
 	} else{
-		switch(n_channels){
-		case 1:
-			utils::getPixVals(It, curr_img, curr_pts, n_pix, img_height, img_width,
-				pix_norm_mult, pix_norm_add); break;
-		case 3:
-			utils::getPixVals(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
-				pix_norm_mult, pix_norm_add); break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
+		ImageBase::updatePixVals(curr_pts);
 	}
 }
 

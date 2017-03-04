@@ -191,10 +191,13 @@ void LSCV::initializePixVals(const Matrix2Xd& init_pts){
 		I0.resize(n_pix);
 		It.resize(n_pix);
 	}
-
-	utils::getPixVals(I0, curr_img, init_pts, n_pix,
-		img_height, img_width, pix_norm_mult, pix_norm_add);
-
+	if(use_uchar_input){
+		utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+	} else{
+		utils::getPixVals(I0, curr_img, init_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+	}
 	/**
 	create a copy of the initial pixel values which will hold the original untampered template 
 	that will be used for remapping the initial pixel values when the intensity map is updated; 
@@ -217,14 +220,18 @@ void LSCV::initializePixVals(const Matrix2Xd& init_pts){
 }
 
 void LSCV::updatePixVals(const Matrix2Xd& curr_pts){
-	utils::getPixVals(It, curr_img, curr_pts, n_pix,
-		img_height, img_width, pix_norm_mult, pix_norm_add);
+	if(use_uchar_input){
+		utils::sc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+	} else{
+		utils::getPixVals(It, curr_img, curr_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+	}
 	if(params.show_subregions){
 		if(first_iter){
 			sub_region_id = (sub_region_id + 1) % n_sub_regions;
 		}
 		showSubRegions(curr_img, curr_pts);
-
 	}
 }
 

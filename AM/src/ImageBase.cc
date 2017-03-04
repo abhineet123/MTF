@@ -71,11 +71,11 @@ void ImageBase::initializePixVals(const Matrix2Xd& init_pts){
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+			utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
 				img_height, img_width, pix_norm_mult, pix_norm_add);
 			break;
 		case 3:
-			utils::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+			utils::mc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
 				img_height, img_width, pix_norm_mult, pix_norm_add);
 			break;
 		default:
@@ -88,7 +88,7 @@ void ImageBase::initializePixVals(const Matrix2Xd& init_pts){
 				img_height, img_width, pix_norm_mult, pix_norm_add);
 			break;
 		case 3:
-			utils::getPixVals<float>(I0, curr_img_cv, init_pts, n_pix,
+			utils::mc::getPixVals<float>(I0, curr_img_cv, init_pts, n_pix,
 				img_height, img_width, pix_norm_mult, pix_norm_add);
 			break;
 		default:
@@ -111,11 +111,11 @@ void ImageBase::initializePixGrad(const Matrix2Xd &init_pts){
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getImgGrad<uchar>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
+			utils::sc::getImgGrad<uchar>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
 				img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getImgGrad<uchar>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
+			utils::mc::getImgGrad<uchar>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
 				img_height, img_width, pix_norm_mult);
 			break;
 		default:
@@ -128,7 +128,7 @@ void ImageBase::initializePixGrad(const Matrix2Xd &init_pts){
 				img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getImgGrad<float>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
+			utils::mc::getImgGrad<float>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
 				img_height, img_width, pix_norm_mult);
 			break;
 		default:
@@ -155,12 +155,12 @@ void ImageBase::initializePixGrad(const Matrix8Xd &warped_offset_pts){
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getWarpedImgGrad<uchar>(dI0_dx,
+			utils::sc::getWarpedImgGrad<uchar>(dI0_dx,
 				curr_img_cv, warped_offset_pts, grad_eps, n_pix,
 				img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getWarpedImgGrad<uchar>(dI0_dx,
+			utils::mc::getWarpedImgGrad<uchar>(dI0_dx,
 				curr_img_cv, warped_offset_pts, grad_eps, n_pix,
 				img_height, img_width, pix_norm_mult);
 			break;
@@ -175,7 +175,7 @@ void ImageBase::initializePixGrad(const Matrix8Xd &warped_offset_pts){
 				img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getWarpedImgGrad<float>(dI0_dx,
+			utils::mc::getWarpedImgGrad<float>(dI0_dx,
 				curr_img_cv, warped_offset_pts, grad_eps, n_pix,
 				img_height, img_width, pix_norm_mult);
 			break;
@@ -200,11 +200,11 @@ void ImageBase::initializePixHess(const Matrix2Xd& init_pts,
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getWarpedImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
+			utils::sc::getWarpedImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getWarpedImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
+			utils::mc::getWarpedImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
@@ -217,7 +217,7 @@ void ImageBase::initializePixHess(const Matrix2Xd& init_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getWarpedImgHess<float>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
+			utils::mc::getWarpedImgHess<float>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
@@ -243,11 +243,11 @@ void ImageBase::initializePixHess(const Matrix2Xd &init_pts){
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts,
+			utils::sc::getImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts,
+			utils::mc::getImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
@@ -260,7 +260,7 @@ void ImageBase::initializePixHess(const Matrix2Xd &init_pts){
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getImgHess<float>(d2I0_dx2, curr_img_cv, init_pts,
+			utils::mc::getImgHess<float>(d2I0_dx2, curr_img_cv, init_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
@@ -279,10 +279,10 @@ void ImageBase::extractPatch(VectorXd &pix_vals, const Matrix2Xd& pts){
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getPixVals<uchar>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
+			utils::sc::getPixVals<uchar>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
 			break;
 		case 3:
-			utils::getPixVals<uchar>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
+			utils::mc::getPixVals<uchar>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
 			break;
 		default:
 			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
@@ -293,7 +293,7 @@ void ImageBase::extractPatch(VectorXd &pix_vals, const Matrix2Xd& pts){
 			utils::getPixVals(pix_vals, curr_img, pts, n_pix, img_height, img_width);
 			break;
 		case 3:
-			utils::getPixVals<float>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
+			utils::mc::getPixVals<float>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
 			break;
 		default:
 			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
@@ -313,11 +313,11 @@ void ImageBase::updatePixVals(const Matrix2Xd& curr_pts){
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+			utils::sc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
 				pix_norm_mult, pix_norm_add);
 			break;
 		case 3:
-			utils::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+			utils::mc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
 				pix_norm_mult, pix_norm_add);
 			break;
 		default:
@@ -330,7 +330,7 @@ void ImageBase::updatePixVals(const Matrix2Xd& curr_pts){
 				pix_norm_mult, pix_norm_add);
 			break;
 		case 3:
-			utils::getPixVals<float>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+			utils::mc::getPixVals<float>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
 				pix_norm_mult, pix_norm_add);
 			break;
 		default:
@@ -345,11 +345,11 @@ void ImageBase::updatePixGrad(const Matrix2Xd &curr_pts){
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getImgGrad<uchar>(dIt_dx, curr_img_cv, curr_pts,
+			utils::sc::getImgGrad<uchar>(dIt_dx, curr_img_cv, curr_pts,
 				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getImgGrad<uchar>(dIt_dx, curr_img_cv, curr_pts,
+			utils::mc::getImgGrad<uchar>(dIt_dx, curr_img_cv, curr_pts,
 				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
@@ -362,7 +362,7 @@ void ImageBase::updatePixGrad(const Matrix2Xd &curr_pts){
 				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getImgGrad<float>(dIt_dx, curr_img_cv, curr_pts,
+			utils::mc::getImgGrad<float>(dIt_dx, curr_img_cv, curr_pts,
 				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
@@ -373,15 +373,14 @@ void ImageBase::updatePixGrad(const Matrix2Xd &curr_pts){
 
 void ImageBase::updatePixHess(const Matrix2Xd &curr_pts){
 	assert(curr_pts.cols() == n_pix);
-
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts,
+			utils::sc::getImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts,
+			utils::mc::getImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
@@ -394,15 +393,13 @@ void ImageBase::updatePixHess(const Matrix2Xd &curr_pts){
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getImgHess<float>(d2It_dx2, curr_img_cv, curr_pts,
+			utils::mc::getImgHess<float>(d2It_dx2, curr_img_cv, curr_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
 			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
 		}
 	}
-
-
 }
 
 void ImageBase::updatePixGrad(const Matrix8Xd &warped_offset_pts){
@@ -411,11 +408,11 @@ void ImageBase::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getWarpedImgGrad<uchar>(dIt_dx, curr_img_cv, warped_offset_pts,
+			utils::sc::getWarpedImgGrad<uchar>(dIt_dx, curr_img_cv, warped_offset_pts,
 				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getWarpedImgGrad<uchar>(dIt_dx, curr_img_cv, warped_offset_pts,
+			utils::mc::getWarpedImgGrad<uchar>(dIt_dx, curr_img_cv, warped_offset_pts,
 				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
@@ -429,7 +426,7 @@ void ImageBase::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getWarpedImgGrad<float>(dIt_dx, curr_img_cv, warped_offset_pts,
+			utils::mc::getWarpedImgGrad<float>(dIt_dx, curr_img_cv, warped_offset_pts,
 				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
@@ -445,11 +442,11 @@ void ImageBase::updatePixHess(const Matrix2Xd& curr_pts,
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getWarpedImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
+			utils::sc::getWarpedImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getWarpedImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
+			utils::mc::getWarpedImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
@@ -462,7 +459,7 @@ void ImageBase::updatePixHess(const Matrix2Xd& curr_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		case 3:
-			utils::getWarpedImgHess<float>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
+			utils::mc::getWarpedImgHess<float>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
 				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:

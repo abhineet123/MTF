@@ -200,8 +200,13 @@ void LRSCV::initializePixVals(const Matrix2Xd& init_pts){
 		It.resize(n_pix);
 	}
 
-	utils::getPixVals(I0, curr_img, init_pts, n_pix,
-		img_height, img_width, pix_norm_mult, pix_norm_add);
+	if(use_uchar_input){
+		utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+	} else{
+		utils::getPixVals(I0, curr_img, init_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+	}
 
 	if(!is_initialized.pix_vals){
 		It = I0;
@@ -218,9 +223,14 @@ void LRSCV::initializePixVals(const Matrix2Xd& init_pts){
 
 
 void LRSCV::updatePixVals(const Matrix2Xd& curr_pts){
-	
-	utils::getPixVals(It, curr_img, curr_pts, n_pix,
-		img_height, img_width, pix_norm_mult, pix_norm_add);
+
+	if(use_uchar_input){
+		utils::sc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+	} else{
+		utils::getPixVals(It, curr_img, curr_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+	}
 
 	if(params.once_per_frame && !first_iter)
 		return;

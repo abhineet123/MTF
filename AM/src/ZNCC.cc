@@ -44,11 +44,11 @@ void ZNCC::initializePixVals(const Matrix2Xd& init_pts) {
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+			utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
 				img_height, img_width);
 			break;
 		case 3:
-			utils::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+			utils::mc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
 				img_height, img_width);
 			break;
 		default:
@@ -61,7 +61,7 @@ void ZNCC::initializePixVals(const Matrix2Xd& init_pts) {
 				img_height, img_width);
 			break;
 		case 3:
-			utils::getPixVals<float>(I0, curr_img_cv, init_pts, n_pix,
+			utils::mc::getPixVals<float>(I0, curr_img_cv, init_pts, n_pix,
 				img_height, img_width);
 			break;
 		default:
@@ -95,10 +95,10 @@ void ZNCC::updatePixVals(const Matrix2Xd& curr_pts) {
 	if(use_uchar_input){
 		switch(n_channels){
 		case 1:
-			utils::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width);
+			utils::sc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width);
 			break;
 		case 3:
-			utils::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width);
+			utils::mc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width);
 			break;
 		default:
 			mc_not_implemeted(ZNCC::updatePixVals, n_channels);
@@ -109,7 +109,7 @@ void ZNCC::updatePixVals(const Matrix2Xd& curr_pts) {
 			utils::getPixVals(It, curr_img, curr_pts, n_pix, img_height, img_width);
 			break;
 		case 3:
-			utils::getPixVals<float>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width);
+			utils::mc::getPixVals<float>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width);
 			break;
 		default:
 			mc_not_implemeted(ZNCC::updatePixVals, n_channels);
