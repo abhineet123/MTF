@@ -48,6 +48,13 @@ void ImageBase::setCurrImg(const cv::Mat &cv_img){
 	img_height = cv_img.rows;
 	img_width = cv_img.cols;
 	curr_img_cv = cv_img;
+	uchar_input = cv_img.type() == CV_8UC1 || cv_img.type() == CV_8UC3;
+	if(cv_img.type()!=inputType()){
+		throw std::invalid_argument(
+			cv_format("ImageBase::Input image type: %s does not match the requiredd: %s", 
+			utils::getType(cv_img), utils::typeToString(inputType()))
+			);
+	}
 	if(!uchar_input && n_channels == 1){
 		// single channel image can share data with an Eigen matrix
 		// not really necessary but remains as a relic from the past

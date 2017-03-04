@@ -212,11 +212,11 @@ void SCV::updatePixGrad(const Matrix2Xd &curr_pts){
 		if(uchar_input){
 			switch(n_channels){
 			case 1:
-				utils::sc::getImgGrad(dI0_dx, init_img_cv, params.weighted_mapping,
+				utils::sc::getImgGrad<uchar>(dI0_dx, init_img_cv, params.weighted_mapping,
 					intensity_map, init_pts, grad_eps, n_pix, img_height, img_width);
 				break;
 			case 3:
-				utils::mc::getImgGrad(dI0_dx, init_img_cv, params.weighted_mapping,
+				utils::mc::getImgGrad<uchar>(dI0_dx, init_img_cv, params.weighted_mapping,
 					intensity_map, init_pts, grad_eps, n_pix, img_height, img_width);
 				break;
 			default:
