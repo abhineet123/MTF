@@ -109,13 +109,13 @@ void GridTrackerFlow<AM, SSM >::update() {
 template <class AM, class SSM>
 void GridTrackerFlow<AM, SSM >::setImage(const cv::Mat &img){
 	am.setCurrImg(img);
-	if(curr_img_float.empty()){
+	if(curr_img.empty()){
 		prev_img.create(img.rows, img.cols, am.inputType());
 	}
-	if(params.show_trackers && curr_img_uchar.empty()){
-		curr_img_uchar.create(img.rows, img.cols, CV_8UC3);
+	if(params.show_trackers && curr_img_disp.empty()){
+		curr_img_disp.create(img.rows, img.cols, CV_8UC3);
 	}
-	curr_img_float = img;
+	curr_img = img;
 }
 
 
@@ -131,9 +131,9 @@ void GridTrackerFlow<AM, SSM >::setRegion(const cv::Mat& corners) {
 
 template <class AM, class SSM>
 void GridTrackerFlow<AM, SSM >::showTrackers(){
-	curr_img_float.convertTo(curr_img_uchar, curr_img_uchar.type());
-	cv::cvtColor(curr_img_uchar, curr_img_uchar, CV_GRAY2BGR);
-	utils::drawRegion(curr_img_uchar, cv_corners_mat, CV_RGB(0, 0, 255), 2);
+	curr_img.convertTo(curr_img_disp, curr_img_disp.type());
+	cv::cvtColor(curr_img_disp, curr_img_disp, CV_GRAY2BGR);
+	utils::drawRegion(curr_img_disp, cv_corners_mat, CV_RGB(0, 0, 255), 2);
 	for(int tracker_id = 0; tracker_id < n_pts; tracker_id++) {
 		cv::Scalar tracker_color;
 		if(pix_mask[tracker_id]){
@@ -141,9 +141,9 @@ void GridTrackerFlow<AM, SSM >::showTrackers(){
 		} else{
 			tracker_color = cv::Scalar(0, 0, 255);
 		}
-		circle(curr_img_uchar, curr_pts[tracker_id], 2, tracker_color, 2);
+		circle(curr_img_disp, curr_pts[tracker_id], 2, tracker_color, 2);
 	}
-	imshow(patch_win_name, curr_img_uchar);
+	imshow(patch_win_name, curr_img_disp);
 	//int key = cv::waitKey(1 - pause_seq);
 	//if(key == 32){
 	//	pause_seq = 1 - pause_seq;

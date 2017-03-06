@@ -25,11 +25,25 @@ namespace mtf {
 		to the same memory location before calling the functions to process them;		
 		*/
 		virtual void setImage(const cv::Mat &img) = 0;
-		//! initialize the tracker to track the object present in the given location		
+		/** 
+		initialize the tracker to track the object present in the given location
+		*/
 		virtual void initialize(const cv::Mat &corners) = 0;
-		//! find the object location in the latest image
+		/**
+		find the object location in the latest image
+		*/
 		virtual void update() = 0;
-		//! overloaded variants for convenience
+		/**
+		modify the tracker's internal state so that the tracked object is 
+		placed at the given location instead of where it was after the 
+		latest call to initialize/update
+		*/
+		virtual void setRegion(const cv::Mat& corners){
+			throw mtf::utils::FunctonNotImplemented(cv::format("%s :: setRegion :: Not implemented Yet", name.c_str()));
+		}
+		/**
+		overloaded variants for convenience
+		*/
 		virtual void initialize(const cv::Mat &img, const cv::Mat &corners){
 			setImage(img);
 			initialize(corners);
@@ -38,12 +52,9 @@ namespace mtf {
 			setImage(img);
 			update();
 		}
-		/**
-		modify the tracker's internal state so that the tracked object is 
-		placed at the given location instead of where it was after the latest call to initialize/update
-		*/
-		virtual void setRegion(const cv::Mat& corners){
-			throw mtf::utils::FunctonNotImplemented(cv::format("%s :: setRegion :: Not implemented Yet", name.c_str()));
+		virtual void setRegion(const cv::Mat &img, const cv::Mat &corners){
+			setImage(img);
+			setRegion(corners);
 		}
 		/**
 		return the trackers's current location in the same format as provided to initialize/setRegion;

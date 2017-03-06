@@ -90,7 +90,6 @@ namespace mtf{
 		int rec_fps = 24;
 		std::vector<std::string> tracker_labels;
 
-
 		bool reinit_at_each_frame = false;
 		bool reset_at_each_frame = false;
 		bool reset_to_init = false;
@@ -223,6 +222,7 @@ namespace mtf{
 		double likelihood_beta = 0.0;
 		bool dist_from_likelihood = false;
 
+		bool enable_pre_proc = false;
 		std::string pre_proc_type = "gauss";
 		//! perform histogram equalization during pre processing;
 		bool pre_proc_hist_eq = false;
@@ -1191,6 +1191,8 @@ namespace mtf{
 				pre_proc_type = std::string(arg_val);
 			} else if(!strcmp(arg_name, "pre_proc_hist_eq")){
 				pre_proc_hist_eq = atoi(arg_val);
+			} else if(!strcmp(arg_name, "enable_pre_proc")){
+				enable_pre_proc = atoi(arg_val);
 			}
 			//! Gaussian smoothing
 			else if(!strcmp(arg_name, "gauss_kernel_size")){

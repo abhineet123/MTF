@@ -224,8 +224,8 @@ void GridTracker<SSM>::setImage(const cv::Mat &img) {
 		}
 	}
 	curr_img = img;
-	if(params.show_trackers && curr_img_uchar.empty()){
-		curr_img_uchar.create(curr_img.rows, curr_img.cols, CV_8UC3);
+	if(params.show_trackers && curr_img_disp.empty()){
+		curr_img_disp.create(curr_img.rows, curr_img.cols, CV_8UC3);
 	}
 }
 
@@ -389,9 +389,9 @@ void GridTracker<SSM>::resetTrackers(bool reinit){
 
 template<class SSM>
 void GridTracker<SSM>::showTrackers(){
-	curr_img.convertTo(curr_img_uchar, curr_img_uchar.type());
-	cv::cvtColor(curr_img_uchar, curr_img_uchar, CV_GRAY2BGR);
-	utils::drawRegion(curr_img_uchar, cv_corners_mat, CV_RGB(0, 0, 255), 2);
+	curr_img.convertTo(curr_img_disp, curr_img_disp.type());
+	cv::cvtColor(curr_img_disp, curr_img_disp, CV_GRAY2BGR);
+	utils::drawRegion(curr_img_disp, cv_corners_mat, CV_RGB(0, 0, 255), 2);
 	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++) {
 		cv::Scalar tracker_color;
 		if(enable_fb_err_est){
@@ -401,12 +401,12 @@ void GridTracker<SSM>::showTrackers(){
 		} else{
 			tracker_color = pix_mask[tracker_id] ? CV_RGB(0, 255, 0) : CV_RGB(255, 0, 0);
 		}
-		circle(curr_img_uchar, curr_pts[tracker_id], 2, tracker_color, 2);
+		circle(curr_img_disp, curr_pts[tracker_id], 2, tracker_color, 2);
 		if(params.show_tracker_edges){
-			utils::drawRegion(curr_img_uchar, trackers[tracker_id]->getRegion(), tracker_color, 1);
+			utils::drawRegion(curr_img_disp, trackers[tracker_id]->getRegion(), tracker_color, 1);
 		}
 	}
-	imshow(patch_win_name, curr_img_uchar);
+	imshow(patch_win_name, curr_img_disp);
 	//int key = cv::waitKey(1 - pause_seq);
 	//if(key == 32){
 	//	pause_seq = 1 - pause_seq;

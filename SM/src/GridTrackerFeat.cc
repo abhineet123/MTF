@@ -22,6 +22,7 @@
 #define GTF_MAX_ITERS 1
 #define GTF_EPSILON 0.01
 #define GTF_ENABLE_PYR 0
+#define GTF_UCHAR_INPUT 1
 #define GTF_SHOW_TRACKERS 0
 #define GTF_SHOW_TRACKER_EDGES 0
 #define GTF_DEBUG_MODE 0
@@ -69,6 +70,7 @@ int _search_win_x, int _search_win_y,
 bool _init_at_each_frame,
 bool _detect_keypoints, bool _rebuild_index,
 int _max_iters, double _epsilon, bool _enable_pyr,
+bool _uchar_input,
 bool _show_keypoints, bool _show_matches,
 bool _debug_mode) :
 grid_size_x(_grid_size_x),
@@ -81,6 +83,7 @@ rebuild_index(_rebuild_index),
 max_iters(_max_iters),
 epsilon(_epsilon),
 enable_pyr(_enable_pyr),
+uchar_input(_uchar_input),
 show_keypoints(_show_keypoints),
 show_matches(_show_matches),
 debug_mode(_debug_mode){}
@@ -96,6 +99,7 @@ rebuild_index(GTF_REBUILD_INDEX),
 max_iters(GTF_MAX_ITERS),
 epsilon(GTF_EPSILON),
 enable_pyr(GTF_ENABLE_PYR),
+uchar_input(GTF_UCHAR_INPUT),
 show_keypoints(GTF_SHOW_TRACKERS),
 show_matches(GTF_SHOW_TRACKER_EDGES),
 debug_mode(GTF_DEBUG_MODE){
@@ -110,6 +114,7 @@ debug_mode(GTF_DEBUG_MODE){
 		max_iters = params->max_iters;
 		epsilon = params->epsilon;
 		enable_pyr = params->enable_pyr;
+		uchar_input = params->uchar_input;
 		show_keypoints = params->show_keypoints;
 		show_matches = params->show_matches;
 		debug_mode = params->debug_mode;
@@ -128,6 +133,7 @@ GridTrackerFeat<SSM>::GridTrackerFeat(const ParamType *grid_params,
 	printf("flann_index_type: %s\n", FLANNParams::toString(flann_params.index_type));
 	printf("init_at_each_frame: %d\n", params.init_at_each_frame);
 	printf("detect_keypoints: %d\n", params.detect_keypoints);
+	printf("uchar_input: %d\n", params.uchar_input);
 	printf("rebuild_index: %d\n", params.rebuild_index);
 	printf("show_keypoints: %d\n", params.show_keypoints);
 	printf("debug_mode: %d\n", params.debug_mode);
@@ -173,8 +179,32 @@ GridTrackerFeat<SSM>::GridTrackerFeat(const ParamType *grid_params,
 }
 
 template<class SSM>
+void GridTrackerFeat<SSM>::setImage(const cv::Mat &img){
+	params.uchar_input = img.type() == CV_8UC1;
+	if(img.type() != inputType()){
+		throw std::invalid_argument(
+			cv_format("GridTrackerFeat::Input image type: %s does not match the required type: %s",
+			utils::getType(img), utils::typeToString(inputType())));
+	}
+	if(params.uchar_input){
+		curr_img = img;
+	} else if(curr_img.empty()){
+		curr_img.create(img.rows, img.cols, CV_8UC1);
+	}
+	if(prev_img.empty()){
+		prev_img.create(img.rows, img.cols, CV_8UC1);
+	}
+	if(params.show_keypoints && curr_img_disp.empty()){
+		curr_img_disp.create(img.rows, img.cols, CV_8UC3);
+	}
+	curr_img_in = img;
+}
+
+template<class SSM>
 void GridTrackerFeat<SSM>::initialize(const cv::Mat &corners) {
-	curr_img_float.convertTo(curr_img, curr_img.type());
+	if(!params.uchar_input){
+		curr_img_in.convertTo(curr_img, curr_img.type());
+	}
 
 	ssm.initialize(corners);
 	cv::Mat mask = cv::Mat::zeros(curr_img.rows, curr_img.cols, CV_8U); // all 0
@@ -207,7 +237,9 @@ void GridTrackerFeat<SSM>::initialize(const cv::Mat &corners) {
 }
 template<class SSM>
 void GridTrackerFeat<SSM>::update() {
-	curr_img_float.convertTo(curr_img, curr_img.type());
+	if(!params.uchar_input){
+		curr_img_in.convertTo(curr_img, curr_img.type());
+	}
 
 	cv::Mat mask = cv::Mat::zeros(curr_img.rows, curr_img.cols, CV_8U); 
 	
@@ -309,17 +341,6 @@ void GridTrackerFeat<SSM>::update() {
 	}
 
 }
-template<class SSM>
-void GridTrackerFeat<SSM>::setImage(const cv::Mat &img){
-	if(curr_img_float.empty()){
-		prev_img.create(img.rows, img.cols, CV_8UC1);
-		curr_img.create(img.rows, img.cols, CV_8UC1);
-	}
-	if(params.show_keypoints && curr_img_uchar.empty()){
-		curr_img_uchar.create(img.rows, img.cols, CV_8UC3);
-	}
-	curr_img_float = img;
-}
 
 template<class SSM>
 void GridTrackerFeat<SSM>::setRegion(const cv::Mat& corners) {
@@ -343,18 +364,18 @@ void GridTrackerFeat<SSM>::setRegion(const cv::Mat& corners) {
 
 template<class SSM>
 void GridTrackerFeat<SSM>::showKeyPoints(){
-	curr_img_float.convertTo(curr_img_uchar, curr_img_uchar.type());
-	cv::cvtColor(curr_img_uchar, curr_img_uchar, CV_GRAY2BGR);
-	utils::drawRegion(curr_img_uchar, cv_corners_mat, CV_RGB(0, 0, 255), 2);
+	curr_img_in.convertTo(curr_img_disp, curr_img_disp.type());
+	cv::cvtColor(curr_img_disp, curr_img_disp, CV_GRAY2BGR);
+	utils::drawRegion(curr_img_disp, cv_corners_mat, CV_RGB(0, 0, 255), 2);
 	vector<cv::DMatch> matches;
 	for(int pt_id = 0; pt_id < n_good_key_pts; pt_id++) {
-		circle(curr_img_uchar, curr_pts[pt_id], 2,
+		circle(curr_img_disp, curr_pts[pt_id], 2,
 			pix_mask[pt_id] ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255), 2);
 		matches.push_back(cv::DMatch(pt_id, 
 			best_idices.at<int>(good_indices[pt_id], 0), 
 			best_distances.at<int>(good_indices[pt_id], 0)));
 	}
-	imshow(patch_win_name, curr_img_uchar);	
+	imshow(patch_win_name, curr_img_disp);	
 	if(params.show_matches){
 		try{
 			cv::Mat img_matches;

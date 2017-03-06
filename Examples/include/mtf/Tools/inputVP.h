@@ -226,7 +226,7 @@ public:
 	}
 	int getFrameID() const override{ return frame_id; }
 
-	void remapBuffer(uchar** new_addr) override{
+	void remapBuffer(unsigned char** new_addr) override{
 		for(int i = 0; i < n_buffers; i++){
 			//printf("Remapping CV buffer %d to: %lu\n", i, (unsigned long)new_addr[i]);
 			vp_buffer[i].bitmap = (vpRGBa*) (new_addr[i]);
@@ -234,6 +234,7 @@ public:
 		buffer_id = -1;
 		update();
 	}
+	bool constBuffer() override{ return true; }
 };
 
 #endif

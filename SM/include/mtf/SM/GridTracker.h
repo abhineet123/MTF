@@ -105,7 +105,7 @@ private:
 	VectorXd ssm_update;
 
 	cv::Mat curr_img, prev_img;
-	cv::Mat curr_img_uchar;
+	cv::Mat curr_img_disp;
 
 	Matrix2Xd centroid_offset;
 

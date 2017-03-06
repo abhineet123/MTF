@@ -43,7 +43,7 @@ private:
 	ParamType params;
 	EstimatorParams est_params;
 
-	cv::Mat curr_img_float, prev_img;
+	cv::Mat curr_img, prev_img;
 	cv::Mat curr_pts_mat, prev_pts_mat;
 
 	std::vector<cv::Point2f> curr_pts, prev_pts;
@@ -59,7 +59,7 @@ private:
 
 	VectorXd ssm_update;
 
-	cv::Mat curr_img_uchar;
+	cv::Mat curr_img_disp;
 
 	Matrix2Xd centroid_offset;
 

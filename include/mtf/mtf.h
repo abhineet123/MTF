@@ -13,6 +13,7 @@
 
 #ifndef ENABLE_ONLY_NT
 //! search methods
+//! templated implementations
 #include "mtf/SM/ESM.h"
 #include "mtf/SM/ICLK.h"
 #include "mtf/SM/FCLK.h"
@@ -708,7 +709,8 @@ TrackerBase *getTracker(const char *sm_type,
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
 				grid_reset_at_each_frame, grid_patch_centroid_inside,
 				grid_fb_err_thresh, grid_pyramid_levels, grid_use_min_eig_vals,
-				grid_min_eig_thresh, max_iters, epsilon, grid_show_trackers, debug_mode);
+				grid_min_eig_thresh, max_iters, epsilon, uchar_input, 
+				grid_show_trackers, debug_mode);
 			typename SSMType::ParamType _ssm_params(ssm_params);
 			_ssm_params.resx = grid_params.getResX();
 			_ssm_params.resy = grid_params.getResY();
@@ -735,7 +737,7 @@ TrackerBase *getTracker(const char *sm_type,
 			GridTrackerFeatParams grid_params(
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
 				grid_reset_at_each_frame, grid_detect_keypoints, grid_rebuild_index,
-				max_iters, epsilon, enable_pyr,
+				max_iters, epsilon, enable_pyr, uchar_input, 
 				grid_show_trackers, grid_show_tracker_edges, debug_mode);
 			SIFTParams sift_params(sift_n_features, sift_n_octave_layers,
 				sift_contrast_thresh, sift_edge_thresh, sift_sigma);

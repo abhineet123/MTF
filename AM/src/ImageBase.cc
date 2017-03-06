@@ -49,9 +49,9 @@ void ImageBase::setCurrImg(const cv::Mat &cv_img){
 	img_width = cv_img.cols;
 	curr_img_cv = cv_img;
 	uchar_input = cv_img.type() == CV_8UC1 || cv_img.type() == CV_8UC3;
-	if(cv_img.type()!=inputType()){
+	if(cv_img.type() != inputType()){
 		throw std::invalid_argument(
-			cv_format("ImageBase::Input image type: %s does not match the requiredd: %s", 
+			cv_format("ImageBase::Input image type: %s does not match the required type: %s",
 			utils::getType(cv_img), utils::typeToString(inputType()))
 			);
 	}

@@ -44,6 +44,8 @@ struct GridTrackerFeatParams{
 	double epsilon;
 	bool enable_pyr;
 
+	bool uchar_input;
+
 	//! show the locations of individual key points
 	bool show_keypoints;
 	//! show the matches between keypoints
@@ -57,8 +59,8 @@ struct GridTrackerFeatParams{
 		bool _init_at_each_frame,
 		bool _detect_keypoints, bool _rebuild_index,
 		int _max_iters, double _epsilon, bool _enable_pyr,
-		bool _show_keypoints, bool _show_matches,
-		bool _debug_mode);
+		bool _uchar_input, bool _show_keypoints,
+		bool _show_matches, 	bool _debug_mode);
 	GridTrackerFeatParams(const GridTrackerFeatParams *params = nullptr);
 
 	int getResX() const{ return grid_size_x; }
@@ -99,7 +101,9 @@ public:
 	int getResX() override{ return params.grid_size_x; }
 	int getResY() override{ return params.grid_size_y; }
 	const cv::Mat& getRegion() override{ return cv_corners_mat; }
-	int inputType() const override{ return CV_32FC1; }
+	int inputType() const override{
+		return params.uchar_input ? CV_8UC1 : CV_32FC1;
+	}
 	SSM& getSSM() { return ssm; }
 
 private:
@@ -117,7 +121,7 @@ private:
 	cv::Mat best_idices;
 	cv::Mat best_distances;
 
-	cv::Mat curr_img_float, curr_img, prev_img;
+	cv::Mat curr_img_in, curr_img, prev_img;
 	std::vector<cv::KeyPoint> curr_key_pts, prev_key_pts;
 	std::vector<cv::Point2f> curr_pts, prev_pts;
 
@@ -130,7 +134,7 @@ private:
 	cv::Mat warp_mat;
 	VectorXd ssm_update;
 
-	cv::Mat curr_img_uchar;
+	cv::Mat curr_img_disp;
 
 	char* patch_win_name;
 

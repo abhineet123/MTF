@@ -145,14 +145,18 @@ int main(int argc, char * argv[]) {
 			printf("Tracker could not be created successfully\n");
 			return EXIT_FAILURE;
 		}
-		PreProc_ pre_proc = getPreProc(pre_procs, tracker->inputType(), pre_proc_type);
-		pre_proc->initialize(input->getFrame(), input->getFrameID());
-		for(PreProc_ curr_obj = pre_proc; curr_obj; curr_obj = curr_obj->next){
-			tracker->setImage(curr_obj->getFrame());
+		if(enable_pre_proc){
+			PreProc_ pre_proc = getPreProc(pre_procs, tracker->inputType(), pre_proc_type);
+			pre_proc->initialize(input->getFrame(), input->getFrameID());
+			for(PreProc_ curr_obj = pre_proc; curr_obj; curr_obj = curr_obj->next){
+				tracker->setImage(curr_obj->getFrame());
+			}			
+			pre_procs.push_back(pre_proc);
+		} else{
+			tracker->setImage(input->getFrame());
 		}
 		tracker->initialize(cv_utils.getObj(tracker_id).corners);
 		trackers.push_back(Tracker_(tracker));
-		pre_procs.push_back(pre_proc);
 	}
 
 	if(input->n_frames == 0){
@@ -176,7 +180,11 @@ int main(int argc, char * argv[]) {
 			}
 		}
 		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
-			pre_procs[tracker_id]->update(input->getFrame(), input->getFrameID());
+			if(enable_pre_proc){
+				pre_procs[tracker_id]->update(input->getFrame(), input->getFrameID());				
+			} else{
+				trackers[tracker_id]->setImage(input->getFrame());
+			}
 			trackers[tracker_id]->setRegion(cv_utils.getGT(input->getFrameID()));
 		}
 	}
@@ -437,7 +445,6 @@ int main(int argc, char * argv[]) {
 				}
 				if(!skip_success){ break; }
 				printf("Reinitializing in frame %5d...\n", input->getFrameID() + 1);
-				pre_procs[0]->update(input->getFrame(), input->getFrameID());
 				reinit_frame_id = input->getFrameID();
 				if(reinit_with_new_obj){
 					//! delete the old tracker instance and create a new one before reinitializing
@@ -446,9 +453,15 @@ int main(int argc, char * argv[]) {
 						printf("Tracker could not be created successfully\n");
 						return EXIT_FAILURE;
 					}
-					for(PreProc_ curr_obj = pre_procs[0]; curr_obj; curr_obj = curr_obj->next){
-						trackers[0]->setImage(curr_obj->getFrame());
+					if(enable_pre_proc){
+						pre_procs[0]->update(input->getFrame(), input->getFrameID());
+						for(PreProc_ curr_obj = pre_procs[0]; curr_obj; curr_obj = curr_obj->next){
+							trackers[0]->setImage(curr_obj->getFrame());
+						}
 					}
+				}
+				if(!enable_pre_proc){
+					trackers[0]->setImage(input->getFrame());
 				}
 				trackers[0]->initialize(cv_utils.getGT(reinit_frame_id));
 				tracker_corners = trackers[0]->getRegion().clone();
@@ -473,18 +486,25 @@ int main(int argc, char * argv[]) {
 					printf("Tracker could not be created successfully\n");
 					return EXIT_FAILURE;
 				}
-				for(PreProc_ pre_proc = pre_procs[0]; pre_proc; pre_proc = pre_proc->next){
-					trackers[0]->setImage(pre_proc->getFrame());
+				if(enable_pre_proc){
+					for(PreProc_ pre_proc = pre_procs[0]; pre_proc; pre_proc = pre_proc->next){
+						trackers[0]->setImage(pre_proc->getFrame());
+					}
 				}
+			}
+			if(!enable_pre_proc){
+				trackers[0]->setImage(input->getFrame());
 			}
 			trackers[0]->initialize(cv_utils.getGT(input->getFrameID()));
 			invalid_tracker_state = tracker_failed = false;
 		} else if(reset_at_each_frame){
-			if(reset_to_init){
-				trackers[0]->setRegion(cv_utils.getGT(init_frame_id));
-			} else{
-				trackers[0]->setRegion(cv_utils.getGT(input->getFrameID()));
+			if(!enable_pre_proc){
+				trackers[0]->setImage(input->getFrame());
 			}
+			cv::Mat reset_location = reset_to_init ? cv_utils.getGT(init_frame_id) :
+				cv_utils.getGT(input->getFrameID());
+			trackers[0]->setRegion(reset_location);
+
 			invalid_tracker_state = tracker_failed = false;
 		}
 		if(invalid_tracker_state){
@@ -543,7 +563,7 @@ int main(int argc, char * argv[]) {
 			}
 			if(show_cv_window){
 				imshow(cv_win_name, input->getFrame());
-				if(show_proc_img){
+				if(enable_pre_proc && show_proc_img){
 					pre_procs[0]->showFrame(proc_win_name);
 				}
 				int pressed_key = cv::waitKey(1 - pause_after_frame);
@@ -581,8 +601,14 @@ int main(int argc, char * argv[]) {
 		//! update trackers       
 		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
 			//! update pre processor
-			pre_procs[tracker_id]->update(input->getFrame(), input->getFrameID());
-			try{
+			if(enable_pre_proc){
+				pre_procs[tracker_id]->update(input->getFrame(), input->getFrameID());
+			} else if(!input->constBuffer()){
+				//! new image is read into a different buffer location each time
+				//! so must be reset in the tracker
+				trackers[tracker_id]->setImage(input->getFrame());
+			}
+			try{				
 				mtf_clock_get(start_time);
 				/**
 				update tracker;
@@ -592,7 +618,6 @@ int main(int argc, char * argv[]) {
 				image is read into the same locatioon
 				*/
 				trackers[tracker_id]->update();
-
 				mtf_clock_get(end_time);
 				mtf_clock_measure(start_time, end_time, tracking_time);
 				mtf_clock_measure(start_time_with_input, end_time, tracking_time_with_input);

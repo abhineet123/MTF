@@ -15,6 +15,7 @@
 #define GTCV_USE_MIN_EIG_VALS 0
 #define GTCV_MIN_EIG_THRESH 1e-4
 #define GTCV_MAX_ITERS 30
+#define GTCV_UCHAR_INPUT 1
 #define GTCV_EPSILON 0.01
 #define GTCV_SHOW_PTS 0
 #define GTCV_DEBUG_MODE 0
@@ -37,6 +38,8 @@ struct GridTrackerCVParams{
 	int max_iters; //! maximum iterations of the GridTrackerCV algorithm to run for each frame
 	double epsilon;
 
+	bool uchar_input;
+
 	bool show_pts;// show the locations of individual patch trackers
 
 	bool debug_mode; //! decides whether logging data will be printed for debugging purposes; 
@@ -49,7 +52,7 @@ struct GridTrackerCVParams{
 		double _fb_err_thresh,
 		int _pyramid_levels, bool _use_min_eig_vals,
 		double _min_eig_thresh, int _max_iters, 
-		double _epsilon,bool _show_pts,
+		double _epsilon, bool _uchar_input, bool _show_pts,
 		bool _debug_mode);
 	GridTrackerCVParams(const GridTrackerCVParams *params = nullptr);
 	
@@ -81,7 +84,9 @@ public:
 	int getResX() override{ return params.grid_size_x; }
 	int getResY() override{ return params.grid_size_y; }
 	const cv::Mat& getRegion() override{ return cv_corners_mat; }
-	int inputType() const override{ return CV_32FC1; }
+	int inputType() const override{ 
+		return params.uchar_input ? CV_8UC1 : CV_32FC1;
+	}
 	SSM& getSSM() { return ssm; }
 
 private:
@@ -90,7 +95,7 @@ private:
 	ParamType params;
 	EstimatorParams est_params;
 
-	cv::Mat curr_img_float, curr_img, prev_img;
+	cv::Mat curr_img_in, curr_img, prev_img;
 	cv::Mat curr_pts_mat, prev_pts_mat;
 
 	std::vector<cv::Point2f> curr_pts, prev_pts;
@@ -106,7 +111,7 @@ private:
 
 	VectorXd ssm_update;
 
-	cv::Mat curr_img_uchar;
+	cv::Mat curr_img_disp;
 
 	Matrix2Xd centroid_offset;
 

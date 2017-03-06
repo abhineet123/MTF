@@ -34,6 +34,8 @@ protected:
 	int n_channels;
 	int buffer_id;
 
+	bool const_buffer;
+
 
 	char img_source;
 	string file_path;
@@ -75,6 +77,8 @@ public:
 
 			n_frames = getNumberOfFrames(file_path.c_str());
 		}
+		const_buffer = n_buffers == 1;
+
 		printf("dev_name: %s\n", dev_name.c_str());
 		printf("dev_path: %s\n", dev_path.c_str());
 		printf("dev_fmt: %s\n", dev_fmt.c_str());
@@ -91,7 +95,11 @@ public:
 	virtual cv::Mat& getFrame(FrameType frame_type) = 0;
 	virtual int getHeight() const{ return img_height; }
 	virtual int getWidth() const{ return img_width; }
-
+	/**
+	return true if the memory address of the output image buffer is constant, i.e. 
+	the image returned by getFrame is always read into the same memory location
+	*/
+	virtual bool constBuffer(){ return const_buffer; }
 
 	int getNumberOfFrames(const char *file_template){
 		int frame_id = 0;

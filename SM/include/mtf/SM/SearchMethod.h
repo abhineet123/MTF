@@ -13,8 +13,6 @@ protected:
 	SSM ssm;
 
 public:
-	using TrackerBase::initialize;
-	using TrackerBase::update;
 
 	typedef typename  AM::ParamType AMParams;
 	typedef typename SSM::ParamType SSMParams;
@@ -42,6 +40,10 @@ public:
 		ssm.setCorners(corners);
 		ssm.getCorners(cv_corners_mat);
 	}
+
+	using TrackerBase::initialize;
+	using TrackerBase::update;
+	using TrackerBase::setRegion;
 
 	const bool *spi_mask;
 	virtual void setSPIMask(const bool *_spi_mask){
