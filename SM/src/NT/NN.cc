@@ -158,8 +158,13 @@ namespace nt{
 				if(params.show_samples){
 					cv::Point2d sample_corners[4];
 					ssm->getCorners(sample_corners);
+#ifdef _WIN32
+					utils::drawCorners(curr_img_uchar, sample_corners,
+						cv::Scalar(0, 0, 255), utils::to_string(sample_id + 1));
+#else
 					utils::drawCorners(curr_img_uchar, sample_corners,
 						cv::Scalar(0, 0, 255), to_string(sample_id + 1));
+#endif
 					if((sample_id + 1) % params.show_samples == 0){
 						cv::imshow("Samples", curr_img_uchar);
 						int key = cv::waitKey(1 - pause_after_show);

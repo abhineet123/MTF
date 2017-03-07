@@ -7,7 +7,7 @@
 #ifndef MTF_GRAPH_UTILS_H
 #define MTF_GRAPH_UTILS_H
 
-// OpenCV
+#include "mtf/Macros/common.h"
 #include "opencv2/core/core.hpp"
 
 #define DEFAULT(val) = val

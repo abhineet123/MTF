@@ -29,7 +29,7 @@ PFSL3_EXE_INSTALL_DIR = /usr/local/bin
 pfsl3: 	${PFSL3_EXE_INSTALL_DIR}/${PFSL3_EXE_NAME}
 
 ${BUILD_DIR}/PFSL3.o: ${PFSL3_SRC_DIR}/PFSL3.cc ${PFSL3_HEADERS} ${ROOT_HEADER_DIR}/TrackerBase.h
-	${CXX} -fPIC -c -I/usr/include/clapack ${WARNING_FLAGS} ${OPT_FLAGS} ${MTF_COMPILETIME_FLAGS} $< ${FLAGS64} ${FLAGSCV} -I${PFSL3_INCLUDE_DIR} -I${ROOT_INCLUDE_DIR} -o  $@	
+	${CXX} -fPIC -c -I/usr/include/clapack ${WARNING_FLAGS} ${OPT_FLAGS} ${MTF_COMPILETIME_FLAGS} $< ${FLAGS64} ${OPENCV_FLAGS} -I${PFSL3_INCLUDE_DIR} -I${ROOT_INCLUDE_DIR} -o  $@	
 ThirdParty/PFSL3/libpfsl3.a: ThirdParty/PFSL3/PFSL3.o
 	ar rcs $@ $<
 ${MTF_LIB_INSTALL_DIR}/libpfsl3.a: ThirdParty/PFSL3/libpfsl3.a
@@ -37,4 +37,4 @@ ${MTF_LIB_INSTALL_DIR}/libpfsl3.a: ThirdParty/PFSL3/libpfsl3.a
 ${PFSL3_EXE_INSTALL_DIR}/${PFSL3_EXE_NAME}: ${BUILD_DIR}/${PFSL3_EXE_NAME}
 	${MTF_LIB_INSTALL_CMD_PREFIX} cp -f $< $@
 ${BUILD_DIR}/${PFSL3_EXE_NAME}: ${PFSL3_SRC_DIR}/tracking.cpp
-	${CXX} -w ${WARNING_FLAGS} -o $@ -I/usr/include/clapack ${OPT_FLAGS_PFSL3} ${FLAGSCV} $< ${LIBSCV} -llapack -lblas -lf2c
+	${CXX} -w ${WARNING_FLAGS} -o $@ -I/usr/include/clapack ${OPT_FLAGS_PFSL3} ${OPENCV_FLAGS} $< ${OPENCV_LIBS} -llapack -lblas -lf2c

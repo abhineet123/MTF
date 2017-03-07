@@ -115,7 +115,42 @@ Input/Output related parameters:
 			jpg:	JPEG image files
 			mpg:	MPEG video file
 			avi:	AVI	video file (only OpenCV pipeline)
-			if XVision pipeline is used with a camera source, this can be used to pass any formatting strings specifying the resolution, FPS and other relevant options.
+			if XVision pipeline is used with a camera source, this can be used to pass any formatting strings specifying the resolution, FPS and other relevant options.		
+
+			
+	 Parameter:	'pre_proc_type'
+		Description:
+			type of filtering to use to pre process the raw input images before feeding them to the trackers
+		Possible Values:
+			-1:	No filtering
+			0:	Gaussian filtering
+			1:	Median filtering
+			2:	Box Average filtering
+			3:	Bilinear filtering	
+			
+	 Parameter:	'pre_proc_hist_eq'
+		Description:
+			perform histogram equalization as part of pre processing
+		Possible Values:
+			0: Disable (default)
+			1: Enable	
+			
+	 Parameter:	'enable_pre_proc'
+		Description:
+			Enable the pre processing module;
+			setting this to 0 will cause raw images from the input module to be fed directly to the trackers which will only work if their format is compatible with that required by the tracker;
+			even when no filtering is used (pre_proc_type = -1), the pre processing module still converts the input images to the correct channels and precision;
+		Possible Values:
+			0: Disable
+			1: Enable (default)
+			
+	 Parameter:	'uchar_input'
+		Description:
+			use input 8 bit unsigned integral images of type CV_8UC1/CV_8UC3 as input to trackers rather than 32 bit floating point variants (CV_32FC1/CV_32FC3) 
+			enabling this can provide a small increase in speed but sometimes at the cost of slight loss in precision especially if filtering or grayscale conversion is enabled
+		Possible Values:
+			0: Disable (default)
+			1: Enable
 			
 	 Parameter:	'init_frame_id'
 		Description:
@@ -136,7 +171,7 @@ Input/Output related parameters:
 			read initial location of the object to be tracked from the text file specified by 'read_obj_fname' where they were previously written to by enabling 'write_objs';
 			this is meant to avoid having to specify a custom initialization locations for one or more trackers repeatedly
 		Possible Values:
-			0: Disable
+			0: Disable (default)
 			1: Enable
 			
 	 Parameter:	'read_obj_fname'
@@ -150,7 +185,7 @@ Input/Output related parameters:
 			only matters if manual selection is enabled by disabling both 'read_objs' and 'read_obj_from_gt';
 			this is meant to avoid having to specify a custom initialization locations for one or more trackers repeatedly
 		Possible Values:
-			0: Disable
+			0: Disable (default)
 			1: Enable
 			
 	 Parameter:	'write_obj_fname'

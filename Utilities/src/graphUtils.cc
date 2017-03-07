@@ -136,12 +136,11 @@ namespace mtf {
 			// Write the scale of the y axis
 			if(showScale) {
 				cv::Scalar clr = GREY;
-				char text[16];
-				sprintf_s(text, sizeof(text) - 1, "%e", maxV);
+				std::string text = cv_format("%e", maxV);
 				cv::putText(imageGraph, text, cv::Point(1, b + 4), cv::FONT_HERSHEY_PLAIN, 1, clr);
 				// Write the scale of the x axis
-				sprintf_s(text, sizeof(text) - 1, "%d", (nArrayLength - 1));
-				cv::putText(imageGraph, text, cv::Point(w - b + 4 - 10 * strlen(text), (h / 2) + 10), 
+				text = cv_format("%d", (nArrayLength - 1));
+				cv::putText(imageGraph, text, cv::Point(w - b + 4 - 10 * text.size(), (h / 2) + 10), 
 					cv::FONT_HERSHEY_PLAIN, 1, clr);
 			}
 
@@ -223,12 +222,11 @@ namespace mtf {
 			if(showScale) {
 				//cvInitFont(cv::FONT_HERSHEY_PLAIN, 1,CV_FONT_HERSHEY_PLAIN,0.5,0.6, 0,1, CV_AA);	// For OpenCV 2.0
 				cv::Scalar clr = GREY;
-				char text[16];
-				sprintf_s(text, sizeof(text) - 1, "%d", maxV);
+				std::string text = cv_format("%d", maxV);
 				cv::putText(imageGraph, text, cv::Point(1, b + 4), cv::FONT_HERSHEY_PLAIN, 1, clr);
 				// Write the scale of the x axis
-				sprintf_s(text, sizeof(text) - 1, "%d", (nArrayLength - 1));
-				cv::putText(imageGraph, text, cv::Point(w - b + 4 - 10 * strlen(text), (h / 2) + 10), cv::FONT_HERSHEY_PLAIN, 1, clr);
+				text = cv_format("%d", nArrayLength - 1);
+				cv::putText(imageGraph, text, cv::Point(w - b + 4 - 10 * text.size(), (h / 2) + 10), cv::FONT_HERSHEY_PLAIN, 1, clr);
 			}
 
 			// Draw the values
@@ -308,12 +306,11 @@ namespace mtf {
 			// Write the scale of the y axis
 			if(showScale) {
 				cv::Scalar clr = GREY;
-				char text[16];
-				sprintf_s(text, sizeof(text) - 1, "%d", maxV);
+				std::string text = cv_format("%d", maxV);
 				cv::putText(imageGraph, text, cv::Point(1, b + 4), cv::FONT_HERSHEY_PLAIN, 1, clr);
 				// Write the scale of the x axis
-				sprintf_s(text, sizeof(text) - 1, "%d", (nArrayLength - 1));
-				cv::putText(imageGraph, text, cv::Point(w - b + 4 - 5 * strlen(text), (h / 2) + 10), cv::FONT_HERSHEY_PLAIN, 1, clr);
+				text = cv_format("%d", nArrayLength - 1);
+				cv::putText(imageGraph, text, cv::Point(w - b + 4 - 5 * text.size(), (h / 2) + 10), cv::FONT_HERSHEY_PLAIN, 1, clr);
 			}
 
 			// Draw the values

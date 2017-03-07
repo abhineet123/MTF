@@ -5,6 +5,7 @@
 #include "opencv2/core/core.hpp"
 #include <assert.h> 
 #include <stdlib.h>
+#include <stdio.h>
 #include <vector>
 
 #if defined(__GNUC__) || defined(__GNUG__)
@@ -43,6 +44,7 @@
 //	INIT_TIMER(start_time);
 
 #ifdef _WIN32
+#define _USE_MATH_DEFINES
 #include <time.h>
 #define mtf_clock_get(time_instant) \
 	clock_t time_instant = clock()

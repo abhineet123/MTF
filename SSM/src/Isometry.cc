@@ -5,6 +5,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#ifdef _WIN32
+# define M_PI 3.14159265358979323846  /* pi */
+#endif
+
 _MTF_BEGIN_NAMESPACE
 
 IsometryParams::IsometryParams(const SSMParams *ssm_params,

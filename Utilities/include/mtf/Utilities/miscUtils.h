@@ -435,6 +435,12 @@ namespace utils{
 			+ corners.at<double>(1, 2) + corners.at<double>(1, 3)) / 4.0;
 
 	}
+	template<typename T>
+	std::string to_string(T val){
+		stringstream ss;
+		ss << val;
+		return ss.str();
+	}
 }
 _MTF_END_NAMESPACE
 #endif

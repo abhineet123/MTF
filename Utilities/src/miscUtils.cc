@@ -4,6 +4,10 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #endif
 #include <fstream>
+#include <string>
+#ifdef _WIN32
+#include <sstream>
+#endif
 
 #define mat_to_pt(vert, id) cv::Point2d(vert.at<double>(0, id), vert.at<double>(1, id))
 #define eig_to_pt(vert, id) cv::Point2d(vert(0, id), vert(1, id))
@@ -164,8 +168,13 @@ namespace utils{
 			cv::line(img, vertices_p2d[vert_id], vertices_p2d[(vert_id + 1) % vertices.cols],
 				col, line_thickness, line_type);
 			if(show_corner_ids){
-				putText(img, to_string(vert_id), vertices_p2d[vert_id],
+#ifdef _WIN32
+				putText(img, utils::to_string(vert_id), vertices_p2d[vert_id],
 					cv::FONT_HERSHEY_SIMPLEX, font_size, col);
+#else
+				putText(img, std::to_string(vert_id), vertices_p2d[vert_id],
+					cv::FONT_HERSHEY_SIMPLEX, font_size, col);
+#endif
 			}
 		}
 		if(label && show_label){

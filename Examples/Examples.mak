@@ -1,8 +1,30 @@
-MTF_EXEC_INSTALL_DIR ?= /usr/local/bin
-MTF_TEST_INSTALL_DIR ?= /usr/local/bin
-MTF_PY_INSTALL_DIR ?= /usr/local/lib/python2.7/dist-packages/
-PYTHON_INCLUDE_DIR ?= /usr/include/python2.7
-MTF_PY_LIB_NAME ?= pyMTF.so
+ifeq ($(OS),Windows_NT)
+	MTF_EXEC_INSTALL_DIR ?= C:/MTF/bin
+	MTF_TEST_INSTALL_DIR ?= C:/MTF/bin
+	MTF_PY_INSTALL_DIR ?= C:/Python27/Lib/site-packages
+	PYTHON_INCLUDE_DIR ?= C:/Python27/include
+	MTF_PY_LIB_NAME ?= pyMTF.pyd
+else
+	MTF_EXEC_INSTALL_DIR ?= /usr/local/bin
+	MTF_TEST_INSTALL_DIR ?= /usr/local/bin
+	MTF_PY_INSTALL_DIR ?= /usr/local/lib/python2.7/dist-packages/
+	PYTHON_INCLUDE_DIR ?= /usr/include/python2.7
+	MTF_PY_LIB_NAME ?= pyMTF.so
+	# add "sudo" to the cp/mkdir commands if the executable installation folder needs administrative access
+	ifneq (,$(findstring /usr,$(MTF_EXEC_INSTALL_DIR)))
+		MTF_EXE_INSTALL_CMD_PREFIX = sudo
+	endif
+	ifneq (,$(findstring /usr,$(MTF_PY_INSTALL_DIR)))
+		MTF_PY_INSTALL_CMD_PREFIX = sudo
+	endif
+	ifneq (,$(findstring /usr,$(MTF_TEST_INSTALL_DIR)))
+		MTF_TEST_INSTALL_CMD_PREFIX = sudo
+	endif
+	ifneq (,$(findstring /usr,$(MTF_APP_INSTALL_DIR)))
+		MTF_APP_INSTALL_CMD_PREFIX = sudo
+	endif
+	FLAGS_TBB +=  -L/opt/intel/composer_xe_2015/tbb/lib/intel64/gcc4.4
+endif
 MTF_APP_INSTALL_DIR ?= .
 MTF_APP_SRC_DIR ?= ${EXAMPLES_ROOT_DIR}/src
 
@@ -12,20 +34,6 @@ uavold ?= 0
 am ?= ssd
 ssm ?= 4
 app_name ?= mtfApp
-
-# add "sudo" to the cp/mkdir commands if the executable installation folder needs administrative access
-ifneq (,$(findstring /usr,$(MTF_EXEC_INSTALL_DIR)))
-MTF_EXE_INSTALL_CMD_PREFIX = sudo
-endif
-ifneq (,$(findstring /usr,$(MTF_PY_INSTALL_DIR)))
-MTF_PY_INSTALL_CMD_PREFIX = sudo
-endif
-ifneq (,$(findstring /usr,$(MTF_TEST_INSTALL_DIR)))
-MTF_TEST_INSTALL_CMD_PREFIX = sudo
-endif
-ifneq (,$(findstring /usr,$(MTF_APP_INSTALL_DIR)))
-MTF_APP_INSTALL_CMD_PREFIX = sudo
-endif
 
 EXAMPLES_ROOT_DIR = Examples
 EXAMPLES_SRC_DIR = ${EXAMPLES_ROOT_DIR}/src
@@ -38,78 +46,77 @@ EXAMPLES_TOOLS_HEADERS = $(addprefix ${EXAMPLES_HEADER_DIR}/,$(addsuffix .h, ${E
 MTF_HEADERS += ${EXAMPLES_TOOLS_HEADERS}
 MTF_INCLUDE_DIRS += ${EXAMPLES_INCLUDE_DIR}
 
-LIBS_BOOST +=  -lboost_random -lboost_filesystem -lboost_system
-FLAGS_TBB +=  -L/opt/intel/composer_xe_2015/tbb/lib/intel64/gcc4.4
-
 UAV_FLAGS =
-MTF_AM= SSD
+MTF_AM = SSD
 MTF_SSM = Similitude
 
 ifeq (${use_caffe}, 1)
-MTF_LIBS += -lstdc++ -lglog -lcaffe
-MTF_LIBS_DIRS +=  -L${CAFFE_LIBRARY_PATH}
-MTF_RUNTIME_FLAGS += ${CAFFE_FLAGS}
+	MTF_LIBS += -lstdc++ -lglog -lcaffe
+	MTF_LIBS_DIRS +=  -L${CAFFE_LIBRARY_PATH}
+	MTF_RUNTIME_FLAGS += ${CAFFE_FLAGS}
 endif
+
 ifeq (${utt}, 1)
-UAV_FLAGS += -DUSE_TEMPLATED_SM -DMTF_AM=${MTF_AM} -DMTF_SSM=${MTF_SSM}
+	UAV_FLAGS += -DUSE_TEMPLATED_SM -DMTF_AM=${MTF_AM} -DMTF_SSM=${MTF_SSM}
 endif
+
 ifeq (${uavold}, 1)
-UAV_FLAGS += -DUSE_OLD_METHOD
+	UAV_FLAGS += -DUSE_OLD_METHOD
 endif
 ifeq (${am}, ssd)
-MTF_AM= SSD
+	MTF_AM= SSD
 else ifeq (${am}, mi)
-MTF_AM= MI
+	MTF_AM= MI
 else ifeq (${am}, ncc)
-MTF_AM= NCC
+	MTF_AM= NCC
 endif
 
 ifeq (${header_only}, 1)
-MTF_RUNTIME_FLAGS += -DHEADER_ONLY_MODE -DDISABLE_THIRD_PARTY_TRACKERS
-MTF_LIB_LINK = 
+	MTF_RUNTIME_FLAGS += -DHEADER_ONLY_MODE -DDISABLE_THIRD_PARTY_TRACKERS
+	MTF_LIB_LINK = 
 endif
 
 ifeq (${ssm}, 2)
-MTF_SSM = Translation
+	MTF_SSM = Translation
 else ifeq (${ssm}, 4)
-MTF_SSM = Similitude
+	MTF_SSM = Similitude
 else ifeq (${ssm}, 6)
-MTF_SSM = Affine
+	MTF_SSM = Affine
 else ifeq (${ssm}, 8)
-MTF_SSM = Homography
+	MTF_SSM = Homography
 endif
 
 ifeq (${o}, 1)
-# LIBS_PARALLEL += -ltbb
-MTF_RUNTIME_FLAGS += -O3 -D NDEBUG -D EIGEN_NO_DEBUG
-ifeq (${header_only}, 1)
-_MTF_EXE_NAME = runMTFh
+	# LIBS_PARALLEL += -ltbb
+	MTF_RUNTIME_FLAGS += -O3 -D NDEBUG -D EIGEN_NO_DEBUG
+	ifeq (${header_only}, 1)
+		_MTF_EXE_NAME = runMTFh
+	else
+		_MTF_EXE_NAME = runMTF
+	endif
+	_MTF_TEST_EXE_NAME = testMTF
+	_MTF_PATCH_EXE_NAME = extractPatch
+	_MTF_UAV_EXE_NAME = trackUAVTrajectory
+	_MTF_GT_EXE_NAME = showGroundTruth
+	_MTF_SYN_EXE_NAME = generateSyntheticSeq
+	_MTF_MOS_EXE_NAME = createMosaic
+	_MTF_REC_EXE_NAME = recordSeq
+	_MTF_APP_EXE_NAME = ${app_name}
 else
-_MTF_EXE_NAME = runMTF
-endif
-_MTF_TEST_EXE_NAME = testMTF
-_MTF_PATCH_EXE_NAME = extractPatch
-_MTF_UAV_EXE_NAME = trackUAVTrajectory
-_MTF_GT_EXE_NAME = showGroundTruth
-_MTF_SYN_EXE_NAME = generateSyntheticSeq
-_MTF_MOS_EXE_NAME = createMosaic
-_MTF_REC_EXE_NAME = recordSeq
-_MTF_APP_EXE_NAME = ${app_name}
-else
-MTF_RUNTIME_FLAGS += -g -O0
-ifeq (${header_only}, 1)
-_MTF_EXE_NAME = runMTFdh
-else
-_MTF_EXE_NAME = runMTFd
-endif
-_MTF_TEST_EXE_NAME = testMTFd
-_MTF_PATCH_EXE_NAME = extractPatchd
-_MTF_UAV_EXE_NAME = trackUAVTrajectoryd
-_MTF_GT_EXE_NAME = showGroundTruthd
-_MTF_SYN_EXE_NAME = generateSyntheticSeqd
-_MTF_MOS_EXE_NAME = createMosaicd
-_MTF_REC_EXE_NAME = recordSeqd
-_MTF_APP_EXE_NAME = $(addsuffix d, ${app_name})
+	MTF_RUNTIME_FLAGS += -g -O0
+	ifeq (${header_only}, 1)
+		_MTF_EXE_NAME = runMTFdh
+	else
+		_MTF_EXE_NAME = runMTFd
+	endif
+	_MTF_TEST_EXE_NAME = testMTFd
+	_MTF_PATCH_EXE_NAME = extractPatchd
+	_MTF_UAV_EXE_NAME = trackUAVTrajectoryd
+	_MTF_GT_EXE_NAME = showGroundTruthd
+	_MTF_SYN_EXE_NAME = generateSyntheticSeqd
+	_MTF_MOS_EXE_NAME = createMosaicd
+	_MTF_REC_EXE_NAME = recordSeqd
+	_MTF_APP_EXE_NAME = $(addsuffix d, ${app_name})				
 endif
 
 MTF_EXE_NAME = $(addsuffix ${LIB_POST_FIX}, ${_MTF_EXE_NAME})
@@ -123,8 +130,8 @@ MTF_REC_EXE_NAME = $(addsuffix ${LIB_POST_FIX}, ${_MTF_REC_EXE_NAME})
 MTF_APP_EXE_NAME = $(addsuffix ${LIB_POST_FIX}, ${_MTF_APP_EXE_NAME})
 
 ifeq (${vp}, 1)
-EXAMPLES_TOOLS += inputVP
-MTF_RUNTIME_FLAGS += -lvisp_io -lvisp_sensor
+	EXAMPLES_TOOLS += inputVP
+	MTF_RUNTIME_FLAGS += -lvisp_io -lvisp_sensor
 endif
 
 .PHONY: exe uav mos syn py test gt patch app mtfi mtfp mtfc mtfu mtft mtfs mtfm app
@@ -205,34 +212,34 @@ ${BUILD_DIR}/${MTF_PATCH_EXE_NAME}: | ${BUILD_DIR}
 ${BUILD_DIR}/${MTF_APP_EXE_NAME}: | ${BUILD_DIR}	
 
 ${BUILD_DIR}/${MTF_EXE_NAME}: ${EXAMPLES_SRC_DIR}/runMTF.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
-	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${FLAGSCV} ${MTF_LIB_LINK} ${LIBS}${LIBS_BOOST} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${LIBSCV} 
+	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${OPENCV_FLAGS} ${MTF_LIB_LINK} ${LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 
 	
 ${BUILD_DIR}/${MTF_UAV_EXE_NAME}: ${EXAMPLES_SRC_DIR}/trackUAVTrajectory.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
-	${CXX} $< -o $@ -w ${UAV_FLAGS} ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${FLAGSCV} ${MTF_LIB_LINK} ${LIBS} ${LIBS_BOOST} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS}  ${LIBSCV} 
+	${CXX} $< -o $@ -w ${UAV_FLAGS} ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${OPENCV_FLAGS} ${MTF_LIB_LINK} ${LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS}  ${OPENCV_LIBS} 
 	
 ${BUILD_DIR}/${MTF_PATCH_EXE_NAME}: ${EXAMPLES_SRC_DIR}/extractPatch.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
-	${CXX} $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${FLAGSCV} ${MTF_LIB_LINK} ${LIBS} ${LIBS_BOOST} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${LIBSCV} 
+	${CXX} $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${OPENCV_FLAGS} ${MTF_LIB_LINK} ${LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 
 	
 ${BUILD_DIR}/${MTF_PY_LIB_NAME}: ${BUILD_DIR}/pyMTF.o 
-	${CXX} -shared $< -o $@  ${MTF_LIB_LINK} ${LIBS} ${LIBS_BOOST} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS}${LIBSCV} -lpython2.7
+	${CXX} -shared $< -o $@  ${MTF_LIB_LINK} ${LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS}${OPENCV_LIBS} -lpython2.7
 	
 ${BUILD_DIR}/pyMTF.o: ${EXAMPLES_SRC_DIR}/pyMTF.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
-	${CXX} -w -c -fPIC $< ${WARNING_FLAGS} ${FLAGS64} ${FLAGSCV} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} -I${PYTHON_INCLUDE_DIR} -I${PYTHON_INCLUDE_DIR}/numpy -o $@
+	${CXX} -w -c -fPIC $< ${WARNING_FLAGS} ${FLAGS64} ${OPENCV_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} -I${PYTHON_INCLUDE_DIR} -I${PYTHON_INCLUDE_DIR}/numpy -o $@
 
 ${BUILD_DIR}/${MTF_GT_EXE_NAME}: ${EXAMPLES_SRC_DIR}/showGroundTruth.cc ${EXAMPLES_TOOLS_HEADERS} ${UTILITIES_HEADER_DIR}/miscUtils.h  ${ROOT_HEADER_DIR}/mtf.h
-	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${FLAGSCV} ${LIBS} ${MTF_LIB_LINK} ${LIBS_BOOST} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${LIBSCV} 
+	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${OPENCV_FLAGS} ${LIBS} ${MTF_LIB_LINK} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 
 	
 ${BUILD_DIR}/${MTF_REC_EXE_NAME}: ${EXAMPLES_SRC_DIR}/recordSeq.cc ${EXAMPLES_TOOLS_HEADERS}
-	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${CONFIG_INCLUDE_FLAGS} ${FLAGS64} ${FLAGSCV} ${LIBS} ${LIBSCV} ${LIBS_BOOST} ${LIBS_PARALLEL}
+	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${CONFIG_INCLUDE_FLAGS} ${FLAGS64} ${OPENCV_FLAGS} ${LIBS} ${OPENCV_LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL}
 	
 ${BUILD_DIR}/${MTF_SYN_EXE_NAME}: ${EXAMPLES_SRC_DIR}/generateSyntheticSeq.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
-	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${FLAGSCV} ${LIBS} ${MTF_LIB_LINK} ${LIBS_BOOST} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${LIBSCV} 
+	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${OPENCV_FLAGS} ${LIBS} ${MTF_LIB_LINK} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 
 	
 ${BUILD_DIR}/${MTF_MOS_EXE_NAME}: ${EXAMPLES_SRC_DIR}/createMosaic.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
-	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${FLAGSCV} ${LIBS} ${MTF_LIB_LINK} ${LIBS_BOOST} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${LIBSCV} 
+	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${OPENCV_FLAGS} ${LIBS} ${MTF_LIB_LINK} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 
 	
 ${BUILD_DIR}/${MTF_TEST_EXE_NAME}: ${EXAMPLES_SRC_DIR}/testMTF.cc ${TEST_HEADERS} ${MTF_HEADERS} ${CONFIG_HEADERS}  ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
-	${CXX} $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${FLAGSCV} ${MTF_LIB_LINK} ${LIBS} ${LIBS_PARALLEL} ${LIBS_BOOST} ${MTF_TEST_LIBS} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${LIBSCV} 
+	${CXX} $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${OPENCV_FLAGS} ${MTF_LIB_LINK} ${LIBS} ${LIBS_PARALLEL} ${BOOST_LIBS} ${MTF_TEST_LIBS} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 
 	
 ${BUILD_DIR}/${MTF_APP_EXE_NAME}: ${MTF_APP_SRC_DIR}/${app_name}.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
-	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${FLAGSCV} ${MTF_LIB_LINK} ${LIBS} ${LIBS_BOOST} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${LIBSCV} 
+	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${FLAGS64} ${OPENCV_FLAGS} ${MTF_LIB_LINK} ${LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 

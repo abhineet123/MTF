@@ -605,7 +605,7 @@ public:
 			string header_3 = std::string(header).substr(10, 4);
 			int header_len = strlen(header);
 			if(header_len != 14 || header_1.compare("frame") ||
-				stoi(header_2) != frame_id + 1 || header_3.compare(".jpg")){
+				atoi(header_2.c_str()) != frame_id + 1 || header_3.compare(".jpg")){
 				printf("Invalid header in line %d of the ground truth file: %s\n", frame_id + 1, header);
 				printf("header_len: %d\n", header_len);
 				printf("header_1: %s\n", header_1.c_str());
