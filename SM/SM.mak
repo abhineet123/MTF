@@ -13,7 +13,13 @@ grid ?= 1
 # requires nonfree module of OpenCV to be installed
 feat ?= 0
 # enable templated FLANN based implementation of NN SM
+ifeq ($(OS),Windows_NT)
+# FLANN has compatibility issue in Windows 
+nn ?= 0
+else
 nn ?= 1
+endif
+
 # enable parallelization of Particle Filter SM using OpenMP
 pfomp ?= 0
 
