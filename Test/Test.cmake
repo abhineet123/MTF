@@ -11,7 +11,12 @@ add_library (mtf_test SHARED ${DIAG_SRC})
 target_compile_options(mtf_test PUBLIC ${MTF_RUNTIME_FLAGS})
 target_link_libraries(mtf_test ${MTF_LIBS})
 target_include_directories(mtf_test PUBLIC ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS})
-install(TARGETS mtf_test LIBRARY DESTINATION ${MTF_LIB_INSTALL_DIR} COMPONENT test_lib)
+if(WIN32)
+	install(TARGETS mtf_test RUNTIME DESTINATION ${MTF_LIB_INSTALL_DIR} COMPONENT test_lib)
+else()
+	install(TARGETS mtf_test LIBRARY DESTINATION ${MTF_LIB_INSTALL_DIR} COMPONENT test_lib)
+endif()  
+
 add_custom_target(install_test_lib
   ${CMAKE_COMMAND}
   -D "CMAKE_INSTALL_COMPONENT=test_lib"

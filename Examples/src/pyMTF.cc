@@ -2,18 +2,15 @@
 //! needed to avoid a weird bug in ViSP
 #define PNG_SKIP_SETJMP_CHECK
 #endif
-
-#include <Python.h>
-#include <numpy/arrayobject.h>
-
+#ifdef _WIN32
+#define hypot _hypot
+#endif
 #include "mtf/mtf.h"
 #include "mtf/Config/parameters.h"
 #include "mtf/Config/datasets.h"
 #include "mtf/Utilities/miscUtils.h"
-
-
-// tools for reading in images from various sources like image sequences, 
-// videos and cameras as well as for pre processing them
+//! tools for reading in images from various sources like image sequences, 
+//! videos and cameras as well as for pre processing them
 #include "mtf/Tools/pipeline.h"
 
 #include <time.h>
@@ -23,6 +20,9 @@
 
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
+
+#include <Python.h>
+#include <numpy/arrayobject.h>
 
 #ifdef _WIN32
 #define start_input_timer() \

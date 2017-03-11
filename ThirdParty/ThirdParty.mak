@@ -3,9 +3,10 @@
 # ------------------------------------------------------------------------------------- #
 
 ifeq ($(OS),Windows_NT)
+# many third party trackers do not compile in Windows yet
 lt ?= 0
 else
-lt ?= 0
+lt ?= 1
 endif
 
 ifeq (${lt}, 0)

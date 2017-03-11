@@ -117,7 +117,7 @@ int main(int argc, char * argv[]){
 	if(mos_use_norm_corners == 2){
 		mos_ssm->applyWarpToPts(mos_pts, mos_ssm->getPts(), norm_warp);
 	}
-	mtf::PixValT mos_patch = Map<VectorXc>(input->getFrame().data, img_size).cast<double>();
+	mtf::PixValT mos_patch = Map<mtf::VectorXc>(input->getFrame().data, img_size).cast<double>();
 	mtf::PixValT prev_patch = mos_patch;
 	mtf::utils::writePixelsToImage(mos_img, mos_patch, mos_pts, n_channels, mos_mask);
 	std::string mos_disp_win = cv_format("Mosaic :: %s", source_name.c_str()), mos_mask_win = "Mask",
@@ -146,7 +146,7 @@ int main(int argc, char * argv[]){
 
 	while(input->update()){
 
-		mos_patch = Map<VectorXc>(input->getFrame().data, img_size).cast<double>();
+		mos_patch = Map<mtf::VectorXc>(input->getFrame().data, img_size).cast<double>();
 		if(mos_use_norm_corners == 3){
 			cv::Mat temp;
 			mtf::utils::writePixelsToImage(mos_prev_tracked_img, prev_patch, mos_ssm->getPts(), n_channels, temp);

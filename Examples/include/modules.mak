@@ -18,8 +18,8 @@ ${TOOLS_LIB_NAME}: ${BUILD_DIR}/Tools ${BUILD_DIR}/Tools/inputCV.o ${BUILD_DIR}/
 	${CXX} -shared -o $@  ${BUILD_DIR}/Tools/parameters.o ${BUILD_DIR}/Tools/inputCV.o ${BUILD_DIR}/Tools/inputBase.o ${BUILD_DIR}/Tools/cvUtils.o
 	sudo cp -f $@ /usr/lib	
 ${BUILD_DIR}/Tools/inputCV.o: Tools/inputCV.cc Tools/inputCV.h
-	${CXX} -c -fPIC ${WARNING_FLAGS} ${OPT_FLAGS} ${MTF_COMPILETIME_FLAGS} ${FLAGS64} ${OPENCV_FLAGS}  ${MTF_FLAGSXV} $< -o $@
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${MTF_COMPILETIME_FLAGS} ${OPENCV_FLAGS}  ${MTF_FLAGSXV} $< -o $@
 ${BUILD_DIR}/Tools/inputBase.o: Tools/inputBase.cc Tools/inputBase.h
-	${CXX} -c -fPIC ${WARNING_FLAGS} ${OPT_FLAGS} ${MTF_COMPILETIME_FLAGS} ${FLAGS64} ${OPENCV_FLAGS}  ${MTF_FLAGSXV} $< -o $@
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${MTF_COMPILETIME_FLAGS} ${OPENCV_FLAGS}  ${MTF_FLAGSXV} $< -o $@
 ${BUILD_DIR}/Tools/cvUtils.o: Tools/cvUtils.cc Tools/cvUtils.h
-	${CXX} -c -fPIC ${WARNING_FLAGS} ${OPT_FLAGS} ${MTF_COMPILETIME_FLAGS} ${FLAGS64} ${OPENCV_FLAGS} $< -o $@	
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${MTF_COMPILETIME_FLAGS} ${OPENCV_FLAGS} $< -o $@	

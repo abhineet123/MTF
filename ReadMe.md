@@ -38,6 +38,15 @@ Installation:
     * [Caffe](http://caffe.berkeleyvision.org/) is needed for some optional modules including FMaps, Regnet and GOTURN if these are enabled during compilation
 	* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see [compile time switches]((#compile-time-switches))).
 	    - **Not recommended** as Xvision is very difficult to install and configure on modern systems
+	* **Installation in Windows**
+		- Install [MinGW](http://www.mingw.org/)
+	    - Install [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm)
+	    - Install [CoreUtils for Windows](http://gnuwin32.sourceforge.net/packages/coreutils.htm)
+		- Install Boost using instructions given [here](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary) and copy all `*.dll.a` files and all header files to the paths set in the variables `BOOST_LIB_DIRS` and `BOOST_INCLUDE_DIRS` respectively in the makefile
+		- Set appropriate locations for `EIGEN_INCLUDE_DIRS`, `OPENCV_INCLUDE_DIRS` and `OPENCV_LIB_DIRS` in the makefile
+		- Set appropriate values for `BOOST_LIBS_SUFFIX`, and `OPENCV_LIBS_SUFFIX` based on the installed versions of the respective libraries 
+		- if the Python interface is to be built, install [Python 2.7.x](https://www.python.org/downloads/windows/) and set appropriate values for `PYTHON_INCLUDE_DIR`, `PYTHON_LIBS_DIR`, `NUMPY_INCLUDE_DIR` and `MTF_PY_INSTALL_DIR`.
+		
 * **Download** the source code as zip file or clone using `git clone https://github.com/abhineet123/MTF.git`.
 * MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the former is recommended for developers/contributors as it offers finer level of control while the latter is for users of the library who only want to install it once (or when the former does not work). For cmake, first use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile and then use one of the make commands as specified below.
 * Use one of the following **make commands** to compile and install the library and the demo application:
