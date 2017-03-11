@@ -18,7 +18,7 @@ The library is implemented entirely in C++ though a Python interface called `pyM
 A Matlab interface similar to [Mexvision](http://ugweb.cs.ualberta.ca/~vis/courses/CompVis/lab/mexVision/) is currently under development too.
 We also provide a simple interface for [ROS](http://www.ros.org/) called [mtf_bridge](https://gitlab.com/vis/mtf_bridge) for seamless integration with robotics applications. A ROS package that uses it to exemplify integration of MTF with ROS is present in the `ROS` sub folder.
 
-Currently, MTF only works under Unix though support for Windows is under active development and will be added soon. Though it has been tested comprehensively only under Linux, specifically Ubuntu 14.04, it should work on Macintosh systems too (see [Compile/Runtime Notes](#compileruntime-notes) section below for resolving possible issues).
+**MTF supports both Unix and Windows systems**. Though it has been tested comprehensively only under Linux, specifically Ubuntu 14.04, it should work on Macintosh systems too (see [Compile/Runtime Notes](#compileruntime-notes) section below for resolving possible issues). Similarly, the Windows build system is in its early stages and needs some manual setting of parameters but we are working on improving it.
 
 MTF is provided under [BSD license](https://opensource.org/licenses/BSD-3-Clause) and so is free for research and commercial applications. We do request, however, that [this paper](https://arxiv.org/abs/1602.09130) be cited by any publications resulting from projects that use MTF so more people can get to know about and benefit from it. Finally, if any issues are encountered while installing or running the library, please create an entry in the [issues](https://github.com/abhineet123/MTF/issues) section and we will do our best to resolve it as soon as possible.
 
@@ -46,6 +46,7 @@ Installation:
 		- Set appropriate locations for `EIGEN_INCLUDE_DIRS`, `OPENCV_INCLUDE_DIRS` and `OPENCV_LIB_DIRS` in the makefile
 		- Set appropriate values for `BOOST_LIBS_SUFFIX`, and `OPENCV_LIBS_SUFFIX` based on the installed versions of the respective libraries 
 		- if the Python interface is to be built, install [Python 2.7.x](https://www.python.org/downloads/windows/) and set appropriate values for `PYTHON_INCLUDE_DIR`, `PYTHON_LIBS_DIR`, `NUMPY_INCLUDE_DIR` and `MTF_PY_INSTALL_DIR`.
+		- Cmake build system currently does not work under Windows so the Make version must be used.
 		
 * **Download** the source code as zip file or clone using `git clone https://github.com/abhineet123/MTF.git`.
 * MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the former is recommended for developers/contributors as it offers finer level of control while the latter is for users of the library who only want to install it once (or when the former does not work). For cmake, first use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile and then use one of the make commands as specified below.
