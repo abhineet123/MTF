@@ -85,7 +85,8 @@ public:
 	int getResY() override{ return params.grid_size_y; }
 	const cv::Mat& getRegion() override{ return cv_corners_mat; }
 	int inputType() const override{ 
-		return params.uchar_input ? CV_8UC1 : CV_32FC1;
+		return params.uchar_input ? rgb_input ? CV_8UC3 : CV_8UC1:
+			rgb_input ? CV_32FC3 : CV_32FC1;
 	}
 	SSM& getSSM() { return ssm; }
 
@@ -123,6 +124,7 @@ private:
 	bool enable_fb_err_est;
 	std::vector<cv::Point2f> fb_prev_pts;
 	VectorXb fb_err_mask;
+	bool rgb_input;
 
 	~GridTrackerCV(){}
 	void resetPts();

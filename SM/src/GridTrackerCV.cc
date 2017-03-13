@@ -84,7 +84,7 @@ void GridTrackerCVParams::updateRes(){
 template<class SSM>
 GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 	const EstimatorParams *_est_params, const SSMParams *_ssm_params) :
-	GridBase(), ssm(_ssm_params), params(grid_params),
+	GridBase(), ssm(_ssm_params), params(grid_params), rgb_input(false),
 	est_params(_est_params), enable_fb_err_est(false){
 	printf("\n");
 	printf("Using OpenCV Grid tracker with:\n");
@@ -163,6 +163,8 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 template<class SSM>
 void GridTrackerCV<SSM>::setImage(const cv::Mat &img){
 	params.uchar_input = img.type() == CV_8UC1;
+	rgb_input = img.type() == CV_8UC3 || img.type() == CV_32FC3;
+
 	if(img.type() != inputType()){
 		throw std::invalid_argument(
 			cv_format("GridTrackerCV::Input image type: %s does not match the required type: %s",
@@ -171,10 +173,10 @@ void GridTrackerCV<SSM>::setImage(const cv::Mat &img){
 	if(params.uchar_input){
 		curr_img = img;
 	} else if(curr_img.empty()){
-		curr_img.create(img.rows, img.cols, CV_8UC1);
+		curr_img.create(img.rows, img.cols, rgb_input ? CV_8UC3 : CV_8UC1);
 	}
 	if(prev_img.empty()){
-		prev_img.create(img.rows, img.cols, CV_8UC1);
+		prev_img.create(img.rows, img.cols, curr_img.type());
 	}
 	if(params.show_pts && curr_img_disp.empty()){
 		curr_img_disp.create(img.rows, img.cols, CV_8UC3);

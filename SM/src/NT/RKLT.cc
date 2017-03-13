@@ -74,11 +74,16 @@ namespace nt{
 	}
 	
 	void  RKLT::setImage(const cv::Mat &cv_img){
-		if(cv_img.type() == grid_tracker->inputType()){
-			grid_tracker->setImage(cv_img);
-		}
-		if(cv_img.type() == templ_tracker->inputType()){
+		if(inputType() == HETEROGENEOUS_INPUT){
+			if(cv_img.type() == grid_tracker->inputType()){
+				grid_tracker->setImage(cv_img);
+			}
+			if(cv_img.type() == templ_tracker->inputType()){
+				templ_tracker->setImage(cv_img);
+			}
+		} else {
 			templ_tracker->setImage(cv_img);
+			grid_tracker->setImage(cv_img);
 		}
 	}
 	

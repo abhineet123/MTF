@@ -40,15 +40,15 @@ typedef PreProcBase::Ptr PreProc_;
 inline InputBase* getInput(char _pipeline_type){
 	switch(_pipeline_type){
 	case OPENCV_PIPELINE:
-		return new InputCV(img_source, source_name, source_fmt, source_path, buffer_count);
+		return new InputCV(img_source, source_name, source_fmt, source_path, input_buffer_size);
 #ifndef DISABLE_XVISION
 	case XVISION_PIPELINE:
-		return new InputXV(img_source, source_name, source_fmt, source_path, buffer_count);
+		return new InputXV(img_source, source_name, source_fmt, source_path, input_buffer_size);
 #endif
 #ifndef DISABLE_VISP
 	case VISP_PIPELINE:
 		return new InputVP(
-			img_source, source_name, source_fmt, source_path, buffer_count, visp_usb_n_buffers,
+			img_source, source_name, source_fmt, source_path, input_buffer_size, visp_usb_n_buffers,
 			static_cast<VpResUSB>(visp_usb_res), static_cast<VpFpsUSB>(visp_usb_fps),
 			static_cast<VpResFW>(visp_fw_res), static_cast<VpFpsFW>(visp_fw_fps)
 			);
@@ -61,16 +61,19 @@ inline InputBase* getInput(char _pipeline_type){
 }
 
 inline PreProcBase* createPreProc(int output_type, const std::string &_pre_proc_type){
-	if(_pre_proc_type == "-1" || _pre_proc_type == "none"){
+	int _pre_proc_type_num = atoi(_pre_proc_type.c_str());
+	if(_pre_proc_type_num < 0 || _pre_proc_type == "raw"){
+		return new NoPreProcessing(output_type, img_resize_factor, pre_proc_hist_eq);
+	} else if(_pre_proc_type_num == 0 || _pre_proc_type == "none"){
 		return new NoFiltering(output_type, img_resize_factor, pre_proc_hist_eq);
-	} else if(_pre_proc_type == "0" || _pre_proc_type == "gauss"){
+	} else if(_pre_proc_type_num == 1 || _pre_proc_type == "gauss"){
 		return new GaussianSmoothing(output_type, img_resize_factor, pre_proc_hist_eq,
 			gauss_kernel_size, gauss_sigma_x, gauss_sigma_y);
-	} else if(_pre_proc_type == "1" || _pre_proc_type == "med"){
+	} else if(_pre_proc_type_num == 2 || _pre_proc_type == "med"){
 		return new MedianFiltering(output_type, img_resize_factor, pre_proc_hist_eq, med_kernel_size);
-	} else if(_pre_proc_type == "2" || _pre_proc_type == "box"){
+	} else if(_pre_proc_type_num == 3 || _pre_proc_type == "box"){
 		return new NormalizedBoxFltering(output_type, img_resize_factor, pre_proc_hist_eq, box_kernel_size);
-	} else if(_pre_proc_type == "3" || _pre_proc_type == "bil"){
+	} else if(_pre_proc_type_num == 4 || _pre_proc_type == "bil"){
 		return new BilateralFiltering(output_type, img_resize_factor, pre_proc_hist_eq,
 			bil_diameter, bil_sigma_col, bil_sigma_space);
 	} else{
@@ -83,6 +86,10 @@ inline PreProcBase* createPreProc(int output_type, const std::string &_pre_proc_
 inline PreProc_ getPreProc(const vector<PreProc_> &existing_objs, int output_type,
 	const std::string &_pre_proc_type){
 	if(output_type == HETEROGENEOUS_INPUT){
+		if(atoi(_pre_proc_type.c_str()) < 0 || _pre_proc_type == "raw"){
+			throw std::invalid_argument(
+				"getPreProc : Heterogeneos output cannot be used without pre processing");
+		}
 		PreProc_ new_obj = getPreProc(existing_objs, supported_output_types[0], _pre_proc_type);
 		PreProc_ curr_obj = new_obj;
 		for(int output_id = 1; output_id < supported_output_types.size(); ++output_id){
@@ -101,6 +108,10 @@ inline PreProc_ getPreProc(const vector<PreProc_> &existing_objs, int output_typ
 inline PreProc_ getPreProc(int output_type,
 	const std::string &_pre_proc_type){
 	if(output_type == HETEROGENEOUS_INPUT){
+		if(atoi(_pre_proc_type.c_str()) < 0 || _pre_proc_type == "raw"){
+			throw std::invalid_argument(
+				"getPreProc : Heterogeneos output cannot be used without pre processing");
+		}
 		PreProc_ new_obj = getPreProc(supported_output_types[0], _pre_proc_type);
 		PreProc_ curr_obj = new_obj;
 		for(int output_id = 1; output_id < supported_output_types.size(); ++output_id){

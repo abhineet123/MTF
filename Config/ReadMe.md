@@ -122,11 +122,13 @@ Input/Output related parameters:
 		Description:
 			type of filtering to use to pre process the raw input images before feeding them to the trackers
 		Possible Values:
-			-1:	No filtering
-			0:	Gaussian filtering
-			1:	Median filtering
-			2:	Box Average filtering
-			3:	Bilinear filtering	
+			-1/raw:	No Pre processing - raw images acquired by input pipeline passed to the tracker which will only work if their format is compatible with that required by the tracker;
+			even when no filtering is used (pre_proc_type = -1), the pre processing module still converts the input images to the correct channels and precision;
+			0/none:	No filtering
+			1/gauss:	Gaussian filtering
+			2/med:	Median filtering
+			3/box:	Box Average filtering
+			4/bil:	Bilinear filtering	
 			
 	 Parameter:	'pre_proc_hist_eq'
 		Description:

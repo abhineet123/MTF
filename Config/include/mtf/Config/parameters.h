@@ -60,7 +60,7 @@ namespace mtf{
 		char pipeline = 'c';
 		char img_source = 'j';
 		double img_resize_factor = 1.0;
-		int buffer_count = 10;
+		int input_buffer_size = 10;
 		int buffer_id = 0;
 
 		//! flags
@@ -222,7 +222,6 @@ namespace mtf{
 		double likelihood_beta = 0.0;
 		bool dist_from_likelihood = false;
 
-		bool enable_pre_proc = false;
 		std::string pre_proc_type = "gauss";
 		//! perform histogram equalization during pre processing;
 		bool pre_proc_hist_eq = false;
@@ -1125,8 +1124,8 @@ namespace mtf{
 				ssd_show_template = atoi(arg_val);
 			}
 
-			else if(!strcmp(arg_name, "buffer_count")){
-				buffer_count = atoi(arg_val);
+			else if(!strcmp(arg_name, "input_buffer_size")){
+				input_buffer_size = atoi(arg_val);
 			} else if(!strcmp(arg_name, "nssd_norm_pix_max")){
 				nssd_norm_pix_max = atof(arg_val);
 			} else if(!strcmp(arg_name, "nssd_norm_pix_min")){
@@ -1191,8 +1190,6 @@ namespace mtf{
 				pre_proc_type = std::string(arg_val);
 			} else if(!strcmp(arg_name, "pre_proc_hist_eq")){
 				pre_proc_hist_eq = atoi(arg_val);
-			} else if(!strcmp(arg_name, "enable_pre_proc")){
-				enable_pre_proc = atoi(arg_val);
 			}
 			//! Gaussian smoothing
 			else if(!strcmp(arg_name, "gauss_kernel_size")){
@@ -2348,6 +2345,10 @@ namespace mtf{
 					source_fmt = (img_source == SRC_USB_CAM) ? USB_DEV_FMT : FW_DEV_FMT;
 				}
 				show_tracking_error = reinit_on_failure = read_obj_from_gt = read_obj_from_file = pause_after_frame = 0;
+			}
+			if(atoi(pre_proc_type.c_str()) < 0){
+				//! input images must be read into the same location for pre processing to be disabled
+				input_buffer_size = 1;
 			}
 			return true;
 		}

@@ -36,7 +36,7 @@ public:
 		frame_rgb_uchar.release();
 		if(next.get()){ next->release(); }
 	}
-	void initialize(const cv::Mat &frame_raw, int _frame_id = -1, bool print_types = true){
+	virtual void initialize(const cv::Mat &frame_raw, int _frame_id = -1, bool print_types = true){
 		if(_frame_id > 0 && frame_id == _frame_id){
 			//! this frame has already been processed
 			return;
@@ -90,7 +90,7 @@ public:
 			}
 			break;
 		default:
-			throw std::invalid_argument("Invalid output image type provided");
+			throw std::invalid_argument("PreProcBase::initialize : Invalid output image type provided");
 		}
 		if(resize_images){
 			printf("Resizing images to : %d x %d\n", frame_resized.cols, frame_resized.rows);
@@ -98,20 +98,20 @@ public:
 		processFrame(frame_raw);
 		if(next.get()){ next->initialize(frame_raw, _frame_id); }
 	}
-	void update(const cv::Mat &frame_raw, int _frame_id = -1){
+	virtual void update(const cv::Mat &frame_raw, int _frame_id = -1){
 		if(_frame_id > 0 && frame_id == _frame_id){ return; }// this frame has already been processed
 		frame_id = _frame_id;
 		processFrame(frame_raw);
 		if(next.get()){ next->update(frame_raw, _frame_id); }
 	}
-	const cv::Mat& getFrame(){
+	virtual const cv::Mat& getFrame(){
 		return resize_images ? frame_resized : rgb_output ? frame_rgb : frame_gs;
 	}
-	const cv::Mat& getFrame(const cv::Mat &frame_raw, int _frame_id = -1){
+	virtual const cv::Mat& getFrame(const cv::Mat &frame_raw, int _frame_id = -1){
 		update(frame_raw, _frame_id);
 		return getFrame();
 	}
-	void showFrame(std::string window_name){
+	virtual void showFrame(std::string window_name){
 		cv::Mat  disp_img;
 		switch(output_type){
 		case CV_32FC1:
@@ -144,9 +144,9 @@ public:
 			throw std::invalid_argument("Invalid output image type provided");
 		}
 	}
-	int outputType() const{ return output_type; }
-	void setFrameID(int _frame_id){ frame_id = _frame_id; }
-	int getFrameID() const{ return frame_id; }
+	virtual int outputType() const{ return output_type; }
+	virtual void setFrameID(int _frame_id){ frame_id = _frame_id; }
+	virtual int getFrameID() const{ return frame_id; }
 
 protected:
 
@@ -211,7 +211,7 @@ protected:
 		}
 	}
 	virtual void apply(cv::Mat &img_gs) const = 0;
-private:
+
 	cv::Mat frame_rgb, frame_gs, frame_rgb_uchar;
 	cv::Mat frame_resized;
 	int output_type;
@@ -302,13 +302,55 @@ public:
 struct NoFiltering : public PreProcBase{
 	NoFiltering(int _output_type = CV_32FC1,
 		double _resize_factor = 1, bool _hist_eq = false) :
-		PreProcBase(_output_type, _resize_factor, _hist_eq){}
-	NoFiltering(const cv::Mat &frame_raw, int _output_type = CV_32FC1,
-		double _resize_factor = 1, bool _hist_eq = false, int _frame_id = -1) :
 		PreProcBase(_output_type, _resize_factor, _hist_eq){
-		initialize(frame_raw, _frame_id, false);
+		printf("Filtering is disabled\n");
 	}
 	void apply(cv::Mat &img_gs) const override{}
 };
-
+struct NoPreProcessing : public PreProcBase{	
+	NoPreProcessing(int _output_type = CV_32FC1,
+		double _resize_factor = 1, bool _hist_eq = false) : 
+		PreProcBase(_output_type, _resize_factor, _hist_eq){
+		printf("Pre processing is disabled\n");
+	}
+	void initialize(const cv::Mat &frame_raw,
+		int _frame_id = -1, bool print_types = true) override{
+		curr_frame = frame_raw;
+		frame_id = _frame_id;
+		output_type = curr_frame.type();
+		if(print_types){
+			printf("Image type : ");
+			switch(output_type){
+			case CV_32FC1:
+				printf("CV_32FC1\n");
+				break;
+			case CV_32FC3:
+				printf("CV_32FC3\n");
+				break;
+			case CV_8UC1:
+				printf("CV_8UC1\n");
+				break;
+			case CV_8UC3:
+				printf("CV_8UC3\n");
+				break;
+			default:
+				throw std::invalid_argument(
+					cv::format("Invalid image type provided: %d", output_type));
+			}
+		}
+	}
+	void update(const cv::Mat &frame_raw, int _frame_id = -1) override{
+		if(frame_raw.data != curr_frame.data){
+			throw std::invalid_argument("NoPreProcessing::update : Input image location in memory has changed");
+		}
+		frame_id = _frame_id;
+	}
+	void apply(cv::Mat &img_gs) const override{}
+	const cv::Mat& getFrame() override{
+		return curr_frame;
+	}
+	int outputType() const override{ return output_type; }
+private:
+	cv::Mat curr_frame;
+};
 #endif
