@@ -48,7 +48,8 @@ template<class AM, class SSM>
 void CascadeSM<AM, SSM>::setImage(const cv::Mat &img){
 	curr_img = img;
 	for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
-		if(img.type() == trackers[tracker_id]->inputType()){
+		if(input_type != HETEROGENEOUS_INPUT ||
+			img.type() == trackers[tracker_id]->inputType()){
 			trackers[tracker_id]->setImage(img);
 		}
 	}

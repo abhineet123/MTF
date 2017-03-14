@@ -494,6 +494,7 @@ namespace mtf{
 		//! OpenCV grid tracker
 		int grid_pyramid_levels = 2;
 		bool grid_use_min_eig_vals = 0;
+		bool grid_rgb_input = false;
 		double grid_min_eig_thresh = 1e-4;
 
 		bool grid_detect_keypoints = false;
@@ -1677,6 +1678,8 @@ namespace mtf{
 				grid_pyramid_levels = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_use_min_eig_vals")){
 				grid_use_min_eig_vals = atoi(arg_val);
+			} else if(!strcmp(arg_name, "grid_rgb_input")){
+				grid_rgb_input = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_min_eig_thresh")){
 				grid_min_eig_thresh = atof(arg_val);
 			} else if(!strcmp(arg_name, "grid_fb_err_thresh")){

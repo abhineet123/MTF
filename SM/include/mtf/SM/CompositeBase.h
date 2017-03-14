@@ -27,7 +27,8 @@ public:
 	virtual ~CompositeBase(){}
 	void setImage(const cv::Mat &img) override{
 		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
-			if(img.type() == trackers[tracker_id]->inputType()){
+			if(inputType() != HETEROGENEOUS_INPUT ||
+				img.type() == trackers[tracker_id]->inputType()){
 				trackers[tracker_id]->setImage(img);
 			}
 		}

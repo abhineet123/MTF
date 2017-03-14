@@ -15,7 +15,7 @@
 #define GTCV_USE_MIN_EIG_VALS 0
 #define GTCV_MIN_EIG_THRESH 1e-4
 #define GTCV_MAX_ITERS 30
-#define GTCV_UCHAR_INPUT 1
+#define GTCV_INPUT_TYPE CV_32FC1
 #define GTCV_EPSILON 0.01
 #define GTCV_SHOW_PTS 0
 #define GTCV_DEBUG_MODE 0
@@ -38,7 +38,7 @@ struct GridTrackerCVParams{
 	int max_iters; //! maximum iterations of the GridTrackerCV algorithm to run for each frame
 	double epsilon;
 
-	bool uchar_input;
+	int input_type;
 
 	bool show_pts;// show the locations of individual patch trackers
 
@@ -51,11 +51,11 @@ struct GridTrackerCVParams{
 		bool reset_at_each_frame, bool _patch_centroid_inside,
 		double _fb_err_thresh,
 		int _pyramid_levels, bool _use_min_eig_vals,
-		double _min_eig_thresh, int _max_iters, 
-		double _epsilon, bool _uchar_input, bool _show_pts,
+		double _min_eig_thresh, int _max_iters,
+		double _epsilon, int _input_type, bool _show_pts,
 		bool _debug_mode);
 	GridTrackerCVParams(const GridTrackerCVParams *params = nullptr);
-	
+
 	int getResX() const{ return resx; }
 	int getResY() const{ return resy; }
 
@@ -84,10 +84,7 @@ public:
 	int getResX() override{ return params.grid_size_x; }
 	int getResY() override{ return params.grid_size_y; }
 	const cv::Mat& getRegion() override{ return cv_corners_mat; }
-	int inputType() const override{ 
-		return params.uchar_input ? rgb_input ? CV_8UC3 : CV_8UC1:
-			rgb_input ? CV_32FC3 : CV_32FC1;
-	}
+	int inputType() const override{ return params.input_type; }
 	SSM& getSSM() { return ssm; }
 
 private:
@@ -124,7 +121,7 @@ private:
 	bool enable_fb_err_est;
 	std::vector<cv::Point2f> fb_prev_pts;
 	VectorXb fb_err_mask;
-	bool rgb_input;
+	bool rgb_input, uchar_input;
 
 	~GridTrackerCV(){}
 	void resetPts();

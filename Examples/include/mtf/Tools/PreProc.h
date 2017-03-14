@@ -308,9 +308,8 @@ struct NoFiltering : public PreProcBase{
 	void apply(cv::Mat &img_gs) const override{}
 };
 struct NoPreProcessing : public PreProcBase{	
-	NoPreProcessing(int _output_type = CV_32FC1,
-		double _resize_factor = 1, bool _hist_eq = false) : 
-		PreProcBase(_output_type, _resize_factor, _hist_eq){
+	NoPreProcessing(int _output_type = CV_32FC1) : 
+		PreProcBase(_output_type){
 		printf("Pre processing is disabled\n");
 	}
 	void initialize(const cv::Mat &frame_raw,

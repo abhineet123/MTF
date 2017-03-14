@@ -10,16 +10,14 @@ ifeq ($(OS),Windows_NT)
 	BOOST_LIBS_SUFFIX ?= -mgw53-1_58
 	MTF_LIB_EXT = .dll
 	MTF_EXE_EXT = .exe
-	# optional version postfix for all compiled files for multiple versions of the library to coexist
-	ver ?= win
+	BUILD_ROOT_DIR = Build\\Windows
 else
 	MTF_LIB_INSTALL_DIR ?= /usr/local/lib
 	MTF_HEADER_INSTALL_DIR ?= /usr/local/include
 	EIGEN_INCLUDE_DIRS ?= /usr/local/include/eigen3 /usr/include/eigen3
 	MTF_LIB_EXT = .so
 	MTF_EXE_EXT =
-	# optional version postfix for all compiled files for multiple versions of the library to coexist
-	ver ?= 0
+	BUILD_ROOT_DIR = Build
 endif
 
 # enable optimization (or Release build)
@@ -34,6 +32,8 @@ omp ?= 0
 use_caffe ?= 0
 # use Caffe in CPU ONLY mode
 caffe_cpu ?= 0
+# optional version postfix for all compiled files for multiple versions of the library to coexist
+ver ?= 0
 
 
 WARNING_FLAGS = -Wfatal-errors -Wno-write-strings -Wno-unused-result
@@ -57,10 +57,10 @@ ifeq ($(OS),Windows_NT)
 	MTF_COMPILETIME_FLAGS += -I${BOOST_INCLUDE_DIRS} 
 	MTF_RUNTIME_FLAGS += -I${BOOST_INCLUDE_DIRS}	
 	MTF_PIC_FLAG = 
-	# MKDIR_CMD = mkdir
+	MKDIR_CMD = mkdir
 	# RM_CMD = del /F /Q
 	# CP_CMD = copy /Y
-	# PATHSEP2 = \\
+	PATHSEP2 = \\
 else
 	OPENCV_FLAGS = `pkg-config --cflags opencv`
 	OPENCV_LIBS = `pkg-config --libs opencv`
@@ -75,8 +75,10 @@ else
 	ifneq (,$(findstring /usr,$(MTF_HEADER_INSTALL_DIR)))
 		MTF_HEADER_INSTALL_CMD_PREFIX = sudo
 	endif
+	MKDIR_CMD = mkdir -p
+	PATHSEP2 = /
 endif
-MKDIR_CMD = mkdir -p
+
 RM_CMD = rm -f	
 # if Mac OSX, then copy header files with -f instead of -u
 ifeq ($(shell uname -s), Darwin)
@@ -85,7 +87,7 @@ else
 	COPY_FLAG = -u
 endif
 CP_CMD = cp ${COPY_FLAG}
-PATHSEP2 = /
+# PATHSEP2 = /
 PATHSEP=$(strip $(PATHSEP2))
 MTF_COMPILETIME_FLAGS += ${OPENCV_FLAGS}
 MTF_RUNTIME_FLAGS += ${OPENCV_FLAGS}
@@ -103,9 +105,9 @@ ifeq (${o}, 1)
 	MTF_NT_LIB_NAME = mtf_nt
 	# Build Version
 	ifneq (${ver}, 0)
-		BUILD_DIR = Build${PATHSEP}Release${PATHSEP}${ver}
+		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}Release${PATHSEP}${ver}
 	else
-		BUILD_DIR = Build${PATHSEP}Release
+		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}Release
 	endif	
 else
 	OPT_FLAGS += -g -O0
@@ -113,9 +115,9 @@ else
 	MTF_NT_LIB_NAME = mtf_nt_debug
 	# Build Version
 	ifneq (${ver}, 0)
-		BUILD_DIR = Build${PATHSEP}Debug${PATHSEP}${ver}
+		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}Debug${PATHSEP}${ver}
 	else
-		BUILD_DIR = Build${PATHSEP}Debug
+		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}Debug
 	endif
 endif
 # Profiling

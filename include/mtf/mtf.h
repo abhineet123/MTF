@@ -705,11 +705,13 @@ TrackerBase *getTracker(const char *sm_type,
 	//! Grid Tracker
 	else if(!strcmp(sm_type, "grid")){
 		if(!strcmp(grid_sm, "cv")){
+			int input_type = grid_rgb_input ? uchar_input ? CV_8UC3 : CV_32FC3 :
+				uchar_input ? CV_8UC1 : CV_32FC1;
 			GridTrackerCVParams grid_params(
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
 				grid_reset_at_each_frame, grid_patch_centroid_inside,
 				grid_fb_err_thresh, grid_pyramid_levels, grid_use_min_eig_vals,
-				grid_min_eig_thresh, max_iters, epsilon, uchar_input, 
+				grid_min_eig_thresh, max_iters, epsilon, input_type,
 				grid_show_trackers, debug_mode);
 			typename SSMType::ParamType _ssm_params(ssm_params);
 			_ssm_params.resx = grid_params.getResX();

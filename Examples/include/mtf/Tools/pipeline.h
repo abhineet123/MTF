@@ -63,7 +63,7 @@ inline InputBase* getInput(char _pipeline_type){
 inline PreProcBase* createPreProc(int output_type, const std::string &_pre_proc_type){
 	int _pre_proc_type_num = atoi(_pre_proc_type.c_str());
 	if(_pre_proc_type_num < 0 || _pre_proc_type == "raw"){
-		return new NoPreProcessing(output_type, img_resize_factor, pre_proc_hist_eq);
+		return new NoPreProcessing(output_type);
 	} else if(_pre_proc_type_num == 0 || _pre_proc_type == "none"){
 		return new NoFiltering(output_type, img_resize_factor, pre_proc_hist_eq);
 	} else if(_pre_proc_type_num == 1 || _pre_proc_type == "gauss"){

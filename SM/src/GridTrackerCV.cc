@@ -16,7 +16,7 @@ bool _reset_at_each_frame, bool _patch_centroid_inside,
 double _fb_err_thresh,
 int _pyramid_levels, bool _use_min_eig_vals,
 double _min_eig_thresh, int _max_iters,
-double _epsilon, bool _uchar_input,
+double _epsilon, int _input_type,
 bool _show_pts, bool _debug_mode) :
 grid_size_x(_grid_size_x),
 grid_size_y(_grid_size_y),
@@ -30,7 +30,7 @@ use_min_eig_vals(_use_min_eig_vals),
 min_eig_thresh(_min_eig_thresh),
 max_iters(_max_iters),
 epsilon(_epsilon),
-uchar_input(_uchar_input),
+input_type(_input_type),
 show_pts(_show_pts),
 debug_mode(_debug_mode){
 	updateRes();
@@ -49,7 +49,7 @@ use_min_eig_vals(GTCV_USE_MIN_EIG_VALS),
 min_eig_thresh(GTCV_MIN_EIG_THRESH),
 max_iters(GTCV_MAX_ITERS),
 epsilon(GTCV_EPSILON),
-uchar_input(GTCV_UCHAR_INPUT),
+input_type(GTCV_INPUT_TYPE),
 show_pts(GTCV_SHOW_PTS),
 debug_mode(GTCV_DEBUG_MODE){
 	if(params){
@@ -65,7 +65,7 @@ debug_mode(GTCV_DEBUG_MODE){
 		min_eig_thresh = params->min_eig_thresh;
 		max_iters = params->max_iters;
 		epsilon = params->epsilon;
-		uchar_input = params->uchar_input;
+		input_type = params->input_type;
 		show_pts = params->show_pts;
 		debug_mode = params->debug_mode;
 	}
@@ -98,7 +98,7 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 	printf("min_eig_thresh: %f\n", params.min_eig_thresh);
 	printf("max_iters: %d\n", params.max_iters);
 	printf("epsilon: %f\n", params.epsilon);
-	printf("uchar_input: %d\n", params.uchar_input);
+	printf("input_type: %s\n", utils::typeToString(params.input_type));
 	printf("show_pts: %d\n", params.show_pts);
 	printf("debug_mode: %d\n", params.debug_mode);
 	printf("\n");
@@ -134,12 +134,15 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 	std::fill(pix_mask.begin(), pix_mask.end(), 1);
 	pause_seq = 0;
 
+	uchar_input = params.input_type == CV_8UC1 || params.input_type == CV_8UC3;
+	rgb_input = params.input_type == CV_8UC3 || params.input_type == CV_32FC3;
+
 	if(params.use_min_eig_vals){
 		lk_flags = cv::OPTFLOW_LK_GET_MIN_EIGENVALS;
 	} else{
 		lk_flags = 0;
 	}
-
+	
 	int sub_regions_x = params.grid_size_x + 1, sub_regions_y = params.grid_size_y + 1;
 	_linear_idx.resize(sub_regions_y, sub_regions_x);
 	for(int idy = 0; idy < sub_regions_y; idy++){
@@ -162,15 +165,12 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 
 template<class SSM>
 void GridTrackerCV<SSM>::setImage(const cv::Mat &img){
-	params.uchar_input = img.type() == CV_8UC1;
-	rgb_input = img.type() == CV_8UC3 || img.type() == CV_32FC3;
-
 	if(img.type() != inputType()){
 		throw std::invalid_argument(
 			cv_format("GridTrackerCV::Input image type: %s does not match the required type: %s",
 			utils::getType(img), utils::typeToString(inputType())));
 	}
-	if(params.uchar_input){
+	if(uchar_input){
 		curr_img = img;
 	} else if(curr_img.empty()){
 		curr_img.create(img.rows, img.cols, rgb_input ? CV_8UC3 : CV_8UC1);
@@ -186,7 +186,7 @@ void GridTrackerCV<SSM>::setImage(const cv::Mat &img){
 
 template<class SSM>
 void GridTrackerCV<SSM>::initialize(const cv::Mat &corners) {
-	if(!params.uchar_input){
+	if(!uchar_input){
 		curr_img_in.convertTo(curr_img, curr_img.type());
 	}
 	ssm.initialize(corners);
@@ -202,7 +202,7 @@ void GridTrackerCV<SSM>::initialize(const cv::Mat &corners) {
 }
 template<class SSM>
 void GridTrackerCV<SSM>::update() {
-	if(!params.uchar_input){
+	if(!uchar_input){
 		curr_img_in.convertTo(curr_img, curr_img.type());
 	}	
 	cv::calcOpticalFlowPyrLK(prev_img, curr_img,
@@ -315,7 +315,7 @@ void GridTrackerCV<SSM>::showPts(){
 	curr_img_in.convertTo(curr_img_disp, curr_img_disp.type());
 	cv::cvtColor(curr_img_disp, curr_img_disp, CV_GRAY2BGR);
 	utils::drawRegion(curr_img_disp, cv_corners_mat, CV_RGB(0, 0, 255), 2);
-	for(int pt_id = 0; pt_id < n_pts; pt_id++) {
+	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		cv::Scalar pt_color;
 		if(enable_fb_err_est){
 			pt_color = fb_err_mask[pt_id] ?

@@ -122,8 +122,9 @@ Input/Output related parameters:
 		Description:
 			type of filtering to use to pre process the raw input images before feeding them to the trackers
 		Possible Values:
-			-1/raw:	No Pre processing - raw images acquired by input pipeline passed to the tracker which will only work if their format is compatible with that required by the tracker;
-			even when no filtering is used (pre_proc_type = -1), the pre processing module still converts the input images to the correct channels and precision;
+			-1/raw:	Disable pre processing - raw images acquired by input pipeline are passed to the tracker unchanged 
+			    this will only work if the raw image format (typically CV_8UC3 or 3 channel 8 bit unsigned integral) is compatible with that required by the tracker;
+			    even when no filtering is used (pre_proc_type = 0), the pre processing module still converts the input images to the correct channels and precision;
 			0/none:	No filtering
 			1/gauss:	Gaussian filtering
 			2/med:	Median filtering
@@ -135,21 +136,13 @@ Input/Output related parameters:
 			perform histogram equalization as part of pre processing
 		Possible Values:
 			0: Disable (default)
-			1: Enable	
-			
-	 Parameter:	'enable_pre_proc'
-		Description:
-			Enable the pre processing module;
-			setting this to 0 will cause raw images from the input module to be fed directly to the trackers which will only work if their format is compatible with that required by the tracker;
-			even when no filtering is used (pre_proc_type = -1), the pre processing module still converts the input images to the correct channels and precision;
-		Possible Values:
-			0: Disable
-			1: Enable (default)
+			1: Enable			
+
 			
 	 Parameter:	'uchar_input'
 		Description:
-			use input 8 bit unsigned integral images of type CV_8UC1/CV_8UC3 as input to trackers rather than 32 bit floating point variants (CV_32FC1/CV_32FC3) 
-			enabling this can provide a small increase in speed but sometimes at the cost of slight loss in precision especially if filtering or grayscale conversion is enabled
+			use 8 bit unsigned integral images of type CV_8UC1/CV_8UC3 as input to trackers rather than 32 bit floating point variants (CV_32FC1/CV_32FC3) 
+			enabling this can provide a small increase in speed but sometimes at the cost of a slight loss in precision especially if filtering or gray scale conversion is enabled
 		Possible Values:
 			0: Disable (default)
 			1: Enable
@@ -681,13 +674,17 @@ GridTracker and RKLT:
 				providing 'pyr' for grid_sm will cause each patch tracker to run on an image pyramid, the settings for which will be taken from the parameters for PyramidalTracker; 
 					a time saving measure employed in this case is to construct the image pyramid only once and share it amongst all the patch trackers;
 			
-	 Parameter:	'grid_grid_res'
+	 Parameter:	'grid_res'
 		Description:
 			resolution of the grid into which the object is divided so that no. of patch trackers = grid_grid_res*grid_grid_res
 			
 	 Parameter:	'grid_patch_size'
 		Description:
-			sampling resolution for each patch tracker	
+			size of the patch used for each sub tracker	in the grid
+			
+	 Parameter:	'grid_patch_res'
+		Description:
+			sampling resolution for each sub tracker; if it is set to 0, the sampling resolution is set equal to the patch size	
 			
 	 Parameter:	'grid_dyn_patch_size'
 		Description:
@@ -733,6 +730,26 @@ GridTracker and RKLT:
 		Description:
 			set to 1 to enable parallelization 	of the patch trackers using Intel TBB library
 			
+	 Parameter:	'grid_rgb_input'
+		Description:
+			set to 1 to use 3 channel RGB images as input to the OpenCV grid tracker;
+			only matters if 'grid_sm'is set to 'cv';
+			
+	 Parameter:	'grid_pyramid_levels'
+		Description:
+			number of levels in the image pyramids used by the OpenCV grid tracker;
+			only matters if 'grid_sm'is set to 'cv';
+			
+	 Parameter:	'grid_use_min_eig_vals'
+		Description:
+			use minimum eigen values as an error measure in the OpenCV grid tracker;	
+			only matters if 'grid_sm'is set to 'cv';
+			
+	 Parameter:	'grid_min_eig_thresh'
+		Description:
+			threshold for minimum eigen value of a 2x2 normal matrix of optical flow equations to filter out grid points in the OpenCV grid tracker;
+			only matters if 'grid_sm'is set to 'cv';
+			more details of this and the previous parameter can be found at: http://docs.opencv.org/2.4/modules/video/doc/motion_analysis_and_object_tracking.html#calcopticalflowpyrlk
 RKLT:
 =====
 	 Parameter:	'rkl_sm'

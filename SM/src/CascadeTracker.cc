@@ -136,7 +136,8 @@ void CascadeTracker::setRegion(const cv::Mat& corners) {
 void CascadeTracker::setImage(const cv::Mat &img){
 	curr_img = img;
 	for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
-		if(img.type() == trackers[tracker_id]->inputType()){
+		if(inputType() != HETEROGENEOUS_INPUT || 
+			img.type() == trackers[tracker_id]->inputType()){
 			trackers[tracker_id]->setImage(img);
 		}
 	}
