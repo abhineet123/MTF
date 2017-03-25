@@ -43,7 +43,7 @@ utt ?= 0
 uavold ?= 0
 am ?= ssd
 ssm ?= 4
-app_name ?= mtfApp
+app ?= mtfApp
 
 EXAMPLES_ROOT_DIR = Examples
 EXAMPLES_SRC_DIR = ${EXAMPLES_ROOT_DIR}/src
@@ -111,7 +111,7 @@ ifeq (${o}, 1)
 	_MTF_SYN_EXE_NAME = generateSyntheticSeq
 	_MTF_MOS_EXE_NAME = createMosaic
 	_MTF_REC_EXE_NAME = recordSeq
-	_MTF_APP_EXE_NAME = ${app_name}
+	_MTF_APP_EXE_NAME = ${app}
 else
 	MTF_RUNTIME_FLAGS += -g -O0
 	ifeq (${header_only}, 1)
@@ -126,7 +126,7 @@ else
 	_MTF_SYN_EXE_NAME = generateSyntheticSeqd
 	_MTF_MOS_EXE_NAME = createMosaicd
 	_MTF_REC_EXE_NAME = recordSeqd
-	_MTF_APP_EXE_NAME = $(addsuffix d, ${app_name})				
+	_MTF_APP_EXE_NAME = $(addsuffix d, ${app})				
 endif
 
 MTF_EXE_NAME = $(addsuffix ${LIB_POST_FIX}${MTF_EXE_EXT}, ${_MTF_EXE_NAME})
@@ -251,5 +251,5 @@ ${BUILD_DIR}/${MTF_MOS_EXE_NAME}: ${EXAMPLES_SRC_DIR}/createMosaic.cc ${MTF_HEAD
 ${BUILD_DIR}/${MTF_TEST_EXE_NAME}: ${EXAMPLES_SRC_DIR}/testMTF.cc ${TEST_HEADERS} ${MTF_HEADERS} ${CONFIG_HEADERS}  ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
 	${CXX} $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${OPENCV_FLAGS} ${MTF_LIB_LINK} ${LIBS} ${LIBS_PARALLEL} ${BOOST_LIBS} ${MTF_TEST_LIBS} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 
 	
-${BUILD_DIR}/${MTF_APP_EXE_NAME}: ${MTF_APP_SRC_DIR}/${app_name}.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
+${BUILD_DIR}/${MTF_APP_EXE_NAME}: ${MTF_APP_SRC_DIR}/${app}.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
 	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${OPENCV_FLAGS} ${MTF_LIB_LINK} ${LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 

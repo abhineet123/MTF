@@ -67,7 +67,7 @@ Installation:
     * `make uav`/`make install_uav` : compile/install an application called `trackUAVTrajectory` that tracks the trajectory of a UAV in a satellite image of the area over which it flew while capturing images from above
     * `make mos`/`make install_mos` : compile/install an application called `createMosaic` that constructs a live mosaic from a video of the region to be stitched
     * `make all`/`make install_all` : compile/install all example applications that come with MTF
-	* `make app app_name=<APPLICATION_NAME>`: build a custom application that uses MTF with its source code in `<APPLICATION_NAME>.cc`; the compiled executable goes in the build directory;
+	* `make app app=<APPLICATION_NAME>`: build a custom application that uses MTF with its source code in `<APPLICATION_NAME>.cc`; the compiled executable goes in the build directory;
 	    - location of the source file (<APPLICATION_NAME>.cc) can be specified through `MTF_APP_SRC_DIR` (defaults to _Examples/src_)
 	    - `make mtfa` will install it too - installation location can be specified through `MTF_APP_INSTALL_DIR` (defaults to the current folder)
     * <a name="compile-time-switches"/>**Compile time switches**</a> for all of the above commands (only applicable to the **make** build system - for cmake there are corresponding options for some of the switches that can be configured before building its makefile):
@@ -78,7 +78,7 @@ Installation:
 		    - should be specified if FLANN is not available
 		    - only matters if the previous option is not specified
 		    - FLANN has some compatibility issues under Windows so this is disabled by default;
-	    - `feat=1` will enable the Feature based grid tracker (disabled by default).
+	    - `feat=1` will enable the Feature tracker (disabled by default).
 		    -  this uses functionality in the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) module of OpenCV so this should be [installed too](http://stackoverflow.com/a/31097788).
 	    - `lt=0` will disable the third party open source learning based trackers - [DSST](http://www.cvl.isy.liu.se/en/research/objrec/visualtracking/scalvistrack/index.html), [KCF](http://home.isr.uc.pt/~henriques/circulant/), [CMT](http://www.gnebehay.com/cmt/), [TLD](http://www.gnebehay.com/tld/), [RCT](http://www4.comp.polyu.edu.hk/~cslzhang/CT/CT.htm), [MIL](http://vision.ucsd.edu/~bbabenko/project_miltrack.html), [Struck](http://www.samhare.net/research/struck), [FragTrack](http://www.cs.technion.ac.il/~amita/fragtrack/fragtrack.htm), [GOTURN](https://github.com/davheld/GOTURN) and [DFT](http://cvlab.epfl.ch/page-107683-en.html) - that are also bundled with this library (in _ThirdParty_ subfolder) (enabled by default except MIL, DFT and GOTURN).
 		    - several third party trackers do not compile under Windows yet and are disabled by default;

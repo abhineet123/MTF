@@ -497,8 +497,14 @@ namespace mtf{
 		bool grid_rgb_input = false;
 		double grid_min_eig_thresh = 1e-4;
 
-		bool grid_detect_keypoints = false;
-		bool grid_rebuild_index = false;
+		int feat_detector_type = 1;
+		int feat_descriptor_type = 0;
+		double feat_max_dist_ratio = 0.75;
+		int feat_min_matches = 10;
+		bool feat_rebuild_index = false;
+		bool feat_show_keypoints = 0;
+		bool feat_show_matches = 0;
+		bool feat_debug_mode = 0;
 
 		bool grid_use_const_grad = true;
 
@@ -786,6 +792,12 @@ namespace mtf{
 		bool mos_save_img = true;
 		std::string mos_out_fname;
 		std::string mos_out_fmt = "jpg";
+
+		std::vector<std::string> qr_input;
+		std::string qr_root_dir = "Data/QRTracker";
+		std::string qr_detector_ssm = "4";
+		double qr_duplicate_min_dist = 50;
+		double qr_min_size = 10;
 
 		inline void split(const std::string &s, char delim, std::vector<std::string> &elems) {
 			stringstream ss(s);
@@ -1686,14 +1698,27 @@ namespace mtf{
 				grid_fb_err_thresh = atof(arg_val);
 			} else if(!strcmp(arg_name, "grid_fb_reinit")){
 				grid_fb_reinit = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_detect_keypoints")){
-				grid_detect_keypoints = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_rebuild_index")){
-				grid_rebuild_index = atoi(arg_val);
 			} else if(!strcmp(arg_name, "grid_use_const_grad")){
 				grid_use_const_grad = atoi(arg_val);
 			}
-
+			//! Feature Tracker
+			else if(!strcmp(arg_name, "feat_detector_type")){
+				feat_detector_type = atoi(arg_val);
+			} else if(!strcmp(arg_name, "feat_descriptor_type")){
+				feat_descriptor_type = atoi(arg_val);
+			} else if(!strcmp(arg_name, "feat_max_dist_ratio")){
+				feat_max_dist_ratio = atof(arg_val);
+			}  else if(!strcmp(arg_name, "feat_min_matches")){
+				feat_min_matches = atoi(arg_val);
+			} else if(!strcmp(arg_name, "feat_rebuild_index")){
+				feat_rebuild_index = atoi(arg_val);
+			}  else if(!strcmp(arg_name, "feat_show_keypoints")){
+				feat_show_keypoints = atoi(arg_val);
+			}  else if(!strcmp(arg_name, "feat_show_matches")){
+				feat_show_matches = atoi(arg_val);
+			}  else if(!strcmp(arg_name, "feat_debug_mode")){
+				feat_debug_mode = atoi(arg_val);
+			}
 			//! SIFT Feature Detector
 			else if(!strcmp(arg_name, "sift_n_features")){
 				sift_n_features = atoi(arg_val);
@@ -2195,6 +2220,16 @@ namespace mtf{
 				mos_out_fname = std::string(arg_val);
 			} else if(!strcmp(arg_name, "mos_out_fmt")){
 				mos_out_fmt = std::string(arg_val);
+			} else if(!strcmp(arg_name, "qr_input")){
+				qr_input.push_back(std::string(arg_val));
+			} else if(!strcmp(arg_name, "qr_root_dir")){
+				qr_root_dir = std::string(arg_val);
+			} else if(!strcmp(arg_name, "qr_detector_ssm")){
+				qr_detector_ssm = std::string(arg_val);
+			} else if(!strcmp(arg_name, "qr_duplicate_min_dist")){
+				qr_duplicate_min_dist = atof(arg_val);
+			} else if(!strcmp(arg_name, "qr_min_size")){
+				qr_min_size = atof(arg_val);
 			}
 		}
 

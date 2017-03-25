@@ -35,11 +35,9 @@
 #ifndef ENABLE_ONLY_NT
 #include "mtf/SM/GridTrackerFlow.h"
 #endif
-#ifndef DISABLE_GRID_FEAT
-#ifndef DISABLE_NN
-#include "mtf/SM/GridTrackerFeat.h"
 #endif
-#endif
+#ifndef DISABLE_FEAT
+#include "mtf/SM/FeatureTracker.h"
 #endif
 #include "mtf/SM/CascadeTracker.h"
 #include "mtf/SM/ParallelTracker.h"
@@ -221,10 +219,10 @@ typedef std::unique_ptr<IALKParams> IALKParams_;
 typedef std::unique_ptr<FCSDParams> FCSDParams_;
 typedef std::unique_ptr<PFParams> PFParams_;
 typedef std::unique_ptr<NNParams> NNParams_;
-#ifndef ENABLE_ONLY_NT
 #ifndef DISABLE_NN
 typedef std::unique_ptr<FLANNParams> FLANNParams_;
-#endif
+#else
+typedef std::unique_ptr<FLANNCVParams> FLANNParams_;
 #endif
 #ifndef DISABLE_REGNET
 typedef std::unique_ptr<RegNetParams> RegNetParams_;
@@ -240,9 +238,7 @@ FALKParams_ getFALKParams();
 IALKParams_ getIALKParams();
 PFParams_ getPFParams();
 NNParams_ getNNParams();
-#ifndef DISABLE_NN
 FLANNParams_ getFLANNParams();
-#endif
 #ifndef DISABLE_REGNET
 RegNetParams_ getRegNetParams();
 #endif
@@ -701,6 +697,25 @@ TrackerBase *getTracker(const char *sm_type,
 			line_reset_pos, line_reset_template, line_debug_mode);
 		return new LineTracker(trackers, &line_params);
 	}
+#ifndef DISABLE_FEAT
+	else if(!strcmp(sm_type, "feat")){
+		bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
+		FeatureTrackerParams grid_params(
+			grid_res, grid_res, grid_patch_size, grid_patch_size, grid_reset_at_each_frame,
+			static_cast<FeatureTrackerParams::DetectorType>(feat_detector_type),
+			static_cast<FeatureTrackerParams::DescriptorType>(feat_descriptor_type),
+			feat_rebuild_index, max_iters, epsilon, enable_pyr, feat_max_dist_ratio, 
+			feat_min_matches, uchar_input, feat_show_keypoints, feat_show_matches, 
+			feat_debug_mode);
+		SIFTParams sift_params(sift_n_features, sift_n_octave_layers,
+			sift_contrast_thresh, sift_edge_thresh, sift_sigma);
+		typename SSMType::ParamType _ssm_params(ssm_params);
+		_ssm_params.resx = grid_params.getResX();
+		_ssm_params.resy = grid_params.getResY();
+		return new FeatureTracker<SSMType>(&grid_params, &sift_params,
+			getFLANNParams().get(),	getSSMEstParams().get(), &_ssm_params);
+	}
+#endif
 #ifndef DISABLE_GRID
 	//! Grid Tracker
 	else if(!strcmp(sm_type, "grid")){
@@ -731,25 +746,6 @@ TrackerBase *getTracker(const char *sm_type,
 			_ssm_params.resy = grid_params.getResY();
 			return new GridTrackerFlow<AMType, SSMType>(&grid_params, getSSMEstParams().get(), am_params, &_ssm_params);
 		}
-#endif
-#ifndef DISABLE_NN
-#ifndef DISABLE_GRID_FEAT
-		else if(!strcmp(grid_sm, "feat")){
-			bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
-			GridTrackerFeatParams grid_params(
-				grid_res, grid_res, grid_patch_size, grid_patch_size,
-				grid_reset_at_each_frame, grid_detect_keypoints, grid_rebuild_index,
-				max_iters, epsilon, enable_pyr, uchar_input, 
-				grid_show_trackers, grid_show_tracker_edges, debug_mode);
-			SIFTParams sift_params(sift_n_features, sift_n_octave_layers,
-				sift_contrast_thresh, sift_edge_thresh, sift_sigma);
-			typename SSMType::ParamType _ssm_params(ssm_params);
-			_ssm_params.resx = grid_params.getResX();
-			_ssm_params.resy = grid_params.getResY();
-			return new GridTrackerFeat<SSMType>(&grid_params, &sift_params,
-				getFLANNParams().get(), getSSMEstParams().get(), &_ssm_params);
-		}
-#endif
 #endif
 		else{
 			vector<TrackerBase*> trackers;
@@ -1344,6 +1340,30 @@ inline FLANNParams_ getFLANNParams(){
 		nn_kdtc_leaf_max_size,
 		nn_hc_branching,
 		static_cast<flann::flann_centers_init_t>(nn_hc_centers_init),
+		nn_hc_trees,
+		nn_hc_leaf_max_size,
+		nn_auto_target_precision,
+		nn_auto_build_weight,
+		nn_auto_memory_weight,
+		nn_auto_sample_fraction
+		));
+}
+#else
+inline FLANNParams_ getFLANNParams(){
+	return FLANNParams_(new FLANNCVParams(
+		static_cast<FLANNCVParams::IdxType>(nn_index_type),
+		nn_srch_checks,
+		nn_srch_eps,
+		nn_srch_sorted,
+		nn_kdt_trees,
+		nn_km_branching,
+		nn_km_iterations,
+		static_cast<cvflann::flann_centers_init_t>(nn_km_centers_init),
+		nn_km_cb_index,
+		nn_kdts_leaf_max_size,
+		nn_kdtc_leaf_max_size,
+		nn_hc_branching,
+		static_cast<cvflann::flann_centers_init_t>(nn_hc_centers_init),
 		nn_hc_trees,
 		nn_hc_leaf_max_size,
 		nn_auto_target_precision,

@@ -566,7 +566,7 @@ namespace utils{
 			const cv::Mat &img, const Matrix8Xd &warped_offset_pts,
 			double grad_eps, int n_pix,
 			int h, int w, double pix_mult_factor){
-			assert(warped_img_grad.rows() == n_pix * 3 && warped_offset_pts.cols() == n_pix && img.type() == CV_32FC3);
+			assert(warped_img_grad.rows() == n_pix && warped_offset_pts.cols() == n_pix);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
@@ -593,7 +593,7 @@ namespace utils{
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts, double grad_eps,
 			int n_pix, int h, int w, double pix_mult_factor){
-			assert(warped_img_grad.rows() == n_pix * 3);
+			assert(warped_img_grad.rows() == n_pix);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
@@ -617,7 +617,7 @@ namespace utils{
 			const cv::Mat &img, const PtsT &pts,
 			double grad_eps, int n_pix, int h, int w,
 			double pix_mult_factor){
-			assert(img_grad.rows() == n_pix * 3 && pts.cols() == n_pix && img.type() == CV_32FC3);
+			assert(img_grad.rows() == n_pix  && pts.cols() == n_pix);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
@@ -640,7 +640,7 @@ namespace utils{
 			const VectorXd &intensity_map, const PtsT &pts,
 			double grad_eps, int n_pix, int h, int w,
 			double pix_mult_factor){
-			assert(img_grad.rows() == n_pix * 3 && pts.cols() == n_pix);
+			assert(img_grad.rows() == n_pix && pts.cols() == n_pix);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
@@ -663,7 +663,7 @@ namespace utils{
 			const cv::Mat &img, const PtsT &warped_pts,
 			const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
 			int h, int w, double pix_mult_factor){
-			assert(warped_img_hess.cols() == n_pix * 3 && warped_pts.cols() == n_pix && img.type() == CV_32FC3);
+			assert(warped_img_hess.cols() == n_pix && warped_pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
 			double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
@@ -730,7 +730,7 @@ namespace utils{
 		void getImgHess(PixHessT &img_hess, const cv::Mat &img,
 			const PtsT &pts, double hess_eps,
 			int n_pix, int h, int w, double pix_mult_factor){
-			assert(img_hess.cols() == n_pix * 3 && pts.cols() == n_pix && img.type() == CV_32FC3);
+			assert(img_hess.cols() == n_pix && pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
 			double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
@@ -762,7 +762,7 @@ namespace utils{
 		void getImgHess(PixHessT &img_hess, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
 			int n_pix, int h, int w, double pix_mult_factor){
-			assert(img_hess.cols() == n_pix * 3 && pts.cols() == n_pix);
+			assert(img_hess.cols() == n_pix && pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
 			double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
@@ -915,7 +915,7 @@ namespace utils{
 			const cv::Mat &img, const Matrix8Xd &warped_offset_pts,
 			double grad_eps, int n_pix,
 			int h, int w, double pix_mult_factor){
-			assert(warped_img_grad.rows() == n_pix * 3 && warped_offset_pts.cols() == n_pix && img.type() == CV_32FC3);
+			assert(warped_img_grad.rows() == n_pix * 3 && warped_offset_pts.cols() == n_pix);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
@@ -976,7 +976,7 @@ namespace utils{
 			const cv::Mat &img, const PtsT &pts,
 			double grad_eps, int n_pix, int h, int w,
 			double pix_mult_factor){
-			assert(img_grad.rows() == n_pix * 3 && pts.cols() == n_pix && img.type() == CV_32FC3);
+			assert(img_grad.rows() == n_pix * 3 && pts.cols() == n_pix);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
@@ -1036,7 +1036,7 @@ namespace utils{
 			const cv::Mat &img, const PtsT &warped_pts,
 			const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
 			int h, int w, double pix_mult_factor){
-			assert(warped_img_hess.cols() == n_pix * 3 && warped_pts.cols() == n_pix && img.type() == CV_32FC3);
+			assert(warped_img_hess.cols() == n_pix * 3 && warped_pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
 			double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
@@ -1126,7 +1126,7 @@ namespace utils{
 		void getImgHess(PixHessT &img_hess, const cv::Mat &img,
 			const PtsT &pts, double hess_eps,
 			int n_pix, int h, int w, double pix_mult_factor){
-			assert(img_hess.cols() == n_pix * 3 && pts.cols() == n_pix && img.type() == CV_32FC3);
+			assert(img_hess.cols() == n_pix * 3 && pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
 			double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);

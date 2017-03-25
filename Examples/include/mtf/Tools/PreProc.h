@@ -107,10 +107,6 @@ public:
 	virtual const cv::Mat& getFrame(){
 		return resize_images ? frame_resized : rgb_output ? frame_rgb : frame_gs;
 	}
-	virtual const cv::Mat& getFrame(const cv::Mat &frame_raw, int _frame_id = -1){
-		update(frame_raw, _frame_id);
-		return getFrame();
-	}
 	virtual void showFrame(std::string window_name){
 		cv::Mat  disp_img;
 		switch(output_type){
@@ -147,6 +143,10 @@ public:
 	virtual int outputType() const{ return output_type; }
 	virtual void setFrameID(int _frame_id){ frame_id = _frame_id; }
 	virtual int getFrameID() const{ return frame_id; }
+	virtual int getWidth() { return getFrame().cols; }
+	virtual int getHeight() { return getFrame().rows; }
+
+
 
 protected:
 

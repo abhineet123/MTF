@@ -7,9 +7,9 @@ WIN_HDF5_LOCATION = E:/Programming/FLANN/HDF5/hdf5-1.10.0-patch1/hdf5-1.10.0-pat
 only_nt ?= 0
 # alias for only_nt
 nt ?= 0
-# enable gid tracker (and its OpenCV variants) - only matters if only_nt is 1 otherwise these are enabled anyway
+# enable grid tracker (and its OpenCV variants) - only matters if only_nt is 1 otherwise these are enabled anyway
 grid ?= 1
-# enable feature based gid tracker (and its OpenCV variant) - only matters if only_nt is 0 or grid is 1 otherwise it is disabled anyway
+# enable feature tracker (and its OpenCV variant) - only matters if only_nt is 0 or grid is 1 otherwise it is disabled anyway
 # requires nonfree module of OpenCV to be installed
 feat ?= 0
 # enable templated FLANN based implementation of NN SM
@@ -58,15 +58,6 @@ ifeq (${only_nt}, 0)
 	ifeq (${grid}, 1)
 		COMPOSITE +=  GridTrackerFlow
 	endif
-	ifeq (${feat}, 1)
-
-		ifeq (${nn}, 1)
-			COMPOSITE += GridTrackerFeat
-		endif
-	else
-		MTF_RUNTIME_FLAGS += -D DISABLE_GRID_FEAT
-		MTF_COMPILETIME_FLAGS += -D DISABLE_GRID_FEAT
-	endif
 	ifeq (${nn}, 1)
 		SEARCH_METHODS += NN FGNN GNN
 		SEARCH_PARAMS += FLANN
@@ -76,27 +67,32 @@ ifeq (${only_nt}, 0)
 			MTF_COMPILETIME_FLAGS += -I ${WIN_FLANN_LOCATION} -I ${WIN_HDF5_LOCATION}
 		endif
 	else
+		SEARCH_PARAMS += FLANNCV
 		SEARCH_METHODS_NT += GNN
 		MTF_RUNTIME_FLAGS += -D DISABLE_NN
 		MTF_COMPILETIME_FLAGS += -D DISABLE_NN
 	endif
 else
 	ifeq (${grid}, 1)
-		COMPOSITE +=  GridTracker GridTrackerCV
-		ifeq (${feat}, 1)
-			COMPOSITE += GridTrackerFeat
-			SEARCH_PARAMS += FLANN
-		else
-			MTF_RUNTIME_FLAGS += -D DISABLE_GRID_FEAT
-			MTF_COMPILETIME_FLAGS += -D DISABLE_GRID_FEAT
-		endif		
+		COMPOSITE +=  GridTracker GridTrackerCV	
+		COMPOSITE_BASE_HEADERS +=  ${SM_HEADER_DIR}/GridBase.h
 	else
 		MTF_RUNTIME_FLAGS += -D DISABLE_GRID
 		MTF_COMPILETIME_FLAGS += -D DISABLE_GRID
 	endif
 	SEARCH_METHODS_NT += GNN
+	SEARCH_PARAMS += FLANNCV
 	MTF_RUNTIME_FLAGS += -D ENABLE_ONLY_NT -D DISABLE_NN
 	MTF_COMPILETIME_FLAGS += -D ENABLE_ONLY_NT -D DISABLE_NN
+endif
+
+ifeq (${feat}, 1)
+	COMPOSITE += FeatureTracker
+	COMPOSITE_BASE_HEADERS +=  ${SM_HEADER_DIR}/FeatureBase.h
+	SEARCH_PARAMS += FLANN
+else
+	MTF_RUNTIME_FLAGS += -D DISABLE_FEAT
+	MTF_COMPILETIME_FLAGS += -D DISABLE_FEAT
 endif
 
 SEARCH_HEADERS += ${SM_BASE_HEADERS} ${COMPOSITE_BASE_HEADERS} ${UTILITIES_HEADER_DIR}/excpUtils.h
@@ -269,7 +265,7 @@ ${BUILD_DIR}/GridTrackerCV.o: ${SM_SRC_DIR}/GridTrackerCV.cc ${SM_HEADER_DIR}/Gr
 ${BUILD_DIR}/GridTrackerFlow.o: ${SM_SRC_DIR}/GridTrackerFlow.cc ${SM_HEADER_DIR}/GridTrackerFlow.h ${SM_HEADER_DIR}/GridTrackerFlowParams.h ${SM_HEADER_DIR}/GridBase.h ${SM_HEADER_DIR}/CompositeBase.h ${ROOT_HEADER_DIR}/TrackerBase.h ${UTILITIES_HEADER_DIR}/excpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h ${MACROS_HEADER_DIR}/common.h ${MACROS_HEADER_DIR}/register.h ${APPEARANCE_HEADERS} ${STATE_SPACE_HEADERS}
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< ${OPENCV_FLAGS} -o $@
 	
-${BUILD_DIR}/GridTrackerFeat.o: ${SM_SRC_DIR}/GridTrackerFeat.cc ${SM_HEADER_DIR}/GridTrackerFeat.h ${SM_HEADER_DIR}/GridBase.h ${SM_HEADER_DIR}/CompositeBase.h ${ROOT_HEADER_DIR}/TrackerBase.h ${UTILITIES_HEADER_DIR}/excpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h ${MACROS_HEADER_DIR}/common.h ${MACROS_HEADER_DIR}/register.h ${STATE_SPACE_HEADERS}
+${BUILD_DIR}/FeatureTracker.o: ${SM_SRC_DIR}/FeatureTracker.cc ${SM_HEADER_DIR}/FeatureTracker.h ${SM_HEADER_DIR}/FeatureBase.h ${SM_HEADER_DIR}/CompositeBase.h ${ROOT_HEADER_DIR}/TrackerBase.h ${UTILITIES_HEADER_DIR}/excpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h ${MACROS_HEADER_DIR}/common.h ${MACROS_HEADER_DIR}/register.h ${STATE_SPACE_HEADERS}
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< ${OPENCV_FLAGS} -o $@	
 	
 ${BUILD_DIR}/RKLT.o: ${SM_SRC_DIR}/RKLT.cc ${SM_HEADER_DIR}/RKLT.h ${APPEARANCE_HEADERS} ${STATE_SPACE_HEADERS} ${SM_BASE_HEADERS} ${UTILITIES_HEADER_DIR}/excpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h ${MACROS_HEADER_DIR}/common.h ${MACROS_HEADER_DIR}/register.h ${SM_HEADER_DIR}/GridBase.h
@@ -348,6 +344,10 @@ ${BUILD_DIR}/NNParams.o: ${SM_SRC_DIR}/NNParams.cc ${SM_HEADER_DIR}/NNParams.h $
 ${BUILD_DIR}/FLANNParams.o: ${SM_SRC_DIR}/FLANNParams.cc ${SM_HEADER_DIR}/FLANNParams.h ${MACROS_HEADER_DIR}/common.h
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< ${OPENCV_FLAGS} -o $@	
 	
+${BUILD_DIR}/FLANNCVParams.o: ${SM_SRC_DIR}/FLANNCVParams.cc ${SM_HEADER_DIR}/FLANNCVParams.h ${MACROS_HEADER_DIR}/common.h
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< ${OPENCV_FLAGS} -o $@	
+	
+		
 ${BUILD_DIR}/RegNetParams.o: ${SM_SRC_DIR}/RegNetParams.cc ${SM_HEADER_DIR}/RegNetParams.h  ${MACROS_HEADER_DIR}/common.h
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< ${OPENCV_FLAGS} -o $@	
 	

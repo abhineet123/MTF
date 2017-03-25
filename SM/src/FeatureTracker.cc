@@ -1,4 +1,4 @@
-#include "mtf/SM/GridTrackerFeat.h"
+#include "mtf/SM/FeatureTracker.h"
 #include "mtf/Utilities/miscUtils.h"
 #include "mtf/Utilities/imgUtils.h"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -12,20 +12,23 @@
 #define SIFT_EDGE_THRESH 10
 #define SIFT_SIGMA 1.6
 
-#define GTF_GRID_SIZE_X 10
-#define GTF_GRID_SIZE_Y 10
-#define GTF_SEARCH_WINDOW_X 10
-#define GTF_SEARCH_WINDOW_Y 10
-#define GTF_INIT_AT_EACH_FRAME 1
-#define GTF_DETECT_KEYPOINTS 0
-#define GTF_REBUILD_INDEX 1
-#define GTF_MAX_ITERS 1
-#define GTF_EPSILON 0.01
-#define GTF_ENABLE_PYR 0
-#define GTF_UCHAR_INPUT 1
-#define GTF_SHOW_TRACKERS 0
-#define GTF_SHOW_TRACKER_EDGES 0
-#define GTF_DEBUG_MODE 0
+#define FEAT_GRID_SIZE_X 10
+#define FEAT_GRID_SIZE_Y 10
+#define FEAT_SEARCH_WINDOW_X 10
+#define FEAT_SEARCH_WINDOW_Y 10
+#define FEAT_INIT_AT_EACH_FRAME 1
+#define FEAT_DETECTOR_TYPE 1
+#define FEAT_DESCRIPTOR_TYPE 0
+#define FEAT_REBUILD_INDEX 1
+#define FEAT_MAX_ITERS 1
+#define FEAT_EPSILON 0.01
+#define FEAT_ENABLE_PYR 0
+#define FEAT_MAX_DIST_RATIO 0.75
+#define FEAT_MIN_MATCHES 10
+#define FEAT_UCHAR_INPUT 1
+#define FEAT_SHOW_TRACKERS 0
+#define FEAT_SHOW_TRACKER_EDGES 0
+#define FEAT_DEBUG_MODE 0
 
 _MTF_BEGIN_NAMESPACE
 
@@ -64,55 +67,66 @@ void SIFTParams::print() const{
 	printf("sigma: %f\n", sigma);
 }
 
-GridTrackerFeatParams::GridTrackerFeatParams(
-int _grid_size_x, int _grid_size_y,
-int _search_win_x, int _search_win_y,
-bool _init_at_each_frame,
-bool _detect_keypoints, bool _rebuild_index,
-int _max_iters, double _epsilon, bool _enable_pyr,
-bool _uchar_input,
-bool _show_keypoints, bool _show_matches,
-bool _debug_mode) :
-grid_size_x(_grid_size_x),
-grid_size_y(_grid_size_y),
-search_window_x(_search_win_x),
-search_window_y(_search_win_y),
-init_at_each_frame(_init_at_each_frame),
-detect_keypoints(_detect_keypoints),
-rebuild_index(_rebuild_index),
-max_iters(_max_iters),
-epsilon(_epsilon),
-enable_pyr(_enable_pyr),
-uchar_input(_uchar_input),
-show_keypoints(_show_keypoints),
-show_matches(_show_matches),
-debug_mode(_debug_mode){}
+FeatureTrackerParams::FeatureTrackerParams(
+	int _grid_size_x, int _grid_size_y,
+	int _search_win_x, int _search_win_y,
+	bool _init_at_each_frame,
+	DetectorType _detector_type,
+	DescriptorType _descriptor_type,
+	bool _rebuild_index, int _max_iters, double _epsilon,
+	bool _enable_pyr, double _max_dist_ratio,
+	int _min_matches, bool _uchar_input,
+	bool _show_keypoints, bool _show_matches,
+	bool _debug_mode) :
+	grid_size_x(_grid_size_x),
+	grid_size_y(_grid_size_y),
+	search_window_x(_search_win_x),
+	search_window_y(_search_win_y),
+	init_at_each_frame(_init_at_each_frame),
+	detector_type(_detector_type),
+	descriptor_type(_descriptor_type),
+	rebuild_index(_rebuild_index),
+	max_iters(_max_iters),
+	epsilon(_epsilon),
+	enable_pyr(_enable_pyr),
+	max_dist_ratio(_max_dist_ratio),
+	min_matches(_min_matches),
+	uchar_input(_uchar_input),
+	show_keypoints(_show_keypoints),
+	show_matches(_show_matches),
+	debug_mode(_debug_mode){}
 
-GridTrackerFeatParams::GridTrackerFeatParams(const GridTrackerFeatParams *params) :
-grid_size_x(GTF_GRID_SIZE_X),
-grid_size_y(GTF_GRID_SIZE_Y),
-search_window_x(GTF_SEARCH_WINDOW_X),
-search_window_y(GTF_SEARCH_WINDOW_Y),
-init_at_each_frame(GTF_INIT_AT_EACH_FRAME),
-detect_keypoints(GTF_DETECT_KEYPOINTS),
-rebuild_index(GTF_REBUILD_INDEX),
-max_iters(GTF_MAX_ITERS),
-epsilon(GTF_EPSILON),
-enable_pyr(GTF_ENABLE_PYR),
-uchar_input(GTF_UCHAR_INPUT),
-show_keypoints(GTF_SHOW_TRACKERS),
-show_matches(GTF_SHOW_TRACKER_EDGES),
-debug_mode(GTF_DEBUG_MODE){
+FeatureTrackerParams::FeatureTrackerParams(const FeatureTrackerParams *params) :
+grid_size_x(FEAT_GRID_SIZE_X),
+grid_size_y(FEAT_GRID_SIZE_Y),
+search_window_x(FEAT_SEARCH_WINDOW_X),
+search_window_y(FEAT_SEARCH_WINDOW_Y),
+init_at_each_frame(FEAT_INIT_AT_EACH_FRAME),
+detector_type(static_cast<DetectorType>(FEAT_DETECTOR_TYPE)),
+descriptor_type(static_cast<DescriptorType>(FEAT_DESCRIPTOR_TYPE)),
+rebuild_index(FEAT_REBUILD_INDEX),
+max_iters(FEAT_MAX_ITERS),
+epsilon(FEAT_EPSILON),
+enable_pyr(FEAT_ENABLE_PYR),
+max_dist_ratio(FEAT_MAX_DIST_RATIO),
+min_matches(FEAT_MIN_MATCHES),
+uchar_input(FEAT_UCHAR_INPUT),
+show_keypoints(FEAT_SHOW_TRACKERS),
+show_matches(FEAT_SHOW_TRACKER_EDGES),
+debug_mode(FEAT_DEBUG_MODE){
 	if(params){
 		grid_size_x = params->grid_size_x;
 		grid_size_y = params->grid_size_y;
 		search_window_x = params->search_window_x;
 		search_window_y = params->search_window_y;
 		init_at_each_frame = params->init_at_each_frame;
-		detect_keypoints = params->detect_keypoints;
+		detector_type = params->detector_type;
+		descriptor_type = params->descriptor_type;
 		rebuild_index = params->rebuild_index;
 		max_iters = params->max_iters;
 		epsilon = params->epsilon;
+		max_dist_ratio = params->max_dist_ratio;
+		min_matches = params->min_matches;
 		enable_pyr = params->enable_pyr;
 		uchar_input = params->uchar_input;
 		show_keypoints = params->show_keypoints;
@@ -121,18 +135,21 @@ debug_mode(GTF_DEBUG_MODE){
 	}
 }
 template<class SSM>
-GridTrackerFeat<SSM>::GridTrackerFeat(const ParamType *grid_params,
-	const SIFTParams *_sift_params, const FLANNParams *_flann_params, 
-	const EstimatorParams *_est_params,	const SSMParams *_ssm_params) :
-	GridBase(), ssm(_ssm_params), params(grid_params), sift_params(_sift_params),
+FeatureTracker<SSM>::FeatureTracker(const ParamType *grid_params,
+	const SIFTParams *_sift_params, const FLANNParams *_flann_params,
+	const EstimatorParams *_est_params, const SSMParams *_ssm_params) :
+	FeatureBase(), ssm(_ssm_params), params(grid_params), sift_params(_sift_params),
 	flann_params(_flann_params), est_params(_est_params){
 	printf("\n");
-	printf("Using Feature based Grid tracker with:\n");
+	printf("Using Feature tracker with:\n");
 	printf("grid_size: %d x %d\n", params.grid_size_x, params.grid_size_y);
 	printf("search window size: %d x %d\n", params.search_window_x, params.search_window_y);
 	printf("flann_index_type: %s\n", FLANNParams::toString(flann_params.index_type));
 	printf("init_at_each_frame: %d\n", params.init_at_each_frame);
-	printf("detect_keypoints: %d\n", params.detect_keypoints);
+	printf("detector_type: %d\n", params.detector_type);
+	printf("descriptor_type: %d\n", params.descriptor_type);
+	printf("max_dist_ratio: %f\n", params.max_dist_ratio);
+	printf("min_matches: %d\n", params.min_matches);
 	printf("uchar_input: %d\n", params.uchar_input);
 	printf("rebuild_index: %d\n", params.rebuild_index);
 	printf("show_keypoints: %d\n", params.show_keypoints);
@@ -151,7 +168,7 @@ GridTrackerFeat<SSM>::GridTrackerFeat(const ParamType *grid_params,
 
 	if(ssm.getResX() != params.getResX() || ssm.getResY() != params.getResY()){
 		throw std::invalid_argument(
-			cv::format("GridTrackerFeat: SSM has invalid sampling resolution: %d x %d",
+			cv::format("FeatureTracker: SSM has invalid sampling resolution: %d x %d",
 			ssm.getResX(), ssm.getResY()));
 	}
 
@@ -160,7 +177,7 @@ GridTrackerFeat<SSM>::GridTrackerFeat(const ParamType *grid_params,
 		sift_params.edge_thresh, sift_params.sigma));
 
 	n_pts = params.grid_size_x *params.grid_size_y;
-	search_window = cv::Size(params.search_window_x, params.search_window_y);	
+	search_window = cv::Size(params.search_window_x, params.search_window_y);
 
 	cv_corners_mat.create(2, 4, CV_64FC1);
 
@@ -179,11 +196,11 @@ GridTrackerFeat<SSM>::GridTrackerFeat(const ParamType *grid_params,
 }
 
 template<class SSM>
-void GridTrackerFeat<SSM>::setImage(const cv::Mat &img){
+void FeatureTracker<SSM>::setImage(const cv::Mat &img){
 	params.uchar_input = img.type() == CV_8UC1;
 	if(img.type() != inputType()){
 		throw std::invalid_argument(
-			cv_format("GridTrackerFeat::Input image type: %s does not match the required type: %s",
+			cv_format("FeatureTracker::Input image type: %s does not match the required type: %s",
 			utils::getType(img), utils::typeToString(inputType())));
 	}
 	if(params.uchar_input){
@@ -201,7 +218,7 @@ void GridTrackerFeat<SSM>::setImage(const cv::Mat &img){
 }
 
 template<class SSM>
-void GridTrackerFeat<SSM>::initialize(const cv::Mat &corners) {
+void FeatureTracker<SSM>::initialize(const cv::Mat &corners) {
 	if(!params.uchar_input){
 		curr_img_in.convertTo(curr_img, curr_img.type());
 	}
@@ -209,18 +226,22 @@ void GridTrackerFeat<SSM>::initialize(const cv::Mat &corners) {
 	ssm.initialize(corners);
 	cv::Mat mask = cv::Mat::zeros(curr_img.rows, curr_img.cols, CV_8U); // all 0
 	mask(utils::getBestFitRectangle<int>(corners)) = 255;
-	if(!params.detect_keypoints){
-		for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	if(params.detector_type == DetectorType::NONE){
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 			Vector2d patch_centroid = ssm.getPts().col(pt_id);
 			prev_key_pts[pt_id].pt.x = patch_centroid(0);
 			prev_key_pts[pt_id].pt.y = patch_centroid(1);
 		}
 	}
-	(*feat)(curr_img, mask, prev_key_pts, prev_descriptors, !params.detect_keypoints);
-	printf("n_key_pts: %d\n", prev_descriptors.rows);
+	(*feat)(curr_img, mask, prev_key_pts, prev_descriptors,
+		params.detector_type == DetectorType::NONE);
+
+	if(params.debug_mode){
+		printf("n_init_key_pts: %d\n", prev_descriptors.rows);
+	}
 	//printf("descriptor_size: %d\n", prev_descriptors.cols);	
 	//printf("prev_descriptors: %s\n", utils::getType(prev_descriptors));
-
+#ifndef DISABLE_NN
 	flann_idx = new flannIdxT(flann_params.getIndexParams(flann_params.index_type));
 	if(params.rebuild_index){
 		flann_query.reset(new flannMatT((float*)(prev_descriptors.data),
@@ -231,28 +252,32 @@ void GridTrackerFeat<SSM>::initialize(const cv::Mat &corners) {
 		flann_idx->buildIndex(flannMatT((float*)(prev_descriptors.data),
 			prev_descriptors.rows, prev_descriptors.cols));
 	}
+#endif
 	curr_img.copyTo(prev_img);
 
 	ssm.getCorners(cv_corners_mat);
 }
 template<class SSM>
-void GridTrackerFeat<SSM>::update() {
+void FeatureTracker<SSM>::update() {
 	if(!params.uchar_input){
 		curr_img_in.convertTo(curr_img, curr_img.type());
 	}
 
-	cv::Mat mask = cv::Mat::zeros(curr_img.rows, curr_img.cols, CV_8U); 
-	
+	cv::Mat mask = cv::Mat::zeros(curr_img.rows, curr_img.cols, CV_8U);
+
 	cv::Rect curr_location_rect = utils::getBestFitRectangle<int>(cv_corners_mat);
 	cv::Rect search_reigon;
 	search_reigon.x = max(curr_location_rect.x - params.search_window_x, 0);
 	search_reigon.y = max(curr_location_rect.y - params.search_window_y, 0);
-	search_reigon.width = min(curr_location_rect.width + 2*params.search_window_x, curr_img.cols - search_reigon.x - 1);
-	search_reigon.height = min(curr_location_rect.height + 2*params.search_window_y, curr_img.rows - search_reigon.y - 1);
+	search_reigon.width = min(curr_location_rect.width + 2 * params.search_window_x, curr_img.cols - search_reigon.x - 1);
+	search_reigon.height = min(curr_location_rect.height + 2 * params.search_window_y, curr_img.rows - search_reigon.y - 1);
 	mask(search_reigon) = 255;
 
 	(*feat)(curr_img, mask, curr_key_pts, curr_descriptors, false);
+	best_idices.create(n_key_pts, 2, CV_32S);
+	best_distances.create(n_key_pts, 2, CV_32F);
 
+#ifndef DISABLE_NN
 	if(params.rebuild_index){
 		flann_idx->buildIndex(flannMatT((float*)(curr_descriptors.data),
 			curr_descriptors.rows, curr_descriptors.cols));
@@ -262,13 +287,6 @@ void GridTrackerFeat<SSM>::update() {
 		n_key_pts = curr_descriptors.rows;
 		assert(curr_key_pts.size() == n_key_pts);
 	}
-
-	printf("n_key_pts: %d\n", n_key_pts);
-	//printf("curr_key_pts.size: %ld\n", curr_key_pts.size());
-	//printf("curr_descriptors_type: %s\n", utils::getType(curr_descriptors));
-
-	best_idices.create(n_key_pts, 2, CV_32S);
-	best_distances.create(n_key_pts, 2, CV_32F);
 	flannResultT flann_result((int*)(best_idices.data), n_key_pts, 2);
 	flannMatT flann_dists((float*)(best_distances.data), n_key_pts, 2);
 
@@ -285,15 +303,29 @@ void GridTrackerFeat<SSM>::update() {
 		cv::format("Invalid search type specified: %d....\n", flann_params.search_type));
 	}
 
-	utils::printMatrixToFile<int>(best_idices, "best_idices", "log/GridTrackerFeat.txt", "%d");
-	utils::printMatrixToFile<int>(best_distances, "best_distances", "log/GridTrackerFeat.txt", "%d");
+	utils::printMatrixToFile<int>(best_idices, "best_idices", "log/FeatureTracker.txt", "%d");
+	utils::printMatrixToFile<int>(best_distances, "best_distances", "log/FeatureTracker.txt", "%d");
+#else
+	std::vector<std::vector<cv::DMatch>> matches;
+	matcher.knnMatch(curr_descriptors, prev_descriptors, matches, 2);
+	for(int match_id = 0; match_id < matches.size(); ++match_id){
+		best_distances.at<float>(match_id, 0) = matches[match_id][0].distance;
+		best_distances.at<float>(match_id, 1) = matches[match_id][1].distance;
+		best_idices.at<int>(match_id, 0) = matches[match_id][0].trainIdx;
+		best_idices.at<int>(match_id, 1) = matches[match_id][1].trainIdx;
+	}
+#endif
+	printf("n_key_pts: %d\n", n_key_pts);
+	//printf("curr_key_pts.size: %ld\n", curr_key_pts.size());
+	//printf("curr_descriptors_type: %s\n", utils::getType(curr_descriptors));
 
 	prev_pts.clear();
 	curr_pts.clear();
 	good_indices.clear();
 	if(params.rebuild_index){
 		for(int pt_id = 0; pt_id < n_key_pts; ++pt_id){
-			if(best_distances.at<float>(pt_id, 0) < 0.75*best_distances.at<float>(pt_id, 1)){
+			if(params.max_dist_ratio < 0 ||
+				best_distances.at<float>(pt_id, 0) < params.max_dist_ratio*best_distances.at<float>(pt_id, 1)){
 				curr_pts.push_back(curr_key_pts[best_idices.at<int>(pt_id, 0)].pt);
 				prev_pts.push_back(prev_key_pts[pt_id].pt);
 				good_indices.push_back(pt_id);
@@ -312,7 +344,7 @@ void GridTrackerFeat<SSM>::update() {
 		}
 		VectorXd inv_update(ssm.getStateSize());
 		ssm.estimateWarpFromPts(inv_update, pix_mask, curr_pts, prev_pts, est_params);
-		ssm.invertState(ssm_update, inv_update);		
+		ssm.invertState(ssm_update, inv_update);
 	}
 
 
@@ -329,6 +361,7 @@ void GridTrackerFeat<SSM>::update() {
 	if(params.init_at_each_frame){
 		prev_key_pts = curr_key_pts;
 		prev_descriptors = curr_descriptors.clone();
+#ifndef DISABLE_NN
 		if(params.rebuild_index){
 			flann_query.reset(new flannMatT((float*)(prev_descriptors.data),
 				prev_descriptors.rows, prev_descriptors.cols));
@@ -337,33 +370,120 @@ void GridTrackerFeat<SSM>::update() {
 			flann_idx->buildIndex(flannMatT((float*)(curr_descriptors.data),
 				curr_descriptors.rows, curr_descriptors.cols));
 		}
+#endif
 		curr_img.copyTo(prev_img);
 	}
 
 }
 
 template<class SSM>
-void GridTrackerFeat<SSM>::setRegion(const cv::Mat& corners) {
+bool FeatureTracker<SSM>::detect(const cv::Mat &mask, cv::Mat &obj_location) {
+	if(!params.uchar_input){
+		curr_img_in.convertTo(curr_img, curr_img.type());
+	}
+	(*feat)(curr_img, mask, curr_key_pts, curr_descriptors, false);
+	n_key_pts = curr_descriptors.rows;
+	assert(curr_key_pts.size() == n_key_pts);
+
+	if(params.debug_mode){
+		printf("n_key_pts: %d\n", n_key_pts);
+	}
+
+	best_idices.create(n_key_pts, 2, CV_32S);
+	best_distances.create(n_key_pts, 2, CV_32F);
+
+#ifndef DISABLE_NN
+	flann_idx->buildIndex(flannMatT((float*)(prev_descriptors.data),
+		prev_descriptors.rows, prev_descriptors.cols));
+	flann_query.reset(new flannMatT((float*)(curr_descriptors.data),
+		curr_descriptors.rows, curr_descriptors.cols));	
+	flannResultT flann_result((int*)(best_idices.data), n_key_pts, 2);
+	flannMatT flann_dists((float*)(best_distances.data), n_key_pts, 2);
+	switch(flann_params.search_type){
+	case SearchType::KNN:
+		flann_idx->knnSearch(*flann_query, flann_result, flann_dists, 2, flann_params.search);
+		record_event("flann_idx->knnSearch");
+		break;
+	case SearchType::Radius:
+		flann_idx->radiusSearch(*flann_query, flann_result, flann_dists, 2, flann_params.search);
+		record_event("flann_idx->radiusSearch");
+		break;
+	default: throw invalid_argument(
+		cv::format("Invalid search type specified: %d....\n", flann_params.search_type));
+	}
+#else
+	std::vector<std::vector<cv::DMatch>> matches;
+	matcher.knnMatch(curr_descriptors, prev_descriptors, matches, 2);
+	//printf("matches.size(): %ld\n", matches.size());
+	for(int match_id = 0; match_id < matches.size(); ++match_id){		
+		best_distances.at<float>(match_id, 0) = matches[match_id][0].distance;
+		best_distances.at<float>(match_id, 1) = matches[match_id][1].distance;
+		best_idices.at<int>(match_id, 0) = matches[match_id][0].trainIdx;
+		best_idices.at<int>(match_id, 1) = matches[match_id][1].trainIdx;
+	}
+#endif
+	prev_pts.clear();
+	curr_pts.clear();
+	good_indices.clear();
+	for(int pt_id = 0; pt_id < n_key_pts; ++pt_id){
+		if(params.max_dist_ratio < 0 ||
+			best_distances.at<float>(pt_id, 0) < params.max_dist_ratio*best_distances.at<float>(pt_id, 1)){
+			//printf("best distance: %f\n", best_distances.at<float>(pt_id, 0));
+			//printf("second best distance: %f\n", best_distances.at<float>(pt_id, 1));
+			prev_pts.push_back(prev_key_pts[best_idices.at<int>(pt_id, 0)].pt);
+			curr_pts.push_back(curr_key_pts[pt_id].pt);
+			good_indices.push_back(pt_id);
+		}
+	}
+	n_good_key_pts = curr_pts.size();
+	if(params.debug_mode){
+		printf("n_good_key_pts: %d\n", n_good_key_pts);
+	}
+	if(params.show_keypoints){ showKeyPoints(); }
+
+	if(n_good_key_pts < params.min_matches){
+		return false;
+	}
+	VectorXd inv_update(ssm.getStateSize());
+	ssm.estimateWarpFromPts(inv_update, pix_mask, curr_pts, prev_pts, est_params);
+	ssm.invertState(ssm_update, inv_update);
+	Matrix24d opt_warped_corners;
+	ssm.applyWarpToCorners(opt_warped_corners, ssm.getCorners(), ssm_update);
+	if((opt_warped_corners.array() < 0).any() || !opt_warped_corners.allFinite()){
+		return false;
+	}
+	if(params.debug_mode){
+		utils::printMatrix(opt_warped_corners, "opt_warped_corners");
+	}	
+	obj_location = utils::Corners(opt_warped_corners).mat();
+	return true;
+}
+
+template<class SSM>
+void FeatureTracker<SSM>::setRegion(const cv::Mat& corners) {
 	ssm.setCorners(corners);
-	if(!params.detect_keypoints){
+	if(params.detector_type == DetectorType::NONE){
 		for(int pt_id = 0; pt_id < n_pts; pt_id++){
 			Vector2d patch_centroid = ssm.getPts().col(pt_id);
 			prev_key_pts[pt_id].pt.x = patch_centroid(0);
 			prev_key_pts[pt_id].pt.y = patch_centroid(1);
 		}
 	}
-	cv::Mat mask = cv::Mat::zeros(curr_img.rows, curr_img.cols, CV_8U); 
+	cv::Mat mask = cv::Mat::zeros(curr_img.rows, curr_img.cols, CV_8U);
 	mask(utils::getBestFitRectangle<int>(corners)) = 1;
-	(*feat)(curr_img, mask, prev_key_pts, prev_descriptors, !params.detect_keypoints);
+	(*feat)(curr_img, mask, prev_key_pts, prev_descriptors,
+		params.detector_type == DetectorType::NONE);
+#ifndef DISABLE_NN
 	flann_idx->buildIndex(flannMatT((float*)(prev_descriptors.data),
 		prev_descriptors.rows, prev_descriptors.cols));
+#endif
 	ssm.getCorners(cv_corners_mat);
 	if(params.show_keypoints){ showKeyPoints(); }
 
 }
 
 template<class SSM>
-void GridTrackerFeat<SSM>::showKeyPoints(){
+void FeatureTracker<SSM>::showKeyPoints(){
 	curr_img_in.convertTo(curr_img_disp, curr_img_disp.type());
 	cv::cvtColor(curr_img_disp, curr_img_disp, CV_GRAY2BGR);
 	utils::drawRegion(curr_img_disp, cv_corners_mat, CV_RGB(0, 0, 255), 2);
@@ -371,11 +491,11 @@ void GridTrackerFeat<SSM>::showKeyPoints(){
 	for(int pt_id = 0; pt_id < n_good_key_pts; pt_id++) {
 		circle(curr_img_disp, curr_pts[pt_id], 2,
 			pix_mask[pt_id] ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255), 2);
-		matches.push_back(cv::DMatch(pt_id, 
-			best_idices.at<int>(good_indices[pt_id], 0), 
+		matches.push_back(cv::DMatch(pt_id,
+			best_idices.at<int>(good_indices[pt_id], 0),
 			best_distances.at<int>(good_indices[pt_id], 0)));
 	}
-	imshow(patch_win_name, curr_img_disp);	
+	imshow(patch_win_name, curr_img_disp);
 	if(params.show_matches){
 		try{
 			cv::Mat img_matches;
@@ -399,5 +519,5 @@ _MTF_END_NAMESPACE
 
 #ifndef HEADER_ONLY_MODE
 #include "mtf/Macros/register.h"
-_REGISTER_TRACKERS_SSM(GridTrackerFeat);
+_REGISTER_TRACKERS_SSM(FeatureTracker);
 #endif

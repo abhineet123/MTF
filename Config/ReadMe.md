@@ -331,6 +331,8 @@ MTF Tracker specific parameters:
 			pysm/pyrs:	Pyramidal search method - identical to Pyramidal tracker except all constituents SMs must have same AM and SSM;
 			grid:	Grid Tracker
 				setting grid_sm in modules.cfg to cv will run the OpenCV version of this tracker
+			feat:	Feature Tracker
+				only works if this was enabled during compilation ()with feat=1 switch)
 			rkl/rklt:	RKLT (Grid tracker + template tracker with SPI and failure detection)
 			hrch:	Hierarchical SSM tracker - uses same SM ('hrch_sm') and AM with four different SSMs - 2, 4, 6 and 8 dof that are run in a cascade
 			if third party trackers are not disabled during compilation:
