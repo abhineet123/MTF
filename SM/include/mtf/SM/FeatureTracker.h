@@ -1,10 +1,10 @@
 #ifndef MTF_FEATURE_TRACKER_H
 #define MTF_FEATURE_TRACKER_H
 
+//#define DISABLE_NN
+
 #include "FeatureBase.h"
-#include <vector>
 #include "opencv2/nonfree/nonfree.hpp"
-#include <memory>
 #ifndef DISABLE_NN
 #include <flann/flann.hpp>
 #include "FLANNParams.h"
@@ -12,6 +12,9 @@
 #include "opencv2/features2d/features2d.hpp"
 #include "FLANNCVParams.h"
 #endif
+
+#include <memory>
+#include <vector>
 
 _MTF_BEGIN_NAMESPACE
 
@@ -55,6 +58,8 @@ struct FeatureTrackerParams{
 	double epsilon;
 	bool enable_pyr;
 
+	bool use_cv_flann;
+
 	bool uchar_input;
 
 	//! show the locations of individual key points
@@ -70,6 +75,7 @@ struct FeatureTrackerParams{
 		bool _init_at_each_frame, DetectorType detector_type,
 		DescriptorType descriptor_type, bool _rebuild_index,
 		int _max_iters, double _epsilon, bool _enable_pyr,
+		bool _use_cv_flann,
 		double _max_dist_ratio, int _min_matches, bool _uchar_input,
 		bool _show_keypoints, bool _show_matches, bool _debug_mode);
 	FeatureTrackerParams(const FeatureTrackerParams *params = nullptr);
@@ -87,7 +93,6 @@ public:
 	typedef ParamType::DescriptorType DescriptorType;
 	typedef typename SSM::ParamType SSMParams;
 	typedef typename SSM::EstimatorParams EstimatorParams;
-
 #ifndef DISABLE_NN
 	typedef FLANNParams::IdxType IdxType;
 	typedef FLANNParams::SearchType SearchType;
@@ -97,11 +102,11 @@ public:
 	typedef std::shared_ptr<flannMatT> FlannMatPtr;
 	typedef std::shared_ptr<flannIdxT> FlannIdxPtr;
 #else
-	cv::FlannBasedMatcher matcher;
 	typedef FLANNCVParams FLANNParams;
 #endif
 	//typedef std::unique_ptr<cv::Feature2D> Feature2DPtr;
 	typedef std::unique_ptr<cv::SIFT> SIFTPtr;
+
 	FeatureTracker(
 		const ParamType *grid_params = nullptr,
 		const SIFTParams *_sift_params = nullptr,
@@ -130,24 +135,23 @@ public:
 	SSM& getSSM() { return ssm; }
 
 private:
-
 	SSM ssm;
 	ParamType params;
 	SIFTParams sift_params;
 	FLANNParams flann_params;
 	EstimatorParams est_params;
 
+	cv::FlannBasedMatcher matcher;
 	SIFTPtr feat;
+
 #ifndef DISABLE_NN
-	flannIdxT *flann_idx;
+	FlannIdxPtr flann_idx;
 	FlannMatPtr flann_dataset, flann_query;
 #endif
-	cv::Mat best_idices;
-	cv::Mat best_distances;
-
 	cv::Mat curr_img_in, curr_img, prev_img;
 	std::vector<cv::KeyPoint> curr_key_pts, prev_key_pts;
 	std::vector<cv::Point2f> curr_pts, prev_pts;
+	cv::Mat best_idices, best_distances;
 
 	int n_pts, n_key_pts, n_good_key_pts;
 	cv::Size search_window;
@@ -155,7 +159,7 @@ private:
 	std::vector<uchar> pix_mask;
 	std::vector<int> good_indices;
 
-	cv::Mat warp_mat;
+	CornersT opt_warped_corners;
 	VectorXd ssm_update;
 
 	cv::Mat curr_img_disp;
@@ -165,6 +169,8 @@ private:
 	MatrixXi _linear_idx;//used for indexing the sub region locations
 	int pause_seq;
 
+	void matchKeyPoints();
+	void cmptWarpedCorners();
 	void showKeyPoints();
 };
 

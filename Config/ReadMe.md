@@ -1,6 +1,7 @@
-Input parameters can be specified in 5 plain text files called **mtf.cfg**, **modules.cfg**, **sigma.cfg**, **thirdparty.cfg** and **multi.cfg** (located in this folder by default) where each line specifies the value of one parameter as: `<param_name><tab><param_val>`. If these files are present in some other folder, its path can be specified at runtime as `runMTF config_dir <directory containing the cfg files>`
+Input parameters can be specified in 6 plain text files called **mtf.cfg**, **modules.cfg**, **examples.cfg**, **thirdparty.cfg**, **sigma.cfg** and **multi.cfg** (located in this folder by default) where each line specifies the value of one parameter as: `<param_name><tab><param_val>`. If these files are present in some other folder, its path can be specified at runtime as `runMTF config_dir <directory containing the cfg files>`
 
-Note that all parameters described here or present in **mtf.cfg**, **modules.cfg** and **thirdparty.cfg** can be specified in either of these files since all are read sequentially - this split is done only for convenience with mtf.cfg containing parameters relevant to the tracking task in general and the other two having parameters specific to MTF modules and third party trackers respectively;; if a parameter is specified in multiple files, its value in a later file will override that in the earlier ones; **sigma.cfg** specifies a list of standard deviations and means along with respective IDs that can be used as input arguments (in modules.cfg) for stochastic modules like NN, PF and RegNet to specify the Gaussian distributions from where these will draw samples;
+Note that all parameters described here or present in **mtf.cfg**, **modules.cfg**, **examples.cfg** and **thirdparty.cfg** can be specified in either of these files since **all files are read sequentially** - this split is done only for convenience so that mtf.cfg contains parameters relevant to the tracking task in general or common to multiple modules/examples/trackers and the other three files contain parameters specific to MTF modules, example applications and third party trackers respectively; if a parameter is specified in multiple files, its value in a later file will override that in the earlier ones;
+**sigma.cfg** specifies a list of standard deviations and means along with respective IDs that can be used as input arguments (in modules.cfg and examples.cfg) for stochastic modules like NN, PF and RegNet to specify the Gaussian distributions from where these will draw samples;
 
 **multi.cfg** specifies configurations for individual trackers in multi tracker setups like CascadeTracker/ParallelTracker for single object tracking or when tracking multiple objects simultaneously.
 The parameters that can be specified here are same as in the last two files and will override the values specified there for each specific tracker thus enabling different trackers to have independent settings.
@@ -410,7 +411,7 @@ MTF Tracker specific parameters:
 			aff or 6:	Affine (6 dof)	
 			sim or 4:	Similarity (translation + rotation + isotropic scaling)(4 dof)
 			iso or 3:	Isometry (translation + rotation)(3 dof)
-			trs or 3s:	Transcaling (Translation + isotropic scaling)
+			ist or 3s:	IST (Isotropic Scaling  + Translation) (3 dof)
 			trans or 2:	Translation (2 dof)	
 			spl:	Spline based SSM with piecewise translation
 			

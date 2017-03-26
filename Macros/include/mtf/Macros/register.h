@@ -47,7 +47,7 @@
 #include "mtf/SSM/Affine.h"
 #include "mtf/SSM/Similitude.h"
 #include "mtf/SSM/Isometry.h"
-#include "mtf/SSM/Transcaling.h"
+#include "mtf/SSM/IST.h"
 #include "mtf/SSM/Translation.h"
 #include "mtf/SSM/LieHomography.h"
 #include "mtf/SSM/CornerHomography.h"
@@ -120,7 +120,7 @@
 	_REGISTER_TRACKERS_AM(SM, Affine)\
 	_REGISTER_TRACKERS_AM(SM, Similitude)\
 	_REGISTER_TRACKERS_AM(SM, Isometry)\
-	_REGISTER_TRACKERS_AM(SM, Transcaling)\
+	_REGISTER_TRACKERS_AM(SM, IST)\
 	_REGISTER_TRACKERS_AM(SM, Translation)\
 	_REGISTER_TRACKERS_AM(SM, Spline)\
 
@@ -132,7 +132,7 @@
 	template class mtf::SM< mtf::Affine>;\
 	template class mtf::SM< mtf::Similitude>;\
 	template class mtf::SM< mtf::Isometry>;\
-	template class mtf::SM< mtf::Transcaling>;\
+	template class mtf::SM< mtf::IST>;\
 	template class mtf::SM< mtf::Translation>;\
 	template class mtf::SM< mtf::Spline>;
 
@@ -209,7 +209,7 @@
 	_REGISTER_HTRACKERS_AM(SM, SSM, Affine)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Similitude)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Isometry)\
-	_REGISTER_HTRACKERS_AM(SM, SSM, Transcaling)\
+	_REGISTER_HTRACKERS_AM(SM, SSM, IST)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Translation)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Spline)\
 
@@ -221,7 +221,7 @@
 	_REGISTER_HTRACKERS_SSM(SM, Affine)\
 	_REGISTER_HTRACKERS_SSM(SM, Similitude)\
 	_REGISTER_HTRACKERS_SSM(SM, Isometry)\
-	_REGISTER_HTRACKERS_SSM(SM, Transcaling)\
+	_REGISTER_HTRACKERS_SSM(SM, IST)\
 	_REGISTER_HTRACKERS_SSM(SM, Translation)\
 	_REGISTER_HTRACKERS_SSM(SM, Spline)\
 
@@ -264,7 +264,7 @@
 	_REGISTER_ESM_AM(HT, JT, Affine)\
 	_REGISTER_ESM_AM(HT, JT, Similitude)\
 	_REGISTER_ESM_AM(HT, JT, Isometry)\
-	_REGISTER_ESM_AM(HT, JT, Transcaling)\
+	_REGISTER_ESM_AM(HT, JT, IST)\
 	_REGISTER_ESM_AM(HT, JT, Translation)\
 	_REGISTER_ESM_AM(HT, JT, Spline)\
 

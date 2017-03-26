@@ -441,6 +441,40 @@ namespace utils{
 		ss << val;
 		return ss.str();
 	}
+	//! get the indices that will rearrange the given points so that they become
+	//! consecutive points along the border of a connected region
+	std::vector<int> rearrangeIntoRegion(const cv::Mat &region_corners);
+
+	//! rearrange elements in vector according to the given indices
+	template<typename ElementT>
+	inline void rearrange(std::vector<ElementT> &vec, 
+		const std::vector<int> &indices){
+		assert(indices.size() == vec.size());
+		auto vec_copy(vec);
+		for(int id = 0; id < vec.size(); ++id) {
+			vec[indices[id]] = vec_copy[id];
+		}
+	}
+	//! rearrange columns of the matrix according to the given indices
+	template<typename ElementT>
+	inline void rearrangeCols(cv::Mat &mat,
+		const std::vector<int> &indices){
+		assert(indices.size() == mat.cols);
+		cv::Mat mat_copy(mat.clone());
+		for(int id = 0; id < mat.cols; ++id) {
+			mat.col(indices[id]) = mat_copy.col(id);
+		}
+	}
+	//! rearrange rows of the matrix according to the given indices
+	template<typename ElementT>
+	inline void rearrangeRows(cv::Mat &mat,
+		const std::vector<int> &indices){
+		assert(indices.size() == mat.rows);
+		cv::Mat mat_copy(mat.clone());
+		for(int id = 0; id < mat.rows; ++id) {
+			mat.row(indices[id]) = mat_copy.row(id);
+		}
+	}
 }
 _MTF_END_NAMESPACE
 #endif

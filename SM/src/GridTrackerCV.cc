@@ -313,7 +313,6 @@ void GridTrackerCV<SSM>::resetPts(){
 template<class SSM>
 void GridTrackerCV<SSM>::showPts(){
 	curr_img_in.convertTo(curr_img_disp, curr_img_disp.type());
-	cv::cvtColor(curr_img_disp, curr_img_disp, CV_GRAY2BGR);
 	utils::drawRegion(curr_img_disp, cv_corners_mat, CV_RGB(0, 0, 255), 2);
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		cv::Scalar pt_color;

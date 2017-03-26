@@ -719,13 +719,13 @@ bool IsometryEstimator::refine(const CvMat* m1, const CvMat* m2,
 }
 
 
-TranscalingEstimator::TranscalingEstimator(int _modelPoints, bool _use_boost_rng)
+ISTEstimator::ISTEstimator(int _modelPoints, bool _use_boost_rng)
 	: SSMEstimator(_modelPoints, cvSize(3, 1), 1, _use_boost_rng) {
 	assert(_modelPoints >= 2);
 	checkPartialSubsets = false;
 }
 
-int TranscalingEstimator::runKernel(const CvMat* m1, const CvMat* m2, CvMat* H) {
+int ISTEstimator::runKernel(const CvMat* m1, const CvMat* m2, CvMat* H) {
 	int n_pts = m1->rows * m1->cols;
 
 	//if(n_pts != 3) {
@@ -744,7 +744,7 @@ int TranscalingEstimator::runKernel(const CvMat* m1, const CvMat* m2, CvMat* H) 
 		out_pts(0, pt_id) = m[pt_id].x;
 		out_pts(1, pt_id) = m[pt_id].y;
 	}
-	Matrix3d sim_mat = utils::computeTranscalingDLT(in_pts, out_pts);
+	Matrix3d sim_mat = utils::computeISTDLT(in_pts, out_pts);
 
 	double *H_ptr = H->data.db;
 	H_ptr[0] = sim_mat(0, 2);
@@ -754,7 +754,7 @@ int TranscalingEstimator::runKernel(const CvMat* m1, const CvMat* m2, CvMat* H) 
 }
 
 
-void TranscalingEstimator::computeReprojError(const CvMat* m1, const CvMat* m2,
+void ISTEstimator::computeReprojError(const CvMat* m1, const CvMat* m2,
 	const CvMat* model, CvMat* _err) {
 	int n_pts = m1->rows * m1->cols;
 	const CvPoint2D64f* M = (const CvPoint2D64f*)m1->data.ptr;
@@ -769,7 +769,7 @@ void TranscalingEstimator::computeReprojError(const CvMat* m1, const CvMat* m2,
 	}
 }
 
-bool TranscalingEstimator::refine(const CvMat* m1, const CvMat* m2,
+bool ISTEstimator::refine(const CvMat* m1, const CvMat* m2,
 	CvMat* model, int maxIters) {
 	LevMarq solver(3, 0, cvTermCriteria(CV_TERMCRIT_ITER + CV_TERMCRIT_EPS, maxIters, DBL_EPSILON));
 	int n_pts = m1->rows * m1->cols;
@@ -1465,7 +1465,7 @@ int	estimateIsometry(const CvMat* in_pts, const CvMat* out_pts,
 }
 
 
-cv::Mat estimateTranscaling(cv::InputArray _in_pts, cv::InputArray _out_pts,
+cv::Mat estimateIST(cv::InputArray _in_pts, cv::InputArray _out_pts,
 	cv::OutputArray _mask, const SSMEstimatorParams &params){
 	cv::Mat in_pts = _in_pts.getMat(), out_pts = _out_pts.getMat();
 	int n_pts = in_pts.checkVector(2);
@@ -1479,13 +1479,13 @@ cv::Mat estimateTranscaling(cv::InputArray _in_pts, cv::InputArray _out_pts,
 		_mask.create(n_pts, 1, CV_8U, -1, true);
 		p_mask = &(c_mask = _mask.getMat());
 	}
-	bool ok = estimateTranscaling(&_pt1, &_pt2, &matH, p_mask, params) > 0;
+	bool ok = estimateIST(&_pt1, &_pt2, &matH, p_mask, params) > 0;
 	if(!ok)
 		H = cv::Scalar(0);
 	return H;
 }
 
-int	estimateTranscaling(const CvMat* in_pts, const CvMat* out_pts,
+int	estimateIST(const CvMat* in_pts, const CvMat* out_pts,
 	CvMat* __H, CvMat* mask, const SSMEstimatorParams &params) {
 	bool result = false;
 	cv::Ptr<CvMat> out_pts_hm, in_pts_hm, tempMask;
@@ -1514,7 +1514,7 @@ int	estimateTranscaling(const CvMat* in_pts, const CvMat* out_pts,
 	if(!tempMask.empty())
 		cvSet(tempMask, cvScalarAll(1.));
 
-	TranscalingEstimator estimator(params.n_model_pts, params.use_boost_rng);
+	ISTEstimator estimator(params.n_model_pts, params.use_boost_rng);
 
 	int method = n_pts == params.n_model_pts ? 0 : params.method_cv;
 

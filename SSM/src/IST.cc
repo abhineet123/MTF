@@ -1,38 +1,38 @@
-#include "mtf/SSM/Transcaling.h"
+#include "mtf/SSM/IST.h"
 #include "mtf/SSM/SSMEstimator.h"
 #include "mtf/Utilities/warpUtils.h"
 #include "mtf/Utilities/miscUtils.h"
 
 _MTF_BEGIN_NAMESPACE
 
-TranscalingParams::TranscalingParams(const SSMParams *ssm_params,
+ISTParams::ISTParams(const SSMParams *ssm_params,
 bool _debug_mode) :
 SSMParams(ssm_params),
 debug_mode(_debug_mode){}
 
-TranscalingParams::TranscalingParams(const TranscalingParams *params) :
+ISTParams::ISTParams(const ISTParams *params) :
 SSMParams(params),
-debug_mode(TRANSCALING_DEBUG_MODE){
+debug_mode(IST_DEBUG_MODE){
 	if(params){
 		debug_mode = params->debug_mode;
 	}
 }
 
-Transcaling::Transcaling( const ParamType *_params) :
+IST::IST( const ParamType *_params) :
 ProjectiveBase(_params), params(_params){
 
 	printf("\n");
-	printf("Using Transcaling SSM with:\n");
+	printf("Using IST SSM with:\n");
 	printf("resx: %d\n", resx);
 	printf("resy: %d\n", resy);
 	printf("debug_mode: %d\n", params.debug_mode);
 
-	name = "transcaling";
+	name = "ist";
 	state_size = 3;
 	curr_state.resize(state_size);
 }
 
-void Transcaling::setState(const VectorXd &ssm_state){
+void IST::setState(const VectorXd &ssm_state){
 	validate_ssm_state(ssm_state);
 	curr_state = ssm_state;
 	getWarpFromState(curr_warp, curr_state);
@@ -40,7 +40,7 @@ void Transcaling::setState(const VectorXd &ssm_state){
 	curr_corners.noalias() = curr_warp.topRows<2>() * init_corners_hm;
 }
 
-void Transcaling::compositionalUpdate(const VectorXd& state_update){
+void IST::compositionalUpdate(const VectorXd& state_update){
 	validate_ssm_state(state_update);
 
 	getWarpFromState(warp_update_mat, state_update);
@@ -52,7 +52,7 @@ void Transcaling::compositionalUpdate(const VectorXd& state_update){
 	curr_corners.noalias() = curr_warp.topRows<2>() * init_corners_hm;
 }
 
-void Transcaling::getWarpFromState(Matrix3d &warp_mat,
+void IST::getWarpFromState(Matrix3d &warp_mat,
 	const VectorXd& ssm_state){
 	validate_ssm_state(ssm_state);
 
@@ -62,17 +62,17 @@ void Transcaling::getWarpFromState(Matrix3d &warp_mat,
 	warp_mat(1, 2) = ssm_state(1);
 }
 
-void Transcaling::getStateFromWarp(VectorXd &state_vec,
+void IST::getStateFromWarp(VectorXd &state_vec,
 	const Matrix3d& sim_mat){
 	validate_ssm_state(state_vec);
-	VALIDATE_TRS_WARP(sim_mat);
+	VALIDATE_IST_WARP(sim_mat);
 
 	state_vec(0) = sim_mat(0, 2);
 	state_vec(1) = sim_mat(1, 2);
 	state_vec(2) = sim_mat(0, 0) - 1;
 }
 
-void Transcaling::getInitPixGrad(Matrix2Xd &dw_dp, int pt_id) {
+void IST::getInitPixGrad(Matrix2Xd &dw_dp, int pt_id) {
 	double x = init_pts(0, pt_id);
 	double y = init_pts(1, pt_id);
 	dw_dp <<
@@ -80,7 +80,7 @@ void Transcaling::getInitPixGrad(Matrix2Xd &dw_dp, int pt_id) {
 		0, 1, y;
 }
 
-void Transcaling::cmptInitPixJacobian(MatrixXd &dI_dp,
+void IST::cmptInitPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dx){
 	validate_ssm_jacobian(dI_dp, dI_dx);
 
@@ -102,7 +102,7 @@ void Transcaling::cmptInitPixJacobian(MatrixXd &dI_dp,
 	}
 }
 
-void Transcaling::cmptApproxPixJacobian(MatrixXd &dI_dp,
+void IST::cmptApproxPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dx){
 	validate_ssm_jacobian(dI_dp, dI_dx);
 	double s_plus_1_inv = 1.0 / (curr_state(2) + 1);
@@ -125,7 +125,7 @@ void Transcaling::cmptApproxPixJacobian(MatrixXd &dI_dp,
 	}
 }
 
-void Transcaling::cmptWarpedPixJacobian(MatrixXd &dI_dp,
+void IST::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dx){
 	validate_ssm_jacobian(dI_dp, dI_dx);
 	double s = curr_state(2) + 1;
@@ -149,7 +149,7 @@ void Transcaling::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 	}
 }
 
-void Transcaling::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
+void IST::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 	const PixGradT &dI_dw){
 	validate_ssm_hessian(d2I_dp2, d2I_dw2, dI_dw);
 
@@ -169,7 +169,7 @@ void Transcaling::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 		}
 	}
 }
-void Transcaling::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
+void IST::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 	const PixGradT &dI_dw) {
 	validate_ssm_hessian(d2I_dp2, d2I_dw2, dI_dw);
 	double s = curr_state(2) + 1;
@@ -194,24 +194,24 @@ void Transcaling::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw
 		}
 	}
 }
-void Transcaling::estimateWarpFromCorners(VectorXd &state_update, const Matrix24d &in_corners,
+void IST::estimateWarpFromCorners(VectorXd &state_update, const Matrix24d &in_corners,
 	const Matrix24d &out_corners){
 	validate_ssm_state(state_update);
 
-	Matrix3d warp_update_mat = utils::computeTranscalingDLT(in_corners, out_corners);
+	Matrix3d warp_update_mat = utils::computeISTDLT(in_corners, out_corners);
 	getStateFromWarp(state_update, warp_update_mat);
 }
 
-void Transcaling::estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mask,
+void IST::estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mask,
 	const vector<cv::Point2f> &in_pts, const vector<cv::Point2f> &out_pts,
 	const EstimatorParams &est_params){
-	cv::Mat trs_params = estimateTranscaling(in_pts, out_pts, mask, est_params);
+	cv::Mat trs_params = estimateIST(in_pts, out_pts, mask, est_params);
 	state_update(0) = trs_params.at<double>(0, 0);
 	state_update(1) = trs_params.at<double>(0, 1);
 	state_update(2) = trs_params.at<double>(0, 2) - 1;
 }
 
-void Transcaling::updateGradPts(double grad_eps){
+void IST::updateGradPts(double grad_eps){
 	double scaled_eps = curr_warp(0, 0) * grad_eps;
 	for(int pt_id = 0; pt_id < n_pts; pt_id++){
 		spi_pt_check(spi_mask, pt_id);
@@ -231,7 +231,7 @@ void Transcaling::updateGradPts(double grad_eps){
 }
 
 
-void Transcaling::updateHessPts(double hess_eps){
+void IST::updateHessPts(double hess_eps){
 	double scaled_eps = curr_warp(0, 0) * hess_eps;
 	double scaled_eps2 = 2 * scaled_eps;
 
@@ -265,11 +265,11 @@ void Transcaling::updateHessPts(double hess_eps){
 	}
 }
 
-void Transcaling::applyWarpToCorners(Matrix24d &warped_corners, const Matrix24d &orig_corners,
+void IST::applyWarpToCorners(Matrix24d &warped_corners, const Matrix24d &orig_corners,
 	const VectorXd &state_update){
 	warped_corners.noalias() = (orig_corners * (state_update(2) + 1)).colwise() + state_update.head<2>();
 }
-void Transcaling::applyWarpToPts(Matrix2Xd &warped_pts, const Matrix2Xd &orig_pts,
+void IST::applyWarpToPts(Matrix2Xd &warped_pts, const Matrix2Xd &orig_pts,
 	const VectorXd &state_update){
 	warped_pts.noalias() = (orig_pts * (state_update(2) + 1)).colwise() + state_update.head<2>();
 }

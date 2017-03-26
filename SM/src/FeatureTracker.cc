@@ -23,6 +23,7 @@
 #define FEAT_MAX_ITERS 1
 #define FEAT_EPSILON 0.01
 #define FEAT_ENABLE_PYR 0
+#define FEAT_USE_CV_FLANN 1
 #define FEAT_MAX_DIST_RATIO 0.75
 #define FEAT_MIN_MATCHES 10
 #define FEAT_UCHAR_INPUT 1
@@ -74,7 +75,8 @@ FeatureTrackerParams::FeatureTrackerParams(
 	DetectorType _detector_type,
 	DescriptorType _descriptor_type,
 	bool _rebuild_index, int _max_iters, double _epsilon,
-	bool _enable_pyr, double _max_dist_ratio,
+	bool _enable_pyr, bool _use_cv_flann,
+	double _max_dist_ratio,
 	int _min_matches, bool _uchar_input,
 	bool _show_keypoints, bool _show_matches,
 	bool _debug_mode) :
@@ -89,6 +91,7 @@ FeatureTrackerParams::FeatureTrackerParams(
 	max_iters(_max_iters),
 	epsilon(_epsilon),
 	enable_pyr(_enable_pyr),
+	use_cv_flann(_use_cv_flann),
 	max_dist_ratio(_max_dist_ratio),
 	min_matches(_min_matches),
 	uchar_input(_uchar_input),
@@ -108,6 +111,7 @@ rebuild_index(FEAT_REBUILD_INDEX),
 max_iters(FEAT_MAX_ITERS),
 epsilon(FEAT_EPSILON),
 enable_pyr(FEAT_ENABLE_PYR),
+use_cv_flann(FEAT_USE_CV_FLANN),
 max_dist_ratio(FEAT_MAX_DIST_RATIO),
 min_matches(FEAT_MIN_MATCHES),
 uchar_input(FEAT_UCHAR_INPUT),
@@ -128,6 +132,7 @@ debug_mode(FEAT_DEBUG_MODE){
 		max_dist_ratio = params->max_dist_ratio;
 		min_matches = params->min_matches;
 		enable_pyr = params->enable_pyr;
+		use_cv_flann = params->use_cv_flann;
 		uchar_input = params->uchar_input;
 		show_keypoints = params->show_keypoints;
 		show_matches = params->show_matches;
@@ -150,6 +155,7 @@ FeatureTracker<SSM>::FeatureTracker(const ParamType *grid_params,
 	printf("descriptor_type: %d\n", params.descriptor_type);
 	printf("max_dist_ratio: %f\n", params.max_dist_ratio);
 	printf("min_matches: %d\n", params.min_matches);
+	printf("use_cv_flann: %d\n", params.use_cv_flann);
 	printf("uchar_input: %d\n", params.uchar_input);
 	printf("rebuild_index: %d\n", params.rebuild_index);
 	printf("show_keypoints: %d\n", params.show_keypoints);
@@ -164,7 +170,7 @@ FeatureTracker<SSM>::FeatureTracker(const ParamType *grid_params,
 	est_params.print();
 	printf("\n");
 
-	name = "grid_feat";
+	name = "feat";
 
 	if(ssm.getResX() != params.getResX() || ssm.getResY() != params.getResY()){
 		throw std::invalid_argument(
@@ -235,6 +241,7 @@ void FeatureTracker<SSM>::initialize(const cv::Mat &corners) {
 	}
 	(*feat)(curr_img, mask, prev_key_pts, prev_descriptors,
 		params.detector_type == DetectorType::NONE);
+	//printf("prev_descriptors.type: %s\n", utils::getType(prev_descriptors));
 
 	if(params.debug_mode){
 		printf("n_init_key_pts: %d\n", prev_descriptors.rows);
@@ -242,19 +249,20 @@ void FeatureTracker<SSM>::initialize(const cv::Mat &corners) {
 	//printf("descriptor_size: %d\n", prev_descriptors.cols);	
 	//printf("prev_descriptors: %s\n", utils::getType(prev_descriptors));
 #ifndef DISABLE_NN
-	flann_idx = new flannIdxT(flann_params.getIndexParams(flann_params.index_type));
-	if(params.rebuild_index){
-		flann_query.reset(new flannMatT((float*)(prev_descriptors.data),
-			prev_descriptors.rows, prev_descriptors.cols));
-		n_key_pts = prev_descriptors.rows;
-		assert(prev_key_pts.size() == n_key_pts);
-	} else{
-		flann_idx->buildIndex(flannMatT((float*)(prev_descriptors.data),
-			prev_descriptors.rows, prev_descriptors.cols));
+	if(!params.use_cv_flann){
+		flann_idx.reset(new flannIdxT(flann_params.getIndexParams(flann_params.index_type)));
+		if(params.rebuild_index){
+			flann_query.reset(new flannMatT((float*)(prev_descriptors.data),
+				prev_descriptors.rows, prev_descriptors.cols));
+			n_key_pts = prev_descriptors.rows;
+			assert(prev_key_pts.size() == n_key_pts);
+		} else{
+			flann_idx->buildIndex(flannMatT((float*)(prev_descriptors.data),
+				prev_descriptors.rows, prev_descriptors.cols));
+		}
 	}
 #endif
 	curr_img.copyTo(prev_img);
-
 	ssm.getCorners(cv_corners_mat);
 }
 template<class SSM>
@@ -263,62 +271,131 @@ void FeatureTracker<SSM>::update() {
 		curr_img_in.convertTo(curr_img, curr_img.type());
 	}
 
+	//! create mask of search region for keypoints
 	cv::Mat mask = cv::Mat::zeros(curr_img.rows, curr_img.cols, CV_8U);
-
 	cv::Rect curr_location_rect = utils::getBestFitRectangle<int>(cv_corners_mat);
-	cv::Rect search_reigon;
-	search_reigon.x = max(curr_location_rect.x - params.search_window_x, 0);
-	search_reigon.y = max(curr_location_rect.y - params.search_window_y, 0);
-	search_reigon.width = min(curr_location_rect.width + 2 * params.search_window_x, curr_img.cols - search_reigon.x - 1);
-	search_reigon.height = min(curr_location_rect.height + 2 * params.search_window_y, curr_img.rows - search_reigon.y - 1);
-	mask(search_reigon) = 255;
+	cv::Rect search_region;
+	search_region.x = max(curr_location_rect.x - params.search_window_x, 0);
+	search_region.y = max(curr_location_rect.y - params.search_window_y, 0);
+	search_region.width = min(curr_location_rect.width + 2 * params.search_window_x, curr_img.cols - search_region.x - 1);
+	search_region.height = min(curr_location_rect.height + 2 * params.search_window_y, curr_img.rows - search_region.y - 1);
+	mask(search_region) = 255;
 
 	(*feat)(curr_img, mask, curr_key_pts, curr_descriptors, false);
+
+	matchKeyPoints();
+	if(n_good_key_pts < params.min_matches){
+		printf("FeatureTracker :: Insufficient matching keypoints found\n");
+		return;
+	}
+	cmptWarpedCorners();
+	ssm.setCorners(opt_warped_corners);
+	ssm.getCorners(cv_corners_mat);
+	if(params.show_keypoints){
+		utils::drawRegion(mask, cv_corners_mat, CV_RGB(255, 255, 255));
+		cv::imshow("Mask", mask);
+		showKeyPoints();
+	}
+	if(params.init_at_each_frame){
+		prev_key_pts = curr_key_pts;
+		prev_descriptors = curr_descriptors.clone();
+#ifndef DISABLE_NN
+		if(!params.use_cv_flann){
+			if(params.rebuild_index){
+				flann_query.reset(new flannMatT((float*)(prev_descriptors.data),
+					prev_descriptors.rows, prev_descriptors.cols));
+				n_key_pts = prev_descriptors.rows;
+			} else{
+				flann_idx->buildIndex(flannMatT((float*)(prev_descriptors.data),
+					prev_descriptors.rows, prev_descriptors.cols));
+			}
+		}
+#endif
+		curr_img.copyTo(prev_img);
+	}
+}
+
+template<class SSM>
+bool FeatureTracker<SSM>::detect(const cv::Mat &mask, cv::Mat &obj_location) {
+	if(!params.uchar_input){
+		curr_img_in.convertTo(curr_img, curr_img.type());
+	}
+	(*feat)(curr_img, mask, curr_key_pts, curr_descriptors, false);
+
+	matchKeyPoints();
+
+	if(params.show_keypoints){ showKeyPoints(); }
+
+	if(n_good_key_pts < params.min_matches){ return false; }
+
+	cmptWarpedCorners();
+
+	if((opt_warped_corners.array() < 0).any() || !opt_warped_corners.allFinite()){
+		return false;
+	}
+	if(params.debug_mode){
+		utils::printMatrix(opt_warped_corners, "opt_warped_corners");
+	}
+	obj_location = utils::Corners(opt_warped_corners).mat();
+	return true;
+}
+
+template<class SSM>
+void FeatureTracker<SSM>::matchKeyPoints() {
+	n_key_pts = curr_descriptors.rows;
+	assert(curr_key_pts.size() == n_key_pts);
+
+	if(params.debug_mode){
+		printf("n_key_pts: %d\n", n_key_pts);
+	}
+
 	best_idices.create(n_key_pts, 2, CV_32S);
 	best_distances.create(n_key_pts, 2, CV_32F);
-
+	
 #ifndef DISABLE_NN
-	if(params.rebuild_index){
-		flann_idx->buildIndex(flannMatT((float*)(curr_descriptors.data),
-			curr_descriptors.rows, curr_descriptors.cols));
+	if(!params.use_cv_flann){
+		if(params.rebuild_index){
+			flann_idx->buildIndex(flannMatT((float*)(curr_descriptors.data),
+				curr_descriptors.rows, curr_descriptors.cols));
+		} else{
+			flann_query.reset(new flannMatT((float*)(curr_descriptors.data),
+				curr_descriptors.rows, curr_descriptors.cols));
+
+		}
+		flannResultT flann_result((int*)(best_idices.data), n_key_pts, 2);
+		flannMatT flann_dists((float*)(best_distances.data), n_key_pts, 2);
+
+		switch(flann_params.search_type){
+		case SearchType::KNN:
+			flann_idx->knnSearch(*flann_query, flann_result, flann_dists, 2, flann_params.search);
+			break;
+		case SearchType::Radius:
+			flann_idx->radiusSearch(*flann_query, flann_result, flann_dists, 2, flann_params.search);
+			break;
+		default: throw invalid_argument(
+			cv_format("Invalid search type specified: %d....\n", flann_params.search_type));
+		}
+		if(params.debug_mode){
+			utils::printMatrixToFile<int>(best_idices, "best_idices", "log/FeatureTracker.txt", "%d");
+			utils::printMatrixToFile<int>(best_distances, "best_distances", "log/FeatureTracker.txt", "%d");
+		}
 	} else{
-		flann_query.reset(new flannMatT((float*)(curr_descriptors.data),
-			curr_descriptors.rows, curr_descriptors.cols));
-		n_key_pts = curr_descriptors.rows;
-		assert(curr_key_pts.size() == n_key_pts);
-	}
-	flannResultT flann_result((int*)(best_idices.data), n_key_pts, 2);
-	flannMatT flann_dists((float*)(best_distances.data), n_key_pts, 2);
-
-	switch(flann_params.search_type){
-	case SearchType::KNN:
-		flann_idx->knnSearch(*flann_query, flann_result, flann_dists, 2, flann_params.search);
-		record_event("flann_idx->knnSearch");
-		break;
-	case SearchType::Radius:
-		flann_idx->radiusSearch(*flann_query, flann_result, flann_dists, 2, flann_params.search);
-		record_event("flann_idx->radiusSearch");
-		break;
-	default: throw invalid_argument(
-		cv::format("Invalid search type specified: %d....\n", flann_params.search_type));
-	}
-
-	utils::printMatrixToFile<int>(best_idices, "best_idices", "log/FeatureTracker.txt", "%d");
-	utils::printMatrixToFile<int>(best_distances, "best_distances", "log/FeatureTracker.txt", "%d");
-#else
-	std::vector<std::vector<cv::DMatch>> matches;
-	matcher.knnMatch(curr_descriptors, prev_descriptors, matches, 2);
-	for(int match_id = 0; match_id < matches.size(); ++match_id){
-		best_distances.at<float>(match_id, 0) = matches[match_id][0].distance;
-		best_distances.at<float>(match_id, 1) = matches[match_id][1].distance;
-		best_idices.at<int>(match_id, 0) = matches[match_id][0].trainIdx;
-		best_idices.at<int>(match_id, 1) = matches[match_id][1].trainIdx;
+#endif
+		std::vector<std::vector<cv::DMatch>> matches;
+		if(params.rebuild_index){
+			matcher.knnMatch(prev_descriptors, curr_descriptors, matches, 2);
+		} else{
+			matcher.knnMatch(curr_descriptors, prev_descriptors, matches, 2);
+		}
+		for(int match_id = 0; match_id < matches.size(); ++match_id){
+			best_distances.at<float>(match_id, 0) = matches[match_id][0].distance;
+			best_distances.at<float>(match_id, 1) = matches[match_id][1].distance;
+			best_idices.at<int>(match_id, 0) = matches[match_id][0].trainIdx;
+			best_idices.at<int>(match_id, 1) = matches[match_id][1].trainIdx;
+		}
+#ifndef DISABLE_NN
 	}
 #endif
-	printf("n_key_pts: %d\n", n_key_pts);
-	//printf("curr_key_pts.size: %ld\n", curr_key_pts.size());
-	//printf("curr_descriptors_type: %s\n", utils::getType(curr_descriptors));
-
 	prev_pts.clear();
 	curr_pts.clear();
 	good_indices.clear();
@@ -330,133 +407,37 @@ void FeatureTracker<SSM>::update() {
 				prev_pts.push_back(prev_key_pts[pt_id].pt);
 				good_indices.push_back(pt_id);
 			}
-		}
-		n_good_key_pts = curr_pts.size();
-		printf("n_good_key_pts: %d\n", n_good_key_pts);
-		ssm.estimateWarpFromPts(ssm_update, pix_mask, prev_pts, curr_pts, est_params);
+		}		
 	} else{
 		for(int pt_id = 0; pt_id < n_key_pts; ++pt_id){
-			if(best_distances.at<float>(pt_id, 0) < 0.75*best_distances.at<float>(pt_id, 1)){
+			//if(params.debug_mode){
+			//	printf("pt_id: %d best_distances: %f, %f\n", pt_id, best_distances.at<float>(pt_id, 0),
+			//		best_distances.at<float>(pt_id, 1));
+			//}
+			if(params.max_dist_ratio < 0 ||
+				best_distances.at<float>(pt_id, 0) < params.max_dist_ratio*best_distances.at<float>(pt_id, 1)){
 				prev_pts.push_back(prev_key_pts[best_idices.at<int>(pt_id, 0)].pt);
 				curr_pts.push_back(curr_key_pts[pt_id].pt);
 				good_indices.push_back(pt_id);
 			}
-		}
-		VectorXd inv_update(ssm.getStateSize());
-		ssm.estimateWarpFromPts(inv_update, pix_mask, curr_pts, prev_pts, est_params);
-		ssm.invertState(ssm_update, inv_update);
-	}
-
-
-	Matrix24d opt_warped_corners;
-	ssm.applyWarpToCorners(opt_warped_corners, ssm.getCorners(), ssm_update);
-	ssm.setCorners(opt_warped_corners);
-
-	ssm.getCorners(cv_corners_mat);
-	if(params.show_keypoints){
-		utils::drawRegion(mask, cv_corners_mat, CV_RGB(255, 255, 255));
-		cv::imshow("Mask", mask);
-		showKeyPoints();
-	}
-	if(params.init_at_each_frame){
-		prev_key_pts = curr_key_pts;
-		prev_descriptors = curr_descriptors.clone();
-#ifndef DISABLE_NN
-		if(params.rebuild_index){
-			flann_query.reset(new flannMatT((float*)(prev_descriptors.data),
-				prev_descriptors.rows, prev_descriptors.cols));
-			n_key_pts = prev_descriptors.rows;
-		} else{
-			flann_idx->buildIndex(flannMatT((float*)(curr_descriptors.data),
-				curr_descriptors.rows, curr_descriptors.cols));
-		}
-#endif
-		curr_img.copyTo(prev_img);
-	}
-
-}
-
-template<class SSM>
-bool FeatureTracker<SSM>::detect(const cv::Mat &mask, cv::Mat &obj_location) {
-	if(!params.uchar_input){
-		curr_img_in.convertTo(curr_img, curr_img.type());
-	}
-	(*feat)(curr_img, mask, curr_key_pts, curr_descriptors, false);
-	n_key_pts = curr_descriptors.rows;
-	assert(curr_key_pts.size() == n_key_pts);
-
-	if(params.debug_mode){
-		printf("n_key_pts: %d\n", n_key_pts);
-	}
-
-	best_idices.create(n_key_pts, 2, CV_32S);
-	best_distances.create(n_key_pts, 2, CV_32F);
-
-#ifndef DISABLE_NN
-	flann_idx->buildIndex(flannMatT((float*)(prev_descriptors.data),
-		prev_descriptors.rows, prev_descriptors.cols));
-	flann_query.reset(new flannMatT((float*)(curr_descriptors.data),
-		curr_descriptors.rows, curr_descriptors.cols));	
-	flannResultT flann_result((int*)(best_idices.data), n_key_pts, 2);
-	flannMatT flann_dists((float*)(best_distances.data), n_key_pts, 2);
-	switch(flann_params.search_type){
-	case SearchType::KNN:
-		flann_idx->knnSearch(*flann_query, flann_result, flann_dists, 2, flann_params.search);
-		record_event("flann_idx->knnSearch");
-		break;
-	case SearchType::Radius:
-		flann_idx->radiusSearch(*flann_query, flann_result, flann_dists, 2, flann_params.search);
-		record_event("flann_idx->radiusSearch");
-		break;
-	default: throw invalid_argument(
-		cv::format("Invalid search type specified: %d....\n", flann_params.search_type));
-	}
-#else
-	std::vector<std::vector<cv::DMatch>> matches;
-	matcher.knnMatch(curr_descriptors, prev_descriptors, matches, 2);
-	//printf("matches.size(): %ld\n", matches.size());
-	for(int match_id = 0; match_id < matches.size(); ++match_id){		
-		best_distances.at<float>(match_id, 0) = matches[match_id][0].distance;
-		best_distances.at<float>(match_id, 1) = matches[match_id][1].distance;
-		best_idices.at<int>(match_id, 0) = matches[match_id][0].trainIdx;
-		best_idices.at<int>(match_id, 1) = matches[match_id][1].trainIdx;
-	}
-#endif
-	prev_pts.clear();
-	curr_pts.clear();
-	good_indices.clear();
-	for(int pt_id = 0; pt_id < n_key_pts; ++pt_id){
-		if(params.max_dist_ratio < 0 ||
-			best_distances.at<float>(pt_id, 0) < params.max_dist_ratio*best_distances.at<float>(pt_id, 1)){
-			//printf("best distance: %f\n", best_distances.at<float>(pt_id, 0));
-			//printf("second best distance: %f\n", best_distances.at<float>(pt_id, 1));
-			prev_pts.push_back(prev_key_pts[best_idices.at<int>(pt_id, 0)].pt);
-			curr_pts.push_back(curr_key_pts[pt_id].pt);
-			good_indices.push_back(pt_id);
 		}
 	}
 	n_good_key_pts = curr_pts.size();
 	if(params.debug_mode){
 		printf("n_good_key_pts: %d\n", n_good_key_pts);
 	}
-	if(params.show_keypoints){ showKeyPoints(); }
-
-	if(n_good_key_pts < params.min_matches){
-		return false;
+}
+template<class SSM>
+void FeatureTracker<SSM>::cmptWarpedCorners() {
+	//! compute warp from matching keypoints 
+	if(params.rebuild_index){
+		ssm.estimateWarpFromPts(ssm_update, pix_mask, prev_pts, curr_pts, est_params);
+	} else{
+		VectorXd inv_update(ssm.getStateSize());
+		ssm.estimateWarpFromPts(inv_update, pix_mask, curr_pts, prev_pts, est_params);
+		ssm.invertState(ssm_update, inv_update);
 	}
-	VectorXd inv_update(ssm.getStateSize());
-	ssm.estimateWarpFromPts(inv_update, pix_mask, curr_pts, prev_pts, est_params);
-	ssm.invertState(ssm_update, inv_update);
-	Matrix24d opt_warped_corners;
 	ssm.applyWarpToCorners(opt_warped_corners, ssm.getCorners(), ssm_update);
-	if((opt_warped_corners.array() < 0).any() || !opt_warped_corners.allFinite()){
-		return false;
-	}
-	if(params.debug_mode){
-		utils::printMatrix(opt_warped_corners, "opt_warped_corners");
-	}	
-	obj_location = utils::Corners(opt_warped_corners).mat();
-	return true;
 }
 
 template<class SSM>
@@ -474,8 +455,10 @@ void FeatureTracker<SSM>::setRegion(const cv::Mat& corners) {
 	(*feat)(curr_img, mask, prev_key_pts, prev_descriptors,
 		params.detector_type == DetectorType::NONE);
 #ifndef DISABLE_NN
-	flann_idx->buildIndex(flannMatT((float*)(prev_descriptors.data),
-		prev_descriptors.rows, prev_descriptors.cols));
+	if(!params.use_cv_flann){
+		flann_idx->buildIndex(flannMatT((float*)(prev_descriptors.data),
+			prev_descriptors.rows, prev_descriptors.cols));
+	}
 #endif
 	ssm.getCorners(cv_corners_mat);
 	if(params.show_keypoints){ showKeyPoints(); }

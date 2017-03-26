@@ -111,22 +111,24 @@ ifeq (${o}, 1)
 	_MTF_SYN_EXE_NAME = generateSyntheticSeq
 	_MTF_MOS_EXE_NAME = createMosaic
 	_MTF_REC_EXE_NAME = recordSeq
+	_MTF_QR_EXE_NAME = trackMarkers
 	_MTF_APP_EXE_NAME = ${app}
 else
 	MTF_RUNTIME_FLAGS += -g -O0
 	ifeq (${header_only}, 1)
-		_MTF_EXE_NAME = runMTFdh
+		_MTF_EXE_NAME = runMTFh_debug
 	else
-		_MTF_EXE_NAME = runMTFd
+		_MTF_EXE_NAME = runMTF_debug
 	endif
-	_MTF_TEST_EXE_NAME = testMTFd
-	_MTF_PATCH_EXE_NAME = extractPatchd
-	_MTF_UAV_EXE_NAME = trackUAVTrajectoryd
-	_MTF_GT_EXE_NAME = showGroundTruthd
-	_MTF_SYN_EXE_NAME = generateSyntheticSeqd
-	_MTF_MOS_EXE_NAME = createMosaicd
-	_MTF_REC_EXE_NAME = recordSeqd
-	_MTF_APP_EXE_NAME = $(addsuffix d, ${app})				
+	_MTF_TEST_EXE_NAME = testMTF_debug
+	_MTF_PATCH_EXE_NAME = extractPatch_debug
+	_MTF_UAV_EXE_NAME = trackUAVTrajectory_debug
+	_MTF_GT_EXE_NAME = showGroundTruth_debug
+	_MTF_SYN_EXE_NAME = generateSyntheticSeq_debug
+	_MTF_MOS_EXE_NAME = createMosaic_debug
+	_MTF_REC_EXE_NAME = recordSeq_debug
+	_MTF_QR_EXE_NAME = trackMarkers_debug
+	_MTF_APP_EXE_NAME = $(addsuffix _debug, ${app})				
 endif
 
 MTF_EXE_NAME = $(addsuffix ${LIB_POST_FIX}${MTF_EXE_EXT}, ${_MTF_EXE_NAME})
@@ -137,6 +139,7 @@ MTF_GT_EXE_NAME = $(addsuffix ${LIB_POST_FIX}${MTF_EXE_EXT}, ${_MTF_GT_EXE_NAME}
 MTF_SYN_EXE_NAME = $(addsuffix ${LIB_POST_FIX}${MTF_EXE_EXT}, ${_MTF_SYN_EXE_NAME})
 MTF_MOS_EXE_NAME = $(addsuffix ${LIB_POST_FIX}${MTF_EXE_EXT}, ${_MTF_MOS_EXE_NAME})
 MTF_REC_EXE_NAME = $(addsuffix ${LIB_POST_FIX}${MTF_EXE_EXT}, ${_MTF_REC_EXE_NAME})
+MTF_QR_EXE_NAME = $(addsuffix ${LIB_POST_FIX}${MTF_EXE_EXT}, ${_MTF_QR_EXE_NAME})
 MTF_APP_EXE_NAME = $(addsuffix ${LIB_POST_FIX}${MTF_EXE_EXT}, ${_MTF_APP_EXE_NAME})
 
 ifeq (${vp}, 1)
@@ -144,7 +147,7 @@ ifeq (${vp}, 1)
 	MTF_RUNTIME_FLAGS += -lvisp_io -lvisp_sensor
 endif
 
-.PHONY: exe uav mos syn py test gt patch app mtfi mtfp mtfc mtfu mtft mtfs mtfm app
+.PHONY: exe uav mos syn py test gt patch qr app mtfi mtfp mtfc mtfu mtft mtfs mtfm app
 .PHONY: install_exe install_uav install_patch install_py install_test
 .PHONY: run
 
@@ -157,8 +160,9 @@ test: ${BUILD_DIR}/${MTF_TEST_EXE_NAME}
 gt: ${BUILD_DIR}/${MTF_GT_EXE_NAME}
 patch: ${BUILD_DIR}/${MTF_PATCH_EXE_NAME}
 rec: ${BUILD_DIR}/${MTF_REC_EXE_NAME}
+qr: ${BUILD_DIR}/${MTF_QR_EXE_NAME}
 app: ${BUILD_DIR}/${MTF_APP_EXE_NAME}
-all: exe uav mos syn py test gt patch rec
+all: exe uav mos syn qr gt patch rec py test
 
 install_exe: ${MTF_EXEC_INSTALL_DIR}/${MTF_EXE_NAME}
 install_gt: ${MTF_EXEC_INSTALL_DIR}/${MTF_GT_EXE_NAME}
@@ -167,10 +171,11 @@ install_mos: ${MTF_EXEC_INSTALL_DIR}/${MTF_MOS_EXE_NAME}
 install_patch: ${MTF_EXEC_INSTALL_DIR}/${MTF_PATCH_EXE_NAME}
 install_syn: ${MTF_EXEC_INSTALL_DIR}/${MTF_SYN_EXE_NAME}
 install_rec: ${MTF_EXEC_INSTALL_DIR}/${MTF_REC_EXE_NAME}
+install_qr: ${MTF_EXEC_INSTALL_DIR}/${MTF_QR_EXE_NAME}
 install_py: ${MTF_PY_INSTALL_DIR}/${MTF_PY_LIB_NAME}
 install_test: ${MTF_TEST_INSTALL_DIR}/${MTF_TEST_EXE_NAME}
 install_app: ${MTF_APP_INSTALL_DIR}/${MTF_APP_EXE_NAME}
-install_all: install_exe install_uav install_mos install_syn install_py install_test install_gt install_patch install_rec
+install_all: install_exe install_uav install_mos install_syn install_qr install_gt install_patch install_rec install_py install_test
 
 mtfi: install install_exe
 mtfpa: install install_patch
@@ -179,6 +184,7 @@ mtfu: install install_uav
 mtfg: install install_gt
 mtfs: install install_syn
 mtfm: install install_mos
+mtfq: install install_qr
 mtfr: install_rec
 mtft: install install_test_lib install_test
 mtfall: install install_test_lib install_all
@@ -200,15 +206,16 @@ ${MTF_EXEC_INSTALL_DIR}/${MTF_GT_EXE_NAME}: ${BUILD_DIR}/${MTF_GT_EXE_NAME}
 	${MTF_EXE_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@
 ${MTF_EXEC_INSTALL_DIR}/${MTF_MOS_EXE_NAME}: ${BUILD_DIR}/${MTF_MOS_EXE_NAME}
 	${MTF_EXE_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@
+${MTF_EXEC_INSTALL_DIR}/${MTF_REC_EXE_NAME}: ${BUILD_DIR}/${MTF_REC_EXE_NAME}
+	${MTF_EXE_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@
+${MTF_EXEC_INSTALL_DIR}/${MTF_QR_EXE_NAME}: ${BUILD_DIR}/${MTF_QR_EXE_NAME}
+	${MTF_EXE_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@
+${MTF_APP_INSTALL_DIR}/${MTF_APP_EXE_NAME}: ${BUILD_DIR}/${MTF_APP_EXE_NAME}
+	${MTF_APP_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@	
 ${MTF_PY_INSTALL_DIR}/${MTF_PY_LIB_NAME}: ${BUILD_DIR}/${MTF_PY_LIB_NAME}
 	${MTF_PY_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@
 ${MTF_TEST_INSTALL_DIR}/${MTF_TEST_EXE_NAME}: ${BUILD_DIR}/${MTF_TEST_EXE_NAME}
-	${MTF_TEST_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@
-${MTF_TEST_INSTALL_DIR}/${MTF_REC_EXE_NAME}: ${BUILD_DIR}/${MTF_REC_EXE_NAME}
-	${MTF_TEST_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@
-${MTF_APP_INSTALL_DIR}/${MTF_APP_EXE_NAME}: ${BUILD_DIR}/${MTF_APP_EXE_NAME}
-	${MTF_APP_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@	
-	
+	${MTF_TEST_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@	
 
 ${BUILD_DIR}/${MTF_EXE_NAME}: | ${BUILD_DIR}	
 ${BUILD_DIR}/${MTF_PY_LIB_NAME}: | ${BUILD_DIR}	
@@ -218,6 +225,7 @@ ${BUILD_DIR}/${MTF_UAV_EXE_NAME}: | ${BUILD_DIR}
 ${BUILD_DIR}/${MTF_GT_EXE_NAME}: | ${BUILD_DIR}	
 ${BUILD_DIR}/${MTF_SYN_EXE_NAME}: | ${BUILD_DIR}	
 ${BUILD_DIR}/${MTF_MOS_EXE_NAME}: | ${BUILD_DIR}	
+${BUILD_DIR}/${MTF_QR_EXE_NAME}: | ${BUILD_DIR}	
 ${BUILD_DIR}/${MTF_PATCH_EXE_NAME}: | ${BUILD_DIR}	
 ${BUILD_DIR}/${MTF_APP_EXE_NAME}: | ${BUILD_DIR}	
 
@@ -228,6 +236,9 @@ ${BUILD_DIR}/${MTF_UAV_EXE_NAME}: ${EXAMPLES_SRC_DIR}/trackUAVTrajectory.cc ${MT
 	${CXX} $< -o $@ -w ${UAV_FLAGS} ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${OPENCV_FLAGS} ${MTF_LIB_LINK} ${LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS}  ${OPENCV_LIBS} 
 	
 ${BUILD_DIR}/${MTF_PATCH_EXE_NAME}: ${EXAMPLES_SRC_DIR}/extractPatch.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
+	${CXX} $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${OPENCV_FLAGS} ${MTF_LIB_LINK} ${LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 
+	
+${BUILD_DIR}/${MTF_QR_EXE_NAME}: ${EXAMPLES_SRC_DIR}/trackMarkers.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
 	${CXX} $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${OPENCV_FLAGS} ${MTF_LIB_LINK} ${LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 
 	
 ${BUILD_DIR}/${MTF_PY_LIB_NAME}: ${BUILD_DIR}/pyMTF.o 

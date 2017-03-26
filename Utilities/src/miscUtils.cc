@@ -487,5 +487,27 @@ namespace utils{
 		//printMatrix<double>(centroid, "getCentroid :: centroid");
 		return cv::Point2d(centroid.at<double>(0, 0), centroid.at<double>(1, 0));
 	}
+	std::vector<int>  rearrangeIntoRegion(const cv::Mat &region_corners){
+		cv::Mat region_rect = utils::Corners(utils::getBestFitRectangle<double>(region_corners)).mat();
+		std::vector<int> rearrange_idx(region_corners.cols);
+		for(int corner_id = 0; corner_id < region_corners.cols; ++corner_id){
+			double min_dist = std::numeric_limits<double>::infinity();
+			int min_idx = 0;
+			double x1 = region_corners.at<double>(0, corner_id);
+			double y1 = region_corners.at<double>(1, corner_id);
+			for(int rect_id = 0; rect_id < region_rect.cols; ++rect_id){
+				double x2 = region_rect.at<double>(0, rect_id);
+				double y2 = region_rect.at<double>(1, rect_id);
+				double dx = x1 - x2, dy = y1 - y2;
+				double dist = dx*dx + dy*dy;
+				if(dist < min_dist){
+					min_dist = dist;
+					min_idx = rect_id;
+				}
+			}
+			rearrange_idx[corner_id] = min_idx;
+		}
+		return rearrange_idx;
+	}
 }
 _MTF_END_NAMESPACE

@@ -1,31 +1,32 @@
-#ifndef MTF_TRANSCALING_H
-#define MTF_TRANSCALING_H
+#ifndef MTF_IST_H
+#define MTF_IST_H
 
-#define VALIDATE_TRS_WARP(warp) \
+#define VALIDATE_IST_WARP(warp) \
 	assert(warp(0, 0) == warp(1, 1)); \
 	assert(warp(0, 1) == 0 && warp(1, 0) == 0); \
 	assert(warp(2, 0) == 0 && warp(2, 1) == 0); \
 	assert(warp(2, 2) == 1)
 
-#define TRANSCALING_DEBUG_MODE 0
+#define IST_DEBUG_MODE 0
 
 #include "ProjectiveBase.h"
 
 _MTF_BEGIN_NAMESPACE
 
-struct TranscalingParams : SSMParams{
+struct ISTParams : SSMParams{
 	bool debug_mode;
-	TranscalingParams(const SSMParams *ssm_params, bool _debug_mode);
-	TranscalingParams(const TranscalingParams *params = nullptr);
+	ISTParams(const SSMParams *ssm_params, bool _debug_mode);
+	ISTParams(const ISTParams *params = nullptr);
 };
 
-class Transcaling : public ProjectiveBase{
+//! Isotropic Scaling and Translation
+class IST : public ProjectiveBase{
 public:
 
-	typedef TranscalingParams ParamType;
+	typedef ISTParams ParamType;
 	ParamType params;
 
-	Transcaling(const ParamType *params_in = nullptr);
+	IST(const ParamType *params_in = nullptr);
 
 	void setState(const VectorXd &ssm_state) override;
 	void compositionalUpdate(const VectorXd& state_update) override;

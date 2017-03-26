@@ -77,8 +77,8 @@ namespace utils{
 	ProjWarpT computeSimilitudeNDLT(const PtsT &in_pts, const PtsT &out_pts);
 	Vector3d computeIsometryDLT(const PtsT &in_pts, const PtsT &out_pts);
 	Vector3d computeIsometryDLT(const CornersT &in_pts, const CornersT &out_pts);
-	ProjWarpT computeTranscalingDLT(const CornersT &in_corners, const CornersT &out_corners);
-	ProjWarpT computeTranscalingDLT(const PtsT &in_corners, const PtsT &out_corners);
+	ProjWarpT computeISTDLT(const CornersT &in_corners, const CornersT &out_corners);
+	ProjWarpT computeISTDLT(const PtsT &in_corners, const PtsT &out_corners);
 
 	void decomposeHomographyForward(ProjWarpT &affine_mat, ProjWarpT &proj_mat, const ProjWarpT &hom_mat);
 	void decomposeHomographyInverse(ProjWarpT &affine_mat, ProjWarpT &proj_mat, const ProjWarpT &hom_mat);

@@ -575,7 +575,7 @@ namespace utils{
 		return iso_params;
 	}
 
-	ProjWarpT computeTranscalingDLT(const CornersT &in_corners, const CornersT &out_corners){
+	ProjWarpT computeISTDLT(const CornersT &in_corners, const CornersT &out_corners){
 		Matrix83d A;
 		A.fill(0);
 		// flattened version of the 2x4 matrix of target corner points
@@ -615,7 +615,7 @@ namespace utils{
 		return transcale_mat;
 	}
 
-	ProjWarpT computeTranscalingDLT(const PtsT &in_pts, const PtsT &out_pts){
+	ProjWarpT computeISTDLT(const PtsT &in_pts, const PtsT &out_pts){
 		assert(in_pts.cols() == out_pts.cols());
 		int n_pts = in_pts.cols();
 		MatrixXd A(2 * n_pts, 3);

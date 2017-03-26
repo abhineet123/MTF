@@ -41,6 +41,19 @@ add_custom_target(install_uav
 add_custom_target(uav DEPENDS trackUAVTrajectory)
 add_custom_target(mtfu DEPENDS trackUAVTrajectory install_uav)
 
+add_executable(trackMarkers Examples/src/trackMarkers.cc)
+target_compile_options(trackMarkers PUBLIC ${MTF_RUNTIME_FLAGS})
+target_include_directories(trackMarkers PUBLIC  Examples/include ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+target_link_libraries(trackMarkers mtf ${MTF_LIBS} ${Boost_LIBRARIES})
+install(TARGETS trackMarkers RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT qr)
+add_custom_target(install_qr
+  ${CMAKE_COMMAND}
+  -D "CMAKE_INSTALL_COMPONENT=qr"
+  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+  )
+add_custom_target(qr DEPENDS trackMarkers)
+add_custom_target(mtfq DEPENDS trackMarkers install_qr)
+
 add_executable(extractPatch Examples/src/extractPatch.cc)
 target_compile_options(extractPatch PUBLIC ${MTF_RUNTIME_FLAGS})
 target_include_directories(extractPatch PUBLIC  Examples/include ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})

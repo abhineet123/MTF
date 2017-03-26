@@ -502,6 +502,7 @@ namespace mtf{
 		double feat_max_dist_ratio = 0.75;
 		int feat_min_matches = 10;
 		bool feat_rebuild_index = false;
+		bool feat_use_cv_flann = true;
 		bool feat_show_keypoints = 0;
 		bool feat_show_matches = 0;
 		bool feat_debug_mode = 0;
@@ -798,6 +799,9 @@ namespace mtf{
 		std::string qr_detector_ssm = "4";
 		double qr_duplicate_min_dist = 50;
 		double qr_min_size = 10;
+		bool qr_init_with_rect = 1;
+		int qr_n_markers = -1;
+
 
 		inline void split(const std::string &s, char delim, std::vector<std::string> &elems) {
 			stringstream ss(s);
@@ -1712,6 +1716,8 @@ namespace mtf{
 				feat_min_matches = atoi(arg_val);
 			} else if(!strcmp(arg_name, "feat_rebuild_index")){
 				feat_rebuild_index = atoi(arg_val);
+			} else if(!strcmp(arg_name, "feat_use_cv_flann")){
+				feat_use_cv_flann = atoi(arg_val);
 			}  else if(!strcmp(arg_name, "feat_show_keypoints")){
 				feat_show_keypoints = atoi(arg_val);
 			}  else if(!strcmp(arg_name, "feat_show_matches")){
@@ -2230,6 +2236,10 @@ namespace mtf{
 				qr_duplicate_min_dist = atof(arg_val);
 			} else if(!strcmp(arg_name, "qr_min_size")){
 				qr_min_size = atof(arg_val);
+			} else if(!strcmp(arg_name, "qr_init_with_rect")){
+				qr_init_with_rect = atoi(arg_val);
+			} else if(!strcmp(arg_name, "qr_n_markers")){
+				qr_n_markers = atoi(arg_val);
 			}
 		}
 
@@ -2413,6 +2423,15 @@ namespace mtf{
 			if(fargc){
 				if(!parseArgumentPairs(fargv.data(), fargc)){
 					printf("Error in parsing modules.cfg\n");
+					return false;
+				}
+				fargv.clear();
+			}
+			//! read parameters for different example applications
+			fargc = readParams(fargv, (config_dir + "/examples.cfg").c_str());
+			if(fargc){
+				if(!parseArgumentPairs(fargv.data(), fargc)){
+					printf("Error in parsing examples.cfg\n");
 					return false;
 				}
 				fargv.clear();

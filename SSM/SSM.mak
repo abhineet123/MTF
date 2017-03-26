@@ -14,7 +14,7 @@ SSM_BASE_HEADERS += ${SSM_HEADER_DIR}/SSMEstimatorParams.h
 
 MTF_INCLUDE_DIRS += ${SSM_INCLUDE_DIR}
 
-STATE_SPACE_MODELS = Spline LieHomography CornerHomography Homography SL3 Affine Similitude Isometry Transcaling Translation
+STATE_SPACE_MODELS = Spline LieHomography CornerHomography Homography SL3 Affine Similitude Isometry IST Translation
 SSM_MODULES = ProjectiveBase SSMEstimator SSMEstimatorParams 
 STATE_SPACE_OBJS = $(addprefix ${BUILD_DIR}/,$(addsuffix .o, ${SSM_MODULES} ${STATE_SPACE_MODELS}))	
 STATE_SPACE_HEADERS = $(addprefix ${SSM_HEADER_DIR}/, $(addsuffix .h, ${SSM_MODULES} ${STATE_SPACE_MODELS}))
@@ -50,7 +50,7 @@ ${BUILD_DIR}/Similitude.o: ${SSM_SRC_DIR}/Similitude.cc ${SSM_HEADER_DIR}/Simili
 ${BUILD_DIR}/Isometry.o: ${SSM_SRC_DIR}/Isometry.cc ${SSM_HEADER_DIR}/Isometry.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${UTILITIES_HEADER_DIR}/warpUtils.h ${MACROS_HEADER_DIR}/common.h
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${ISO_FLAGS} $< -o $@
 	
-${BUILD_DIR}/Transcaling.o: ${SSM_SRC_DIR}/Transcaling.cc ${SSM_HEADER_DIR}/Transcaling.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h  ${UTILITIES_HEADER_DIR}/warpUtils.h ${MACROS_HEADER_DIR}/common.h
+${BUILD_DIR}/IST.o: ${SSM_SRC_DIR}/IST.cc ${SSM_HEADER_DIR}/IST.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h  ${UTILITIES_HEADER_DIR}/warpUtils.h ${MACROS_HEADER_DIR}/common.h
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${ISO_FLAGS} $< -o $@	
 	
 ${BUILD_DIR}/Translation.o: ${SSM_SRC_DIR}/Translation.cc ${SSM_HEADER_DIR}/Translation.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h ${MACROS_HEADER_DIR}/common.h

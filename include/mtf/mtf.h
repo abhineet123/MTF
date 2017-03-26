@@ -118,7 +118,7 @@
 #include "mtf/SSM/Affine.h"
 #include "mtf/SSM/Similitude.h"
 #include "mtf/SSM/Isometry.h"
-#include "mtf/SSM/Transcaling.h"
+#include "mtf/SSM/IST.h"
 #include "mtf/SSM/Translation.h"
 #include "mtf/SSM/LieHomography.h"
 #include "mtf/SSM/CornerHomography.h"
@@ -704,9 +704,9 @@ TrackerBase *getTracker(const char *sm_type,
 			grid_res, grid_res, grid_patch_size, grid_patch_size, grid_reset_at_each_frame,
 			static_cast<FeatureTrackerParams::DetectorType>(feat_detector_type),
 			static_cast<FeatureTrackerParams::DescriptorType>(feat_descriptor_type),
-			feat_rebuild_index, max_iters, epsilon, enable_pyr, feat_max_dist_ratio, 
-			feat_min_matches, uchar_input, feat_show_keypoints, feat_show_matches, 
-			feat_debug_mode);
+			feat_rebuild_index, max_iters, epsilon, enable_pyr, feat_use_cv_flann,
+			feat_max_dist_ratio, feat_min_matches, uchar_input, feat_show_keypoints, 
+			feat_show_matches, feat_debug_mode);
 		SIFTParams sift_params(sift_n_features, sift_n_octave_layers,
 			sift_contrast_thresh, sift_edge_thresh, sift_sigma);
 		typename SSMType::ParamType _ssm_params(ssm_params);
@@ -807,7 +807,7 @@ TrackerBase *getTracker(const char *sm_type, const char *ssm_type,
 	} else if(!strcmp(ssm_type, "iso") || !strcmp(ssm_type, "3")){
 		return getTracker<AMType, mtf::Isometry>(sm_type, am_params, cast_params(Isometry));
 	} else if(!strcmp(ssm_type, "trs") || !strcmp(ssm_type, "3s")){
-		return getTracker<AMType, mtf::Transcaling>(sm_type, am_params, cast_params(Transcaling));
+		return getTracker<AMType, mtf::IST>(sm_type, am_params, cast_params(IST));
 	} else if(!strcmp(ssm_type, "trans") || !strcmp(ssm_type, "2")){
 		return getTracker<AMType, mtf::Translation>(sm_type, am_params, cast_params(Translation));
 	} else if(!strcmp(ssm_type, "spline") || !strcmp(ssm_type, "spl")){
@@ -934,7 +934,7 @@ inline SSMParams_ getSSMParams(const char *ssm_type){
 	} else if(!strcmp(ssm_type, "iso") || !strcmp(ssm_type, "3")){
 		return SSMParams_(new IsometryParams(ssm_params.get(), iso_pt_based_sampling));
 	} else if(!strcmp(ssm_type, "trs") || !strcmp(ssm_type, "3s")){
-		return SSMParams_(new TranscalingParams(ssm_params.get(), debug_mode));
+		return SSMParams_(new ISTParams(ssm_params.get(), debug_mode));
 	} else if(!strcmp(ssm_type, "trans") || !strcmp(ssm_type, "2")){
 		return SSMParams_(new TranslationParams(ssm_params.get(), debug_mode));
 	} else if(!strcmp(ssm_type, "spline") || !strcmp(ssm_type, "spl")){
@@ -967,7 +967,7 @@ inline StateSpaceModel *getSSM(const char *ssm_type){
 	} else if(!strcmp(ssm_type, "iso") || !strcmp(ssm_type, "3")){
 		return new mtf::Isometry(cast_params(Isometry));
 	} else if(!strcmp(ssm_type, "trs") || !strcmp(ssm_type, "3s")){
-		return new mtf::Transcaling(cast_params(Transcaling));
+		return new mtf::IST(cast_params(IST));
 	} else if(!strcmp(ssm_type, "trans") || !strcmp(ssm_type, "2")){
 		return new mtf::Translation(cast_params(Translation));
 	} else if(!strcmp(ssm_type, "spline") || !strcmp(ssm_type, "spl")){
