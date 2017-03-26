@@ -462,7 +462,7 @@ namespace utils{
 		assert(indices.size() == mat.cols);
 		cv::Mat mat_copy(mat.clone());
 		for(int id = 0; id < mat.cols; ++id) {
-			mat.col(indices[id]) = mat_copy.col(id);
+			mat_copy.col(id).copyTo(mat.col(indices[id]));
 		}
 	}
 	//! rearrange rows of the matrix according to the given indices
@@ -472,7 +472,7 @@ namespace utils{
 		assert(indices.size() == mat.rows);
 		cv::Mat mat_copy(mat.clone());
 		for(int id = 0; id < mat.rows; ++id) {
-			mat.row(indices[id]) = mat_copy.row(id);
+			mat_copy.row(id).copyTo(mat.row(indices[id]));
 		}
 	}
 }

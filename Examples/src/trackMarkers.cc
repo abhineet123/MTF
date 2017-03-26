@@ -183,7 +183,10 @@ int main(int argc, char * argv[]) {
 				std::vector<int> rearrange_idx = utils::rearrangeIntoRegion(qr_region);
 				utils::rearrange(trackers, rearrange_idx);
 				utils::rearrange(pre_procs, rearrange_idx);
+				//utils::printMatrix(Map<RowVectorXi>(rearrange_idx.data(), rearrange_idx.size()), "rearrange_idx", "%d");
+				//std::cout << "qr_region before:\n" << qr_region<<"\n";
 				utils::rearrangeCols<double>(qr_region, rearrange_idx);
+				//std::cout << "qr_region after:\n" << qr_region << "\n";
 				rearrange_corners = false;				
 			}
 			utils::drawRegion(input->getFrame(MUTABLE), qr_region, cv::Scalar(255, 0, 0));
