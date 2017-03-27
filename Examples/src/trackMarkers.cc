@@ -29,7 +29,7 @@ typedef std::unique_ptr<mtf::FeatureBase> Detector_;
 bool isDuplicate(const cv::Mat &qr_location, const std::vector<Tracker_> &trackers){
 	for(int tracker_id = 0; tracker_id < trackers.size(); ++tracker_id) {
 		// center location error between the QR and tracker locations
-		double dist = utils::getTrackingError(TrackErrT::CL, qr_location, trackers[tracker_id]->getRegion());
+		double dist = mtf::utils::getTrackingError(TrackErrT::CL, qr_location, trackers[tracker_id]->getRegion());
 		if(dist < qr_duplicate_min_dist){ return true; }
 	}
 	return false;
@@ -113,7 +113,7 @@ int main(int argc, char * argv[]) {
 		for(int tracker_id = 0; tracker_id < trackers.size(); ++tracker_id) {
 			pre_procs[tracker_id]->update(input->getFrame(), input->getFrameID());
 			trackers[tracker_id]->update();
-			cv::Rect curr_location_rect = utils::getBestFitRectangle<int>(
+			cv::Rect curr_location_rect = mtf::utils::getBestFitRectangle<int>(
 				trackers[tracker_id]->getRegion(), img_width, img_height);
 			if(curr_location_rect.height > 0 && curr_location_rect.width > 0){
 				detector_mask(curr_location_rect).setTo(0);
@@ -122,7 +122,7 @@ int main(int argc, char * argv[]) {
 		if(!marker_images_proc.empty()){
 			marker_pre_proc->update(input->getFrame(), input->getFrameID());
 			if(reinit_detector){
-				cv::Mat init_marker_corners(utils::Corners(
+				cv::Mat init_marker_corners(mtf::utils::Corners(
 					cv::Rect_<int>(0, 0, marker_images_proc.back().cols, marker_images_proc.back().rows)).mat());
 				marker_detector->initialize(marker_images_proc.back(), init_marker_corners);
 				marker_detector->setImage(marker_pre_proc->getFrame());
@@ -131,9 +131,9 @@ int main(int argc, char * argv[]) {
 			cv::Mat curr_marker_corners;
 			bool marker_found = marker_detector->detect(detector_mask, curr_marker_corners);
 			if(marker_found){
-				cv::Rect_<double> curr_qr_rect = utils::getBestFitRectangle<double>(curr_marker_corners);
+				cv::Rect_<double> curr_qr_rect = mtf::utils::getBestFitRectangle<double>(curr_marker_corners);
 				if(curr_qr_rect.width > qr_min_size && curr_qr_rect.height > qr_min_size &&
-					!isDuplicate(utils::Corners(curr_qr_rect).mat(), trackers)){
+					!isDuplicate(mtf::utils::Corners(curr_qr_rect).mat(), trackers)){
 					//printf("\n\n Found a match....\n\n");
 					mtf::TrackerBase *tracker = mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm);
 					if(!tracker){
@@ -146,12 +146,12 @@ int main(int argc, char * argv[]) {
 						tracker->setImage(curr_obj->getFrame());
 					}
 					if(qr_init_with_rect){
-						tracker->initialize(utils::Corners(curr_qr_rect).mat());
+						tracker->initialize(mtf::utils::Corners(curr_qr_rect).mat());
 					} else{
 						tracker->initialize(curr_marker_corners);
 					}					
-					utils::printMatrix<double>(tracker->getRegion(), "Marker detected at");
-					utils::drawRegion(input->getFrame(MUTABLE), tracker->getRegion(),
+					mtf::utils::printMatrix<double>(tracker->getRegion(), "Marker detected at");
+					mtf::utils::drawRegion(input->getFrame(MUTABLE), tracker->getRegion(),
 						cv::Scalar(0, 0, 255));
 					cv::imshow(detector_window, input->getFrame(MUTABLE));
 					cv::waitKey(500);
@@ -170,26 +170,26 @@ int main(int argc, char * argv[]) {
 			destroy_marker_window = false;
 		}
 		for(int tracker_id = 0; tracker_id < trackers.size(); ++tracker_id) {
-			utils::drawRegion(input->getFrame(MUTABLE), trackers[tracker_id]->getRegion());
+			mtf::utils::drawRegion(input->getFrame(MUTABLE), trackers[tracker_id]->getRegion());
 		}
 		if(qr_n_markers >= 3 && trackers.size() == qr_n_markers){
 			cv::Mat qr_region(2, qr_n_markers, CV_64FC1);
 			for(int qr_id = 0; qr_id < qr_n_markers; ++qr_id) {
-				cv::Point2d centroid = utils::getCentroid(trackers[qr_id]->getRegion());
+				cv::Point2d centroid = mtf::utils::getCentroid(trackers[qr_id]->getRegion());
 				qr_region.at<double>(0, qr_id) = centroid.x;
 				qr_region.at<double>(1, qr_id) = centroid.y;
 			}
 			if(rearrange_corners){
-				std::vector<int> rearrange_idx = utils::rearrangeIntoRegion(qr_region);
-				utils::rearrange(trackers, rearrange_idx);
-				utils::rearrange(pre_procs, rearrange_idx);
-				//utils::printMatrix(Map<RowVectorXi>(rearrange_idx.data(), rearrange_idx.size()), "rearrange_idx", "%d");
+				std::vector<int> rearrange_idx = mtf::utils::rearrangeIntoRegion(qr_region);
+				mtf::utils::rearrange(trackers, rearrange_idx);
+				mtf::utils::rearrange(pre_procs, rearrange_idx);
+				//mtf::utils::printMatrix(Map<RowVectorXi>(rearrange_idx.data(), rearrange_idx.size()), "rearrange_idx", "%d");
 				//std::cout << "qr_region before:\n" << qr_region<<"\n";
-				utils::rearrangeCols<double>(qr_region, rearrange_idx);
+				mtf::utils::rearrangeCols<double>(qr_region, rearrange_idx);
 				//std::cout << "qr_region after:\n" << qr_region << "\n";
 				rearrange_corners = false;				
 			}
-			utils::drawRegion(input->getFrame(MUTABLE), qr_region, cv::Scalar(255, 0, 0));
+			mtf::utils::drawRegion(input->getFrame(MUTABLE), qr_region, cv::Scalar(255, 0, 0));
 		}
 		//	printf("n_trackers: %d\n", trackers.size());
 		cv::imshow(main_window, input->getFrame(MUTABLE));
