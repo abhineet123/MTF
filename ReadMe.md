@@ -121,10 +121,12 @@ Compile/Runtime Notes:
     * MTF has been tested and found to work with OpenCV 3.1 installed using [this method (option 2)](http://milq.github.io/install-opencv-ubuntu-debian/) on Ubuntu 14.04 but general compatibility with other system configurations is not guaranteed since comprehensive testing has only been doe with 2.4.x.
     * third party trackers in particular are likely to have issues with OpenCV 3.x as many use legacy versions so these should be disabled using `lt=0` if compilation or linking errors pertaining to these are found.
     * if a linking error of type `/usr/bin/ld: cannot find -lippicv` occurs, remove `-ippicv` from opencv pkg-config configuration file which is usually located at `/usr/local/lib/pkgconfig/opencv.pc` or follow the procedures suggested [here](http://answers.opencv.org/question/84265/compiling-error-with-lippicv/)
-
+	
+<!--- 
 [](* if MTF had earlier been compiled with `only_nt=0` (or `nn=1`) and is recompiled with `only_nt=1` (or `nn=0`) **or vice versa**, some linking error with missing symbols related to `mtf::NNParams` or `mtf::FLANNParams` may occur when compiling the executable; to fix this, remove `NNParams.o` from the build folder (Build/Release or Build/Debug) by running, for instance `rm Build/Release/NNParams.o` so this recompiles too; some of the code in `NNParams` is conditional on whether standard version of NN (that uses FLANN) is enabled or not so having a wrong version compiled causes this error and, unfortunately, there is no way to automatically recompile this file when FLANN based NN is enabled or disabled through compile time switches;)
 
 [](* switching from `only_nt=1` to `only_nt=0` can sometimes also lead to linking errors of the type: `undefined reference to `mtf::gnn::GNN<[some AM]>::[some function]`; to resolve this, remove `GNN.o` and `FGNN.o` from the build folder by running, for instance `rm Build/Release/GNN.o Build/Release/FGNN.o` and recompile.)
+---> 
 
 Setting Parameters:
 -------------------
