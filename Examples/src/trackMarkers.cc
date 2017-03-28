@@ -151,11 +151,11 @@ int main(int argc, char * argv[]) {
 						tracker->initialize(curr_marker_corners);
 					}					
 					mtf::utils::printMatrix<double>(tracker->getRegion(), "Marker detected at");
-					mtf::utils::drawRegion(input->getFrame(MUTABLE), tracker->getRegion(),
-						cv::Scalar(0, 0, 255));
-					cv::imshow(detector_window, input->getFrame(MUTABLE));
-					cv::waitKey(500);
-					cv::destroyWindow(detector_window);
+					//mtf::utils::drawRegion(input->getFrame(MUTABLE), tracker->getRegion(),
+					//	cv::Scalar(0, 0, 255));
+					//cv::imshow(detector_window, input->getFrame(MUTABLE));
+					//cv::waitKey(200);
+					//cv::destroyWindow(detector_window);
 					pre_procs.push_back(pre_proc);
 					trackers.push_back(Tracker_(tracker));
 					marker_images_proc.pop_back();

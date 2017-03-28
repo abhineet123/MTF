@@ -36,7 +36,7 @@ Installation:
     * [ViSP library](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see [compile time switches](#compile-time-switches)).
 	    - Note that [version 3.0.0](http://gforge.inria.fr/frs/download.php/latestfile/475/visp-3.0.0.zip)+ is required. The Ubuntu apt package is 2.8 and is therefore incompatible.
     * [Caffe](http://caffe.berkeleyvision.org/) is needed for some optional modules including FMaps, Regnet and GOTURN if these are enabled during compilation
-	* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see [compile time switches]((#compile-time-switches))).
+	* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see [compile time switches](#compile-time-switches)).
 	    - **Not recommended** as Xvision is very difficult to install and configure on modern systems
 	* **Installation in Windows**
 		- Install [MinGW](http://www.mingw.org/), [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm) and [CoreUtils for Windows](http://gnuwin32.sourceforge.net/packages/coreutils.htm)
@@ -66,7 +66,8 @@ Installation:
 		- currently only supports Python 2.7 so will give compilation errors if Python 3 is also installed and set as default
     * `make uav`/`make install_uav` : compile/install an application called `trackUAVTrajectory` that tracks the trajectory of a UAV in a satellite image of the area over which it flew while capturing images from above
     * `make mos`/`make install_mos` : compile/install an application called `createMosaic` that constructs a live mosaic from a video of the region to be stitched
-    * `make all`/`make install_all` : compile/install all example applications that come with MTF
+    * `make qr`/`make install_qr` : compile/install an application called `trackMarkers` that automatically detects one or more markers in the input stream and starts tracking them
+    * `make all`/`make install_all` : compile/install all example applications that come with MTF along with the Python interface
 	* `make app app=<APPLICATION_NAME>`: build a custom application that uses MTF with its source code in `<APPLICATION_NAME>.cc`; the compiled executable goes in the build directory;
 	    - location of the source file (<APPLICATION_NAME>.cc) can be specified through `MTF_APP_SRC_DIR` (defaults to _Examples/src_)
 	    - `make mtfa` will install it too - installation location can be specified through `MTF_APP_INSTALL_DIR` (defaults to the current folder)
