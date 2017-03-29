@@ -100,7 +100,8 @@ PyMODINIT_FUNC initpyMTF()  {
 static PyObject* initialize(PyObject* self, PyObject* args) {
 
 	/*parse first input array*/
-	if(!PyArg_ParseTuple(args, "O!O!z", &PyArray_Type, &img_py, &PyArray_Type, &init_corners_py, &config_root_dir)) {
+	if(!PyArg_ParseTuple(args, "O!O!z", &PyArray_Type, &img_py, &PyArray_Type,
+		&init_corners_py, &config_root_dir)) {
 		printf("\n----pyMTF::initialize: Input arguments could not be parsed----\n\n");
 		return NULL;
 	}
@@ -125,6 +126,7 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 	} else{
 		printf("Reading MTF configuration files from: %s\n", config_root_dir);
 	}
+	config_dir = std::string(config_root_dir);
 #ifdef USE_TBB
 	Eigen::initParallel();
 #endif

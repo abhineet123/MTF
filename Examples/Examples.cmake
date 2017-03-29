@@ -64,7 +64,8 @@ add_custom_target(install_patch
   -D "CMAKE_INSTALL_COMPONENT=patch"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
   )
- 
+add_custom_target(mtfpa DEPENDS extractPatch install_patch)
+
 add_executable(generateSyntheticSeq Examples/src/generateSyntheticSeq.cc)
 target_compile_options(generateSyntheticSeq PUBLIC ${MTF_RUNTIME_FLAGS})
 target_include_directories(generateSyntheticSeq PUBLIC  Examples/include ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
@@ -76,7 +77,7 @@ add_custom_target(install_syn
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
   )
 add_custom_target(syn DEPENDS generateSyntheticSeq)
-add_custom_target(mtfw DEPENDS generateSyntheticSeq install_syn)
+add_custom_target(mtfs DEPENDS generateSyntheticSeq install_syn)
 
 add_executable(createMosaic Examples/src/createMosaic.cc)
 target_compile_options(createMosaic PUBLIC ${MTF_RUNTIME_FLAGS})
@@ -94,38 +95,39 @@ add_custom_target(mtfm DEPENDS createMosaic install_mos)
 find_package(PythonLibs 2.7)
 if(PYTHONLIBS_FOUND)
 	if(PYTHONLIBS_VERSION_STRING VERSION_LESS 3.0.0)
-		add_library (pyMTF MODULE Examples/src/pyMTF.cc)
+		add_library(pyMTF MODULE Examples/src/pyMTF.cc)
 		set_target_properties(pyMTF PROPERTIES PREFIX "")
-		add_custom_target(mtfp DEPENDS pyMTF)
 		target_compile_options(pyMTF PUBLIC ${MTF_RUNTIME_FLAGS})
 		target_include_directories(pyMTF PUBLIC Examples/include ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
 		target_link_libraries(pyMTF mtf ${MTF_LIBS} ${PYTHON_LIBRARIES} ${PYTHON_LIBS} ${Boost_LIBRARIES})	
-		install(TARGETS pyMTF LIBRARY DESTINATION ${MTF_PY_INSTALL_DIR} COMPONENT py)
-		add_custom_target(py DEPENDS pyMTF)
+		install(TARGETS pyMTF LIBRARY DESTINATION ${MTF_PY_INSTALL_DIR} COMPONENT _install_py)
+		add_custom_target(_install_py DEPENDS pyMTF)
 		add_custom_target(install_py
 		  ${CMAKE_COMMAND}
-		  -D "CMAKE_INSTALL_COMPONENT=py"
+		  -D "CMAKE_INSTALL_COMPONENT=_install_py"
 		  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
 		  )
+		  add_custom_target(mtfp DEPENDS pyMTF install_py)
 	  else()
-		message(STATUS "Incompatible version of Python library found so PyMTF is disabled: " ${PYTHONLIBS_VERSION_STRING})
+		message(STATUS "Incompatible version of Python library found so pyMTF is disabled: " ${PYTHONLIBS_VERSION_STRING})
 	endif()		
 else(PYTHONLIBS_FOUND)
-	message(STATUS "Python library not found so PyMTF is disabled")
+	message(STATUS "Python library not found so pyMTF is disabled")
 endif(PYTHONLIBS_FOUND)
 
 add_executable(testMTF Examples/src/testMTF.cc)
-# add_custom_target(mtft DEPENDS testMTF)
 target_compile_options(testMTF PUBLIC ${MTF_RUNTIME_FLAGS})
 target_include_directories(testMTF PUBLIC Examples/include ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 target_link_libraries(testMTF mtf_test mtf ${MTF_LIBS} ${Boost_LIBRARIES})
-install(TARGETS testMTF RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT test_exe)
+install(TARGETS testMTF RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT test)
 add_custom_target(test DEPENDS testMTF)
 add_custom_target(install_test
   ${CMAKE_COMMAND}
-  -D "CMAKE_INSTALL_COMPONENT=test_exe"
+  -D "CMAKE_INSTALL_COMPONENT=test"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
   )
-  
-add_custom_target(all DEPENDS runMTF createMosaic generateSyntheticSeq trackUAVTrajectory)
+add_custom_target(mtft DEPENDS testMTF mtf_test install_test install_test_lib)
+ 
+add_custom_target(all DEPENDS runMTF createMosaic generateSyntheticSeq trackUAVTrajectory trackMarkers extractPatch pyMTF testMTF)
 add_custom_target(install_all DEPENDS install_exe install_mos install_syn install_uav)
+add_custom_target(mtfall DEPENDS mtfe mtfu mtfm mtfs mtfq mtfpa mtft)

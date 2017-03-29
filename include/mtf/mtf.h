@@ -256,7 +256,7 @@ bool getPFk(vector<SearchMethod<AMType, SSMType>*> &trackers,
 	const typename SSMType::ParamType *ssm_params = nullptr){
 	int n_pfk_ssm_sigma_ids = pfk_ssm_sigma_ids.size();
 	if(n_pfk_ssm_sigma_ids < pfk_n_layers){
-		printf("Insufficient sigma IDs specified for %d layer PF: %lu\n", 
+		printf("Insufficient sigma IDs specified for %d layer PF: %d\n", 
 			pfk_n_layers, n_pfk_ssm_sigma_ids);
 		return false;
 	}
@@ -278,7 +278,7 @@ bool getNNk(vector<SearchMethod<AMType, SSMType>*> &trackers,
 	const typename SSMType::ParamType *ssm_params = nullptr){
 	int n_nnk_ssm_sigma_ids = nnk_ssm_sigma_ids.size();
 	if(n_nnk_ssm_sigma_ids < nnk_n_layers){
-		printf("Insufficient sigma IDs specified for %d layer NN: %lu\n", 
+		printf("Insufficient sigma IDs specified for %d layer NN: %d\n", 
 			nnk_n_layers, n_nnk_ssm_sigma_ids);
 		return false;
 	}

@@ -16,10 +16,10 @@ if(WIN32)
 else()
 	install(TARGETS mtf_test LIBRARY DESTINATION ${MTF_LIB_INSTALL_DIR} COMPONENT test_lib)
 endif()  
-
+add_custom_target(test_lib DEPENDS mtf_test)
 add_custom_target(install_test_lib
   ${CMAKE_COMMAND}
   -D "CMAKE_INSTALL_COMPONENT=test_lib"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
   )
-add_custom_target(mtft DEPENDS install_lib install_test_lib install_header install_test_exe)
+#add_custom_target(mtft DEPENDS install_lib install_test_lib install_header install_test_exe)
