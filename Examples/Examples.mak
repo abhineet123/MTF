@@ -148,7 +148,7 @@ ifeq (${vp}, 1)
 endif
 
 .PHONY: exe uav mos syn py test gt patch qr app mtfi mtfp mtfc mtfu mtft mtfs mtfm app
-.PHONY: install_exe install_uav install_patch install_py install_test
+.PHONY: install_exe install_uav install_mos install_patch install_qr install_rec install_syn install_py install_test install_app install_all
 .PHONY: run
 
 exe: ${BUILD_DIR}/${MTF_EXE_NAME}

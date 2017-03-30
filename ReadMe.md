@@ -64,6 +64,7 @@ Installation:
 	    - usage of this module is fully demonstrated in the `mtfTracker.py` file in our [Python Tracking Framework](https://github.com/abhineet123/PTF)
 	    -  installation location can be specified through `MTF_PY_INSTALL_DIR` (defaults to _/usr/local/lib/python2.7/dist-packages/_)
 		- currently only supports Python 2.7 so will give compilation errors if Python 3 is also installed and set as default
+		- importing pyMTF from a Python script in Windows currently results in an error: `ImportError: DLL load failed: A dynamic link library (DLL) initialization routine failed.` due to an incompatibility between the python import system and third party modules compiled with MinGW. We are working on fixing this issue.
     * `make uav`/`make install_uav` : compile/install an application called `trackUAVTrajectory` that tracks the trajectory of a UAV in a satellite image of the area over which it flew while capturing images from above
     * `make mos`/`make install_mos` : compile/install an application called `createMosaic` that constructs a live mosaic from a video of the region to be stitched
     * `make qr`/`make install_qr` : compile/install an application called `trackMarkers` that automatically detects one or more markers in the input stream and starts tracking them
