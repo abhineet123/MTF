@@ -69,7 +69,7 @@ Installation:
     * `make mos`/`make install_mos` : compile/install an application called `createMosaic` that constructs a live mosaic from a video of the region to be stitched
     * `make qr`/`make install_qr` : compile/install an application called `trackMarkers` that automatically detects one or more markers in the input stream and starts tracking them
     * `make all`/`make install_all` : compile/install all example applications that come with MTF along with the Python interface
-	* `make app app=<APPLICATION_NAME>`: build a custom application that uses MTF with its source code in `<APPLICATION_NAME>.cc`; the compiled executable goes in the build directory;
+	* `make app app=<APPLICATION_NAME>`: build a custom application that uses MTF with its source code located in `<APPLICATION_NAME>.cc`; the compiled executable goes in the build directory;
 	    - location of the source file (<APPLICATION_NAME>.cc) can be specified through `MTF_APP_SRC_DIR` (defaults to _Examples/src_)
 	    - `make mtfa` will install it too - installation location can be specified through `MTF_APP_INSTALL_DIR` (defaults to the current folder)
     * <a name="compile-time-switches"/>**Compile time switches**</a> for all of the above commands (only applicable to the **make** build system - for cmake there are corresponding options for some of the switches that can be configured before building its makefile):
