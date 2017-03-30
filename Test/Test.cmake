@@ -21,5 +21,6 @@ add_custom_target(install_test_lib
   ${CMAKE_COMMAND}
   -D "CMAKE_INSTALL_COMPONENT=test_lib"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+  DEPENDS mtf_test
   )
 #add_custom_target(mtft DEPENDS install_lib install_test_lib install_header install_test_exe)

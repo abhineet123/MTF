@@ -24,6 +24,7 @@ add_custom_target(install_exe
   ${CMAKE_COMMAND}
   -D "CMAKE_INSTALL_COMPONENT=exe"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+   DEPENDS runMTF
   )
 add_custom_target(exe DEPENDS runMTF)
 add_custom_target(mtfe DEPENDS runMTF install_exe)
@@ -37,6 +38,7 @@ add_custom_target(install_uav
   ${CMAKE_COMMAND}
   -D "CMAKE_INSTALL_COMPONENT=uav"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+   DEPENDS trackUAVTrajectory
   )
 add_custom_target(uav DEPENDS trackUAVTrajectory)
 add_custom_target(mtfu DEPENDS trackUAVTrajectory install_uav)
@@ -50,6 +52,7 @@ add_custom_target(install_qr
   ${CMAKE_COMMAND}
   -D "CMAKE_INSTALL_COMPONENT=qr"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+   DEPENDS trackMarkers
   )
 add_custom_target(qr DEPENDS trackMarkers)
 add_custom_target(mtfq DEPENDS trackMarkers install_qr)
@@ -63,6 +66,7 @@ add_custom_target(install_patch
   ${CMAKE_COMMAND}
   -D "CMAKE_INSTALL_COMPONENT=patch"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+   DEPENDS extractPatch
   )
 add_custom_target(mtfpa DEPENDS extractPatch install_patch)
 
@@ -75,6 +79,7 @@ add_custom_target(install_syn
   ${CMAKE_COMMAND}
   -D "CMAKE_INSTALL_COMPONENT=syn"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+   DEPENDS generateSyntheticSeq
   )
 add_custom_target(syn DEPENDS generateSyntheticSeq)
 add_custom_target(mtfs DEPENDS generateSyntheticSeq install_syn)
@@ -88,6 +93,7 @@ add_custom_target(install_mos
   ${CMAKE_COMMAND}
   -D "CMAKE_INSTALL_COMPONENT=mos"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+   DEPENDS createMosaic
   )
 add_custom_target(mos DEPENDS createMosaic)
 add_custom_target(mtfm DEPENDS createMosaic install_mos)
@@ -100,12 +106,13 @@ if(PYTHONLIBS_FOUND)
 		target_compile_options(pyMTF PUBLIC ${MTF_RUNTIME_FLAGS})
 		target_include_directories(pyMTF PUBLIC Examples/include ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
 		target_link_libraries(pyMTF mtf ${MTF_LIBS} ${PYTHON_LIBRARIES} ${PYTHON_LIBS} ${Boost_LIBRARIES})	
-		install(TARGETS pyMTF LIBRARY DESTINATION ${MTF_PY_INSTALL_DIR} COMPONENT _install_py)
-		add_custom_target(_install_py DEPENDS pyMTF)
+		install(TARGETS pyMTF LIBRARY DESTINATION ${MTF_PY_INSTALL_DIR} COMPONENT py)
+		add_custom_target(py DEPENDS pyMTF)
 		add_custom_target(install_py
 		  ${CMAKE_COMMAND}
-		  -D "CMAKE_INSTALL_COMPONENT=_install_py"
+		  -D "CMAKE_INSTALL_COMPONENT=py"
 		  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+		   DEPENDS pyMTF
 		  )
 		  add_custom_target(mtfp DEPENDS pyMTF install_py)
 	  else()
@@ -125,9 +132,10 @@ add_custom_target(install_test
   ${CMAKE_COMMAND}
   -D "CMAKE_INSTALL_COMPONENT=test"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+   DEPENDS testMTF
   )
 add_custom_target(mtft DEPENDS testMTF mtf_test install_test install_test_lib)
  
 add_custom_target(all DEPENDS runMTF createMosaic generateSyntheticSeq trackUAVTrajectory trackMarkers extractPatch pyMTF testMTF)
-add_custom_target(install_all DEPENDS install_exe install_mos install_syn install_uav)
+add_custom_target(install_all DEPENDS install_exe install_mos install_syn install_uav install_qr install_py)
 add_custom_target(mtfall DEPENDS mtfe mtfu mtfm mtfs mtfq mtfpa mtft)

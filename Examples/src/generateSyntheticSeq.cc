@@ -178,7 +178,7 @@ int main(int argc, char * argv[]) {
 	printf("Writing synthetic sequence GT to: %s\n", syn_gt_path.c_str());
 
 	printf("n_pts: %d\n", ssm->getNPts());
-	printf("n_pix: %d\n", original_patch.size());
+	printf("n_pix: %ld\n", original_patch.size());
 
 	if(syn_continuous_warping){
 		printf("Using continuous warping\n");
