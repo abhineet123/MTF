@@ -6,7 +6,6 @@ VISP_HEADER_DIR = ${VISP_INCLUDE_DIR}/mtf/${VISP_ROOT_DIR}
 ViSP_HEADERS = $(addprefix  ${VISP_HEADER_DIR}/, ViSP.h)
 
 vp ?= 0
-
 ifeq (${vp}, 1)
 THIRD_PARTY_TRACKERS += ViSP
 THIRD_PARTY_RUNTIME_FLAGS += -I/usr/local/include

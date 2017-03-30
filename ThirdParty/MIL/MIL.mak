@@ -7,7 +7,9 @@ MIL_LIB_NAME = $(addsuffix ${LIB_POST_FIX}, mil)
 MIL_LIB_SO =  $(addprefix lib, $(addsuffix .so, ${MIL_LIB_NAME}))
 
 mil ?= 0
-
+ifeq ($(OS),Windows_NT)
+THIRD_PARTY_RUNTIME_FLAGS += -D DISABLE_MIL
+else
 ifeq (${mil}, 0)
 THIRD_PARTY_RUNTIME_FLAGS += -D DISABLE_MIL
 else
@@ -17,6 +19,7 @@ THIRD_PARTY_TRACKERS_SO_LOCAL += ${MIL_ROOT_DIR}/${MIL_LIB_SO}
 THIRD_PARTY_LIBS_DIRS += -L${MIL_ROOT_DIR}
 THIRD_PARTY_INCLUDE_DIRS += ${MIL_INCLUDE_DIR}
 THIRD_PARTY_HEADERS += ${MIL_HEADERS} ${MIL_LIB_HEADERS}
+endif
 endif
 
 MIL_LIB_MODULES = cv_onlineboosting cv_onlinemil object_tracker

@@ -147,7 +147,7 @@ ifeq (${vp}, 1)
 	MTF_RUNTIME_FLAGS += -lvisp_io -lvisp_sensor
 endif
 
-.PHONY: exe uav mos syn py test gt patch qr app mtfi mtfp mtfc mtfu mtft mtfs mtfm app
+.PHONY: exe uav mos syn py test gt patch qr app mtfi mtfp mtfc mtfu mtft mtfs mtfm
 .PHONY: install_exe install_uav install_mos install_patch install_qr install_rec install_syn install_py install_test install_app install_all
 .PHONY: run
 
@@ -264,3 +264,26 @@ ${BUILD_DIR}/${MTF_TEST_EXE_NAME}: ${EXAMPLES_SRC_DIR}/testMTF.cc ${TEST_HEADERS
 	
 ${BUILD_DIR}/${MTF_APP_EXE_NAME}: ${MTF_APP_SRC_DIR}/${app}.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
 	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${OPENCV_FLAGS} ${MTF_LIB_LINK} ${LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 
+	
+# ------------------------------------------------------------------------------- #
+# ------------------------------------ Tools ------------------------------------ #
+# ------------------------------------------------------------------------------- #	
+ifeq (${o}, 1)
+TOOLS_LIB_NAME=libmtf_tools.so
+TOOLS_LIB_LINK=-lmtf_tools
+else
+TOOLS_LIB_NAME=libmtf_tools_debug.so
+TOOLS_LIB_LINK=-lmtf_tools_debug
+endif
+
+${BUILD_DIR}/Tools:
+		mkdir -p $@
+${TOOLS_LIB_NAME}: ${BUILD_DIR}/Tools ${BUILD_DIR}/Tools/inputCV.o ${BUILD_DIR}/Tools/inputBase.o ${BUILD_DIR}/Tools/cvUtils.o
+	${CXX} -shared -o $@  ${BUILD_DIR}/Tools/parameters.o ${BUILD_DIR}/Tools/inputCV.o ${BUILD_DIR}/Tools/inputBase.o ${BUILD_DIR}/Tools/cvUtils.o
+	sudo cp -f $@ /usr/lib	
+${BUILD_DIR}/Tools/inputCV.o: Tools/inputCV.cc Tools/inputCV.h
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${MTF_COMPILETIME_FLAGS} ${OPENCV_FLAGS}  ${MTF_FLAGSXV} $< -o $@
+${BUILD_DIR}/Tools/inputBase.o: Tools/inputBase.cc Tools/inputBase.h
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${MTF_COMPILETIME_FLAGS} ${OPENCV_FLAGS}  ${MTF_FLAGSXV} $< -o $@
+${BUILD_DIR}/Tools/cvUtils.o: Tools/cvUtils.cc Tools/cvUtils.h
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${MTF_COMPILETIME_FLAGS} ${OPENCV_FLAGS} $< -o $@	

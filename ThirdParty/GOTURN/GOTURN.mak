@@ -15,6 +15,9 @@ CAFFE_LIB_DIR = ${CAFFE_INSTALL_DIR}/lib
 gtrn ?= 0
 gtrn_exe ?= 0
 
+ifeq ($(OS),Windows_NT)
+THIRD_PARTY_RUNTIME_FLAGS += -D DISABLE_GOTURN
+else
 ifeq (${gtrn}, 0)
 THIRD_PARTY_RUNTIME_FLAGS += -D DISABLE_GOTURN
 else
@@ -28,6 +31,7 @@ THIRD_PARTY_TRACKERS_SO_LOCAL += ${GOTURN_ROOT_DIR}/${GOTURN_LIB_SO}
 THIRD_PARTY_RUNTIME_FLAGS += -I${CAFFE_INCLUDE_DIR}
 #THIRD_PARTY_RUNTIME_FLAGS += ${CAFFE_FLAGS}
 LIBS_BOOST += -lboost_regex
+endif
 endif
 
 ifeq (${caffe_cpu}, 1)

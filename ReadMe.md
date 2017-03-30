@@ -83,7 +83,7 @@ Installation:
 	    - `feat=1` will enable the Feature tracker (disabled by default).
 		    -  this uses functionality in the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) module of OpenCV so this should be [installed too](http://stackoverflow.com/a/31097788).
 	    - `lt=0` will disable the third party open source learning based trackers - [DSST](http://www.cvl.isy.liu.se/en/research/objrec/visualtracking/scalvistrack/index.html), [KCF](http://home.isr.uc.pt/~henriques/circulant/), [CMT](http://www.gnebehay.com/cmt/), [TLD](http://www.gnebehay.com/tld/), [RCT](http://www4.comp.polyu.edu.hk/~cslzhang/CT/CT.htm), [MIL](http://vision.ucsd.edu/~bbabenko/project_miltrack.html), [Struck](http://www.samhare.net/research/struck), [FragTrack](http://www.cs.technion.ac.il/~amita/fragtrack/fragtrack.htm), [GOTURN](https://github.com/davheld/GOTURN) and [DFT](http://cvlab.epfl.ch/page-107683-en.html) - that are also bundled with this library (in _ThirdParty_ subfolder) (enabled by default except MIL, DFT and GOTURN).
-		    - several third party trackers do not compile under Windows yet and are disabled by default;
+		    - several third party trackers that have a CMake build system do not compile under Windows yet and are ths not available;
 	    - `gtrn=1` will enable [GOTURN](https://github.com/davheld/GOTURN) deep learning based tracker (disabled by default)
 			- requires [Caffe]((http://caffe.berkeleyvision.org/)) to be installed and configured
 			    * if not installed in `~/caffe/build/install`, specify `CAFFE_INSTALL_DIR` either at compile time or by editing `ThirdParty/GOTURN/GOTURN.mak`

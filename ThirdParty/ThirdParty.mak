@@ -2,13 +2,7 @@
 # ------------------------------------ Third Party ------------------------------------ #
 # ------------------------------------------------------------------------------------- #
 
-ifeq ($(OS),Windows_NT)
-# many third party trackers do not compile in Windows yet
-lt ?= 0
-else
 lt ?= 1
-endif
-
 ifeq (${lt}, 0)
 vp = 0
 xv = 0
@@ -28,6 +22,7 @@ MTF_RUNTIME_FLAGS += ${THIRD_PARTY_RUNTIME_FLAGS}
 THIRD_PARTY_TRACKERS_SO_LOCAL =
 THIRD_PARTY_LINK_LIBS = 
 THIRD_PARTY_DIRS_SUB_DIRS = CMT DSST KCF RCT Struck TLD MIL DFT FRG PFSL3 GOTURN ViSP Xvision
+
 include $(foreach SUB_DIR,${THIRD_PARTY_DIRS_SUB_DIRS},ThirdParty/${SUB_DIR}/${SUB_DIR}.mak)
 
 THIRD_PARTY_TRACKERS_SO =  $(addprefix ${MTF_LIB_INSTALL_DIR}/lib, $(addsuffix .so, ${_THIRD_PARTY_TRACKERS_SO}))

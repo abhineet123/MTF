@@ -9,7 +9,9 @@ DFT_BUILD_TARGET = libCppRelease
 
 dft ?= 0
 dft_exe ?= 0
-
+ifeq ($(OS),Windows_NT)
+THIRD_PARTY_RUNTIME_FLAGS += -D DISABLE_DFT
+else
 ifeq (${dft}, 0)
 THIRD_PARTY_RUNTIME_FLAGS += -D DISABLE_DFT
 else
@@ -20,7 +22,7 @@ THIRD_PARTY_LIBS_DIRS += -L${DFT_ROOT_DIR}
 THIRD_PARTY_HEADERS += ${DFT_HEADERS} ${DFT_LIB_HEADERS} 
 THIRD_PARTY_INCLUDE_DIRS += ${DFT_INCLUDE_DIR}
 endif
-
+endif
 ifeq (${dft_exe}, 1)
 DFT_BUILD_TARGET = all
 endif

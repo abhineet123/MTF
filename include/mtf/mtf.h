@@ -5,9 +5,6 @@
 //! Provides functions to create trackers corresponding to different combinations of 
 //! search methods, appearance models and state space models as well as some third party trackers
 
-//#define MTF_VERSION_MAJOR @MTF_VERSION_MAJOR@
-//#define MTF_VERSION_MINOR @MTF_VERSION_MINOR@
-
 //! parameters for the different modules
 #include "mtf/Config/parameters.h"
 
@@ -58,13 +55,6 @@
 #include "mtf/SM/NT/RegNet.h"
 #endif
 #include "mtf/SM/NT/RKLT.h"
-
-// Obsolete/failed search methods
-//#include "mtf/SM/HACLK.h"
-//#include "mtf/SM/ESMH.h"
-//#include "mtf/SM/HESM.h"
-//#include "mtf/SM/FESM.h"
-//#include "mtf/SM/IALK2.h"
 
 //! appearance models
 #include "mtf/AM/SSD.h"
@@ -127,10 +117,18 @@
 
 //! Third Party Trackers
 #ifndef DISABLE_THIRD_PARTY_TRACKERS
-//! learning based trackers
+//! thirdparty learning based trackers
 #include "mtf/ThirdParty/DSST/DSST.h"
 #include "mtf/ThirdParty/KCF/KCFTracker.h"
 #include "mtf/ThirdParty/RCT/CompressiveTracker.h"
+#ifndef DISABLE_VISP
+#include "mtf/ThirdParty/ViSP/ViSP.h"
+#endif
+#ifndef DISABLE_PFSL3
+#include "mtf/ThirdParty/PFSL3/PFSL3.h"
+#endif
+#ifndef _WIN32
+//! thirdparty trackers with Cmake build systems do not compile in Windows yet
 #include "mtf/ThirdParty/CMT/CMT.h"
 #include "mtf/ThirdParty/TLD/TLD.h"
 #include "mtf/ThirdParty/Struck/Struck.h"
@@ -141,14 +139,8 @@
 #ifndef DISABLE_DFT
 #include "mtf/ThirdParty/DFT/DFT.h"
 #endif
-#ifndef DISABLE_PFSL3
-#include "mtf/ThirdParty/PFSL3/PFSL3.h"
-#endif
 #ifndef DISABLE_GOTURN
 #include "mtf/ThirdParty/GOTURN/GOTURN.h"
-#endif
-#ifndef DISABLE_VISP
-#include "mtf/ThirdParty/ViSP/ViSP.h"
 #endif
 #ifndef DISABLE_XVISION
 //! Xvision trackers
@@ -168,6 +160,7 @@
 #include "mtf/ThirdParty/Xvision/xvSSDGrid.h"
 #include "mtf/ThirdParty/Xvision/xvSSDGridLine.h"
 bool using_xv_tracker = false;
+#endif
 #endif
 #endif
 
@@ -210,7 +203,6 @@ typedef std::unique_ptr<AMParams> AMParams_;
 typedef std::unique_ptr<SSMParams> SSMParams_;
 typedef std::unique_ptr<SSMEstimatorParams> SSMEstParams_;
 
-
 typedef std::unique_ptr<ESMParams> ESMParams_;
 typedef std::unique_ptr<FCLKParams> FCLKParams_;
 typedef std::unique_ptr<ICLKParams> ICLKParams_;
@@ -222,7 +214,9 @@ typedef std::unique_ptr<NNParams> NNParams_;
 #ifndef DISABLE_NN
 typedef std::unique_ptr<FLANNParams> FLANNParams_;
 #else
+#ifndef DISABLE_FEAT
 typedef std::unique_ptr<FLANNCVParams> FLANNParams_;
+#endif
 #endif
 #ifndef DISABLE_REGNET
 typedef std::unique_ptr<RegNetParams> RegNetParams_;
@@ -238,16 +232,17 @@ FALKParams_ getFALKParams();
 IALKParams_ getIALKParams();
 PFParams_ getPFParams();
 NNParams_ getNNParams();
+#ifndef DISABLE_NN
 FLANNParams_ getFLANNParams();
+#else
+#ifndef DISABLE_FEAT
+FLANNParams_ getFLANNParams();
+#endif
+#endif
 #ifndef DISABLE_REGNET
 RegNetParams_ getRegNetParams();
 #endif
 ImageBase *getPixMapper(const char *pix_mapper_type);
-
-//template< class AMType, class SSMType >
-//TrackerBase *getFESMObj(
-//	typename AMType::ParamType *am_params = nullptr,
-//	typename SSMType::ParamType *ssm_params = nullptr);
 
 //! Multi layer Particle Filter
 template< class AMType, class SSMType >
@@ -1349,6 +1344,7 @@ inline FLANNParams_ getFLANNParams(){
 		));
 }
 #else
+#ifndef DISABLE_FEAT
 inline FLANNParams_ getFLANNParams(){
 	return FLANNParams_(new FLANNCVParams(
 		static_cast<FLANNCVParams::IdxType>(nn_index_type),
@@ -1372,6 +1368,7 @@ inline FLANNParams_ getFLANNParams(){
 		nn_auto_sample_fraction
 		));
 }
+#endif
 #endif
 
 #ifndef DISABLE_REGNET
@@ -1645,51 +1642,11 @@ inline TrackerBase *getTracker(const char *tracker_type){
 			kcf_resize_factor
 			);
 		return new KCFTracker(&kcf_params);
-	} else if(!strcmp(tracker_type, "cmt")){
-		CMTParams cmt_params(cmt_estimate_scale, cmt_estimate_rotation,
-			cmt_feat_detector, cmt_desc_extractor, cmt_resize_factor);
-		return new cmt::CMT(&cmt_params);
-	} else if(!strcmp(tracker_type, "tld")){
-		TLDParams tld_params(tld_tracker_enabled, tld_detector_enabled,
-			tld_learning_enabled, tld_alternating);
-		return new tld::TLD(&tld_params);
 	} else if(!strcmp(tracker_type, "rct")){
 		RCTParams rct_params(rct_min_n_rect, rct_max_n_rect, rct_n_feat,
 			rct_rad_outer_pos, rct_rad_search_win, rct_learning_rate);
 		return new CompressiveTracker(&rct_params);
-	} else if(!strcmp(tracker_type, "strk")){
-		struck::StruckParams strk_params(strk_config_path);
-		return new struck::Struck(&strk_params);
-	} else if(!strcmp(tracker_type, "frg")){
-		FRGParams frg_params(frg_n_bins, frg_search_margin,
-			static_cast<FRGParams::HistComparisonMetric>(frg_hist_cmp_metric),
-			frg_resize_factor, frg_show_window);
-		return new FRG(&frg_params);
 	}
-#ifndef DISABLE_MIL
-	else if(!strcmp(tracker_type, "mil")){
-		MILParams mil_params(
-			mil_algorithm,
-			mil_num_classifiers,
-			mil_overlap,
-			mil_search_factor,
-			mil_pos_radius_train,
-			mil_neg_num_train,
-			mil_num_features
-			);
-		return new MIL(&mil_params);
-	}
-#endif
-#ifndef DISABLE_DFT
-	else if(!strcmp(tracker_type, "dft")){
-		dft::DFTParams dft_params(dft_res_to_l, dft_p_to_l, dft_max_iter,
-			dft_max_iter_single_level, dft_pyramid_smoothing_variance,
-			dft_presmoothing_variance, dft_n_control_points_on_edge,
-			dft_b_adaptative_choice_of_points, dft_b_normalize_descriptors,
-			static_cast<OptimizationType>(dft_optimization_type));
-		return new dft::DFT(&dft_params);
-	}
-#endif
 #ifndef DISABLE_PFSL3
 	else if(!strcmp(tracker_type, "pfsl3")){
 		PFSL3Params pfsl3_params(pfsl3_p_x, pfsl3_p_y,
@@ -1700,13 +1657,6 @@ inline TrackerBase *getTracker(const char *tracker_type){
 			pfsl3_basis_thr, pfsl3_max_num_basis, pfsl3_max_num_used_basis,
 			pfsl3_show_weights, pfsl3_show_templates, pfsl3_debug_mode);
 		return new PFSL3(&pfsl3_params);
-	}
-#endif
-#ifndef DISABLE_GOTURN
-	else if(!strcmp(tracker_type, "goturn") || !strcmp(tracker_type, "gtrn")){
-		GOTURNParams gtrn_params(gtrn_do_train, gtrn_gpu_id, gtrn_show_intermediate_output,
-			gtrn_model_file.c_str(), gtrn_trained_file.c_str());
-		return new GOTURN(&gtrn_params);
 	}
 #endif
 #ifndef DISABLE_VISP
@@ -1752,6 +1702,55 @@ inline TrackerBase *getTracker(const char *tracker_type){
 			visp_pyr_level_to_stop
 			);
 		return new ViSP(&visp_params);
+	}
+#endif
+#ifndef _WIN32
+	else if(!strcmp(tracker_type, "cmt")){
+		CMTParams cmt_params(cmt_estimate_scale, cmt_estimate_rotation,
+			cmt_feat_detector, cmt_desc_extractor, cmt_resize_factor);
+		return new cmt::CMT(&cmt_params);
+	} else if(!strcmp(tracker_type, "tld")){
+		TLDParams tld_params(tld_tracker_enabled, tld_detector_enabled,
+			tld_learning_enabled, tld_alternating);
+		return new tld::TLD(&tld_params);
+	} else if(!strcmp(tracker_type, "strk")){
+		struck::StruckParams strk_params(strk_config_path);
+		return new struck::Struck(&strk_params);
+	} else if(!strcmp(tracker_type, "frg")){
+		FRGParams frg_params(frg_n_bins, frg_search_margin,
+			static_cast<FRGParams::HistComparisonMetric>(frg_hist_cmp_metric),
+			frg_resize_factor, frg_show_window);
+		return new FRG(&frg_params);
+	}
+#ifndef DISABLE_MIL
+	else if(!strcmp(tracker_type, "mil")){
+		MILParams mil_params(
+			mil_algorithm,
+			mil_num_classifiers,
+			mil_overlap,
+			mil_search_factor,
+			mil_pos_radius_train,
+			mil_neg_num_train,
+			mil_num_features
+			);
+		return new MIL(&mil_params);
+	}
+#endif
+#ifndef DISABLE_DFT
+	else if(!strcmp(tracker_type, "dft")){
+		dft::DFTParams dft_params(dft_res_to_l, dft_p_to_l, dft_max_iter,
+			dft_max_iter_single_level, dft_pyramid_smoothing_variance,
+			dft_presmoothing_variance, dft_n_control_points_on_edge,
+			dft_b_adaptative_choice_of_points, dft_b_normalize_descriptors,
+			static_cast<OptimizationType>(dft_optimization_type));
+		return new dft::DFT(&dft_params);
+	}
+#endif
+#ifndef DISABLE_GOTURN
+	else if(!strcmp(tracker_type, "goturn") || !strcmp(tracker_type, "gtrn")){
+		GOTURNParams gtrn_params(gtrn_do_train, gtrn_gpu_id, gtrn_show_intermediate_output,
+			gtrn_model_file.c_str(), gtrn_trained_file.c_str());
+		return new GOTURN(&gtrn_params);
 	}
 #endif
 #ifndef DISABLE_XVISION
@@ -1802,77 +1801,9 @@ inline TrackerBase *getTracker(const char *tracker_type){
 	}
 #endif
 #endif
+#endif
 	return nullptr;
 }
-//template< class AMType, class SSMType >
-//TrackerBase *getFESMObj(
-//	typename AMType::ParamType *am_params = nullptr,
-//	typename SSMType::ParamType *ssm_params = nullptr){
-//	FESMParams esm_params(max_iters, epsilon,
-//		sec_ord_hess, esm_spi_enable, esm_spi_thresh, debug_mode);
-//	switch(static_cast<FESMParams::JacType>(jac_type)){
-//	case FESMParams::JacType::Original:
-//		switch(static_cast<FESMParams::HessType>(hess_type)){
-//		case FESMParams::HessType::Original:
-//			return new FESM < AMType, SSMType,
-//				FESMParams::HessType::Original,
-//				FESMParams::JacType::Original >(&esm_params, am_params, ssm_params);
-//		case FESMParams::HessType::SumOfStd:
-//			return new FESM < AMType, SSMType,
-//				FESMParams::HessType::SumOfStd,
-//				FESMParams::JacType::Original >(&esm_params, am_params, ssm_params);
-//		case FESMParams::HessType::SumOfSelf:
-//			return new FESM < AMType, SSMType,
-//				FESMParams::HessType::SumOfSelf,
-//				FESMParams::JacType::Original >(&esm_params, am_params, ssm_params);
-//		case FESMParams::HessType::InitialSelf:
-//			return new FESM < AMType, SSMType,
-//				FESMParams::HessType::InitialSelf,
-//				FESMParams::JacType::Original >(&esm_params, am_params, ssm_params);
-//		case FESMParams::HessType::CurrentSelf:
-//			return new FESM < AMType, SSMType,
-//				FESMParams::HessType::CurrentSelf,
-//				FESMParams::JacType::Original >(&esm_params, am_params, ssm_params);
-//		case FESMParams::HessType::Std:
-//			return new FESM < AMType, SSMType,
-//				FESMParams::HessType::CurrentSelf,
-//				FESMParams::JacType::Original >(&esm_params, am_params, ssm_params);
-//		default:
-//			throw std::invalid_argument("Invalid FESM Hessian type provided");
-//		}
-//	case FESMParams::JacType::DiffOfJacs:
-//		switch(static_cast<FESMParams::HessType>(hess_type)){
-//		case FESMParams::HessType::Original:
-//			return new FESM < AMType, SSMType,
-//				FESMParams::HessType::Original,
-//				FESMParams::JacType::DiffOfJacs >(&esm_params, am_params, ssm_params);
-//		case FESMParams::HessType::SumOfStd:
-//			return new FESM < AMType, SSMType,
-//				FESMParams::HessType::SumOfStd,
-//				FESMParams::JacType::DiffOfJacs >(&esm_params, am_params, ssm_params);
-//		case FESMParams::HessType::SumOfSelf:
-//			return new FESM < AMType, SSMType,
-//				FESMParams::HessType::SumOfSelf,
-//				FESMParams::JacType::DiffOfJacs >(&esm_params, am_params, ssm_params);
-//		case FESMParams::HessType::InitialSelf:
-//			return new FESM < AMType, SSMType,
-//				FESMParams::HessType::InitialSelf,
-//				FESMParams::JacType::DiffOfJacs >(&esm_params, am_params, ssm_params);
-//		case FESMParams::HessType::CurrentSelf:
-//			return new FESM < AMType, SSMType,
-//				FESMParams::HessType::CurrentSelf,
-//				FESMParams::JacType::DiffOfJacs >(&esm_params, am_params, ssm_params);
-//		case FESMParams::HessType::Std:
-//			return new FESM < AMType, SSMType,
-//				FESMParams::HessType::CurrentSelf,
-//				FESMParams::JacType::DiffOfJacs >(&esm_params, am_params, ssm_params);
-//		default:
-//			throw std::invalid_argument("Invalid FESM Hessian type provided");
-//		}
-//	default:
-//		throw std::invalid_argument("Invalid FESM Jacobian type provided");
-//	}
-//}
 
 _MTF_END_NAMESPACE
 

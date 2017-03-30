@@ -9,8 +9,7 @@ only_nt ?= 0
 nt ?= 0
 # enable grid tracker (and its OpenCV variants) - only matters if only_nt is 1 otherwise these are enabled anyway
 grid ?= 1
-# enable feature tracker (and its OpenCV variant) - only matters if only_nt is 0 or grid is 1 otherwise it is disabled anyway
-# requires nonfree module of OpenCV to be installed
+# enable feature tracker - requires nonfree module of OpenCV to be installed
 feat ?= 0
 # enable templated FLANN based implementation of NN SM
 ifeq ($(OS),Windows_NT)
