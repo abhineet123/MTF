@@ -32,6 +32,11 @@ else
 	FLAGS_TBB +=  -L/opt/intel/composer_xe_2015/tbb/lib/intel64/gcc4.4
 endif
 
+EXAMPLE_TARGETS = exe uav mos syn qr gt patch rec py test
+ifeq (${feat}, 1)
+	EXAMPLE_TARGETS += qr
+endif
+EXAMPLE_INSTALL_TARGETS = $(addprefix install_,${EXAMPLE_TARGETS})
 
 MTF_APP_INSTALL_DIR ?= .
 MTF_APP_SRC_DIR ?= ${EXAMPLES_ROOT_DIR}/src
@@ -147,6 +152,7 @@ ifeq (${vp}, 1)
 	MTF_RUNTIME_FLAGS += -lvisp_io -lvisp_sensor
 endif
 
+
 .PHONY: exe uav mos syn py test gt patch qr app mtfi mtfp mtfc mtfu mtft mtfs mtfm
 .PHONY: install_exe install_uav install_mos install_patch install_qr install_rec install_syn install_py install_test install_app install_all
 .PHONY: run
@@ -162,7 +168,7 @@ patch: ${BUILD_DIR}/${MTF_PATCH_EXE_NAME}
 rec: ${BUILD_DIR}/${MTF_REC_EXE_NAME}
 qr: ${BUILD_DIR}/${MTF_QR_EXE_NAME}
 app: ${BUILD_DIR}/${MTF_APP_EXE_NAME}
-all: exe uav mos syn qr gt patch rec py test
+all: ${EXAMPLE_TARGETS}
 
 install_exe: ${MTF_EXEC_INSTALL_DIR}/${MTF_EXE_NAME}
 install_gt: ${MTF_EXEC_INSTALL_DIR}/${MTF_GT_EXE_NAME}
@@ -175,7 +181,7 @@ install_qr: ${MTF_EXEC_INSTALL_DIR}/${MTF_QR_EXE_NAME}
 install_py: ${MTF_PY_INSTALL_DIR}/${MTF_PY_LIB_NAME}
 install_test: ${MTF_TEST_INSTALL_DIR}/${MTF_TEST_EXE_NAME}
 install_app: ${MTF_APP_INSTALL_DIR}/${MTF_APP_EXE_NAME}
-install_all: install_exe install_uav install_mos install_syn install_qr install_gt install_patch install_rec install_py install_test
+install_all: ${EXAMPLE_INSTALL_TARGETS}
 
 mtfi: install install_exe
 mtfpa: install install_patch

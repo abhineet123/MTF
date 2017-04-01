@@ -29,11 +29,13 @@ Installation:
     * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) should be installed and added to the C/C++ include paths. This can be done, for instance, by running `echo "export C_INCLUDE_PATH=${C_INCLUDE_PATH}:/usr/include/eigen3" >> ~/.bashrc` and `echo "export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:/usr/include/eigen3" >> ~/.bashrc` assuming that Eigen is installed in _/usr/include/eigen3_
     * [OpenCV](http://opencv.org/) should be installed.
 		- **OpenCV 2.4.x is recommended since possible compatibility issues with OpenCV 3.x may prevent successful compilation** (see [Compile/Runtime Notes](#compileruntime-notes) section below)
-    * [FLANN library](http://www.cs.ubc.ca/research/flann/) and its dependency [HDF5](https://www.hdfgroup.org/HDF5/release/obtain5.html) should be installed for the NN search method
+		- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) module should be [installed too](http://stackoverflow.com/a/31097788) if the feature tracker is enabled during compilation
+    * [Boost](http://www.boost.org/) should be installed
+    * [FLANN](http://www.cs.ubc.ca/research/flann/) and its dependency [HDF5](https://www.hdfgroup.org/HDF5/release/obtain5.html) should be installed for the NN search method
 	    - NN can be disabled at compile time using `nn=0` switch if these are not available (see [compile time switches](#compile-time-switches))
-	* [Boost Library](http://www.boost.org/) should be installed
+	
     * [Intel TBB](https://www.threadingbuildingblocks.org/) / [OpenMP](http://openmp.org/wp/) should be installed if parallelization is to be enabled.
-    * [ViSP library](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see [compile time switches](#compile-time-switches)).
+    * [ViSP](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see [compile time switches](#compile-time-switches)).
 	    - Note that [version 3.0.0](http://gforge.inria.fr/frs/download.php/latestfile/475/visp-3.0.0.zip)+ is required. The Ubuntu apt package is 2.8 and is therefore incompatible.
     * [Caffe](http://caffe.berkeleyvision.org/) is needed for some optional modules including FMaps, Regnet and GOTURN if these are enabled during compilation
 	* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see [compile time switches](#compile-time-switches)).
@@ -68,6 +70,8 @@ Installation:
     * `make uav`/`make install_uav` : compile/install an application called `trackUAVTrajectory` that tracks the trajectory of a UAV in a satellite image of the area over which it flew while capturing images from above
     * `make mos`/`make install_mos` : compile/install an application called `createMosaic` that constructs a live mosaic from a video of the region to be stitched
     * `make qr`/`make install_qr` : compile/install an application called `trackMarkers` that automatically detects one or more markers in the input stream and starts tracking them
+	    - this uses the Feature tracker so will only compile if that is enabled (see below)
+	    - this reads marker images from `Data/Markers` folder by default; this can be changed by adjusting `qr_root_dir` in `Config/examples.cfg` where the names of marker files and the number of markers can also be specified along with some other parameters;
     * `make all`/`make install_all` : compile/install all example applications that come with MTF along with the Python interface
 	* `make app app=<APPLICATION_NAME>`: build a custom application that uses MTF with its source code located in `<APPLICATION_NAME>.cc`; the compiled executable goes in the build directory;
 	    - location of the source file (<APPLICATION_NAME>.cc) can be specified through `MTF_APP_SRC_DIR` (defaults to _Examples/src_)
@@ -111,9 +115,12 @@ Compile/Runtime Notes:
 * if an error like `cannot find -l<name of library>` (for instance `cannot find -lhdf5` or `cannot find -lmtf`) occurs at compile time, location of the corresponding library should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables in the **.bashrc** file. 
     * For instance HDF5 installs in `/usr/local/hdf5/lib` by default so `echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc` and `echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc` can be run to add its path there. Similarly, MTF installs to `/usr/local/lib` by default so use `echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc` and `echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc` for it.
 	* The bashrc file should be reloaded by either restarting the terminal or running `. ~/.bashrc` and compilation should be tried again.
-* similar compile time errors pertaining to missing header files may be encountered in which case the location of the `include` folder of the corresponding library should be added to **C_INCLUDE_PATH** and **CPLUS_INCLUDE_PATH** variables as for Eigen
+* similar compile time errors pertaining to missing header files may be encountered in which case the location of the `include` folder of the corresponding library should be added to **C_INCLUDE_PATH** and **CPLUS_INCLUDE_PATH** variables.
+    * For instance, run `echo "export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc` and `echo "export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc` for HDF5. 
 * if a runtime error like `cannot find libmtf` or something similar is encountered while running `runMTF`, `/usr/local/lib` should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables as above (assuming the default MTF installation directory has not been changed - otherwise the new path should be used instead).
 * if MTF had earlier been compiled with `only_nt=0` (or `nn=1`) and is recompiled with `only_nt=1` (or `nn=0`) such that the **executable does not get recompiled**, a runtime error of the type: `symbol lookup error: runMTF: undefined symbol:` may occur on running the executable; to resolve this, remove `runMTF` (or whatever executable is causing the error) from the build folder (Build/Release or Build/Debug) by running, for instance `rm Build/Release/runMTF` and recompile; this happens because using `only_nt=1` or `nn=0` turns off part of the code in the library but the executable will continue to expect these to be present till it is recompiled;
+* if a compile time error similar to this occurs: `/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h:233:98: error: no matching function for call to ‘Eigen::internal::blas_traits`, please update Eigen to the latest version;
+
 * **Using MTF on Macintosh Systems**
 	* if make build system is used, some thirdparty modules might not compile successfully if cmake uses clang instead of gcc as the default compiler; in such cases compiling with `lt=0` to disable all thirdparty modules is the best option.
     * if cmake build system is used, then `export CC=/usr/bin/gcc` and `export CXX=/use/bin/g++` must be run so that cmake uses gcc during compilation. 
