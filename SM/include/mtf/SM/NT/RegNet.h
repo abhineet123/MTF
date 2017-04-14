@@ -9,10 +9,6 @@ _MTF_BEGIN_NAMESPACE
 
 namespace nt{
 	class RegNet : public SearchMethod{
-		init_profiling();
-		char *log_fname;
-		char *time_fname;
-
 	public:
 		typedef RegNetParams ParamType;
 
@@ -61,6 +57,11 @@ namespace nt{
 		string saved_db_path, saved_idx_path;
 		cv::Mat curr_img_uchar;
 		cv::Point2d curr_corners[4];
+
+		init_profiling();
+		char *log_fname;
+		char *time_fname;
+
 	};
 }
 

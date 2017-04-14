@@ -23,7 +23,6 @@ class AST : public ProjectiveBase{
 public:
 
 	typedef ASTParams ParamType;
-	ParamType params;
 
 	AST(const ParamType *params_in = nullptr);
 
@@ -74,6 +73,9 @@ public:
 #ifndef DISABLE_SPI
 	bool supportsSPI() override{ return true; }
 #endif
+protected:
+	ParamType params;
+
 
 };
 

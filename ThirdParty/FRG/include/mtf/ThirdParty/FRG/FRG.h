@@ -32,12 +32,7 @@ public:
 	int inputType() const override{ return CV_8UC1; }
 	void initialize(const cv::Mat& cv_corners) override;
 	void update() override;
-	void setImage(const cv::Mat &img)  override{ 
-		curr_img_uchar = img;
-		curr_img_uchar_resized.create(curr_img_uchar.rows*params.resize_factor,
-			curr_img_uchar.cols*params.resize_factor, CV_8UC1);
-		input_img = curr_img_uchar_resized;
-	}
+	void setImage(const cv::Mat &img)  override;
 	void updateCVCorners();
 	
 private:

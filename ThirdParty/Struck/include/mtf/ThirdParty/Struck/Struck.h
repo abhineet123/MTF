@@ -21,18 +21,19 @@ namespace struck{
 	class Struck : public mtf::TrackerBase{
 	public:
 		typedef StruckParams ParamType;
-		ParamType params;
-		Config conf;
-		Tracker tracker;
-		cv::Mat curr_img;
-		cv::Mat curr_img_resized;
-		float scaleW, scaleH;
 		Struck();
 		Struck(const ParamType *struck_params = nullptr);
 		void setImage(const cv::Mat &img) override;
 		int inputType() const  override{ return CV_8UC1; }
 		void initialize(const cv::Mat& corners) override;
 		void update() override;
+	private:
+		ParamType params;
+		Config conf;
+		Tracker tracker;
+		cv::Mat curr_img;
+		cv::Mat curr_img_resized;
+		float scaleW, scaleH;
 		void updateCVCorners();
 	};
 }

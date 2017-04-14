@@ -26,16 +26,9 @@ struct TPSParams : SSMParams{
 };
 //! Thin plate splines
 class TPS : public StateSpaceModel{
-	PtsT norm_pts;
-	CornersT norm_corners;
-	PtsT corner_control_pts;
-	MatrixX2dM tps_params;
-	VectorXi ctrl_idx, ctrl_idy;
-public:
-	
+public:	
 	typedef TPSParams ParamType;
 	ParamType params;
-
 
 	TPS(TPSParams *params_in=nullptr);
 	void compositionalUpdate(const VectorXd& state_update) override;
@@ -80,6 +73,12 @@ public:
 	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
 
 private:
+	PtsT norm_pts;
+	CornersT norm_corners;
+	PtsT corner_control_pts;
+	MatrixX2dM tps_params;
+	VectorXi ctrl_idx, ctrl_idy;
+
 	CornersT rand_d;
 	Vector2d rand_t;
 	CornersT disturbed_corners;

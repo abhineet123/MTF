@@ -27,7 +27,6 @@ class Affine : public ProjectiveBase{
 public:
 
 	typedef AffineParams ParamType;
-	ParamType params;
 
 	Affine( const ParamType *params_in = nullptr);
 
@@ -93,6 +92,7 @@ public:
 #endif
 
 protected:
+	ParamType params;
 
 	Vector6d stateToGeom(const Vector6d &state);
 	Vector6d geomToState(const Vector6d &geom);

@@ -8,12 +8,6 @@ _MTF_BEGIN_NAMESPACE
 
 template<class AM, class SSM>
 class ICLK : public SearchMethod < AM, SSM > {
-
-private:
-	init_profiling();
-	char *log_fname;
-	char *time_fname;
-
 public:
 	typedef ICLKParams ParamType;
 	typedef typename ParamType::HessType HessType;
@@ -56,6 +50,11 @@ protected:
 
 	int state_size, ssm_state_size, am_state_size;
 	int frame_id;
+
+private:
+	init_profiling();
+	char *log_fname;
+	char *time_fname;
 
 
 };

@@ -14,11 +14,6 @@ namespace nt{
 		typedef SearchMethod TemplTrackerType;
 
 		typedef RKLTParams ParamType;
-		ParamType params;
-
-		TemplTrackerType *templ_tracker;
-		GridBase * grid_tracker;
-		cv::Mat grid_corners_mat;
 
 		RKLT(const ParamType *rklt_params,  GridBase *_grid_tracker, 
 			TemplTrackerType *_templ_tracker);
@@ -32,8 +27,17 @@ namespace nt{
 		void setImage(const cv::Mat &cv_img) override;
 		void setRegion(const cv::Mat &corners) override;
 
+		TemplTrackerType* getTemplateTracker(){ return templ_tracker; }
+		GridBase* getGridTracker(){ return grid_tracker; }
+
 	private:
 		~RKLT();
+		ParamType params;
+
+		TemplTrackerType *templ_tracker;
+		GridBase * grid_tracker;
+		cv::Mat grid_corners_mat;
+
 		int templ_resx, templ_resy;
 		int grid_resx, grid_resy;
 		int res_ratio_x, res_ratio_y;

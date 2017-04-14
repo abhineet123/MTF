@@ -8,14 +8,9 @@ _MTF_BEGIN_NAMESPACE
 
 template<class AM, class SSM>
 class FCLK : public SearchMethod < AM, SSM > {
-	init_profiling();
-	char *log_fname;
-	char *time_fname;
-
 public:
 
 	typedef FCLKParams ParamType;
-	ParamType params;
 	typedef ParamType::HessType HessType;
 
 	using SearchMethod<AM, SSM> ::am;
@@ -35,6 +30,7 @@ public:
 	void setRegion(const cv::Mat& corners) override;
 
 protected:
+	ParamType params;
 
 	// Let S = size of SSM state vector and N = resx * resy = no. of pixels in the object patch
 
@@ -57,8 +53,9 @@ protected:
 
 	int frame_id;
 
-
-
+	init_profiling();
+	char *log_fname;
+	char *time_fname;
 };
 
 

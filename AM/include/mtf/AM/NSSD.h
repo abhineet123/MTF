@@ -29,9 +29,11 @@ class NSSD : public SSDBase{
 public:
 
 	typedef NSSDParams ParamType; 
-
-	ParamType params;
 	NSSD(const ParamType *nssd_params = nullptr);
+
+protected:
+	ParamType params;
+
 };
 
 _MTF_END_NAMESPACE

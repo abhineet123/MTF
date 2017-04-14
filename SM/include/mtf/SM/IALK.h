@@ -8,11 +8,6 @@ _MTF_BEGIN_NAMESPACE
 
 template<class AM, class SSM>
 class IALK : public SearchMethod < AM, SSM > {
-
-	init_profiling();
-	char *log_fname;
-	char *time_fname;
-
 public:
 
 	typedef IALKParams ParamType;
@@ -38,7 +33,6 @@ protected:
 
 	ParamType params;
 
-
 	// Let S = size of SSM state vector and N = resx * resy = no. of pixels in the object patch
 
 	//! 1 x S Jacobian of the AM error norm w.r.t. SSM state vector
@@ -56,6 +50,11 @@ protected:
 	VectorXd ssm_update;
 	Matrix3d warp_update;
 	int frame_id;
+
+
+	init_profiling();
+	char *log_fname;
+	char *time_fname;
 
 };
 _MTF_END_NAMESPACE

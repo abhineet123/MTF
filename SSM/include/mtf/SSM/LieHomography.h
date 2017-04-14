@@ -29,12 +29,6 @@ class LieHomography : public ProjectiveBase{
 public:
 
 	typedef LieHomographyParams ParamType;
-	ParamType params;
-
-	Matrix3d lieAlgBasis[8];
-	RowVector3d zero_vec;
-	Matrix3d lie_alg_mat;
-
 	using StateSpaceModel::setCorners;
 
 	LieHomography( const ParamType *params_in = nullptr);
@@ -68,6 +62,12 @@ public:
 	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
 
 private:
+	ParamType params;
+
+	Matrix3d lieAlgBasis[8];
+	RowVector3d zero_vec;
+	Matrix3d lie_alg_mat;
+
 	void computeJacobian(MatrixXd &jacobian, Matrix3Xd &basis_pts_hm);
 
 

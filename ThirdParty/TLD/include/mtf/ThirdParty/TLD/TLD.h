@@ -45,17 +45,30 @@ struct TLDParams{
 	TLDParams(const TLDParams *params = nullptr);
 };
 
-namespace tld
-{
+namespace tld{
 
-	class TLD : public mtf::TrackerBase
-	{
-		void storeCurrentData();
-		void fuseHypotheses();
-		void learn();
-		void initialLearning();
+	class TLD : public mtf::TrackerBase{
 	public:
 		typedef TLDParams ParamType;
+
+		TLD();
+		TLD(const ParamType *tld_params = nullptr);
+		virtual ~TLD();
+
+		void release();
+		void selectObject(const cv::Mat &img, cv::Rect *bb);
+		void processImage(const cv::Mat &img);
+		void writeToFile(const char *path);
+		void readFromFile(const char *path);
+
+		void initialize(const cv::Mat& cv_corners) override;
+		void setImage(const cv::Mat &img) override{ cv_img = img; }
+		int inputType() const  override{ return CV_8UC1; }
+		void update() override{
+			processImage(cv_img);
+			updateCVCorners();
+		}
+	private:
 		ParamType params;
 
 		bool trackerEnabled;
@@ -77,25 +90,11 @@ namespace tld
 
 		cv::Mat cv_img;
 
-		TLD();
-		TLD(const ParamType *tld_params = nullptr);
-		virtual ~TLD();
-
-		void release();
-		void selectObject(const cv::Mat &img, cv::Rect *bb);
-		void processImage(const cv::Mat &img);
-		void writeToFile(const char *path);
-		void readFromFile(const char *path);
-
-		void initialize(const cv::Mat& cv_corners) override;
-		void setImage(const cv::Mat &img) override{ cv_img = img; }
-		int inputType() const  override{ return CV_8UC1; }
-		void update() override{
-			processImage(cv_img);
-			updateCVCorners();
-		}
+		void storeCurrentData();
+		void fuseHypotheses();
+		void learn();
+		void initialLearning();
 		void updateCVCorners();
 	};
-
 } /* namespace tld */
 #endif /* TLD_H_ */

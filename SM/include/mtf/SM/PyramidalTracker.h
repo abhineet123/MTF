@@ -11,12 +11,6 @@ class PyramidalTracker : public CompositeBase {
 
 public:
 	typedef PyramidalParams ParamType;
-	ParamType params;
-
-	vector<cv::Size> img_sizes;
-	vector<cv::Mat> img_pyramid;
-	double overall_scale_factor;
-	bool external_img_pyramid;
 
 	PyramidalTracker(const vector<TrackerBase*> _trackers, const ParamType *parl_params);
 	void setImage(const cv::Mat &img) override;
@@ -31,6 +25,12 @@ public:
 	}
 	void setImagePyramid(const vector<cv::Mat> &_img_pyramid);
 	const vector<cv::Mat>& getImagePyramid() const{ return img_pyramid; }
+protected:
+	ParamType params;
+	vector<cv::Size> img_sizes;
+	vector<cv::Mat> img_pyramid;
+	double overall_scale_factor;
+	bool external_img_pyramid;
 	void updateImagePyramid();
 	void showImagePyramid();
 };

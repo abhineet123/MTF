@@ -20,12 +20,6 @@ public:
 	typedef MILParams ParamType;
 	typedef std::unique_ptr<cv::ObjectTracker> ObjectTrackerPtr;
 
-	ParamType params;
-	cv::ObjectTracker *tracker;
-	cv::Mat curr_img;
-	cv::Rect curr_location;
-	CvRect init_bb;
-
 	MIL();
 	MIL(const ParamType *mil_params = nullptr);
 	~MIL(){
@@ -39,6 +33,12 @@ public:
 	int inputType() const override{ return CV_8UC1; }
 	void initialize(const cv::Mat& corners) override;
 	void update() override;
+private:
+	ParamType params;
+	cv::ObjectTracker *tracker;
+	cv::Mat curr_img;
+	cv::Rect curr_location;
+	CvRect init_bb;
 	void updateCVCorners();
 };
 

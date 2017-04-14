@@ -24,7 +24,6 @@ class IST : public ProjectiveBase{
 public:
 
 	typedef ISTParams ParamType;
-	ParamType params;
 
 	IST(const ParamType *params_in = nullptr);
 
@@ -75,7 +74,8 @@ public:
 #ifndef DISABLE_SPI
 	bool supportsSPI() override{ return true; }
 #endif
-
+protected:
+	ParamType params;
 };
 
 

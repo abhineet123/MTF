@@ -62,21 +62,8 @@ struct FESMParams{
 
 template<class AM, class SSM>
 class FESMBase : public SearchMethod < AM, SSM > {
-protected:
-	init_profiling();
-	char *time_fname;
-	char *log_fname;
-
-	string hess_order;
-
-	void initializeSPIMask();
-	void updateSPIMask();
-	void showSPIMask();
-
 public:
 	typedef FESMParams ParamType;
-	ParamType params;
-
 	using SearchMethod<AM, SSM> ::am;
 	using SearchMethod<AM, SSM> ::ssm;
 	using typename SearchMethod<AM, SSM> ::AMParams;
@@ -85,6 +72,27 @@ public:
 	using SearchMethod<AM, SSM> ::name;
 	using SearchMethod<AM, SSM> ::initialize;
 	using SearchMethod<AM, SSM> ::update;
+
+	FESMBase(const ParamType *nesm_params = nullptr,
+		const AMParams *am_params = nullptr,
+		const SSMParams *ssm_params = nullptr);
+
+	void initialize(const cv::Mat &corners) override;
+	void update() override;
+
+	virtual void initializeHessian(){}
+	virtual void updateJacobian();
+	virtual void updateHessian();
+
+	// functions re implemented by AFESMBase to get the additive variant
+	void initializePixJacobian();
+	void updatePixJacobian();
+	void initializePixHessian();
+	void updatePixHessian();
+	void updateSSM();
+
+protected:
+	ParamType params;
 
 	int frame_id;
 	VectorXc pix_mask2;
@@ -108,23 +116,15 @@ public:
 	//! S x S Hessian of the AM error norm w.r.t. SSM state vector
 	MatrixXd hessian, init_self_hessian;
 
-	FESMBase(const ParamType *nesm_params = nullptr,
-		const AMParams *am_params = nullptr,
-		const SSMParams *ssm_params = nullptr);
+	init_profiling();
+	char *time_fname;
+	char *log_fname;
 
-	void initialize(const cv::Mat &corners) override;
-	void update() override;
+	string hess_order;
 
-	virtual void initializeHessian(){}
-	virtual void updateJacobian();
-	virtual void updateHessian();
-
-	// functions re implemented by AFESMBase to get the additive variant
-	void initializePixJacobian();
-	void updatePixJacobian();
-	void initializePixHessian();
-	void updatePixHessian();
-	void updateSSM();
+	void initializeSPIMask();
+	void updateSPIMask();
+	void showSPIMask();
 };
 _MTF_END_NAMESPACE
 

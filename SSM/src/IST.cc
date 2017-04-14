@@ -22,7 +22,7 @@ IST::IST( const ParamType *_params) :
 ProjectiveBase(_params), params(_params){
 
 	printf("\n");
-	printf("Using IST SSM with:\n");
+	printf("Using Isotropic Scaling and Translation SSM with:\n");
 	printf("resx: %d\n", resx);
 	printf("resy: %d\n", resy);
 	printf("debug_mode: %d\n", params.debug_mode);
@@ -205,10 +205,10 @@ void IST::estimateWarpFromCorners(VectorXd &state_update, const Matrix24d &in_co
 void IST::estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mask,
 	const vector<cv::Point2f> &in_pts, const vector<cv::Point2f> &out_pts,
 	const EstimatorParams &est_params){
-	cv::Mat trs_params = estimateIST(in_pts, out_pts, mask, est_params);
-	state_update(0) = trs_params.at<double>(0, 0);
-	state_update(1) = trs_params.at<double>(0, 1);
-	state_update(2) = trs_params.at<double>(0, 2) - 1;
+	cv::Mat ist_params = estimateIST(in_pts, out_pts, mask, est_params);
+	state_update(0) = ist_params.at<double>(0, 0);
+	state_update(1) = ist_params.at<double>(0, 1);
+	state_update(2) = ist_params.at<double>(0, 2) - 1;
 }
 
 void IST::updateGradPts(double grad_eps){

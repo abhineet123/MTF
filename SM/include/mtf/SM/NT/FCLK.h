@@ -8,18 +8,6 @@ _MTF_BEGIN_NAMESPACE
 namespace nt{
 	// Non templated implementation of FCLK
 	class FCLK : public SearchMethod {
-		init_profiling();
-		char *log_fname;
-		char *time_fname;
-
-		cv::Mat curr_img_uchar;
-		VectorXd curr_patch_eig;
-		cv::Mat curr_patch, curr_patch_uchar, curr_patch_resized;
-
-		std::string write_frame_dir;
-
-		void drawGrid();
-
 	public:
 
 		typedef FCLKParams ParamType;
@@ -63,6 +51,18 @@ namespace nt{
 		int frame_id;
 
 		int state_size, ssm_state_size, am_state_size;
+
+		init_profiling();
+		char *log_fname;
+		char *time_fname;
+
+		cv::Mat curr_img_uchar;
+		VectorXd curr_patch_eig;
+		cv::Mat curr_patch, curr_patch_uchar, curr_patch_resized;
+
+		std::string write_frame_dir;
+
+		void drawGrid();
 	};
 }
 

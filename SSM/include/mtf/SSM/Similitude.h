@@ -32,10 +32,7 @@ struct SimilitudeParams : SSMParams{
 
 class Similitude : public ProjectiveBase{
 public:
-
 	typedef SimilitudeParams ParamType;
-	ParamType params;
-
 	Similitude( const ParamType *params_in = nullptr);
 	void setCorners(const CornersT& corners) override;
 	using ProjectiveBase::setCorners;
@@ -98,6 +95,8 @@ public:
 #endif
 
 private:
+	ParamType params;
+
 	Vector4d geomToState(const Vector4d &geom);
 	Vector4d stateToGeom(const Vector4d &est);
 

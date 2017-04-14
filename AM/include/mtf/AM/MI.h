@@ -45,8 +45,6 @@ public:
 
 	typedef MIParams ParamType;
 
-	ParamType params;
-
 	MI(const ParamType *mi_params = nullptr, const int _n_channels = 1);
 
 	double max_similarity;
@@ -77,13 +75,8 @@ public:
 	//static const utils::BSpline3WithDiffPtr bSpline3_arr[4];
 
 	//-----------------------------------functor support-----------------------------------//
-	int feat_size;
-	VectorXd feat_vec;
-
 	typedef double ElementType;
 	typedef double ResultType;
-
-	double log_hist_norm_mult;
 
 	void initializeDistFeat() override{
 		feat_vec.resize(feat_size);
@@ -98,6 +91,7 @@ public:
 	int getDistFeatSize() override{ return feat_size; }
 
 private:
+	ParamType params;
 
 	char *log_fname;
 	char *time_fname;
@@ -126,6 +120,11 @@ private:
 
 	MatrixXd self_joint_hist, self_joint_hist_log;
 	MatrixXd self_grad_factor;
+
+	int feat_size;
+	VectorXd feat_vec;
+	double log_hist_norm_mult;
+
 
 	// only used internally to increase speed by offlining as many computations as possible;
 	MatrixX2i _std_bspl_ids;

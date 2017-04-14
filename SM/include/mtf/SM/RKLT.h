@@ -11,15 +11,8 @@ template<class AM, class SSM>
 class RKLT : public CompositeBase {
 
 public:
-
 	typedef SearchMethod < AM, SSM > TemplTrackerType;
-
 	typedef RKLTParams ParamType;
-	ParamType params;
-
-	TemplTrackerType *templ_tracker;
-	GridBase * grid_tracker;
-	cv::Mat grid_corners_mat;
 
 	RKLT(const ParamType *rklt_params,
 		GridBase *_grid_tracker, TemplTrackerType *_templ_tracker);
@@ -34,6 +27,12 @@ public:
 	void setRegion(const cv::Mat &corners) override;
 
 private:
+	ParamType params;
+
+	TemplTrackerType *templ_tracker;
+	GridBase * grid_tracker;
+	cv::Mat grid_corners_mat;
+
 	~RKLT();
 };
 _MTF_END_NAMESPACE

@@ -38,7 +38,6 @@ class DFM: public SSDBase{
 public:
 
 	typedef DFMParams ParamType;     
-    ParamType params; 
 
 	DFM(const ParamType *img_params = nullptr);
  	void initializePixVals(const Matrix2Xd& curr_pts) override;
@@ -49,6 +48,7 @@ public:
     std::vector<cv::Mat> init_fmaps, curr_fmaps;
     
 private:
+	ParamType params;
 
 	PixValT init_pix_vals_temp, curr_pix_vals_temp;
 	PixValT temp_fmaps;

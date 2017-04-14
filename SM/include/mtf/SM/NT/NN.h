@@ -8,9 +8,6 @@
 _MTF_BEGIN_NAMESPACE
 namespace nt{
 	class NN : public SearchMethod {
-		init_profiling();
-		char *log_fname;
-		char *time_fname;
 	public:
 
 		typedef NNParams ParamType;
@@ -55,6 +52,10 @@ namespace nt{
 		cv::Point2d curr_corners[4];
 
 		bool dataset_loaded;
+
+		init_profiling();
+		char *log_fname;
+		char *time_fname;
 
 		void generateDataset();
 		void loadDataset();

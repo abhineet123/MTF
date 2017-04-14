@@ -108,10 +108,11 @@
 #include "mtf/SSM/Affine.h"
 #include "mtf/SSM/Similitude.h"
 #include "mtf/SSM/Isometry.h"
+#include "mtf/SSM/AST.h"
 #include "mtf/SSM/IST.h"
 #include "mtf/SSM/Translation.h"
 #include "mtf/SSM/LieHomography.h"
-#include "mtf/SSM/CornerHomography.h"
+#include "mtf/SSM/CBH.h"
 #include "mtf/SSM/SL3.h"
 #include "mtf/SSM/Spline.h"
 
@@ -787,10 +788,10 @@ TrackerBase *getTracker(const char *sm_type, const char *ssm_type,
 	SSMParams_ params = getSSMParams(ssm_type);
 	if(!params){ return nullptr; }
 
-	if(!strcmp(ssm_type, "lie_hom") || !strcmp(ssm_type, "l8")){
+	if(!strcmp(ssm_type, "lhom") || !strcmp(ssm_type, "l8")){
 		return getTracker<AMType, LieHomography>(sm_type, am_params, cast_params(LieHomography));
-	} else if(!strcmp(ssm_type, "chom") || !strcmp(ssm_type, "c8")){
-		return getTracker<AMType, mtf::CornerHomography>(sm_type, am_params, cast_params(CornerHomography));
+	} else if(!strcmp(ssm_type, "cbh") || !strcmp(ssm_type, "c8")){
+		return getTracker<AMType, mtf::CBH>(sm_type, am_params, cast_params(CBH));
 	} else if(!strcmp(ssm_type, "sl3")){
 		return getTracker<AMType, mtf::SL3>(sm_type, am_params, cast_params(SL3));
 	} else if(!strcmp(ssm_type, "hom") || !strcmp(ssm_type, "8")){
@@ -801,7 +802,9 @@ TrackerBase *getTracker(const char *sm_type, const char *ssm_type,
 		return getTracker<AMType, mtf::Similitude>(sm_type, am_params, cast_params(Similitude));
 	} else if(!strcmp(ssm_type, "iso") || !strcmp(ssm_type, "3")){
 		return getTracker<AMType, mtf::Isometry>(sm_type, am_params, cast_params(Isometry));
-	} else if(!strcmp(ssm_type, "trs") || !strcmp(ssm_type, "3s")){
+	} else if(!strcmp(ssm_type, "ast") || !strcmp(ssm_type, "4s")){
+		return getTracker<AMType, mtf::AST>(sm_type, am_params, cast_params(AST));
+	} else if(!strcmp(ssm_type, "ist") || !strcmp(ssm_type, "3s")){
 		return getTracker<AMType, mtf::IST>(sm_type, am_params, cast_params(IST));
 	} else if(!strcmp(ssm_type, "trans") || !strcmp(ssm_type, "2")){
 		return getTracker<AMType, mtf::Translation>(sm_type, am_params, cast_params(Translation));
@@ -909,12 +912,12 @@ inline TrackerBase *getTracker(const char *sm_type, const char *am_type,
 }
 inline SSMParams_ getSSMParams(const char *ssm_type){
 	SSMParams_ ssm_params(new SSMParams(resx, resy));
-	if(!strcmp(ssm_type, "lie_hom") || !strcmp(ssm_type, "l8")){
+	if(!strcmp(ssm_type, "lhom") || !strcmp(ssm_type, "l8")){
 		return SSMParams_(new LieHomographyParams(ssm_params.get(), lhom_normalized_init, 
 			lhom_grad_eps, debug_mode));
-	} else if(!strcmp(ssm_type, "chom") || !strcmp(ssm_type, "c8")){
-		return SSMParams_(new CornerHomographyParams(ssm_params.get(), chom_normalized_init,
-			chom_grad_eps, debug_mode));
+	} else if(!strcmp(ssm_type, "cbh") || !strcmp(ssm_type, "c8")){
+		return SSMParams_(new CBHParams(ssm_params.get(), cbh_normalized_init,
+			cbh_grad_eps, debug_mode));
 	} else if(!strcmp(ssm_type, "sl3")){
 		return SSMParams_(new SL3Params(ssm_params.get(), sl3_normalized_init, sl3_iterative_sample_mean,
 			sl3_sample_mean_max_iters, sl3_sample_mean_eps, sl3_debug_mode));
@@ -928,7 +931,9 @@ inline SSMParams_ getSSMParams(const char *ssm_type){
 			sim_geom_sampling, sim_pt_based_sampling, sim_n_model_pts, debug_mode));
 	} else if(!strcmp(ssm_type, "iso") || !strcmp(ssm_type, "3")){
 		return SSMParams_(new IsometryParams(ssm_params.get(), iso_pt_based_sampling));
-	} else if(!strcmp(ssm_type, "trs") || !strcmp(ssm_type, "3s")){
+	} else if(!strcmp(ssm_type, "ast") || !strcmp(ssm_type, "4s")){
+		return SSMParams_(new ASTParams(ssm_params.get(), debug_mode));
+	} else if(!strcmp(ssm_type, "ist") || !strcmp(ssm_type, "3s")){
 		return SSMParams_(new ISTParams(ssm_params.get(), debug_mode));
 	} else if(!strcmp(ssm_type, "trans") || !strcmp(ssm_type, "2")){
 		return SSMParams_(new TranslationParams(ssm_params.get(), debug_mode));
@@ -947,10 +952,10 @@ inline StateSpaceModel *getSSM(const char *ssm_type){
 	SSMParams_ params = getSSMParams(ssm_type);
 	if(!params){ return nullptr; }
 
-	if(!strcmp(ssm_type, "lie_hom") || !strcmp(ssm_type, "l8")){
+	if(!strcmp(ssm_type, "lhom") || !strcmp(ssm_type, "l8")){
 		return new LieHomography(cast_params(LieHomography));
-	} else if(!strcmp(ssm_type, "chom") || !strcmp(ssm_type, "c8")){
-		return new mtf::CornerHomography(cast_params(CornerHomography));
+	} else if(!strcmp(ssm_type, "cbh") || !strcmp(ssm_type, "c8")){
+		return new mtf::CBH(cast_params(CBH));
 	} else if(!strcmp(ssm_type, "sl3")){
 		return new mtf::SL3(cast_params(SL3));
 	} else if(!strcmp(ssm_type, "hom") || !strcmp(ssm_type, "8")){
@@ -961,7 +966,9 @@ inline StateSpaceModel *getSSM(const char *ssm_type){
 		return new mtf::Similitude(cast_params(Similitude));
 	} else if(!strcmp(ssm_type, "iso") || !strcmp(ssm_type, "3")){
 		return new mtf::Isometry(cast_params(Isometry));
-	} else if(!strcmp(ssm_type, "trs") || !strcmp(ssm_type, "3s")){
+	} else if(!strcmp(ssm_type, "ast") || !strcmp(ssm_type, "4s")){
+		return new mtf::AST(cast_params(AST));
+	} else if(!strcmp(ssm_type, "ist") || !strcmp(ssm_type, "3s")){
 		return new mtf::IST(cast_params(IST));
 	} else if(!strcmp(ssm_type, "trans") || !strcmp(ssm_type, "2")){
 		return new mtf::Translation(cast_params(Translation));

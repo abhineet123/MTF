@@ -18,24 +18,24 @@ struct HESMParams{
 	bool debug_mode; //! decides whether logging data will be printed for debugging purposes; 
 	//! only matters if logging is enabled at compile time
 
-	HESMParams(int _max_iters, double _epsilon, 
+	HESMParams(int _max_iters, double _epsilon,
 		bool _rec_init_err_grad, bool _debug_mode){
-			max_iters = _max_iters;
-			epsilon = _epsilon;
-			rec_init_err_grad = _rec_init_err_grad;
-			debug_mode = _debug_mode;
+		max_iters = _max_iters;
+		epsilon = _epsilon;
+		rec_init_err_grad = _rec_init_err_grad;
+		debug_mode = _debug_mode;
 	}
 	HESMParams(HESMParams *params = nullptr) :
-		max_iters(_MAX_ITERS), 
+		max_iters(_MAX_ITERS),
 		epsilon(_EPSILON),
-		rec_init_err_grad(_REC_INIT_ERR_GRAD), 
+		rec_init_err_grad(_REC_INIT_ERR_GRAD),
 		debug_mode(_DEBUG_MODE){
-			if(params){
-				max_iters = params->max_iters;
-				epsilon = params->epsilon;
-				rec_init_err_grad = params->rec_init_err_grad;
-				debug_mode = params->debug_mode;
-			}
+		if(params){
+			max_iters = params->max_iters;
+			epsilon = params->epsilon;
+			rec_init_err_grad = params->rec_init_err_grad;
+			debug_mode = params->debug_mode;
+		}
 	}
 };
 
@@ -59,33 +59,42 @@ struct SSMData{
 };
 
 template<class AM, class SSM, class SSM2>
-class HESM : public SearchMethod<AM, SSM> {
+class HESM : public SearchMethod < AM, SSM > {
 
 public:
 	typedef HESMParams ParamType;
-	ParamType params;
 
-	using SearchMethod<AM, SSM> ::am ;
-	using SearchMethod<AM, SSM> ::ssm ;
-	using typename SearchMethod<AM, SSM> :: AMParams ;
-	using typename SearchMethod<AM, SSM> :: SSMParams ;
+	using SearchMethod<AM, SSM> ::am;
+	using SearchMethod<AM, SSM> ::ssm;
+	using typename SearchMethod<AM, SSM> ::AMParams;
+	using typename SearchMethod<AM, SSM> ::SSMParams;
 	using SearchMethod<AM, SSM> ::resx;
 	using SearchMethod<AM, SSM> ::resy;
-	using SearchMethod<AM, SSM> ::n_pix ;
-	using SearchMethod<AM, SSM> ::cv_corners_mat ;
-	using SearchMethod<AM, SSM> ::cv_corners ;
-	using SearchMethod<AM, SSM> ::name ;
-	using SearchMethod<AM, SSM> ::curr_img ;
-	using SearchMethod<AM, SSM> ::img_height ;
-	using SearchMethod<AM, SSM> ::img_width ;
-	using SearchMethod<AM, SSM> :: initialize ;
-	using SearchMethod<AM, SSM> :: update ;	
-
-	int frame_id;
-	char *log_fname;
-	char *time_fname;
+	using SearchMethod<AM, SSM> ::n_pix;
+	using SearchMethod<AM, SSM> ::cv_corners_mat;
+	using SearchMethod<AM, SSM> ::cv_corners;
+	using SearchMethod<AM, SSM> ::name;
+	using SearchMethod<AM, SSM> ::curr_img;
+	using SearchMethod<AM, SSM> ::img_height;
+	using SearchMethod<AM, SSM> ::img_width;
+	using SearchMethod<AM, SSM> ::initialize;
+	using SearchMethod<AM, SSM> ::update;
 
 	typedef typename SSM2::ParamType SSM2Params;
+
+
+	HESM(const ParamType *nesm_params = NULL,
+		const AMParams *am_params = NULL, const SSMParams *ssm_params = NULL,
+		SSM2Params *ssm2_params = NULL);
+
+	void initialize(const cv::Mat &corners) override;
+	void update() override;
+	template<class _SSM> void updateSSM(_SSM *_ssm, SSMData &_data);
+	//template<class _SSM> void initializeSSM(_SSM *_ssm, SSMData &_data);
+
+	//double computeSSMUpdate();
+private:
+	ParamType params;
 
 	SSM2 *ssm2;
 	SSMData ssm_data, ssm2_data;
@@ -109,17 +118,10 @@ public:
 	//! A x S mean of the initial and current jacobians of the AM error vector w.r.t. the SSM state vector;
 	//MatrixXd err_vec_jacobian;
 
-	HESM(const ParamType *nesm_params=NULL, 
-		const AMParams *am_params=NULL, const SSMParams *ssm_params=NULL,
-		SSM2Params *ssm2_params=NULL);
+	int frame_id;
+	char *log_fname;
+	char *time_fname;
 
- void initialize(const cv::Mat &corners);
-	void update();
-	template<class _SSM> void updateSSM(_SSM *_ssm, SSMData &_data);
-	//template<class _SSM> void initializeSSM(_SSM *_ssm, SSMData &_data);
-
-	//double computeSSMUpdate();
-private:
 	//! these share memory with their namesake 'Map' variables
 	MatrixXd _init_jacobian, _curr_jacobian;
 };

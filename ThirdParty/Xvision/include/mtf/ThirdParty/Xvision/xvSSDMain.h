@@ -32,7 +32,7 @@ struct XVParams{
 		copy_frame = _copy_frame;
 		refresh_win = _refresh_win;
 	}
-	XVParams(XVParams *params) : show_xv_window(false), steps_per_frame(STEPS_PER_FRAME),
+	XVParams(const XVParams *params) : show_xv_window(false), steps_per_frame(STEPS_PER_FRAME),
 		copy_frame(false), refresh_win(false){
 		if(params){
 			show_xv_window = params->show_xv_window;
@@ -103,6 +103,55 @@ class XVSSDMain : public TrackerBase {
 public:
 	typedef XVParams ParamType;
 
+	XVSSDMain(const ParamType *xv_params = NULL) : TrackerBase(),
+		params(xv_params){
+		this->xv_line_width = 3;
+		this->no_of_frames = 0;
+		this->region_thresh = 50;
+		this->region_size = (2 * region_thresh + 1) * (2 * region_thresh + 1);
+		this->init_pos_min = new XVPosition;
+		this->init_pos = new XVPosition;
+		this->init_size = new XVSize;
+	}
+
+	~XVSSDMain() {
+		if(write_tracker_states) {
+			delete(tracker_state_fname);
+		}
+	}
+
+	void setImage(const cv::Mat &img) override{
+		if(!xv_frame){
+			img_height = img.rows;
+			img_width = img.cols;
+			xv_frame = new IMAGE_TYPE(img_width, img_height);
+		}
+		xv_frame->remap((PIX_TYPE*)(img.data), false);
+	}
+	int inputType() const  override{ return CV_8UC3; }
+
+	void initialize(const cv::Mat& cv_corners){
+		double pos_x = (cv_corners.at<double>(0, 0) + cv_corners.at<double>(0, 1) +
+			cv_corners.at<double>(0, 2) + cv_corners.at<double>(0, 3)) / 4;
+		double pos_y = (cv_corners.at<double>(1, 0) + cv_corners.at<double>(1, 1) +
+			cv_corners.at<double>(1, 2) + cv_corners.at<double>(1, 3)) / 4;
+		double size_x = ((cv_corners.at<double>(0, 1) - cv_corners.at<double>(0, 0)) + (cv_corners.at<double>(0, 2) - cv_corners.at<double>(0, 3))) / 2;
+		double size_y = ((cv_corners.at<double>(1, 3) - cv_corners.at<double>(1, 0)) + (cv_corners.at<double>(1, 2) - cv_corners.at<double>(1, 1))) / 2;
+		initialize(pos_x, pos_y, size_x, size_y);
+	}
+	void update(){ update(NULL); }
+
+protected:
+	/*virtual functions to be implemented by specific trackers*/
+	virtual void initTracker() = 0;
+	virtual double updateTrackerState() = 0;
+	virtual void updateCorners() = 0;
+	virtual void resetTrackerPosition(double pos_x, double pos_y) = 0;
+	virtual void resetTrackerTemplate(IMAGE_TYPE *img, double pos_x, double pos_y,
+		double size_x, double size_y) = 0;
+	virtual void getTransformedPoints(vector<XVPositionD> &in_pts, vector<XVPositionD> &out_pts) = 0;
+
+private:
 	ParamType params;
 
 	IMAGE_TYPE* xv_frame = NULL;
@@ -168,77 +217,6 @@ public:
 	int write_tracker_states;
 	ofstream tracker_state_fout, diff_state_fout;
 	char *tracker_state_fname;
-
-	/*virtual functions to be implemented by specific trackers*/
-	virtual void initTracker() = 0;
-	virtual double updateTrackerState() = 0;
-	virtual void updateCorners() = 0;
-	virtual void resetTrackerPosition(double pos_x, double pos_y) = 0;
-	virtual void resetTrackerTemplate(IMAGE_TYPE *img, double pos_x, double pos_y,
-		double size_x, double size_y) = 0;
-	virtual void getTransformedPoints(vector<XVPositionD> &in_pts, vector<XVPositionD> &out_pts) = 0;
-
-
-	/*helper functions*/
-	void getInitPoints();
-	void getInitPixelValues();
-	void getInitPixelValues2();
-	void writeTransformedPoints();
-	void writeTransformedPointsBin();
-	void writeCurrentFrameBin();
-	void writeCurrentFrameGS();
-	void writeCurrentFrameGSBin();
-	void writeInitData();
-	void writeParamsBin();
-	void printSSDOfRegion(int tracker_id);
-	void printSSDOfRegion(double *region_ssd);
-	void printSSSDLog(int tracker_id);
-	void printErrorLog(int tracker_id);
-	void getCurrentPixelValues();
-	int* getPixelValue(int x, int y, IMAGE_TYPE* img);
-	double* getPixelValue(double x, double y, IMAGE_TYPE* img);
-	PIX_TYPE_GS getPixelValueGS(int x, int y, IMAGE_TYPE_GS* img);
-	double getPixelValueGS(double x, double y, IMAGE_TYPE_GS* img);
-	double getCurrentSSD();
-	double getCurrentSSDGS();
-	double* getSSDOfRegion();
-
-	XVSSDMain(const ParamType *xv_params = NULL) : TrackerBase(),
-		params(xv_params){
-		this->xv_line_width = 3;
-		this->no_of_frames = 0;
-		this->region_thresh = 50;
-		this->region_size = (2 * region_thresh + 1) * (2 * region_thresh + 1);
-		this->init_pos_min = new XVPosition;
-		this->init_pos = new XVPosition;
-		this->init_size = new XVSize;
-	}
-
-	~XVSSDMain() {
-		if(write_tracker_states) {
-			delete(tracker_state_fname);
-		}
-	}
-
-	void setImage(const cv::Mat &img) override{
-		if(!xv_frame){
-			img_height = img.rows;
-			img_width = img.cols;
-			xv_frame = new IMAGE_TYPE(img_width, img_height);
-		}
-		xv_frame->remap((PIX_TYPE*)(img.data), false);
-	}
-	int inputType() const  override{ return CV_8UC3; }
-
-	void initialize(const Mat& cv_corners){
-		double pos_x = (cv_corners.at<double>(0, 0) + cv_corners.at<double>(0, 1) +
-			cv_corners.at<double>(0, 2) + cv_corners.at<double>(0, 3)) / 4;
-		double pos_y = (cv_corners.at<double>(1, 0) + cv_corners.at<double>(1, 1) +
-			cv_corners.at<double>(1, 2) + cv_corners.at<double>(1, 3)) / 4;
-		double size_x = ((cv_corners.at<double>(0, 1) - cv_corners.at<double>(0, 0)) + (cv_corners.at<double>(0, 2) - cv_corners.at<double>(0, 3))) / 2;
-		double size_y = ((cv_corners.at<double>(1, 3) - cv_corners.at<double>(1, 0)) + (cv_corners.at<double>(1, 2) - cv_corners.at<double>(1, 1))) / 2;
-		initialize(pos_x, pos_y, size_x, size_y);
-	}
 
 	void initialize(double pos_x, double pos_y,
 		double size_x, double size_y,
@@ -364,13 +342,12 @@ public:
 			//printf("frame_dir=%s\n", frame_dir);
 
 			//printf("Calling writeCurrentFrameGSBin\n");
-			writeCurrentFrameBin();			
+			writeCurrentFrameBin();
 			writeCurrentFrameGSBin();
 		}
 		updateCVCorners();
 		//printf("Done initializing\n");
 	}
-	void update(){ update(NULL); }
 
 	void update(IMAGE_TYPE *xv_frame_in, char* fps = "0.0") {
 		//printf("Updating with frame %d...\n", no_of_frames);
@@ -454,6 +431,29 @@ public:
 			diff_state_fout.close();
 		}
 	}
+	/*helper functions*/
+	void getInitPoints();
+	void getInitPixelValues();
+	void getInitPixelValues2();
+	void writeTransformedPoints();
+	void writeTransformedPointsBin();
+	void writeCurrentFrameBin();
+	void writeCurrentFrameGS();
+	void writeCurrentFrameGSBin();
+	void writeInitData();
+	void writeParamsBin();
+	void printSSDOfRegion(int tracker_id);
+	void printSSDOfRegion(double *region_ssd);
+	void printSSSDLog(int tracker_id);
+	void printErrorLog(int tracker_id);
+	void getCurrentPixelValues();
+	int* getPixelValue(int x, int y, IMAGE_TYPE* img);
+	double* getPixelValue(double x, double y, IMAGE_TYPE* img);
+	PIX_TYPE_GS getPixelValueGS(int x, int y, IMAGE_TYPE_GS* img);
+	double getPixelValueGS(double x, double y, IMAGE_TYPE_GS* img);
+	double getCurrentSSD();
+	double getCurrentSSDGS();
+	double* getSSDOfRegion();
 };
 
 #endif

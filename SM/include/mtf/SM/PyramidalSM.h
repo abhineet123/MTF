@@ -35,6 +35,8 @@ public:
 		return trackers[0]->getRegion();
 	}
 	void setRegion(const cv::Mat& corners)  override;
+	void setImagePyramid(const vector<cv::Mat> &_img_pyramid);
+	const vector<cv::Mat>& getImagePyramid() const{ return img_pyramid; }
 
 protected:
 
@@ -44,9 +46,6 @@ protected:
 	vector<cv::Mat> img_pyramid;
 	double overall_scale_factor;
 	bool external_img_pyramid;
-
-	void setImagePyramid(const vector<cv::Mat> &_img_pyramid);
-	const vector<cv::Mat>& getImagePyramid() const{ return img_pyramid; }
 	void updateImagePyramid();
 	void showImagePyramid();
 };

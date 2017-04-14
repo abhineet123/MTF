@@ -9,23 +9,10 @@ namespace nt{
 
 	class FALK : public SearchMethod {
 
-		init_profiling();
-		char *log_fname;
-		char *time_fname;
-
-		cv::Mat curr_img_uchar;
-		VectorXd curr_patch_eig;
-		cv::Mat curr_patch, curr_patch_uchar, curr_patch_resized;
-
-		std::string write_frame_dir;
-
-		void drawGrid();
-
 	public:
 		typedef FALKParams ParamType;
 		typedef ParamType::HessType HessType;
 
-		ParamType params;
 		using SearchMethod::initialize;
 		using SearchMethod::update;		
 
@@ -34,6 +21,10 @@ namespace nt{
 		void update() override;	
 
 	private:
+		ParamType params;
+
+		init_profiling();
+
 		// Let S = size of SSM state vector and N = resx * resy = no. of pixels in the object patch
 
 		//! 1 x S Jacobian of the AM similarity function w.r.t. SSM state vector
@@ -48,6 +39,17 @@ namespace nt{
 		Matrix24d prev_corners;
 		VectorXd ssm_update;
 		int frame_id;
+
+		char *log_fname;
+		char *time_fname;
+
+		cv::Mat curr_img_uchar;
+		VectorXd curr_patch_eig;
+		cv::Mat curr_patch, curr_patch_uchar, curr_patch_resized;
+
+		std::string write_frame_dir;
+
+		void drawGrid();
 	};
 }
 _MTF_END_NAMESPACE

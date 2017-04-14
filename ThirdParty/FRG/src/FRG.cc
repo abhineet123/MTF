@@ -83,6 +83,12 @@ void FRG::update(){
 	}	
 	updateCVCorners();
 }
+void FRG::setImage(const cv::Mat &img){
+	curr_img_uchar = img;
+	curr_img_uchar_resized.create(curr_img_uchar.rows*params.resize_factor,
+		curr_img_uchar.cols*params.resize_factor, CV_8UC1);
+	input_img = curr_img_uchar_resized;
+}
 void FRG::updateCVCorners(){
 	cv_corners_mat.at<double>(0, 0) = cv_corners_mat.at<double>(0, 3) =
 		static_cast<double>(frg_tracker->curr_template_tl_x) / params.resize_factor;

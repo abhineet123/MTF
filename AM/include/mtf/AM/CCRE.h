@@ -57,7 +57,6 @@ class CCRE : public AppearanceModel{
 public:
 
 	typedef CCREParams ParamType;	
-	ParamType params;	
 
 	CCRE(const ParamType *ccre_params = nullptr, int _n_channels = 1);
 
@@ -108,6 +107,7 @@ public:
 	int getDistFeatSize() override{ return feat_size; }
 
 protected:
+	ParamType params;
 
 	double max_similarity, likelihood_numr;
 

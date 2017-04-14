@@ -46,6 +46,16 @@ namespace dft{
 	class DFT : public mtf::TrackerBase{
 	public:
 		typedef DFTParams ParamType;
+
+		DFT();
+		DFT(const ParamType *dft_params = nullptr);
+		void setImage(const cv::Mat &img) override{ curr_img = img; }
+		int inputType() const  override{ return CV_32FC1; }
+		void initialize(const cv::Mat& corners) override;
+		void update() override;
+		void updateCVCorners();
+
+	private:
 		ParamType params;
 		OptimizationParameters opt_params;
 
@@ -61,14 +71,6 @@ namespace dft{
 
 		cv::Mat curr_img, curr_img_scaled;
 		cv::Mat templ, firstFrame;
-
-		DFT();
-		DFT(const ParamType *dft_params = nullptr);
-		void setImage(const cv::Mat &img) override{ curr_img = img; }
-		int inputType() const  override{ return CV_32FC1; }
-		void initialize(const cv::Mat& corners) override;
-		void update() override;
-		void updateCVCorners();
 	};
 }
 

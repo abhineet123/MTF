@@ -575,6 +575,80 @@ namespace utils{
 		return iso_params;
 	}
 
+	ProjWarpT computeASTDLT(const CornersT &in_corners, const CornersT &out_corners){
+		Matrix84d A;
+		A.fill(0);
+		// flattened version of the 2x4 matrix of target corner points
+		//Map<Vector8d> in_corners_vec((double*)in_corners.data());
+		//Map<Vector8d> out_corners_vec((double*)out_corners.data());
+		//Vector8d corner_diff_vec = out_corners_vec - in_corners_vec;
+
+		Vector8d corner_diff_vec;
+		//utils::printMatrix(in_corners, "in_corners");
+		//utils::printMatrix(out_corners_vec, "out_corners_vec");
+		//utils::printMatrix(out_corners, "out_corners");
+		for(int i = 0; i < 4; ++i){
+			int r1 = 2 * i;
+			A(r1, 0) = 1;
+			A(r1, 2) = in_corners(0, i);
+			corner_diff_vec(r1) = out_corners(0, i) - in_corners(0, i);
+
+			int r2 = 2 * i + 1;
+			A(r2, 1) = 1;
+			A(r2, 3) = in_corners(1, i);
+			corner_diff_vec(r2) = out_corners(1, i) - in_corners(1, i);
+		}
+		JacobiSVD<MatrixXd> svd(A, ComputeThinU | ComputeThinV);
+		Matrix84d U = svd.matrixU();
+		Matrix4d V = svd.matrixV();
+		Vector4d S = svd.singularValues();
+
+		Vector4d x = V * ((U.transpose() * corner_diff_vec).array() / S.array()).matrix();
+
+		ProjWarpT ast_mat = ProjWarpT::Zero();
+		ast_mat(0, 0) = 1 + x(2);
+		ast_mat(0, 2) = x(0);
+		ast_mat(1, 1) = 1 + x(3);
+		ast_mat(1, 2) = x(1);
+		ast_mat(2, 2) = 1;
+		return ast_mat;
+	}
+
+	ProjWarpT computeASTDLT(const PtsT &in_pts, const PtsT &out_pts){
+		assert(in_pts.cols() == out_pts.cols());
+		int n_pts = in_pts.cols();
+		MatrixXd A(2 * n_pts, 4);
+		A.fill(0);
+		VectorXd corner_diff_vec(n_pts * 2);
+		//utils::printMatrix(in_corners, "in_corners");
+		//utils::printMatrix(out_corners_vec, "out_corners_vec");
+		//utils::printMatrix(out_corners, "out_corners");
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+			int r1 = 2 * pt_id;
+			A(r1, 0) = 1;
+			A(r1, 2) = in_pts(0, pt_id);
+			corner_diff_vec(r1) = out_pts(0, pt_id) - in_pts(0, pt_id);
+
+			int r2 = 2 * pt_id + 1;
+			A(r2, 1) = 1;
+			A(r2, 3) = in_pts(1, pt_id);
+			corner_diff_vec(r2) = out_pts(1, pt_id) - in_pts(1, pt_id);
+		}
+		JacobiSVD<MatrixXd> svd(A, ComputeThinU | ComputeThinV);
+
+		Vector4d x = svd.matrixV() * ((svd.matrixU().transpose() * corner_diff_vec).array() /
+			svd.singularValues().array()).matrix();
+
+		ProjWarpT ast_mat = ProjWarpT::Zero();
+		ast_mat(0, 0) = 1 + x(2);
+		ast_mat(0, 2) = x(0);
+		ast_mat(1, 1) = 1 + x(3);
+		ast_mat(1, 2) = x(1);
+		ast_mat(2, 2) = 1;
+
+		return ast_mat;
+	}
+
 	ProjWarpT computeISTDLT(const CornersT &in_corners, const CornersT &out_corners){
 		Matrix83d A;
 		A.fill(0);
@@ -605,14 +679,14 @@ namespace utils{
 
 		Vector3d x = V * ((U.transpose() * corner_diff_vec).array() / S.array()).matrix();
 
-		ProjWarpT transcale_mat = ProjWarpT::Zero();
-		transcale_mat(0, 0) = 1 + x(2);
-		transcale_mat(0, 2) = x(0);
-		transcale_mat(1, 1) = 1 + x(2);
-		transcale_mat(1, 2) = x(1);
-		transcale_mat(2, 2) = 1;
+		ProjWarpT ist_mat = ProjWarpT::Zero();
+		ist_mat(0, 0) = 1 + x(2);
+		ist_mat(0, 2) = x(0);
+		ist_mat(1, 1) = 1 + x(2);
+		ist_mat(1, 2) = x(1);
+		ist_mat(2, 2) = 1;
 
-		return transcale_mat;
+		return ist_mat;
 	}
 
 	ProjWarpT computeISTDLT(const PtsT &in_pts, const PtsT &out_pts){
@@ -640,14 +714,14 @@ namespace utils{
 		Vector3d x = svd.matrixV() * ((svd.matrixU().transpose() * corner_diff_vec).array() /
 			svd.singularValues().array()).matrix();
 
-		ProjWarpT transcale_mat = ProjWarpT::Zero();
-		transcale_mat(0, 0) = 1 + x(2);
-		transcale_mat(0, 2) = x(0);
-		transcale_mat(1, 1) = 1 + x(2);
-		transcale_mat(1, 2) = x(1);
-		transcale_mat(2, 2) = 1;
+		ProjWarpT ist_mat = ProjWarpT::Zero();
+		ist_mat(0, 0) = 1 + x(2);
+		ist_mat(0, 2) = x(0);
+		ist_mat(1, 1) = 1 + x(2);
+		ist_mat(1, 2) = x(1);
+		ist_mat(2, 2) = 1;
 
-		return transcale_mat;
+		return ist_mat;
 	}
 
 	// normalizes the given points so that their mean (centroid) moves to origin

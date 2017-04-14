@@ -11,7 +11,6 @@ class CascadeTracker : public CompositeBase{
 
 public:
 	typedef CascadeParams ParamType;
-	ParamType params;
 
 	CascadeTracker(const vector<TrackerBase*> _trackers,
 		const ParamType *casc_params=nullptr);
@@ -24,6 +23,8 @@ public:
 	void setImage(const cv::Mat &img) override;
 
 protected:
+	ParamType params;
+
 	bool failure_detected;
 	vector<cv::Mat> img_buffer, corners_buffer;
 	int buffer_id;

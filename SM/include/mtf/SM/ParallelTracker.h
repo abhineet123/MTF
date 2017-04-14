@@ -11,17 +11,7 @@ class ParallelTracker : public CompositeBase {
 
 public:
 	typedef ParallelParams ParamType;
-	ParamType params;
-
-	bool failure_detected;
-	vector<cv::Mat> img_buffer, corners_buffer;
-	int buffer_id;
-	bool buffer_filled;
-	cv::Mat curr_img;
-
 	typedef ParamType::PrlEstMethod EstimationMethod;
-
-	cv::Mat mean_corners_cv;
 
 	ParallelTracker(const vector<TrackerBase*> _trackers, const ParamType *parl_params);
 	void setImage(const cv::Mat &img) override;
@@ -31,6 +21,15 @@ public:
 		return mean_corners_cv;
 	}
 	void setRegion(const cv::Mat& corners)  override;
+protected:
+	ParamType params;
+
+	bool failure_detected;
+	vector<cv::Mat> img_buffer, corners_buffer;
+	int buffer_id;
+	bool buffer_filled;
+	cv::Mat curr_img;
+	cv::Mat mean_corners_cv;
 };
 
 _MTF_END_NAMESPACE

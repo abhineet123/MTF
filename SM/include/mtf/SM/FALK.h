@@ -8,11 +8,6 @@ _MTF_BEGIN_NAMESPACE
 
 template<class AM, class SSM>
 class FALK : public SearchMethod < AM, SSM > {
-
-	init_profiling();
-	char *log_fname;
-	char *time_fname;
-
 public:
 
 	typedef FALKParams ParamType;
@@ -50,6 +45,10 @@ protected:
 	Matrix24d prev_corners;
 	VectorXd ssm_update;
 	int frame_id;
+
+	init_profiling();
+	char *log_fname;
+	char *time_fname;
 
 };
 _MTF_END_NAMESPACE

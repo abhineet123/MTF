@@ -34,23 +34,6 @@ struct KLDParams : AMParams{
 class KLD : public AppearanceModel{
 public:
 	typedef KLDParams ParamType;
-	ParamType params;
-
-	char *log_fname;
-	char *time_fname;
-
-	//! multiplicative factor for normalizing histograms
-	double hist_norm_mult;
-
-	// let A = err_vec_size = n_bins*n_bins and N = n_pix = no. of pixels
-	VectorXd init_hist, curr_hist;
-	MatrixXd init_hist_mat, curr_hist_mat;
-
-	//! n_bins X N gradients of the individual histograms w.r.t. pixel values
-	MatrixXd init_hist_grad, curr_hist_grad;
-	MatrixXd init_hist_hess, curr_hist_hess;
-	VectorXd init_grad_factor, curr_grad_factor;
-	VectorXd init_hist_log, curr_hist_log;
 
 	KLD(const ParamType *kld_params = nullptr);
 
@@ -71,9 +54,6 @@ public:
 		const MatrixXd &curr_pix_hessian) override;
 
 	//----------------- functor support--------------------------------------
-	int feat_size;
-	VectorXd feat_vec;
-
 	typedef double ElementType;
 	typedef double ResultType;
 	typedef bool is_kdtree_distance;
@@ -105,6 +85,27 @@ public:
 	}
 
 private:
+	ParamType params;
+
+	char *log_fname;
+	char *time_fname;
+
+	//! multiplicative factor for normalizing histograms
+	double hist_norm_mult;
+
+	// let A = err_vec_size = n_bins*n_bins and N = n_pix = no. of pixels
+	VectorXd init_hist, curr_hist;
+	MatrixXd init_hist_mat, curr_hist_mat;
+
+	//! n_bins X N gradients of the individual histograms w.r.t. pixel values
+	MatrixXd init_hist_grad, curr_hist_grad;
+	MatrixXd init_hist_hess, curr_hist_hess;
+	VectorXd init_grad_factor, curr_grad_factor;
+	VectorXd init_hist_log, curr_hist_log;
+
+	int feat_size;
+	VectorXd feat_vec;
+
 	// only used internally to increase speed by offlining as many computations as possible;
 	MatrixX2i _std_bspl_ids;
 	MatrixX2i _init_bspl_ids;

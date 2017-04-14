@@ -74,7 +74,6 @@ class ESMH : public SearchMethod < AM, SSM > {
 
 public:
 	typedef ESMHParams ParamType;
-	ParamType params;
 
 	typedef ParamType::JacType JacType;
 	typedef ParamType::HessType HessType;
@@ -87,6 +86,9 @@ public:
 	using SearchMethod<AM, SSM> ::name;
 	using SearchMethod<AM, SSM> ::initialize;
 	using SearchMethod<AM, SSM> ::update;
+
+protected:
+	ParamType params;
 
 	int frame_id;
 	VectorXc pix_mask2;
@@ -105,6 +107,7 @@ public:
 	//! S x S Hessian of the AM error norm w.r.t. SSM state vector
 	MatrixXd hessian, init_self_hessian;
 
+public:
 
 	ESMH(const ParamType *esm_params,
 		const AMParams *am_params, const SSMParams *ssm_params) :

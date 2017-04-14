@@ -27,8 +27,6 @@ class Homography : public ProjectiveBase{
 public:
 	
 	typedef HomographyParams ParamType;
-	ParamType params;
-
 	using ProjectiveBase::setCorners;
 
 	Homography( const ParamType *params_in = nullptr);
@@ -82,6 +80,8 @@ public:
 #endif
 
 private:
+	ParamType params;
+
 	CornersT rand_d;
 	Vector2d rand_t;
 	CornersT disturbed_corners;

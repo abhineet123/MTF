@@ -8,11 +8,6 @@ _MTF_BEGIN_NAMESPACE
 namespace nt{
 
 	class IALK : public SearchMethod{
-
-		init_profiling();
-		char *log_fname;
-		char *time_fname;
-
 	public:
 
 		typedef IALKParams ParamType;
@@ -48,6 +43,9 @@ namespace nt{
 		Matrix3d warp_update;
 		int frame_id;
 
+		init_profiling();
+		char *log_fname;
+		char *time_fname;
 	};
 }
 _MTF_END_NAMESPACE

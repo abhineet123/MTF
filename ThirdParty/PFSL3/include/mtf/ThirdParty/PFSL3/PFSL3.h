@@ -62,10 +62,6 @@ struct PFSL3Params {
 class PFSL3 : public mtf::TrackerBase {
 public:
 	typedef PFSL3Params ParamType;
-	ParamType params;
-
-	CvMat curr_img;
-	CvMat *img;
 
 	PFSL3(const ParamType *pfsl3_params=nullptr);
 	virtual ~PFSL3() {}
@@ -76,6 +72,11 @@ public:
 	void updateCVCorners();
 
 private:
+	ParamType params;
+
+	CvMat curr_img;
+	CvMat *img;
+
 	FILE *debug_fid;
 	int p_x, p_y;
 	double c_x, c_y, l_x, l_y;

@@ -106,6 +106,14 @@ class LineTracker : public CompositeBase {
 public:
 
 	typedef  LineTrackerParams ParamType;
+
+	LineTracker(const vector<TrackerBase*> trackers,
+	 const ParamType *line_params = nullptr);
+	~LineTracker(){}
+	void initialize(const cv::Mat& cv_corners) override;
+	void update() override;
+
+private:
 	ParamType params;
 
 	int corner_tracker_ids[4];
@@ -126,12 +134,6 @@ public:
 	lineParams *mean_vert_params;
 
 	int is_initialized;
-
-	LineTracker(const vector<TrackerBase*> trackers,
-	 const ParamType *line_params = nullptr);
-	~LineTracker(){}
-	void initialize(const cv::Mat& cv_corners) override;
-	void update() override;
 
 	void initGridPositions(const cv::Mat& cv_corners);
 	void updateAlpha(gridLine* curr_lines, gridLine* prev_lines, 

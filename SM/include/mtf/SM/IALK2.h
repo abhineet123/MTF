@@ -50,16 +50,8 @@ struct IALK2Params{
 template<class AM, class SSM>
 class IALK2 : public SearchMethod < AM, SSM > {
 
-private:
-	ClockType start_time, end_time;
-	std::vector<double> proc_times;
-	std::vector<char*> proc_labels;
-	char *log_fname;
-	char *time_fname;
-
 public:
 	typedef IALK2Params ParamType;
-	ParamType params;
 	typedef typename ParamType::HessType HessType;
 
 	using SearchMethod<AM, SSM> ::am;
@@ -71,6 +63,15 @@ public:
 
 	using SearchMethod<AM, SSM> ::initialize;
 	using SearchMethod<AM, SSM> ::update;
+
+	IALK2(const ParamType *iclk_params = NULL,
+		const AMParams *am_params = NULL, const SSMParams *ssm_params = NULL);
+
+	void initialize(const cv::Mat &corners) override;
+	void update() override;
+
+private:
+	ParamType params;
 
 	// Let S = size of SSM state vector and N = resx * resy = no. of pixels in the object patch
 	//! 1 x S Jacobian of the AM error norm w.r.t. SSM state vector
@@ -85,14 +86,11 @@ public:
 	Matrix24d prev_corners;
 	VectorXd ssm_update, inv_update;
 	int frame_id;
-
-	IALK2(const ParamType *iclk_params = NULL,
-		const AMParams *am_params = NULL, const SSMParams *ssm_params = NULL);
-
-	void initialize(const cv::Mat &corners) override;
-	void update() override;
-
-private:
+	ClockType start_time, end_time;
+	std::vector<double> proc_times;
+	std::vector<char*> proc_labels;
+	char *log_fname;
+	char *time_fname;
 	void updatePixJacobian();
 	void updatePixHessian();
 

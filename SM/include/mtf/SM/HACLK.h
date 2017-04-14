@@ -51,19 +51,11 @@ struct HACLKParams{
 // Hessian After Convergence Lucas Kanade Search Method
 template<class AM, class SSM>
 class HACLK : public SearchMethod < AM, SSM > {
-private:
-	ClockType start_time, end_time;
-	std::vector<double> proc_times;
-	std::vector<char*> proc_labels;
-	char *log_fname;
-	char *time_fname;
 public:
 
 	enum { GaussNewton, Newton, InitialNewton, CurrentNewton,  ConvergedNewton};
-	bool use_newton_method;
 
 	typedef HACLKParams ParamType;
-	ParamType params;	
 
 	using SearchMethod<AM, SSM> ::am;
 	using SearchMethod<AM, SSM> ::ssm;
@@ -74,6 +66,16 @@ public:
 	using SearchMethod<AM, SSM> ::initialize;
 	using SearchMethod<AM, SSM> ::update;
 
+	HACLK(const ParamType *haclk_params = nullptr,
+		const AMParams *am_params = nullptr, const SSMParams *ssm_params = nullptr);
+
+	void initialize(const cv::Mat &corners) override;
+	void update() override;
+
+private:
+	ParamType params;
+
+	bool use_newton_method;
 	// Let S = size of SSM state vector and N = resx * resy = no. of pixels in the object patch
 
 	//! N x S jacobians of the pix values w.r.t the SSM state vector 
@@ -97,15 +99,12 @@ public:
 
 	int n_frames;
 	int frame_id;
-
-	HACLK(const ParamType *haclk_params = nullptr,
-		const AMParams *am_params = nullptr, const SSMParams *ssm_params = nullptr);
-
-	void initialize(const cv::Mat &corners) override;
-	void update() override;
-
-private:
 	VectorXd inv_state;
+	ClockType start_time, end_time;
+	std::vector<double> proc_times;
+	std::vector<char*> proc_labels;
+	char *log_fname;
+	char *time_fname;
 	inline void updateSSM(VectorXd &state_update){
 		ssm.compositionalUpdate(state_update);
 	}

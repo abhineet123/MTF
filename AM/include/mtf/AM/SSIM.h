@@ -19,7 +19,6 @@ struct SSIMParams : AMParams{
 class SSIM : public AppearanceModel{
 public:
 	typedef SSIMParams ParamType;
-	ParamType params;
 
 	SSIM(const ParamType *ssim_params = nullptr, const int _n_channels = 1);
 
@@ -53,7 +52,6 @@ public:
 	}
 
 	/*Support for FLANN library*/
-	VectorXd curr_feat_vec;
 	typedef double ElementType;
 	typedef double ResultType;
 	double operator()(const double* a, const double* b, size_t size, double worst_dist = -1) const override;
@@ -64,6 +62,8 @@ public:
 	int getDistFeatSize() override;
 
 protected:
+	ParamType params;
+
 	//! mean, variance and standard deviation of the initial pixel values
 	double init_pix_mean, init_pix_var, init_pix_mean2;
 	//! mean, variance and standard deviation of the current pixel values
@@ -79,6 +79,8 @@ protected:
 
 	RowVectorXd init_grad_vec, curr_grad_vec;
 	double init_grad_scal, curr_grad_scal;
+
+	VectorXd curr_feat_vec;
 };
 
 _MTF_END_NAMESPACE

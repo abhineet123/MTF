@@ -55,37 +55,12 @@ public:
 	typedef NumericalDataType NDT;
 	typedef ParamType::UpdateType UpdateType;
 
-	ParamType params;
-
-	AM am;
-	SSM ssm;
-
 	int frame_id;
 	int n_pix;
 
 	int am_dist_size;
 	int ssm_state_size, am_state_size;
 	int state_size;
-
-	VectorXd inv_ssm_state, inv_am_state;
-
-	//! N x S jacobians of the pix values w.r.t the SSM state vector where N = resx * resy
-	//! is the no. of pixels in the object patch
-	MatrixXd init_pix_jacobian, init_pix_hessian;
-	MatrixXd curr_pix_jacobian, curr_pix_hessian;
-	MatrixXd mean_pix_jacobian, mean_pix_hessian;
-
-	//! 1 x S Jacobian of the AM error norm w.r.t. SSM state vector
-	RowVectorXd similarity_jacobian;
-	//! S x S Hessian of the AM error norm w.r.t. SSM state vector
-	MatrixXd hessian, init_hessian;
-	MatrixXd init_self_hessian, init_self_hessian2;
-	MatrixXd curr_self_hessian, curr_self_hessian2;
-
-	VectorXd init_dist_vec, curr_dist_vec;
-
-	Matrix3d warp_update;
-	char *update_name;
 
 	Diagnostics(AM _am, SSM _ssm,
 		const ParamType *diag_params = nullptr);
@@ -119,8 +94,34 @@ public:
 	const char* toString(NDT data_type);
 	const MatrixXd& getData(){ return diagnostics_data; }
 
+	AM& getAM(){ return am; }
+	SSM& getSSM(){ return ssm; }
 
 private:
+	ParamType params;
+
+	AM am;
+	SSM ssm;
+
+	VectorXd inv_ssm_state, inv_am_state;
+
+	//! N x S jacobians of the pix values w.r.t the SSM state vector where N = resx * resy
+	//! is the no. of pixels in the object patch
+	MatrixXd init_pix_jacobian, init_pix_hessian;
+	MatrixXd curr_pix_jacobian, curr_pix_hessian;
+	MatrixXd mean_pix_jacobian, mean_pix_hessian;
+
+	//! 1 x S Jacobian of the AM error norm w.r.t. SSM state vector
+	RowVectorXd similarity_jacobian;
+	//! S x S Hessian of the AM error norm w.r.t. SSM state vector
+	MatrixXd hessian, init_hessian;
+	MatrixXd init_self_hessian, init_self_hessian2;
+	MatrixXd curr_self_hessian, curr_self_hessian2;
+
+	VectorXd init_dist_vec, curr_dist_vec;
+
+	Matrix3d warp_update;
+	char *update_name;
 	MatrixXd diagnostics_data;
 
 	char *init_patch_win_name;

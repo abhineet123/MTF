@@ -25,11 +25,6 @@ class LieAffine : public ProjectiveBase{
 public:
 
 	typedef LieAffineParams ParamType;
-	ParamType params;
-
-	Matrix3d lieAlgBasis[6];
-	RowVector3d zero_vec;
-	Matrix3d lie_alg_mat;
 
 	using StateSpaceModel::setCorners;
 
@@ -61,10 +56,12 @@ public:
 	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
 	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
 
+protected:
+	ParamType params;
 
-
-
-
+	Matrix3d lieAlgBasis[6];
+	RowVector3d zero_vec;
+	Matrix3d lie_alg_mat;
 };
 
 _MTF_END_NAMESPACE

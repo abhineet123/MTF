@@ -29,14 +29,8 @@ struct FCSDParams{
 namespace nt{
 
 	class FCSD : public SearchMethod {
-		init_profiling();
-		char *log_fname;
-		char *time_fname;
-
 	public:
 		typedef FCSDParams ParamType;
-
-		ParamType params;
 
 		using SearchMethod ::am;
 		using SearchMethod ::ssm;
@@ -51,6 +45,8 @@ namespace nt{
 		void update() override;
 
 	protected:
+		ParamType params;
+
 		// Let S = size of SSM state vector and N = resx * resy = no. of pixels in the object patch
 
 		//! 1 x S Jacobian of the AM error norm w.r.t. SSM state vector
@@ -65,6 +61,10 @@ namespace nt{
 		Matrix3d warp_update;
 		int frame_id;
 		double learning_rate;
+
+		init_profiling();
+		char *log_fname;
+		char *time_fname;
 
 	};
 }

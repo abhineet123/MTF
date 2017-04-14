@@ -32,13 +32,7 @@ struct LieIsometryParams{
 
 class LieIsometry : public ProjectiveBase{
 public:
-
 	typedef LieIsometryParams ParamType;
-	ParamType params;
-
-	Matrix3d lieAlgBasis[3];
-	RowVector3d zero_vec;
-	Matrix3d lie_alg_mat;
 
 	LieIsometry( LieIsometryParams *params_in = nullptr);
 
@@ -68,6 +62,13 @@ public:
 
 	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
 	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
+
+protected:
+	ParamType params;
+
+	Matrix3d lieAlgBasis[3];
+	RowVector3d zero_vec;
+	Matrix3d lie_alg_mat;
 };
 
 _MTF_END_NAMESPACE

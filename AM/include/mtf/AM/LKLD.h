@@ -48,31 +48,6 @@ struct LKLDParams : AMParams{
 class LKLD : public AppearanceModel{
 public:
 	typedef LKLDParams ParamType;
-	ParamType params;
-
-	char *log_fname;
-	char *time_fname;
-
-	//! multiplicative factor for normalizing histograms
-	double hist_norm_mult;
-
-	// let A = err_vec_size = n_bins*n_bins and N = n_pix = no. of pixels
-	MatrixXd init_hists, curr_hists;
-	MatrixXd init_hists_log, curr_hists_log;
-	MatrixXd init_grad_factors, curr_grad_factors;
-
-	MatrixXd init_hist_mat, curr_hist_mat;
-	//! n_bins X N gradients of the individual histograms w.r.t. pixel values
-	MatrixXd init_hist_grad, curr_hist_grad;
-	MatrixXd init_hist_hess, curr_hist_hess;
-
-	int n_sub_regions;
-	int patch_size_x, patch_size_y;
-	int sub_region_size_x, sub_region_size_y;
-	int sub_region_n_pix;
-	MatrixX2i sub_region_x, sub_region_y;
-	MatrixXi sub_region_pix_id;
-
 
 	LKLD(const ParamType *kld_params = nullptr);
 
@@ -101,9 +76,6 @@ public:
 		const MatrixXd &curr_pix_hessian) override;
 
 	//----------------- functor support--------------------------------------
-	int feat_size;
-	VectorXd feat_vec;
-
 	typedef double ElementType;
 	typedef double ResultType;
 
@@ -119,6 +91,35 @@ public:
 		size_t hist_mat_size, double worst_dist = -1) const override;
 
 private:
+
+	ParamType params;
+
+	char *log_fname;
+	char *time_fname;
+
+	//! multiplicative factor for normalizing histograms
+	double hist_norm_mult;
+
+	// let A = err_vec_size = n_bins*n_bins and N = n_pix = no. of pixels
+	MatrixXd init_hists, curr_hists;
+	MatrixXd init_hists_log, curr_hists_log;
+	MatrixXd init_grad_factors, curr_grad_factors;
+
+	MatrixXd init_hist_mat, curr_hist_mat;
+	//! n_bins X N gradients of the individual histograms w.r.t. pixel values
+	MatrixXd init_hist_grad, curr_hist_grad;
+	MatrixXd init_hist_hess, curr_hist_hess;
+
+	int n_sub_regions;
+	int patch_size_x, patch_size_y;
+	int sub_region_size_x, sub_region_size_y;
+	int sub_region_n_pix;
+	MatrixX2i sub_region_x, sub_region_y;
+	MatrixXi sub_region_pix_id;
+
+	int feat_size;
+	VectorXd feat_vec;
+
 	// only used internally to increase speed by offlining as many computations as possible;
 	MatrixX2i _std_bspl_ids;
 	MatrixX2i _init_bspl_ids;

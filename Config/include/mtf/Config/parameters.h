@@ -247,8 +247,8 @@ namespace mtf{
 		double lhom_grad_eps = 1e-8;
 
 		//! Corner based Homograhy
-		int chom_normalized_init = 0;
-		double chom_grad_eps = 1e-8;
+		int cbh_normalized_init = 0;
+		double cbh_grad_eps = 1e-8;
 
 		//! Similitude
 		bool sim_normalized_init = false;
@@ -1277,10 +1277,10 @@ namespace mtf{
 				sl3_debug_mode = atoi(arg_val);
 			}
 			//! Corner based Homography
-			else if(!strcmp(arg_name, "chom_normalized_init")){
-				chom_normalized_init = atoi(arg_val);
-			} else if(!strcmp(arg_name, "chom_grad_eps")){
-				chom_grad_eps = atof(arg_val);
+			else if(!strcmp(arg_name, "cbh_normalized_init")){
+				cbh_normalized_init = atoi(arg_val);
+			} else if(!strcmp(arg_name, "cbh_grad_eps")){
+				cbh_grad_eps = atof(arg_val);
 			}
 			//! Spline SSM
 			else if(!strcmp(arg_name, "spl_control_size")){

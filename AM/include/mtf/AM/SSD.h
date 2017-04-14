@@ -18,7 +18,6 @@ class SSD : public SSDBase{
 public:
 
 	typedef SSDParams ParamType;
-	ParamType params;
 
 	SSD(const ParamType *ssd_params = nullptr, const int _n_channels = 1);
 	double getLikelihood() const override{
@@ -33,6 +32,8 @@ public:
 	void updateModel(const Matrix2Xd& curr_pts) override;
 
 protected:
+	ParamType params;
+
 	bool use_running_avg;
 	double old_pix_wt;
 

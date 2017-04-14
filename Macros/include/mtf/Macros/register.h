@@ -47,10 +47,11 @@
 #include "mtf/SSM/Affine.h"
 #include "mtf/SSM/Similitude.h"
 #include "mtf/SSM/Isometry.h"
+#include "mtf/SSM/AST.h"
 #include "mtf/SSM/IST.h"
 #include "mtf/SSM/Translation.h"
 #include "mtf/SSM/LieHomography.h"
-#include "mtf/SSM/CornerHomography.h"
+#include "mtf/SSM/CBH.h"
 #include "mtf/SSM/SL3.h"
 #include "mtf/SSM/Spline.h"	
 
@@ -114,24 +115,26 @@
 
 #define _REGISTER_TRACKERS(SM) \
 	_REGISTER_TRACKERS_AM(SM, LieHomography)\
-	_REGISTER_TRACKERS_AM(SM, CornerHomography)\
+	_REGISTER_TRACKERS_AM(SM, CBH)\
 	_REGISTER_TRACKERS_AM(SM, SL3)\
 	_REGISTER_TRACKERS_AM(SM, Homography)\
 	_REGISTER_TRACKERS_AM(SM, Affine)\
 	_REGISTER_TRACKERS_AM(SM, Similitude)\
 	_REGISTER_TRACKERS_AM(SM, Isometry)\
+	_REGISTER_TRACKERS_AM(SM, AST)\
 	_REGISTER_TRACKERS_AM(SM, IST)\
 	_REGISTER_TRACKERS_AM(SM, Translation)\
 	_REGISTER_TRACKERS_AM(SM, Spline)\
 
 #define _REGISTER_TRACKERS_SSM(SM) \
 	template class mtf::SM< mtf::LieHomography>;\
-	template class mtf::SM< mtf::CornerHomography>;\
+	template class mtf::SM< mtf::CBH>;\
 	template class mtf::SM< mtf::SL3>;\
 	template class mtf::SM< mtf::Homography>;\
 	template class mtf::SM< mtf::Affine>;\
 	template class mtf::SM< mtf::Similitude>;\
 	template class mtf::SM< mtf::Isometry>;\
+	template class mtf::SM< mtf::AST>;\
 	template class mtf::SM< mtf::IST>;\
 	template class mtf::SM< mtf::Translation>;\
 	template class mtf::SM< mtf::Spline>;
@@ -203,24 +206,26 @@
 
 #define _REGISTER_HTRACKERS_SSM(SM, SSM) \
 	_REGISTER_HTRACKERS_AM(SM, SSM, LieHomography)\
-	_REGISTER_HTRACKERS_AM(SM, SSM, CornerHomography)\
+	_REGISTER_HTRACKERS_AM(SM, SSM, CBH)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, SL3)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Homography)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Affine)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Similitude)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Isometry)\
+	_REGISTER_HTRACKERS_AM(SM, SSM, AST)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, IST)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Translation)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Spline)\
 
 #define _REGISTER_HTRACKERS(SM) \
 	_REGISTER_HTRACKERS_SSM(SM, LieHomography)\
-	_REGISTER_HTRACKERS_SSM(SM, CornerHomography)\
+	_REGISTER_HTRACKERS_SSM(SM, CBH)\
 	_REGISTER_HTRACKERS_SSM(SM, SL3)\
 	_REGISTER_HTRACKERS_SSM(SM, Homography)\
 	_REGISTER_HTRACKERS_SSM(SM, Affine)\
 	_REGISTER_HTRACKERS_SSM(SM, Similitude)\
 	_REGISTER_HTRACKERS_SSM(SM, Isometry)\
+	_REGISTER_HTRACKERS_SSM(SM, AST)\
 	_REGISTER_HTRACKERS_SSM(SM, IST)\
 	_REGISTER_HTRACKERS_SSM(SM, Translation)\
 	_REGISTER_HTRACKERS_SSM(SM, Spline)\
@@ -258,12 +263,13 @@
 
 #define _REGISTER_ESM(HT, JT) \
 	_REGISTER_ESM_AM(HT, JT, LieHomography)\
-	_REGISTER_ESM_AM(HT, JT, CornerHomography)\
+	_REGISTER_ESM_AM(HT, JT, CBH)\
 	_REGISTER_ESM_AM(HT, JT, SL3)\
 	_REGISTER_ESM_AM(HT, JT, Homography)\
 	_REGISTER_ESM_AM(HT, JT, Affine)\
 	_REGISTER_ESM_AM(HT, JT, Similitude)\
 	_REGISTER_ESM_AM(HT, JT, Isometry)\
+	_REGISTER_ESM_AM(HT, JT, AST)\
 	_REGISTER_ESM_AM(HT, JT, IST)\
 	_REGISTER_ESM_AM(HT, JT, Translation)\
 	_REGISTER_ESM_AM(HT, JT, Spline)\

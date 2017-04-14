@@ -20,7 +20,6 @@ using cv::Ptr;
 using cv::RotatedRect;
 using cv::Size2f;
 
-
 struct CMTParams{
 	bool estimate_scale;
 	bool estimate_rotation;
@@ -37,9 +36,6 @@ namespace cmt{
 	class CMT : public mtf::TrackerBase{
 	public:
 		typedef CMTParams ParamType;
-		ParamType params;
-		Mat curr_img_gs;
-		Mat curr_img_gs_resized;
 		CMT();
 		CMT(const CMTParams *cmt_params = nullptr);
 		int inputType() const  override{ return CV_8UC1; }
@@ -49,6 +45,9 @@ namespace cmt{
 		void setImage(const cv::Mat &img)  override{ curr_img_gs = img; }
 		void processFrame(const Mat im_gray);
 		void updateCVCorners();
+
+	private:
+		ParamType params;
 
 		Fusion fusion;
 		Matcher matcher;
@@ -61,7 +60,8 @@ namespace cmt{
 		vector<Point2f> points_active; //public for visualization purposes
 		RotatedRect bb_rot;
 
-	private:
+		Mat curr_img_gs;
+		Mat curr_img_gs_resized;
 		Ptr<FeatureDetector> detector;
 		Ptr<DescriptorExtractor> descriptor;
 		Size2f size_initial;

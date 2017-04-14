@@ -29,12 +29,6 @@ struct GOTURNParams{
 class GOTURN : public mtf::TrackerBase{
 public:
 	typedef GOTURNParams ParamType;
-	ParamType params;
-
-	Regressor *regressor;
-	Tracker *tracker;
-
-	cv::Mat curr_img;
 	GOTURN(const GOTURNParams *gtrn_params = nullptr);
 	~GOTURN();
 
@@ -42,11 +36,18 @@ public:
 	void initialize(const cv::Mat& cv_corners) override;
 	void update() override;
 	void setImage(const cv::Mat &img)  override{ curr_img = img; }
-	void updateCVCorners();
 
 private:
+	ParamType params;
+
+	Regressor *regressor;
+	Tracker *tracker;
+
+	cv::Mat curr_img;
 	BoundingBox bbox_estimate;
 	std::vector<float> bounding_box_vec;
+
+	void updateCVCorners();
 };
 
 #endif /* end of include guard: GOTURN_H */
