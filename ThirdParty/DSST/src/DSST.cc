@@ -102,7 +102,8 @@ void DSSTTracker::setRegion(const cv::Mat& corners){
         corners_vec.push_back(cv::Point2f(tr.x/tParams.resize_factor, tr.y/tParams.resize_factor));
         corners_vec.push_back(cv::Point2f(br.x/tParams.resize_factor, br.y/tParams.resize_factor));
 
-		Vector3d result = utils::computeIsometryDLT(utils::Corners(tSetup.init_bb).eig(), utils::Corners(corners).eig());
+		Vector3d result = mtf::utils::computeIsometryDLT(
+			mtf::utils::Corners(tSetup.init_bb).eig(), mtf::utils::Corners(corners).eig());
        // init_bb.size= cv::Size(result[0]*tSetup.original.width,result[1]*tSetup.original.height);
         
         init_bb= cv::minAreaRect(corners_vec);
