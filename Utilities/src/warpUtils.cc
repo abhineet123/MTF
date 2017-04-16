@@ -102,7 +102,8 @@ namespace utils{
 	//! tests if the given point is inside the given polygon - undefined for points on the edges
 	bool isInsideRegion(const cv::Mat &verices, double testx, double testy){
 		int n_vert = verices.cols;
-		int i, j, c = 0;
+		int i, j;
+		bool c = false;
 		for(i = 0, j = n_vert - 1; i < n_vert; j = i++) {
 			if(((verices.at<double>(1, i)>testy) != (verices.at<double>(1, j) > testy)) &&
 				(testx < (verices.at<double>(0, j) - verices.at<double>(0, i)) *

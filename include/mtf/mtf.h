@@ -476,16 +476,14 @@ TrackerBase *getTracker(const char *sm_type,
 		//! make copies of the original AM and SSM types in case they have 
 		//! accidently been changed in the multi trcker param file since
 		//! all trackers in CascadeSM must have the same AM and SSM
-		char _mtf_am[strlen(mtf_am)], _mtf_ssm[strlen(mtf_ssm)];
-		strcpy(_mtf_am, mtf_am);
-		strcpy(_mtf_ssm, mtf_ssm);
-
+		std::string _mtf_am(mtf_am), _mtf_ssm(mtf_ssm);
 		FILE *fid = nullptr;
 		vector<SMType*> trackers;
 		trackers.resize(casc_n_trackers);
 		for(int i = 0; i < casc_n_trackers; i++){
 			fid = readTrackerParams(fid, 1);
-			if(!(trackers[i] = dynamic_cast<SMType*>(getTracker(mtf_sm, _mtf_am, _mtf_ssm, mtf_ilm)))){
+			if(!(trackers[i] = dynamic_cast<SMType*>(getTracker(mtf_sm, _mtf_am.c_str(), 
+				_mtf_ssm.c_str(), mtf_ilm)))){
 				printf("Invalid search method provided for cascade SM tracker: %s\n", mtf_sm);
 				return nullptr;
 			}
@@ -592,10 +590,7 @@ TrackerBase *getTracker(const char *sm_type,
 		//! make copies of the original AM and SSM types in case they have 
 		//! accidently been changed in the multi trcker param file since
 		//! all trackers in ParallelSM must have the same AM and SSM
-		char _mtf_am[strlen(mtf_am)], _mtf_ssm[strlen(mtf_ssm)];
-		strcpy(_mtf_am, mtf_am);
-		strcpy(_mtf_ssm, mtf_ssm);
-
+		std::string _mtf_am(mtf_am), _mtf_ssm(mtf_ssm);
 		FILE *fid = nullptr;
 		for(int tracker_id = 0; tracker_id < prl_n_trackers; tracker_id++) {
 			fid = readTrackerParams(fid, 1);
@@ -608,7 +603,8 @@ TrackerBase *getTracker(const char *sm_type,
 			//typename SSMType::ParamType _ssm_params(ssm_params);
 			//_ssm_params.resx = resx;
 			//_ssm_params.resy = resy;
-			if(!(trackers[tracker_id] = dynamic_cast<SMType*>(getTracker(mtf_sm, _mtf_am, _mtf_ssm, mtf_ilm)))) {
+			if(!(trackers[tracker_id] = dynamic_cast<SMType*>(getTracker(mtf_sm, _mtf_am.c_str(),
+				_mtf_ssm.c_str(), mtf_ilm)))) {
 				printf("Invalid search method provided for parallel SM tracker: %s\n", mtf_sm);
 				return nullptr;
 			}

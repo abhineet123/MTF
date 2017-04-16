@@ -19,7 +19,6 @@
 
 #include <vector>
 #include <memory>
-
 /**
 any FPS larger than this is considered meaningless and
 not used for computing the average

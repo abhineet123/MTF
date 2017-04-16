@@ -11,7 +11,7 @@ namespace nt{
 	public:
 
 		typedef IALKParams ParamType;
-		typedef typename ParamType::HessType HessType;
+		typedef ParamType::HessType HessType;
 
 		using SearchMethod::initialize;
 		using SearchMethod::update;		

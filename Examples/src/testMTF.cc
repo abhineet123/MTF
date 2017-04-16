@@ -1,7 +1,3 @@
-#ifdef _WIN32
-#define snprintf  _snprintf
-#endif
-
 #include "mtf/mtf.h"
 #include "mtf/Test/Diagnostics.h"
 
@@ -221,7 +217,8 @@ int main(int argc, char * argv[]) {
 		}
 	}
 	std::string bin_out_fname;
-	ofstream out_files[diag_len];
+	std::vector<std::shared_ptr<ofstream> > out_files;
+	out_files.resize(diag_len);
 	if(diag_bin){
 		for(int data_id = 0; data_id < diag_len; data_id++){
 			if(diag_gen[data_id] - '0'){
@@ -241,13 +238,14 @@ int main(int argc, char * argv[]) {
 				} else{
 					printf("Writing %s data to %s\n", data_name, bin_out_fname.c_str());
 				}
-				out_files[data_id].open(bin_out_fname, ios::out | ios::binary);
+				;
+				out_files[data_id].reset(new ofstream(bin_out_fname, ios::out | ios::binary));
 				if(diag_3d){
 					Vector4i header(start_id - 1, start_id, diag_res, diag_res);
-					out_files[data_id].write((char*)(header.data()), sizeof(int) * 4);
+					out_files[data_id]->write((char*)(header.data()), sizeof(int) * 4);
 				} else{
-					out_files[data_id].write((char*)(&diag_res), sizeof(int));
-					out_files[data_id].write((char*)(&(diag->state_size)), sizeof(int));
+					out_files[data_id]->write((char*)(&diag_res), sizeof(int));
+					out_files[data_id]->write((char*)(&(diag->state_size)), sizeof(int));
 				}
 			}
 		}
@@ -288,18 +286,18 @@ int main(int argc, char * argv[]) {
 				}
 				if(diag_3d){
 					if(frame_id == start_id){
-						out_files[data_id].write((char*)(y_vec.data()), sizeof(double)*y_vec.size());
-						out_files[data_id].write((char*)(x_vec.data()), sizeof(double)*x_vec.size());
+						out_files[data_id]->write((char*)(y_vec.data()), sizeof(double)*y_vec.size());
+						out_files[data_id]->write((char*)(x_vec.data()), sizeof(double)*x_vec.size());
 					}
-					out_files[data_id].write((char*)(diag->getData().data()),
+					out_files[data_id]->write((char*)(diag->getData().data()),
 						sizeof(double)*diag->getData().size());
 
-					long curr_pos = out_files[data_id].tellp();
-					out_files[data_id].seekp(0, ios_base::beg);
-					out_files[data_id].write((char*)(&frame_id), sizeof(int));
-					out_files[data_id].seekp(curr_pos, ios_base::beg);
+					long curr_pos = out_files[data_id]->tellp();
+					out_files[data_id]->seekp(0, ios_base::beg);
+					out_files[data_id]->write((char*)(&frame_id), sizeof(int));
+					out_files[data_id]->seekp(curr_pos, ios_base::beg);
 				} else{
-					out_files[data_id].write((char*)(diag->getData().data()),
+					out_files[data_id]->write((char*)(diag->getData().data()),
 						sizeof(double)*diag->getData().size());
 				}
 
@@ -329,10 +327,11 @@ int main(int argc, char * argv[]) {
 	if(diag_bin){
 		for(int data_id = 0; data_id < diag_len; data_id++){
 			if(diag_gen[data_id] - '0'){
-				out_files[data_id].write((char*)(proc_times.data()), sizeof(double)*proc_times.size());
-				out_files[data_id].close();
+				out_files[data_id]->write((char*)(proc_times.data()), sizeof(double)*proc_times.size());
+				out_files[data_id]->close();
 			}
 		}
+		out_files.clear();
 	}
 	if(diag_verbose){
 		printf("Total Time taken:\t %f\n", total_time_taken);

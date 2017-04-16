@@ -40,12 +40,12 @@
 	do{if(!strcmp(arg_name, #param_name)){\
 		param_name = param_func(arg_val);\
 		return;\
-					}} while(0)
+						}} while(0)
 #define parse_param_vec(param_name, param_func)\
 	do{if(!strcmp(arg_name, #param_name)){\
 		param_name.push_back(param_func(arg_val));\
 		return;\
-						}} while(0)
+							}} while(0)
 
 namespace mtf{
 	namespace params{
@@ -928,1318 +928,2383 @@ namespace mtf{
 		inline char atoc(char *arg_val){ return arg_val[0]; }
 		inline int atoc_i(char *arg_val){ return arg_val[0] - '0'; }
 
+		inline void processAgrumentUnchained(char *arg_name, char *arg_val,
+			char *arg_prefix = nullptr){
+			if(arg_val[0] == '#'){ return; }
+			parse_param(n_trackers, atoi);
+			parse_param(track_single_obj, atoi);
+			parse_param(source_id, atoi);
+			parse_param(actor_id, atoi);
+			parse_param(pipeline, atoc);
+			parse_param(img_source, atoc);
+			parse_param(rec_source, atoc);
+			parse_param(rec_fps, atoi);
+			parse_param(rec_seq_suffix, std::string);
+			parse_param(img_resize_factor, atof);
+			parse_param(write_frame_data, atoc_i);
+			parse_param(gt_write_ssm_params, atoi);
+			parse_param(write_tracking_data, atoc_i);
+			parse_param(overwrite_gt, atoc_i);
+			parse_param(tracking_data_fname, std::string);
+			parse_param(record_frames_fname, std::string);
+			parse_param(record_frames_dir, std::string);
+			parse_param(read_obj_fname, std::string);
+			parse_param(write_obj_fname, std::string);
+			parse_param(write_pts, atoc_i);
+			parse_param(show_cv_window, atoc_i);
+			parse_param(show_ground_truth, atoc_i);
+			parse_param(show_xv_window, atoc_i);
+			parse_param(read_obj_from_gt, atoi);
+			parse_param(sel_quad_obj, atoi);
+		}
+
 		inline void processAgrument(char *arg_name, char *arg_val,
 			char *arg_prefix = nullptr){
 			if(arg_val[0] == '#'){ return; }
-
-			//parse_param(n_trackers, atoi);
-			//parse_param(source_id, atoi);
-			//parse_param(actor_id, atoi);
-			//parse_param(pipeline, atoc);
-			//parse_param(img_source, atoc);
-			//parse_param(write_frame_data, atoc_i);
-			//parse_param(write_tracking_data, atoc_i);
-			//parse_param(tracking_data_fname, std::string);
-			//parse_param(record_frames_fname, std::string);
-			//parse_param(read_obj_fname, std::string);
-			//parse_param(write_obj_fname, std::string);
-			//parse_param(write_pts, atoc_i);
-			//parse_param(show_cv_window, atoc_i);
-			//parse_param(show_ground_truth, atoc_i);
-			//parse_param(show_xv_window, atoc_i);
-			//parse_param(read_obj_from_gt, atoi);
-			//parse_param(sel_quad_obj, atoi);
-
 			if(!strcmp(arg_name, "n_trackers")){
 				n_trackers = atoi(arg_val);
-			} else if(!strcmp(arg_name, "track_single_obj")){
-				track_single_obj = atoi(arg_val);
-			} else if(!strcmp(arg_name, "source_id")){
-				source_id = atoi(arg_val);
-			} else if(!strcmp(arg_name, "actor_id")){
-				actor_id = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pipeline")){
-				pipeline = arg_val[0];
-			} else if(!strcmp(arg_name, "img_source")){
-				img_source = arg_val[0];
-			} else if(!strcmp(arg_name, "rec_source")){
-				rec_source = arg_val[0];
-			} else if(!strcmp(arg_name, "rec_fps")){
-				rec_fps = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rec_seq_suffix")){
-				rec_seq_suffix = std::string(arg_val);
-			} else if(!strcmp(arg_name, "img_resize_factor")){
-				img_resize_factor = atof(arg_val);
-			} else if(!strcmp(arg_name, "n_trackers")){
-				n_trackers = atoi(arg_val);
-			} else if(!strcmp(arg_name, "write_frame_data")){
-				write_frame_data = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "gt_write_ssm_params")){
-				gt_write_ssm_params = atoi(arg_val);
-			} else if(!strcmp(arg_name, "write_tracking_data")){
-				write_tracking_data = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "overwrite_gt")){
-				overwrite_gt = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "tracking_data_fname")){
-				tracking_data_fname = std::string(arg_val);
-			} else if(!strcmp(arg_name, "record_frames_fname")){
-				record_frames_fname = std::string(arg_val);
-			} else if(!strcmp(arg_name, "record_frames_dir")){
-				record_frames_dir = std::string(arg_val);
-			} else if(!strcmp(arg_name, "read_obj_fname")){
-				read_obj_fname = std::string(arg_val);
-			} else if(!strcmp(arg_name, "write_obj_fname")){
-				write_obj_fname = std::string(arg_val);
-			} else if(!strcmp(arg_name, "write_pts")){
-				write_pts = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "show_corner_ids")){
-				show_corner_ids = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "tracker_labels")){
-				tracker_labels.push_back(std::string(arg_val));
-			} else if(!strcmp(arg_name, "show_cv_window")){
-				show_cv_window = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "show_ground_truth")){
-				show_ground_truth = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "show_xv_window")){
-				show_xv_window = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "read_obj_from_gt")){
-				read_obj_from_gt = atoi(arg_val);
-			} else if(!strcmp(arg_name, "sel_quad_obj")){
-				sel_quad_obj = atoi(arg_val);
-			} else if(!strcmp(arg_name, "line_thickness")){
-				line_thickness = atoi(arg_val);
-			} else if(!strcmp(arg_name, "reinit_gt_from_bin")){
-				reinit_gt_from_bin = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "read_obj_from_file")){
-				read_obj_from_file = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "write_objs")){
-				write_objs = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "record_frames")){
-				record_frames = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "source_name")){
-				source_name = std::string(arg_val);
-			} else if(!strcmp(arg_name, "source_path")){
-				source_path = std::string(arg_val);
-			} else if(!strcmp(arg_name, "patch_size")){
-				patch_size = atoi(arg_val);
-			} else if(!strcmp(arg_name, "source_fmt")){
-				source_fmt = std::string(arg_val);
-			} else if(!strcmp(arg_name, "db_root_path") || !strcmp(arg_name, "root_path")){
-				db_root_path = std::string(arg_val);
-			} else if(!strcmp(arg_name, "xvg_grid_size_x")){
-				xvg_grid_size_x = atoi(arg_val);
-			} else if(!strcmp(arg_name, "xvg_grid_size_y")){
-				xvg_grid_size_y = atoi(arg_val);
-			} else if(!strcmp(arg_name, "xvg_adjust_grid")){
-				xvg_adjust_grid = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "xvg_adjust_lines")){
-				xvg_adjust_lines = arg_val[0] - '0';
-			} else if(!strcmp(arg_name, "xvg_reset_pos")){
-				xvg_reset_pos = atoi(arg_val);
-			} else if(!strcmp(arg_name, "reset_template")){
-				reset_template = atoi(arg_val);
-			} else if(!strcmp(arg_name, "xvg_reset_wts")){
-				xvg_reset_wts = atoi(arg_val);
-			} else if(!strcmp(arg_name, "xvg_pause_after_line")){
-				xvg_pause_after_line = atoi(arg_val);
-			} else if(!strcmp(arg_name, "debug_mode")){
-				debug_mode = atoi(arg_val);
-			} else if(!strcmp(arg_name, "xvg_use_constant_slope")){
-				xvg_use_constant_slope = atoi(arg_val);
-			} else if(!strcmp(arg_name, "xvg_use_ls")){
-				xvg_use_ls = atoi(arg_val);
-			} else if(!strcmp(arg_name, "xvg_inter_alpha_thresh")){
-				xvg_inter_alpha_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "xvg_intra_alpha_thresh")){
-				xvg_intra_alpha_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "pause_after_frame")){
-				pause_after_frame = atoi(arg_val);
-			} else if(!strcmp(arg_name, "print_corners")){
-				print_corners = atoi(arg_val);
-			} else if(!strcmp(arg_name, "xvg_show_tracked_pts")){
-				xvg_show_tracked_pts = atoi(arg_val);
-			} else if(!strcmp(arg_name, "show_warped_img")){
-				show_warped_img = atoi(arg_val);
-			} else if(!strcmp(arg_name, "show_proc_img")){
-				show_proc_img = atoi(arg_val);
-			} else if(!strcmp(arg_name, "write_tracker_states")){
-				write_tracker_states = atoi(arg_val);
-			} else if(!strcmp(arg_name, "xvg_update_wts")){
-				xvg_update_wts = atoi(arg_val);
-			} else if(!strcmp(arg_name, "xvg_sel_reset_thresh")){
-				xvg_sel_reset_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "res_from_size")){
-				res_from_size = atof(arg_val);
-			} else if(!strcmp(arg_name, "mtf_res")){
-				mtf_res = atoi(arg_val);
-			} else if(!strcmp(arg_name, "resx")){
-				resx = atoi(arg_val);
-			} else if(!strcmp(arg_name, "resy")){
-				resy = atoi(arg_val);
-			} else if(!strcmp(arg_name, "epsilon")){
-				epsilon = atof(arg_val);
-			} else if(!strcmp(arg_name, "max_iters")){
-				max_iters = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mtf_sm")){
-				processStringParam(mtf_sm, arg_val);
-			} else if(!strcmp(arg_name, "mtf_am")){
-				processStringParam(mtf_am, arg_val);
-			} else if(!strcmp(arg_name, "mtf_ssm")){
-				processStringParam(mtf_ssm, arg_val);
-			} else if(!strcmp(arg_name, "mtf_ilm")){
-				processStringParam(mtf_ilm, arg_val);
-			} else if(!strcmp(arg_name, "enable_nt")){
-				enable_nt = atoi(arg_val);
-			} else if(!strcmp(arg_name, "invalid_state_err_thresh")){
-				invalid_state_err_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "invalid_state_check")){
-				invalid_state_check = atoi(arg_val);
-			} else if(!strcmp(arg_name, "uchar_input")){
-				uchar_input = atoi(arg_val);
+				return;
 			}
-
+			if(!strcmp(arg_name, "track_single_obj")){
+				track_single_obj = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "source_id")){
+				source_id = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "actor_id")){
+				actor_id = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "pipeline")){
+				pipeline = arg_val[0];
+				return;
+			}
+			if(!strcmp(arg_name, "img_source")){
+				img_source = arg_val[0];
+				return;
+			}
+			if(!strcmp(arg_name, "rec_source")){
+				rec_source = arg_val[0];
+				return;
+			}
+			if(!strcmp(arg_name, "rec_fps")){
+				rec_fps = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "rec_seq_suffix")){
+				rec_seq_suffix = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "img_resize_factor")){
+				img_resize_factor = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "write_frame_data")){
+				write_frame_data = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "gt_write_ssm_params")){
+				gt_write_ssm_params = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "write_tracking_data")){
+				write_tracking_data = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "overwrite_gt")){
+				overwrite_gt = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "tracking_data_fname")){
+				tracking_data_fname = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "record_frames_fname")){
+				record_frames_fname = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "record_frames_dir")){
+				record_frames_dir = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "read_obj_fname")){
+				read_obj_fname = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "write_obj_fname")){
+				write_obj_fname = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "write_pts")){
+				write_pts = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "show_corner_ids")){
+				show_corner_ids = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "tracker_labels")){
+				tracker_labels.push_back(std::string(arg_val));
+				return;
+			}
+			if(!strcmp(arg_name, "show_cv_window")){
+				show_cv_window = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "show_ground_truth")){
+				show_ground_truth = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "show_xv_window")){
+				show_xv_window = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "read_obj_from_gt")){
+				read_obj_from_gt = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "sel_quad_obj")){
+				sel_quad_obj = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "line_thickness")){
+				line_thickness = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "reinit_gt_from_bin")){
+				reinit_gt_from_bin = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "read_obj_from_file")){
+				read_obj_from_file = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "write_objs")){
+				write_objs = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "record_frames")){
+				record_frames = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "source_name")){
+				source_name = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "source_path")){
+				source_path = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "patch_size")){
+				patch_size = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "source_fmt")){
+				source_fmt = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "db_root_path") || !strcmp(arg_name, "root_path")){
+				db_root_path = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_grid_size_x")){
+				xvg_grid_size_x = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_grid_size_y")){
+				xvg_grid_size_y = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_adjust_grid")){
+				xvg_adjust_grid = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_adjust_lines")){
+				xvg_adjust_lines = arg_val[0] - '0';
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_reset_pos")){
+				xvg_reset_pos = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "reset_template")){
+				reset_template = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_reset_wts")){
+				xvg_reset_wts = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_pause_after_line")){
+				xvg_pause_after_line = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "debug_mode")){
+				debug_mode = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_use_constant_slope")){
+				xvg_use_constant_slope = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_use_ls")){
+				xvg_use_ls = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_inter_alpha_thresh")){
+				xvg_inter_alpha_thresh = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_intra_alpha_thresh")){
+				xvg_intra_alpha_thresh = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "pause_after_frame")){
+				pause_after_frame = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "print_corners")){
+				print_corners = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_show_tracked_pts")){
+				xvg_show_tracked_pts = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "show_warped_img")){
+				show_warped_img = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "show_proc_img")){
+				show_proc_img = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "write_tracker_states")){
+				write_tracker_states = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_update_wts")){
+				xvg_update_wts = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_sel_reset_thresh")){
+				xvg_sel_reset_thresh = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "res_from_size")){
+				res_from_size = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mtf_res")){
+				mtf_res = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "resx")){
+				resx = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "resy")){
+				resy = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "epsilon")){
+				epsilon = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "max_iters")){
+				max_iters = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mtf_sm")){
+				processStringParam(mtf_sm, arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mtf_am")){
+				processStringParam(mtf_am, arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mtf_ssm")){
+				processStringParam(mtf_ssm, arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mtf_ilm")){
+				processStringParam(mtf_ilm, arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "enable_nt")){
+				enable_nt = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "invalid_state_err_thresh")){
+				invalid_state_err_thresh = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "invalid_state_check")){
+				invalid_state_check = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "uchar_input")){
+				uchar_input = atoi(arg_val);
+				return;
+			}
 			//! ICLK
-			else if(!strcmp(arg_name, "ic_update_ssm")){
+			if(!strcmp(arg_name, "ic_update_ssm")){
 				ic_update_ssm = atoi(arg_val);
-			} else if(!strcmp(arg_name, "ic_chained_warp")){
+				return;
+			}
+			if(!strcmp(arg_name, "ic_chained_warp")){
 				ic_chained_warp = atoi(arg_val);
-			} else if(!strcmp(arg_name, "ic_hess_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "ic_hess_type")){
 				ic_hess_type = atoi(arg_val);
+				return;
 			}
 			//! FCLK
-			else if(!strcmp(arg_name, "fc_chained_warp")){
+			if(!strcmp(arg_name, "fc_chained_warp")){
 				fc_chained_warp = atoi(arg_val);
-			} else if(!strcmp(arg_name, "fc_hess_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "fc_hess_type")){
 				fc_hess_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "fc_write_ssm_updates")){
+				return;
+			}
+			if(!strcmp(arg_name, "fc_write_ssm_updates")){
 				fc_write_ssm_updates = atoi(arg_val);
-			} else if(!strcmp(arg_name, "fc_show_grid")){
+				return;
+			}
+			if(!strcmp(arg_name, "fc_show_grid")){
 				fc_show_grid = atoi(arg_val);
-			} else if(!strcmp(arg_name, "fc_show_patch")){
+				return;
+			}
+			if(!strcmp(arg_name, "fc_show_patch")){
 				fc_show_patch = atoi(arg_val);
-			} else if(!strcmp(arg_name, "fc_patch_resize_factor")){
+				return;
+			}
+			if(!strcmp(arg_name, "fc_patch_resize_factor")){
 				fc_patch_resize_factor = atoi(arg_val);
-			} else if(!strcmp(arg_name, "fc_debug_mode")){
+				return;
+			}
+			if(!strcmp(arg_name, "fc_debug_mode")){
 				fc_debug_mode = atoi(arg_val);
+				return;
 			}
 			// IA/FA
-			else if(!strcmp(arg_name, "ia_hess_type")){
+			if(!strcmp(arg_name, "ia_hess_type")){
 				ia_hess_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "fa_hess_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "fa_hess_type")){
 				fa_hess_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "fa_show_grid")){
+				return;
+			}
+			if(!strcmp(arg_name, "fa_show_grid")){
 				fa_show_grid = atoi(arg_val);
-			} else if(!strcmp(arg_name, "fa_patch_resize_factor")){
+				return;
+			}
+			if(!strcmp(arg_name, "fa_patch_resize_factor")){
 				fa_patch_resize_factor = atof(arg_val);
-			} else if(!strcmp(arg_name, "fa_show_patch")){
+				return;
+			}
+			if(!strcmp(arg_name, "fa_show_patch")){
 				fa_show_patch = atoi(arg_val);
-			} else if(!strcmp(arg_name, "fa_write_frames")){
+				return;
+			}
+			if(!strcmp(arg_name, "fa_write_frames")){
 				fa_write_frames = atoi(arg_val);
+				return;
 			}
-
-			else if(!strcmp(arg_name, "ssd_show_template")){
+			//! SSD
+			if(!strcmp(arg_name, "ssd_show_template")){
 				ssd_show_template = atoi(arg_val);
+				return;
 			}
 
-			else if(!strcmp(arg_name, "input_buffer_size")){
+			if(!strcmp(arg_name, "input_buffer_size")){
 				input_buffer_size = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nssd_norm_pix_max")){
+				return;
+			}
+			if(!strcmp(arg_name, "nssd_norm_pix_max")){
 				nssd_norm_pix_max = atof(arg_val);
-			} else if(!strcmp(arg_name, "nssd_norm_pix_min")){
+				return;
+			}
+			if(!strcmp(arg_name, "nssd_norm_pix_min")){
 				nssd_norm_pix_min = atof(arg_val);
-			} else if(!strcmp(arg_name, "zncc_likelihood_alpha")){
+				return;
+			}
+			if(!strcmp(arg_name, "zncc_likelihood_alpha")){
 				zncc_likelihood_alpha = atof(arg_val);
-			} else if(!strcmp(arg_name, "init_frame_id")){
+				return;
+			}
+			if(!strcmp(arg_name, "init_frame_id")){
 				init_frame_id = atoi(arg_val);
-			} else if(!strcmp(arg_name, "start_frame_id")){
+				return;
+			}
+			if(!strcmp(arg_name, "start_frame_id")){
 				start_frame_id = atoi(arg_val);
-			} else if(!strcmp(arg_name, "frame_gap")){
+				return;
+			}
+			if(!strcmp(arg_name, "frame_gap")){
 				frame_gap = atoi(arg_val);
-			} else if(!strcmp(arg_name, "end_frame_id")){
+				return;
+			}
+			if(!strcmp(arg_name, "end_frame_id")){
 				end_frame_id = atoi(arg_val);
-			} else if(!strcmp(arg_name, "show_tracking_error")){
+				return;
+			}
+			if(!strcmp(arg_name, "show_tracking_error")){
 				show_tracking_error = atoi(arg_val);
-			} else if(!strcmp(arg_name, "write_tracking_error")){
+				return;
+			}
+			if(!strcmp(arg_name, "write_tracking_error")){
 				write_tracking_error = atoi(arg_val);
-			} else if(!strcmp(arg_name, "tracking_err_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "tracking_err_type")){
 				tracking_err_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "show_jaccard_error")){
+				return;
+			}
+			if(!strcmp(arg_name, "show_jaccard_error")){
 				show_jaccard_error = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grad_eps")){
+				return;
+			}
+			if(!strcmp(arg_name, "grad_eps")){
 				grad_eps = strtod(arg_val, nullptr);
-			} else if(!strcmp(arg_name, "hess_eps")){
+				return;
+			}
+			if(!strcmp(arg_name, "hess_eps")){
 				hess_eps = strtod(arg_val, nullptr);
-			} else if(!strcmp(arg_name, "likelihood_alpha")){
+				return;
+			}
+			if(!strcmp(arg_name, "likelihood_alpha")){
 				likelihood_alpha = strtod(arg_val, nullptr);
-			} else if(!strcmp(arg_name, "likelihood_beta")){
+				return;
+			}
+			if(!strcmp(arg_name, "likelihood_beta")){
 				likelihood_beta = strtod(arg_val, nullptr);
-			} else if(!strcmp(arg_name, "dist_from_likelihood")){
+				return;
+			}
+			if(!strcmp(arg_name, "dist_from_likelihood")){
 				dist_from_likelihood = atoi(arg_val);
+				return;
 			}
 			//! Reinitialization
-			else if(!strcmp(arg_name, "reinit_at_each_frame")){
+			if(!strcmp(arg_name, "reinit_at_each_frame")){
 				reinit_at_each_frame = atoi(arg_val);
-			} else if(!strcmp(arg_name, "reset_at_each_frame")){
+				return;
+			}
+			if(!strcmp(arg_name, "reset_at_each_frame")){
 				reset_at_each_frame = atoi(arg_val);
-			} else if(!strcmp(arg_name, "reset_to_init")){
+				return;
+			}
+			if(!strcmp(arg_name, "reset_to_init")){
 				reset_to_init = atoi(arg_val);
-			} else if(!strcmp(arg_name, "reinit_on_failure")){
+				return;
+			}
+			if(!strcmp(arg_name, "reinit_on_failure")){
 				reinit_on_failure = atoi(arg_val);
-			} else if(!strcmp(arg_name, "reinit_err_thresh")){
+				return;
+			}
+			if(!strcmp(arg_name, "reinit_err_thresh")){
 				reinit_err_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "reinit_frame_skip")){
+				return;
+			}
+			if(!strcmp(arg_name, "reinit_frame_skip")){
 				reinit_frame_skip = atoi(arg_val);
-			} else if(!strcmp(arg_name, "reinit_with_new_obj")){
+				return;
+			}
+			if(!strcmp(arg_name, "reinit_with_new_obj")){
 				reinit_with_new_obj = atoi(arg_val);
+				return;
 			}
 			//! Reinitialization GT
-			else if(!strcmp(arg_name, "use_reinit_gt")){
+			if(!strcmp(arg_name, "use_reinit_gt")){
 				use_reinit_gt = atoi(arg_val);
+				return;
 			}
 			//! Optimized low DOF ground truth
-			else if(!strcmp(arg_name, "use_opt_gt")){
+			if(!strcmp(arg_name, "use_opt_gt")){
 				use_opt_gt = atoi(arg_val);
-			} else if(!strcmp(arg_name, "opt_gt_ssm")){
+				return;
+			}
+			if(!strcmp(arg_name, "opt_gt_ssm")){
 				opt_gt_ssm = std::string(arg_val);
+				return;
 			}
 			//! Pre processing type
-			else if(!strcmp(arg_name, "pre_proc_type")){
+			if(!strcmp(arg_name, "pre_proc_type")){
 				pre_proc_type = std::string(arg_val);
-			} else if(!strcmp(arg_name, "pre_proc_hist_eq")){
+				return;
+			}
+			if(!strcmp(arg_name, "pre_proc_hist_eq")){
 				pre_proc_hist_eq = atoi(arg_val);
+				return;
 			}
 			//! Gaussian smoothing
-			else if(!strcmp(arg_name, "gauss_kernel_size")){
+			if(!strcmp(arg_name, "gauss_kernel_size")){
 				gauss_kernel_size = atoi(arg_val);
-			} else if(!strcmp(arg_name, "gauss_sigma_x")){
+				return;
+			}
+			if(!strcmp(arg_name, "gauss_sigma_x")){
 				gauss_sigma_x = atof(arg_val);
-			} else if(!strcmp(arg_name, "gauss_sigma_y")){
+				return;
+			}
+			if(!strcmp(arg_name, "gauss_sigma_y")){
 				gauss_sigma_y = atof(arg_val);
+				return;
 			}
 			//! Median Blurring
-			else if(!strcmp(arg_name, "med_kernel_size")){
+			if(!strcmp(arg_name, "med_kernel_size")){
 				med_kernel_size = atoi(arg_val);
+				return;
 			}
 			//! Blurring with normalized box filter
-			else if(!strcmp(arg_name, "box_kernel_size")){
+			if(!strcmp(arg_name, "box_kernel_size")){
 				box_kernel_size = atoi(arg_val);
+				return;
 			}
 			//! Bilateral Filtering
-			else if(!strcmp(arg_name, "bil_diameter")){
+			if(!strcmp(arg_name, "bil_diameter")){
 				bil_diameter = atoi(arg_val);
-			} else if(!strcmp(arg_name, "bil_sigma_col")){
+				return;
+			}
+			if(!strcmp(arg_name, "bil_sigma_col")){
 				bil_sigma_col = atof(arg_val);
-			} else if(!strcmp(arg_name, "bil_sigma_space")){
+				return;
+			}
+			if(!strcmp(arg_name, "bil_sigma_space")){
 				bil_sigma_space = atof(arg_val);
+				return;
 			}
 			//! Affine
-			else if(!strcmp(arg_name, "aff_normalized_init")){
+			if(!strcmp(arg_name, "aff_normalized_init")){
 				aff_normalized_init = atoi(arg_val);
-			} else if(!strcmp(arg_name, "aff_pt_based_sampling")){
+				return;
+			}
+			if(!strcmp(arg_name, "aff_pt_based_sampling")){
 				aff_pt_based_sampling = atoi(arg_val);
+				return;
 			}
 			//! Homography
-			else if(!strcmp(arg_name, "hom_normalized_init")){
+			if(!strcmp(arg_name, "hom_normalized_init")){
 				hom_normalized_init = atoi(arg_val);
-			} else if(!strcmp(arg_name, "hom_corner_based_sampling")){
+				return;
+			}
+			if(!strcmp(arg_name, "hom_corner_based_sampling")){
 				hom_corner_based_sampling = atoi(arg_val);
+				return;
 			}
 			//! Lie Homography
-			else if(!strcmp(arg_name, "lhom_normalized_init")){
+			if(!strcmp(arg_name, "lhom_normalized_init")){
 				lhom_normalized_init = atoi(arg_val);
-			} else if(!strcmp(arg_name, "lhom_grad_eps")){
+				return;
+			}
+			if(!strcmp(arg_name, "lhom_grad_eps")){
 				lhom_grad_eps = atof(arg_val);
+				return;
 			}
 			//! Similitude
-			else if(!strcmp(arg_name, "sim_normalized_init")){
+			if(!strcmp(arg_name, "sim_normalized_init")){
 				sim_normalized_init = atoi(arg_val);
-			} else if(!strcmp(arg_name, "sim_n_model_pts")){
+				return;
+			}
+			if(!strcmp(arg_name, "sim_n_model_pts")){
 				sim_n_model_pts = atoi(arg_val);
-			} else if(!strcmp(arg_name, "sim_geom_sampling")){
+				return;
+			}
+			if(!strcmp(arg_name, "sim_geom_sampling")){
 				sim_geom_sampling = atoi(arg_val);
-			} else if(!strcmp(arg_name, "sim_pt_based_sampling")){
+				return;
+			}
+			if(!strcmp(arg_name, "sim_pt_based_sampling")){
 				sim_pt_based_sampling = atoi(arg_val);
+				return;
 			}
 			//! Isometry
-			else if(!strcmp(arg_name, "iso_pt_based_sampling")){
+			if(!strcmp(arg_name, "iso_pt_based_sampling")){
 				iso_pt_based_sampling = atoi(arg_val);
+				return;
 			}
 			//! SL3
-			else if(!strcmp(arg_name, "sl3_normalized_init")){
+			if(!strcmp(arg_name, "sl3_normalized_init")){
 				sl3_normalized_init = atoi(arg_val);
-			} else if(!strcmp(arg_name, "sl3_iterative_sample_mean")){
+				return;
+			}
+			if(!strcmp(arg_name, "sl3_iterative_sample_mean")){
 				sl3_iterative_sample_mean = atoi(arg_val);
-			} else if(!strcmp(arg_name, "sl3_sample_mean_max_iters")){
+				return;
+			}
+			if(!strcmp(arg_name, "sl3_sample_mean_max_iters")){
 				sl3_sample_mean_max_iters = atoi(arg_val);
-			} else if(!strcmp(arg_name, "sl3_sample_mean_eps")){
+				return;
+			}
+			if(!strcmp(arg_name, "sl3_sample_mean_eps")){
 				sl3_sample_mean_eps = atof(arg_val);
-			} else if(!strcmp(arg_name, "sl3_debug_mode")){
+				return;
+			}
+			if(!strcmp(arg_name, "sl3_debug_mode")){
 				sl3_debug_mode = atoi(arg_val);
+				return;
 			}
 			//! Corner based Homography
-			else if(!strcmp(arg_name, "cbh_normalized_init")){
+			if(!strcmp(arg_name, "cbh_normalized_init")){
 				cbh_normalized_init = atoi(arg_val);
-			} else if(!strcmp(arg_name, "cbh_grad_eps")){
+				return;
+			}
+			if(!strcmp(arg_name, "cbh_grad_eps")){
 				cbh_grad_eps = atof(arg_val);
+				return;
 			}
 			//! Spline SSM
-			else if(!strcmp(arg_name, "spl_control_size")){
+			if(!strcmp(arg_name, "spl_control_size")){
 				spl_control_size = atoi(arg_val);
-			} else if(!strcmp(arg_name, "spl_control_overlap")){
+				return;
+			}
+			if(!strcmp(arg_name, "spl_control_overlap")){
 				spl_control_overlap = atof(arg_val);
-			} else if(!strcmp(arg_name, "spl_interp_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "spl_interp_type")){
 				spl_interp_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "spl_static_wts")){
+				return;
+			}
+			if(!strcmp(arg_name, "spl_static_wts")){
 				spl_static_wts = atoi(arg_val);
-			} else if(!strcmp(arg_name, "spl_debug_mode")){
+				return;
+			}
+			if(!strcmp(arg_name, "spl_debug_mode")){
 				spl_debug_mode = atoi(arg_val);
+				return;
 			}
 			//! SCV
-			else if(!strcmp(arg_name, "scv_hist_type")){
+			if(!strcmp(arg_name, "scv_hist_type")){
 				scv_hist_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "scv_use_bspl")){
+				return;
+			}
+			if(!strcmp(arg_name, "scv_use_bspl")){
 				scv_use_bspl = atoi(arg_val);
-			} else if(!strcmp(arg_name, "scv_n_bins")){
+				return;
+			}
+			if(!strcmp(arg_name, "scv_n_bins")){
 				scv_n_bins = atoi(arg_val);
-			} else if(!strcmp(arg_name, "scv_preseed")){
+				return;
+			}
+			if(!strcmp(arg_name, "scv_preseed")){
 				scv_preseed = atof(arg_val);
-			} else if(!strcmp(arg_name, "scv_pou")){
+				return;
+			}
+			if(!strcmp(arg_name, "scv_pou")){
 				scv_pou = atoi(arg_val);
-			} else if(!strcmp(arg_name, "scv_weighted_mapping")){
+				return;
+			}
+			if(!strcmp(arg_name, "scv_weighted_mapping")){
 				scv_weighted_mapping = atoi(arg_val);
-			} else if(!strcmp(arg_name, "scv_mapped_gradient")){
+				return;
+			}
+			if(!strcmp(arg_name, "scv_mapped_gradient")){
 				scv_mapped_gradient = atoi(arg_val);
-			} else if(!strcmp(arg_name, "scv_affine_mapping")){
+				return;
+			}
+			if(!strcmp(arg_name, "scv_affine_mapping")){
 				scv_affine_mapping = atoi(arg_val);
-			} else if(!strcmp(arg_name, "scv_once_per_frame")){
+				return;
+			}
+			if(!strcmp(arg_name, "scv_once_per_frame")){
 				scv_once_per_frame = atoi(arg_val);
-			} else if(!strcmp(arg_name, "scv_approx_dist_feat")){
+				return;
+			}
+			if(!strcmp(arg_name, "scv_approx_dist_feat")){
 				scv_approx_dist_feat = atoi(arg_val);
-			} else if(!strcmp(arg_name, "scv_likelihood_alpha")){
+				return;
+			}
+			if(!strcmp(arg_name, "scv_likelihood_alpha")){
 				scv_likelihood_alpha = atof(arg_val);
+				return;
 			}
 			//! LSCV
-			else if(!strcmp(arg_name, "lscv_sub_regions")){
+			if(!strcmp(arg_name, "lscv_sub_regions")){
 				lscv_sub_regions = atoi(arg_val);
-			} else if(!strcmp(arg_name, "lscv_spacing")){
+				return;
+			}
+			if(!strcmp(arg_name, "lscv_spacing")){
 				lscv_spacing = atoi(arg_val);
-			} else if(!strcmp(arg_name, "lscv_show_subregions")){
+				return;
+			}
+			if(!strcmp(arg_name, "lscv_show_subregions")){
 				lscv_show_subregions = atoi(arg_val);
+				return;
 			}
 			//! LKLD
-			else if(!strcmp(arg_name, "lkld_pre_seed")){
+			if(!strcmp(arg_name, "lkld_pre_seed")){
 				lkld_pre_seed = atof(arg_val);
-			} else if(!strcmp(arg_name, "lkld_pou")){
+				return;
+			}
+			if(!strcmp(arg_name, "lkld_pou")){
 				lkld_pou = atoi(arg_val);
-			} else if(!strcmp(arg_name, "lkld_n_bins")){
+				return;
+			}
+			if(!strcmp(arg_name, "lkld_n_bins")){
 				lkld_n_bins = atoi(arg_val);
-			} else if(!strcmp(arg_name, "lkld_sub_regions")){
+				return;
+			}
+			if(!strcmp(arg_name, "lkld_sub_regions")){
 				lkld_sub_regions = atoi(arg_val);
-			} else if(!strcmp(arg_name, "lkld_spacing")){
+				return;
+			}
+			if(!strcmp(arg_name, "lkld_spacing")){
 				lkld_spacing = atoi(arg_val);
+				return;
 			}
 			//! NCC
-			else if(!strcmp(arg_name, "ncc_fast_hess")){
+			if(!strcmp(arg_name, "ncc_fast_hess")){
 				ncc_fast_hess = atoi(arg_val);
-			} else if(!strcmp(arg_name, "ncc_likelihood_alpha")){
+				return;
+			}
+			if(!strcmp(arg_name, "ncc_likelihood_alpha")){
 				ncc_likelihood_alpha = atof(arg_val);
+				return;
 			}
 			//! SPSS
-			else if(!strcmp(arg_name, "spss_k")){
+			if(!strcmp(arg_name, "spss_k")){
 				spss_k = atof(arg_val);
-			} else if(!strcmp(arg_name, "spss_likelihood_alpha")){
+				return;
+			}
+			if(!strcmp(arg_name, "spss_likelihood_alpha")){
 				spss_likelihood_alpha = atof(arg_val);
+				return;
 			}
 			//! SSIM
-			else if(!strcmp(arg_name, "ssim_pix_proc_type")){
+			if(!strcmp(arg_name, "ssim_pix_proc_type")){
 				ssim_pix_proc_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "ssim_k1")){
+				return;
+			}
+			if(!strcmp(arg_name, "ssim_k1")){
 				ssim_k1 = atof(arg_val);
-			} else if(!strcmp(arg_name, "ssim_k2")){
+				return;
+			}
+			if(!strcmp(arg_name, "ssim_k2")){
 				ssim_k2 = atof(arg_val);
-			} else if(!strcmp(arg_name, "ssim_likelihood_alpha")){
+				return;
+			}
+			if(!strcmp(arg_name, "ssim_likelihood_alpha")){
 				ssim_likelihood_alpha = atof(arg_val);
+				return;
 			}
 			//! Sum of AMs
-			else if(!strcmp(arg_name, "sum_am1")){
+			if(!strcmp(arg_name, "sum_am1")){
 				sum_am1 = std::string(arg_val);
-			} else if(!strcmp(arg_name, "sum_am2")){
+				return;
+			}
+			if(!strcmp(arg_name, "sum_am2")){
 				sum_am2 = std::string(arg_val);
+				return;
 			}
 			//! Hessian
-			else if(!strcmp(arg_name, "sec_ord_hess")){
+			if(!strcmp(arg_name, "sec_ord_hess")){
 				sec_ord_hess = atoi(arg_val);
-			} else if(!strcmp(arg_name, "leven_marq")){
+				return;
+			}
+			if(!strcmp(arg_name, "leven_marq")){
 				leven_marq = atoi(arg_val);
-			} else if(!strcmp(arg_name, "lm_delta_init")){
+				return;
+			}
+			if(!strcmp(arg_name, "lm_delta_init")){
 				lm_delta_init = atof(arg_val);
-			} else if(!strcmp(arg_name, "lm_delta_update")){
+				return;
+			}
+			if(!strcmp(arg_name, "lm_delta_update")){
 				lm_delta_update = atof(arg_val);
+				return;
 			}
 			//! Online learning in AM
-			else if(!strcmp(arg_name, "enable_learning")){
+			if(!strcmp(arg_name, "enable_learning")){
 				enable_learning = atof(arg_val);
-			} else if(!strcmp(arg_name, "learning_rate")){
+				return;
+			}
+			if(!strcmp(arg_name, "learning_rate")){
 				learning_rate = atof(arg_val);
+				return;
 			}
 			//! ESM
-			else if(!strcmp(arg_name, "esm_hess_type")){
+			if(!strcmp(arg_name, "esm_hess_type")){
 				esm_hess_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "esm_jac_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "esm_jac_type")){
 				esm_jac_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "esm_chained_warp")){
+				return;
+			}
+			if(!strcmp(arg_name, "esm_chained_warp")){
 				esm_chained_warp = atoi(arg_val);
+				return;
 			}
 			//! MI and CCRE
-			else if(!strcmp(arg_name, "mi_pre_seed")){
+			if(!strcmp(arg_name, "mi_pre_seed")){
 				mi_pre_seed = atof(arg_val);
-			} else if(!strcmp(arg_name, "mi_pou")){
+				return;
+			}
+			if(!strcmp(arg_name, "mi_pou")){
 				mi_pou = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mi_n_bins")){
+				return;
+			}
+			if(!strcmp(arg_name, "mi_n_bins")){
 				mi_n_bins = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mi_likelihood_alpha")){
+				return;
+			}
+			if(!strcmp(arg_name, "mi_likelihood_alpha")){
 				mi_likelihood_alpha = atof(arg_val);
+				return;
 			}
 			//! CCRE
-			else if(!strcmp(arg_name, "ccre_pre_seed")){
+			if(!strcmp(arg_name, "ccre_pre_seed")){
 				ccre_pre_seed = atof(arg_val);
-			} else if(!strcmp(arg_name, "ccre_pou")){
+				return;
+			}
+			if(!strcmp(arg_name, "ccre_pou")){
 				ccre_pou = atoi(arg_val);
-			} else if(!strcmp(arg_name, "ccre_n_bins")){
+				return;
+			}
+			if(!strcmp(arg_name, "ccre_n_bins")){
 				ccre_n_bins = atoi(arg_val);
-			} else if(!strcmp(arg_name, "ccre_symmetrical_grad")){
+				return;
+			}
+			if(!strcmp(arg_name, "ccre_symmetrical_grad")){
 				ccre_symmetrical_grad = atoi(arg_val);
-			} else if(!strcmp(arg_name, "ccre_n_blocks")){
+				return;
+			}
+			if(!strcmp(arg_name, "ccre_n_blocks")){
 				ccre_n_blocks = atoi(arg_val);
-			} else if(!strcmp(arg_name, "ccre_likelihood_alpha")){
+				return;
+			}
+			if(!strcmp(arg_name, "ccre_likelihood_alpha")){
 				ccre_likelihood_alpha = atof(arg_val);
+				return;
 			}
 			//! NGF
-			else if(!strcmp(arg_name, "ngf_eta")){
+			if(!strcmp(arg_name, "ngf_eta")){
 				ngf_eta = atof(arg_val);
-			} else if(!strcmp(arg_name, "ngf_use_ssd")){
+				return;
+			}
+			if(!strcmp(arg_name, "ngf_use_ssd")){
 				ngf_use_ssd = atoi(arg_val);
+				return;
 			}
 			//! diagnostics
-			else if(!strcmp(arg_name, "diag_am")){
+			if(!strcmp(arg_name, "diag_am")){
 				processStringParam(diag_am, arg_val);
-			} else if(!strcmp(arg_name, "diag_ssm")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_ssm")){
 				processStringParam(diag_ssm, arg_val);
-			} else if(!strcmp(arg_name, "diag_ilm")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_ilm")){
 				processStringParam(diag_ilm, arg_val);
-			} else if(!strcmp(arg_name, "diag_range")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_range")){
 				diag_range = atof(arg_val);
-			} else if(!strcmp(arg_name, "diag_ssm_range")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_ssm_range")){
 				diag_ssm_range = atof_arr(arg_val);
-			} else if(!strcmp(arg_name, "diag_ssm_range_id")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_ssm_range_id")){
 				diag_ssm_range_id = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_am_range_id")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_am_range_id")){
 				diag_am_range_id = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_res")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_res")){
 				diag_res = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_3d")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_3d")){
 				diag_3d = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_3d_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_3d_ids")){
 				diag_3d_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "diag_update_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_update_type")){
 				diag_update_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_start_id")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_start_id")){
 				diag_start_id = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_end_id")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_end_id")){
 				diag_end_id = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_grad_diff")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_grad_diff")){
 				diag_grad_diff = atof(arg_val);
-			} else if(!strcmp(arg_name, "diag_gen_norm")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_gen_norm")){
 				diag_gen_norm = std::string(arg_val);
-			} else if(!strcmp(arg_name, "diag_gen_jac")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_gen_jac")){
 				diag_gen_jac = std::string(arg_val);
-			} else if(!strcmp(arg_name, "diag_gen_hess")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_gen_hess")){
 				diag_gen_hess = std::string(arg_val);
-			} else if(!strcmp(arg_name, "diag_gen_hess2")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_gen_hess2")){
 				diag_gen_hess2 = std::string(arg_val);
-			} else if(!strcmp(arg_name, "diag_gen_hess_sum")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_gen_hess_sum")){
 				diag_gen_hess_sum = std::string(arg_val);
-			} else if(!strcmp(arg_name, "diag_gen_num")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_gen_num")){
 				diag_gen_num = std::string(arg_val);
-			} else if(!strcmp(arg_name, "diag_gen_ssm")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_gen_ssm")){
 				diag_gen_ssm = std::string(arg_val);
-			} else if(!strcmp(arg_name, "diag_bin")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_bin")){
 				diag_bin = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_inv")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_inv")){
 				diag_inv = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_frame_gap")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_frame_gap")){
 				diag_frame_gap = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_show_data")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_show_data")){
 				diag_show_data = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_show_corners")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_show_corners")){
 				diag_show_corners = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_show_patches")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_show_patches")){
 				diag_show_patches = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_verbose")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_verbose")){
 				diag_verbose = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_enable_validation")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_enable_validation")){
 				diag_enable_validation = atoi(arg_val);
-			} else if(!strcmp(arg_name, "diag_validation_prec")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_validation_prec")){
 				diag_validation_prec = atof(arg_val);
-			} else if(!strcmp(arg_name, "diag_out_prefix")){
+				return;
+			}
+			if(!strcmp(arg_name, "diag_out_prefix")){
 				diag_out_prefix = std::string(arg_val);
+				return;
 			}
 			//! Selective Pixel Integration
-			else if(!strcmp(arg_name, "esm_spi_enable")){
+			if(!strcmp(arg_name, "esm_spi_enable")){
 				esm_spi_enable = atoi(arg_val);
-			} else if(!strcmp(arg_name, "esm_spi_thresh")){
+				return;
+			}
+			if(!strcmp(arg_name, "esm_spi_thresh")){
 				esm_spi_thresh = atof(arg_val);
+				return;
 			}
 
-			else if(!strcmp(arg_name, "pix_mapper")){
+			if(!strcmp(arg_name, "pix_mapper")){
 				processStringParam(pix_mapper, arg_val);;
+				return;
 			}
 			//! NN and GNN
-			else if(!strcmp(arg_name, "nn_max_iters")){
+			if(!strcmp(arg_name, "nn_max_iters")){
 				nn_max_iters = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_n_samples")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_n_samples")){
 				nn_n_samples = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_ssm_sigma_prec")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_ssm_sigma_prec")){
 				nn_ssm_sigma_prec = atof(arg_val);
-			} else if(!strcmp(arg_name, "nn_additive_update")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_additive_update")){
 				nn_additive_update = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_show_samples")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_show_samples")){
 				nn_show_samples = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_add_samples_gap")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_add_samples_gap")){
 				nn_add_samples_gap = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_n_samples_to_add")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_n_samples_to_add")){
 				nn_n_samples_to_add = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_remove_samples")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_remove_samples")){
 				nn_remove_samples = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_ssm_sigma_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_ssm_sigma_ids")){
 				nn_ssm_sigma_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "nn_ssm_mean_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_ssm_mean_ids")){
 				nn_ssm_mean_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "nn_corner_sigma_d")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_corner_sigma_d")){
 				nn_corner_sigma_d = atof(arg_val);
-			} else if(!strcmp(arg_name, "nn_corner_sigma_t")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_corner_sigma_t")){
 				nn_corner_sigma_t = atof(arg_val);
-			} else if(!strcmp(arg_name, "nn_pix_sigma")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_pix_sigma")){
 				nn_pix_sigma = atof_arr(arg_val);
-			} else if(!strcmp(arg_name, "nn_n_trees")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_n_trees")){
 				nn_n_trees = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_n_checks")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_n_checks")){
 				nn_n_checks = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_index_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_index_type")){
 				nn_index_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_search_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_search_type")){
 				nn_search_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_save_index")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_save_index")){
 				nn_save_index = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_load_index")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_load_index")){
 				nn_load_index = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_saved_index_fid")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_saved_index_fid")){
 				nn_saved_index_fid = atoi(arg_val);
+				return;
 			}
 			//! NN Index specific parameters
-			else if(!strcmp(arg_name, "nn_srch_checks")){
+			if(!strcmp(arg_name, "nn_srch_checks")){
 				nn_srch_checks = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_srch_eps")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_srch_eps")){
 				nn_srch_eps = atof(arg_val);
-			} else if(!strcmp(arg_name, "nn_srch_sorted")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_srch_sorted")){
 				nn_srch_sorted = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_srch_max_neighbors")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_srch_max_neighbors")){
 				nn_srch_max_neighbors = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_srch_cores")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_srch_cores")){
 				nn_srch_cores = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_srch_matrices_in_gpu_ram")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_srch_matrices_in_gpu_ram")){
 				nn_srch_matrices_in_gpu_ram = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_srch_use_heap")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_srch_use_heap")){
 				nn_srch_use_heap = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_gnn_degree")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_gnn_degree")){
 				nn_gnn_degree = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_gnn_max_steps")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_gnn_max_steps")){
 				nn_gnn_max_steps = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_gnn_cmpt_dist_thresh")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_gnn_cmpt_dist_thresh")){
 				nn_gnn_cmpt_dist_thresh = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_gnn_random_start")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_gnn_random_start")){
 				nn_gnn_random_start = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_fgnn_index_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_fgnn_index_type")){
 				nn_fgnn_index_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_gnn_verbose")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_gnn_verbose")){
 				nn_gnn_verbose = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_kdt_trees")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_kdt_trees")){
 				nn_kdt_trees = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_km_branching")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_km_branching")){
 				nn_km_branching = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_km_iterations")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_km_iterations")){
 				nn_km_iterations = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_km_centers_init")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_km_centers_init")){
 				nn_km_centers_init = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_km_cb_index")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_km_cb_index")){
 				nn_km_cb_index = atof(arg_val);
-			} else if(!strcmp(arg_name, "nn_kdts_leaf_max_size")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_kdts_leaf_max_size")){
 				nn_kdts_leaf_max_size = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_kdtc_leaf_max_size")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_kdtc_leaf_max_size")){
 				nn_kdtc_leaf_max_size = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_hc_branching")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_hc_branching")){
 				nn_hc_branching = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_hc_centers_init")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_hc_centers_init")){
 				nn_hc_centers_init = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_hc_trees")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_hc_trees")){
 				nn_hc_trees = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_hc_leaf_max_size")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_hc_leaf_max_size")){
 				nn_hc_leaf_max_size = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nn_auto_target_precision")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_auto_target_precision")){
 				nn_auto_target_precision = atof(arg_val);
-			} else if(!strcmp(arg_name, "ann_uto_build_weight")){
+				return;
+			}
+			if(!strcmp(arg_name, "ann_uto_build_weight")){
 				nn_auto_build_weight = atof(arg_val);
-			} else if(!strcmp(arg_name, "nn_auto_memory_weight")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_auto_memory_weight")){
 				nn_auto_memory_weight = atof(arg_val);
-			} else if(!strcmp(arg_name, "nn_auto_sample_fraction")){
+				return;
+			}
+			if(!strcmp(arg_name, "nn_auto_sample_fraction")){
 				nn_auto_sample_fraction = atof(arg_val);
-			} else if(!strcmp(arg_name, "nnk_n_layers")){
+				return;
+			}
+			if(!strcmp(arg_name, "nnk_n_layers")){
 				nnk_n_layers = atoi(arg_val);
-			} else if(!strcmp(arg_name, "nnk_ssm_sigma_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "nnk_ssm_sigma_ids")){
 				nnk_ssm_sigma_ids.push_back(atoi_arr(arg_val));
+				return;
 			}
 			//! Regression Network
-			else if(!strcmp(arg_name, "rg_max_iters")){
+			if(!strcmp(arg_name, "rg_max_iters")){
 				rg_max_iters = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_n_samples")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_n_samples")){
 				rg_n_samples = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_additive_update")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_additive_update")){
 				rg_additive_update = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_show_samples")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_show_samples")){
 				rg_show_samples = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_add_points")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_add_points")){
 				rg_add_points = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_remove_points")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_remove_points")){
 				rg_remove_points = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_ssm_sigma_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_ssm_sigma_ids")){
 				rg_ssm_sigma_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "rg_ssm_mean_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_ssm_mean_ids")){
 				rg_ssm_mean_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "rg_pix_sigma")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_pix_sigma")){
 				rg_pix_sigma = atof_arr(arg_val);
-			} else if(!strcmp(arg_name, "rg_save_index")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_save_index")){
 				rg_save_index = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_load_index")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_load_index")){
 				rg_load_index = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_saved_index_fid")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_saved_index_fid")){
 				rg_saved_index_fid = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_nepochs")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_nepochs")){
 				rg_nepochs = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_bs")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_bs")){
 				rg_bs = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_preproc")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_preproc")){
 				rg_preproc = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_solver")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_solver")){
 				processStringParam(rg_solver, arg_val);;
-			} else if(!strcmp(arg_name, "rg_train")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_train")){
 				processStringParam(rg_train, arg_val);;
-			} else if(!strcmp(arg_name, "rg_mean")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_mean")){
 				processStringParam(rg_mean, arg_val);;
-			} else if(!strcmp(arg_name, "rg_dbg")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_dbg")){
 				rg_dbg = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rg_pretrained")){
+				return;
+			}
+			if(!strcmp(arg_name, "rg_pretrained")){
 				rg_pretrained = atoi(arg_val);
+				return;
 			}
 
 			//! RIU AM
-			else if(!strcmp(arg_name, "riu_likelihood_alpha")){
+			if(!strcmp(arg_name, "riu_likelihood_alpha")){
 				riu_likelihood_alpha = atof(arg_val);
+				return;
 			}
 			//! Hierarchical SSM tracker
-			else if(!strcmp(arg_name, "hrch_sm")){
+			if(!strcmp(arg_name, "hrch_sm")){
 				processStringParam(hrch_sm, arg_val);
-			} else if(!strcmp(arg_name, "hrch_am")){
+				return;
+			}
+			if(!strcmp(arg_name, "hrch_am")){
 				processStringParam(hrch_am, arg_val);
+				return;
 			}
 			//! Cascade Tracker
 			if(!strcmp(arg_name, "casc_n_trackers")){
 				casc_n_trackers = atoi(arg_val);
-			} else 	if(!strcmp(arg_name, "casc_enable_feedback")){
+				return;
+			}
+			if(!strcmp(arg_name, "casc_enable_feedback")){
 				casc_enable_feedback = atoi(arg_val);
-			} else if(!strcmp(arg_name, "casc_auto_reinit")) {
+				return;
+			}
+			if(!strcmp(arg_name, "casc_auto_reinit")) {
 				casc_auto_reinit = atoi(arg_val);
-			} else if(!strcmp(arg_name, "casc_reinit_err_thresh")) {
+				return;
+			}
+			if(!strcmp(arg_name, "casc_reinit_err_thresh")) {
 				casc_reinit_err_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "casc_reinit_frame_gap")) {
+				return;
+			}
+			if(!strcmp(arg_name, "casc_reinit_frame_gap")) {
 				casc_reinit_frame_gap = atof(arg_val);
+				return;
 			}
 			//! Grid tracker
-			else if(!strcmp(arg_name, "grid_sm")){
+			if(!strcmp(arg_name, "grid_sm")){
 				processStringParam(grid_sm, arg_val);
-			} else if(!strcmp(arg_name, "grid_am")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_am")){
 				processStringParam(grid_am, arg_val);
-			} else if(!strcmp(arg_name, "grid_ssm")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_ssm")){
 				processStringParam(grid_ssm, arg_val);
-			} else if(!strcmp(arg_name, "grid_ilm")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_ilm")){
 				processStringParam(grid_ilm, arg_val);
-			} else if(!strcmp(arg_name, "grid_res")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_res")){
 				grid_res = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_patch_size")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_patch_size")){
 				grid_patch_size = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_patch_res")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_patch_res")){
 				grid_patch_res = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_reset_at_each_frame")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_reset_at_each_frame")){
 				grid_reset_at_each_frame = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_dyn_patch_size")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_dyn_patch_size")){
 				grid_dyn_patch_size = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_patch_centroid_inside")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_patch_centroid_inside")){
 				grid_patch_centroid_inside = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_show_trackers")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_show_trackers")){
 				grid_show_trackers = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_show_tracker_edges")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_show_tracker_edges")){
 				grid_show_tracker_edges = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_use_tbb")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_use_tbb")){
 				grid_use_tbb = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_pyramid_levels")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_pyramid_levels")){
 				grid_pyramid_levels = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_use_min_eig_vals")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_use_min_eig_vals")){
 				grid_use_min_eig_vals = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_rgb_input")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_rgb_input")){
 				grid_rgb_input = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_min_eig_thresh")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_min_eig_thresh")){
 				grid_min_eig_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "grid_fb_err_thresh")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_fb_err_thresh")){
 				grid_fb_err_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "grid_fb_reinit")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_fb_reinit")){
 				grid_fb_reinit = atoi(arg_val);
-			} else if(!strcmp(arg_name, "grid_use_const_grad")){
+				return;
+			}
+			if(!strcmp(arg_name, "grid_use_const_grad")){
 				grid_use_const_grad = atoi(arg_val);
+				return;
 			}
 			//! Feature Tracker
-			else if(!strcmp(arg_name, "feat_detector_type")){
+			if(!strcmp(arg_name, "feat_detector_type")){
 				feat_detector_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "feat_descriptor_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "feat_descriptor_type")){
 				feat_descriptor_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "feat_max_dist_ratio")){
+				return;
+			}
+			if(!strcmp(arg_name, "feat_max_dist_ratio")){
 				feat_max_dist_ratio = atof(arg_val);
-			}  else if(!strcmp(arg_name, "feat_min_matches")){
+				return;
+			}  if(!strcmp(arg_name, "feat_min_matches")){
 				feat_min_matches = atoi(arg_val);
-			} else if(!strcmp(arg_name, "feat_rebuild_index")){
+				return;
+			}
+			if(!strcmp(arg_name, "feat_rebuild_index")){
 				feat_rebuild_index = atoi(arg_val);
-			} else if(!strcmp(arg_name, "feat_use_cv_flann")){
+				return;
+			}
+			if(!strcmp(arg_name, "feat_use_cv_flann")){
 				feat_use_cv_flann = atoi(arg_val);
-			}  else if(!strcmp(arg_name, "feat_show_keypoints")){
+				return;
+			}  if(!strcmp(arg_name, "feat_show_keypoints")){
 				feat_show_keypoints = atoi(arg_val);
-			}  else if(!strcmp(arg_name, "feat_show_matches")){
+				return;
+			}  if(!strcmp(arg_name, "feat_show_matches")){
 				feat_show_matches = atoi(arg_val);
-			}  else if(!strcmp(arg_name, "feat_debug_mode")){
+				return;
+			}  if(!strcmp(arg_name, "feat_debug_mode")){
 				feat_debug_mode = atoi(arg_val);
+				return;
 			}
 			//! SIFT Feature Detector
-			else if(!strcmp(arg_name, "sift_n_features")){
+			if(!strcmp(arg_name, "sift_n_features")){
 				sift_n_features = atoi(arg_val);
-			} else if(!strcmp(arg_name, "sift_n_octave_layers")){
+				return;
+			}
+			if(!strcmp(arg_name, "sift_n_octave_layers")){
 				sift_n_octave_layers = atoi(arg_val);
-			} else if(!strcmp(arg_name, "sift_edge_thresh")){
+				return;
+			}
+			if(!strcmp(arg_name, "sift_edge_thresh")){
 				sift_edge_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "sift_contrast_thresh")){
+				return;
+			}
+			if(!strcmp(arg_name, "sift_contrast_thresh")){
 				sift_contrast_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "sift_sigma")){
+				return;
+			}
+			if(!strcmp(arg_name, "sift_sigma")){
 				sift_sigma = atof(arg_val);
+				return;
 			}
 			//! SSM Estimator
-			else if(!strcmp(arg_name, "est_method")){
+			if(!strcmp(arg_name, "est_method")){
 				est_method = atoi(arg_val);
-			} else if(!strcmp(arg_name, "est_ransac_reproj_thresh")){
+				return;
+			}
+			if(!strcmp(arg_name, "est_ransac_reproj_thresh")){
 				est_ransac_reproj_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "est_n_model_pts")){
+				return;
+			}
+			if(!strcmp(arg_name, "est_n_model_pts")){
 				est_n_model_pts = atoi(arg_val);
-			} else if(!strcmp(arg_name, "est_max_iters")){
+				return;
+			}
+			if(!strcmp(arg_name, "est_max_iters")){
 				est_max_iters = atoi(arg_val);
-			} else if(!strcmp(arg_name, "est_max_subset_attempts")){
+				return;
+			}
+			if(!strcmp(arg_name, "est_max_subset_attempts")){
 				est_max_subset_attempts = atoi(arg_val);
-			} else if(!strcmp(arg_name, "est_use_boost_rng")){
+				return;
+			}
+			if(!strcmp(arg_name, "est_use_boost_rng")){
 				est_use_boost_rng = atoi(arg_val);
-			} else if(!strcmp(arg_name, "est_confidence")){
+				return;
+			}
+			if(!strcmp(arg_name, "est_confidence")){
 				est_confidence = atof(arg_val);
-			} else if(!strcmp(arg_name, "est_refine")){
+				return;
+			}
+			if(!strcmp(arg_name, "est_refine")){
 				est_refine = atoi(arg_val);
-			} else if(!strcmp(arg_name, "est_lm_max_iters")){
+				return;
+			}
+			if(!strcmp(arg_name, "est_lm_max_iters")){
 				est_lm_max_iters = atoi(arg_val);
+				return;
 			}
 			//! RKLT
-			else if(!strcmp(arg_name, "rkl_sm")){
+			if(!strcmp(arg_name, "rkl_sm")){
 				processStringParam(rkl_sm, arg_val);
-			} else if(!strcmp(arg_name, "rkl_enable_spi")){
+				return;
+			}
+			if(!strcmp(arg_name, "rkl_enable_spi")){
 				rkl_enable_spi = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rkl_enable_feedback")){
+				return;
+			}
+			if(!strcmp(arg_name, "rkl_enable_feedback")){
 				rkl_enable_feedback = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rkl_failure_detection")){
+				return;
+			}
+			if(!strcmp(arg_name, "rkl_failure_detection")){
 				rkl_failure_detection = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rkl_failure_thresh")){
+				return;
+			}
+			if(!strcmp(arg_name, "rkl_failure_thresh")){
 				rkl_failure_thresh = atof(arg_val);
+				return;
 			}
 			//! Parallel Tracker
-			else if(!strcmp(arg_name, "prl_n_trackers")) {
+			if(!strcmp(arg_name, "prl_n_trackers")) {
 				prl_n_trackers = atoi(arg_val);
-			} else if(!strcmp(arg_name, "prl_estimation_method")) {
+				return;
+			}
+			if(!strcmp(arg_name, "prl_estimation_method")) {
 				prl_estimation_method = atoi(arg_val);
-			} else if(!strcmp(arg_name, "prl_reset_to_mean")) {
+				return;
+			}
+			if(!strcmp(arg_name, "prl_reset_to_mean")) {
 				prl_reset_to_mean = atoi(arg_val);
-			} else if(!strcmp(arg_name, "prl_auto_reinit")) {
+				return;
+			}
+			if(!strcmp(arg_name, "prl_auto_reinit")) {
 				prl_auto_reinit = atoi(arg_val);
-			} else if(!strcmp(arg_name, "prl_reinit_err_thresh")) {
+				return;
+			}
+			if(!strcmp(arg_name, "prl_reinit_err_thresh")) {
 				prl_reinit_err_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "prl_reinit_frame_gap")) {
+				return;
+			}
+			if(!strcmp(arg_name, "prl_reinit_frame_gap")) {
 				prl_reinit_frame_gap = atof(arg_val);
+				return;
 			}
 			//! Pyramidal Tracker
-			else if(!strcmp(arg_name, "pyr_sm")) {
+			if(!strcmp(arg_name, "pyr_sm")) {
 				pyr_sm = std::string(arg_val);
-			} else if(!strcmp(arg_name, "pyr_no_of_levels")) {
+				return;
+			}
+			if(!strcmp(arg_name, "pyr_no_of_levels")) {
 				pyr_no_of_levels = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pyr_scale_factor")) {
+				return;
+			}
+			if(!strcmp(arg_name, "pyr_scale_factor")) {
 				pyr_scale_factor = atof(arg_val);
-			} else if(!strcmp(arg_name, "pyr_scale_res")) {
+				return;
+			}
+			if(!strcmp(arg_name, "pyr_scale_res")) {
 				pyr_scale_res = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pyr_show_levels")) {
+				return;
+			}
+			if(!strcmp(arg_name, "pyr_show_levels")) {
 				pyr_show_levels = atoi(arg_val);
+				return;
 			}
 			//! Gradient Descent
-			else if(!strcmp(arg_name, "gd_learning_rate")){
+			if(!strcmp(arg_name, "gd_learning_rate")){
 				gd_learning_rate = atof(arg_val);
+				return;
 			}
 			//! Gain and Bias Illumination Model
-			else if(!strcmp(arg_name, "gb_additive_update")){
+			if(!strcmp(arg_name, "gb_additive_update")){
 				gb_additive_update = atoi(arg_val);
+				return;
 			}
 			//! Piecewise Gain and Bias Illumination Model
-			else if(!strcmp(arg_name, "pgb_additive_update")){
+			if(!strcmp(arg_name, "pgb_additive_update")){
 				pgb_additive_update = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pgb_sub_regions_x")){
+				return;
+			}
+			if(!strcmp(arg_name, "pgb_sub_regions_x")){
 				pgb_sub_regions_x = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pgb_sub_regions_y")){
+				return;
+			}
+			if(!strcmp(arg_name, "pgb_sub_regions_y")){
 				pgb_sub_regions_y = atoi(arg_val);
+				return;
 			}
 			//! Radial Basis Function illumination model
-			else if(!strcmp(arg_name, "rbf_additive_update")){
+			if(!strcmp(arg_name, "rbf_additive_update")){
 				rbf_additive_update = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rbf_n_ctrl_pts_x")){
+				return;
+			}
+			if(!strcmp(arg_name, "rbf_n_ctrl_pts_x")){
 				rbf_n_ctrl_pts_x = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rbf_n_ctrl_pts_y")){
+				return;
+			}
+			if(!strcmp(arg_name, "rbf_n_ctrl_pts_y")){
 				rbf_n_ctrl_pts_y = atoi(arg_val);
+				return;
 			}
 			//! Particle Filter
-			else if(!strcmp(arg_name, "pf_max_iters")){
+			if(!strcmp(arg_name, "pf_max_iters")){
 				pf_max_iters = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pf_n_particles")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_n_particles")){
 				pf_n_particles = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pf_dynamic_model")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_dynamic_model")){
 				pf_dynamic_model = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pf_update_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_update_type")){
 				pf_update_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pf_likelihood_func")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_likelihood_func")){
 				pf_likelihood_func = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pf_resampling_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_resampling_type")){
 				pf_resampling_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pf_reset_to_mean")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_reset_to_mean")){
 				pf_reset_to_mean = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pf_mean_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_mean_type")){
 				pf_mean_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pf_ssm_sigma_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_ssm_sigma_ids")){
 				pf_ssm_sigma_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "pf_ssm_mean_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_ssm_mean_ids")){
 				pf_ssm_mean_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "pf_update_distr_wts")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_update_distr_wts")){
 				pf_update_distr_wts = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pf_min_distr_wt")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_min_distr_wt")){
 				pf_min_distr_wt = atof(arg_val);
-			} else if(!strcmp(arg_name, "pf_adaptive_resampling_thresh")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_adaptive_resampling_thresh")){
 				pf_adaptive_resampling_thresh = atof(arg_val);
-			} else if(!strcmp(arg_name, "pf_measurement_sigma")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_measurement_sigma")){
 				pf_measurement_sigma = atof(arg_val);
-			} else if(!strcmp(arg_name, "pf_pix_sigma")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_pix_sigma")){
 				pf_pix_sigma = atof_arr(arg_val);
-			} else if(!strcmp(arg_name, "pf_show_particles")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_show_particles")){
 				pf_show_particles = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pf_jacobian_as_sigma")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_jacobian_as_sigma")){
 				pf_jacobian_as_sigma = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pf_debug_mode")){
+				return;
+			}
+			if(!strcmp(arg_name, "pf_debug_mode")){
 				pf_debug_mode = atoi(arg_val);
+				return;
 			}
 			//! Multi layer PF
-			else if(!strcmp(arg_name, "pfk_n_layers")){
+			if(!strcmp(arg_name, "pfk_n_layers")){
 				pfk_n_layers = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfk_ssm_sigma_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfk_ssm_sigma_ids")){
 				pfk_ssm_sigma_ids.push_back(atoi_arr(arg_val));
+				return;
 			}
 			//! Gaussian parameters for sampling SSM parameters
-			else if(!strcmp(arg_name, "ssm_sigma")){
+			if(!strcmp(arg_name, "ssm_sigma")){
 				ssm_sigma.push_back(atof_arr(arg_val));
-			} else if(!strcmp(arg_name, "ssm_mean")){
+				return;
+			}
+			if(!strcmp(arg_name, "ssm_mean")){
 				ssm_mean.push_back(atof_arr(arg_val));
-			} else if(!strcmp(arg_name, "am_sigma")){
+				return;
+			}
+			if(!strcmp(arg_name, "am_sigma")){
 				am_sigma.push_back(atof_arr(arg_val));
-			} else if(!strcmp(arg_name, "am_mean")){
+				return;
+			}
+			if(!strcmp(arg_name, "am_mean")){
 				am_mean.push_back(atof_arr(arg_val));
+				return;
 			}
 			//! CMT
-			else if(!strcmp(arg_name, "cmt_estimate_scale")){
+			if(!strcmp(arg_name, "cmt_estimate_scale")){
 				cmt_estimate_scale = atoi(arg_val);
-			} else if(!strcmp(arg_name, "cmt_estimate_rotation")){
+				return;
+			}
+			if(!strcmp(arg_name, "cmt_estimate_rotation")){
 				cmt_estimate_rotation = atoi(arg_val);
-			} else if(!strcmp(arg_name, "cmt_feat_detector")){
+				return;
+			}
+			if(!strcmp(arg_name, "cmt_feat_detector")){
 				processStringParam(cmt_feat_detector, arg_val);
-			} else if(!strcmp(arg_name, "cmt_desc_extractor")){
+				return;
+			}
+			if(!strcmp(arg_name, "cmt_desc_extractor")){
 				processStringParam(cmt_desc_extractor, arg_val);
-			} else if(!strcmp(arg_name, "cmt_resize_factor")){
+				return;
+			}
+			if(!strcmp(arg_name, "cmt_resize_factor")){
 				cmt_resize_factor = atof(arg_val);
+				return;
 			}
 			//! DSST
-			else if(!strcmp(arg_name, "dsst_sigma")){
+			if(!strcmp(arg_name, "dsst_sigma")){
 				dsst_sigma = atof(arg_val);
-			} else if(!strcmp(arg_name, "dsst_scale_sigma")){
+				return;
+			}
+			if(!strcmp(arg_name, "dsst_scale_sigma")){
 				dsst_scale_sigma = atof(arg_val);
-			} else if(!strcmp(arg_name, "dsst_lambda")){
+				return;
+			}
+			if(!strcmp(arg_name, "dsst_lambda")){
 				dsst_lambda = atof(arg_val);
-			} else if(!strcmp(arg_name, "dsst_learning_rate")){
+				return;
+			}
+			if(!strcmp(arg_name, "dsst_learning_rate")){
 				dsst_learning_rate = atof(arg_val);
-			} else if(!strcmp(arg_name, "dsst_number_scales")){
+				return;
+			}
+			if(!strcmp(arg_name, "dsst_number_scales")){
 				dsst_number_scales = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dsst_number_rots")){
+				return;
+			}
+			if(!strcmp(arg_name, "dsst_number_rots")){
 				dsst_number_rots = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dsst_scale_step")){
+				return;
+			}
+			if(!strcmp(arg_name, "dsst_scale_step")){
 				dsst_scale_step = atof(arg_val);
-			} else if(!strcmp(arg_name, "dsst_rot_step")){
+				return;
+			}
+			if(!strcmp(arg_name, "dsst_rot_step")){
 				dsst_rot_step = atof(arg_val);
-			} else if(!strcmp(arg_name, "dsst_padding")){
+				return;
+			}
+			if(!strcmp(arg_name, "dsst_padding")){
 				dsst_padding = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dsst_resize_factor")){
+				return;
+			}
+			if(!strcmp(arg_name, "dsst_resize_factor")){
 				dsst_resize_factor = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dsst_is_scaling")){
+				return;
+			}
+			if(!strcmp(arg_name, "dsst_is_scaling")){
 				dsst_is_scaling = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dsst_is_rotating")){
+				return;
+			}
+			if(!strcmp(arg_name, "dsst_is_rotating")){
 				dsst_is_rotating = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dsst_bin_size")){
+				return;
+			}
+			if(!strcmp(arg_name, "dsst_bin_size")){
 				dsst_bin_size = atoi(arg_val);
+				return;
 			}
 			//! KCF
-			else if(!strcmp(arg_name, "kcf_output_sigma_factor")){
+			if(!strcmp(arg_name, "kcf_output_sigma_factor")){
 				kcf_output_sigma_factor = atof(arg_val);
-			} else if(!strcmp(arg_name, "kcf_interp_factor")){
+				return;
+			}
+			if(!strcmp(arg_name, "kcf_interp_factor")){
 				kcf_interp_factor = atof(arg_val);
-			} else if(!strcmp(arg_name, "kcf_lambda")){
+				return;
+			}
+			if(!strcmp(arg_name, "kcf_lambda")){
 				kcf_lambda = atof(arg_val);
-			} else if(!strcmp(arg_name, "kcf_kernel_sigma")){
+				return;
+			}
+			if(!strcmp(arg_name, "kcf_kernel_sigma")){
 				kcf_kernel_sigma = atof(arg_val);
-			} else if(!strcmp(arg_name, "kcf_number_scales")){
+				return;
+			}
+			if(!strcmp(arg_name, "kcf_number_scales")){
 				kcf_number_scales = atoi(arg_val);
-			} else if(!strcmp(arg_name, "kcf_scale_step")){
+				return;
+			}
+			if(!strcmp(arg_name, "kcf_scale_step")){
 				kcf_scale_step = atof(arg_val);
-			} else if(!strcmp(arg_name, "kcf_padding")){
+				return;
+			}
+			if(!strcmp(arg_name, "kcf_padding")){
 				kcf_padding = atoi(arg_val);
-			} else if(!strcmp(arg_name, "kcf_resize_factor")){
+				return;
+			}
+			if(!strcmp(arg_name, "kcf_resize_factor")){
 				kcf_resize_factor = atoi(arg_val);
-			} else if(!strcmp(arg_name, "kcf_scale_model_max_area")){
+				return;
+			}
+			if(!strcmp(arg_name, "kcf_scale_model_max_area")){
 				kcf_scale_model_max_area = atof(arg_val);
-			} else if(!strcmp(arg_name, "kcf_scale_sigma_factor")){
+				return;
+			}
+			if(!strcmp(arg_name, "kcf_scale_sigma_factor")){
 				kcf_scale_sigma_factor = atof(arg_val);
-			} else if(!strcmp(arg_name, "kcf_scale_learning_rate")){
+				return;
+			}
+			if(!strcmp(arg_name, "kcf_scale_learning_rate")){
 				kcf_scale_learning_rate = atof(arg_val);
-			} else if(!strcmp(arg_name, "kcf_enableScaling")){
+				return;
+			}
+			if(!strcmp(arg_name, "kcf_enableScaling")){
 				kcf_enableScaling = atoi(arg_val);
+				return;
 			}
 			//! MIL
-			else if(!strcmp(arg_name, "mil_algorithm")){
+			if(!strcmp(arg_name, "mil_algorithm")){
 				mil_algorithm = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mil_num_classifiers")){
+				return;
+			}
+			if(!strcmp(arg_name, "mil_num_classifiers")){
 				mil_num_classifiers = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mil_overlap")){
+				return;
+			}
+			if(!strcmp(arg_name, "mil_overlap")){
 				mil_overlap = atof(arg_val);
-			} else if(!strcmp(arg_name, "mil_search_factor")){
+				return;
+			}
+			if(!strcmp(arg_name, "mil_search_factor")){
 				mil_search_factor = atof(arg_val);
-			} else if(!strcmp(arg_name, "mil_pos_radius_train")){
+				return;
+			}
+			if(!strcmp(arg_name, "mil_pos_radius_train")){
 				mil_pos_radius_train = atof(arg_val);
-			} else if(!strcmp(arg_name, "mil_neg_num_train")){
+				return;
+			}
+			if(!strcmp(arg_name, "mil_neg_num_train")){
 				mil_neg_num_train = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mil_num_features")){
+				return;
+			}
+			if(!strcmp(arg_name, "mil_num_features")){
 				mil_num_features = atoi(arg_val);
+				return;
 			}
 			//! TLD
-			else if(!strcmp(arg_name, "tld_detector_enabled")){
+			if(!strcmp(arg_name, "tld_detector_enabled")){
 				tld_detector_enabled = atoi(arg_val);
-			} else if(!strcmp(arg_name, "tld_learning_enabled")){
+				return;
+			}
+			if(!strcmp(arg_name, "tld_learning_enabled")){
 				tld_learning_enabled = atoi(arg_val);
-			} else if(!strcmp(arg_name, "tld_tracker_enabled")){
+				return;
+			}
+			if(!strcmp(arg_name, "tld_tracker_enabled")){
 				tld_tracker_enabled = atoi(arg_val);
-			} else if(!strcmp(arg_name, "tld_alternating")){
+				return;
+			}
+			if(!strcmp(arg_name, "tld_alternating")){
 				tld_alternating = atoi(arg_val);
+				return;
 			}
 			//! RCT
-			else if(!strcmp(arg_name, "rct_min_n_rect")){
+			if(!strcmp(arg_name, "rct_min_n_rect")){
 				rct_min_n_rect = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rct_max_n_rect")){
+				return;
+			}
+			if(!strcmp(arg_name, "rct_max_n_rect")){
 				rct_max_n_rect = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rct_n_feat")){
+				return;
+			}
+			if(!strcmp(arg_name, "rct_n_feat")){
 				rct_n_feat = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rct_rad_outer_pos")){
+				return;
+			}
+			if(!strcmp(arg_name, "rct_rad_outer_pos")){
 				rct_rad_outer_pos = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rct_rad_search_win")){
+				return;
+			}
+			if(!strcmp(arg_name, "rct_rad_search_win")){
 				rct_rad_search_win = atoi(arg_val);
-			} else if(!strcmp(arg_name, "rct_learning_rate")){
+				return;
+			}
+			if(!strcmp(arg_name, "rct_learning_rate")){
 				rct_learning_rate = atof(arg_val);
+				return;
 			}
 			//! Struck
-			else if(!strcmp(arg_name, "strk_config_path")){
+			if(!strcmp(arg_name, "strk_config_path")){
 				strk_config_path = std::string(arg_val);
+				return;
 			}
 			//! ViSP
-			else if(!strcmp(arg_name, "visp_sm")){
+			if(!strcmp(arg_name, "visp_sm")){
 				processStringParam(visp_sm, arg_val);
-			} else if(!strcmp(arg_name, "visp_am")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_am")){
 				processStringParam(visp_am, arg_val);
-			} else if(!strcmp(arg_name, "visp_ssm")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_ssm")){
 				processStringParam(visp_ssm, arg_val);
-			} else if(!strcmp(arg_name, "visp_max_iters")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_max_iters")){
 				visp_max_iters = atoi(arg_val);
-			} else if(!strcmp(arg_name, "visp_res")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_res")){
 				visp_res = atoi(arg_val);
-			} else if(!strcmp(arg_name, "visp_pyr_n_levels")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_pyr_n_levels")){
 				visp_pyr_n_levels = atoi(arg_val);
-			} else if(!strcmp(arg_name, "visp_pyr_level_to_stop")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_pyr_level_to_stop")){
 				visp_pyr_level_to_stop = atoi(arg_val);
-			} else if(!strcmp(arg_name, "visp_lambda")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_lambda")){
 				visp_lambda = atof(arg_val);
-			} else if(!strcmp(arg_name, "visp_thresh_grad")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_thresh_grad")){
 				visp_thresh_grad = atof(arg_val);
-			} else if(!strcmp(arg_name, "visp_fw_res")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_fw_res")){
 				visp_fw_res = atoi(arg_val);
-			} else if(!strcmp(arg_name, "visp_fw_fps")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_fw_fps")){
 				visp_fw_fps = atoi(arg_val);
-			} else if(!strcmp(arg_name, "visp_usb_res")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_usb_res")){
 				visp_usb_res = atoi(arg_val);
-			} else if(!strcmp(arg_name, "visp_usb_fps")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_usb_fps")){
 				visp_usb_fps = atoi(arg_val);
-			} else if(!strcmp(arg_name, "visp_usb_n_buffers")){
+				return;
+			}
+			if(!strcmp(arg_name, "visp_usb_n_buffers")){
 				visp_usb_n_buffers = atoi(arg_val);
+				return;
 			}
 			//! PFSL3
-			else if(!strcmp(arg_name, "pfsl3_p_x")){
+			if(!strcmp(arg_name, "pfsl3_p_x")){
 				pfsl3_p_x = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_p_y")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_p_y")){
 				pfsl3_p_y = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_rot")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_rot")){
 				pfsl3_rot = atof(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_ncc_std")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_ncc_std")){
 				pfsl3_ncc_std = atof(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_pca_std")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_pca_std")){
 				pfsl3_pca_std = atof(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_state_std")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_state_std")){
 				pfsl3_state_std = atof_arr(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_ar_p")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_ar_p")){
 				pfsl3_ar_p = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_n")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_n")){
 				pfsl3_n = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_n_c")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_n_c")){
 				pfsl3_n_c = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_n_iter")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_n_iter")){
 				pfsl3_n_iter = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_sampling")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_sampling")){
 				pfsl3_sampling = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_capture")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_capture")){
 				pfsl3_capture = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_mean_check")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_mean_check")){
 				pfsl3_mean_check = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_outlier_flag")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_outlier_flag")){
 				pfsl3_outlier_flag = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_len")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_len")){
 				pfsl3_len = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_init_size")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_init_size")){
 				pfsl3_init_size = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_update_period")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_update_period")){
 				pfsl3_update_period = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_ff")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_ff")){
 				pfsl3_ff = atof(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_basis_thr")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_basis_thr")){
 				pfsl3_basis_thr = atof(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_max_num_basis")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_max_num_basis")){
 				pfsl3_max_num_basis = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_max_num_used_basis")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_max_num_used_basis")){
 				pfsl3_max_num_used_basis = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_show_weights")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_show_weights")){
 				pfsl3_show_weights = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_show_templates")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_show_templates")){
 				pfsl3_show_templates = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pfsl3_debug_mode")){
+				return;
+			}
+			if(!strcmp(arg_name, "pfsl3_debug_mode")){
 				pfsl3_debug_mode = atoi(arg_val);
+				return;
 			}
 
 			//! GOTURN
-			else if(!strcmp(arg_name, "gtrn_do_train")){
+			if(!strcmp(arg_name, "gtrn_do_train")){
 				gtrn_do_train = atoi(arg_val);
-			} else if(!strcmp(arg_name, "gtrn_gpu_id")){
+				return;
+			}
+			if(!strcmp(arg_name, "gtrn_gpu_id")){
 				gtrn_gpu_id = atoi(arg_val);
-			} else if(!strcmp(arg_name, "gtrn_show_intermediate_output")){
+				return;
+			}
+			if(!strcmp(arg_name, "gtrn_show_intermediate_output")){
 				gtrn_show_intermediate_output = atoi(arg_val);
-			} else if(!strcmp(arg_name, "gtrn_model_file")){
+				return;
+			}
+			if(!strcmp(arg_name, "gtrn_model_file")){
 				gtrn_model_file = std::string(arg_val);
-			} else if(!strcmp(arg_name, "gtrn_trained_file")){
+				return;
+			}
+			if(!strcmp(arg_name, "gtrn_trained_file")){
 				gtrn_trained_file = std::string(arg_val);
+				return;
 			}
 			//! DFT
-			else if(!strcmp(arg_name, "dft_res_to_l")){
+			if(!strcmp(arg_name, "dft_res_to_l")){
 				dft_res_to_l = atof(arg_val);
-			} else if(!strcmp(arg_name, "dft_p_to_l")){
+				return;
+			}
+			if(!strcmp(arg_name, "dft_p_to_l")){
 				dft_p_to_l = atof(arg_val);
-			} else if(!strcmp(arg_name, "dft_max_iter")){
+				return;
+			}
+			if(!strcmp(arg_name, "dft_max_iter")){
 				dft_max_iter = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dft_max_iter_single_level")){
+				return;
+			}
+			if(!strcmp(arg_name, "dft_max_iter_single_level")){
 				dft_max_iter_single_level = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dft_pyramid_smoothing_variance")){
+				return;
+			}
+			if(!strcmp(arg_name, "dft_pyramid_smoothing_variance")){
 				dft_pyramid_smoothing_variance = atof32_arr(arg_val);
-			} else if(!strcmp(arg_name, "dft_presmoothing_variance")){
+				return;
+			}
+			if(!strcmp(arg_name, "dft_presmoothing_variance")){
 				dft_presmoothing_variance = atof(arg_val);
-			} else if(!strcmp(arg_name, "dft_n_control_points_on_edge")){
+				return;
+			}
+			if(!strcmp(arg_name, "dft_n_control_points_on_edge")){
 				dft_n_control_points_on_edge = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dft_b_adaptative_choice_of_points")){
+				return;
+			}
+			if(!strcmp(arg_name, "dft_b_adaptative_choice_of_points")){
 				dft_b_adaptative_choice_of_points = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dft_b_normalize_descriptors")){
+				return;
+			}
+			if(!strcmp(arg_name, "dft_b_normalize_descriptors")){
 				dft_b_normalize_descriptors = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dft_optimization_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "dft_optimization_type")){
 				dft_optimization_type = atoi(arg_val);
+				return;
 			}
 			// FRG
-			else if(!strcmp(arg_name, "frg_n_bins")){
+			if(!strcmp(arg_name, "frg_n_bins")){
 				frg_n_bins = atoi(arg_val);
-			} else if(!strcmp(arg_name, "frg_search_margin")){
+				return;
+			}
+			if(!strcmp(arg_name, "frg_search_margin")){
 				frg_search_margin = atoi(arg_val);
-			} else if(!strcmp(arg_name, "frg_hist_cmp_metric")){
+				return;
+			}
+			if(!strcmp(arg_name, "frg_hist_cmp_metric")){
 				frg_hist_cmp_metric = atoi(arg_val);
-			} else if(!strcmp(arg_name, "frg_resize_factor")){
+				return;
+			}
+			if(!strcmp(arg_name, "frg_resize_factor")){
 				frg_resize_factor = atof(arg_val);
-			} else if(!strcmp(arg_name, "frg_show_window")){
+				return;
+			}
+			if(!strcmp(arg_name, "frg_show_window")){
 				frg_show_window = atoi(arg_val);
+				return;
 			}
 			//! FMaps
-			else if(!strcmp(arg_name, "dfm_nfmaps")){
+			if(!strcmp(arg_name, "dfm_nfmaps")){
 				dfm_nfmaps = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dfm_layer_name")){
+				return;
+			}
+			if(!strcmp(arg_name, "dfm_layer_name")){
 				processStringParam(dfm_layer_name, arg_val);
-			} else if(!strcmp(arg_name, "dfm_vis")){
+				return;
+			}
+			if(!strcmp(arg_name, "dfm_vis")){
 				dfm_vis = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dfm_zncc")){
+				return;
+			}
+			if(!strcmp(arg_name, "dfm_zncc")){
 				dfm_zncc = atoi(arg_val);
-			} else if(!strcmp(arg_name, "dfm_model_f_name")){
+				return;
+			}
+			if(!strcmp(arg_name, "dfm_model_f_name")){
 				processStringParam(dfm_model_f_name, arg_val);
-			} else if(!strcmp(arg_name, "dfm_params_f_name")){
+				return;
+			}
+			if(!strcmp(arg_name, "dfm_params_f_name")){
 				processStringParam(dfm_params_f_name, arg_val);
-			} else if(!strcmp(arg_name, "dfm_mean_f_name")){
+				return;
+			}
+			if(!strcmp(arg_name, "dfm_mean_f_name")){
 				processStringParam(dfm_mean_f_name, arg_val);
+				return;
 			}
 			//! Patch extractor
-			else if(!strcmp(arg_name, "extracted_frame_ids")){
+			if(!strcmp(arg_name, "extracted_frame_ids")){
 				extracted_frame_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "extraction_id")){
+				return;
+			}
+			if(!strcmp(arg_name, "extraction_id")){
 				extraction_id = atoi(arg_val);
+				return;
 			}
 			//! PCA
-			else if(!strcmp(arg_name, "pca_n_eigenvec")){
+			if(!strcmp(arg_name, "pca_n_eigenvec")){
 				pca_n_eigenvec = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pca_batchsize")){
+				return;
+			}
+			if(!strcmp(arg_name, "pca_batchsize")){
 				pca_batchsize = atoi(arg_val);
-			} else if(!strcmp(arg_name, "pca_f_factor")){
+				return;
+			}
+			if(!strcmp(arg_name, "pca_f_factor")){
 				pca_f_factor = atof(arg_val);
-			} else if(!strcmp(arg_name, "pca_show_basis")){
+				return;
+			}
+			if(!strcmp(arg_name, "pca_show_basis")){
 				pca_show_basis = atoi(arg_val);
+				return;
 			}
 
 			//! Synthetic warped sequence generator
-			else if(!strcmp(arg_name, "syn_ssm")){
+			if(!strcmp(arg_name, "syn_ssm")){
 				syn_ssm = std::string(arg_val);
-			} else if(!strcmp(arg_name, "syn_ilm")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_ilm")){
 				syn_ilm = std::string(arg_val);
-			} else if(!strcmp(arg_name, "syn_frame_id")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_frame_id")){
 				syn_frame_id = atoi(arg_val);
-			} else if(!strcmp(arg_name, "syn_grayscale_img")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_grayscale_img")){
 				syn_grayscale_img = atoi(arg_val);
-			} else if(!strcmp(arg_name, "syn_continuous_warping")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_continuous_warping")){
 				syn_continuous_warping = atoi(arg_val);
-			} else if(!strcmp(arg_name, "syn_ssm_sigma_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_ssm_sigma_ids")){
 				syn_ssm_sigma_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "syn_ssm_mean_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_ssm_mean_ids")){
 				syn_ssm_mean_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "syn_am_sigma_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_am_sigma_ids")){
 				syn_am_sigma_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "syn_am_mean_ids")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_am_mean_ids")){
 				syn_am_mean_ids = atoi_arr(arg_val);
-			} else if(!strcmp(arg_name, "syn_pix_sigma")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_pix_sigma")){
 				syn_pix_sigma = atof(arg_val);
-			} else if(!strcmp(arg_name, "syn_am_on_obj")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_am_on_obj")){
 				syn_am_on_obj = atoi(arg_val);
-			} else if(!strcmp(arg_name, "syn_warp_entire_image")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_warp_entire_image")){
 				syn_warp_entire_image = atoi(arg_val);
-			} else if(!strcmp(arg_name, "syn_background_type")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_background_type")){
 				syn_background_type = atoi(arg_val);
-			} else if(!strcmp(arg_name, "syn_use_inv_warp")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_use_inv_warp")){
 				syn_use_inv_warp = atoi(arg_val);
-			} else if(!strcmp(arg_name, "syn_out_suffix")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_out_suffix")){
 				syn_out_suffix = std::string(arg_val);
-			} else if(!strcmp(arg_name, "syn_n_frames")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_n_frames")){
 				syn_n_frames = atoi(arg_val);
-			} else if(!strcmp(arg_name, "syn_add_noise")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_add_noise")){
 				syn_add_noise = atoi(arg_val);
-			} else if(!strcmp(arg_name, "syn_noise_mean")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_noise_mean")){
 				syn_noise_mean = atof(arg_val);
-			} else if(!strcmp(arg_name, "syn_noise_sigma")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_noise_sigma")){
 				syn_noise_sigma = atof(arg_val);
-			} else if(!strcmp(arg_name, "syn_save_as_video")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_save_as_video")){
 				syn_save_as_video = atoi(arg_val);
-			} else if(!strcmp(arg_name, "syn_video_fps")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_video_fps")){
 				syn_video_fps = atoi(arg_val);
-			} else if(!strcmp(arg_name, "syn_jpg_quality")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_jpg_quality")){
 				syn_jpg_quality = atoi(arg_val);
-			} else if(!strcmp(arg_name, "syn_show_output")){
+				return;
+			}
+			if(!strcmp(arg_name, "syn_show_output")){
 				syn_show_output = atoi(arg_val);
+				return;
 			}
 			//! online image mosaicing
-			else if(!strcmp(arg_name, "mos_inv_tracking")){
+			if(!strcmp(arg_name, "mos_inv_tracking")){
 				mos_inv_tracking = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_use_norm_corners")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_use_norm_corners")){
 				mos_use_norm_corners = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_track_border")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_track_border")){
 				mos_track_border = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_border_width")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_border_width")){
 				mos_border_width = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_border_height")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_border_height")){
 				mos_border_height = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_init_offset_x")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_init_offset_x")){
 				mos_init_offset_x = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_init_offset_y")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_init_offset_y")){
 				mos_init_offset_y = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_disp_width")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_disp_width")){
 				mos_disp_width = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_disp_height")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_disp_height")){
 				mos_disp_height = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_show_grid")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_show_grid")){
 				mos_show_grid = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_show_tracked_img")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_show_tracked_img")){
 				mos_show_tracked_img = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_show_patch")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_show_patch")){
 				mos_show_patch = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_show_mask")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_show_mask")){
 				mos_show_mask = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_use_write_mask")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_use_write_mask")){
 				mos_use_write_mask = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_save_img")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_save_img")){
 				mos_save_img = atoi(arg_val);
-			} else if(!strcmp(arg_name, "mos_out_fname")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_out_fname")){
 				mos_out_fname = std::string(arg_val);
-			} else if(!strcmp(arg_name, "mos_out_fmt")){
+				return;
+			}
+			if(!strcmp(arg_name, "mos_out_fmt")){
 				mos_out_fmt = std::string(arg_val);
-			} else if(!strcmp(arg_name, "qr_input")){
+				return;
+			}
+			if(!strcmp(arg_name, "qr_input")){
 				qr_input.push_back(std::string(arg_val));
-			} else if(!strcmp(arg_name, "qr_root_dir")){
+				return;
+			}
+			if(!strcmp(arg_name, "qr_root_dir")){
 				qr_root_dir = std::string(arg_val);
-			} else if(!strcmp(arg_name, "qr_detector_ssm")){
+				return;
+			}
+			if(!strcmp(arg_name, "qr_detector_ssm")){
 				qr_detector_ssm = std::string(arg_val);
-			} else if(!strcmp(arg_name, "qr_duplicate_min_dist")){
+				return;
+			}
+			if(!strcmp(arg_name, "qr_duplicate_min_dist")){
 				qr_duplicate_min_dist = atof(arg_val);
-			} else if(!strcmp(arg_name, "qr_min_size")){
+				return;
+			}
+			if(!strcmp(arg_name, "qr_min_size")){
 				qr_min_size = atof(arg_val);
-			} else if(!strcmp(arg_name, "qr_init_with_rect")){
+				return;
+			}
+			if(!strcmp(arg_name, "qr_init_with_rect")){
 				qr_init_with_rect = atoi(arg_val);
-			} else if(!strcmp(arg_name, "qr_n_markers")){
+				return;
+			}
+			if(!strcmp(arg_name, "qr_n_markers")){
 				qr_n_markers = atoi(arg_val);
+				return;
 			}
 		}
 
@@ -2315,6 +3380,7 @@ namespace mtf{
 				strtok(arg_val, "\r");
 				// discard all numbers and special characters from the start of the argument name
 				char *alpha_arg_name = arg_name;
+				//printf("arg_name: %s\n", arg_name);
 				vector<char> arg_prefix;
 				while(!isalpha(*alpha_arg_name)){
 					arg_prefix.push_back(*alpha_arg_name);

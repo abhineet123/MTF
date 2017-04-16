@@ -53,6 +53,7 @@ using namespace std;
 using namespace mtf::params;
 
 
+static PyObject* initInput(PyObject* self, PyObject* args);
 static PyObject* initialize(PyObject* self, PyObject* args);
 static PyObject* update(PyObject* self, PyObject* args);
 static PyObject* setRegion(PyObject* self, PyObject* args);
@@ -66,6 +67,11 @@ static double* out_corners_data;
 typedef unique_ptr<mtf::TrackerBase> Tracker_;
 static vector<Tracker_> trackers;
 static vector<PreProc_> pre_proc;
+static Input_ input;
+
+static double min_x, min_y, max_x, max_y;
+static double size_x, size_y;
+static cv::Mat init_img_cv, init_corners_cv, curr_img_cv;
 
 static int img_height, img_width;
 static vector<cv::Scalar> obj_cols;
@@ -77,10 +83,10 @@ static char fps_text[100];
 static int frame_id;
 double fps, fps_win;
 static char* config_root_dir = "C++/MTF/Config";
-
-
+bool using_input_pipeline = false;
 
 static PyMethodDef pyMTFMethods[] = {
+	{ "initInput", initInput, METH_VARARGS },
 	{ "initialize", initialize, METH_VARARGS },
 	{ "update", update, METH_VARARGS },
 	{ "setRegion", setRegion, METH_VARARGS },
@@ -94,99 +100,131 @@ PyMODINIT_FUNC initpyMTF()  {
 	(void)Py_InitModule("pyMTF", pyMTFMethods);
 	import_array();  // Must be present for NumPy.  Called first after above line.
 }
-
-/* ==== initialize tracker ==== */
-
-static PyObject* initialize(PyObject* self, PyObject* args) {
-
-	/*parse first input array*/
-	if(!PyArg_ParseTuple(args, "O!O!z", &PyArray_Type, &img_py, &PyArray_Type,
-		&init_corners_py, &config_root_dir)) {
-		printf("\n----pyMTF::initialize: Input arguments could not be parsed----\n\n");
-		return NULL;
-	}
-
-	if(img_py == NULL) {
-		printf("\n----pyMTF::initialize::init_img is NULL----\n\n");
-		return NULL;
-	}
-	if(init_corners_py == NULL) {
-		printf("\n----pyMTF::initialize::init_corners is NULL----\n\n");
-		return NULL;
-	}
-
-	if(init_corners_py->dimensions[0] != 2 || init_corners_py->dimensions[1] != 4){
-		printf("pyMTF::Initial corners matrix has incorrect dimensions: %ld, %ld\n",
-			init_corners_py->dimensions[0], init_corners_py->dimensions[1]);
-		return NULL;
-	}
-	if(!config_root_dir){
-		config_root_dir = "C++/MTF/Config";
-		printf("Using default configuration folder: %s\n", config_root_dir);
-	} else{
-		printf("Reading MTF configuration files from: %s\n", config_root_dir);
-	}
-	config_dir = std::string(config_root_dir);
+/* ==== initialize input pipeline ==== */
+static PyObject* initInput(PyObject* self, PyObject* args) {
 #ifdef USE_TBB
 	Eigen::initParallel();
 #endif
-
-	img_height = img_py->dimensions[0];
-	img_width = img_py->dimensions[1];
-
-	printf("img_height: %d\n", img_height);
-	printf("img_width: %d\n", img_width);
-
-	cv::Mat init_img_cv(img_height, img_width, CV_8UC3, img_py->data);
-
-	cv::Mat temp(2, 4, CV_64FC1, init_corners_py->data);
-	cv::Mat init_corners_cv(2, 4, CV_64FC1);
-
-	//double *in_corners_data = (double*)init_corners_py->data;
-	//for(int i = 0; i < 4; i++) {
-	//	init_corners_cv.at<double>(0, i) = in_corners_data[i];
-	//	init_corners_cv.at<double>(1, i) = in_corners_data[i + init_corners_py->strides[1]];
-	//}
-	init_corners_cv.at<double>(0, 0) = temp.at<double>(0, 0);
-	init_corners_cv.at<double>(1, 0) = temp.at<double>(0, 1);
-	init_corners_cv.at<double>(0, 1) = temp.at<double>(0, 2);
-	init_corners_cv.at<double>(1, 1) = temp.at<double>(0, 3);
-	init_corners_cv.at<double>(0, 2) = temp.at<double>(1, 0);
-	init_corners_cv.at<double>(1, 2) = temp.at<double>(1, 1);
-	init_corners_cv.at<double>(0, 3) = temp.at<double>(1, 2);
-	init_corners_cv.at<double>(1, 3) = temp.at<double>(1, 3);
-
-
-	printf("init_corners_cv:\n");
-	for(int i = 0; i < 4; i++) {
-		printf("%d: (%f, %f)\n", i, init_corners_cv.at<double>(0, i), init_corners_cv.at<double>(1, i));
+	if(!readParams(0, nullptr)){
+		return Py_BuildValue("i", 0);
 	}
+	input.reset(getInput(pipeline));
+	if(!input->initialize()){
+		printf("Pipeline could not be initialized successfully. Exiting...\n");
+		return Py_BuildValue("i", 0);
+	}
+	CVUtils cv_utils(img_resize_factor);
+	if(!getObjectsToTrack(cv_utils, input.get())){
+		printf("Object(s) to be tracked could not be read\n");
+		return Py_BuildValue("i", 0);
+	}
+	size_x = cv_utils.getObj(0).size_x;
+	size_y = cv_utils.getObj(0).size_y;
+	max_x = cv_utils.getObj(0).max_point.x;
+	max_y = cv_utils.getObj(0).max_point.y;
+	min_x = cv_utils.getObj(0).min_point.x;
+	min_y = cv_utils.getObj(0).min_point.y;
 
-	double min_x = init_corners_cv.at<double>(0, 0);
-	double min_y = init_corners_cv.at<double>(1, 0);
-	double max_x = init_corners_cv.at<double>(0, 2);
-	double max_y = init_corners_cv.at<double>(1, 2);
-	double size_x = max_x - min_x;
-	double size_y = max_y - min_y;
+	init_corners_cv = cv_utils.getObj(0).corners.clone();
+	init_img_cv = input->getFrame();		
+	img_height = input->getHeight();
+	img_width = input->getWidth();
 
-	if(!readParams(0, nullptr)){ return Py_BuildValue("i", 0); }
+	using_input_pipeline = true;
+	return Py_BuildValue("i", 1);
+}
 
-	printf("*******************************\n");
-	printf("Using parameters:\n");
-	printf("n_trackers: %d\n", n_trackers);
-	printf("actor_id: %d\n", actor_id);
-	printf("source_id: %d\n", source_id);
-	printf("source_name: %s\n", source_name.c_str());
-	printf("actor: %s\n", actor.c_str());
-	printf("pipeline: %c\n", pipeline);
-	printf("img_source: %c\n", img_source);
-	printf("show_cv_window: %d\n", show_cv_window);
-	printf("read_obj_from_gt: %d\n", read_obj_from_gt);
-	printf("write_tracking_data: %d\n", write_tracking_data);
-	printf("mtf_sm: %s\n", mtf_sm);
-	printf("mtf_am: %s\n", mtf_am);
-	printf("mtf_ssm: %s\n", mtf_ssm);
-	printf("*******************************\n");
+/* ==== initialize tracker ==== */
+static PyObject* initialize(PyObject* self, PyObject* args) {
+	if(!using_input_pipeline){
+		/*parse first input array*/
+		if(!PyArg_ParseTuple(args, "O!O!z", &PyArray_Type, &img_py, &PyArray_Type,
+			&init_corners_py, &config_root_dir)) {
+			printf("\n----pyMTF::initialize: Input arguments could not be parsed----\n\n");
+			return NULL;
+		}
+
+		if(img_py == NULL) {
+			printf("\n----pyMTF::initialize::init_img is NULL----\n\n");
+			return NULL;
+		}
+		if(init_corners_py == NULL) {
+			printf("\n----pyMTF::initialize::init_corners is NULL----\n\n");
+			return NULL;
+		}
+
+		if(init_corners_py->dimensions[0] != 2 || init_corners_py->dimensions[1] != 4){
+			printf("pyMTF::Initial corners matrix has incorrect dimensions: %ld, %ld\n",
+				init_corners_py->dimensions[0], init_corners_py->dimensions[1]);
+			return NULL;
+		}
+#ifdef USE_TBB
+		Eigen::initParallel();
+#endif
+		if(!config_root_dir){
+			config_root_dir = "C++/MTF/Config";
+			printf("Using default configuration folder: %s\n", config_root_dir);
+		} else{
+			printf("Reading MTF configuration files from: %s\n", config_root_dir);
+		}
+		config_dir = std::string(config_root_dir);
+
+		img_height = img_py->dimensions[0];
+		img_width = img_py->dimensions[1];
+
+		printf("img_height: %d\n", img_height);
+		printf("img_width: %d\n", img_width);
+
+		init_img_cv=cv::Mat(img_height, img_width, CV_8UC3, img_py->data);
+
+		cv::Mat temp(2, 4, CV_64FC1, init_corners_py->data);
+		init_corners_cv.create(2, 4, CV_64FC1);
+
+		//double *in_corners_data = (double*)init_corners_py->data;
+		//for(int i = 0; i < 4; i++) {
+		//	init_corners_cv.at<double>(0, i) = in_corners_data[i];
+		//	init_corners_cv.at<double>(1, i) = in_corners_data[i + init_corners_py->strides[1]];
+		//}
+		init_corners_cv.at<double>(0, 0) = temp.at<double>(0, 0);
+		init_corners_cv.at<double>(1, 0) = temp.at<double>(0, 1);
+		init_corners_cv.at<double>(0, 1) = temp.at<double>(0, 2);
+		init_corners_cv.at<double>(1, 1) = temp.at<double>(0, 3);
+		init_corners_cv.at<double>(0, 2) = temp.at<double>(1, 0);
+		init_corners_cv.at<double>(1, 2) = temp.at<double>(1, 1);
+		init_corners_cv.at<double>(0, 3) = temp.at<double>(1, 2);
+		init_corners_cv.at<double>(1, 3) = temp.at<double>(1, 3);
+		
+		printf("init_corners_cv:\n");
+		for(int i = 0; i < 4; ++i) {
+			printf("%d: (%f, %f)\n", i, init_corners_cv.at<double>(0, i), init_corners_cv.at<double>(1, i));
+		}
+
+		min_x = init_corners_cv.at<double>(0, 0);
+		min_y = init_corners_cv.at<double>(1, 0);
+		max_x = init_corners_cv.at<double>(0, 2);
+		max_y = init_corners_cv.at<double>(1, 2);
+		size_x = max_x - min_x;
+		size_y = max_y - min_y;
+
+		if(!readParams(0, nullptr)){ return Py_BuildValue("i", 0); }
+
+		printf("*******************************\n");
+		printf("Using parameters:\n");
+		printf("n_trackers: %d\n", n_trackers);
+		printf("actor_id: %d\n", actor_id);
+		printf("source_id: %d\n", source_id);
+		printf("source_name: %s\n", source_name.c_str());
+		printf("actor: %s\n", actor.c_str());
+		printf("pipeline: %c\n", pipeline);
+		printf("img_source: %c\n", img_source);
+		printf("show_cv_window: %d\n", show_cv_window);
+		printf("read_obj_from_gt: %d\n", read_obj_from_gt);
+		printf("write_tracking_data: %d\n", write_tracking_data);
+		printf("mtf_sm: %s\n", mtf_sm);
+		printf("mtf_am: %s\n", mtf_am);
+		printf("mtf_ssm: %s\n", mtf_ssm);
+		printf("*******************************\n");
+	}
 
 
 	/*********************************** initialize trackers ***********************************/
@@ -198,7 +236,7 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 		printf("Getting sampling resolution from object size...\n");
 	}
 	FILE *multi_fid = NULL;
-	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++) {
+	for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
 		if(n_trackers > 1){
 			multi_fid = readTrackerParams(multi_fid);
 		}
@@ -234,7 +272,6 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 	obj_cols.push_back(cv::Scalar(255, 255, 255));
 	obj_cols.push_back(cv::Scalar(0, 0, 0));
 
-
 	int dims[] = { 2, 4 };
 	out_corners_py = (PyArrayObject *)PyArray_FromDims(2, dims, NPY_DOUBLE);
 	out_corners_data = (double*)out_corners_py->data;
@@ -245,20 +282,25 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 }
 
 static PyObject* update(PyObject* self, PyObject* args) {
-
-	/*parse first input array*/
-	if(!PyArg_ParseTuple(args, "O!", &PyArray_Type, &img_py)) {
-		printf("\n----pyMTF::update: Input arguments could not be parsed----\n\n");
-		return NULL;
+	if(!using_input_pipeline){
+		/*parse first input array*/
+		if(!PyArg_ParseTuple(args, "O!", &PyArray_Type, &img_py)) {
+			printf("\n----pyMTF::update: Input arguments could not be parsed----\n\n");
+			return NULL;
+		}
+		if(img_py == NULL) {
+			printf("\n----pyMTF::img_py is NULL----\n\n");
+			return NULL;
+		}
+		curr_img_cv = cv::Mat(img_height, img_width, CV_8UC3, img_py->data);
+	} else{
+		if(!input->update()){
+			printf("Frame %d could not be read from the input pipeline\n", input->getFrameID() + 1);
+			return NULL;
+		}
+		curr_img_cv = input->getFrame();
 	}
-
-	if(img_py == NULL) {
-		printf("\n----pyMTF::img_py is NULL----\n\n");
-		return NULL;
-	}
-	frame_id++;
-
-	cv::Mat curr_img_cv(img_height, img_width, CV_8UC3, img_py->data);
+	++frame_id;
 	start_input_timer();
 	//update trackers
 	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++) {
