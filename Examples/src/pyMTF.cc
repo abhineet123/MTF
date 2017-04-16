@@ -261,7 +261,7 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 		pre_proc.push_back(new_pre_proc);
 	}
 	if(show_cv_window) {
-		cv::namedWindow("OpenCV Window", cv::WINDOW_AUTOSIZE);
+		cv::namedWindow("PyMTF", cv::WINDOW_AUTOSIZE);
 	}
 	obj_cols.push_back(cv::Scalar(0, 0, 255));
 	obj_cols.push_back(cv::Scalar(0, 255, 0));
