@@ -161,27 +161,27 @@ else()
 	install(TARGETS mtf LIBRARY DESTINATION ${MTF_LIB_INSTALL_DIR} COMPONENT lib)
 endif() 
 # install(TARGETS mtf LIBRARY DESTINATION ${MTF_LIB_INSTALL_DIR} COMPONENT lib)
+# message(STATUS "MTF_INCLUDE_DIRS: ${MTF_INCLUDE_DIRS}")
+addSuffix("${MTF_INCLUDE_DIRS}" "/" MTF_INCLUDE_DIRS)
+# message(STATUS "MTF_INCLUDE_DIRS_REL: ${MTF_INCLUDE_DIRS}")
+install(DIRECTORY ${MTF_INCLUDE_DIRS}
+	DESTINATION ${MTF_HEADER_INSTALL_DIR}
+	COMPONENT header
+	)
+if(NOT WIN32)
 add_custom_target(install_lib
   ${CMAKE_COMMAND}
   ${HEADER_DEF_SWITCH} "CMAKE_INSTALL_COMPONENT=lib"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
   )
-# message(STATUS "MTF_INCLUDE_DIRS: ${MTF_INCLUDE_DIRS}")
-addSuffix("${MTF_INCLUDE_DIRS}" "/" MTF_INCLUDE_DIRS)
-# message(STATUS "MTF_INCLUDE_DIRS_REL: ${MTF_INCLUDE_DIRS}")
 add_custom_target(mtfi DEPENDS mtf install_lib install_header mtfe)
-
-install(DIRECTORY ${MTF_INCLUDE_DIRS}
-	DESTINATION ${MTF_HEADER_INSTALL_DIR}
-	COMPONENT header
-	)
 add_custom_target(install_header
   ${CMAKE_COMMAND}
   ${HEADER_DEF_SWITCH} "CMAKE_INSTALL_COMPONENT=header"
   -P "${MTF_BINARY_DIR}/cmake_install.cmake"
   )
 add_custom_target(install DEPENDS install_lib install_header)
-
+endif()
   
 # install headers while maintaining the directory structure
 # installHeadersWithDir("${MTF_HEADERS}" "${MTF_HEADER_INSTALL_DIR}")
