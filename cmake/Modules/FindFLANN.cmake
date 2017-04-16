@@ -12,7 +12,7 @@
 if(WIN32)
 	set(FLANN_BASE_NAME flann)
 else()
-	set(FLANN_BASE_NAME flann_CPP)
+	set(FLANN_BASE_NAME flann_cpp)
 endif() 
 if(FLANN_USE_STATIC)
   set(FLANN_RELEASE_NAME ${FLANN_BASE_NAME}_s)

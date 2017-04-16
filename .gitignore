@@ -19,6 +19,7 @@
 *.bmp
 batch/
 Build/
+build2/
 Backup/
 Data/
 Docs/
