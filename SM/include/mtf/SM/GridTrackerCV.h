@@ -86,6 +86,8 @@ public:
 	const cv::Mat& getRegion() override{ return cv_corners_mat; }
 	int inputType() const override{ return params.input_type; }
 	SSM& getSSM() { return ssm; }
+	
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 private:
 

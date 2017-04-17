@@ -133,6 +133,9 @@ public:
 	using FeatureBase::setRegion;
 
 	SSM& getSSM() { return ssm; }
+	
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 
 private:
 	SSM ssm;

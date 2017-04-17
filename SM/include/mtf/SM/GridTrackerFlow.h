@@ -36,6 +36,8 @@ public:
 	SSM& getSSM() { return ssm; }
 	AM& getAM() { return am; }
 
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 private:
 
 	AM am;

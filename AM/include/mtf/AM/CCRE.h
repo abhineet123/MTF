@@ -1,18 +1,6 @@
 #ifndef MTF_CCRE_H
 #define MTF_CCRE_H
 
-//! OpenMP scheduler
-#ifndef CCRE_OMP_SCHD
-#define CCRE_OMP_SCHD auto
-#endif
-
-#define CCRE_N_BINS 8
-#define CCRE_PRE_SEED 10
-#define CCRE_POU false
-#define CCRE_SYMMETRICAL_GRAD false
-#define CCRE_N_BLOCKS 0
-#define CCRE_DEBUG_MODE false
-
 #include "AppearanceModel.h"
 
 _MTF_BEGIN_NAMESPACE

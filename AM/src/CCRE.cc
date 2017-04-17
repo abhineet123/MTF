@@ -5,6 +5,18 @@
 #include "mtf/Utilities/graphUtils.h"
 #include "opencv2/highgui/highgui.hpp"
 
+//! OpenMP scheduler
+#ifndef CCRE_OMP_SCHD
+#define CCRE_OMP_SCHD static
+#endif
+
+#define CCRE_N_BINS 8
+#define CCRE_PRE_SEED 10
+#define CCRE_POU false
+#define CCRE_SYMMETRICAL_GRAD false
+#define CCRE_N_BLOCKS 0
+#define CCRE_DEBUG_MODE false
+
 _MTF_BEGIN_NAMESPACE
 
 CCREParams::CCREParams(const AMParams *am_params,

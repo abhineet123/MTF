@@ -25,7 +25,9 @@ public:
 
 	void setImage(const cv::Mat &cv_img) override;
 	void setRegion(const cv::Mat &corners) override;
-
+	
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+	
 private:
 	ParamType params;
 

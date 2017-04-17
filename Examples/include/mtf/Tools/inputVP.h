@@ -1,13 +1,13 @@
 #ifndef MTF_INPUT_VP
 #define MTF_INPUT_VP
 
-#if defined _WIN32
-//#define VISP_HAVE_FFMPEG
-#define VISP_HAVE_V4L2
-#define VISP_HAVE_DC1394
-#define VISP_HAVE_OPENCV
-#define VISP_HAVE_OPENCV_VERSION 0x020100
-#endif
+//#if defined _WIN32
+////#define VISP_HAVE_FFMPEG
+//#define VISP_HAVE_V4L2
+//#define VISP_HAVE_DC1394
+//#define VISP_HAVE_OPENCV
+//#define VISP_HAVE_OPENCV_VERSION 0x020100
+//#endif
 
 #include "inputBase.h"
 #include <visp3/core/vpImage.h>
@@ -134,7 +134,11 @@ public:
 #if defined( VISP_HAVE_DC1394 )
 		else if(img_source == SRC_FW_CAM) {
 			vp1394TwoGrabber *dc1394_cap = new vp1394TwoGrabber;
+#ifndef _WIN32
+			printf("Opening FireWire camera with GUID %lu\n", dc1394_cap->getGuid());
+#else
 			printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
+#endif
 			switch(fw_res){
 			case VpResFW::Default:
 				break;

@@ -13,7 +13,7 @@
 
 //! OpenMP scheduler
 #ifndef GRID_OMP_SCHD
-#define GRID_OMP_SCHD auto
+#define GRID_OMP_SCHD static
 #endif
 
 _MTF_BEGIN_NAMESPACE

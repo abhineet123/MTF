@@ -89,6 +89,8 @@ public:
 	int getResY() override{ return params.grid_size_y; }
 	SSM& getSSM() { return ssm; }
 
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 private:
 
 	SSM ssm;

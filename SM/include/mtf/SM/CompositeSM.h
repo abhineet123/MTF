@@ -67,6 +67,8 @@ public:
 	virtual AM& getAM() { return trackers.back()->getAM(); }
 	virtual SSM& getSSM() { return trackers.back()->getSSM(); }
 
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 protected:
 	const vector<SM*> trackers;
 	int n_trackers;

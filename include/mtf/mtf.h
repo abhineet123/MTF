@@ -128,12 +128,12 @@
 #ifndef DISABLE_PFSL3
 #include "mtf/ThirdParty/PFSL3/PFSL3.h"
 #endif
+#include "mtf/ThirdParty/Struck/Struck.h"
+#include "mtf/ThirdParty/CMT/CMT.h"
+#include "mtf/ThirdParty/FRG/FRG.h"
 #ifndef _WIN32
 //! thirdparty trackers with Cmake build systems do not compile in Windows yet
-#include "mtf/ThirdParty/CMT/CMT.h"
 #include "mtf/ThirdParty/TLD/TLD.h"
-#include "mtf/ThirdParty/Struck/Struck.h"
-#include "mtf/ThirdParty/FRG/FRG.h"
 #ifndef DISABLE_MIL
 #include "mtf/ThirdParty/MIL/MIL.h"
 #endif
@@ -1707,15 +1707,10 @@ inline TrackerBase *getTracker(const char *tracker_type){
 		return new ViSP(&visp_params);
 	}
 #endif
-#ifndef _WIN32
 	else if(!strcmp(tracker_type, "cmt")){
 		CMTParams cmt_params(cmt_estimate_scale, cmt_estimate_rotation,
 			cmt_feat_detector, cmt_desc_extractor, cmt_resize_factor);
 		return new cmt::CMT(&cmt_params);
-	} else if(!strcmp(tracker_type, "tld")){
-		TLDParams tld_params(tld_tracker_enabled, tld_detector_enabled,
-			tld_learning_enabled, tld_alternating);
-		return new tld::TLD(&tld_params);
 	} else if(!strcmp(tracker_type, "strk")){
 		struck::StruckParams strk_params(strk_config_path);
 		return new struck::Struck(&strk_params);
@@ -1724,6 +1719,12 @@ inline TrackerBase *getTracker(const char *tracker_type){
 			static_cast<FRGParams::HistComparisonMetric>(frg_hist_cmp_metric),
 			frg_resize_factor, frg_show_window);
 		return new FRG(&frg_params);
+	}
+#ifndef _WIN32
+	else if(!strcmp(tracker_type, "tld")){
+		TLDParams tld_params(tld_tracker_enabled, tld_detector_enabled,
+			tld_learning_enabled, tld_alternating);
+		return new tld::TLD(&tld_params);
 	}
 #ifndef DISABLE_MIL
 	else if(!strcmp(tracker_type, "mil")){
