@@ -33,6 +33,7 @@ struct AMStatus : ImgStatus{
 		sampler = false;
 	}
 };
+
 /**
 Similarity function that indicates how well a candidate warped patch matches the template.
 Registration based tracking is expressed as the solution to the following optimization problem:
@@ -308,18 +309,6 @@ public:
 
 	// ------------------------ Distance Feature ------------------------ //
 
-	typedef double ElementType;
-	typedef double ResultType;
-
-	/**
-	computes the distance / dissimilarity between two patches where each is codified or represented
-	by a suitable distance feature computed using updateDistFeat
-	*/
-	virtual double operator()(const double* a, const double* b,
-		size_t dist_size, double worst_dist = -1) const {
-		am_func_not_implemeted(distance functor);
-	}
-
 	/** to be called once during initialization if any of the distance feature functionality is to be used */
 	virtual void initializeDistFeat() {
 		am_func_not_implemeted(initializeDistFeat);
@@ -380,6 +369,27 @@ public:
 	}
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+};
+/**
+Distance feature functor for FLANN
+*/
+struct AMDist{
+public:
+	const string &name;
+	typedef double ElementType;
+	typedef double ResultType;
+
+	AMDist(const string &_name) : name(_name){}
+	/**
+	computes the distance / dissimilarity between two patches where each is codified or represented
+	by a suitable distance feature computed using updateDistFeat
+	*/
+	virtual double operator()(const double* a, const double* b,
+		size_t dist_size, double worst_dist = -1) const {
+		am_func_not_implemeted(distance_functor);
+	}
+private:
+	~AMDist(){}
 };
 
 _MTF_END_NAMESPACE
