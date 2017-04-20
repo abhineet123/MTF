@@ -71,7 +71,7 @@ int main(int argc, char * argv[]) {
 	patch_extractor_ssm.initialize(cv_utils.getGT(0));
 	patch_extractor_am.initializePixVals(patch_extractor_ssm.getPts());
 
-	int patch_size = patch_extractor_am.getNPix();
+	unsigned int patch_size = patch_extractor_am.getNPix();
 	int n_extracted_patches = extracted_frame_ids.size();
 	if (extracted_frame_ids[0] == -1) {
 		n_extracted_patches = input->n_frames;

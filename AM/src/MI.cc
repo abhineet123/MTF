@@ -40,7 +40,7 @@ MI::MI(const ParamType *mi_params, const int _n_channels) :
 AppearanceModel(mi_params, _n_channels), params(mi_params),
 dist_func(name, params, feat_size, patch_size, hist_pre_seed, _std_bspl_ids){
 	printf("\n");
-	printf("Using  Mutual Information AM with:\n");
+	printf("Using Mutual Information AM with:\n");
 	printf("n_bins: %d\n", params.n_bins);
 	printf("pre_seed: %f\n", params.pre_seed);
 	printf("partition_of_unity: %d\n", params.partition_of_unity);

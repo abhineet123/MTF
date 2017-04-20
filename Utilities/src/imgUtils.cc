@@ -91,7 +91,7 @@ namespace utils{
 	template<>
 	inline double getPixVal<InterpType::CubicBSpl, BorderType::Constant>(
 		const EigImgT &img, double x, double y,
-		int h, int w, double overflow_val){
+		unsigned int h, unsigned int w, double overflow_val){
 		assert(img.rows() == h && img.cols() == w);
 		//printf("----------Cubic BSpline Interpolation------------\n\n");
 		if(checkOverflow(x, y, h, w)){
@@ -120,7 +120,7 @@ namespace utils{
 	template<>
 	inline double getPixVal<InterpType::Cubic, BorderType::Constant>(
 		const EigImgT &img, double x, double y,
-		int h, int w, double overflow_val){
+		unsigned int h, unsigned int w, double overflow_val){
 		assert(img.rows() == h && img.cols() == w);
 		//printf("----------Bicubic Interpolation------------\n\n");
 		if(checkOverflow(x, y, h, w)){
@@ -143,7 +143,7 @@ namespace utils{
 	template<>
 	inline double getPixVal<InterpType::Cubic2, BorderType::Constant>(
 		const EigImgT &img, double x, double y,
-		int h, int w, double overflow_val){
+		unsigned int h, unsigned int w, double overflow_val){
 		assert(img.rows() == h && img.cols() == w);
 		//printf("----------Bi cubic Interpolation using coefficients------------\n\n");		
 		Matrix4d neigh_pix_grid, bicubic_coeff;
@@ -161,7 +161,7 @@ namespace utils{
 
 	template<typename PtsT>
 	void getPixVals(VectorXd &pix_vals,
-		const EigImgT &img, const PtsT &pts, int n_pix, int h, int w,
+		const EigImgT &img, const PtsT &pts, unsigned int n_pix, unsigned int h, unsigned int w,
 		double norm_mult, double norm_add){
 		//printf("n_pix: %d\t pix_vals.size(): %l\t pts.cols(): %l", n_pix, pix_vals.size(),  pts.cols());
 		assert(pix_vals.size() == n_pix && pts.cols() == n_pix);
@@ -176,14 +176,14 @@ namespace utils{
 	/****************************************************************/
 	void getWarpedImgGrad(PixGradT &warped_img_grad,
 		const EigImgT &img, const Matrix8Xd &warped_offset_pts,
-		double grad_eps, int n_pix,
-		int h, int w, double pix_mult_factor){
+		double grad_eps, unsigned int n_pix,
+		unsigned int h, unsigned int w, double pix_mult_factor){
 		assert(warped_img_grad.rows() == n_pix);
 
 		double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 		double pix_val_inc, pix_val_dec;
 
-		for(int pix_id = 0; pix_id < n_pix; pix_id++){
+		for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 
 			pix_val_inc = getPixVal<GRAD_INTERP_TYPE, PIX_BORDER_TYPE>(img, warped_offset_pts(0, pix_id),
 				warped_offset_pts(1, pix_id), h, w);
@@ -205,13 +205,13 @@ namespace utils{
 	void getWarpedImgGrad(PixGradT &warped_img_grad,
 		const EigImgT &img, const VectorXd &intensity_map,
 		const Matrix8Xd &warped_offset_pts, double grad_eps,
-		int n_pix, int h, int w, double pix_mult_factor){
+		unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 		assert(warped_img_grad.rows() == n_pix);
 
 		double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 		double pix_val_inc, pix_val_dec;
 
-		for(int pix_id = 0; pix_id < n_pix; pix_id++){
+		for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 
 			pix_val_inc = mapPixVal<mapping_type>(getPixVal<GRAD_INTERP_TYPE, PIX_BORDER_TYPE>(img,
 				warped_offset_pts(0, pix_id), warped_offset_pts(1, pix_id), h, w), intensity_map);
@@ -232,14 +232,14 @@ namespace utils{
 
 	void getImgGrad(PixGradT &img_grad,
 		const EigImgT &img, const PtsT &pts,
-		double grad_eps, int n_pix, int h, int w,
+		double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 		double pix_mult_factor){
 		assert(img_grad.rows() == n_pix && pts.cols() == n_pix);
 
 		double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 		double pix_val_inc, pix_val_dec;
 
-		for(int pix_id = 0; pix_id < n_pix; pix_id++){
+		for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 			double curr_x = pts(0, pix_id), curr_y = pts(1, pix_id);
 
 			pix_val_inc = getPixVal<GRAD_INTERP_TYPE, PIX_BORDER_TYPE>(img, curr_x + grad_eps, curr_y, h, w);
@@ -259,8 +259,8 @@ namespace utils{
 
 	void getWarpedImgHess(PixHessT &warped_img_hess,
 		const EigImgT &img, const PtsT &warped_pts,
-		const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-		int h, int w, double pix_mult_factor){
+		const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+		unsigned int h, unsigned int w, double pix_mult_factor){
 		assert(warped_img_hess.cols() == n_pix && warped_pts.cols() == n_pix);
 
 		double hess_eps2 = 2 * hess_eps;
@@ -268,7 +268,7 @@ namespace utils{
 
 		double pix_val_inc, pix_val_dec, pix_val_inc2, pix_val_dec2;
 
-		for(int pix_id = 0; pix_id < n_pix; pix_id++){
+		for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 
 			double pix_val = getPixVal<HESS_INTERP_TYPE, PIX_BORDER_TYPE>(img, warped_pts(0, pix_id), warped_pts(1, pix_id), h, w);
 
@@ -293,7 +293,7 @@ namespace utils{
 	void getWarpedImgHess(PixHessT &warped_img_hess,
 		const EigImgT &img, const VectorXd &intensity_map,
 		const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
-		double hess_eps, int n_pix, int h, int w, double pix_mult_factor){
+		double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 		assert(warped_img_hess.cols() == n_pix && warped_pts.cols() == n_pix);
 
 		double hess_eps2 = 2 * hess_eps;
@@ -301,7 +301,7 @@ namespace utils{
 
 		double pix_val_inc, pix_val_dec, pix_val_inc2, pix_val_dec2;
 
-		for(int pix_id = 0; pix_id < n_pix; pix_id++){
+		for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 
 			double pix_val = mapPixVal<mapping_type>(getPixVal<HESS_INTERP_TYPE, PIX_BORDER_TYPE>(img, warped_pts(0, pix_id),
 				warped_pts(1, pix_id), h, w), intensity_map);
@@ -337,13 +337,13 @@ namespace utils{
 
 	void getImgHess(PixHessT &img_hess, const EigImgT &img,
 		const PtsT &pts, double hess_eps,
-		int n_pix, int h, int w, double pix_mult_factor){
+		unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 		assert(img_hess.cols() == n_pix && pts.cols() == n_pix);
 
 		double hess_eps2 = 2 * hess_eps;
 		double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
 
-		for(int pix_id = 0; pix_id < n_pix; pix_id++){
+		for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 			double curr_x = pts(0, pix_id), curr_y = pts(1, pix_id);
 			double curr_pix_val = getPixVal<HESS_INTERP_TYPE, PIX_BORDER_TYPE>(img, curr_x, curr_y, h, w);
 
@@ -370,13 +370,13 @@ namespace utils{
 	template<InterpType mapping_type>
 	void getImgGrad(PixGradT &img_grad, const EigImgT &img,
 		const VectorXd &intensity_map, const PtsT &pts,
-		double grad_eps, int n_pix, int h, int w,
+		double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 		double pix_mult_factor){
 		assert(img_grad.rows() == n_pix && pts.cols() == n_pix);
 
 		double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 		double pix_val_inc, pix_val_dec;
-		for(int pix_id = 0; pix_id < n_pix; pix_id++){
+		for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 			double curr_x = pts(0, pix_id), curr_y = pts(1, pix_id);
 
 			pix_val_inc = mapPixVal<mapping_type>(getPixVal<GRAD_INTERP_TYPE, PIX_BORDER_TYPE>(img, curr_x + grad_eps, curr_y, h, w), intensity_map);
@@ -393,13 +393,13 @@ namespace utils{
 	template<InterpType mapping_type>
 	void getImgHess(PixHessT &img_hess, const EigImgT &img,
 		const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
-		int n_pix, int h, int w, double pix_mult_factor){
+		unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 		assert(img_hess.cols() == n_pix && pts.cols() == n_pix);
 
 		double hess_eps2 = 2 * hess_eps;
 		double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
 
-		for(int pix_id = 0; pix_id < n_pix; pix_id++){
+		for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 			double curr_x = pts(0, pix_id), curr_y = pts(1, pix_id);
 			double curr_pix_val = mapPixVal<mapping_type>(getPixVal<HESS_INTERP_TYPE, PIX_BORDER_TYPE>(img, curr_x, curr_y, h, w), intensity_map);
 
@@ -423,10 +423,10 @@ namespace utils{
 	// computes image hessian analytically by fitting a cubic polynomial surface to a 4x4 grid of pixels around each location
 	void getImgHess(PixHessT &img_hess,
 		const EigImgT &img, const PtsT &pts,
-		int n_pix, int h, int w){
+		unsigned int n_pix, unsigned int h, unsigned int w){
 		assert(img_hess.cols() == n_pix && pts.cols() == n_pix);
 		Matrix4d neigh_pix_grid, bicubic_coeff;
-		for(int pix_id = 0; pix_id < n_pix; pix_id++){
+		for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 
 			double x = pts(0, pix_id), y = pts(1, pix_id);
 
@@ -453,7 +453,7 @@ namespace utils{
 	// convenience functions for mapping
 	void getWarpedImgGrad(PixGradT &warped_img_grad, const EigImgT &img,
 		bool weighted_mapping, const VectorXd &intensity_map, const Matrix8Xd &warped_offset_pts,
-		double grad_eps, int n_pix, int h, int w, double pix_mult_factor){
+		double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 		if(weighted_mapping){
 			getWarpedImgGrad<InterpType::Linear>(warped_img_grad,
 				img, intensity_map, warped_offset_pts, grad_eps, n_pix, h, w,
@@ -467,7 +467,7 @@ namespace utils{
 	void getWarpedImgHess(PixHessT &warped_img_hess, const EigImgT &img,
 		bool weighted_mapping, const VectorXd &intensity_map,
 		const PtsT &warped_pts, const Matrix16Xd &warped_offset_pts,
-		double hess_eps, int n_pix, int h, int w, double pix_mult_factor){
+		double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 		if(weighted_mapping){
 			getWarpedImgHess<InterpType::Linear>(warped_img_hess,
 				img, intensity_map, warped_pts, warped_offset_pts,
@@ -480,7 +480,7 @@ namespace utils{
 	}
 	void getImgGrad(PixGradT &img_grad, const EigImgT &img,
 		bool weighted_mapping, const VectorXd &intensity_map,
-		const PtsT &pts, double grad_eps, int n_pix, int h, int w,
+		const PtsT &pts, double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 		double pix_mult_factor){
 		if(weighted_mapping){
 			getImgGrad<InterpType::Linear>(img_grad,
@@ -493,8 +493,8 @@ namespace utils{
 		}
 	}
 	void getImgHess(PixHessT &img_hess, const EigImgT &img, bool weighted_mapping,
-		const VectorXd &intensity_map, const PtsT &pts, double hess_eps, int n_pix,
-		int h, int w, double pix_mult_factor){
+		const VectorXd &intensity_map, const PtsT &pts, double hess_eps, unsigned int n_pix,
+		unsigned int h, unsigned int w, double pix_mult_factor){
 		if(weighted_mapping){
 			getImgHess<InterpType::Linear>(img_hess,
 				img, intensity_map, pts, hess_eps, n_pix, h, w, pix_mult_factor);
@@ -504,17 +504,17 @@ namespace utils{
 		}
 	}
 	void getWeightedPixVals(VectorXd &pix_vals, const EigImgT &img, const PtsT &pts,
-		int frame_count, double alpha, bool use_running_avg, int n_pix,
-		int h, int w, double norm_mult, double norm_add){
+		int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+		unsigned int h, unsigned int w, double norm_mult, double norm_add){
 		if(use_running_avg){
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double pix_val = norm_mult * getPixVal<PIX_INTERP_TYPE, PIX_BORDER_TYPE>(
 					img, pts(0, pix_id), pts(1, pix_id),
 					h, w) + norm_add;
 				pix_vals(pix_id) += (pix_val - pix_vals(pix_id)) / frame_count;
 			}
 		} else{
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double pix_val = getPixVal<PIX_INTERP_TYPE, PIX_BORDER_TYPE>(
 					img, pts(0, pix_id), pts(1, pix_id), h, w);
 				pix_vals(pix_id) = alpha*pix_val + (1 - alpha)*pix_vals(pix_id);
@@ -530,7 +530,7 @@ namespace utils{
 
 		template<typename ScalarType, typename PtsT>
 		void getPixVals(VectorXd &pix_vals,
-			const cv::Mat &img, const PtsT &pts, int n_pix, int h, int w,
+			const cv::Mat &img, const PtsT &pts, unsigned int n_pix, unsigned int h, unsigned int w,
 			double norm_mult, double norm_add){
 			//printf("n_pix: %d\t pix_vals.size(): %l\t pts.cols(): %l", n_pix, pix_vals.size(),  pts.cols());
 			assert(pix_vals.size() == n_pix && pts.cols() == n_pix);
@@ -544,17 +544,17 @@ namespace utils{
 
 		template<typename ScalarType>
 		void getWeightedPixVals(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			unsigned int frame_count, double alpha, bool use_running_avg, int n_pix,
-			int h, int w, double norm_mult, double norm_add){
+			unsigned int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+			unsigned int h, unsigned int w, double norm_mult, double norm_add){
 			if(use_running_avg){
-				for(int pix_id = 0; pix_id < n_pix; ++pix_id){
+				for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 					double pix_val = PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(img,
 						pts(0, pix_id), pts(1, pix_id), h, w);
 					pix_vals[pix_id] += (norm_mult*pix_vals[pix_id] + norm_add - pix_vals[pix_id]) / frame_count;
 				}
 			} else{
 				double alpha_mult = norm_mult*alpha, alpha_add = norm_add*alpha;
-				for(int pix_id = 0; pix_id < n_pix; ++pix_id){
+				for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 					double pix_val = PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(img,
 						pts(0, pix_id), pts(1, pix_id), h, w);
 					pix_vals[pix_id] = alpha_mult*pix_val + alpha_add + (1 - alpha)*pix_vals[pix_id];
@@ -564,13 +564,13 @@ namespace utils{
 		template<typename ScalarType>
 		void getWarpedImgGrad(PixGradT &warped_img_grad,
 			const cv::Mat &img, const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix,
-			int h, int w, double pix_mult_factor){
+			double grad_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor){
 			assert(warped_img_grad.rows() == n_pix && warped_offset_pts.cols() == n_pix);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
-			for(int pix_id = 0; pix_id < n_pix; ++pix_id){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double pix_val_inc_x, pix_val_dec_x;
 				double pix_val_inc_y, pix_val_dec_y;
 
@@ -592,12 +592,12 @@ namespace utils{
 		void getWarpedImgGrad(PixGradT &warped_img_grad,
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts, double grad_eps,
-			int n_pix, int h, int w, double pix_mult_factor){
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			assert(warped_img_grad.rows() == n_pix);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double pix_val_inc_x = PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(img,
 					warped_offset_pts(0, pix_id), warped_offset_pts(1, pix_id), h, w);
 				double pix_val_dec_x = PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(img,
@@ -615,13 +615,13 @@ namespace utils{
 		template<typename ScalarType>
 		void getImgGrad(PixGradT &img_grad,
 			const cv::Mat &img, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w,
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor){
 			assert(img_grad.rows() == n_pix  && pts.cols() == n_pix);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double curr_x = pts(0, pix_id), curr_y = pts(1, pix_id);
 
 				double pix_val_inc_x = PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(img, curr_x + grad_eps, curr_y, h, w);
@@ -638,13 +638,13 @@ namespace utils{
 		template<typename ScalarType, InterpType mapping_type>
 		void getImgGrad(PixGradT &img_grad, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w,
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor){
 			assert(img_grad.rows() == n_pix && pts.cols() == n_pix);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double curr_x = pts(0, pix_id), curr_y = pts(1, pix_id);
 
 				double pix_val_inc_x = PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(img, curr_x + grad_eps, curr_y, h, w);
@@ -661,14 +661,14 @@ namespace utils{
 		template<typename ScalarType>
 		void getWarpedImgHess(PixHessT &warped_img_hess,
 			const cv::Mat &img, const PtsT &warped_pts,
-			const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor){
+			const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor){
 			assert(warped_img_hess.cols() == n_pix && warped_pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
 			double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
 
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 
 				double pix_val = PixVal<ScalarType, HESS_INTERP_TYPE, PIX_BORDER_TYPE>::get(img, warped_pts(0, pix_id), warped_pts(1, pix_id), h, w);
 
@@ -692,13 +692,13 @@ namespace utils{
 		void getWarpedImgHess(PixHessT &warped_img_hess,
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
-			double hess_eps, int n_pix, int h, int w, double pix_mult_factor){
+			double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			assert(warped_img_hess.cols() == n_pix && warped_pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
 			double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
 
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 
 				double pix_val = PixVal<ScalarType, HESS_INTERP_TYPE, PIX_BORDER_TYPE>::get(img, warped_pts(0, pix_id), warped_pts(1, pix_id), h, w);
 
@@ -729,13 +729,13 @@ namespace utils{
 		template<typename ScalarType>
 		void getImgHess(PixHessT &img_hess, const cv::Mat &img,
 			const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor){
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			assert(img_hess.cols() == n_pix && pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
 			double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
 
-			for(int pix_id = 0; pix_id < n_pix; ++pix_id){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double curr_x = pts(0, pix_id), curr_y = pts(1, pix_id);
 				double pix_val = PixVal<ScalarType, HESS_INTERP_TYPE, PIX_BORDER_TYPE>::get(img, curr_x, curr_y, h, w);
 
@@ -761,13 +761,13 @@ namespace utils{
 		template<typename ScalarType, InterpType mapping_type>
 		void getImgHess(PixHessT &img_hess, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor){
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			assert(img_hess.cols() == n_pix && pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
 			double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
 
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double curr_x = pts(0, pix_id), curr_y = pts(1, pix_id);
 				double inc_x = curr_x + hess_eps, dec_x = curr_x - hess_eps;
 				double inc_y = curr_y + hess_eps, dec_y = curr_y - hess_eps;
@@ -800,7 +800,7 @@ namespace utils{
 		void getWarpedImgGrad(PixGradT &warped_img_grad, const cv::Mat &img,
 			bool weighted_mapping, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts, double grad_eps,
-			int n_pix, int h, int w, double pix_mult_factor){
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			if(weighted_mapping){
 				getWarpedImgGrad<ScalarType, InterpType::Linear>(warped_img_grad,
 					img, intensity_map, warped_offset_pts, grad_eps,
@@ -814,7 +814,7 @@ namespace utils{
 		template<typename ScalarType>
 		void getImgGrad(PixGradT &img_grad, const cv::Mat &img,
 			bool weighted_mapping, const VectorXd &intensity_map,
-			const PtsT &pts, double grad_eps, int n_pix, int h, int w,
+			const PtsT &pts, double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor){
 			if(weighted_mapping){
 				getImgGrad<ScalarType, InterpType::Linear>(img_grad,
@@ -830,7 +830,7 @@ namespace utils{
 		void getWarpedImgHess(PixHessT &warped_img_hess,
 			const cv::Mat &img, bool weighted_mapping, const VectorXd &intensity_map,
 			const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
-			double hess_eps, int n_pix, int h, int w, double pix_mult_factor){
+			double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			if(weighted_mapping){
 				getWarpedImgHess<ScalarType, InterpType::Linear>(warped_img_hess,
 					img, intensity_map,
@@ -846,7 +846,7 @@ namespace utils{
 		template<typename ScalarType>
 		void getImgHess(PixHessT &img_hess, const cv::Mat &img, bool weighted_mapping,
 			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor){
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			if(weighted_mapping){
 				getImgHess<ScalarType, InterpType::Linear>(img_hess, img, intensity_map, pts,
 					hess_eps, n_pix, h, w, pix_mult_factor);
@@ -865,12 +865,12 @@ namespace utils{
 
 		template<typename ScalarType, typename PtsT>
 		void getPixVals(VectorXd &pix_vals,
-			const cv::Mat &img, const PtsT &pts, int n_pix, int h, int w,
+			const cv::Mat &img, const PtsT &pts, unsigned int n_pix, unsigned int h, unsigned int w,
 			double norm_mult, double norm_add){
 			//printf("n_pix: %d\t pix_vals.size(): %l\t pts.cols(): %l", n_pix, pix_vals.size(),  pts.cols());
 			assert(pix_vals.size() == 3 * n_pix && pts.cols() == n_pix);
 			double *pix_data = pix_vals.data();
-			for(int pix_id = 0; pix_id < n_pix; ++pix_id){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_data, img,
 					pts(0, pix_id), pts(1, pix_id), h, w);
 				pix_data[0] = norm_mult*pix_data[0] + norm_add;
@@ -881,12 +881,12 @@ namespace utils{
 		}
 		template<typename ScalarType>
 		void getWeightedPixVals(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, int n_pix,
-			int h, int w, double norm_mult, double norm_add){
+			int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+			unsigned int h, unsigned int w, double norm_mult, double norm_add){
 
 			double *pix_data = pix_vals.data();
 			if(use_running_avg){
-				for(int pix_id = 0; pix_id < n_pix; pix_id++){
+				for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 					double pix_val[3];
 					PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val, img,
 						pts(0, pix_id), pts(1, pix_id), h, w);
@@ -899,7 +899,7 @@ namespace utils{
 				}
 			} else{
 				double alpha_mult = norm_mult*alpha, alpha_add = norm_add*alpha;
-				for(int pix_id = 0; pix_id < n_pix; pix_id++){
+				for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 					double pix_val[3];
 					PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val, img,
 						pts(0, pix_id), pts(1, pix_id), h, w);
@@ -913,14 +913,14 @@ namespace utils{
 		template<typename ScalarType>
 		void getWarpedImgGrad(PixGradT &warped_img_grad,
 			const cv::Mat &img, const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix,
-			int h, int w, double pix_mult_factor){
+			double grad_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor){
 			assert(warped_img_grad.rows() == n_pix * 3 && warped_offset_pts.cols() == n_pix);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
 			int ch_pix_id = 0;
-			for(int pix_id = 0; pix_id < n_pix; ++pix_id){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double pix_val_inc_x[3], pix_val_dec_x[3];
 				double pix_val_inc_y[3], pix_val_dec_y[3];
 
@@ -945,13 +945,13 @@ namespace utils{
 		void getWarpedImgGrad(PixGradT &warped_img_grad,
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts, double grad_eps,
-			int n_pix, int h, int w, double pix_mult_factor){
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			assert(warped_img_grad.rows() == n_pix * 3);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
 			int ch_pix_id = 0;
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double pix_val_inc_x[3], pix_val_dec_x[3];
 				double pix_val_inc_y[3], pix_val_dec_y[3];
 				PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_inc_x, img,
@@ -974,7 +974,7 @@ namespace utils{
 		template<typename ScalarType>
 		void getImgGrad(PixGradT &img_grad,
 			const cv::Mat &img, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w,
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor){
 			assert(img_grad.rows() == n_pix * 3 && pts.cols() == n_pix);
 
@@ -982,7 +982,7 @@ namespace utils{
 
 			int ch_pix_id = 0;
 
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double curr_x = pts(0, pix_id), curr_y = pts(1, pix_id);
 
 				double pix_val_inc_x[3], pix_val_dec_x[3];
@@ -1005,14 +1005,14 @@ namespace utils{
 		template<typename ScalarType, InterpType mapping_type>
 		void getImgGrad(PixGradT &img_grad, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w,
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor){
 			assert(img_grad.rows() == n_pix * 3 && pts.cols() == n_pix);
 
 			double grad_mult_factor = pix_mult_factor / (2 * grad_eps);
 
 			int ch_pix_id = 0;
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double curr_x = pts(0, pix_id), curr_y = pts(1, pix_id);
 				double pix_val_inc_x[3], pix_val_dec_x[3];
 				double pix_val_inc_y[3], pix_val_dec_y[3];
@@ -1034,8 +1034,8 @@ namespace utils{
 		template<typename ScalarType>
 		void getWarpedImgHess(PixHessT &warped_img_hess,
 			const cv::Mat &img, const PtsT &warped_pts,
-			const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor){
+			const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor){
 			assert(warped_img_hess.cols() == n_pix * 3 && warped_pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
@@ -1043,7 +1043,7 @@ namespace utils{
 
 			int ch_pix_id = 0;
 
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double pix_val[3];
 				double pix_val_inc_x[3], pix_val_dec_x[3];
 				double pix_val_inc_y[3], pix_val_dec_y[3];
@@ -1077,14 +1077,14 @@ namespace utils{
 		void getWarpedImgHess(PixHessT &warped_img_hess,
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
-			double hess_eps, int n_pix, int h, int w, double pix_mult_factor){
+			double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			assert(warped_img_hess.cols() == n_pix && warped_pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
 			double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
 
 			int ch_pix_id = 0;
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 
 				double pix_val[3];
 				double pix_val_inc_x[3], pix_val_dec_x[3];
@@ -1125,14 +1125,14 @@ namespace utils{
 		template<typename ScalarType>
 		void getImgHess(PixHessT &img_hess, const cv::Mat &img,
 			const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor){
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			assert(img_hess.cols() == n_pix * 3 && pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
 			double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
 
 			int ch_pix_id = 0;
-			for(int pix_id = 0; pix_id < n_pix; ++pix_id){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double pix_val[3];
 				double pix_val_inc_x[3], pix_val_dec_x[3];
 				double pix_val_inc_y[3], pix_val_dec_y[3];
@@ -1168,14 +1168,14 @@ namespace utils{
 		template<typename ScalarType, InterpType mapping_type>
 		void getImgHess(PixHessT &img_hess, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor){
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			assert(img_hess.cols() == n_pix * 3 && pts.cols() == n_pix);
 
 			double hess_eps2 = 2 * hess_eps;
 			double hess_mult_factor = pix_mult_factor / (hess_eps2 * hess_eps2);
 
 			int ch_pix_id = 0;
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				double curr_x = pts(0, pix_id), curr_y = pts(1, pix_id);
 				double inc_x = curr_x + hess_eps, dec_x = curr_x - hess_eps;
 				double inc_y = curr_y + hess_eps, dec_y = curr_y - hess_eps;
@@ -1219,7 +1219,7 @@ namespace utils{
 		void getWarpedImgGrad(PixGradT &warped_img_grad, const cv::Mat &img,
 			bool weighted_mapping, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts, double grad_eps,
-			int n_pix, int h, int w, double pix_mult_factor){
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			if(weighted_mapping){
 				getWarpedImgGrad<ScalarType, InterpType::Linear>(warped_img_grad,
 					img, intensity_map, warped_offset_pts, grad_eps,
@@ -1233,7 +1233,7 @@ namespace utils{
 		template<typename ScalarType>
 		void getImgGrad(PixGradT &img_grad, const cv::Mat &img,
 			bool weighted_mapping, const VectorXd &intensity_map,
-			const PtsT &pts, double grad_eps, int n_pix, int h, int w,
+			const PtsT &pts, double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor){
 			if(weighted_mapping){
 				getImgGrad<ScalarType, InterpType::Linear>(img_grad,
@@ -1249,7 +1249,7 @@ namespace utils{
 		void getWarpedImgHess(PixHessT &warped_img_hess,
 			const cv::Mat &img, bool weighted_mapping, const VectorXd &intensity_map,
 			const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
-			double hess_eps, int n_pix, int h, int w, double pix_mult_factor){
+			double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			if(weighted_mapping){
 				getWarpedImgHess<ScalarType, InterpType::Linear>(warped_img_hess,
 					img, intensity_map,
@@ -1265,7 +1265,7 @@ namespace utils{
 		template<typename ScalarType>
 		void getImgHess(PixHessT &img_hess, const cv::Mat &img, bool weighted_mapping,
 			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor){
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor){
 			if(weighted_mapping){
 				getImgHess<ScalarType, InterpType::Linear>(img_hess, img, intensity_map, pts,
 					hess_eps, n_pix, h, w, pix_mult_factor);
@@ -1282,7 +1282,7 @@ namespace utils{
 	// ******************************************************************************* //
 
 	bool getNeighboringPixGrid(Matrix4d &pix_grid, const EigImgT &img, double x, double y,
-		int h, int w){
+		unsigned int h, unsigned int w){
 		assert(img.rows() == h && img.cols() == w);
 
 		if(checkOverflow(x, y, h, w)){
@@ -1768,7 +1768,7 @@ namespace utils{
 		int n_channels = cv_patch.type() == CV_8UC1 || cv_patch.type() == CV_32FC1 ? 1 : 3;
 		if(end_x < 0){ end_x = cv_patch.cols - 1; }
 		if(end_y < 0){ end_y = cv_patch.rows - 1; }
-		int n_pix = (end_x - start_x + 1)* (end_y - start_y + 1);
+		unsigned int n_pix = (end_x - start_x + 1)* (end_y - start_y + 1);
 		VectorXd eig_patch(n_pix);
 		int pix_id = -1;
 		if(n_channels == 1){
@@ -1794,119 +1794,119 @@ namespace utils{
 
 	template
 		void getPixVals<PtsT>(VectorXd &pix_vals,
-		const EigImgT &img, const PtsT &pts, int n_pix, int h, int w,
+		const EigImgT &img, const PtsT &pts, unsigned int n_pix, unsigned int h, unsigned int w,
 		double norm_mult, double norm_add);
 
 	template
 		void getWarpedImgGrad<InterpType::Nearest>(PixGradT &warped_img_grad,
 		const EigImgT &img, const VectorXd &intensity_map,
 		const Matrix8Xd &warped_offset_pts,
-		double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+		double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 	template
 		void getWarpedImgGrad<InterpType::Linear>(PixGradT &warped_img_grad,
 		const EigImgT &img, const VectorXd &intensity_map,
 		const Matrix8Xd &warped_offset_pts,
-		double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+		double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 	template
 		void getImgGrad<InterpType::Nearest>(PixGradT &img_grad, const EigImgT &img,
 		const VectorXd &intensity_map, const PtsT &pts,
-		double grad_eps, int n_pix, int h, int w,
+		double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 		double pix_mult_factor);
 	template
 		void getImgGrad<InterpType::Linear>(PixGradT &img_grad, const EigImgT &img,
 		const VectorXd &intensity_map, const PtsT &pts,
-		double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+		double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 	template
 		void getWarpedImgHess<InterpType::Nearest>(PixHessT &warped_img_hess,
 		const EigImgT &img, const VectorXd &intensity_map, const PtsT &warped_pts,
-		const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-		int h, int w, double pix_mult_factor);
+		const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+		unsigned int h, unsigned int w, double pix_mult_factor);
 	template
 		void getWarpedImgHess<InterpType::Linear>(PixHessT &warped_img_hess,
 		const EigImgT &img, const VectorXd &intensity_map, const PtsT &warped_pts,
-		const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-		int h, int w, double pix_mult_factor);
+		const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+		unsigned int h, unsigned int w, double pix_mult_factor);
 	
 	template
 		void getImgHess<InterpType::Nearest>(PixHessT &img_hess, const EigImgT &img, 
-		const VectorXd &intensity_map, const PtsT &pts, double hess_eps, int n_pix,
-		int h, int w, double pix_mult_factor);
+		const VectorXd &intensity_map, const PtsT &pts, double hess_eps, unsigned int n_pix,
+		unsigned int h, unsigned int w, double pix_mult_factor);
 	template
 		void getImgHess<InterpType::Linear>(PixHessT &img_hess, const EigImgT &img, 
-		const VectorXd &intensity_map, const PtsT &pts, double hess_eps, int n_pix, 
-		int h, int w, double pix_mult_factor);
+		const VectorXd &intensity_map, const PtsT &pts, double hess_eps, unsigned int n_pix, 
+		unsigned int h, unsigned int w, double pix_mult_factor);
 
 	namespace sc{
 		//! OpenCV single channel floating point images
 		template
 			void getPixVals<float, PtsT>(VectorXd &pix_vals,
-			const cv::Mat &img, const PtsT &pts, int n_pix, int h, int w,
+			const cv::Mat &img, const PtsT &pts, unsigned int n_pix, unsigned int h, unsigned int w,
 			double norm_mult, double norm_add);
 		template
 			void getWeightedPixVals<float>(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, int n_pix,
-			int h, int w, double norm_mult, double norm_add);
+			int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+			unsigned int h, unsigned int w, double norm_mult, double norm_add);
 		template
 			void getWarpedImgHess<float>(PixHessT &warped_img_hess,
 			const cv::Mat &img, const PtsT &warped_pts,
-			const Matrix16Xd &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			const Matrix16Xd &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getWarpedImgGrad<float>(PixGradT &warped_img_grad,
 			const cv::Mat &img, const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgGrad<float>(PixGradT &img_grad,
 			const  cv::Mat &img, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w,
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getImgHess<float>(PixHessT &img_hess, const cv::Mat &img,
 			const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor);
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getWarpedImgGrad<float, InterpType::Nearest>(PixGradT &warped_img_grad,
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getWarpedImgGrad<float, InterpType::Linear>(PixGradT &warped_img_grad,
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getImgGrad<float, InterpType::Nearest>(PixGradT &img_grad, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w,
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getImgGrad<float, InterpType::Linear>(PixGradT &img_grad, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getWarpedImgHess<float, InterpType::Nearest>(PixHessT &warped_img_hess,
 			const cv::Mat &img, const VectorXd &intensity_map, const PtsT &warped_pts,
-			const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getWarpedImgHess<float, InterpType::Linear>(PixHessT &warped_img_hess,
 			const cv::Mat &img, const VectorXd &intensity_map, const PtsT &warped_pts,
-			const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getImgHess<float, InterpType::Nearest>(PixHessT &img_hess, const cv::Mat &img, const VectorXd &intensity_map,
-			const PtsT &pts, double hess_eps, int n_pix, int h, int w,
+			const PtsT &pts, double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getImgHess<float, InterpType::Linear>(PixHessT &img_hess, const cv::Mat &img, const VectorXd &intensity_map,
-			const PtsT &pts, double hess_eps, int n_pix, int h, int w,
+			const PtsT &pts, double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 
 		//! convenience functions to choose the mapping type
@@ -1914,184 +1914,184 @@ namespace utils{
 			void getWarpedImgGrad<float>(PixGradT &warped_img_grad, const cv::Mat &img,
 			bool weighted_mapping, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts, double grad_eps,
-			int n_pix, int h, int w, double pix_mult_factor);
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgGrad<float>(PixGradT &img_grad, const cv::Mat &img,
 			bool weighted_mapping, const VectorXd &intensity_map,
-			const PtsT &pts, double grad_eps, int n_pix, int h, int w,
+			const PtsT &pts, double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getWarpedImgHess<float>(PixHessT &warped_img_hess,
 			const cv::Mat &img, bool weighted_mapping, const VectorXd &intensity_map,
 			const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
-			double hess_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgHess<float>(PixHessT &img_hess, const cv::Mat &img, bool weighted_mapping,
 			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor);
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 
 		//! OpenCV  single channel unsigned integral images
 		template
 			void getPixVals<uchar, PtsT>(VectorXd &pix_vals,
-			const cv::Mat &img, const PtsT &pts, int n_pix, int h, int w,
+			const cv::Mat &img, const PtsT &pts, unsigned int n_pix, unsigned int h, unsigned int w,
 			double norm_mult, double norm_add);
 		template
 			void getWeightedPixVals<uchar>(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, int n_pix,
-			int h, int w, double norm_mult, double norm_add);
+			int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+			unsigned int h, unsigned int w, double norm_mult, double norm_add);
 
 		template
 			void getWarpedImgGrad<uchar>(PixGradT &warped_img_grad,
 			const cv::Mat &img, const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgGrad<uchar>(PixGradT &img_grad,
 			const  cv::Mat &img, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w,
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getWarpedImgHess<uchar>(PixHessT &warped_img_hess,
 			const cv::Mat &img, const PtsT &warped_pts,
-			const Matrix16Xd &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			const Matrix16Xd &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgHess<uchar>(PixHessT &img_hess, const cv::Mat &img,
 			const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor);
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 
 		template
 			void getWarpedImgGrad<uchar, InterpType::Nearest>(PixGradT &warped_img_grad,
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getWarpedImgGrad<uchar, InterpType::Linear>(PixGradT &warped_img_grad,
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getImgGrad<uchar, InterpType::Nearest>(PixGradT &img_grad, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w,
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getImgGrad<uchar, InterpType::Linear>(PixGradT &img_grad, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getWarpedImgHess<uchar, InterpType::Nearest>(PixHessT &warped_img_hess,
 			const cv::Mat &img, const VectorXd &intensity_map, const PtsT &warped_pts,
-			const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getWarpedImgHess<uchar, InterpType::Linear>(PixHessT &warped_img_hess,
 			const cv::Mat &img, const VectorXd &intensity_map, const PtsT &warped_pts,
-			const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getImgHess<uchar, InterpType::Nearest>(PixHessT &img_hess, const cv::Mat &img, const VectorXd &intensity_map,
-			const PtsT &pts, double hess_eps, int n_pix, int h, int w, double pix_mult_factor);
+			const PtsT &pts, double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgHess<uchar, InterpType::Linear>(PixHessT &img_hess, const cv::Mat &img, const VectorXd &intensity_map,
-			const PtsT &pts, double hess_eps, int n_pix, int h, int w, double pix_mult_factor);
+			const PtsT &pts, double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 		//! convenience functions to choose the mapping type
 		template
 			void getWarpedImgGrad<uchar>(PixGradT &warped_img_grad, const cv::Mat &img,
 			bool weighted_mapping, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts, double grad_eps,
-			int n_pix, int h, int w, double pix_mult_factor);
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgGrad<uchar>(PixGradT &img_grad, const cv::Mat &img,
 			bool weighted_mapping, const VectorXd &intensity_map,
-			const PtsT &pts, double grad_eps, int n_pix, int h, int w,
+			const PtsT &pts, double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getWarpedImgHess<uchar>(PixHessT &warped_img_hess,
 			const cv::Mat &img, bool weighted_mapping, const VectorXd &intensity_map,
 			const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
-			double hess_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgHess<uchar>(PixHessT &img_hess, const cv::Mat &img, bool weighted_mapping,
 			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor);
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 	}
 
 	namespace mc{
 		//! OpenCV multi channel floating point images
 		template
 			void getPixVals<float, PtsT>(VectorXd &pix_vals,
-			const cv::Mat &img, const PtsT &pts, int n_pix, int h, int w,
+			const cv::Mat &img, const PtsT &pts, unsigned int n_pix, unsigned int h, unsigned int w,
 			double norm_mult, double norm_add);
 		template
 			void getWeightedPixVals<float>(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, int n_pix,
-			int h, int w, double norm_mult, double norm_add);
+			int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+			unsigned int h, unsigned int w, double norm_mult, double norm_add);
 		template
 			void getWarpedImgHess<float>(PixHessT &warped_img_hess,
 			const cv::Mat &img, const PtsT &warped_pts,
-			const Matrix16Xd &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			const Matrix16Xd &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getWarpedImgGrad<float>(PixGradT &warped_img_grad,
 			const cv::Mat &img, const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgGrad<float>(PixGradT &img_grad,
 			const  cv::Mat &img, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w,
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getImgHess<float>(PixHessT &img_hess, const cv::Mat &img,
 			const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor);
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getWarpedImgGrad<float, InterpType::Nearest>(PixGradT &warped_img_grad,
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getWarpedImgGrad<float, InterpType::Linear>(PixGradT &warped_img_grad,
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getImgGrad<float, InterpType::Nearest>(PixGradT &img_grad, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w,
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getImgGrad<float, InterpType::Linear>(PixGradT &img_grad, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getWarpedImgHess<float, InterpType::Nearest>(PixHessT &warped_img_hess,
 			const cv::Mat &img, const VectorXd &intensity_map, const PtsT &warped_pts,
-			const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getWarpedImgHess<float, InterpType::Linear>(PixHessT &warped_img_hess,
 			const cv::Mat &img, const VectorXd &intensity_map, const PtsT &warped_pts,
-			const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getImgHess<float, InterpType::Nearest>(PixHessT &img_hess, const cv::Mat &img, const VectorXd &intensity_map,
-			const PtsT &pts, double hess_eps, int n_pix, int h, int w,
+			const PtsT &pts, double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getImgHess<float, InterpType::Linear>(PixHessT &img_hess, const cv::Mat &img, const VectorXd &intensity_map,
-			const PtsT &pts, double hess_eps, int n_pix, int h, int w,
+			const PtsT &pts, double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 
 		//! convenience functions to choose the mapping type
@@ -2099,113 +2099,113 @@ namespace utils{
 			void getWarpedImgGrad<float>(PixGradT &warped_img_grad, const cv::Mat &img,
 			bool weighted_mapping, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts, double grad_eps,
-			int n_pix, int h, int w, double pix_mult_factor);
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgGrad<float>(PixGradT &img_grad, const cv::Mat &img,
 			bool weighted_mapping, const VectorXd &intensity_map,
-			const PtsT &pts, double grad_eps, int n_pix, int h, int w,
+			const PtsT &pts, double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getWarpedImgHess<float>(PixHessT &warped_img_hess,
 			const cv::Mat &img, bool weighted_mapping, const VectorXd &intensity_map,
 			const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
-			double hess_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgHess<float>(PixHessT &img_hess, const cv::Mat &img, bool weighted_mapping,
 			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor);
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 
 		//! OpenCV  multi channel unsigned integral images
 		template
 			void getPixVals<uchar, PtsT>(VectorXd &pix_vals,
-			const cv::Mat &img, const PtsT &pts, int n_pix, int h, int w,
+			const cv::Mat &img, const PtsT &pts, unsigned int n_pix, unsigned int h, unsigned int w,
 			double norm_mult, double norm_add);
 		template
 			void getWeightedPixVals<uchar>(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, int n_pix,
-			int h, int w, double norm_mult, double norm_add);
+			int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+			unsigned int h, unsigned int w, double norm_mult, double norm_add);
 
 		template
 			void getWarpedImgGrad<uchar>(PixGradT &warped_img_grad,
 			const cv::Mat &img, const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgGrad<uchar>(PixGradT &img_grad,
 			const  cv::Mat &img, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w,
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getWarpedImgHess<uchar>(PixHessT &warped_img_hess,
 			const cv::Mat &img, const PtsT &warped_pts,
-			const Matrix16Xd &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			const Matrix16Xd &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgHess<uchar>(PixHessT &img_hess, const cv::Mat &img,
 			const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor);
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 
 		template
 			void getWarpedImgGrad<uchar, InterpType::Nearest>(PixGradT &warped_img_grad,
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getWarpedImgGrad<uchar, InterpType::Linear>(PixGradT &warped_img_grad,
 			const cv::Mat &img, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts,
-			double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getImgGrad<uchar, InterpType::Nearest>(PixGradT &img_grad, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w,
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getImgGrad<uchar, InterpType::Linear>(PixGradT &img_grad, const cv::Mat &img,
 			const VectorXd &intensity_map, const PtsT &pts,
-			double grad_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getWarpedImgHess<uchar, InterpType::Nearest>(PixHessT &warped_img_hess,
 			const cv::Mat &img, const VectorXd &intensity_map, const PtsT &warped_pts,
-			const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getWarpedImgHess<uchar, InterpType::Linear>(PixHessT &warped_img_hess,
 			const cv::Mat &img, const VectorXd &intensity_map, const PtsT &warped_pts,
-			const HessPtsT &warped_offset_pts, double hess_eps, int n_pix,
-			int h, int w, double pix_mult_factor);
+			const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
+			unsigned int h, unsigned int w, double pix_mult_factor);
 
 		template
 			void getImgHess<uchar, InterpType::Nearest>(PixHessT &img_hess, const cv::Mat &img, const VectorXd &intensity_map,
-			const PtsT &pts, double hess_eps, int n_pix, int h, int w, double pix_mult_factor);
+			const PtsT &pts, double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgHess<uchar, InterpType::Linear>(PixHessT &img_hess, const cv::Mat &img, const VectorXd &intensity_map,
-			const PtsT &pts, double hess_eps, int n_pix, int h, int w, double pix_mult_factor);
+			const PtsT &pts, double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 
 		//! convenience functions to choose the mapping type
 		template
 			void getWarpedImgGrad<uchar>(PixGradT &warped_img_grad, const cv::Mat &img,
 			bool weighted_mapping, const VectorXd &intensity_map,
 			const Matrix8Xd &warped_offset_pts, double grad_eps,
-			int n_pix, int h, int w, double pix_mult_factor);
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgGrad<uchar>(PixGradT &img_grad, const cv::Mat &img,
 			bool weighted_mapping, const VectorXd &intensity_map,
-			const PtsT &pts, double grad_eps, int n_pix, int h, int w,
+			const PtsT &pts, double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor);
 		template
 			void getWarpedImgHess<uchar>(PixHessT &warped_img_hess,
 			const cv::Mat &img, bool weighted_mapping, const VectorXd &intensity_map,
 			const PtsT &warped_pts, const HessPtsT &warped_offset_pts,
-			double hess_eps, int n_pix, int h, int w, double pix_mult_factor);
+			double hess_eps, unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 		template
 			void getImgHess<uchar>(PixHessT &img_hess, const cv::Mat &img, bool weighted_mapping,
 			const VectorXd &intensity_map, const PtsT &pts, double hess_eps,
-			int n_pix, int h, int w, double pix_mult_factor);
+			unsigned int n_pix, unsigned int h, unsigned int w, double pix_mult_factor);
 	}
 }
 

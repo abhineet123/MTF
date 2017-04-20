@@ -55,12 +55,12 @@ public:
 	typedef NumericalDataType NDT;
 	typedef ParamType::UpdateType UpdateType;
 
-	int frame_id;
-	int n_pix;
+	unsigned int frame_id;
+	unsigned int n_pix;
 
-	int am_dist_size;
-	int ssm_state_size, am_state_size;
-	int state_size;
+	unsigned int am_dist_size;
+	unsigned int ssm_state_size, am_state_size;
+	unsigned int state_size;
 
 	Diagnostics(AM _am, SSM _ssm,
 		const ParamType *diag_params = nullptr);
