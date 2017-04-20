@@ -13,6 +13,38 @@ base class for appearance models that use the negative sum of squared difference
 L2 norm of the difference between the initial and current pixel values (original or modified)
 as the similarity measure
 */
+struct SSDDist : AMDist{
+	typedef bool is_kdtree_distance;
+	typedef double ElementType;
+	typedef double ResultType;
+
+	SSDDist(const string &_name) : AMDist(_name){}
+	/**
+	* Squared Euclidean distance functor, optimized version
+	*/
+	/**
+	*  Compute the squared Euclidean distance between two vectors.
+	*
+	*	This is highly optimized, with loop unrolling, as it is one
+	*	of the most expensive inner loops.
+	*
+	*	The computation of squared root at the end is omitted for
+	*	efficiency.
+	*/
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override;
+	/**
+	*	Partial euclidean distance, using just one dimension. This is used by the
+	*	kd-tree when computing partial distances while traversing the tree.
+	*
+	*	Squared root is omitted for efficiency.
+	*/
+	double accum_dist(const double& a, const double& b, int) const{
+		return (a - b)*(a - b);
+	}
+private:
+	~SSDDist(){}
+};
 class SSDBase : public AppearanceModel{
 
 public:
@@ -80,31 +112,12 @@ public:
 	/**
 	Support for FLANN library
 	*/
-	typedef bool is_kdtree_distance;
-	typedef double ElementType;
-	typedef double ResultType;
-	/**
-	* Squared Euclidean distance functor, optimized version
-	*/
-	/**
-	*  Compute the squared Euclidean distance between two vectors.
-	*
-	*	This is highly optimized, with loop unrolling, as it is one
-	*	of the most expensive inner loops.
-	*
-	*	The computation of squared root at the end is omitted for
-	*	efficiency.
-	*/
-	double operator()(const double* a, const double* b,
-		size_t size, double worst_dist = -1) const override;
-	/**
-	*	Partial euclidean distance, using just one dimension. This is used by the
-	*	kd-tree when computing partial distances while traversing the tree.
-	*
-	*	Squared root is omitted for efficiency.
-	*/
-	double accum_dist(const double& a, const double& b, int) const{
-		return (a - b)*(a - b);
+	typedef SSDDist DistType;
+	AMDistPtr getDistPtr() override{
+		return AMDistPtr(new DistType(name));
+	}
+	const DistType& getDistObj(){
+		return dist_func;
 	}
 	void updateDistFeat(double* feat_addr) override{
 		int feat_size = getDistFeatSize();
@@ -115,7 +128,7 @@ public:
 	void initializeDistFeat() override{}
 	void updateDistFeat() override{}
 	const double* getDistFeat() override{ return getCurrPixVals().data(); }
-	int getDistFeatSize() override{ return n_pix*n_channels; }
+	unsigned int getDistFeatSize() override{ return n_pix*n_channels; }
 
 	// -------------------------------------------------------------------------- //
 	// --------------------------- Stochastic Sampler --------------------------- //
@@ -158,6 +171,8 @@ protected:
 	VectorXdM I_diff;
 	PixValT It_orig;
 	ILMPixHessT ilm_d2f_dIt_type;
+
+	const DistType dist_func;
 
 	void cmptILMHessian(MatrixXd &d2f_dp2, const MatrixXd &dI_dpssm, 
 		const double* I, const double* df_dg = nullptr);

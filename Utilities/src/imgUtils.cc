@@ -544,7 +544,7 @@ namespace utils{
 
 		template<typename ScalarType>
 		void getWeightedPixVals(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, int n_pix,
+			unsigned int frame_count, double alpha, bool use_running_avg, int n_pix,
 			int h, int w, double norm_mult, double norm_add){
 			if(use_running_avg){
 				for(int pix_id = 0; pix_id < n_pix; ++pix_id){

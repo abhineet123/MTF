@@ -318,9 +318,9 @@ namespace utils{
 			const cv::Mat &img, const PtsT &pts, int n_pix, int h, int w,
 			double norm_mult = 1, double norm_add = 0);
 		template<typename ScalarType>
-			void getWeightedPixVals(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, int n_pix,
-			int h, int w, double norm_mult=1, double norm_add=0);
+		void getWeightedPixVals(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
+			unsigned int frame_count, double alpha, bool use_running_avg, int n_pix,
+			int h, int w, double norm_mult = 1, double norm_add = 0);
 
 		/************ functions for image gradient and Hessian ************/
 

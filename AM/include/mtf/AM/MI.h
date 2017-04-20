@@ -40,6 +40,28 @@ struct MIParams : AMParams{
 	MIParams(const MIParams *params = nullptr);
 };
 
+struct MIDist : AMDist{
+	typedef double ElementType;
+	typedef double ResultType;
+	MIDist(const string &_name, const MIParams &_params,
+		const unsigned int &_feat_size, 
+		const unsigned int &_patch_size,
+		const double &_hist_pre_seed,
+		const MatrixX2i &_std_bspl_ids) :
+		AMDist(_name), params(_params), feat_size(_feat_size),
+		patch_size(_patch_size), hist_pre_seed(_hist_pre_seed),
+		std_bspl_ids(_std_bspl_ids){}
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override;
+private:
+	const MIParams &params;
+	const unsigned int &feat_size;
+	const unsigned int &patch_size;
+	const double &hist_pre_seed;
+	const MatrixX2i &std_bspl_ids;
+	~MIDist(){}
+};
+
 class MI : public AppearanceModel{
 public:
 
@@ -75,8 +97,14 @@ public:
 	//static const utils::BSpline3WithDiffPtr bSpline3_arr[4];
 
 	//-----------------------------------functor support-----------------------------------//
-	typedef double ElementType;
-	typedef double ResultType;
+	typedef MIDist DistType;	
+	AMDistPtr getDistPtr() override{
+		return AMDistPtr(new DistType(name, params, feat_size,
+			patch_size, hist_pre_seed, _std_bspl_ids));
+	}
+	const DistType& getDistObj(){
+		return dist_func;
+	}
 
 	void initializeDistFeat() override{
 		feat_vec.resize(feat_size);
@@ -86,9 +114,7 @@ public:
 	}
 	const double* getDistFeat() override{ return feat_vec.data(); }
 	void updateDistFeat(double* feat_addr) override;
-	double operator()(const double* hist1_mat_addr, const double* hist2_mat_addr,
-		size_t hist_mat_size, double worst_dist = -1) const override;
-	int getDistFeatSize() override{ return feat_size; }
+	unsigned int getDistFeatSize() override{ return feat_size; }
 
 private:
 	ParamType params;
@@ -121,16 +147,17 @@ private:
 	MatrixXd self_joint_hist, self_joint_hist_log;
 	MatrixXd self_grad_factor;
 
-	int feat_size;
+	unsigned int feat_size;
 	VectorXd feat_vec;
 	double log_hist_norm_mult;
-
 
 	// only used internally to increase speed by offlining as many computations as possible;
 	MatrixX2i _std_bspl_ids;
 	MatrixX2i _init_bspl_ids;
 	MatrixX2i _curr_bspl_ids;
 	MatrixXi _linear_idx;
+
+	const DistType dist_func;
 
 	void cmptSelfHist();
 };

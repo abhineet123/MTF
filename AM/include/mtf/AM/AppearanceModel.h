@@ -35,6 +35,28 @@ struct AMStatus : ImgStatus{
 };
 
 /**
+Distance functor for FLANN
+*/
+struct AMDist{
+	typedef double ElementType;
+	typedef double ResultType;
+
+	const string &name;
+
+	AMDist(const string &_name) : name(_name){}
+	/**
+	computes the distance / dissimilarity between two patches where each is codified or represented
+	by a suitable distance feature computed using updateDistFeat
+	*/
+	virtual double operator()(const double* a, const double* b,
+		size_t dist_size, double worst_dist = -1) const {
+		am_func_not_implemeted(distance_functor);
+	}
+private:
+	~AMDist(){}
+};
+
+/**
 Similarity function that indicates how well a candidate warped patch matches the template.
 Registration based tracking is expressed as the solution to the following optimization problem:
 p_t = argmax(p_ssm, p_am) f(I_0(x), I_t(w(x, p_ssm)), p_am)
@@ -336,8 +358,12 @@ public:
 		am_func_not_implemeted(updateDistFeat);
 	}
 	/** returns the size of the distance vector */
-	virtual int getDistFeatSize() {
+	virtual unsigned int getDistFeatSize() {
 		am_func_not_implemeted(getDistFeatSize);
+	}
+	typedef shared_ptr<const AMDist> AMDistPtr;
+	virtual AMDistPtr getDistPtr() {
+		am_func_not_implemeted(getDistPtr);
 	}
 
 	// -------------------------------------------------------------------------- //
@@ -369,27 +395,6 @@ public:
 	}
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-};
-/**
-Distance feature functor for FLANN
-*/
-struct AMDist{
-public:
-	const string &name;
-	typedef double ElementType;
-	typedef double ResultType;
-
-	AMDist(const string &_name) : name(_name){}
-	/**
-	computes the distance / dissimilarity between two patches where each is codified or represented
-	by a suitable distance feature computed using updateDistFeat
-	*/
-	virtual double operator()(const double* a, const double* b,
-		size_t dist_size, double worst_dist = -1) const {
-		am_func_not_implemeted(distance_functor);
-	}
-private:
-	~AMDist(){}
 };
 
 _MTF_END_NAMESPACE

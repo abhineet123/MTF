@@ -9,7 +9,7 @@ _MTF_BEGIN_NAMESPACE
 
 SSDBase::SSDBase(const AMParams *am_params, const int _n_channels) :
 AppearanceModel(am_params, _n_channels), ilm(nullptr), likelihood_alpha(1),
-I_diff(0, 0){
+I_diff(0, 0), dist_func(name){
 	if(am_params){
 		ilm = am_params->ilm;
 		likelihood_alpha = am_params->likelihood_alpha;
@@ -490,7 +490,7 @@ void SSDBase::getSumOfHessians(MatrixXd &d2f_dp2, const bool *pix_mask,
 *	The computation of squared root at the end is omitted for
 *	efficiency.
 */
-double SSDBase::operator()(const double* a, const double* b,
+double SSDDist::operator()(const double* a, const double* b,
 	size_t size, double worst_dist) const{
 	double result = 0;
 	double diff0, diff1, diff2, diff3;

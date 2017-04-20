@@ -49,43 +49,6 @@ struct ImgStatus{
 };
 class ImageBase{
 
-protected:
-	//! Eigen structure shaing memory with the OpenCV image used by default with grayscale inputs
-	EigImgT curr_img;
-	//! OpenCV image used by default with multi channel inputs
-	cv::Mat curr_img_cv;
-
-	//! height and width of the input images
-	int img_height, img_width;
-	//! horizontal and vertical sampling resolutions for the object patch
-	int resx, resy;
-	//! no. of pixels in the sampled image patch to be tracked	
-	int n_pix;
-	//! no. of values that represent each pixel in the sampled patch
-	//! defined as a constant to enable compile time optimizations
-	const int n_channels;
-	//! size of the vector that represents the object patch in the image, typically n_pix*n_channels
-	int patch_size;
-
-	//! let N = n_pix = no. of pixels and C = n_channels = no. of channels
-
-	//! pixel values for all channels in the object patch being tracked (flattened as a vector)	
-	PixValT I0, It;
-	//! (N*C) x 2 jacobian of pixel values in the warped image w.r.t. pixel coordinate locations
-	//! aka gradient of the warped image or warp of the gradient image depending on the search method
-	PixGradT dI0_dx, dIt_dx;
-	//! 4 x (N*C) Hessian of pixel values in the warped image w.r.t. pixel coordinate locations;
-	//! each column of this matrix contains the 2x2 hessian for the respective location (for each channel) flasttened in the column major order;
-	PixHessT d2I0_dx2, d2It_dx2;
-	//! additive and multiplicative factors for normalizing pixel values
-	double pix_norm_add, pix_norm_mult;
-	//! incremented once during initialization and thereafter everytime the template is updated
-	int frame_count;
-	//! offsets to use for computing the numerical image gradient and hessian
-	double grad_eps, hess_eps;
-	//! use 8 bit unsigned integral images as input
-	bool uchar_input;
-
 public:
 	/** convenience type if floating point grayscale image is used as input by the AM */
 	typedef EigImgT ImageT;
@@ -106,13 +69,13 @@ public:
 	//! make some last moment changes to the variable being accessed before returning it to can avoid any 
 	//! unnecessary computations concerning the variable (e.g. in its 'update' function) unless it is actually accessed;
 	virtual const cv::Mat& getCurrImg() const{ return curr_img_cv; }
-	virtual int getImgHeight() const{ return img_height; }
-	virtual int getImgWidth() const{ return img_width; }
-	virtual int getResX() const{ return resx; }
-	virtual int getResY() const{ return resy; }
-	virtual int getNPix() const{ return n_pix; }
-	virtual int getNChannels() const{ return n_channels; }
-	virtual int getPatchSize() const{ return patch_size; }
+	virtual unsigned int getImgHeight() const{ return img_height; }
+	virtual unsigned int getImgWidth() const{ return img_width; }
+	virtual unsigned int getResX() const{ return resx; }
+	virtual unsigned int getResY() const{ return resy; }
+	virtual unsigned int getNPix() const{ return n_pix; }
+	virtual unsigned int getNChannels() const{ return n_channels; }
+	virtual unsigned int getPatchSize() const{ return patch_size; }
 	virtual double getGradOffset() const{ return grad_eps; }
 	virtual double getHessOffset() const{ return hess_eps; }
 	virtual const PixValT& getInitPixVals() const{ return I0; }
@@ -166,6 +129,43 @@ public:
 	virtual ImgStatus* isInitialized() = 0;
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+protected:
+	//! Eigen structure shaing memory with the OpenCV image used by default with grayscale inputs
+	EigImgT curr_img;
+	//! OpenCV image used by default with multi channel inputs
+	cv::Mat curr_img_cv;
+
+	//! height and width of the input images
+	unsigned int img_height, img_width;
+	//! horizontal and vertical sampling resolutions for the object patch
+	unsigned int resx, resy;
+	//! no. of pixels in the sampled image patch to be tracked	
+	unsigned int n_pix;
+	//! no. of values that represent each pixel in the sampled patch
+	//! defined as a constant to enable compile time optimizations
+	const unsigned int n_channels;
+	//! size of the vector that represents the object patch in the image, typically n_pix*n_channels
+	unsigned int patch_size;
+
+	//! let N = n_pix = no. of pixels and C = n_channels = no. of channels
+
+	//! pixel values for all channels in the object patch being tracked (flattened as a vector)	
+	PixValT I0, It;
+	//! (N*C) x 2 jacobian of pixel values in the warped image w.r.t. pixel coordinate locations
+	//! aka gradient of the warped image or warp of the gradient image depending on the search method
+	PixGradT dI0_dx, dIt_dx;
+	//! 4 x (N*C) Hessian of pixel values in the warped image w.r.t. pixel coordinate locations;
+	//! each column of this matrix contains the 2x2 hessian for the respective location (for each channel) flasttened in the column major order;
+	PixHessT d2I0_dx2, d2It_dx2;
+	//! additive and multiplicative factors for normalizing pixel values
+	double pix_norm_add, pix_norm_mult;
+	//! incremented once during initialization and thereafter everytime the template is updated
+	unsigned int frame_count;
+	//! offsets to use for computing the numerical image gradient and hessian
+	double grad_eps, hess_eps;
+	//! use 8 bit unsigned integral images as input
+	bool uchar_input;
 };
 
 _MTF_END_NAMESPACE

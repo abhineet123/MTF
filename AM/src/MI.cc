@@ -37,7 +37,8 @@ debug_mode(MI_DEBUG_MODE){
 }
 
 MI::MI(const ParamType *mi_params, const int _n_channels) :
-AppearanceModel(mi_params, _n_channels), params(mi_params){
+AppearanceModel(mi_params, _n_channels), params(mi_params),
+dist_func(name, params, feat_size, patch_size, hist_pre_seed, _std_bspl_ids){
 	printf("\n");
 	printf("Using  Mutual Information AM with:\n");
 	printf("n_bins: %d\n", params.n_bins);
@@ -744,7 +745,7 @@ void MI::updateDistFeat(double* feat_addr){
 	}
 }
 
-double MI::operator()(const double* hist1_mat_addr, const double* hist2_mat_addr,
+double MIDist::operator()(const double* hist1_mat_addr, const double* hist2_mat_addr,
 	size_t hist_mat_size, double worst_dist) const{
 
 	//printf("hist_mat_size: %ld\n", hist_mat_size);
@@ -778,9 +779,9 @@ double MI::operator()(const double* hist1_mat_addr, const double* hist2_mat_addr
 		//}
 
 
-		int bspl_id11 = _std_bspl_ids(pix1_floor, 0);
+		int bspl_id11 = std_bspl_ids(pix1_floor, 0);
 		int bspl_id12 = bspl_id11 + 1, bspl_id13 = bspl_id11 + 2, bspl_id14 = bspl_id11 + 3;
-		int bspl_id21 = _std_bspl_ids(pix2_floor, 0);
+		int bspl_id21 = std_bspl_ids(pix2_floor, 0);
 		int bspl_id22 = bspl_id21 + 1, bspl_id23 = bspl_id21 + 2, bspl_id24 = bspl_id21 + 3;
 
 		hist1(bspl_id11) += hist1_mat(1, pix_id);
