@@ -126,7 +126,7 @@ private:
 	double hist_pre_seed;
 	//! multiplicative factor for normalizing histograms
 	double hist_norm_mult;
-	int joint_hist_size;
+	unsigned int joint_hist_size;
 
 	// let A = joint_hist_size = n_bins*n_bins and N = n_pix = no. of pixels
 	//! n_bins x n_bins joint histograms; 
