@@ -285,6 +285,20 @@ namespace utils{
 		}
 		return true;
 	}
+	//! remove elements from OpenCV Mat or other compatible structures
+	//! according to the provided binary mask
+	//! copied from its namesake defined in fundam.cpp inside calib3d module of OpenCV
+	template<typename T> int icvCompressPoints(T* ptr,
+		const uchar* mask, int mstep, int count){
+		int i, j;
+		for(i = j = 0; i < count; i++)
+			if(mask[i*mstep]){
+				if(i > j)
+					ptr[j] = ptr[i];
+				j++;
+			}
+		return j;
+	}
 	void drawCorners(cv::Mat &img, const cv::Point2d(&cv_corners)[4],
 		const cv::Scalar corners_col, const std::string label);
 	// mask a vector, i.e. retain only those entries where the given mask is true

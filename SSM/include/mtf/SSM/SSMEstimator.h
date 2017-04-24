@@ -110,20 +110,6 @@ public:
 	bool completeSymmFlag;
 };
 
-//! remove elements from OpenCV Mat or other compatible structures
-//! according to the provided binary mask
-//! copied from its namesake defined in fundam.cpp inside calib3d module of OpenCV
-template<typename T> int icvCompressPoints(T* ptr,
-	const uchar* mask, int mstep, int count){
-	int i, j;
-	for(i = j = 0; i < count; i++)
-		if(mask[i*mstep]){
-			if(i > j)
-				ptr[j] = ptr[i];
-			j++;
-		}
-	return j;
-}
 
 cv::Mat estimateHomography(cv::InputArray _points1, cv::InputArray _points2,
 	cv::OutputArray _mask, const SSMEstimatorParams &est_params);
@@ -154,18 +140,6 @@ cv::Mat estimateAST(cv::InputArray _points1, cv::InputArray _points2,
 	cv::OutputArray _mask, const SSMEstimatorParams &est_params);
 
 int	estimateAST(const CvMat* in_pts, const CvMat* out_pts,
-	CvMat* __H, CvMat* mask, const SSMEstimatorParams &est_params);
-
-cv::Mat estimateIST(cv::InputArray _points1, cv::InputArray _points2,
-	cv::OutputArray _mask, const SSMEstimatorParams &est_params);
-
-int	estimateIST(const CvMat* in_pts, const CvMat* out_pts,
-	CvMat* __H, CvMat* mask, const SSMEstimatorParams &est_params);
-
-cv::Mat estimateTranslation(cv::InputArray _points1, cv::InputArray _points2,
-	cv::OutputArray _mask, const SSMEstimatorParams &est_params);
-
-int	estimateTranslation(const CvMat* in_pts, const CvMat* out_pts,
 	CvMat* __H, CvMat* mask, const SSMEstimatorParams &est_params);
 
 _MTF_END_NAMESPACE

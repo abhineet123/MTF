@@ -9,6 +9,7 @@
 #define TRANS_DEBUG_MODE 0
 
 #include "ProjectiveBase.h"
+#include "mtf/SSM/SSMEstimator.h"
 
 _MTF_BEGIN_NAMESPACE
 
@@ -124,6 +125,11 @@ public:
 protected:
 
 	ParamType params;
+	cv::Mat estimateTranslation(cv::InputArray _points1, cv::InputArray _points2,
+		cv::OutputArray _mask, const SSMEstimatorParams &est_params);
+
+	int	estimateTranslation(const CvMat* in_pts, const CvMat* out_pts,
+		CvMat* __H, CvMat* mask, const SSMEstimatorParams &est_params);
 };
 
 _MTF_END_NAMESPACE

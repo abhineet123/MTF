@@ -10,6 +10,7 @@
 #define IST_DEBUG_MODE 0
 
 #include "ProjectiveBase.h"
+#include "mtf/SSM/SSMEstimator.h"
 
 _MTF_BEGIN_NAMESPACE
 
@@ -88,6 +89,11 @@ public:
 #endif
 protected:
 	ParamType params;
+	cv::Mat estimateIST(cv::InputArray _points1, cv::InputArray _points2,
+		cv::OutputArray _mask, const SSMEstimatorParams &est_params);
+
+	int	estimateIST(const CvMat* in_pts, const CvMat* out_pts,
+		CvMat* __H, CvMat* mask, const SSMEstimatorParams &est_params);
 };
 
 

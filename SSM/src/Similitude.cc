@@ -1,5 +1,4 @@
 #include "mtf/SSM/Similitude.h"
-#include "mtf/SSM/SSMEstimator.h"
 #include "mtf/Utilities/warpUtils.h"
 #include "mtf/Utilities/miscUtils.h"
 
