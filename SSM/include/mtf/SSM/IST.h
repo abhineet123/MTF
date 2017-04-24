@@ -19,6 +19,18 @@ struct ISTParams : SSMParams{
 	ISTParams(const ISTParams *params = nullptr);
 };
 
+class ISTEstimator : public SSMEstimator{
+public:
+	ISTEstimator(int modelPoints, bool _use_boost_rng);
+
+	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
+	bool refine(const CvMat* m1, const CvMat* m2,
+		CvMat* model, int maxIters) override;
+protected:
+	void computeReprojError(const CvMat* m1, const CvMat* m2,
+		const CvMat* model, CvMat* error) override;
+};
+
 //! Isotropic Scaling and Translation
 class IST : public ProjectiveBase{
 public:

@@ -14,6 +14,7 @@
 #define SIM_DEBUG_MODE 0
 
 #include "ProjectiveBase.h"
+#include "mtf/SSM/SSMEstimator.h"
 
 _MTF_BEGIN_NAMESPACE
 
@@ -28,6 +29,18 @@ struct SimilitudeParams : SSMParams{
 		int pt_based_sampling, int _n_model_pts,
 		bool _debug_mode);
 	SimilitudeParams(const SimilitudeParams *params = nullptr);
+};
+
+class SimilitudeEstimator : public SSMEstimator{
+public:
+	SimilitudeEstimator(int modelPoints, bool _use_boost_rng);
+
+	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
+	bool refine(const CvMat* m1, const CvMat* m2,
+		CvMat* model, int maxIters) override;
+protected:
+	void computeReprojError(const CvMat* m1, const CvMat* m2,
+		const CvMat* model, CvMat* error) override;
 };
 
 class Similitude : public ProjectiveBase{

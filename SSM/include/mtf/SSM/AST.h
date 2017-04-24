@@ -18,6 +18,18 @@ struct ASTParams : SSMParams{
 	ASTParams(const ASTParams *params = nullptr);
 };
 
+class ASTEstimator : public SSMEstimator{
+public:
+	ASTEstimator(int modelPoints, bool _use_boost_rng);
+
+	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
+	bool refine(const CvMat* m1, const CvMat* m2,
+		CvMat* model, int maxIters) override;
+protected:
+	void computeReprojError(const CvMat* m1, const CvMat* m2,
+		const CvMat* model, CvMat* error) override;
+};
+
 //! Anisotropic Scaling and Translation
 class AST : public ProjectiveBase{
 public:

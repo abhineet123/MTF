@@ -19,6 +19,18 @@ struct TranslationParams : SSMParams{
 	TranslationParams(const TranslationParams *params = nullptr);
 };
 
+class TranslationEstimator : public SSMEstimator{
+public:
+	TranslationEstimator(int modelPoints, bool _use_boost_rng);
+
+	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
+	bool refine(const CvMat* m1, const CvMat* m2,
+		CvMat* model, int maxIters) override;
+protected:
+	void computeReprojError(const CvMat* m1, const CvMat* m2,
+		const CvMat* model, CvMat* error) override;
+};
+
 class Translation : public ProjectiveBase{
 public:
 

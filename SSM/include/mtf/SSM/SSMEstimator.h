@@ -73,66 +73,6 @@ protected:
 		const CvMat* model, CvMat* error) override;
 };
 
-class SimilitudeEstimator : public SSMEstimator{
-public:
-	SimilitudeEstimator(int modelPoints, bool _use_boost_rng);
-
-	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
-	bool refine(const CvMat* m1, const CvMat* m2,
-		CvMat* model, int maxIters) override;
-protected:
-	void computeReprojError(const CvMat* m1, const CvMat* m2,
-		const CvMat* model, CvMat* error) override;
-};
-
-class IsometryEstimator : public SSMEstimator{
-public:
-	IsometryEstimator(int modelPoints, bool _use_boost_rng);
-
-	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
-	bool refine(const CvMat* m1, const CvMat* m2,
-		CvMat* model, int maxIters) override;
-protected:
-	void computeReprojError(const CvMat* m1, const CvMat* m2,
-		const CvMat* model, CvMat* error) override;
-};
-
-class ASTEstimator : public SSMEstimator{
-public:
-	ASTEstimator(int modelPoints, bool _use_boost_rng);
-
-	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
-	bool refine(const CvMat* m1, const CvMat* m2,
-		CvMat* model, int maxIters) override;
-protected:
-	void computeReprojError(const CvMat* m1, const CvMat* m2,
-		const CvMat* model, CvMat* error) override;
-};
-
-class ISTEstimator : public SSMEstimator{
-public:
-	ISTEstimator(int modelPoints, bool _use_boost_rng);
-
-	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
-	bool refine(const CvMat* m1, const CvMat* m2,
-		CvMat* model, int maxIters) override;
-protected:
-	void computeReprojError(const CvMat* m1, const CvMat* m2,
-		const CvMat* model, CvMat* error) override;
-};
-
-class TranslationEstimator : public SSMEstimator{
-public:
-	TranslationEstimator(int modelPoints, bool _use_boost_rng);
-
-	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
-	bool refine(const CvMat* m1, const CvMat* m2,
-		CvMat* model, int maxIters) override;
-protected:
-	void computeReprojError(const CvMat* m1, const CvMat* m2,
-		const CvMat* model, CvMat* error) override;
-};
-
 //! Levenberg Marquardt Solver for refining estimated SSM paarameters
 //! copied from CvLevMarq in calib3d module of OpenCV
 class LevMarq{

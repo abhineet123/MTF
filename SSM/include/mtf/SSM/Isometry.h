@@ -16,6 +16,7 @@
 #define ISO_PT_BASED_SAMPLING true
 
 #include "ProjectiveBase.h"
+#include "mtf/SSM/SSMEstimator.h"
 
 _MTF_BEGIN_NAMESPACE
 
@@ -23,6 +24,18 @@ struct IsometryParams : SSMParams{
 	int pt_based_sampling;
 	IsometryParams(const SSMParams *ssm_params, int _pt_based_sampling);
 	IsometryParams(const IsometryParams *params = nullptr);
+};
+
+class IsometryEstimator : public SSMEstimator{
+public:
+	IsometryEstimator(int modelPoints, bool _use_boost_rng);
+
+	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
+	bool refine(const CvMat* m1, const CvMat* m2,
+		CvMat* model, int maxIters) override;
+protected:
+	void computeReprojError(const CvMat* m1, const CvMat* m2,
+		const CvMat* model, CvMat* error) override;
 };
 
 class Isometry : public ProjectiveBase{

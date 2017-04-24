@@ -471,5 +471,100 @@ void Similitude::compositionalRandomWalk(VectorXd &perturbed_state,
 	}
 }
 
+
+SimilitudeEstimator::SimilitudeEstimator(int _modelPoints, bool _use_boost_rng)
+	: SSMEstimator(_modelPoints, cvSize(2, 2), 1, _use_boost_rng) {
+	assert(_modelPoints >= 2);
+	checkPartialSubsets = false;
+}
+
+int SimilitudeEstimator::runKernel(const CvMat* m1, const CvMat* m2, CvMat* H) {
+	int n_pts = m1->rows * m1->cols;
+
+	//if(n_pts != 3) {
+	//    throw invalid_argument(cv::format("Invalid no. of points: %d provided", n_pts));
+	//}
+	const CvPoint2D64f* M = (const CvPoint2D64f*)m1->data.ptr;
+	const CvPoint2D64f* m = (const CvPoint2D64f*)m2->data.ptr;
+
+	Matrix2Xd in_pts, out_pts;
+	in_pts.resize(Eigen::NoChange, n_pts);
+	out_pts.resize(Eigen::NoChange, n_pts);
+	for(int pt_id = 0; pt_id < n_pts; pt_id++) {
+		in_pts(0, pt_id) = M[pt_id].x;
+		in_pts(1, pt_id) = M[pt_id].y;
+
+		out_pts(0, pt_id) = m[pt_id].x;
+		out_pts(1, pt_id) = m[pt_id].y;
+	}
+	Matrix3d sim_mat = utils::computeSimilitudeDLT(in_pts, out_pts);
+
+	double *H_ptr = H->data.db;
+	H_ptr[0] = sim_mat(0, 0);
+	H_ptr[1] = sim_mat(0, 2);
+	H_ptr[2] = sim_mat(1, 0);
+	H_ptr[3] = sim_mat(1, 2);
+	return 1;
+}
+
+
+void SimilitudeEstimator::computeReprojError(const CvMat* m1, const CvMat* m2,
+	const CvMat* model, CvMat* _err) {
+	int n_pts = m1->rows * m1->cols;
+	const CvPoint2D64f* M = (const CvPoint2D64f*)m1->data.ptr;
+	const CvPoint2D64f* m = (const CvPoint2D64f*)m2->data.ptr;
+	const double* H = model->data.db;
+	float* err = _err->data.fl;
+
+	for(int pt_id = 0; pt_id < n_pts; pt_id++) {
+		double dx = (H[0] * M[pt_id].x - H[2] * M[pt_id].y + H[1]) - m[pt_id].x;
+		double dy = (H[2] * M[pt_id].x + H[0] * M[pt_id].y + H[3]) - m[pt_id].y;
+		err[pt_id] = (float)(dx * dx + dy * dy);
+	}
+}
+
+bool SimilitudeEstimator::refine(const CvMat* m1, const CvMat* m2,
+	CvMat* model, int maxIters) {
+	LevMarq solver(4, 0, cvTermCriteria(CV_TERMCRIT_ITER + CV_TERMCRIT_EPS, maxIters, DBL_EPSILON));
+	int n_pts = m1->rows * m1->cols;
+	const CvPoint2D64f* M = (const CvPoint2D64f*)m1->data.ptr;
+	const CvPoint2D64f* m = (const CvPoint2D64f*)m2->data.ptr;
+	CvMat modelPart = cvMat(solver.param->rows, solver.param->cols, model->type, model->data.ptr);
+	cvCopy(&modelPart, solver.param);
+
+	for(;;)	{
+		const CvMat* _param = 0;
+		CvMat *_JtJ = 0, *_JtErr = 0;
+		double* _errNorm = 0;
+
+		if(!solver.updateAlt(_param, _JtJ, _JtErr, _errNorm))
+			break;
+
+		for(int pt_id = 0; pt_id < n_pts; pt_id++)	{
+			const double* h = _param->data.db;
+			double Mx = M[pt_id].x, My = M[pt_id].y;
+			double _xi = (h[0] * Mx - h[2] * My + h[1]);
+			double _yi = (h[2] * Mx + h[0] * My + h[3]);
+			double err[] = { _xi - m[pt_id].x, _yi - m[pt_id].y };
+			if(_JtJ || _JtErr) {
+				double J[][4] = {
+					{ Mx, 1, -My, 0 },
+					{ My, 0, Mx, 1 }
+				};
+				for(int j = 0; j < 4; j++) {
+					for(int k = j; k < 4; k++)
+						_JtJ->data.db[j * 4 + k] += J[0][j] * J[0][k] + J[1][j] * J[1][k];
+					_JtErr->data.db[j] += J[0][j] * err[0] + J[1][j] * err[1];
+				}
+			}
+			if(_errNorm)
+				*_errNorm += err[0] * err[0] + err[1] * err[1];
+		}
+	}
+
+	cvCopy(solver.param, &modelPart);
+	return true;
+}
+
 _MTF_END_NAMESPACE
 
