@@ -10,7 +10,8 @@
 #define IST_DEBUG_MODE 0
 
 #include "ProjectiveBase.h"
-#include "mtf/SSM/SSMEstimator.h"
+#include "SSMEstimator.h"
+#include "SSMEstimatorParams.h"
 
 _MTF_BEGIN_NAMESPACE
 

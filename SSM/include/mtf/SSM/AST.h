@@ -9,6 +9,8 @@
 #define AST_DEBUG_MODE 0
 
 #include "ProjectiveBase.h"
+#include "SSMEstimator.h"
+#include "SSMEstimatorParams.h"
 
 _MTF_BEGIN_NAMESPACE
 
@@ -86,7 +88,13 @@ public:
 	bool supportsSPI() override{ return true; }
 #endif
 protected:
+
 	ParamType params;
+
+	cv::Mat estimateAST(cv::InputArray _points1, cv::InputArray _points2,
+		cv::OutputArray _mask, const SSMEstimatorParams &est_params);
+	int	estimateAST(const CvMat* in_pts, const CvMat* out_pts,
+		CvMat* __H, CvMat* mask, const SSMEstimatorParams &est_params);
 
 
 };

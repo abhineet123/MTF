@@ -1,6 +1,8 @@
 #include "mtf/SSM/Similitude.h"
 #include "mtf/Utilities/warpUtils.h"
 #include "mtf/Utilities/miscUtils.h"
+#include "opencv2/core/core_c.h"
+#include "opencv2/calib3d/calib3d.hpp"
 
 _MTF_BEGIN_NAMESPACE
 
@@ -469,6 +471,94 @@ void Similitude::compositionalRandomWalk(VectorXd &perturbed_state,
 		ProjectiveBase::compositionalRandomWalk(perturbed_state, base_state);
 	}
 }
+
+
+cv::Mat Similitude::estimateSimilitude(cv::InputArray _in_pts, cv::InputArray _out_pts,
+	cv::OutputArray _mask, const SSMEstimatorParams &params){
+	cv::Mat in_pts = _in_pts.getMat(), out_pts = _out_pts.getMat();
+	int n_pts = in_pts.checkVector(2);
+	CV_Assert(n_pts >= 0 && out_pts.checkVector(2) == n_pts &&
+		in_pts.type() == out_pts.type());
+
+	cv::Mat H(2, 2, CV_64F);
+	CvMat _pt1 = in_pts, _pt2 = out_pts;
+	CvMat matH = H, c_mask, *p_mask = 0;
+	if(_mask.needed()){
+		_mask.create(n_pts, 1, CV_8U, -1, true);
+		p_mask = &(c_mask = _mask.getMat());
+	}
+	bool ok = estimateSimilitude(&_pt1, &_pt2, &matH, p_mask, params) > 0;
+	if(!ok)
+		H = cv::Scalar(0);
+	return H;
+}
+
+int	Similitude::estimateSimilitude(const CvMat* in_pts, const CvMat* out_pts,
+	CvMat* __H, CvMat* mask, const SSMEstimatorParams &params) {
+	bool result = false;
+	cv::Ptr<CvMat> out_pts_hm, in_pts_hm, tempMask;
+
+	double H[4];
+	CvMat matH = cvMat(2, 2, CV_64FC1, H);
+
+	CV_Assert(CV_IS_MAT(out_pts) && CV_IS_MAT(in_pts));
+
+	int n_pts = MAX(out_pts->cols, out_pts->rows);
+	CV_Assert(n_pts >= params.n_model_pts);
+
+	out_pts_hm = cvCreateMat(1, n_pts, CV_64FC2);
+	cvConvertPointsHomogeneous(out_pts, out_pts_hm);
+
+	in_pts_hm = cvCreateMat(1, n_pts, CV_64FC2);
+	cvConvertPointsHomogeneous(in_pts, in_pts_hm);
+
+	if(mask) {
+		CV_Assert(CV_IS_MASK_ARR(mask) && CV_IS_MAT_CONT(mask->type) &&
+			(mask->rows == 1 || mask->cols == 1) &&
+			mask->rows * mask->cols == n_pts);
+	}
+	if(mask || n_pts > params.n_model_pts)
+		tempMask = cvCreateMat(1, n_pts, CV_8U);
+	if(!tempMask.empty())
+		cvSet(tempMask, cvScalarAll(1.));
+
+	SimilitudeEstimator estimator(params.n_model_pts, params.use_boost_rng);
+
+	int method = n_pts == params.n_model_pts ? 0 : params.method_cv;
+
+	if(method == CV_LMEDS)
+		result = estimator.runLMeDS(in_pts_hm, out_pts_hm, &matH, tempMask, params.confidence,
+		params.max_iters, params.max_subset_attempts);
+	else if(method == CV_RANSAC)
+		result = estimator.runRANSAC(in_pts_hm, out_pts_hm, &matH, tempMask, params.ransac_reproj_thresh,
+		params.confidence, params.max_iters, params.max_subset_attempts);
+	else
+		result = estimator.runKernel(in_pts_hm, out_pts_hm, &matH) > 0;
+
+	if(result && n_pts > params.n_model_pts) {
+		utils::icvCompressPoints((CvPoint2D64f*)in_pts_hm->data.ptr, tempMask->data.ptr, 1, n_pts);
+		n_pts = utils::icvCompressPoints((CvPoint2D64f*)out_pts_hm->data.ptr, tempMask->data.ptr, 1, n_pts);
+		in_pts_hm->cols = out_pts_hm->cols = n_pts;
+		if(method == CV_RANSAC)
+			estimator.runKernel(in_pts_hm, out_pts_hm, &matH);
+		if(params.refine){
+			estimator.refine(in_pts_hm, out_pts_hm, &matH, params.lm_max_iters);
+		}
+	}
+
+	if(result)
+		cvConvert(&matH, __H);
+
+	if(mask && tempMask) {
+		if(CV_ARE_SIZES_EQ(mask, tempMask))
+			cvCopy(tempMask, mask);
+		else
+			cvTranspose(tempMask, mask);
+	}
+
+	return (int)result;
+}
+
 
 
 SimilitudeEstimator::SimilitudeEstimator(int _modelPoints, bool _use_boost_rng)

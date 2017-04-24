@@ -14,7 +14,8 @@
 #define SIM_DEBUG_MODE 0
 
 #include "ProjectiveBase.h"
-#include "mtf/SSM/SSMEstimator.h"
+#include "SSMEstimator.h"
+#include "SSMEstimatorParams.h"
 
 _MTF_BEGIN_NAMESPACE
 
@@ -112,6 +113,11 @@ private:
 
 	Vector4d geomToState(const Vector4d &geom);
 	Vector4d stateToGeom(const Vector4d &est);
+
+	cv::Mat estimateSimilitude(cv::InputArray _points1, cv::InputArray _points2,
+		cv::OutputArray _mask, const SSMEstimatorParams &est_params);
+	int	estimateSimilitude(const CvMat* in_pts, const CvMat* out_pts,
+		CvMat* __H, CvMat* mask, const SSMEstimatorParams &est_params);
 
 };
 

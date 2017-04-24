@@ -16,7 +16,8 @@
 #define ISO_PT_BASED_SAMPLING true
 
 #include "ProjectiveBase.h"
-#include "mtf/SSM/SSMEstimator.h"
+#include "SSMEstimator.h"
+#include "SSMEstimatorParams.h"
 
 _MTF_BEGIN_NAMESPACE
 
@@ -90,6 +91,11 @@ public:
 private:
 	ParamType params;
 	double getAngleOfRotation(double sin_theta, double cos_theta);
+
+	cv::Mat estimateIsometry(cv::InputArray _points1, cv::InputArray _points2,
+		cv::OutputArray _mask, const SSMEstimatorParams &est_params);
+	int	estimateIsometry(const CvMat* in_pts, const CvMat* out_pts,
+		CvMat* __H, CvMat* mask, const SSMEstimatorParams &est_params);
 
 };
 
