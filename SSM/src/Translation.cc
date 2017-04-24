@@ -384,7 +384,7 @@ int	Translation::estimateTranslation(const CvMat* in_pts, const CvMat* out_pts,
 
 	if(result && n_pts > params.n_model_pts) {
 		utils::icvCompressPoints((CvPoint2D64f*)in_pts_hm->data.ptr, tempMask->data.ptr, 1, n_pts);
-		n_pts = utils:icvCompressPoints((CvPoint2D64f*)out_pts_hm->data.ptr, tempMask->data.ptr, 1, n_pts);
+		n_pts = utils::icvCompressPoints((CvPoint2D64f*)out_pts_hm->data.ptr, tempMask->data.ptr, 1, n_pts);
 		in_pts_hm->cols = out_pts_hm->cols = n_pts;
 		if(method == CV_RANSAC)
 			estimator.runKernel(in_pts_hm, out_pts_hm, &matH);
