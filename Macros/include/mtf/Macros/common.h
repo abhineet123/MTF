@@ -173,6 +173,8 @@ typedef float CVPixT;
 
 typedef Matrix<double, 3, 4> Matrix34d;
 typedef Matrix<double, 2, 4> Matrix24d;
+typedef Matrix<double, 2, 5> Matrix25d;
+typedef Matrix<double, 5, 5> Matrix5d;
 typedef Matrix<double, 10, 1> Vector10d;
 typedef Matrix<double, 8, 1> Vector8d;
 typedef Matrix<double, 5, 1> Vector5d;

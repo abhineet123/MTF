@@ -1,5 +1,5 @@
 #include "mtf/SSM/Affine.h"
-#include "mtf/SSM/SSMEstimator.h"
+#include "mtf/SSM/AffineEstimator.h"
 #include "mtf/Utilities/warpUtils.h"
 #include "mtf/Utilities/miscUtils.h"
 

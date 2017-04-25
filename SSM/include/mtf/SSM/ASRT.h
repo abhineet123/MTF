@@ -13,6 +13,8 @@
 #define ASRT_DEBUG_MODE 0
 
 #include "ProjectiveBase.h"
+#include "SSMEstimator.h"
+#include "SSMEstimatorParams.h"
 
 _MTF_BEGIN_NAMESPACE
 
@@ -28,6 +30,20 @@ struct ASRTParams : SSMParams{
 		bool _debug_mode);
 	ASRTParams(const ASRTParams *params = nullptr);
 };
+
+class ASRTEstimator : public SSMEstimator{
+public:
+	ASRTEstimator(int modelPoints, bool _use_boost_rng);
+
+	int runKernel(const CvMat* m1, const CvMat* m2, CvMat* model) override;
+	bool refine(const CvMat* m1, const CvMat* m2,
+		CvMat* model, int maxIters) override;
+protected:
+	void computeReprojError(const CvMat* m1, const CvMat* m2,
+		const CvMat* model, CvMat* error) override;
+};
+
+
 //! Anisotropic Scaling, Rotation and Translation
 class ASRT : public ProjectiveBase{
 public:
@@ -98,6 +114,11 @@ private:
 
 	Vector4d geomToState(const Vector4d &geom);
 	Vector4d stateToGeom(const Vector4d &est);
+
+	cv::Mat estimateASRT(cv::InputArray _points1, cv::InputArray _points2,
+		cv::OutputArray _mask, const SSMEstimatorParams &est_params);
+	int	estimateASRT(const CvMat* in_pts, const CvMat* out_pts,
+		CvMat* __H, CvMat* mask, const SSMEstimatorParams &est_params);
 
 };
 

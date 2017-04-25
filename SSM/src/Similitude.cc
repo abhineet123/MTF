@@ -209,13 +209,22 @@ void Similitude::cmptApproxPixJacobian(MatrixXd &dI_dp, const PixGradT &dI_dx) {
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
 		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
-			double Ix = dI_dx(ch_pt_id, 0);
-			double Iy = dI_dx(ch_pt_id, 1);
+			double Ix = (dI_dx(ch_pt_id, 0)*a_plus_1 - dI_dx(ch_pt_id, 1)*b)*inv_det;
+			double Iy = (dI_dx(ch_pt_id, 0)*b + dI_dx(ch_pt_id, 1)*a_plus_1)*inv_det;
 
-			dI_dp(ch_pt_id, 0) = (Ix*a_plus_1 - Iy*b) * inv_det;
-			dI_dp(ch_pt_id, 1) = (Ix*b + Iy*a_plus_1) * inv_det;
-			dI_dp(ch_pt_id, 2) = (Ix*(x*a_plus_1 + y*b) + Iy*(y*a_plus_1 - x*b)) * inv_det;
-			dI_dp(ch_pt_id, 3) = (Ix*(-y*a_plus_1 + x*b) + Iy*(x*a_plus_1 + y*b)) * inv_det;
+			dI_dp(ch_pt_id, 0) = Ix;
+			dI_dp(ch_pt_id, 1) = Iy;
+			dI_dp(ch_pt_id, 2) = Ix*x + Iy*y;
+			dI_dp(ch_pt_id, 3) = Iy*x - Ix*y;
+
+			//double Ix = dI_dx(ch_pt_id, 0);
+			//double Iy = dI_dx(ch_pt_id, 1);
+
+			//dI_dp(ch_pt_id, 0) = (Ix*a_plus_1 - Iy*b) * inv_det;
+			//dI_dp(ch_pt_id, 1) = (Ix*b + Iy*a_plus_1) * inv_det;
+			//dI_dp(ch_pt_id, 2) = (Ix*(x*a_plus_1 + y*b) + Iy*(y*a_plus_1 - x*b)) * inv_det;
+			//dI_dp(ch_pt_id, 3) = (Ix*(-y*a_plus_1 + x*b) + Iy*(x*a_plus_1 + y*b)) * inv_det;
+
 			++ch_pt_id;
 		}
 	}
