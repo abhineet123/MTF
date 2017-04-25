@@ -278,12 +278,12 @@ void LSCV::updateSimilarity(bool prereq_only){
 	SSDBase::updateSimilarity(prereq_only);
 }
 
-double LSCV::operator()(const double* a, const double* b,
+double LSCVDist::operator()(const double* a, const double* b,
 	size_t size, double worst_dist) const{
 	assert(size == n_pix);
 
 	if(params.approx_dist_feat){
-		return SSDBase::operator()(a, b, size, worst_dist);
+		return SSDDist::operator()(a, b, size, worst_dist);
 	}
 	Map<const MatrixXdr> _init_patch(a, resy, resx);
 	Map<const MatrixXdr> _curr_patch(b, resy, resx);

@@ -309,12 +309,12 @@ void SCV::updatePixHess(const Matrix2Xd &curr_pts){
 
 	}
 }
-double SCV::operator()(const double* a, const double* b,
+double SCVDist::operator()(const double* a, const double* b,
 	size_t size, double worst_dist) const{
 	assert(size == patch_size);
 
 	if(params.approx_dist_feat){
-		return SSDBase::operator()(a, b, size, worst_dist);
+		return SSDDist::operator()(a, b, size, worst_dist);
 	}
 	/**
 	this has to be as fast as possible so BSpline histogram option is disabled here

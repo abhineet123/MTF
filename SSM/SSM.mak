@@ -14,7 +14,7 @@ SSM_BASE_HEADERS += ${SSM_HEADER_DIR}/SSMEstimatorParams.h
 
 MTF_INCLUDE_DIRS += ${SSM_INCLUDE_DIR}
 
-STATE_SPACE_MODELS = Spline LieHomography CBH Homography SL3 Affine Similitude Isometry AST IST Translation
+STATE_SPACE_MODELS = Spline LieHomography CBH Homography SL3 Affine ASRT Similitude Isometry AST IST Translation
 SSM_MODULES = ProjectiveBase SSMEstimatorParams 
 SSM_ESTIMATORS = SSM Homography Affine 
 STATE_SPACE_OBJS = $(addprefix ${BUILD_DIR}/,$(addsuffix .o, ${SSM_MODULES} ${STATE_SPACE_MODELS}))	
@@ -48,16 +48,19 @@ ${BUILD_DIR}/Homography.o: ${SSM_SRC_DIR}/Homography.cc ${SSM_HEADER_DIR}/Homogr
 ${BUILD_DIR}/Affine.o: ${SSM_SRC_DIR}/Affine.cc ${SSM_HEADER_DIR}/Affine.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h ${SSM_HEADER_DIR}/AffineEstimator.h ${MACROS_HEADER_DIR}/common.h ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< -o $@
 	
-${BUILD_DIR}/Similitude.o: ${SSM_SRC_DIR}/Similitude.cc ${SSM_HEADER_DIR}/Similitude.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h ${UTILITIES_HEADER_DIR}/warpUtils.h ${MACROS_HEADER_DIR}/common.h
+${BUILD_DIR}/Similitude.o: ${SSM_SRC_DIR}/Similitude.cc ${SSM_HEADER_DIR}/Similitude.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h ${MACROS_HEADER_DIR}/common.h
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${ISO_FLAGS} $< -o $@	
 	
-${BUILD_DIR}/Isometry.o: ${SSM_SRC_DIR}/Isometry.cc ${SSM_HEADER_DIR}/Isometry.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${UTILITIES_HEADER_DIR}/warpUtils.h ${MACROS_HEADER_DIR}/common.h
+${BUILD_DIR}/ASRT.o: ${SSM_SRC_DIR}/ASRT.cc ${SSM_HEADER_DIR}/ASRT.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h  ${MACROS_HEADER_DIR}/common.h
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${ISO_FLAGS} $< -o $@	
+	
+${BUILD_DIR}/Isometry.o: ${SSM_SRC_DIR}/Isometry.cc ${SSM_HEADER_DIR}/Isometry.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h ${MACROS_HEADER_DIR}/common.h
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${ISO_FLAGS} $< -o $@
 
-${BUILD_DIR}/AST.o: ${SSM_SRC_DIR}/AST.cc ${SSM_HEADER_DIR}/AST.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h  ${UTILITIES_HEADER_DIR}/warpUtils.h ${MACROS_HEADER_DIR}/common.h
+${BUILD_DIR}/AST.o: ${SSM_SRC_DIR}/AST.cc ${SSM_HEADER_DIR}/AST.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h  ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h ${MACROS_HEADER_DIR}/common.h
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${ISO_FLAGS} $< -o $@	
 	
-${BUILD_DIR}/IST.o: ${SSM_SRC_DIR}/IST.cc ${SSM_HEADER_DIR}/IST.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h  ${UTILITIES_HEADER_DIR}/warpUtils.h ${MACROS_HEADER_DIR}/common.h
+${BUILD_DIR}/IST.o: ${SSM_SRC_DIR}/IST.cc ${SSM_HEADER_DIR}/IST.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h  ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h ${MACROS_HEADER_DIR}/common.h
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${ISO_FLAGS} $< -o $@	
 	
 ${BUILD_DIR}/Translation.o: ${SSM_SRC_DIR}/Translation.cc ${SSM_HEADER_DIR}/Translation.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h ${MACROS_HEADER_DIR}/common.h

@@ -65,12 +65,25 @@ struct SCVParams : AMParams{
 	SCVParams(const SCVParams *params = nullptr);
 };
 
+struct SCVDist : SSDDist{
+	const SCVParams &params;
+	const unsigned int &patch_size;
+
+	SCVDist(const string &_name, const SCVParams &_params,
+		const unsigned int &_patch_size) : SSDDist(_name),
+		params(_params), patch_size(_patch_size){}
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override;
+private:
+	~SCVDist(){}
+};
+
 //! Sum of Conditional Variance
 class SCV : public SSDBase{
 public:
 	typedef SCVParams ParamType;
+	typedef SCVDist DistType;
 	typedef SCVParams::HistType HistType;
-
 
 	SCV(const ParamType *scv_params = nullptr, const int _n_channels = 1);
 	void initializePixVals(const Matrix2Xd& init_pts) override;
@@ -85,8 +98,6 @@ public:
 
 	void updatePixHess(const Matrix2Xd &curr_pts) override;
 	using AppearanceModel::updatePixHess;
-	double operator()(const double* a, const double* b,
-		size_t size, double worst_dist = -1) const override;
 
 protected:
 

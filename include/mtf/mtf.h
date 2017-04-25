@@ -106,6 +106,7 @@
 //! state space models
 #include "mtf/SSM/Homography.h"
 #include "mtf/SSM/Affine.h"
+#include "mtf/SSM/ASRT.h"
 #include "mtf/SSM/Similitude.h"
 #include "mtf/SSM/Isometry.h"
 #include "mtf/SSM/AST.h"
@@ -794,6 +795,8 @@ TrackerBase *getTracker(const char *sm_type, const char *ssm_type,
 		return getTracker<AMType, mtf::Homography>(sm_type, am_params, cast_params(Homography));
 	} else if(!strcmp(ssm_type, "aff") || !strcmp(ssm_type, "6")){
 		return getTracker<AMType, mtf::Affine>(sm_type, am_params, cast_params(Affine));
+	} else if(!strcmp(ssm_type, "asrt") || !strcmp(ssm_type, "5")){
+		return getTracker<AMType, mtf::ASRT>(sm_type, am_params, cast_params(ASRT));
 	} else if(!strcmp(ssm_type, "sim") || !strcmp(ssm_type, "4")){
 		return getTracker<AMType, mtf::Similitude>(sm_type, am_params, cast_params(Similitude));
 	} else if(!strcmp(ssm_type, "iso") || !strcmp(ssm_type, "3")){
@@ -922,6 +925,9 @@ inline SSMParams_ getSSMParams(const char *ssm_type){
 			hom_corner_based_sampling, debug_mode));
 	} else if(!strcmp(ssm_type, "aff") || !strcmp(ssm_type, "6")){
 		return SSMParams_(new AffineParams(ssm_params.get(), aff_normalized_init, aff_pt_based_sampling, debug_mode));
+	} else if(!strcmp(ssm_type, "asrt") || !strcmp(ssm_type, "5")){
+		return SSMParams_(new ASRTParams(ssm_params.get(), sim_normalized_init,
+			sim_geom_sampling, sim_pt_based_sampling, sim_n_model_pts, debug_mode));
 	} else if(!strcmp(ssm_type, "sim") || !strcmp(ssm_type, "4")){
 		return SSMParams_(new SimilitudeParams(ssm_params.get(), sim_normalized_init,
 			sim_geom_sampling, sim_pt_based_sampling, sim_n_model_pts, debug_mode));
@@ -958,6 +964,8 @@ inline StateSpaceModel *getSSM(const char *ssm_type){
 		return new mtf::Homography(cast_params(Homography));
 	} else if(!strcmp(ssm_type, "aff") || !strcmp(ssm_type, "6")){
 		return new mtf::Affine(cast_params(Affine));
+	} else if(!strcmp(ssm_type, "asrt") || !strcmp(ssm_type, "5")){
+		return new mtf::ASRT(cast_params(ASRT));
 	} else if(!strcmp(ssm_type, "sim") || !strcmp(ssm_type, "4")){
 		return new mtf::Similitude(cast_params(Similitude));
 	} else if(!strcmp(ssm_type, "iso") || !strcmp(ssm_type, "3")){

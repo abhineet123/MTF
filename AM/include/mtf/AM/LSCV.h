@@ -56,6 +56,21 @@ struct LSCVParams : AMParams{
 	LSCVParams(const LSCVParams *params = nullptr);
 };
 
+struct LSCVDist : SSDDist{
+	const LSCVParams &params;
+	const unsigned int &n_pix;
+	const unsigned int &resx;
+	const unsigned int &resy;
+
+	LSCVDist(const string &_name, const LSCVParams &_params,
+		const unsigned int &_n_pix) : SSDDist(_name),
+		params(_params), n_pix(_n_pix){}
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override;
+private:
+	~LSCVDist(){}
+};
+
 //! Locally adaptive Sum of Conditional Variance
 class LSCV : public SSDBase{
 
@@ -69,9 +84,6 @@ public:
 	void updatePixVals(const Matrix2Xd& curr_pts) override;
 
 	void updateSimilarity(bool prereq_only = true) override;
-
-	double operator()(const double* a, const double* b,
-		size_t size, double worst_dist = -1) const override;
 
 protected:
 

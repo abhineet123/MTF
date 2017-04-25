@@ -29,6 +29,7 @@ class NSSD : public SSDBase{
 public:
 
 	typedef NSSDParams ParamType; 
+
 	NSSD(const ParamType *nssd_params = nullptr);
 
 protected:
