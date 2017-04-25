@@ -28,7 +28,7 @@ struct ASRTParams : SSMParams{
 		bool _debug_mode);
 	ASRTParams(const ASRTParams *params = nullptr);
 };
-
+//! Anisotropic Scaling, Rotation and Translation
 class ASRT : public ProjectiveBase{
 public:
 	typedef ASRTParams ParamType;

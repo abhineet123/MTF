@@ -421,6 +421,81 @@ namespace utils{
 		return affine_mat;
 	}
 
+	ProjWarpT computeASRTDLT(const CornersT &in_corners, const CornersT &out_corners){
+		Matrix85d A;
+		A.fill(0);
+		// flattened version of the 2x4 matrix of target corner points
+		//Map<Vector8d> in_corners_vec((double*)in_corners.data());
+		//Map<Vector8d> out_corners_vec((double*)out_corners.data());
+		//Vector8d corner_diff_vec = out_corners_vec - in_corners_vec;
+
+		Vector10d corner_diff_vec;
+		for(int corner_id = 0; corner_id < 4; corner_id++){
+			int r1 = 2 * corner_id;
+			A(r1, 0) = 1;
+			A(r1, 2) = in_corners(0, corner_id);
+			A(r1, 3) = -in_corners(1, corner_id);
+			corner_diff_vec(r1) = out_corners(0, corner_id) - in_corners(0, corner_id);
+
+			int r2 = 2 * corner_id + 1;
+			A(r2, 1) = 1;
+			A(r2, 3) = in_corners(0, corner_id);
+			A(r2, 4) = in_corners(1, corner_id);
+			corner_diff_vec(r2) = out_corners(1, corner_id) - in_corners(1, corner_id);
+		}
+		JacobiSVD<MatrixXd> svd(A, ComputeThinU | ComputeThinV);
+		Matrix85d U = svd.matrixU();
+		Matrix55d V = svd.matrixV();
+		Vector5d S = svd.singularValues();
+
+		Vector5d x = V * ((U.transpose() * corner_diff_vec).array() / S.array()).matrix();
+
+		ProjWarpT asrt_mat = ProjWarpT::Zero();
+		asrt_mat(0, 0) = 1 + x(2);
+		asrt_mat(0, 1) = -x(3);
+		asrt_mat(0, 2) = x(0);
+		asrt_mat(1, 0) = x(3);
+		asrt_mat(1, 1) = 1 + x(4);
+		asrt_mat(1, 2) = x(1);
+		asrt_mat(2, 2) = 1;
+
+		return asrt_mat;
+	}
+
+	ProjWarpT computeASRTDLT(const PtsT &in_pts, const PtsT &out_pts){
+		assert(in_pts.cols() == out_pts.cols());
+		int n_pts = in_pts.cols();
+		MatrixXd A(2 * n_pts, 5);
+		A.fill(0);
+		VectorXd corner_diff_vec(n_pts * 2);
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+			int r1 = 2 * pt_id;
+			A(r1, 0) = 1;
+			A(r1, 2) = in_pts(0, pt_id);
+			A(r1, 3) = -in_pts(1, pt_id);
+			corner_diff_vec(r1) = out_pts(0, pt_id) - in_pts(0, pt_id);
+
+			int r2 = 2 * pt_id + 1;
+			A(r2, 1) = 1;
+			A(r2, 3) = in_pts(0, pt_id);
+			A(r2, 4) = in_pts(1, pt_id);
+			corner_diff_vec(r2) = out_pts(1, pt_id) - in_pts(1, pt_id);
+		}
+		JacobiSVD<MatrixXd> svd(A, ComputeThinU | ComputeThinV);
+		VectorXd x = svd.matrixV() * ((svd.matrixU().transpose() * corner_diff_vec).array() /
+			svd.singularValues().array()).matrix();
+
+		ProjWarpT asrt_mat = ProjWarpT::Zero();
+		asrt_mat(0, 0) = 1 + x(2);
+		asrt_mat(0, 1) = -x(3);
+		asrt_mat(0, 2) = x(0);
+		asrt_mat(1, 0) = x(3);
+		asrt_mat(1, 1) = 1 + x(4);
+		asrt_mat(1, 2) = x(1);
+		asrt_mat(2, 2) = 1;
+		return asrt_mat;
+	}
+
 	ProjWarpT computeSimilitudeDLT(const CornersT &in_corners, const CornersT &out_corners){
 		Matrix84d A;
 		A.fill(0);
@@ -430,18 +505,18 @@ namespace utils{
 		//Vector8d corner_diff_vec = out_corners_vec - in_corners_vec;
 
 		Vector8d corner_diff_vec;
-		for(int i = 0; i < 4; i++){
-			int r1 = 2 * i;
+		for(int corner_id = 0; corner_id < 4; corner_id++){
+			int r1 = 2 * corner_id;
 			A(r1, 0) = 1;
-			A(r1, 2) = in_corners(0, i);
-			A(r1, 3) = -in_corners(1, i);
-			corner_diff_vec(r1) = out_corners(0, i) - in_corners(0, i);
+			A(r1, 2) = in_corners(0, corner_id);
+			A(r1, 3) = -in_corners(1, corner_id);
+			corner_diff_vec(r1) = out_corners(0, corner_id) - in_corners(0, corner_id);
 
-			int r2 = 2 * i + 1;
+			int r2 = 2 * corner_id + 1;
 			A(r2, 1) = 1;
-			A(r2, 2) = in_corners(1, i);
-			A(r2, 3) = in_corners(0, i);
-			corner_diff_vec(r2) = out_corners(1, i) - in_corners(1, i);
+			A(r2, 2) = in_corners(1, corner_id);
+			A(r2, 3) = in_corners(0, corner_id);
+			corner_diff_vec(r2) = out_corners(1, corner_id) - in_corners(1, corner_id);
 		}
 		JacobiSVD<MatrixXd> svd(A, ComputeThinU | ComputeThinV);
 		Matrix84d U = svd.matrixU();
@@ -461,6 +536,7 @@ namespace utils{
 
 		return sim_mat;
 	}
+
 	ProjWarpT computeSimilitudeNDLT(const CornersT &in_corners, const CornersT &out_corners){
 		CornersT norm_corners;
 		ProjWarpT inv_norm_mat;

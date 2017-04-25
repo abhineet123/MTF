@@ -173,7 +173,9 @@ typedef float CVPixT;
 
 typedef Matrix<double, 3, 4> Matrix34d;
 typedef Matrix<double, 2, 4> Matrix24d;
+typedef Matrix<double, 10, 1> Vector10d;
 typedef Matrix<double, 8, 1> Vector8d;
+typedef Matrix<double, 5, 1> Vector5d;
 typedef Matrix<double, 6, 1> Vector6d;
 
 typedef Matrix<double, 8, Dynamic> Matrix8Xd;
@@ -190,10 +192,12 @@ typedef Matrix<double, 2, 6> Matrix26d;
 typedef Matrix<double, 9, 8> Matrix98d;
 typedef Matrix<double, 8, 9> Matrix89d;
 typedef Matrix<double, 8, 6> Matrix86d;
+typedef Matrix<double, 8, 5> Matrix85d;
 typedef Matrix<double, 8, 4> Matrix84d;
 typedef Matrix<double, 8, 3> Matrix83d;
 typedef Matrix<double, 7, 2> Matrix72d;
 typedef Matrix<double, 6, 6> Matrix66d;
+typedef Matrix<double, 5, 5> Matrix55d;
 typedef Matrix<double, 4, 4> Matrix44d;
 typedef Matrix<double, 4, 3> Matrix43d;
 typedef Matrix<double, 3, 9> Matrix39d;

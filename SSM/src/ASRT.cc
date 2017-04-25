@@ -47,7 +47,7 @@ params(_params){
 	printf("debug_mode: %d\n", params.debug_mode);
 
 	name = "asrt";
-	state_size = 4;
+	state_size = 5;
 	curr_state.resize(state_size);
 
 	utils::getNormUnitSquarePts(norm_pts, norm_corners, resx, resy,
@@ -115,12 +115,13 @@ void ASRT :: getWarpFromState(Matrix3d &warp_mat,
 	double ty = ssm_state(1);
 	double a = ssm_state(2);
 	double b = ssm_state(3);
+	double c = ssm_state(4);
 
 	warp_mat(0,0) = 1 + a;
 	warp_mat(0,1) = -b;
 	warp_mat(0,2) = tx;
 	warp_mat(1,0) = b;
-	warp_mat(1, 1) = 1 + a;
+	warp_mat(1, 1) = 1 + c;
 	warp_mat(1,2) = ty;
 	warp_mat(2,0) = 0;
 	warp_mat(2,1) = 0;
@@ -137,14 +138,15 @@ void ASRT :: getStateFromWarp(VectorXd &state_vec,
 	state_vec(1) = sim_mat(1, 2);
 	state_vec(2) = sim_mat(0, 0) - 1;
 	state_vec(3) = sim_mat(1, 0);
+	state_vec(4) = sim_mat(1, 1) - 1;
 }
 
 void ASRT::getInitPixGrad(Matrix2Xd &dI_dp, int pt_id) {
 	double x = init_pts(0, pt_id);
 	double y = init_pts(1, pt_id);
 	dI_dp <<
-		1, 0, x, -y,
-		0, 1, y, x;
+		1, 0, x, -y, 0,
+		0, 1, 0, x, y;
 }
 
 void ASRT::cmptInitPixJacobian(MatrixXd &dI_dp,
@@ -163,8 +165,9 @@ void ASRT::cmptInitPixJacobian(MatrixXd &dI_dp,
 
 			dI_dp(ch_pt_id, 0) = Ix;
 			dI_dp(ch_pt_id, 1) = Iy;
-			dI_dp(ch_pt_id, 2) = Ix*x + Iy*y;
+			dI_dp(ch_pt_id, 2) = Ix*x;
 			dI_dp(ch_pt_id, 3) = Iy*x - Ix*y;
+			dI_dp(ch_pt_id, 4) = Iy*y;
 			++ch_pt_id;
 		}
 	}
@@ -174,10 +177,10 @@ void ASRT::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dx){
 	validate_ssm_jacobian(dI_dp, dI_dx);
 	double a = curr_state(2) + 1, b = -curr_state(3);
-	double c = curr_state(3), d = curr_state(2) + 1;
+	double c = curr_state(3), d = curr_state(4) + 1;
 
 	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -189,8 +192,9 @@ void ASRT::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 
 			dI_dp(ch_pt_id, 0) = Ix;
 			dI_dp(ch_pt_id, 1) = Iy;
-			dI_dp(ch_pt_id, 2) = Ix*x + Iy*y;
+			dI_dp(ch_pt_id, 2) = Ix*x;
 			dI_dp(ch_pt_id, 3) = Iy*x - Ix*y;
+			dI_dp(ch_pt_id, 3) = Iy*y;
 			++ch_pt_id;
 		}
 	}

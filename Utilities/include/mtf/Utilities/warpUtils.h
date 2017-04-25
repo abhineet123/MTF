@@ -71,14 +71,16 @@ namespace utils{
 	ProjWarpT computeAffineDLT(const PtsT &in_pts, const PtsT &out_pts);
 	ProjWarpT computeAffineDLT(const Matrix23d &in_pts, const Matrix23d &out_pts);
 	ProjWarpT computeAffineNDLT(const CornersT &in_corners, const CornersT &out_corners);
+	ProjWarpT computeASRTDLT(const CornersT &in_corners, const CornersT &out_corners);
+	ProjWarpT computeASRTDLT(const PtsT &in_pts, const PtsT &out_pts);
 	ProjWarpT computeSimilitudeDLT(const CornersT &in_corners, const CornersT &out_corners);
 	ProjWarpT computeSimilitudeNDLT(const CornersT &in_corners, const CornersT &out_corners);
 	ProjWarpT computeSimilitudeDLT(const PtsT &in_pts, const PtsT &out_pts);
 	ProjWarpT computeSimilitudeNDLT(const PtsT &in_pts, const PtsT &out_pts);
-	Vector3d computeIsometryDLT(const PtsT &in_pts, const PtsT &out_pts);
-	Vector3d computeIsometryDLT(const CornersT &in_pts, const CornersT &out_pts);
 	ProjWarpT computeASTDLT(const CornersT &in_corners, const CornersT &out_corners);
 	ProjWarpT computeASTDLT(const PtsT &in_corners, const PtsT &out_corners);
+	Vector3d computeIsometryDLT(const PtsT &in_pts, const PtsT &out_pts);
+	Vector3d computeIsometryDLT(const CornersT &in_pts, const CornersT &out_pts);
 	ProjWarpT computeISTDLT(const CornersT &in_corners, const CornersT &out_corners);
 	ProjWarpT computeISTDLT(const PtsT &in_corners, const PtsT &out_corners);
 

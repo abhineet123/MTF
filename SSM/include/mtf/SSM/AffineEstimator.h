@@ -2,9 +2,9 @@
 #define MTF_AFFINE_ESTIMATOR_H
 
 #include "SSMEstimator.h"
+#include "SSMEstimatorParams.h"
 
 _MTF_BEGIN_NAMESPACE
-
 
 class AffineEstimator : public SSMEstimator{
 public:

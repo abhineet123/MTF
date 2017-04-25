@@ -4,7 +4,6 @@
 #include "SSMEstimator.h"
 #include "SSMEstimatorParams.h"
 
-
 _MTF_BEGIN_NAMESPACE
 
 class HomographyEstimator : public SSMEstimator{
