@@ -36,9 +36,18 @@ debug_mode(MI_DEBUG_MODE){
 	}
 }
 
+MIDist::MIDist(const string &_name, int _n_bins,
+	unsigned int _feat_size, unsigned int _patch_size,
+	double _hist_pre_seed, double _pre_seed,
+	const MatrixX2i &_std_bspl_ids,
+	double _log_hist_norm_mult) :
+	AMDist(_name), n_bins(_n_bins), feat_size(_feat_size),
+	patch_size(_patch_size), pre_seed(_pre_seed),
+	hist_pre_seed(_hist_pre_seed), std_bspl_ids(_std_bspl_ids),
+	log_hist_norm_mult(_log_hist_norm_mult){}
+
 MI::MI(const ParamType *mi_params, const int _n_channels) :
-AppearanceModel(mi_params, _n_channels), params(mi_params),
-dist_func(name, params, feat_size, patch_size, hist_pre_seed, _std_bspl_ids){
+AppearanceModel(mi_params, _n_channels), params(mi_params){
 	printf("\n");
 	printf("Using Mutual Information AM with:\n");
 	printf("n_bins: %d\n", params.n_bins);
@@ -753,13 +762,13 @@ double MIDist::operator()(const double* hist1_mat_addr, const double* hist2_mat_
 
 	assert(hist_mat_size == feat_size);
 
-	VectorXd hist1(params.n_bins);
-	VectorXd hist2(params.n_bins);
-	MatrixXd joint_hist(params.n_bins, params.n_bins);
+	VectorXd hist1(n_bins);
+	VectorXd hist2(n_bins);
+	MatrixXd joint_hist(n_bins, n_bins);
 
 	hist1.fill(hist_pre_seed);
 	hist2.fill(hist_pre_seed);
-	joint_hist.fill(params.pre_seed);
+	joint_hist.fill(pre_seed);
 
 	Map<const MatrixXdr> hist1_mat(hist1_mat_addr, 5, patch_size);
 	Map<const MatrixXdr> hist2_mat(hist2_mat_addr, 5, patch_size);
@@ -768,7 +777,7 @@ double MIDist::operator()(const double* hist1_mat_addr, const double* hist2_mat_
 	//utils::printMatrixToFile(hist2_mat, "hist2_mat", "log/mi_log.txt");
 
 
-	for(size_t pix_id = 0; pix_id < patch_size; pix_id++) {
+	for(size_t pix_id = 0; pix_id < patch_size; ++pix_id) {
 		int pix1_floor = static_cast<int>(hist1_mat(0, pix_id));
 		int pix2_floor = static_cast<int>(hist2_mat(0, pix_id));
 
@@ -823,8 +832,8 @@ double MIDist::operator()(const double* hist1_mat_addr, const double* hist2_mat_
 	//utils::printMatrixToFile(hist2, "hist2", "log/mi_log.txt");
 
 	ResultType result = 0;
-	for(int id1 = 0; id1 < params.n_bins; id1++){
-		for(int id2 = 0; id2 < params.n_bins; id2++){
+	for(int id1 = 0; id1 < n_bins; id1++){
+		for(int id2 = 0; id2 < n_bins; id2++){
 			result -= joint_hist(id1, id2) * (log(joint_hist(id1, id2) / (hist1(id1) * hist2(id2))) - log_hist_norm_mult);
 		}
 	}

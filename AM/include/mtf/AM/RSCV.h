@@ -59,11 +59,24 @@ struct RSCVParams : AMParams{
 	RSCVParams(const RSCVParams *params = nullptr);
 };
 
+struct RSCVDist : SSDDist{
+	RSCVDist(const string &_name, unsigned int _patch_size,
+		int _n_bins, bool _approx_dist_feat);
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override;
+private:
+	unsigned int patch_size;
+	int n_bins;
+	bool approx_dist_feat;
+	~RSCVDist(){}
+};
+
 //! Reversed Sum of Conditional Variance
 class RSCV : public SSDBase{
 public:
 
 	typedef RSCVParams ParamType;
+	typedef RSCVDist DistType;
 
 	RSCV(const ParamType *rscv_params = nullptr, const int _n_channels = 1);
 
@@ -77,8 +90,9 @@ public:
 	void updatePixHess(const Matrix2Xd& curr_pts, 
 		const Matrix16Xd &warped_offset_pts) override;
 
-	double operator()(const double* a, const double* b,
-		size_t size, double worst_dist = -1) const override;
+	const DistType* getDistPtr() override{
+		return new DistType(name, patch_size, params.n_bins, params.approx_dist_feat);
+	}
 	void updateDistFeat(double* feat_addr) override;
 	void updateDistFeat() override{}
 	const double* getDistFeat() override{ 

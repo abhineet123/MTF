@@ -66,14 +66,14 @@ struct SCVParams : AMParams{
 };
 
 struct SCVDist : SSDDist{
-	unsigned int patch_size;
-	int n_bins;
-	bool approx_dist_feat;
 	SCVDist(const string &_name, unsigned int _patch_size,
 		int _n_bins, bool _approx_dist_feat);
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 private:
+	unsigned int patch_size;
+	int n_bins;
+	bool approx_dist_feat;
 	~SCVDist(){}
 };
 

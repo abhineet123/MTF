@@ -63,9 +63,7 @@
 #include "mtf/AM/SCV.h"
 #include "mtf/AM/LSCV.h"
 #include "mtf/AM/RSCV.h"
-#include "mtf/AM/LRSCV.h"
-#include "mtf/AM/KLD.h"
-#include "mtf/AM/LKLD.h"	
+#include "mtf/AM/LRSCV.h"	
 #include "mtf/AM/MI.h"
 #include "mtf/AM/SPSS.h"
 #include "mtf/AM/SSIM.h"
@@ -74,6 +72,8 @@
 #include "mtf/AM/RIU.h"
 #include "mtf/AM/NGF.h"
 #include "mtf/AM/SAD.h"
+#include "mtf/AM/KLD.h"
+#include "mtf/AM/LKLD.h"
 #ifndef DISABLE_DFM
 #include "mtf/AM/DFM.h"
 #endif

@@ -18,10 +18,25 @@ struct SPSSParams : AMParams{
 	SPSSParams(const SPSSParams *params = nullptr);
 };
 
+struct SPSSDist : AMDist{
+	typedef bool is_kdtree_distance;
+	SPSSDist(const string &_name, double _c) : AMDist(_name), c(_c){}
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override;
+	double accum_dist(const ElementType& a,
+		const ElementType& b, int) const{
+		return -(2 * a*b + c) / (a*a + b*b + c);
+	}
+private:
+	double c;
+	~SPSSDist(){}
+};
+
 //! Sum of Pixelwise Structural Similarity
 class SPSS : public AppearanceModel{
 public:
 	typedef SPSSParams ParamType;
+	typedef SPSSDist DistType;
 
 	SPSS(const ParamType *spss_params = nullptr, const int _n_channels = 1);
 
@@ -54,16 +69,14 @@ public:
 		const MatrixXd &d2It_dp2) override;
 
 	/*Support for FLANN library*/
-	typedef bool is_kdtree_distance;
-	typedef double ElementType;
-	typedef double ResultType;
-	int getDistFeatSize() override{ return patch_size; }
+	const DistType* getDistPtr() override{
+		return new DistType(name, c);
+	}
+	unsigned int getDistFeatSize() override{ return patch_size; }
 	void initializeDistFeat() override{}
 	void updateDistFeat(double* feat_addr) override;
 	const double* getDistFeat() override{ return getCurrPixVals().data(); }
 	void updateDistFeat() override{}
-	double operator()(const double* a, const double* b, size_t size, double worst_dist = -1) const override;
-	ResultType accum_dist(const ElementType& a, const ElementType& b, int) const;
 
 protected:
 	ParamType params;

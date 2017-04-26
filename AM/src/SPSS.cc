@@ -232,7 +232,7 @@ void SPSS::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jaco
 	cmptSelfHessian(self_hessian, curr_pix_jacobian);
 }
 
-double SPSS::operator()(const double* a, const double* b, size_t size, double worst_dist) const{
+double SPSSDist::operator()(const double* a, const double* b, size_t size, double worst_dist) const{
 	double result = double();
 	double diff0, diff1, diff2, diff3;
 	const double* last = a + size;
@@ -256,11 +256,6 @@ double SPSS::operator()(const double* a, const double* b, size_t size, double wo
 		result -= diff0;
 	}
 	return result;
-}
-
-double SPSS::accum_dist(const ElementType& a, const ElementType& b, int) const
-{
-	return -(2 * a*b + c) / (a*a + b*b + c);
 }
 
 void SPSS::updateDistFeat(double* feat_addr){

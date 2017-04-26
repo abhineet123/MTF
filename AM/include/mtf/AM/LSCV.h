@@ -57,13 +57,6 @@ struct LSCVParams : AMParams{
 };
 
 struct LSCVDist : SSDDist{
-	bool approx_dist_feat;	
-	unsigned int n_pix, resx, resy;
-	int n_bins, n_sub_regions_x, n_sub_regions_y;
-	MatrixX2i sub_region_x, sub_region_y;
-	MatrixXd sub_region_wts;
-	MatrixXi subregion_idx;
-	ColPivHouseholderQR<MatrixX2d> intensity_vals_dec;
 	LSCVDist(const string &_name, bool _approx_dist_feat,
 		int _n_bins, int _n_sub_regions_x, int _n_sub_regions_y,
 		unsigned int _n_pix, unsigned int _resx, unsigned int _resy,
@@ -73,6 +66,13 @@ struct LSCVDist : SSDDist{
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 private:
+	bool approx_dist_feat;
+	unsigned int n_pix, resx, resy;
+	int n_bins, n_sub_regions_x, n_sub_regions_y;
+	MatrixX2i sub_region_x, sub_region_y;
+	MatrixXd sub_region_wts;
+	MatrixXi subregion_idx;
+	ColPivHouseholderQR<MatrixX2d> intensity_vals_dec;
 	~LSCVDist(){}
 };
 

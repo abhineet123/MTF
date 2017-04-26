@@ -41,24 +41,20 @@ struct MIParams : AMParams{
 };
 
 struct MIDist : AMDist{
-	typedef double ElementType;
-	typedef double ResultType;
-	MIDist(const string &_name, const MIParams &_params,
-		const unsigned int &_feat_size, 
-		const unsigned int &_patch_size,
-		const double &_hist_pre_seed,
-		const MatrixX2i &_std_bspl_ids) :
-		AMDist(_name), params(_params), feat_size(_feat_size),
-		patch_size(_patch_size), hist_pre_seed(_hist_pre_seed),
-		std_bspl_ids(_std_bspl_ids){}
+	MIDist(const string &_name, int _n_bins,
+		unsigned int _feat_size, unsigned int _patch_size,
+		double _hist_pre_seed, double _pre_seed,
+		const MatrixX2i &_std_bspl_ids,
+		double _log_hist_norm_mult);
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 private:
-	const MIParams &params;
-	const unsigned int &feat_size;
-	const unsigned int &patch_size;
-	const double &hist_pre_seed;
-	const MatrixX2i &std_bspl_ids;
+	int n_bins;
+	unsigned int feat_size;
+	unsigned int patch_size;
+	double pre_seed, hist_pre_seed;
+	MatrixX2i std_bspl_ids;
+	double log_hist_norm_mult;
 	~MIDist(){}
 };
 
@@ -66,6 +62,7 @@ class MI : public AppearanceModel{
 public:
 
 	typedef MIParams ParamType;
+	typedef MIDist DistType;
 
 	MI(const ParamType *mi_params = nullptr, const int _n_channels = 1);
 
@@ -97,15 +94,11 @@ public:
 	//static const utils::BSpline3WithDiffPtr bSpline3_arr[4];
 
 	//-----------------------------------functor support-----------------------------------//
-	typedef MIDist DistType;	
-	AMDistPtr getDistPtr() override{
-		return AMDistPtr(new DistType(name, params, feat_size,
-			patch_size, hist_pre_seed, _std_bspl_ids));
+	const DistType* getDistPtr() override{
+		return new DistType(name, params.n_bins, feat_size,
+			patch_size, hist_pre_seed, params.pre_seed, 
+			_std_bspl_ids, log_hist_norm_mult);
 	}
-	const DistType& getDistObj(){
-		return dist_func;
-	}
-
 	void initializeDistFeat() override{
 		feat_vec.resize(feat_size);
 	}
@@ -156,8 +149,6 @@ private:
 	MatrixX2i _init_bspl_ids;
 	MatrixX2i _curr_bspl_ids;
 	MatrixXi _linear_idx;
-
-	const DistType dist_func;
 
 	void cmptSelfHist();
 };

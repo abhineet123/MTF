@@ -48,6 +48,11 @@ debug_mode(RSCV_DEBUG_MODE){
 	}
 }
 
+RSCVDist::RSCVDist(const string &_name, unsigned int _patch_size,
+	int _n_bins, bool _approx_dist_feat) : SSDDist(_name),
+	patch_size(_patch_size), n_bins(_n_bins),
+	approx_dist_feat(_approx_dist_feat){}
+
 RSCV::RSCV(const ParamType *rscv_params, const int _n_channels) :
 SSDBase(rscv_params, _n_channels), params(rscv_params){
 	name = "rscv";
@@ -388,21 +393,23 @@ void RSCV::updateDistFeat(double* feat_addr){
 		}
 	}
 }
-double RSCV::operator()(const double* a, const double* b,
+double RSCVDist::operator()(const double* a, const double* b,
 	size_t size, double worst_dist) const{
-	if(params.approx_dist_feat){
-		return SSDBase::operator()(a, b, size, worst_dist);
+	assert(size == patch_size);
+
+	if(approx_dist_feat){
+		return SSDDist::operator()(a, b, size, worst_dist);
 	}
-	MatrixXi joint_hist = MatrixXi::Zero(params.n_bins, params.n_bins);
-	VectorXi hist = VectorXi::Zero(params.n_bins);
-	VectorXd intensity_map(params.n_bins);
+	MatrixXi joint_hist = MatrixXi::Zero(n_bins, n_bins);
+	VectorXi hist = VectorXi::Zero(n_bins);
+	VectorXd intensity_map(n_bins);
 	for(size_t pix_id = 0; pix_id < size; ++pix_id) {
 		int a_int = static_cast<int>(a[pix_id]);
 		int b_int = static_cast<int>(b[pix_id]);
 		hist(b_int) += 1;
 		joint_hist(b_int, a_int) += 1;
 	}
-	for(int bin_id = 0; bin_id < params.n_bins; bin_id++){
+	for(int bin_id = 0; bin_id < n_bins; ++bin_id){
 		if(hist(bin_id) == 0){
 			/**
 			since the sum of all entries in a row of the joint histogram is zero,
@@ -411,7 +418,7 @@ double RSCV::operator()(const double* a, const double* b,
 			intensity_map(bin_id) = bin_id;
 		} else{
 			double wt_sum = 0;
-			for(int j = 0; j < params.n_bins; j++){
+			for(int j = 0; j < n_bins; j++){
 				wt_sum += j * joint_hist(bin_id, j);
 			}
 			intensity_map(bin_id) = wt_sum / hist(bin_id);

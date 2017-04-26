@@ -286,7 +286,7 @@ void SSIM::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jaco
 
 /*Support for FLANN library*/
 
-int SSIM::getDistFeatSize(){ return patch_size + 3; }
+unsigned int SSIM::getDistFeatSize(){ return patch_size + 3; }
 
 void SSIM::initializeDistFeat(){
 	curr_feat_vec.resize(getDistFeatSize());
@@ -310,7 +310,7 @@ void SSIM::updateDistFeat(){
 	updateDistFeat(curr_feat_vec.data());
 }
 
-double SSIM::operator()(const double* a, const double* b, size_t size, double worst_dist) const
+double SSIMDist::operator()(const double* a, const double* b, size_t size, double worst_dist) const
 {
 	double result = double();
 	double cross_pix_var = 0;
