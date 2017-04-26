@@ -361,8 +361,7 @@ public:
 	virtual unsigned int getDistFeatSize() {
 		am_func_not_implemeted(getDistFeatSize);
 	}
-	typedef shared_ptr<const AMDist> AMDistPtr;
-	virtual AMDistPtr getDistPtr() {
+	virtual const AMDist* getDistPtr() {
 		am_func_not_implemeted(getDistPtr);
 	}
 

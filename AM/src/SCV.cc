@@ -313,23 +313,23 @@ double SCVDist::operator()(const double* a, const double* b,
 	size_t size, double worst_dist) const{
 	assert(size == patch_size);
 
-	if(params.approx_dist_feat){
+	if(approx_dist_feat){
 		return SSDDist::operator()(a, b, size, worst_dist);
 	}
 	/**
 	this has to be as fast as possible so BSpline histogram option is disabled here
 	and the histograms can thus be of integeral type
 	*/
-	MatrixXi joint_hist = MatrixXi::Zero(params.n_bins, params.n_bins);
-	VectorXi hist = VectorXi::Zero(params.n_bins);
-	VectorXd intensity_map(params.n_bins);
+	MatrixXi joint_hist = MatrixXi::Zero(n_bins, n_bins);
+	VectorXi hist = VectorXi::Zero(n_bins);
+	VectorXd intensity_map(n_bins);
 	for(int pix_id = 0; pix_id < size; ++pix_id) {
 		int a_int = static_cast<int>(a[pix_id]);
 		int b_int = static_cast<int>(b[pix_id]);
 		hist(a_int) += 1;
 		joint_hist(b_int, a_int) += 1;
 	}
-	for(int bin_id = 0; bin_id < params.n_bins; ++bin_id){
+	for(int bin_id = 0; bin_id < n_bins; ++bin_id){
 		if(hist(bin_id) == 0){
 			/**
 			since the sum of all entries in a column of the joint histogram is zero
@@ -338,7 +338,7 @@ double SCVDist::operator()(const double* a, const double* b,
 			intensity_map(bin_id) = bin_id;
 		} else{
 			double wt_sum = 0;
-			for(int i = 0; i < params.n_bins; ++i){
+			for(int i = 0; i < n_bins; ++i){
 				wt_sum += i * joint_hist(i, bin_id);
 			}
 			intensity_map(bin_id) = wt_sum / static_cast<double>(hist(bin_id));

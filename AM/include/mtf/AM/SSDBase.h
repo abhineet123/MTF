@@ -15,8 +15,6 @@ as the similarity measure
 */
 struct SSDDist : AMDist{
 	typedef bool is_kdtree_distance;
-	typedef double ElementType;
-	typedef double ResultType;
 
 	SSDDist(const string &_name) : AMDist(_name){}
 	/**
@@ -113,11 +111,8 @@ public:
 	Support for FLANN library
 	*/
 	typedef SSDDist DistType;
-	AMDistPtr getDistPtr() override{
-		return AMDistPtr(new DistType(name));
-	}
-	const DistType& getDistObj(){
-		return dist_func;
+	const DistType* getDistPtr() override{
+		return new DistType(name);
 	}
 	void updateDistFeat(double* feat_addr) override{
 		int feat_size = getDistFeatSize();
@@ -170,9 +165,7 @@ protected:
 
 	VectorXdM I_diff;
 	PixValT It_orig;
-	ILMPixHessT ilm_d2f_dIt_type;
-
-	const DistType dist_func;
+	ILMPixHessT ilm_d2f_dIt_type;	
 
 	void cmptILMHessian(MatrixXd &d2f_dp2, const MatrixXd &dI_dpssm, 
 		const double* I, const double* df_dg = nullptr);

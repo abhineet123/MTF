@@ -9,7 +9,7 @@ _MTF_BEGIN_NAMESPACE
 
 SSDBase::SSDBase(const AMParams *am_params, const int _n_channels) :
 AppearanceModel(am_params, _n_channels), ilm(nullptr), likelihood_alpha(1),
-I_diff(0, 0), dist_func(name){
+I_diff(0, 0){
 	if(am_params){
 		ilm = am_params->ilm;
 		likelihood_alpha = am_params->likelihood_alpha;

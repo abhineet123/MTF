@@ -15,8 +15,8 @@ bool _affine_mapping, bool _once_per_frame,
 int _n_bins, double _pre_seed, bool _weighted_mapping,
 bool _show_subregions, bool _approx_dist_feat) :
 AMParams(am_params),
-sub_regions_x(_sub_regions_x),
-sub_regions_y(_sub_regions_y),
+n_sub_regions_x(_sub_regions_x),
+n_sub_regions_y(_sub_regions_y),
 spacing_x(_spacing_x),
 spacing_y(_spacing_y),
 affine_mapping(_affine_mapping),
@@ -32,8 +32,8 @@ approx_dist_feat(_approx_dist_feat){
 //! copy constructor
 LSCVParams::LSCVParams(const LSCVParams *params) :
 AMParams(params),
-sub_regions_x(LSCV_SUB_REGIONS),
-sub_regions_y(LSCV_SUB_REGIONS),
+n_sub_regions_x(LSCV_SUB_REGIONS),
+n_sub_regions_y(LSCV_SUB_REGIONS),
 spacing_x(LSCV_SPACING),
 spacing_y(LSCV_SPACING),
 affine_mapping(LSCV_AFFINE_MAPPING),
@@ -45,8 +45,8 @@ show_subregions(LSCV_SHOW_SUBREGIONS),
 approx_dist_feat(LSCV_APPROX_DIST_FEAT){
 
 	if(params){
-		sub_regions_x = params->sub_regions_x;
-		sub_regions_y = params->sub_regions_y;
+		n_sub_regions_x = params->n_sub_regions_x;
+		n_sub_regions_y = params->n_sub_regions_y;
 		spacing_x = params->spacing_x;
 		spacing_y = params->spacing_y;
 
@@ -66,6 +66,19 @@ approx_dist_feat(LSCV_APPROX_DIST_FEAT){
 	}
 }
 
+LSCVDist::LSCVDist(const string &_name, bool _approx_dist_feat,
+	int _n_bins, int _n_sub_regions_x, int _n_sub_regions_y,
+	unsigned int _n_pix, unsigned int _resx, unsigned int _resy,
+	const MatrixX2i &_sub_region_x, const MatrixX2i &_sub_region_y,
+	const MatrixXd &_sub_region_wts, const MatrixXi &_subregion_idx,
+	const ColPivHouseholderQR<MatrixX2d> &_intensity_vals_dec) :
+	SSDDist(_name), approx_dist_feat(_approx_dist_feat),
+	n_pix(_n_pix), resx(_resx), resy(_resy), n_bins(_n_bins),
+	n_sub_regions_x(_n_sub_regions_x), n_sub_regions_y(_n_sub_regions_y),
+	sub_region_x(_sub_region_x), sub_region_y(_sub_region_y),
+	sub_region_wts(_sub_region_wts), subregion_idx(_subregion_idx),
+	intensity_vals_dec(_intensity_vals_dec){}
+
 LSCV::LSCV(const ParamType *lscv_params, int _n_channels) :
 SSDBase(lscv_params, _n_channels), params(lscv_params),
 init_patch(0, 0, 0), curr_patch(0, 0, 0){
@@ -74,7 +87,7 @@ init_patch(0, 0, 0), curr_patch(0, 0, 0){
 	printf("\n");
 	printf("Using Localized Sum of Conditional Variance AM with:\n");
 
-	printf("sub_regions: %d x %d\n", params.sub_regions_x, params.sub_regions_y);
+	printf("sub_regions: %d x %d\n", params.n_sub_regions_x, params.n_sub_regions_y);
 	printf("sub region spacing: %d x %d\n", params.spacing_x, params.spacing_y);
 	printf("affine_mapping: %d\n", params.affine_mapping);
 	printf("once_per_frame: %d\n", params.once_per_frame);
@@ -86,7 +99,7 @@ init_patch(0, 0, 0), curr_patch(0, 0, 0){
 	printf("show_subregions: %d\n", params.show_subregions);
 	printf("approx_dist_feat: %d\n", params.approx_dist_feat);
 
-	n_sub_regions = params.sub_regions_x*params.sub_regions_y;
+	n_sub_regions = params.n_sub_regions_x*params.n_sub_regions_y;
 
 	// preseeding the joint histogram by 's' is equivalent to 
 	// preseeding individual histograms by s * n_bins
@@ -115,11 +128,11 @@ init_patch(0, 0, 0), curr_patch(0, 0, 0){
 	curr_hist.resize(params.n_bins);
 	curr_joint_hist.resize(params.n_bins, params.n_bins);
 
-	sub_region_x.resize(params.sub_regions_x, Eigen::NoChange);
-	sub_region_y.resize(params.sub_regions_y, Eigen::NoChange);
+	sub_region_x.resize(params.n_sub_regions_x, Eigen::NoChange);
+	sub_region_y.resize(params.n_sub_regions_y, Eigen::NoChange);
 
-	sub_region_size_x = resx - (params.sub_regions_x - 1)*params.spacing_x;
-	sub_region_size_y = resy - (params.sub_regions_y - 1)*params.spacing_y;
+	sub_region_size_x = resx - (params.n_sub_regions_x - 1)*params.spacing_x;
+	sub_region_size_y = resy - (params.n_sub_regions_y - 1)*params.spacing_y;
 
 	if(sub_region_size_x <= 0 || sub_region_size_y <= 0){
 		throw std::invalid_argument(
@@ -131,22 +144,22 @@ init_patch(0, 0, 0), curr_patch(0, 0, 0){
 	if(params.once_per_frame){
 		printf("Updating the template only once per frame\n");
 	}
-	for(int idx = 0; idx < params.sub_regions_x; idx++){
+	for(int idx = 0; idx < params.n_sub_regions_x; idx++){
 		sub_region_x(idx, 0) = idx*params.spacing_x;
 		sub_region_x(idx, 1) = sub_region_x(idx, 0) + sub_region_size_x - 1;
 	}
-	for(int idy = 0; idy < params.sub_regions_y; idy++){
+	for(int idy = 0; idy < params.n_sub_regions_y; idy++){
 		sub_region_y(idy, 0) = idy*params.spacing_y;
 		sub_region_y(idy, 1) = sub_region_y(idy, 0) + sub_region_size_y - 1;
 	}
 
-	_subregion_idx.resize(params.sub_regions_y, params.sub_regions_x);
+	_subregion_idx.resize(params.n_sub_regions_y, params.n_sub_regions_x);
 	sub_region_centers.resize(n_sub_regions, Eigen::NoChange);
-	for(int idy = 0; idy < params.sub_regions_y; idy++){
+	for(int idy = 0; idy < params.n_sub_regions_y; idy++){
 		double mean_y = static_cast<double>(sub_region_y(idy, 0) + sub_region_y(idy, 1)) / 2.0;
-		for(int idx = 0; idx < params.sub_regions_x; idx++){
+		for(int idx = 0; idx < params.n_sub_regions_x; idx++){
 
-			_subregion_idx(idy, idx) = idy * params.sub_regions_x + idx;
+			_subregion_idx(idy, idx) = idy * params.n_sub_regions_x + idx;
 
 			double mean_x = static_cast<double>(sub_region_x(idx, 0) + sub_region_x(idx, 1)) / 2.0;
 			sub_region_centers(_subregion_idx(idy, idx), 0) = mean_x;
@@ -159,8 +172,8 @@ init_patch(0, 0, 0), curr_patch(0, 0, 0){
 		int pix_x = pix_id % resx;
 		int pix_y = pix_id / resx;
 		double pix_wt_sum = 0;
-		for(int idy = 0; idy < params.sub_regions_y; idy++){
-			for(int idx = 0; idx < params.sub_regions_x; idx++){
+		for(int idy = 0; idy < params.n_sub_regions_y; idy++){
+			for(int idx = 0; idx < params.n_sub_regions_x; idx++){
 				int diff_x = pix_x - sub_region_centers(_subregion_idx(idy, idx), 0);
 				int diff_y = pix_y - sub_region_centers(_subregion_idx(idy, idx), 1);
 				double pix_wt = 1.0 / static_cast<double>(1.0 + diff_x*diff_x + diff_y*diff_y);
@@ -240,10 +253,10 @@ void LSCV::updateSimilarity(bool prereq_only){
 		return;
 
 	I0.setZero();
-	for(int idx = 0; idx < params.sub_regions_x; idx++){
+	for(int idx = 0; idx < params.n_sub_regions_x; idx++){
 		int start_x = sub_region_x(idx, 0);
 		int end_x = sub_region_x(idx, 1);
-		for(int idy = 0; idy < params.sub_regions_y; idy++){
+		for(int idy = 0; idy < params.n_sub_regions_y; idy++){
 			utils::getDiracJointHist(curr_joint_hist, curr_hist, init_hist,
 				curr_patch, init_patch, start_x, end_x,
 				sub_region_y(idy, 0), sub_region_y(idy, 1),
@@ -282,18 +295,18 @@ double LSCVDist::operator()(const double* a, const double* b,
 	size_t size, double worst_dist) const{
 	assert(size == n_pix);
 
-	if(params.approx_dist_feat){
+	if(approx_dist_feat){
 		return SSDDist::operator()(a, b, size, worst_dist);
 	}
 	Map<const MatrixXdr> _init_patch(a, resy, resx);
 	Map<const MatrixXdr> _curr_patch(b, resy, resx);
 	VectorXd _mapped_a = VectorXd::Zero(size);
-	for(int idx = 0; idx < params.sub_regions_x; ++idx){
+	for(int idx = 0; idx < n_sub_regions_x; ++idx){
 		int start_x = sub_region_x(idx, 0);
 		int end_x = sub_region_x(idx, 1);
-		for(int idy = 0; idy < params.sub_regions_y; ++idy){
-			MatrixXi _joint_hist = MatrixXi::Zero(params.n_bins, params.n_bins);
-			VectorXi _hist = VectorXi::Zero(params.n_bins);	
+		for(int idy = 0; idy < n_sub_regions_y; ++idy){
+			MatrixXi _joint_hist = MatrixXi::Zero(n_bins, n_bins);
+			VectorXi _hist = VectorXi::Zero(n_bins);	
 			for(int y = sub_region_y(idy, 0); y <= sub_region_y(idy, 1); ++y) {
 				for(int x = start_x; x <= end_x; ++x) {
 					int pix1_int = static_cast<int>(_init_patch(y, x));
@@ -302,13 +315,13 @@ double LSCVDist::operator()(const double* a, const double* b,
 					_joint_hist(pix2_int, pix1_int) += 1;
 				}
 			}
-			VectorXd _intensity_map(params.n_bins);
-			for(int bin_id = 0; bin_id < params.n_bins; ++bin_id){
+			VectorXd _intensity_map(n_bins);
+			for(int bin_id = 0; bin_id < n_bins; ++bin_id){
 				if(_hist(bin_id) == 0){
 					_intensity_map(bin_id) = bin_id;
 				} else{
 					double wt_sum = 0;
-					for(int i = 0; i < params.n_bins; ++i){
+					for(int i = 0; i < n_bins; ++i){
 						wt_sum += i * _joint_hist(i, bin_id);
 					}
 					_intensity_map(bin_id) = wt_sum / _hist(bin_id);
@@ -316,7 +329,8 @@ double LSCVDist::operator()(const double* a, const double* b,
 			}
 			Vector2d _affine_params = intensity_vals_dec.solve(_intensity_map);
 			for(int pix_id = 0; pix_id < n_pix; ++pix_id){
-				_mapped_a(pix_id) += (_affine_params(0)*a[pix_id] + _affine_params(1))*sub_region_wts(pix_id, _subregion_idx(idy, idx));
+				_mapped_a(pix_id) += (_affine_params(0)*a[pix_id] + _affine_params(1))
+					*sub_region_wts(pix_id, subregion_idx(idy, idx));
 			}
 		}
 	}
@@ -367,8 +381,8 @@ void  LSCV::showSubRegions(const EigImgT& img, const Matrix2Xd& pts){
 	};
 	int n_cols = sizeof(region_cols) / sizeof(cv::Scalar);
 	int col_id = sub_region_id % n_cols;
-	int idx = sub_region_id % params.sub_regions_x;
-	int idy = sub_region_id / params.sub_regions_x;
+	int idx = sub_region_id % params.n_sub_regions_x;
+	int idy = sub_region_id / params.n_sub_regions_x;
 	int x1 = sub_region_x(idx, 0);
 	int x2 = sub_region_x(idx, 1);
 	int y1 = sub_region_y(idy, 0);

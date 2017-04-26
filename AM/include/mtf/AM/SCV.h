@@ -66,12 +66,11 @@ struct SCVParams : AMParams{
 };
 
 struct SCVDist : SSDDist{
-	const SCVParams &params;
-	const unsigned int &patch_size;
-
-	SCVDist(const string &_name, const SCVParams &_params,
-		const unsigned int &_patch_size) : SSDDist(_name),
-		params(_params), patch_size(_patch_size){}
+	unsigned int patch_size;
+	int n_bins;
+	bool approx_dist_feat;
+	SCVDist(const string &_name, unsigned int _patch_size,
+		int _n_bins, bool _approx_dist_feat);
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 private:
@@ -98,6 +97,9 @@ public:
 
 	void updatePixHess(const Matrix2Xd &curr_pts) override;
 	using AppearanceModel::updatePixHess;
+	const DistType* getDistPtr() override{
+		return new DistType(name, patch_size, params.n_bins, params.approx_dist_feat);
+	}
 
 protected:
 

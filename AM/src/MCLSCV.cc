@@ -51,10 +51,10 @@ void MCLSCV::updateSimilarity(bool prereq_only){
 		return;
 	//! channel wise processing
 	for(int ch = 0; ch < 3; ch++){
-		for(int idx = 0; idx < params.sub_regions_x; idx++){
+		for(int idx = 0; idx < params.n_sub_regions_x; idx++){
 			int start_x = sub_region_x(idx, 0);
 			int end_x = sub_region_x(idx, 1);
-			for(int idy = 0; idy < params.sub_regions_y; idy++){
+			for(int idy = 0; idy < params.n_sub_regions_y; idy++){
 				curr_hist.fill(hist_pre_seed);
 				init_hist.fill(hist_pre_seed);
 				curr_joint_hist.fill(0);
