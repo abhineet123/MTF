@@ -6,8 +6,8 @@
 _MTF_BEGIN_NAMESPACE
 namespace gnn{
 
-	template <class AM>
-	void  FGNN<AM>::buildGraph(const double *dataset, flannIdxT* flann_index,
+	template <class DistType>
+	void  FGNN<DistType>::buildGraph(const double *dataset, flannIdxT* flann_index,
 		const flann::SearchParams &search_params){
 		VectorXi nn_ids(params.degree);
 		VectorXd nn_dists(params.degree);
@@ -43,4 +43,4 @@ namespace gnn{
 _MTF_END_NAMESPACE
 
 #include "mtf/Macros/register.h"
-_REGISTER_AM_TRACKERS(gnn::FGNN);
+_REGISTER_TRACKERS_DIST(gnn::FGNN);

@@ -3,12 +3,7 @@
 
 #include "mtf/Macros/common.h"
 #include <vector>
-
-#define GNN_DEGREE 250
-#define GNN_MAX_STEPS 10
-#define GNN_CMPT_DIST_THRESH 10000
-#define GNN_RANDOM_START 0
-#define GNN_VERBOSE 0
+#include <memory>
 
 _MTF_BEGIN_NAMESPACE
 
@@ -25,35 +20,32 @@ namespace gnn{
 			bool _verbose);
 		GNNParams(const GNNParams *params = nullptr);
 	};
-
 	struct Node{
 		VectorXi nns_inds;
 		int size;
 		int capacity;
 	};
-
 	struct IndxDist{
 		double dist;
 		int idx;
 	};
-
 	inline int cmpQsort(const void *a, const void *b){
 		IndxDist *a1 = (IndxDist *)a;
 		IndxDist *b1 = (IndxDist *)b;
-
 		// Ascending
 		if(a1->dist > b1->dist) return 1;
 		if(a1->dist == b1->dist) return 0;
 		return -1;
 	}
 
-	template<class AM>
+	template<class DistType>
 	class GNN{
 	public:
 
 		typedef GNNParams ParamType;
+		typedef std::shared_ptr<const DistType> DistTypePtr;
 
-		GNN(const AM *_dist_func, int _n_samples, int _n_dims,
+		GNN(DistTypePtr _dist_func, int _n_samples, int _n_dims,
 			bool _is_symmetrical = true, const ParamType *gnn_params = nullptr);
 		~GNN(){}
 		void computeDistances(const double *dataset);
@@ -69,7 +61,7 @@ namespace gnn{
 
 	protected:
 
-		const AM *dist_func;
+		DistTypePtr dist_func;
 		const int n_samples, n_dims;
 		const bool is_symmetrical;
 		ParamType params;

@@ -1,9 +1,6 @@
 #ifndef MTF_SSIM_H
 #define MTF_SSIM_H
 
-#define SSIM_K1 0.01
-#define SSIM_K2 0.03
-
 #include "AppearanceModel.h"
 
 _MTF_BEGIN_NAMESPACE
@@ -17,13 +14,14 @@ struct SSIMParams : AMParams{
 };
 
 struct SSIMDist : AMDist{
+	typedef double ElementType;
+	typedef double ResultType;
 	SSIMDist(const string &_name, double _c1, double _c2) : 
 		AMDist(_name), c1(_c1), c2(_c2){}
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 private:
 	double c1, c2;
-	~SSIMDist(){}
 };
 
 

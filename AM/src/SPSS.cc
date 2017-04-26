@@ -1,6 +1,9 @@
 #include "mtf/AM/SPSS.h"
 #include "mtf/Utilities/imgUtils.h"
 
+#define SPSS_K 0.01
+#define SPSS_PIX_MAPPER nullptr
+
 _MTF_BEGIN_NAMESPACE
 
 SPSSParams::SPSSParams(const AMParams *am_params,
@@ -120,7 +123,7 @@ void SPSS::updateSimilarity(bool prereq_only){
 	f = f_vec.sum();
 
 	//f = 0;
-	//for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	//for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 	//	pix_vals_prod(pix_id) = I0(pix_id)*It(pix_id);
 	//	curr_pix_vals_sqr(pix_id) = It(pix_id)*It(pix_id);
 	//	curr_err_vec_den(pix_id) = init_pix_vals_sqr(pix_id) + curr_pix_vals_sqr(pix_id) + c;
@@ -134,7 +137,7 @@ void SPSS::updateInitGrad(){
 		/
 		(f_vec_den.array() * f_vec_den.array());
 
-	//for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	//for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 	//	df_dI0(pix_id) =
 	//		2 * (It(pix_id)*(curr_pix_vals_sqr(pix_id) - init_pix_vals_sqr(pix_id))
 	//		+
@@ -146,7 +149,7 @@ void SPSS::updateInitGrad(){
 void SPSS::updateCurrGrad(){
 	df_dIt = 2 * (I0.array() - f_vec.array()*It.array()) / f_vec_den.array();
 
-	//for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	//for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 	//	df_dIt(pix_id) =
 	//		2 * (I0(pix_id) - curr_err_vec(pix_id)*It(pix_id))
 	//		/
@@ -162,7 +165,7 @@ void SPSS::cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dp){
 		).matrix().transpose() * dI0_dp;
 
 	//d2f_dp2.fill(0);
-	//for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	//for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 	//	double init_hess = -2 * (f_vec(pix_id) + I0(pix_id)*df_dI0(pix_id)) / f_vec_den(pix_id);
 	//	d2f_dp2 += dI0_dp.row(pix_id).transpose() * dI0_dp.row(pix_id) * init_hess;
 	//}
@@ -180,7 +183,7 @@ void SPSS::cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dp,
 	//Map<VectorXd>(d2f_dp2.data(), p_size*p_size) +=
 	//	(d2I0_dp2.array().rowwise() * df_dI0.array()).matrix().rowwise().sum();
 
-	for(int pix_id = 0; pix_id < patch_size; ++pix_id){
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		d2f_dp2 +=  Map<const MatrixXd>(d2I0_dp2.col(pix_id).data(), p_size, p_size) * df_dI0(pix_id);
 	}
 }
@@ -193,7 +196,7 @@ void SPSS::cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp){
 		).matrix().transpose() * dIt_dp;
 
 	//curr_hessian.fill(0);
-	//for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	//for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 	//	double hess = -2 * (f_vec(pix_id) + 3 * df_dIt(pix_id)*It(pix_id)) /
 	//		f_vec_den(pix_id);
 	//	curr_hessian += dIt_dp.row(pix_id).transpose() * dIt_dp.row(pix_id) * hess;
@@ -210,7 +213,7 @@ void SPSS::cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp,
 	//Map<VectorXd>(d2f_dp2.data(), p_size*p_size) += 
 	//	(d2It_dp2.array().rowwise() * df_dIt.array()).matrix().rowwise().sum();
 
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		d2f_dp2 += Map<const MatrixXd>(d2It_dp2.col(pix_id).data(), p_size, p_size) * df_dIt(pix_id);
 	}
 }
@@ -221,7 +224,7 @@ void SPSS::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &dIt_dp){
 		(-2 / (2 * It_sqr.array() + c))).matrix().transpose() * dIt_dp;
 
 	//self_hessian.fill(0);
-	//for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	//for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 	//	double self_hess = -2 / (2 * curr_pix_vals_sqr(pix_id) + c);
 	//	self_hessian += curr_pix_jacobian.row(pix_id).transpose() * curr_pix_jacobian.row(pix_id) * self_hess;
 	//}

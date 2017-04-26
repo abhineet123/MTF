@@ -17,7 +17,7 @@
 #include "mtf/SM/FALK.h"
 #include "mtf/SM/IALK.h"
 #include "mtf/SM/PF.h"
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 #include "mtf/SM/NN.h"
 #endif
 //! composite search methods
@@ -65,10 +65,10 @@
 #include "mtf/AM/RSCV.h"
 #include "mtf/AM/LRSCV.h"	
 #include "mtf/AM/MI.h"
+#include "mtf/AM/CCRE.h"
 #include "mtf/AM/SPSS.h"
 #include "mtf/AM/SSIM.h"
 #include "mtf/AM/NCC.h"
-#include "mtf/AM/CCRE.h"
 #include "mtf/AM/RIU.h"
 #include "mtf/AM/NGF.h"
 #include "mtf/AM/SAD.h"
@@ -213,7 +213,7 @@ typedef std::unique_ptr<IALKParams> IALKParams_;
 typedef std::unique_ptr<FCSDParams> FCSDParams_;
 typedef std::unique_ptr<PFParams> PFParams_;
 typedef std::unique_ptr<NNParams> NNParams_;
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 typedef std::unique_ptr<FLANNParams> FLANNParams_;
 #else
 #ifndef DISABLE_FEAT
@@ -234,7 +234,7 @@ FALKParams_ getFALKParams();
 IALKParams_ getIALKParams();
 PFParams_ getPFParams();
 NNParams_ getNNParams();
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 FLANNParams_ getFLANNParams();
 #else
 #ifndef DISABLE_FEAT
@@ -383,7 +383,7 @@ TrackerBase *getTracker(const char *sm_type,
 			casc_reinit_err_thresh, casc_reinit_frame_gap);
 		return new CascadeSM<AMType, SSMType>(trackers, &casc_params);
 	}
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 	//! NN tracker
 	else if(!strcmp(sm_type, "nn")){// Nearest Neighbor Search
 		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
@@ -1324,7 +1324,7 @@ inline NNParams_ getNNParams(){
 }
 
 //! params for NN SM
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 inline FLANNParams_ getFLANNParams(){
 	return FLANNParams_(new FLANNParams(
 		static_cast<FLANNParams::SearchType>(nn_search_type),

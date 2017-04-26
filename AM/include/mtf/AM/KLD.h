@@ -1,11 +1,6 @@
 #ifndef MTF_KLD_H
 #define MTF_KLD_H
 
-#define KLD_N_BINS 8
-#define KLD_PRE_SEED 10
-#define KLD_POU false
-#define KLD_DEBUG_MODE false
-
 #include "AppearanceModel.h"
 
 _MTF_BEGIN_NAMESPACE
@@ -30,10 +25,29 @@ struct KLDParams : AMParams{
 	//! default/copy constructor
 	KLDParams(const KLDParams *params = nullptr);
 };
+
+struct KLDDist : AMDist{
+	typedef bool is_kdtree_distance;
+	typedef double ElementType;
+	typedef double ResultType;
+	KLDDist(const string &_name, unsigned int _feat_size) :
+		AMDist(_name), feat_size(_feat_size){}
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override;
+	inline double accum_dist(const double& a, const double& b, int) const{
+		double ratio = a / b;
+		return ratio > 0 ? a * log(ratio) : 0;
+	}
+private:
+	unsigned int feat_size;
+};
+
+
 // (nagative) Kullback–Leibler Divergence
 class KLD : public AppearanceModel{
 public:
 	typedef KLDParams ParamType;
+	typedef KLDDist DistType;
 
 	KLD(const ParamType *kld_params = nullptr);
 
@@ -53,36 +67,19 @@ public:
 	void cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacobian,
 		const MatrixXd &curr_pix_hessian) override;
 
-	//----------------- functor support--------------------------------------
-	typedef double ElementType;
-	typedef double ResultType;
-	typedef bool is_kdtree_distance;
-
+	/**
+	Support for FLANN library
+	*/
+	const DistType* getDistPtr() override{
+		return new DistType(name, feat_size);
+	}
 	void initializeDistFeat() override;
-
-	int getDistFeatSize() override { return feat_size; }
+	unsigned int getDistFeatSize() override { return feat_size; }
 	void updateDistFeat() override {
 		updateDistFeat(feat_vec.data());
 	}
 	const double* getDistFeat() override{ return feat_vec.data(); }
 	void updateDistFeat(double* feat_addr) override;
-	double operator()(const double* hist1_mat_addr, const double* hist2_mat_addr,
-		size_t hist_mat_size, double worst_dist = -1) const override;
-
-
-	/**
-	* Partial distance, used by the kd-tree.
-	*/
-	template <typename U, typename V>
-	inline ResultType accum_dist(const U& a, const V& b, int) const
-	{
-		ResultType result = ResultType();
-		ResultType ratio = (ResultType)(a / b);
-		if(ratio > 0) {
-			result = a * log(ratio);
-		}
-		return result;
-	}
 
 private:
 	ParamType params;

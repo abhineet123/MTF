@@ -156,7 +156,7 @@ namespace utils{
 	//! get weighted pixel values using alpha as weighting factor 
 	//! between existing and new pixel values
 	void getWeightedPixVals(VectorXd &pix_vals, const EigImgT &img, const PtsT &pts,
-		int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+		unsigned int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
 		unsigned int h, unsigned int w, double norm_mult, double norm_add);
 
 	/************ functions for image gradient and Hessian ************/
@@ -553,7 +553,7 @@ namespace utils{
 		//! between existing and new pixel values
 		template<typename ScalarType>
 		void getWeightedPixVals(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+			unsigned int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
 			unsigned int h, unsigned int w, double pix_norm_mult, double pix_norm_add);
 		
 		/************ functions for image gradient and Hessian ************/
@@ -644,7 +644,7 @@ namespace utils{
 	template<InterpType interp_type>
 	inline void mapPixVals(VectorXd &dst_pix_vals, const VectorXd &src_pix_vals,
 		const VectorXd &intensity_map, unsigned int n_pix){
-		for(int i = 0; i < n_pix; i++){
+		for(unsigned int i = 0; i < n_pix; ++i){
 			dst_pix_vals(i) = mapPixVal<interp_type>(src_pix_vals(i), intensity_map);
 		}
 	}
@@ -686,8 +686,8 @@ namespace utils{
 	cv::Mat convertFloatImgToUchar(cv::Mat &img, int nchannels);
 	void generateWarpedImg(cv::Mat &warped_img, const cv::Mat &warped_corners,
 		const mtf::PtsT &warped_pts, const mtf::PixValT orig_patch,
-		const cv::Mat &orig_img, int img_width, int img_height,
-		int n_pts, int background_type, bool show_warped_img = false,
+		const cv::Mat &orig_img, unsigned int img_width, unsigned int img_height,
+		unsigned int n_pts, int background_type, bool show_warped_img = false,
 		const char* win_name = "warped_img");
 	template<typename ScalarType>
 	void generateInverseWarpedImg(cv::Mat &warped_img, const mtf::PtsT &warped_pts,
@@ -695,11 +695,11 @@ namespace utils{
 		int img_width, int img_height, int n_pts, bool show_warped_img = false,
 		const char* win_name = "warped_img");
 	void generateInverseWarpedImg(cv::Mat &warped_img, const PixValT &pix_vals,
-		int img_width, int img_height, int n_pts, bool show_warped_img,
+		unsigned int img_width, unsigned int img_height, unsigned int n_pts, bool show_warped_img,
 		const char* win_name = "warped_img");
 	//! write pixel values in the given image at the given locations
 	void writePixelsToImage(cv::Mat &img, const PixValT &pix_vals,
-		const mtf::PtsT &pts, int n_channels, cv::Mat &mask);
+		const mtf::PtsT &pts, unsigned int n_channels, cv::Mat &mask);
 	void writePixelsToImage(cv::Mat &img, const cv::Mat &pix_vals,
 		const mtf::PtsT &pts, int n_channels, cv::Mat &mask);
 	void writePixelsToImage(cv::Mat &img, const cv::Mat &pix_vals,

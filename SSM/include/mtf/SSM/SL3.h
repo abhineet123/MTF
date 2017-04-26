@@ -1,15 +1,6 @@
 #ifndef MTF_SL3_H
 #define MTF_SL3_H
 
-#define VALIDATE_LIE_HOM_WARP(warp) \
-	assert(warp.determinant() == 1.0);
-
-#define SL3_NORMALIZED_BASIS 0
-#define SL3_ITERATIVE_SAMPLE_MEAN 1
-#define SL3_SAMPLE_MEAN_MAX_ITERS 10
-#define SL3_SAMPLE_MEAN_EPS 1e-4
-#define SL3_DEBUG_MODE 0
-
 #include "ProjectiveBase.h"
 
 _MTF_BEGIN_NAMESPACE

@@ -3,9 +3,6 @@
 
 #include "AppearanceModel.h"
 
-#define SPSS_K 0.01
-#define SPSS_PIX_MAPPER nullptr
-
 _MTF_BEGIN_NAMESPACE
 
 struct SPSSParams : AMParams{
@@ -20,6 +17,8 @@ struct SPSSParams : AMParams{
 
 struct SPSSDist : AMDist{
 	typedef bool is_kdtree_distance;
+	typedef double ElementType;
+	typedef double ResultType;
 	SPSSDist(const string &_name, double _c) : AMDist(_name), c(_c){}
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
@@ -29,7 +28,6 @@ struct SPSSDist : AMDist{
 	}
 private:
 	double c;
-	~SPSSDist(){}
 };
 
 //! Sum of Pixelwise Structural Similarity

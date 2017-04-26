@@ -35,7 +35,7 @@ double SAD::getLikelihood() const{
 void SAD::updateSimilarity(bool prereq_only){
 	f = -(It - I0).lpNorm<1>();
 }
-double SAD::operator()(const double* a, const double* b,
+double SADDist::operator()(const double* a, const double* b,
 	size_t size, double worst_dist) const{
 	double result = 0;
 	const double* last = a + size;

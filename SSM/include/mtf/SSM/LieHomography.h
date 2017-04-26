@@ -1,14 +1,6 @@
 #ifndef MTF_LIE_HOMOGRAPHY_H
 #define MTF_LIE_HOMOGRAPHY_H
 
-#define VALIDATE_LIE_HOM_WARP(warp) \
-	assert(warp.determinant() == 1.0);
-
-
-#define LHOM_NORMALIZED_INIT 0
-#define LHOM_GRAD_EPS 1e-8
-#define LHOM_DEBUG_MODE 0
-
 #include "ProjectiveBase.h"
 
 _MTF_BEGIN_NAMESPACE

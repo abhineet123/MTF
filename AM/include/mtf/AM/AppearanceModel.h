@@ -40,10 +40,9 @@ Distance functor for FLANN
 struct AMDist{
 	typedef double ElementType;
 	typedef double ResultType;
-
-	const string &name;
-
+	const string name;
 	AMDist(const string &_name) : name(_name){}
+	virtual ~AMDist() {}
 	/**
 	computes the distance / dissimilarity between two patches where each is codified or represented
 	by a suitable distance feature computed using updateDistFeat
@@ -52,8 +51,6 @@ struct AMDist{
 		size_t dist_size, double worst_dist = -1) const {
 		am_func_not_implemeted(distance_functor);
 	}
-private:
-	~AMDist(){}
 };
 
 /**

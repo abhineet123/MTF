@@ -1,6 +1,9 @@
 #include "mtf/AM/SSIM.h"
 #include "mtf/Utilities/miscUtils.h"
 
+#define SSIM_K1 0.01
+#define SSIM_K2 0.03
+
 _MTF_BEGIN_NAMESPACE
 
 SSIMParams::SSIMParams(const AMParams *am_params,
@@ -115,7 +118,7 @@ void SSIM::updateInitGrad(){
 	//	init_grad(i) = ((a*curr_pix_vals_cntr(i) - fc*init_pix_vals_cntr(i)) / patch_size + add_factor)* mult_factor;
 	//}
 	init_grad_scal = 2 * (curr_pix_mean*b - init_pix_mean*f*d) / (cd*(patch_size - 1));
-	for(int patch_id = 0; patch_id < patch_size; patch_id++){
+	for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 		init_grad_vec(patch_id) = mult_factor*(a*curr_pix_vals_cntr(patch_id) - f*c*init_pix_vals_cntr(patch_id));
 		df_dI0(patch_id) = init_grad_vec(patch_id) + init_grad_scal;
 	}
@@ -130,7 +133,7 @@ void SSIM::updateCurrGrad(){
 	//P = mult_factor*(a*init_pix_vals_cntr - similarity*c*curr_pix_vals_cntr).transpose();
 
 	curr_grad_scal = 2 * (init_pix_mean*b - curr_pix_mean*f*d) / (cd*(patch_size - 1));
-	for(int patch_id = 0; patch_id < patch_size; patch_id++){
+	for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 		curr_grad_vec(patch_id) = mult_factor*(a*init_pix_vals_cntr(patch_id) - f*c*curr_pix_vals_cntr(patch_id));
 		df_dIt(patch_id) = curr_grad_vec(patch_id) + curr_grad_scal;
 	}
@@ -188,7 +191,7 @@ void SSIM::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jaco
 	assert(init_pix_hessian.rows() == ssm_state_size * ssm_state_size);
 
 	cmptInitHessian(init_hessian, init_pix_jacobian);
-	for(int patch_id = 0; patch_id < patch_size; patch_id++){
+	for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 		init_hessian += Map<const MatrixXd>(init_pix_hessian.col(patch_id).data(), ssm_state_size, ssm_state_size) * df_dI0(patch_id);;
 	}
 
@@ -258,7 +261,7 @@ void SSIM::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jaco
 
 	cmptCurrHessian(curr_hessian, curr_pix_jacobian);
 
-	for(int patch_id = 0; patch_id < patch_size; patch_id++){
+	for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 		curr_hessian += Map<const MatrixXd>(curr_pix_hessian.col(patch_id).data(), ssm_state_size, ssm_state_size) * df_dIt(patch_id);
 	}
 	//utils::printMatrix(curr_hessian, "second order curr_hessian");

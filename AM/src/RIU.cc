@@ -1,14 +1,15 @@
 #include "mtf/AM/RIU.h"
 #include "mtf/Utilities/miscUtils.h"
 
+#define RIU_DEBUG false
+
 _MTF_BEGIN_NAMESPACE
 
 //! value constructor
 RIUParams::RIUParams(const AMParams *am_params,
 bool _debug_mode) :
-AMParams(am_params){
-	debug_mode = _debug_mode;
-}
+AMParams(am_params), debug_mode(_debug_mode){}
+
 //! default/copy constructor
 RIUParams::RIUParams(const RIUParams *params) :
 AMParams(params),
@@ -17,6 +18,11 @@ debug_mode(RIU_DEBUG){
 		debug_mode = params->debug_mode;
 	}
 }
+
+RIUDist::RIUDist(const string &_name, bool _dist_from_likelihood,
+	double _likelihood_alpha) : AMDist(_name),
+	dist_from_likelihood(_dist_from_likelihood),
+	likelihood_alpha(_likelihood_alpha){}
 
 RIU::RIU(const ParamType *riu_params, const int _n_channels) :
 AppearanceModel(riu_params, _n_channels), params(riu_params){
@@ -216,7 +222,7 @@ void RIU::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacob
 	cmptSelfHessian(self_hessian, curr_pix_jacobian);
 }
 
-double RIU::operator()(const double* a, const double* b, size_t size, double worst_dist) const{
+double RIUDist::operator()(const double* a, const double* b, size_t size, double worst_dist) const{
 	assert(size == patch_size + 1);
 	const double* _I0, *_It;
 	if(a[0] == 1){
@@ -229,8 +235,8 @@ double RIU::operator()(const double* a, const double* b, size_t size, double wor
 	VectorXd _r = Map<const VectorXd>(_It, size - 1).array() / Map<const VectorXd>(_I0, size - 1).array();
 	double _r_mean = _r.mean();
 	double dist = ((_r.array() - _r_mean).matrix().squaredNorm() / size) / (_r_mean);
-	return params.dist_from_likelihood ?
-		-exp(-params.likelihood_alpha * dist) : dist;
+	return dist_from_likelihood ?
+		-exp(-likelihood_alpha * dist) : dist;
 }
 
 void RIU::updateDistFeat(double* feat_addr){

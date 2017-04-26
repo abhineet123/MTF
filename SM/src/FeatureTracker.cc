@@ -248,7 +248,7 @@ void FeatureTracker<SSM>::initialize(const cv::Mat &corners) {
 	}
 	//printf("descriptor_size: %d\n", prev_descriptors.cols);	
 	//printf("prev_descriptors: %s\n", utils::getType(prev_descriptors));
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 	if(!params.use_cv_flann){
 		flann_idx.reset(new flannIdxT(flann_params.getIndexParams(flann_params.index_type)));
 		if(params.rebuild_index){
@@ -299,7 +299,7 @@ void FeatureTracker<SSM>::update() {
 	if(params.init_at_each_frame){
 		prev_key_pts = curr_key_pts;
 		prev_descriptors = curr_descriptors.clone();
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 		if(!params.use_cv_flann){
 			if(params.rebuild_index){
 				flann_query.reset(new flannMatT((float*)(prev_descriptors.data),
@@ -352,7 +352,7 @@ void FeatureTracker<SSM>::matchKeyPoints() {
 	best_idices.create(n_key_pts, 2, CV_32S);
 	best_distances.create(n_key_pts, 2, CV_32F);
 	
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 	if(!params.use_cv_flann){
 		if(params.rebuild_index){
 			flann_idx->buildIndex(flannMatT((float*)(curr_descriptors.data),
@@ -393,7 +393,7 @@ void FeatureTracker<SSM>::matchKeyPoints() {
 			best_idices.at<int>(match_id, 0) = matches[match_id][0].trainIdx;
 			best_idices.at<int>(match_id, 1) = matches[match_id][1].trainIdx;
 		}
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 	}
 #endif
 	prev_pts.clear();
@@ -454,7 +454,7 @@ void FeatureTracker<SSM>::setRegion(const cv::Mat& corners) {
 	mask(utils::getBestFitRectangle<int>(corners)) = 1;
 	(*feat)(curr_img, mask, prev_key_pts, prev_descriptors,
 		params.detector_type == DetectorType::NONE);
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 	if(!params.use_cv_flann){
 		flann_idx->buildIndex(flannMatT((float*)(prev_descriptors.data),
 			prev_descriptors.rows, prev_descriptors.cols));

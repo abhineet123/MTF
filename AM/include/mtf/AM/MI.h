@@ -1,12 +1,6 @@
 #ifndef MTF_MI_H
 #define MTF_MI_H
 
-#define MI_N_BINS 8
-#define MI_PRE_SEED 10
-#define MI_POU false
-#define MI_PIX_MAPPER nullptr
-#define MI_DEBUG_MODE false
-
 #include "AppearanceModel.h"
 
 _MTF_BEGIN_NAMESPACE
@@ -41,10 +35,12 @@ struct MIParams : AMParams{
 };
 
 struct MIDist : AMDist{
+	typedef double ElementType;
+	typedef double ResultType;
 	MIDist(const string &_name, int _n_bins,
 		unsigned int _feat_size, unsigned int _patch_size,
 		double _hist_pre_seed, double _pre_seed,
-		const MatrixX2i &_std_bspl_ids,
+		const int *_std_bspl_ids,
 		double _log_hist_norm_mult);
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
@@ -53,9 +49,8 @@ private:
 	unsigned int feat_size;
 	unsigned int patch_size;
 	double pre_seed, hist_pre_seed;
-	MatrixX2i std_bspl_ids;
+	const int *_std_bspl_ids;
 	double log_hist_norm_mult;
-	~MIDist(){}
 };
 
 class MI : public AppearanceModel{
@@ -97,7 +92,7 @@ public:
 	const DistType* getDistPtr() override{
 		return new DistType(name, params.n_bins, feat_size,
 			patch_size, hist_pre_seed, params.pre_seed, 
-			_std_bspl_ids, log_hist_norm_mult);
+			_std_bspl_ids.data(), log_hist_norm_mult);
 	}
 	void initializeDistFeat() override{
 		feat_vec.resize(feat_size);

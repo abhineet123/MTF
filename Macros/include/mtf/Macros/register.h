@@ -60,7 +60,7 @@
 #define _REGISTER_TRACKERS_DFM(SM, SSM) \
 	template class mtf::SM< mtf::DFM, mtf::SSM >;
 #define _REGISTER_AM_TRACKERS_DFM(SM) \
-	template class mtf::SM< mtf::DFM >;
+	template class mtf::SM< mtf::DFM::DistType >;
 #else
 #define _REGISTER_TRACKERS_DFM(SM, SSM)
 #define _REGISTER_AM_TRACKERS_DFM(SM)
@@ -72,8 +72,8 @@
 	template class mtf::SM< mtf::MCPCA, mtf::SSM >;
 
 #define _REGISTER_AM_TRACKERS_PCA(SM) \
-	template class mtf::SM< mtf::PCA >;\
-	template class mtf::SM< mtf::MCPCA >;
+	template class mtf::SM< mtf::PCA::DistType >;\
+	template class mtf::SM< mtf::MCPCA::DistType >;
 
 #else
 #define _REGISTER_TRACKERS_PCA(SM, SSM)
@@ -142,36 +142,36 @@
 	template class mtf::SM< mtf::Translation>;\
 	template class mtf::SM< mtf::Spline>;
 
-#define _REGISTER_AM_TRACKERS(SM) \
-	template class mtf::SM< mtf::SSD >;\
-	template class mtf::SM< mtf::NSSD >;\
-	template class mtf::SM< mtf::ZNCC >;\
-	template class mtf::SM< mtf::SCV >;\
-	template class mtf::SM< mtf::RSCV >;\
-	template class mtf::SM< mtf::LSCV >;\
-	template class mtf::SM< mtf::LRSCV >;\
-	template class mtf::SM< mtf::KLD >;\
-	template class mtf::SM< mtf::LKLD >;\
-	template class mtf::SM< mtf::SPSS >;\
-	template class mtf::SM< mtf::SSIM >;\
-	template class mtf::SM< mtf::NCC >;\
-	template class mtf::SM< mtf::CCRE >;\
-	template class mtf::SM< mtf::MI >;\
-	template class mtf::SM< mtf::RIU >;\
-	template class mtf::SM< mtf::NGF >;\
-	template class mtf::SM< mtf::SAD >;\
-	template class mtf::SM< mtf::MCSSD >;\
-	template class mtf::SM< mtf::MCSCV >;\
-	template class mtf::SM< mtf::MCLSCV >;\
-	template class mtf::SM< mtf::MCRSCV >;\
-	template class mtf::SM< mtf::MCZNCC >;\
-	template class mtf::SM< mtf::MCNCC >;\
-	template class mtf::SM< mtf::MCMI >;\
-	template class mtf::SM< mtf::MCSSIM >;\
-	template class mtf::SM< mtf::MCSPSS >;\
-	template class mtf::SM< mtf::MCRIU >;\
-	template class mtf::SM< mtf::MCSAD >;\
-	template class mtf::SM< mtf::MCCCRE >;\
+#define _REGISTER_TRACKERS_DIST(SM) \
+	template class mtf::SM< mtf::SSD::DistType >;\
+	template class mtf::SM< mtf::NSSD::DistType >;\
+	template class mtf::SM< mtf::ZNCC::DistType >;\
+	template class mtf::SM< mtf::SCV::DistType >;\
+	template class mtf::SM< mtf::RSCV::DistType >;\
+	template class mtf::SM< mtf::LSCV::DistType >;\
+	template class mtf::SM< mtf::LRSCV::DistType >;\
+	template class mtf::SM< mtf::KLD::DistType >;\
+	template class mtf::SM< mtf::LKLD::DistType >;\
+	template class mtf::SM< mtf::SPSS::DistType >;\
+	template class mtf::SM< mtf::SSIM::DistType >;\
+	template class mtf::SM< mtf::NCC::DistType >;\
+	template class mtf::SM< mtf::CCRE::DistType >;\
+	template class mtf::SM< mtf::MI::DistType >;\
+	template class mtf::SM< mtf::RIU::DistType >;\
+	template class mtf::SM< mtf::NGF::DistType >;\
+	template class mtf::SM< mtf::SAD::DistType >;\
+	template class mtf::SM< mtf::MCSSD::DistType >;\
+	template class mtf::SM< mtf::MCSCV::DistType >;\
+	template class mtf::SM< mtf::MCLSCV::DistType >;\
+	template class mtf::SM< mtf::MCRSCV::DistType >;\
+	template class mtf::SM< mtf::MCZNCC::DistType >;\
+	template class mtf::SM< mtf::MCNCC::DistType >;\
+	template class mtf::SM< mtf::MCMI::DistType >;\
+	template class mtf::SM< mtf::MCSSIM::DistType >;\
+	template class mtf::SM< mtf::MCSPSS::DistType >;\
+	template class mtf::SM< mtf::MCRIU::DistType >;\
+	template class mtf::SM< mtf::MCSAD::DistType >;\
+	template class mtf::SM< mtf::MCCCRE::DistType >;\
 	 _REGISTER_AM_TRACKERS_PCA(SM)\
 	 _REGISTER_AM_TRACKERS_DFM(SM)
 

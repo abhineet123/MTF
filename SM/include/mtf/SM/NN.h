@@ -15,14 +15,15 @@ template<class AM, class SSM>
 class NN : public SearchMethod < AM, SSM > {
 	init_profiling();
 public:
+	typedef typename AM::DistType DistType;
 	typedef flann::Matrix<double> flannMatT;
 	typedef flann::Matrix<int> flannResultT;
 	typedef unique_ptr<flannMatT> flannMatT_;
 
 	//typedef flann::Index<flann::L2<double> > flannIdxT;
-	typedef flann::Index<AM> FLANN;
+	typedef flann::Index<DistType> FLANN;
 	typedef unique_ptr<FLANN> FLANN_;
-	typedef gnn::FGNN<AM> FGNN;
+	typedef gnn::FGNN<DistType> FGNN;
 	typedef unique_ptr<FGNN> FGNN_;
 
 

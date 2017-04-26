@@ -18,10 +18,23 @@ struct NGFParams : AMParams{
 	NGFParams(const NGFParams *params = nullptr);
 };
 
+struct NGFDist : AMDist{
+	typedef double ElementType;
+	typedef double ResultType;
+	NGFDist(const string &_name, bool _use_ssd,
+		unsigned int _patch_size);
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override;
+private:
+	bool use_ssd;
+	unsigned int patch_size;
+};
+
 //! Normalized Gradient Fields
 class NGF : public AppearanceModel{
 public:
 	typedef NGFParams ParamType;
+	typedef NGFDist DistType;
 	typedef SparseMatrix<double> SpMat;
 	typedef Triplet<double> SpTr;
 
@@ -49,16 +62,16 @@ public:
 	};
 
 	// -------------------- distance feature functions -------------------- //
-	typedef double ElementType;
-	typedef double ResultType;
 	int feat_size;
 	VectorXd curr_feat_vec;
-	int getDistFeatSize() override{ return feat_size; }
+	const DistType* getDistPtr() override{
+		return new DistType(name, params.use_ssd, patch_size);
+	}
+	unsigned int getDistFeatSize() override{ return feat_size; }
 	void initializeDistFeat() override;
 	void updateDistFeat(double* feat_addr) override;
 	const double* getDistFeat() override{ return curr_feat_vec.data(); }
 	void updateDistFeat() override{ updateDistFeat(curr_feat_vec.data()); }
-	double operator()(const double* a, const double* b, size_t size, double worst_dist = -1) const override;
 
 protected:
 	ParamType params;

@@ -1,4 +1,4 @@
-set(STATE_SPACE_MODELS Spline LieHomography CBH Homography SL3 Affine Similitude Isometry AST IST Translation)
+set(STATE_SPACE_MODELS Spline LieHomography CBH Homography SL3 Affine ASRT Similitude Isometry AST IST Translation)
 set(SSM_MODULES ProjectiveBase SSMEstimatorParams)
 set(SSM_ESTIMATORS SSM Homography Affine )
 addPrefixAndSuffix("${STATE_SPACE_MODELS}" "SSM/src/" ".cc" STATE_SPACE_MODELS_SRC)

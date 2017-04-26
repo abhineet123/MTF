@@ -39,12 +39,33 @@ struct CCREParams : AMParams{
 	CCREParams(const CCREParams *params = nullptr);
 };
 
+struct CCREDist : AMDist{
+	typedef double ElementType;
+	typedef double ResultType;
+	CCREDist(const string &_name, int _n_bins,
+		unsigned int _feat_size, unsigned int _patch_size,
+		double _hist_pre_seed, double _pre_seed,
+		const int *__std_bspl_ids, double _hist_norm_mult,
+		double _log_hist_norm_mult);
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override;
+private:
+	int n_bins;
+	unsigned int feat_size;
+	unsigned int patch_size;
+	double pre_seed, hist_pre_seed;
+	const int *_std_bspl_ids;
+	double hist_norm_mult, log_hist_norm_mult;
+};
+
+
 //! Cross Cumulative Residual Entropy
 class CCRE : public AppearanceModel{
 
 public:
 
 	typedef CCREParams ParamType;	
+	typedef CCREDist DistType;
 
 	CCRE(const ParamType *ccre_params = nullptr, int _n_channels = 1);
 
@@ -75,13 +96,14 @@ public:
 	void cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobian,
 		const MatrixXd &curr_pix_hessian) override;
 
-	//-----------------------------------functor support-----------------------------------//
+	//-----------------------------------FLANN support-----------------------------------//
 	int feat_size;
 	VectorXd feat_vec;
-
-	typedef double ElementType;
-	typedef double ResultType;
-
+	const DistType* getDistPtr() override{
+		return new DistType(name, params.n_bins, feat_size,
+			patch_size, hist_pre_seed, params.pre_seed,
+			_std_bspl_ids.data(), hist_norm_mult, log_hist_norm_mult);
+	}
 	void initializeDistFeat() override{
 		feat_vec.resize(feat_size);
 	}
@@ -90,9 +112,7 @@ public:
 	}
 	const double* getDistFeat() override{ return feat_vec.data(); }
 	void updateDistFeat(double* feat_addr) override;
-	double operator()(const double* hist1_mat_addr, const double* hist2_mat_addr,
-		size_t hist_mat_size, double worst_dist = -1) const override;
-	int getDistFeatSize() override{ return feat_size; }
+	unsigned int getDistFeatSize() override{ return feat_size; }
 
 protected:
 	ParamType params;

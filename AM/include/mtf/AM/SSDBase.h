@@ -13,10 +13,11 @@ base class for appearance models that use the negative sum of squared difference
 L2 norm of the difference between the initial and current pixel values (original or modified)
 as the similarity measure
 */
-struct SSDDist : AMDist{
+struct SSDBaseDist : AMDist{
 	typedef bool is_kdtree_distance;
-
-	SSDDist(const string &_name) : AMDist(_name){}
+	typedef double ElementType;
+	typedef double ResultType;
+	SSDBaseDist(const string &_name) : AMDist(_name){}
 	/**
 	* Squared Euclidean distance functor, optimized version
 	*/
@@ -40,12 +41,11 @@ struct SSDDist : AMDist{
 	double accum_dist(const double& a, const double& b, int) const{
 		return (a - b)*(a - b);
 	}
-private:
-	~SSDDist(){}
 };
 class SSDBase : public AppearanceModel{
 
 public:
+	typedef SSDBaseDist DistType;
 	typedef IlluminationModel::PixHessType ILMPixHessT;
 
 	SSDBase(const AMParams *am_params = nullptr,
@@ -110,13 +110,12 @@ public:
 	/**
 	Support for FLANN library
 	*/
-	typedef SSDDist DistType;
 	const DistType* getDistPtr() override{
 		return new DistType(name);
 	}
 	void updateDistFeat(double* feat_addr) override{
-		int feat_size = getDistFeatSize();
-		for(size_t pix = 0; pix < feat_size; pix++) {
+		unsigned int feat_size = getDistFeatSize();
+		for(size_t pix = 0; pix < feat_size; ++pix) {
 			*feat_addr++ = It(pix);
 		}
 	}

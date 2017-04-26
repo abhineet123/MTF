@@ -34,7 +34,8 @@ namespace nt{
 		printf("ssm_state_size: %d\n", ssm_state_size);
 		printf("am_dist_size: %d\n", am_dist_size);
 
-		gnn_index.reset(new GNN(am.get(), params.n_samples, am_dist_size,
+		std::shared_ptr<const DistType> dist_func(am->getDistPtr());
+		gnn_index.reset(new GNN(dist_func, params.n_samples, am_dist_size,
 			am->isSymmetrical(), &params.gnn));
 
 		using_pix_sigma = params.processDistributions(state_sigma, state_mean,

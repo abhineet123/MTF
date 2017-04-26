@@ -1,5 +1,5 @@
 #include "mtf/SSM/SL3.h"
-#include "mtf/SSM/SSMEstimator.h"
+#include "mtf/SSM/HomographyEstimator.h"
 #include "mtf/Utilities/warpUtils.h"
 #include "mtf/Utilities/miscUtils.h"
 #include "mtf/Utilities/excpUtils.h"
@@ -8,6 +8,16 @@
 #include "opencv2/calib3d/calib3d.hpp"
 #include <boost/random/random_device.hpp>
 #include <boost/random/seed_seq.hpp>
+
+#define VALIDATE_SL3_WARP(warp) \
+	assert(warp.determinant() == 1.0);
+
+#define SL3_NORMALIZED_BASIS 0
+#define SL3_ITERATIVE_SAMPLE_MEAN 1
+#define SL3_SAMPLE_MEAN_MAX_ITERS 10
+#define SL3_SAMPLE_MEAN_EPS 1e-4
+#define SL3_DEBUG_MODE 0
+
 #ifndef SL3_MAX_VALID_VAL
 #define SL3_MAX_VALID_VAL 1e10
 #endif

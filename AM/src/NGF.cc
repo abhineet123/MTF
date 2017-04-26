@@ -12,6 +12,7 @@ double _eta, bool _use_ssd) :
 AMParams(am_params),
 eta(_eta),
 use_ssd(_use_ssd){}
+
 //! default/copy constructor
 NGFParams::NGFParams(const NGFParams *params) :
 AMParams(params),
@@ -22,6 +23,10 @@ use_ssd(NGF_USE_SSD){
 		use_ssd = params->use_ssd;
 	}
 }
+
+NGFDist::NGFDist(const string &_name, bool _use_ssd,
+	unsigned int _patch_size) : AMDist(_name),
+	use_ssd(_use_ssd), patch_size(_patch_size){}
 
 NGF::NGF(const ParamType *ngf_params, const int _n_channels) :
 AppearanceModel(ngf_params, _n_channels), params(ngf_params){
@@ -67,12 +72,12 @@ void NGF::initializeSimilarity(){
 		initializePixGrad(_init_pts);
 		double eps = params.eta*dI0_dx.cwiseAbs().sum() / static_cast<double>(patch_size);
 		double eps_squared = eps*eps;
-		for(int patch_id = 0; patch_id < patch_size; ++patch_id){
+		for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 			norm_dI0_dx.row(patch_id) = dI0_dx.row(patch_id) / (dI0_dx.row(patch_id).norm() + eps_squared);
 		}
 	} else{
 
-		//for(int patch_id = 0; patch_id < patch_size; ++patch_id){
+		//for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 		//	norm_dI0_dx.row(patch_id) = dI0_dx.row(patch_id) / (dI0_dx.row(patch_id).norm() + eps_squared);
 		//	double dot_prod = norm_dI0_dx(patch_id, 0)*norm_dI0_dx(patch_id, 0) + norm_dI0_dx(patch_id, 1)*norm_dI0_dx(patch_id, 1);
 		//	f += dot_prod*dot_prod;
@@ -89,8 +94,8 @@ void NGF::initializeSimilarity(){
 		grad_It_squared_norm.resize(n_pix);
 		const double eps_squared = 100 * 100;
 		double r1, r2;
-		for(int y = 0; y < resy; y++) {
-			for(int x = 0; x < resx; x++) {
+		for(unsigned int y = 0; y < resy; ++y) {
+			for(unsigned int x = 0; x < resx; ++x) {
 				unsigned int idx = x + y*resx;
 				if(x == 0) {
 					grad_It_x[idx] = grad_I0_x[idx] = (I0[idx + 1] - I0[idx]) / 2;
@@ -137,8 +142,8 @@ void NGF::initializeGrad(){
 	unsigned int k = 0;
 	std::vector<SpTr> _dr_dI;
 	_dr_dI.reserve(6 * n_pix);
-	for(int y = 0; y < resy; y++) {
-		for(int x = 0; x < resx; x++) {
+	for(unsigned int y = 0; y < resy; ++y) {
+		for(unsigned int x = 0; x < resx; ++x) {
 			unsigned int idx = x + y*resx;
 			int drcI;
 			double drcP;
@@ -291,21 +296,21 @@ void NGF::updateSimilarity(bool prereq_only){
 		updatePixGrad(_curr_pts);
 		double eps = params.eta*dIt_dx.cwiseAbs().sum() / static_cast<double>(patch_size);
 		double eps_squared = eps*eps;
-		for(int patch_id = 0; patch_id < patch_size; ++patch_id){
+		for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 			norm_dIt_dx.row(patch_id) = dIt_dx.row(patch_id) / (dIt_dx.row(patch_id).norm() + eps_squared);
 		}
 		f = -(norm_dI0_dx - norm_dIt_dx).squaredNorm();
 	} else{
 		f = 0;
-		//for(int patch_id = 0; patch_id < patch_size; ++patch_id){
+		//for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 		//	norm_dIt_dx.row(patch_id) = dIt_dx.row(patch_id) / (dIt_dx.row(patch_id).norm() + eps_squared);
 		//	double dot_prod = norm_dI0_dx(patch_id, 0)*norm_dIt_dx(patch_id, 0) + norm_dI0_dx(patch_id, 1)*norm_dIt_dx(patch_id, 1);
 		//	f += dot_prod*dot_prod;
 		//}
 		const double eps_squared = 100 * 100;
 		double r1, r2;
-		for(int y = 0; y < resy; y++) {
-			for(int x = 0; x < resx; x++) {
+		for(unsigned int y = 0; y < resy; ++y) {
+			for(unsigned int x = 0; x < resx; ++x) {
 				unsigned int idx = x + y*resx;
 				if(x == 0) {
 					grad_It_x[idx] = (It[idx + 1] - It[idx]) / 2;
@@ -345,8 +350,8 @@ void NGF::updateInitGrad(){
 	unsigned int k = 0;
 	std::vector<SpTr> _dr_dI;
 	_dr_dI.reserve(6 * n_pix);
-	for(int y = 0; y < resy; y++) {
-		for(int x = 0; x < resx; x++) {
+	for(unsigned int y = 0; y < resy; ++y) {
+		for(unsigned int x = 0; x < resx; ++x) {
 			unsigned int idx = x + y*resx;
 			int drcI;
 			double drcP;
@@ -496,8 +501,8 @@ void NGF::updateCurrGrad(){
 	unsigned int k = 0;
 	std::vector<SpTr> _dr_dI;
 	_dr_dI.reserve(6 * n_pix);
-	for(int y = 0; y < resy; y++) {
-		for(int x = 0; x < resx; x++) {
+	for(unsigned int y = 0; y < resy; ++y) {
+		for(unsigned int x = 0; x < resx; ++x) {
 			unsigned int idx = x + y*resx;
 			int drcI;
 			double drcP;
@@ -669,8 +674,8 @@ void NGF::updateDistFeat(double* feat_addr){
 		}
 	} else{
 		const double eps_squared = 100 * 100;
-		for(int y = 0; y < resy; y++) {
-			for(int x = 0; x < resx; x++) {
+		for(unsigned int y = 0; y < resy; ++y) {
+			for(unsigned int x = 0; x < resx; ++x) {
 				unsigned int idx = x + y*resx;
 				if(x == 0) {
 					feat_addr[idx * 2] = (It[idx + 1] - It[idx]) / 2;
@@ -695,10 +700,10 @@ void NGF::updateDistFeat(double* feat_addr){
 	}
 }
 
-double NGF::operator()(const double* a, const double* b, size_t size, double worst_dist) const{
+double NGFDist::operator()(const double* a, const double* b, size_t size, double worst_dist) const{
 	assert(size == patch_size * 2);
 	double dist = 0;
-	if(params.use_ssd){
+	if(use_ssd){
 		double diff0, diff1, diff2, diff3;
 		const double* last = a + size;
 		const double* lastgroup = last - 3;

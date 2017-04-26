@@ -14,22 +14,40 @@ struct SSDParams : AMParams{
 	SSDParams(const SSDParams *params = nullptr);
 };
 
+struct SSDDist : SSDBaseDist{
+	typedef double ElementType;
+	typedef double ResultType;
+	SSDDist(const string &_name, bool _dist_from_likelihood,
+		double _likelihood_alpha, unsigned int _patch_size);
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override{
+		double dist = SSDBaseDist::operator()(a, b, size, worst_dist);
+		return dist_from_likelihood ?
+			-exp(-likelihood_alpha * sqrt(dist / (static_cast<double>(patch_size)))) : dist;
+	}
+private:
+	bool dist_from_likelihood;
+	double likelihood_alpha;
+	unsigned int patch_size;
+};
+
 class SSD : public SSDBase{
 public:
 
 	typedef SSDParams ParamType;
+	typedef SSDDist DistType;
 
 	SSD(const ParamType *ssd_params = nullptr, const int _n_channels = 1);
 	double getLikelihood() const override{
 		return exp(-params.likelihood_alpha * sqrt(-f / (static_cast<double>(patch_size))));
 	}
-	double operator()(const double* a, const double* b,
-		size_t size, double worst_dist=-1) const override{
-		double dist = SSDBase::operator()(a, b, size, worst_dist);
-		return params.dist_from_likelihood ?
-			-exp(-params.likelihood_alpha * sqrt( dist / (static_cast<double>(patch_size)))) : dist;
-	}
 	void updateModel(const Matrix2Xd& curr_pts) override;
+
+	/*Support for FLANN library*/
+	const DistType* getDistPtr() override{
+		return new DistType(name, params.dist_from_likelihood, 
+			params.likelihood_alpha, patch_size);
+	}
 
 protected:
 	ParamType params;

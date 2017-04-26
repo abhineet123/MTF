@@ -3,8 +3,6 @@
 
 #include "AppearanceModel.h"
 
-#define RIU_DEBUG false
-
 _MTF_BEGIN_NAMESPACE
 
 struct RIUParams : AMParams{
@@ -19,10 +17,23 @@ struct RIUParams : AMParams{
 	RIUParams(const RIUParams *params = nullptr);
 };
 
+struct RIUDist : AMDist{
+	typedef double ElementType;
+	typedef double ResultType;
+	RIUDist(const string &_name, bool _dist_from_likelihood,
+		double _likelihood_alpha);
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override;
+private:
+	bool dist_from_likelihood;
+	double likelihood_alpha;
+};
+
 //! Ratio Image Uniformity
 class RIU : public AppearanceModel{
 public:
 	typedef RIUParams ParamType;
+	typedef RIUDist DistType;
 
 	RIU(const ParamType *riu_params = nullptr, const int _n_channels = 1);
 
@@ -52,10 +63,11 @@ public:
 		const MatrixXd &curr_pix_hessian) override;
 
 	// -------------------- distance feature functions -------------------- //
-	typedef double ElementType;
-	typedef double ResultType;
 	VectorXd curr_feat_vec;
-	int getDistFeatSize() override{ return patch_size + 1; }
+	const DistType* getDistPtr() override{
+		return new DistType(name, params.dist_from_likelihood, params.likelihood_alpha);
+	}
+	unsigned int getDistFeatSize() override{ return patch_size + 1; }
 	void initializeDistFeat() override{
 		curr_feat_vec.resize(patch_size + 1);
 	}
@@ -65,7 +77,6 @@ public:
 		updateDistFeat(curr_feat_vec.data());
 		curr_feat_vec[0] = 1;
 	}
-	double operator()(const double* a, const double* b, size_t size, double worst_dist = -1) const override;
 
 protected:
 	ParamType params;

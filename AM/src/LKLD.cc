@@ -2,6 +2,13 @@
 #include "mtf/Utilities/miscUtils.h"
 #include "mtf/Utilities/histUtils.h"
 
+#define LKLD_N_BINS 8
+#define LKLD_PRE_SEED 10
+#define LKLD_POU true
+#define LKLD_DEBUG_MODE false
+#define LKLD_SUB_REGIONS 3
+#define LKLD_SPACING 10
+
 _MTF_BEGIN_NAMESPACE
 
 //! value constructor
@@ -173,7 +180,7 @@ void LKLD::initializeSimilarity(){
 	_eig_set_zero(init_hist_mat, double);
 
 	double bspl, bspl_grad;
-	for(int pix_id = 0; pix_id < n_pix; pix_id++) {
+	for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id) {
 		_init_bspl_ids.row(pix_id) = _std_bspl_ids.row(static_cast<int>(I0(pix_id)));
 		double curr_diff = _init_bspl_ids(pix_id, 0) - I0(pix_id);
 		for(int hist_id = _init_bspl_ids(pix_id, 0); hist_id <= _init_bspl_ids(pix_id, 1); hist_id++) {
@@ -249,7 +256,7 @@ void LKLD::updateSimilarity(bool prereq_only){
 	// to take advantage of the many common computations involved
 	_eig_set_zero(curr_hist_mat, double);
 	_eig_set_zero(curr_hist_grad, double);
-	for(int pix = 0; pix < n_pix; pix++) {
+	for(unsigned int pix = 0; pix < n_pix; pix++) {
 		_curr_bspl_ids.row(pix) = _std_bspl_ids.row(static_cast<int>(It(pix)));
 		double curr_diff = _curr_bspl_ids(pix, 0) - It(pix);
 		for(int id = _curr_bspl_ids(pix, 0); id <= _curr_bspl_ids(pix, 1); id++) {
@@ -396,7 +403,7 @@ void LKLD::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jaco
 	// get first order hessian
 	cmptCurrHessian(curr_hessian, curr_pix_jacobian);
 
-	for(int pix_id = 0; pix_id < n_pix; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 		curr_hessian += df_dIt(pix_id) * MatrixXdM((double*)curr_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size);
 	}
 }
@@ -408,7 +415,7 @@ void LKLD::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jaco
 
 	cmptInitHessian(init_hessian, init_pix_jacobian);
 
-	for(int pix_id = 0; pix_id < n_pix; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 		init_hessian += df_dI0(pix_id) * MatrixXdM((double*)init_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size);
 	}
 }
@@ -429,7 +436,7 @@ void LKLD::initializeDistFeat(){
 void LKLD::updateDistFeat(double* feat_addr){
 	VectorXdM hist(feat_addr, params.n_bins);
 	hist.fill(0);
-	for(size_t pix_id = 0; pix_id < n_pix; pix_id++) {
+	for(size_t pix_id = 0; pix_id < n_pix; ++pix_id) {
 		int pix_val_floor = static_cast<int>(It(pix_id));
 		double pix_diff = _std_bspl_ids(pix_val_floor, 0) - It(pix_id);
 		for(int hist_id = _std_bspl_ids(pix_val_floor, 0); hist_id<=_std_bspl_ids(pix_val_floor, 1); hist_id++) {
@@ -446,12 +453,11 @@ void LKLD::updateDistFeat(double* feat_addr){
 	//}
 }
 
-double LKLD::operator()(const double* hist1_addr, const double* hist2_addr,
+double LKLDDist::operator()(const double* hist1_addr, const double* hist2_addr,
 	size_t hist_size, double worst_dist) const{
 	assert(hist_size == feat_size);
-
-	ResultType result = 0;
-	for(int hist_id = 0; hist_id < hist_size; hist_id++){
+	double result = 0;
+	for(int hist_id = 0; hist_id < hist_size; ++hist_id){
 		result -= (*hist1_addr) * log((*hist1_addr) / (*hist2_addr));
 		hist1_addr++;
 		hist2_addr++;

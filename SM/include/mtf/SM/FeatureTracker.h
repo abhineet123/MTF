@@ -1,11 +1,11 @@
 #ifndef MTF_FEATURE_TRACKER_H
 #define MTF_FEATURE_TRACKER_H
 
-//#define DISABLE_NN
+//#define DISABLE_FLANN
 
 #include "FeatureBase.h"
 #include "opencv2/nonfree/nonfree.hpp"
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 #include <flann/flann.hpp>
 #include "FLANNParams.h"
 #else
@@ -93,7 +93,7 @@ public:
 	typedef ParamType::DescriptorType DescriptorType;
 	typedef typename SSM::ParamType SSMParams;
 	typedef typename SSM::EstimatorParams EstimatorParams;
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 	typedef FLANNParams::IdxType IdxType;
 	typedef FLANNParams::SearchType SearchType;
 	typedef flann::Index<flann::L2<float> > flannIdxT;
@@ -147,7 +147,7 @@ private:
 	cv::FlannBasedMatcher matcher;
 	SIFTPtr feat;
 
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 	FlannIdxPtr flann_idx;
 	FlannMatPtr flann_dataset, flann_query;
 #endif

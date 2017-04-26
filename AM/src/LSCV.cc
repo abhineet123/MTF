@@ -5,6 +5,16 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
+#define LSCV_N_BINS 256
+#define LSCV_PRE_SEED 0
+#define LSCV_WEIGHTED_MAPPING 0
+#define LSCV_SUB_REGIONS 3
+#define LSCV_SPACING 10
+#define LSCV_AFFINE_MAPPING 0
+#define LSCV_ONCE_PER_FRAME 0
+#define LSCV_SHOW_SUBREGIONS 0
+#define LSCV_APPROX_DIST_FEAT 0
+
 _MTF_BEGIN_NAMESPACE
 
 //! value constructor
@@ -68,16 +78,18 @@ approx_dist_feat(LSCV_APPROX_DIST_FEAT){
 
 LSCVDist::LSCVDist(const string &_name, bool _approx_dist_feat,
 	int _n_bins, int _n_sub_regions_x, int _n_sub_regions_y,
+	int _n_sub_regions, int _intensity_range,
 	unsigned int _n_pix, unsigned int _resx, unsigned int _resy,
-	const MatrixX2i &_sub_region_x, const MatrixX2i &_sub_region_y,
-	const MatrixXd &_sub_region_wts, const MatrixXi &_subregion_idx,
-	const ColPivHouseholderQR<MatrixX2d> &_intensity_vals_dec) :
-	SSDDist(_name), approx_dist_feat(_approx_dist_feat),
+	const int *__sub_region_x, const int *__sub_region_y,
+	const double *__sub_region_wts, const int *__subregion_idx,
+	double *__intensity_vals) :
+	SSDBaseDist(_name), approx_dist_feat(_approx_dist_feat),
 	n_pix(_n_pix), resx(_resx), resy(_resy), n_bins(_n_bins),
 	n_sub_regions_x(_n_sub_regions_x), n_sub_regions_y(_n_sub_regions_y),
-	sub_region_x(_sub_region_x), sub_region_y(_sub_region_y),
-	sub_region_wts(_sub_region_wts), subregion_idx(_subregion_idx),
-	intensity_vals_dec(_intensity_vals_dec){}
+	n_sub_regions(_n_sub_regions), intensity_range(_intensity_range),
+	_sub_region_x(__sub_region_x), _sub_region_y(_sub_region_y),
+	_sub_region_wts(__sub_region_wts), _subregion_idx(__subregion_idx),
+	_intensity_vals(__intensity_vals){}
 
 LSCV::LSCV(const ParamType *lscv_params, int _n_channels) :
 SSDBase(lscv_params, _n_channels), params(lscv_params),
@@ -110,7 +122,7 @@ init_patch(0, 0, 0), curr_patch(0, 0, 0){
 	printf("norm_pix_min: %f\n", norm_pix_min);
 	printf("norm_pix_max: %f\n", norm_pix_max);
 
-	int intensity_range = norm_pix_max - norm_pix_min + 1;
+	intensity_range = static_cast<int>(norm_pix_max - norm_pix_min + 1);
 	intensity_vals.resize(intensity_range, Eigen::NoChange);
 	intensity_vals.col(0) = VectorXd::LinSpaced(intensity_range, norm_pix_min, norm_pix_max);
 	intensity_vals.col(1).fill(1);
@@ -168,14 +180,14 @@ init_patch(0, 0, 0), curr_patch(0, 0, 0){
 	}
 
 	sub_region_wts.resize(n_pix, n_sub_regions);
-	for(int pix_id = 0; pix_id < n_pix; pix_id++){
-		int pix_x = pix_id % resx;
-		int pix_y = pix_id / resx;
+	for(unsigned int pix_id = 0; pix_id < n_pix; pix_id++){
+		unsigned int pix_x = pix_id % resx;
+		unsigned int pix_y = pix_id / resx;
 		double pix_wt_sum = 0;
 		for(int idy = 0; idy < params.n_sub_regions_y; idy++){
 			for(int idx = 0; idx < params.n_sub_regions_x; idx++){
-				int diff_x = pix_x - sub_region_centers(_subregion_idx(idy, idx), 0);
-				int diff_y = pix_y - sub_region_centers(_subregion_idx(idy, idx), 1);
+				int diff_x = static_cast<int>(pix_x - sub_region_centers(_subregion_idx(idy, idx), 0));
+				int diff_y = static_cast<int>(pix_y - sub_region_centers(_subregion_idx(idy, idx), 1));
 				double pix_wt = 1.0 / static_cast<double>(1.0 + diff_x*diff_x + diff_y*diff_y);
 				pix_wt_sum += sub_region_wts(pix_id, _subregion_idx(idy, idx)) = pix_wt;
 			}
@@ -291,79 +303,6 @@ void LSCV::updateSimilarity(bool prereq_only){
 	SSDBase::updateSimilarity(prereq_only);
 }
 
-double LSCVDist::operator()(const double* a, const double* b,
-	size_t size, double worst_dist) const{
-	assert(size == n_pix);
-
-	if(approx_dist_feat){
-		return SSDDist::operator()(a, b, size, worst_dist);
-	}
-	Map<const MatrixXdr> _init_patch(a, resy, resx);
-	Map<const MatrixXdr> _curr_patch(b, resy, resx);
-	VectorXd _mapped_a = VectorXd::Zero(size);
-	for(int idx = 0; idx < n_sub_regions_x; ++idx){
-		int start_x = sub_region_x(idx, 0);
-		int end_x = sub_region_x(idx, 1);
-		for(int idy = 0; idy < n_sub_regions_y; ++idy){
-			MatrixXi _joint_hist = MatrixXi::Zero(n_bins, n_bins);
-			VectorXi _hist = VectorXi::Zero(n_bins);	
-			for(int y = sub_region_y(idy, 0); y <= sub_region_y(idy, 1); ++y) {
-				for(int x = start_x; x <= end_x; ++x) {
-					int pix1_int = static_cast<int>(_init_patch(y, x));
-					int pix2_int = static_cast<int>(_curr_patch(y, x));
-					_hist(pix1_int) += 1;
-					_joint_hist(pix2_int, pix1_int) += 1;
-				}
-			}
-			VectorXd _intensity_map(n_bins);
-			for(int bin_id = 0; bin_id < n_bins; ++bin_id){
-				if(_hist(bin_id) == 0){
-					_intensity_map(bin_id) = bin_id;
-				} else{
-					double wt_sum = 0;
-					for(int i = 0; i < n_bins; ++i){
-						wt_sum += i * _joint_hist(i, bin_id);
-					}
-					_intensity_map(bin_id) = wt_sum / _hist(bin_id);
-				}
-			}
-			Vector2d _affine_params = intensity_vals_dec.solve(_intensity_map);
-			for(int pix_id = 0; pix_id < n_pix; ++pix_id){
-				_mapped_a(pix_id) += (_affine_params(0)*a[pix_id] + _affine_params(1))
-					*sub_region_wts(pix_id, subregion_idx(idy, idx));
-			}
-		}
-	}
-
-	double result = 0;
-	const double* last = b + size;
-	const double* lastgroup = last - 3;
-	/**
-	Process 4 items with each loop for efficiency.
-	*/
-	const double* _a = _mapped_a.data();
-	while(b < lastgroup) {
-		double diff0 = b[0] - _a[0];
-		double diff1 = b[1] - _a[1];
-		double diff2 = b[2] - _a[2];
-		double diff3 = b[3] - _a[3];
-		result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3;
-		_a += 4;
-		b += 4;
-		if((worst_dist > 0) && (result > worst_dist)) {
-			return result;
-		}
-	}
-	/**
-	Process last 0-3 pixels.  Not needed for standard vector lengths.
-	*/
-	while(b < last) {
-		double diff0 = *_a++ - *b++;
-		result += diff0 * diff0;
-	}
-	return result;
-}
-
 void  LSCV::showSubRegions(const EigImgT& img, const Matrix2Xd& pts){
 	patch_img = cv::Mat(img.rows(), img.cols(), CV_32FC1, const_cast<float*>(img.data()));
 	patch_img_uchar.create(img.rows(), img.cols(), CV_8UC3);
@@ -409,6 +348,88 @@ void  LSCV::showSubRegions(const EigImgT& img, const Matrix2Xd& pts){
 		printf("sub_region_id: %d\n", sub_region_id);
 	}
 }
+
+
+double LSCVDist::operator()(const double* a, const double* b,
+	size_t size, double worst_dist) const{
+	assert(size == n_pix);
+
+	if(approx_dist_feat){
+		return SSDBaseDist::operator()(a, b, size, worst_dist);
+	}
+	Map<const MatrixXdr> _init_patch(a, resy, resx);
+	Map<const MatrixXdr> _curr_patch(b, resy, resx);
+	Map<const MatrixXi> sub_region_x(_sub_region_x, n_sub_regions_x, 2);
+	Map<const MatrixXi> sub_region_y(_sub_region_y, n_sub_regions_y, 2);
+	Map<const MatrixXd> sub_region_wts(_sub_region_wts, n_pix, n_sub_regions);
+	Map<const MatrixXi> subregion_idx(_subregion_idx, n_sub_regions_y, n_sub_regions_x);
+	Map<MatrixXd> intensity_vals(_intensity_vals, intensity_range, 2);
+	ColPivHouseholderQR<Map<MatrixXd>> intensity_vals_dec(intensity_vals);
+
+	VectorXd _mapped_a = VectorXd::Zero(size);
+	for(int idx = 0; idx < n_sub_regions_x; ++idx){
+		int start_x = sub_region_x(idx, 0);
+		int end_x = sub_region_x(idx, 1);
+		for(int idy = 0; idy < n_sub_regions_y; ++idy){
+			MatrixXi _joint_hist = MatrixXi::Zero(n_bins, n_bins);
+			VectorXi _hist = VectorXi::Zero(n_bins);
+			for(int y = sub_region_y(idy, 0); y <= sub_region_y(idy, 1); ++y) {
+				for(int x = start_x; x <= end_x; ++x) {
+					int pix1_int = static_cast<int>(_init_patch(y, x));
+					int pix2_int = static_cast<int>(_curr_patch(y, x));
+					_hist(pix1_int) += 1;
+					_joint_hist(pix2_int, pix1_int) += 1;
+				}
+			}
+			VectorXd _intensity_map(n_bins);
+			for(int bin_id = 0; bin_id < n_bins; ++bin_id){
+				if(_hist(bin_id) == 0){
+					_intensity_map(bin_id) = bin_id;
+				} else{
+					double wt_sum = 0;
+					for(int i = 0; i < n_bins; ++i){
+						wt_sum += i * _joint_hist(i, bin_id);
+					}
+					_intensity_map(bin_id) = wt_sum / _hist(bin_id);
+				}
+			}
+			Vector2d _affine_params = intensity_vals_dec.solve(_intensity_map);
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
+				_mapped_a(pix_id) += (_affine_params(0)*a[pix_id] + _affine_params(1))
+					*sub_region_wts(pix_id, subregion_idx(idy, idx));
+			}
+		}
+	}
+
+	double result = 0;
+	const double* last = b + size;
+	const double* lastgroup = last - 3;
+	/**
+	Process 4 items with each loop for efficiency.
+	*/
+	const double* _a = _mapped_a.data();
+	while(b < lastgroup) {
+		double diff0 = b[0] - _a[0];
+		double diff1 = b[1] - _a[1];
+		double diff2 = b[2] - _a[2];
+		double diff3 = b[3] - _a[3];
+		result += diff0 * diff0 + diff1 * diff1 + diff2 * diff2 + diff3 * diff3;
+		_a += 4;
+		b += 4;
+		if((worst_dist > 0) && (result > worst_dist)) {
+			return result;
+		}
+	}
+	/**
+	Process last 0-3 pixels.  Not needed for standard vector lengths.
+	*/
+	while(b < last) {
+		double diff0 = *_a++ - *b++;
+		result += diff0 * diff0;
+	}
+	return result;
+}
+
 
 _MTF_END_NAMESPACE
 

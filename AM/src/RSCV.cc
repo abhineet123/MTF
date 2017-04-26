@@ -3,6 +3,15 @@
 #include "mtf/Utilities/histUtils.h"
 #include "mtf/Utilities/miscUtils.h"
 
+#define RSCV_N_BINS 256
+#define RSCV_USE_BSPL 0
+#define RSCV_POU 0
+#define RSCV_PRE_SEED 0
+#define RSCV_WEIGHTED_MAPPING false
+#define RSCV_MAPPED_GRADIENT false
+#define RSCV_APPROX_DIST_FEAT true
+#define RSCV_DEBUG_MODE 0
+
 _MTF_BEGIN_NAMESPACE
 
 //! value constructor
@@ -49,7 +58,7 @@ debug_mode(RSCV_DEBUG_MODE){
 }
 
 RSCVDist::RSCVDist(const string &_name, unsigned int _patch_size,
-	int _n_bins, bool _approx_dist_feat) : SSDDist(_name),
+	int _n_bins, bool _approx_dist_feat) : SSDBaseDist(_name),
 	patch_size(_patch_size), n_bins(_n_bins),
 	approx_dist_feat(_approx_dist_feat){}
 
@@ -398,7 +407,7 @@ double RSCVDist::operator()(const double* a, const double* b,
 	assert(size == patch_size);
 
 	if(approx_dist_feat){
-		return SSDDist::operator()(a, b, size, worst_dist);
+		return SSDBaseDist::operator()(a, b, size, worst_dist);
 	}
 	MatrixXi joint_hist = MatrixXi::Zero(n_bins, n_bins);
 	VectorXi hist = VectorXi::Zero(n_bins);

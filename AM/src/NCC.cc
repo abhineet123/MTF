@@ -8,6 +8,8 @@
 #include "tbb/tbb.h" 
 #endif
 
+
+#define NCC_FAST_HESS 0
 //! OpenMP scheduler
 #ifndef NCC_OMP_SCHD
 #define NCC_OMP_SCHD auto
@@ -59,7 +61,7 @@ void NCC::initializeSimilarity(){
 	if(spi_mask){
 		I0_mean = utils::getMean(spi_mask, I0, patch_size);
 		c = 0;
-		for(int patch_id = 0; patch_id < patch_size; patch_id++){
+		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 			if(!spi_mask[patch_id]){ continue; }
 			I0_cntr[patch_id] = I0[patch_id] - I0_mean;
 			c += I0_cntr[patch_id] * I0_cntr[patch_id];
@@ -116,7 +118,7 @@ void NCC::updateSimilarity(bool prereq_only){
 	if(spi_mask){
 		It_mean = utils::getMean(spi_mask, It, patch_size);
 		a = b = 0;
-		for(int patch_id = 0; patch_id < patch_size; patch_id++){
+		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 			if(!spi_mask[patch_id]){ continue; }
 			It_cntr[patch_id] = It[patch_id] - It_mean;
 			a += I0_cntr[patch_id] * It_cntr[patch_id];
@@ -127,7 +129,7 @@ void NCC::updateSimilarity(bool prereq_only){
 #endif
 		It_mean = It.mean();
 		a = b = 0;
-		for(int patch_id = 0; patch_id < patch_size; ++patch_id){
+		for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 			It_cntr[patch_id] = It[patch_id] - It_mean;
 			a += I0_cntr[patch_id] * It_cntr[patch_id];
 			b += It_cntr[patch_id] * It_cntr[patch_id];
@@ -151,7 +153,7 @@ void NCC::updateInitGrad(){
 	if(spi_mask){
 		df_dI0_ncntr_mean = 0;
 		int valid_patch_size = 0;
-		for(int patch_id = 0; patch_id < patch_size; patch_id++){
+		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 			if(!spi_mask[patch_id]){ continue; }
 			It_cntr_b(patch_id) = It_cntr(patch_id) / b;
 			df_dI0_ncntr(patch_id) = (It_cntr_b(patch_id) - f*I0_cntr_c(patch_id)) / c;
@@ -162,7 +164,7 @@ void NCC::updateInitGrad(){
 	} else{
 #endif
 		df_dI0_ncntr_mean = 0;
-		for(int patch_id = 0; patch_id < patch_size; patch_id++){
+		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 			It_cntr_b(patch_id) = It_cntr(patch_id) / b;
 			df_dI0_ncntr(patch_id) = (It_cntr_b(patch_id) - f*I0_cntr_c(patch_id)) / c;
 			df_dI0_ncntr_mean += df_dI0_ncntr(patch_id);
@@ -180,7 +182,7 @@ void NCC::updateCurrGrad(){
 	if(spi_mask){
 		df_dIt_ncntr_mean = 0;
 		int valid_patch_size = 0;
-		for(int patch_id = 0; patch_id < patch_size; patch_id++){
+		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 			if(!spi_mask[patch_id]){ continue; }
 			It_cntr_b(patch_id) = It_cntr(patch_id) / b;
 			df_dIt_ncntr(patch_id) = (I0_cntr_c(patch_id) - f*It_cntr_b(patch_id)) / b;
@@ -191,7 +193,7 @@ void NCC::updateCurrGrad(){
 	} else{
 #endif
 		df_dIt_ncntr_mean = 0;
-		for(int patch_id = 0; patch_id < patch_size; patch_id++){
+		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 			It_cntr_b(patch_id) = It_cntr(patch_id) / b;
 			df_dIt_ncntr(patch_id) = (I0_cntr_c(patch_id) - f*It_cntr_b(patch_id)) / b;
 			df_dIt_ncntr_mean += df_dIt_ncntr(patch_id);
@@ -315,7 +317,7 @@ void NCC::cmptSelfHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp){
 		MatrixXd dIt_dp_cntr = (dIt_dp.rowwise() - dIt_dp_mean).array() / b;
 		if(params.fast_hess){
 			d2f_dp2.setZero();
-			for(int patch_id = 0; patch_id < patch_size; patch_id++){
+			for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 				if(!spi_mask[patch_id]){ continue; }
 				d2f_dp2 += -dIt_dp_cntr.row(patch_id).transpose()*dIt_dp_cntr.row(patch_id)
 					+
@@ -325,7 +327,7 @@ void NCC::cmptSelfHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp){
 			}
 		} else{
 			d2f_dp2.setZero();
-			for(int patch_id = 0; patch_id < patch_size; patch_id++){
+			for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 				if(!spi_mask[patch_id]){ continue; }
 				d2f_dp2 += -dIt_dp_cntr.row(patch_id).transpose()*dIt_dp_cntr.row(patch_id)
 					+
@@ -365,7 +367,7 @@ void NCC::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jacob
 	int ssm_state_size = init_hessian.rows();
 	assert(init_pix_hessian.rows() == ssm_state_size * ssm_state_size);
 	cmptInitHessian(init_hessian, init_pix_jacobian);
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++){
 		spi_pt_check(spi_mask, pix_id);
 		init_hessian += Map<const MatrixXd>(init_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size) * df_dI0(pix_id);;
 	}
@@ -375,7 +377,7 @@ void NCC::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacob
 	int ssm_state_size = curr_hessian.rows();
 	assert(curr_pix_hessian.rows() == ssm_state_size * ssm_state_size);
 	cmptCurrHessian(curr_hessian, curr_pix_jacobian);
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++){
 		spi_pt_check(spi_mask, pix_id);
 		curr_hessian += Map<const MatrixXd>(curr_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size) * df_dIt(pix_id);;
 	}
@@ -539,32 +541,6 @@ void NCC::updateDistFeat(double* feat_addr){
 	}
 }
 
-double NCC::operator()(const double* a, const double* b,
-	size_t size, double worst_dist) const {
-	assert(size == patch_size);
-
-	double num = 0;
-	const double* last = a + size;
-	const double* lastgroup = last - 3;
-
-	/* Process 4 items with each loop for efficiency. */
-	while(a < lastgroup) {
-
-		num += a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
-		a += 4;
-		b += 4;
-	}
-	/* Process last 0-3 pixels.  Not needed for standard vector lengths. */
-	while(a < last) {
-
-		num += *a * *b;
-		a++;
-		b++;
-	}
-	return -num;
-}
-
-
 void NCC::updateModel(const Matrix2Xd& curr_pts){
 	assert(curr_pts.cols() == n_pix);
 	++frame_count;
@@ -599,6 +575,31 @@ void NCC::updateModel(const Matrix2Xd& curr_pts){
 	}
 	//! re initialize any quantities that depend on the template
 	reinitialize();
+}
+
+double NCCDist::operator()(const double* a, const double* b,
+	size_t size, double worst_dist) const {
+	assert(size == patch_size);
+
+	double num = 0;
+	const double* last = a + size;
+	const double* lastgroup = last - 3;
+
+	/* Process 4 items with each loop for efficiency. */
+	while(a < lastgroup) {
+
+		num += a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
+		a += 4;
+		b += 4;
+	}
+	/* Process last 0-3 pixels.  Not needed for standard vector lengths. */
+	while(a < last) {
+
+		num += *a * *b;
+		a++;
+		b++;
+	}
+	return -num;
 }
 
 _MTF_END_NAMESPACE

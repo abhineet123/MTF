@@ -3,16 +3,6 @@
 
 #include "SSDBase.h"
 
-#define SCV_N_BINS 256
-#define SCV_HIST_TYPE HistType::Dirac
-#define SCV_POU false
-#define SCV_PRE_SEED 0
-#define SCV_WEIGHTED_MAPPING false
-#define SCV_MAPPED_GRADIENT false
-#define SCV_APPROX_DIST_FEAT false
-#define SCV_LIKELIHOOD_ALPHA 50
-#define SCV_DEBUG_MODE false
-
 _MTF_BEGIN_NAMESPACE
 
 struct SCVParams : AMParams{
@@ -65,7 +55,9 @@ struct SCVParams : AMParams{
 	SCVParams(const SCVParams *params = nullptr);
 };
 
-struct SCVDist : SSDDist{
+struct SCVDist : SSDBaseDist{
+	typedef double ElementType;
+	typedef double ResultType;
 	SCVDist(const string &_name, unsigned int _patch_size,
 		int _n_bins, bool _approx_dist_feat);
 	double operator()(const double* a, const double* b,
@@ -74,7 +66,6 @@ private:
 	unsigned int patch_size;
 	int n_bins;
 	bool approx_dist_feat;
-	~SCVDist(){}
 };
 
 //! Sum of Conditional Variance

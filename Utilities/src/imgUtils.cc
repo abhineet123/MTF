@@ -166,7 +166,7 @@ namespace utils{
 		//printf("n_pix: %d\t pix_vals.size(): %l\t pts.cols(): %l", n_pix, pix_vals.size(),  pts.cols());
 		assert(pix_vals.size() == n_pix && pts.cols() == n_pix);
 
-		for(int i = 0; i < n_pix; i++){
+		for(unsigned int i = 0; i < n_pix; i++){
 			pix_vals(i) = norm_mult * getPixVal<PIX_INTERP_TYPE, PIX_BORDER_TYPE>(img, pts(0, i), pts(1, i), h, w) + norm_add;
 		}
 	}
@@ -504,7 +504,7 @@ namespace utils{
 		}
 	}
 	void getWeightedPixVals(VectorXd &pix_vals, const EigImgT &img, const PtsT &pts,
-		int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+		unsigned int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
 		unsigned int h, unsigned int w, double norm_mult, double norm_add){
 		if(use_running_avg){
 			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
@@ -535,7 +535,7 @@ namespace utils{
 			//printf("n_pix: %d\t pix_vals.size(): %l\t pts.cols(): %l", n_pix, pix_vals.size(),  pts.cols());
 			assert(pix_vals.size() == n_pix && pts.cols() == n_pix);
 
-			for(int i = 0; i < n_pix; i++){
+			for(unsigned int i = 0; i < n_pix; i++){
 				pix_vals(i) = norm_mult * PixVal<ScalarType, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::
 					get(img, pts(0, i), pts(1, i), h, w) + norm_add;
 				//pix_vals(i) = 0;
@@ -881,7 +881,7 @@ namespace utils{
 		}
 		template<typename ScalarType>
 		void getWeightedPixVals(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+			unsigned int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
 			unsigned int h, unsigned int w, double norm_mult, double norm_add){
 
 			double *pix_data = pix_vals.data();
@@ -932,7 +932,7 @@ namespace utils{
 					warped_offset_pts(5, pix_id), h, w);
 				PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_dec_y, img, warped_offset_pts(6, pix_id),
 					warped_offset_pts(7, pix_id), h, w);
-				for(int channel_id = 0; channel_id < 3; ++channel_id){
+				for(unsigned int channel_id = 0; channel_id < 3; ++channel_id){
 					warped_img_grad(ch_pix_id, 0) = (pix_val_inc_x[channel_id] - pix_val_dec_x[channel_id])*grad_mult_factor;
 					warped_img_grad(ch_pix_id, 1) = (pix_val_inc_y[channel_id] - pix_val_dec_y[channel_id])*grad_mult_factor;
 					++ch_pix_id;
@@ -962,7 +962,7 @@ namespace utils{
 					warped_offset_pts(4, pix_id), warped_offset_pts(5, pix_id), h, w);
 				PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_dec_y, img,
 					warped_offset_pts(6, pix_id), warped_offset_pts(7, pix_id), h, w);
-				for(int channel_id = 0; channel_id < 3; ++channel_id){
+				for(unsigned int channel_id = 0; channel_id < 3; ++channel_id){
 					warped_img_grad(ch_pix_id, 0) = (mapPixVal<mapping_type>(pix_val_inc_x[channel_id], intensity_map)
 						- mapPixVal<mapping_type>(pix_val_dec_x[channel_id], intensity_map))*grad_mult_factor;
 					warped_img_grad(ch_pix_id, 1) = (mapPixVal<mapping_type>(pix_val_inc_y[channel_id], intensity_map)
@@ -994,7 +994,7 @@ namespace utils{
 				PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_inc_y, img, curr_x, curr_y + grad_eps, h, w);
 				PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_dec_y, img, curr_x, curr_y - grad_eps, h, w);
 
-				for(int channel_id = 0; channel_id < 3; ++channel_id){
+				for(unsigned int channel_id = 0; channel_id < 3; ++channel_id){
 					img_grad(ch_pix_id, 0) = (pix_val_inc_x[channel_id] - pix_val_dec_x[channel_id])*grad_mult_factor;
 					img_grad(ch_pix_id, 1) = (pix_val_inc_y[channel_id] - pix_val_dec_y[channel_id])*grad_mult_factor;
 					++ch_pix_id;
@@ -1022,7 +1022,7 @@ namespace utils{
 				PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_inc_y, img, curr_x, curr_y + grad_eps, h, w);
 				PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_dec_y, img, curr_x, curr_y - grad_eps, h, w);
 
-				for(int channel_id = 0; channel_id < 3; ++channel_id){
+				for(unsigned int channel_id = 0; channel_id < 3; ++channel_id){
 					img_grad(ch_pix_id, 0) = (mapPixVal<mapping_type>(pix_val_inc_x[channel_id], intensity_map) -
 						mapPixVal<mapping_type>(pix_val_dec_x[channel_id], intensity_map))*grad_mult_factor;
 					img_grad(ch_pix_id, 1) = (mapPixVal<mapping_type>(pix_val_inc_y[channel_id], intensity_map) -
@@ -1063,7 +1063,7 @@ namespace utils{
 				PixVal<ScalarType, HESS_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_inc_yx, img, warped_offset_pts(12, pix_id), warped_offset_pts(13, pix_id), h, w);
 				PixVal<ScalarType, HESS_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_dec_yx, img, warped_offset_pts(14, pix_id), warped_offset_pts(15, pix_id), h, w);
 
-				for(int channel_id = 0; channel_id < 3; ++channel_id){
+				for(unsigned int channel_id = 0; channel_id < 3; ++channel_id){
 					warped_img_hess(0, ch_pix_id) = (pix_val_inc_x[channel_id] + pix_val_dec_x[channel_id] - 2 * pix_val[channel_id])*hess_mult_factor;
 					warped_img_hess(3, ch_pix_id) = (pix_val_inc_y[channel_id] + pix_val_dec_y[channel_id] - 2 * pix_val[channel_id])*hess_mult_factor;
 					warped_img_hess(1, ch_pix_id) = warped_img_hess(2, ch_pix_id) = ((pix_val_inc_xy[channel_id] + pix_val_dec_xy[channel_id]) -
@@ -1105,7 +1105,7 @@ namespace utils{
 				PixVal<ScalarType, HESS_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_inc_yx, img, warped_offset_pts(12, pix_id), warped_offset_pts(13, pix_id), h, w);
 				PixVal<ScalarType, HESS_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_dec_yx, img, warped_offset_pts(14, pix_id), warped_offset_pts(15, pix_id), h, w);
 
-				for(int channel_id = 0; channel_id < 3; ++channel_id){
+				for(unsigned int channel_id = 0; channel_id < 3; ++channel_id){
 					warped_img_hess(0, ch_pix_id) = (mapPixVal<mapping_type>(pix_val_inc_x[channel_id], intensity_map) +
 						mapPixVal<mapping_type>(pix_val_dec_x[channel_id], intensity_map) -
 						2 * mapPixVal<mapping_type>(pix_val[channel_id], intensity_map))*hess_mult_factor;
@@ -1155,7 +1155,7 @@ namespace utils{
 				PixVal<ScalarType, HESS_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_inc_yx, img, inc_x, dec_y, h, w);
 				PixVal<ScalarType, HESS_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_dec_yx, img, dec_x, inc_y, h, w);
 
-				for(int channel_id = 0; channel_id < 3; ++channel_id){
+				for(unsigned int channel_id = 0; channel_id < 3; ++channel_id){
 					img_hess(0, ch_pix_id) = (pix_val_inc_x[channel_id] + pix_val_dec_x[channel_id] - 2 * pix_val[channel_id]) * hess_mult_factor;
 					img_hess(3, ch_pix_id) = (pix_val_inc_y[channel_id] + pix_val_dec_y[channel_id] - 2 * pix_val[channel_id]) * hess_mult_factor;
 					img_hess(1, ch_pix_id) = img_hess(2, ch_pix_id) = ((pix_val_inc_xy[channel_id] + pix_val_dec_xy[channel_id]) -
@@ -1196,7 +1196,7 @@ namespace utils{
 				PixVal<ScalarType, HESS_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_ixdy, img, inc_x, dec_y, h, w);
 				PixVal<ScalarType, HESS_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_val_dxiy, img, dec_x, inc_y, h, w);
 
-				for(int channel_id = 0; channel_id < 3; ++channel_id){
+				for(unsigned int channel_id = 0; channel_id < 3; ++channel_id){
 					img_hess(0, ch_pix_id) = (mapPixVal<mapping_type>(pix_val_inc_x[channel_id], intensity_map) +
 						mapPixVal<mapping_type>(pix_val_dec_x[channel_id], intensity_map) - 2 * mapPixVal<mapping_type>(pix_val[channel_id], intensity_map)) * hess_mult_factor;
 
@@ -1443,12 +1443,12 @@ namespace utils{
 
 	void generateWarpedImg(cv::Mat &warped_img, const cv::Mat &warped_corners,
 		const mtf::PtsT &warped_pts, const mtf::PixValT orig_patch,
-		const cv::Mat &orig_img, int img_width, int img_height,
-		int n_pts, int background_type, bool show_warped_img, const char* win_name){
+		const cv::Mat &orig_img, unsigned int img_width, unsigned int img_height,
+		unsigned int n_pts, int background_type, bool show_warped_img, const char* win_name){
 
 		double inf = std::numeric_limits<double>::infinity();
 		double max_x = -inf, min_x = inf, max_y = -inf, min_y = inf;
-		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 			if(warped_pts(0, pt_id) > max_x){
 				max_x = warped_pts(0, pt_id);
 			}
@@ -1464,8 +1464,8 @@ namespace utils{
 		}
 		//printf("min_x: %f max_x: %f min_y: %f max_y: %f\n", min_x, max_x, min_y, max_y);
 
-		for(int row_id = 0; row_id < img_height; ++row_id){
-			for(int col_id = 0; col_id < img_width; ++col_id){
+		for(unsigned int row_id = 0; row_id < img_height; ++row_id){
+			for(unsigned int col_id = 0; col_id < img_width; ++col_id){
 				if(row_id < min_y || row_id > max_y ||
 					col_id < min_x || col_id > max_x ||
 					!mtf::utils::isInsideRegion(warped_corners, col_id, row_id)){
@@ -1527,8 +1527,8 @@ namespace utils{
 						if(warped_img.type() == CV_8UC3){
 							cv::Vec3d orig_pix_vals[4];
 							//printf("orig_pix_vals:\n");
-							for(int pt_id = 0; pt_id < 4; ++pt_id){
-								for(int channel_id = 0; channel_id < 3; ++channel_id){
+							for(unsigned int pt_id = 0; pt_id < 4; ++pt_id){
+								for(unsigned int channel_id = 0; channel_id < 3; ++channel_id){
 									orig_pix_vals[pt_id][channel_id] = orig_patch[neigh_pts_id[pt_id] * 3 + channel_id];
 									//printf("%f\t", orig_pix_vals[pt_id][channel_id]);
 								}
@@ -1559,7 +1559,7 @@ namespace utils{
 						} else{
 							double orig_pix_vals[4];
 							//printf("orig_pix_vals:\n");
-							for(int pt_id = 0; pt_id < 4; ++pt_id){
+							for(unsigned int pt_id = 0; pt_id < 4; ++pt_id){
 								orig_pix_vals[pt_id] = orig_patch[neigh_pts_id[pt_id]];
 							}
 							double  pix_val = (
@@ -1585,7 +1585,7 @@ namespace utils{
 		int n_pts, bool show_warped_img, const char* win_name){
 		assert(n_pts == img_width*img_height);
 
-		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 			int col_id = pt_id % img_width;
 			int row_id = pt_id / img_width;
 
@@ -1597,7 +1597,7 @@ namespace utils{
 				double pix_vals[3];
 				mc::PixVal<ScalarType, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(pix_vals, orig_img,
 					warped_pts(0, pt_id), warped_pts(1, pt_id), img_height, img_width);
-				for(int channel_id = 0; channel_id < 3; ++channel_id){
+				for(unsigned int channel_id = 0; channel_id < 3; ++channel_id){
 					pix_vals[channel_id] = min(255.0, pix_vals[channel_id]);
 					pix_vals[channel_id] = max(0.0, pix_vals[channel_id]);
 				}
@@ -1624,19 +1624,19 @@ namespace utils{
 
 
 	void generateInverseWarpedImg(cv::Mat &warped_img,
-		const PixValT &pix_vals, int img_width, int img_height,
-		int n_pts, bool show_warped_img, const char* win_name){
+		const PixValT &pix_vals, unsigned int img_width, unsigned int img_height,
+		unsigned int n_pts, bool show_warped_img, const char* win_name){
 		assert(n_pts == img_width*img_height);
 		assert((warped_img.type() == CV_8UC3 && pix_vals.size() == n_pts * 3) ||
 			(warped_img.type() == CV_8UC1 && pix_vals.size() == n_pts));
 
-		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
-			int col_id = pt_id % img_width;
-			int row_id = pt_id / img_width;
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
+			unsigned int col_id = pt_id % img_width;
+			unsigned int row_id = pt_id / img_width;
 
 			if(warped_img.type() == CV_8UC3){
 				double pix_val[3];
-				for(int channel_id = 0; channel_id < 3; ++channel_id){
+				for(unsigned int channel_id = 0; channel_id < 3; ++channel_id){
 					pix_val[channel_id] = pix_vals[pt_id * 3 + channel_id];
 					pix_val[channel_id] = min(255.0, pix_val[channel_id]);
 					pix_val[channel_id] = max(0.0, pix_val[channel_id]);
@@ -1695,15 +1695,15 @@ namespace utils{
 
 	void writePixelsToImage(cv::Mat &img, 
 		const PixValT &pix_vals, const mtf::PtsT &pts, 
-		int n_channels, cv::Mat &mask){
-		int n_pts = pts.cols();
+		unsigned int n_channels, cv::Mat &mask){
+		unsigned int n_pts = pts.cols();
 		assert(pix_vals.size() == n_pts*n_channels);
 
 		bool use_mask = !mask.empty();
 		MatrixXd min_dist(img.rows, img.cols);
 		min_dist.fill(-1);
 
-		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 			int min_x = static_cast<int>(pts(0, pt_id));
 			int min_y = static_cast<int>(pts(1, pt_id));
 			int max_x = min_x + 1;
@@ -1846,7 +1846,7 @@ namespace utils{
 			double norm_mult, double norm_add);
 		template
 			void getWeightedPixVals<float>(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+			unsigned int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
 			unsigned int h, unsigned int w, double norm_mult, double norm_add);
 		template
 			void getWarpedImgHess<float>(PixHessT &warped_img_hess,
@@ -1938,7 +1938,7 @@ namespace utils{
 			double norm_mult, double norm_add);
 		template
 			void getWeightedPixVals<uchar>(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+			unsigned int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
 			unsigned int h, unsigned int w, double norm_mult, double norm_add);
 
 		template
@@ -2031,7 +2031,7 @@ namespace utils{
 			double norm_mult, double norm_add);
 		template
 			void getWeightedPixVals<float>(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+			unsigned int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
 			unsigned int h, unsigned int w, double norm_mult, double norm_add);
 		template
 			void getWarpedImgHess<float>(PixHessT &warped_img_hess,
@@ -2123,7 +2123,7 @@ namespace utils{
 			double norm_mult, double norm_add);
 		template
 			void getWeightedPixVals<uchar>(VectorXd &pix_vals, const cv::Mat &img, const PtsT &pts,
-			int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
+			unsigned int frame_count, double alpha, bool use_running_avg, unsigned int n_pix,
 			unsigned int h, unsigned int w, double norm_mult, double norm_add);
 
 		template

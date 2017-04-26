@@ -1,13 +1,6 @@
 #ifndef MTF_LKLD_H
 #define MTF_LKLD_H
 
-#define LKLD_N_BINS 8
-#define LKLD_PRE_SEED 10
-#define LKLD_POU true
-#define LKLD_DEBUG_MODE false
-#define LKLD_SUB_REGIONS 3
-#define LKLD_SPACING 10
-
 #include "AppearanceModel.h"
 
 _MTF_BEGIN_NAMESPACE
@@ -44,10 +37,24 @@ struct LKLDParams : AMParams{
 	//! default/copy constructor
 	LKLDParams(const  LKLDParams *params = nullptr);
 };
+
+struct LKLDDist : AMDist{
+	typedef double ElementType;
+	typedef double ResultType;
+	LKLDDist(const string &_name, unsigned int _feat_size) :
+		AMDist(_name), feat_size(_feat_size){}
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override;
+private:
+	unsigned int feat_size;
+};
+
+
 // Localized Kullback–Leibler Divergence
 class LKLD : public AppearanceModel{
 public:
 	typedef LKLDParams ParamType;
+	typedef LKLDDist DistType;
 
 	LKLD(const ParamType *kld_params = nullptr);
 
@@ -75,20 +82,19 @@ public:
 	void cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobian,
 		const MatrixXd &curr_pix_hessian) override;
 
-	//----------------- functor support--------------------------------------
-	typedef double ElementType;
-	typedef double ResultType;
-
+	/**
+	Support for FLANN library
+	*/
+	const DistType* getDistPtr() override{
+		return new DistType(name, feat_size);
+	}
 	void initializeDistFeat() override;
-
-	int getDistFeatSize() override{ return feat_size; }
+	unsigned int getDistFeatSize() override{ return feat_size; }
 	void updateDistFeat() override{
 		updateDistFeat(feat_vec.data());
 	}
 	const double* getDistFeat() override{ return feat_vec.data(); }
 	void updateDistFeat(double* feat_addr) override;
-	double operator() (const double* hist1_mat_addr, const double* hist2_mat_addr,
-		size_t hist_mat_size, double worst_dist = -1) const override;
 
 private:
 

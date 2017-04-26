@@ -424,12 +424,7 @@ namespace utils{
 	ProjWarpT computeASRTDLT(const CornersT &in_corners, const CornersT &out_corners){
 		Matrix85d A;
 		A.fill(0);
-		// flattened version of the 2x4 matrix of target corner points
-		//Map<Vector8d> in_corners_vec((double*)in_corners.data());
-		//Map<Vector8d> out_corners_vec((double*)out_corners.data());
-		//Vector8d corner_diff_vec = out_corners_vec - in_corners_vec;
-
-		Vector10d corner_diff_vec;
+		Vector8d corner_diff_vec;
 		for(int corner_id = 0; corner_id < 4; corner_id++){
 			int r1 = 2 * corner_id;
 			A(r1, 0) = 1;

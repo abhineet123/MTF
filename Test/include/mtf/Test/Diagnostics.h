@@ -49,8 +49,10 @@ public:
 	};
 
 	typedef DiagnosticsParams ParamType;
+	typedef AMDist DistType;
 	typedef std::shared_ptr<mtf::StateSpaceModel> SSM;
 	typedef std::shared_ptr<mtf::AppearanceModel> AM;
+	typedef std::shared_ptr<const DistType> DistTypePtr;
 	typedef AnalyticalDataType ADT;
 	typedef NumericalDataType NDT;
 	typedef ParamType::UpdateType UpdateType;
@@ -102,6 +104,7 @@ private:
 
 	AM am;
 	SSM ssm;
+	DistTypePtr dist_func;
 
 	VectorXd inv_ssm_state, inv_am_state;
 

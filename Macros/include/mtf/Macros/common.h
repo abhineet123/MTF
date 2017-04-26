@@ -50,7 +50,9 @@
 	clock_t time_instant = clock()
 #define mtf_clock_measure(start_time, end_time, elapsed_time) \
 	elapsed_time = static_cast<double>(end_time - start_time)/CLOCKS_PER_SEC
-
+//! disable the annoying: warning C4503: 'Eigen::DenseBase<Derived>': decorated name length exceeded, name was truncated
+//! error in VS
+#pragma warning(disable:4503)
 #else
 #include <ctime> 
 #define mtf_clock_get(time_instant) \

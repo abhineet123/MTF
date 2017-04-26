@@ -198,7 +198,7 @@ double Diagnostics::getADTVal(ADT data_type, int state_id){
 		am->updatePixVals(ssm->getPts());
 		am->updateDistFeat();
 		//utils::printMatrixToFile(am->updateDistFeat().transpose().eval(), "curr_dist_vec", "log/diag_log.txt");
-		return (*am)(init_dist_vec.data(), am->getDistFeat(), am_dist_size);
+		return (*dist_func)(init_dist_vec.data(), am->getDistFeat(), am_dist_size);
 	case  ADT::StdJac:
 		updateCurrGrad();
 		updateCurrPixJacobian();

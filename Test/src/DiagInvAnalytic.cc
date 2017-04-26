@@ -106,7 +106,7 @@ double Diagnostics::getInvADTVal(ADT data_type, int state_id){
 		// don't need curr_pix_vals anymore so can safely overwrite with the values extracted from init_img
 		am->updatePixVals(ssm->getPts());
 		am->updateDistFeat();
-		return (*am)(am->getDistFeat(), curr_dist_vec.data(), am_dist_size);		
+		return (*dist_func)(am->getDistFeat(), curr_dist_vec.data(), am_dist_size);
 	case  ADT::StdJac:
 		updateInitGrad();
 		updateInitPixJacobian();

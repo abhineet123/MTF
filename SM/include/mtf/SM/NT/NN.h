@@ -11,7 +11,8 @@ namespace nt{
 	public:
 
 		typedef NNParams ParamType;
-		typedef gnn::GNN<AppearanceModel> GNN;
+		typedef AMDist DistType;
+		typedef gnn::GNN<AMDist> GNN;
 		typedef unique_ptr<GNN> GNN_;
 
 		NN(AM _am, SSM _ssm, const ParamType *nn_params = nullptr);

@@ -3,6 +3,11 @@
 #include "mtf/Utilities/imgUtils.h"
 #include "mtf/Utilities/histUtils.h"
 
+#define KLD_N_BINS 8
+#define KLD_PRE_SEED 10
+#define KLD_POU false
+#define KLD_DEBUG_MODE false
+
 
 _MTF_BEGIN_NAMESPACE
 
@@ -188,7 +193,7 @@ void KLD::updateSimilarity(bool prereq_only){
 */
 void KLD::updateInitGrad(){
 	df_dI0.fill(0);
-	for(int pix = 0; pix < n_pix; pix++){
+	for(unsigned int pix = 0; pix < n_pix; ++pix){
 		for(int id = _init_bspl_ids(pix, 0); id <= _init_bspl_ids(pix, 1); id++) {
 			df_dI0(pix) -= init_hist_grad(id, pix) * init_grad_factor(id);
 		}
@@ -208,7 +213,7 @@ void KLD::updateCurrGrad(){
 	//utils::printMatrixToFile(curr_grad, "curr_grad", log_fname, "%15.9f");
 
 	df_dIt.fill(0);
-	for(int pix_id = 0; pix_id < n_pix; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 		//printf("pix_id: %d\n", pix_id);
 		for(int hist_id = _curr_bspl_ids(pix_id, 0); hist_id <= _curr_bspl_ids(pix_id, 1); hist_id++) {
 			//printf("hist_id: %d\n", hist_id);
@@ -293,7 +298,7 @@ void KLD::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jacob
 	MatrixXd hessian_new(state_vec_size, state_vec_size);
 	hessian_new.fill(0);
 	MatrixXd pix_term(state_vec_size, state_vec_size);
-	for(int pix_id = 0; pix_id < n_pix; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 		Map<const MatrixXd> pix_hess_ssm(init_pix_hessian.col(pix_id).data(), state_vec_size, state_vec_size);
 		pix_jac_ssm.noalias() = init_pix_jacobian.row(pix_id).transpose() * init_pix_jacobian.row(pix_id);
 		for(int hist_id = _init_bspl_ids(pix_id, 0); hist_id <= _init_bspl_ids(pix_id, 1); hist_id++) {
@@ -327,7 +332,7 @@ void KLD::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacob
 
 	hessian_new.fill(0);
 	MatrixXd pix_term(state_vec_size, state_vec_size);
-	for(int pix_id = 0; pix_id < n_pix; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 		Map<const MatrixXd> pix_hess_ssm(curr_pix_hessian.col(pix_id).data(), state_vec_size, state_vec_size);
 		pix_jac_ssm.noalias() = curr_pix_jacobian.row(pix_id).transpose() * curr_pix_jacobian.row(pix_id);
 		for(int hist_id = _curr_bspl_ids(pix_id, 0); hist_id <= _curr_bspl_ids(pix_id, 1); hist_id++) {
@@ -354,7 +359,7 @@ void KLD::initializeDistFeat(){
 void KLD::updateDistFeat(double* feat_addr){
 	VectorXdM hist((double*)feat_addr, params.n_bins);
 	hist.fill(0);
-	for(size_t pix_id = 0; pix_id < n_pix; pix_id++) {
+	for(size_t pix_id = 0; pix_id < n_pix; ++pix_id) {
 		int pix_val_floor = static_cast<int>(It(pix_id));
 		double pix_diff = _std_bspl_ids(pix_val_floor, 0) - It(pix_id);
 		for(int hist_id = _std_bspl_ids(pix_val_floor, 0); hist_id<=_std_bspl_ids(pix_val_floor, 1); hist_id++) {
@@ -371,12 +376,11 @@ void KLD::updateDistFeat(double* feat_addr){
 	//}
 }
 
-double KLD::operator()(const double* hist1_addr, const double* hist2_addr,
+double KLDDist::operator()(const double* hist1_addr, const double* hist2_addr,
 	size_t hist_size, double worst_dist) const{
 	assert(hist_size == feat_size);
-
-	ResultType result = 0;
-	for(int hist_id = 0; hist_id < hist_size; hist_id++){
+	double result = 0;
+	for(unsigned int hist_id = 0; hist_id < hist_size; ++hist_id){
 		result -= (*hist1_addr) * log((*hist1_addr) / (*hist2_addr));
 		hist1_addr++;
 		hist2_addr++;

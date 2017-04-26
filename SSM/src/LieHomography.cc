@@ -1,8 +1,15 @@
 #include "mtf/SSM/LieHomography.h"
-#include "mtf/SSM/SSMEstimator.h"
+#include "mtf/SSM/HomographyEstimator.h"
 #include "mtf/Utilities/warpUtils.h"
 #include "mtf/Utilities/miscUtils.h"
 #include <unsupported/Eigen/MatrixFunctions>
+
+#define VALIDATE_LIE_HOM_WARP(warp) \
+	assert(warp.determinant() == 1.0);
+
+#define LHOM_NORMALIZED_INIT 0
+#define LHOM_GRAD_EPS 1e-8
+#define LHOM_DEBUG_MODE 0
 
 #define MAX_VALID_VAL 1e10
 #define is_unbounded(eig_mat) (eig_mat.array().cwiseAbs().eval() > MAX_VALID_VAL).any()

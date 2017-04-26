@@ -1,7 +1,12 @@
 #include "mtf/SM/GNN.h"
 #include "mtf/Utilities//miscUtils.h"
-
 #include <fstream> 
+
+#define GNN_DEGREE 250
+#define GNN_MAX_STEPS 10
+#define GNN_CMPT_DIST_THRESH 10000
+#define GNN_RANDOM_START 0
+#define GNN_VERBOSE 0
 
 _MTF_BEGIN_NAMESPACE
 namespace gnn{
@@ -29,8 +34,8 @@ namespace gnn{
 		}
 	}
 
-	template <class AM>
-	GNN<AM>::GNN(const AM *_dist_func, int _n_samples, int _n_dims,
+	template <class DistType>
+	GNN<DistType>::GNN(DistTypePtr _dist_func, int _n_samples, int _n_dims,
 		bool _is_symmetrical, const ParamType *gnn_params) :
 		dist_func(_dist_func),
 		n_samples(_n_samples),
@@ -53,8 +58,8 @@ namespace gnn{
 		start_node_idx = getRandNum(0, n_samples - 1);
 	}
 
-	template <class AM>
-	void GNN<AM>::computeDistances(const double *dataset){
+	template <class DistType>
+	void GNN<DistType>::computeDistances(const double *dataset){
 		dataset_distances.resize(n_samples, n_samples);
 		if(params.verbose){
 			printf("Computing distances between samples...\n");
@@ -82,8 +87,8 @@ namespace gnn{
 		}
 		dist_computed = true;
 	}
-	template <class AM>
-	void GNN<AM>::buildGraph(const double *dataset){
+	template <class DistType>
+	void GNN<DistType>::buildGraph(const double *dataset){
 		if(!dist_computed && n_samples <= params.cmpt_dist_thresh){
 			// distance is pre computed and stored only if the no. of samples is not large enough to 
 			// cause a bad_alloc error on attempting to allocate memory for this
@@ -138,8 +143,8 @@ namespace gnn{
 			}
 		}
 	}	
-	template <class AM>
-	void GNN<AM>::searchGraph(const double *query, const double *dataset,
+	template <class DistType>
+	void GNN<DistType>::searchGraph(const double *query, const double *dataset,
 		int *nn_ids, double *nn_dists, int K){
 		int gnns_cap = K;
 		int visited_cap = K * 4;  //avg depth = 4
@@ -229,8 +234,8 @@ namespace gnn{
 		}
 	}
 
-	template <class AM>
-	void GNN<AM>::saveGraph(const char* saved_graph_path){
+	template <class DistType>
+	void GNN<DistType>::saveGraph(const char* saved_graph_path){
 		ofstream out_file(saved_graph_path, ios::out | ios::binary);
 		if(out_file.good()){
 			printf("Saving GNN graph to: %s\n", saved_graph_path);
@@ -246,8 +251,8 @@ namespace gnn{
 			printf("Failed to saved GNN graph to: %s\n", saved_graph_path);
 		}
 	}
-	template <class AM>
-	void GNN<AM>::loadGraph(const char* saved_graph_path){
+	template <class DistType>
+	void GNN<DistType>::loadGraph(const char* saved_graph_path){
 		ifstream in_file(saved_graph_path, ios::in | ios::binary);
 		if(in_file.good()){
 			printf("Loading GNN graph from: %s\n", saved_graph_path);
@@ -266,8 +271,8 @@ namespace gnn{
 			printf("Failed to load GNN graph from: %s\n", saved_graph_path);
 		}
 	}
-	template <class AM>
-	void GNN<AM>::buildGraph(const double *X, int k){
+	template <class DistType>
+	void GNN<DistType>::buildGraph(const double *X, int k){
 		nodes.resize(n_samples);
 		for(int i = 0; i < n_samples; i++){
 			nodes[i].nns_inds.resize(k);
@@ -294,8 +299,8 @@ namespace gnn{
 			}
 		}
 	}
-	template <class AM>
-	int GNN<AM>::searchGraph(const double *query, const double *X, int NNs, int K){
+	template <class DistType>
+	int GNN<DistType>::searchGraph(const double *query, const double *X, int NNs, int K){
 
 		IndxDist *gnn_dists, *knns, *visited_nodes;
 
@@ -369,8 +374,8 @@ namespace gnn{
 		start_node_idx = gnn_dists[0].idx;
 		return gnn_dists[0].idx;
 	}
-	template <class AM>
-	void GNN<AM>::pickKNNs(IndxDist *vis_nodes, int visited,
+	template <class DistType>
+	void GNN<DistType>::pickKNNs(IndxDist *vis_nodes, int visited,
 		IndxDist **gnn_dists, int K, int *gnns_cap){
 		qsort(vis_nodes, visited, sizeof(vis_nodes[0]), cmpQsort); //Ascending...
 		if(K > *gnns_cap){
@@ -400,8 +405,8 @@ namespace gnn{
 		}
 	}
 
-	template <class AM>
-	void GNN<AM>::knnSearch2(const double *Q, IndxDist *dists,
+	template <class DistType>
+	void GNN<DistType>::knnSearch2(const double *Q, IndxDist *dists,
 		const double *X, int rows, int cols, int k){
 		// Faster version of knn_search
 		// Calculates the distance of query to all data points in X and returns the sorted dist array
@@ -446,8 +451,8 @@ namespace gnn{
 		}
 	}
 
-	template <class AM>
-	void GNN<AM>::knnSearch11(const double *Q, IndxDist *dists, const double *X,
+	template <class DistType>
+	void GNN<DistType>::knnSearch11(const double *Q, IndxDist *dists, const double *X,
 		int rows, int cols, int k, int *X_inds){
 		// Faster version of knn_search1
 		// Calculates the distance of query to all data points in X and returns the sorted dist array
@@ -484,8 +489,8 @@ namespace gnn{
 		}
 	}
 
-	template <class AM>
-	void GNN<AM>::addNode(Node *node_i, int nn){
+	template <class DistType>
+	void GNN<DistType>::addNode(Node *node_i, int nn){
 		int size = node_i->size++;
 		if(size >= node_i->capacity){
 			//node_i->nns_inds = static_cast<int*>(realloc(node_i->nns_inds, /*size*2*/ (size + 10)*sizeof(int)));
@@ -499,9 +504,9 @@ namespace gnn{
 _MTF_END_NAMESPACE
 //! for NT version of NN
 #include "mtf/AM/AppearanceModel.h"
-template class mtf::gnn::GNN< mtf::AppearanceModel >;
+template class mtf::gnn::GNN<mtf::AMDist>;
 #ifndef ENABLE_ONLY_NT
 //! for standard version of NN
 #include "mtf/Macros/register.h"
-_REGISTER_AM_TRACKERS(gnn::GNN);
+_REGISTER_TRACKERS_DIST(gnn::GNN);
 #endif

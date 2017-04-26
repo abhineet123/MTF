@@ -3,17 +3,6 @@
 
 #include "SSDBase.h"
 
-#define LSCV_N_BINS 256
-#define LSCV_PRE_SEED 0
-#define LSCV_WEIGHTED_MAPPING 0
-#define LSCV_SUB_REGIONS 3
-#define LSCV_SPACING 10
-#define LSCV_AFFINE_MAPPING 0
-#define LSCV_ONCE_PER_FRAME 0
-#define LSCV_SHOW_SUBREGIONS 0
-#define LSCV_APPROX_DIST_FEAT 0
-
-
 _MTF_BEGIN_NAMESPACE
 
 struct LSCVParams : AMParams{
@@ -56,24 +45,27 @@ struct LSCVParams : AMParams{
 	LSCVParams(const LSCVParams *params = nullptr);
 };
 
-struct LSCVDist : SSDDist{
+struct LSCVDist : SSDBaseDist{
+	typedef double ElementType;
+	typedef double ResultType;
 	LSCVDist(const string &_name, bool _approx_dist_feat,
 		int _n_bins, int _n_sub_regions_x, int _n_sub_regions_y,
+		int _n_sub_regions, int _intensity_range,
 		unsigned int _n_pix, unsigned int _resx, unsigned int _resy,
-		const MatrixX2i &_sub_region_x, const MatrixX2i &_sub_region_y,
-		const MatrixXd &_sub_region_wts, const MatrixXi &_subregion_idx,
-		const ColPivHouseholderQR<MatrixX2d> &_intensity_vals_dec);
+		const int *__sub_region_x, const int *__sub_region_y,
+		const double *__sub_region_wts, const int *__subregion_idx,
+		double *_intensity_vals);
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 private:
 	bool approx_dist_feat;
 	unsigned int n_pix, resx, resy;
-	int n_bins, n_sub_regions_x, n_sub_regions_y;
-	MatrixX2i sub_region_x, sub_region_y;
-	MatrixXd sub_region_wts;
-	MatrixXi subregion_idx;
-	ColPivHouseholderQR<MatrixX2d> intensity_vals_dec;
-	~LSCVDist(){}
+	int n_bins, n_sub_regions_x, n_sub_regions_y, n_sub_regions;
+	int intensity_range;
+	const int *_sub_region_x, *_sub_region_y;
+	const double *_sub_region_wts;
+	const int *_subregion_idx;
+	double *_intensity_vals;
 };
 
 //! Locally adaptive Sum of Conditional Variance
@@ -94,8 +86,8 @@ public:
 	const DistType* getDistPtr() override{
 		return new DistType(name, params.approx_dist_feat, n_pix, resx, resy,
 			params.n_bins, params.n_sub_regions_x, params.n_sub_regions_y, 
-			sub_region_x, sub_region_y, sub_region_wts, _subregion_idx, 
-			intensity_vals_dec);
+			n_sub_regions, intensity_range, sub_region_x.data(), sub_region_y.data(), 
+			sub_region_wts.data(), _subregion_idx.data(), intensity_vals.data());
 	}
 
 protected:
@@ -109,6 +101,7 @@ protected:
 
 	int n_sub_regions;
 	int sub_region_size_x, sub_region_size_y;
+	int intensity_range;
 
 	// let A = err_vec_size = n_bins*n_bins and N = n_pix = no. of pixels
 	//! n_bins x n_bins joint histograms; 

@@ -18,6 +18,15 @@ am1(_am1), am2(_am2){
 	hess_eps = am1->getHessOffset();
 }
 
+SumOfAMsDist::SumOfAMsDist(const string &_name, const AMDist *_am1,
+	const AMDist *_am2, double _am1_norm_factor, double _am2_norm_factor,
+	unsigned int _am1_dist_feat_size, unsigned int _am2_dist_feat_size) :
+	AMDist(name), am1(_am1), am2(_am2),
+	am1_norm_factor(_am1_norm_factor),
+	am2_norm_factor(_am2_norm_factor),
+	am1_dist_feat_size(_am1_dist_feat_size),
+	am2_dist_feat_size(_am2_dist_feat_size){}
+
 void SumOfAMs::setCurrImg(const cv::Mat &cv_img){
 
 	am1->setCurrImg(cv_img);
@@ -244,7 +253,7 @@ void SumOfAMs::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_
 
 /*Support for FLANN library*/
 
-int SumOfAMs::getDistFeatSize(){ return am1->getDistFeatSize() + am2->getDistFeatSize(); }
+unsigned int SumOfAMs::getDistFeatSize(){ return am1->getDistFeatSize() + am2->getDistFeatSize(); }
 
 void SumOfAMs::initializeDistFeat(){
 	am1->initializeDistFeat();
@@ -263,9 +272,9 @@ void SumOfAMs::updateDistFeat(){
 	updateDistFeat(curr_feat_vec.data());
 }
 
-double SumOfAMs::operator()(const double* a, const double* b, size_t size, double worst_dist) const{
+double SumOfAMsDist::operator()(const double* a, const double* b, size_t size, double worst_dist) const{
 	double am1_dist = am1->operator()(a, b, am1_dist_feat_size, worst_dist);
-	double am2_dist = am2->operator()(a + am1_dist_feat_size, 
+	double am2_dist = am2->operator()(a + am1_dist_feat_size,
 		b + am1_dist_feat_size, am2_dist_feat_size, worst_dist);
 	return am1_dist*am1_norm_factor + am2_dist*am2_norm_factor;
 }

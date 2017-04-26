@@ -51,6 +51,17 @@ debug_mode(CCRE_DEBUG_MODE){
 	}
 }
 
+CCREDist::CCREDist(const string &_name, int _n_bins,
+	unsigned int _feat_size, unsigned int _patch_size,
+	double _hist_pre_seed, double _pre_seed,
+	const int *__std_bspl_ids, double _hist_norm_mult,
+	double _log_hist_norm_mult) :
+	AMDist(_name), n_bins(_n_bins), feat_size(_feat_size),
+	patch_size(_patch_size), pre_seed(_pre_seed),
+	hist_pre_seed(_hist_pre_seed), _std_bspl_ids(__std_bspl_ids),
+	hist_norm_mult(_hist_norm_mult),
+	log_hist_norm_mult(_log_hist_norm_mult){}
+
 CCRE::CCRE(const ParamType *ccre_params, int _n_channels) :
 AppearanceModel(ccre_params, _n_channels),
 params(ccre_params){
@@ -164,7 +175,7 @@ void CCRE::initializeSimilarity(){
 	init_hist.fill(hist_pre_seed);
 	init_hist_mat.setZero();
 	init_hist_grad.setZero();
-	for(int pix_id = 0; pix_id < patch_size; pix_id++) {
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
 		_init_bspl_ids.row(pix_id) = _std_bspl_ids.row(static_cast<int>(I0(pix_id)));
 		double curr_diff = _init_bspl_ids(pix_id, 0) - I0(pix_id);
 		for(int hist_id = _init_bspl_ids(pix_id, 0); hist_id <= _init_bspl_ids(pix_id, 1); hist_id++) {
@@ -180,7 +191,7 @@ void CCRE::initializeSimilarity(){
 	if(!is_initialized.similarity || params.symmetrical_grad){
 		//! initial cumulative histogram and its gradient
 		init_cum_hist.fill(hist_pre_seed);
-		for(int pix_id = 0; pix_id < patch_size; pix_id++) {
+		for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
 			int cum_hist_id = 0;
 			while(cum_hist_id < _init_bspl_ids(pix_id, 0)){
 #ifndef CCRE_DISABLE_TRUE_CUM_HIST
@@ -221,7 +232,7 @@ void CCRE::initializeSimilarity(){
 		//! initial cumulative joint histogram and its gradient
 		cum_joint_hist.fill(params.pre_seed);
 		init_cum_joint_hist_grad.setZero();
-		for(int pix_id = 0; pix_id < patch_size; pix_id++) {
+		for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
 			for(int hist_id = _init_bspl_ids(pix_id, 0); hist_id <= _init_bspl_ids(pix_id, 1); ++hist_id) {
 				int cum_hist_id = 0;
 				while(cum_hist_id < _init_bspl_ids(pix_id, 0)){
@@ -280,7 +291,7 @@ void CCRE::initializeGrad(){
 		df_dI0.resize(patch_size);
 		df_dIt.resize(patch_size);
 
-		for(int patch_id = 0; patch_id < patch_size; patch_id++){
+		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 			df_dI0(patch_id) = 0;
 			for(int id1 = _init_bspl_ids(patch_id, 0); id1 <= _init_bspl_ids(patch_id, 1); id1++) {
 				for(int id2 = _init_bspl_ids(patch_id, 0); id2 <= _init_bspl_ids(patch_id, 1); id2++) {
@@ -321,7 +332,7 @@ void CCRE::updateSimilarity(bool prereq_only){
 		*/
 		curr_cum_hist_grad.setZero();
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
-		for(int pix_id = 0; pix_id < patch_size; pix_id++){
+		for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 			_curr_bspl_ids.row(pix_id) = _std_bspl_ids.row(static_cast<int>(It(pix_id)));
 			int curr_id = 0;
 			while(curr_id < _curr_bspl_ids(pix_id, 0)){
@@ -352,7 +363,7 @@ void CCRE::updateSimilarity(bool prereq_only){
 		}
 	} else{
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
-		for(int pix_id = 0; pix_id < patch_size; pix_id++){
+		for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 			_curr_bspl_ids.row(pix_id) = _std_bspl_ids.row(static_cast<int>(It(pix_id)));
 			int curr_id = 0;
 			while(curr_id < _curr_bspl_ids(pix_id, 0)){
@@ -416,7 +427,7 @@ void CCRE::updateInitGrad(){
 	// this does not need to be normalized since init_hist_grad has already been normalized
 	init_cum_joint_hist_grad.setZero();
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		df_dI0(pix_id) = 0;
 		for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
 			int curr_id = 0;
@@ -447,7 +458,7 @@ void CCRE::updateInitGrad(){
 }
 void CCRE::updateCurrGrad(){
 	curr_cum_joint_hist_grad.setZero();
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		df_dIt(pix_id) = 0;
 		for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
 			for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
@@ -527,7 +538,7 @@ void  CCRE::cmptInitHessian(MatrixXd &hessian, const MatrixXd &init_pix_jacobian
 		hessian += cum_joint_hist_sum(init_id)*init_hist_grad_ratio_jac.row(init_id).transpose()*init_hist_grad_ratio_jac.row(init_id);
 	}
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double scalar_term = 0;
 		for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
 			for(int curr_id = 0; curr_id < params.n_bins; curr_id++) {
@@ -554,7 +565,7 @@ void  CCRE::cmptCurrHessian(MatrixXd &hessian, const MatrixXd &curr_pix_jacobian
 	curr_cum_hist_hess.setZero();
 
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double curr_diff = _curr_bspl_ids(pix_id, 0) - It(pix_id);
 		double hist_hess_term = 0;
 		for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
@@ -588,7 +599,7 @@ void CCRE::cmptCumSelfHist(){
 	curr_cum_hist_hess.setZero();
 
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
-	for(int pix_id = 0; pix_id < patch_size; pix_id++) {
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
 		double curr_diff = _curr_bspl_ids(pix_id, 0) - It(pix_id);
 		for(int hist_id = _curr_bspl_ids(pix_id, 0); hist_id <= _curr_bspl_ids(pix_id, 1); ++hist_id) {
 			curr_hist_mat(hist_id, pix_id) = utils::bSpl3(curr_diff);
@@ -629,7 +640,7 @@ void CCRE::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jaco
 	self_hessian.setZero();
 	joint_hist_jacobian.setZero();
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double hist_hess_term = 0;
 		for(int cum_hist_id = _curr_bspl_ids(pix_id, 0); cum_hist_id <= _curr_bspl_ids(pix_id, 1); ++cum_hist_id) {
 			double inner_term = 0;
@@ -659,7 +670,7 @@ void CCRE::updateSymSimilarity(bool prereq_only){
 	curr_hist.fill(hist_pre_seed);
 	curr_hist_mat.setZero();
 	cum_joint_hist.fill(params.pre_seed);
-	for(int pix_id = 0; pix_id < patch_size; pix_id++) {
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
 		double curr_diff = _curr_bspl_ids(pix_id, 0) - It(pix_id);
 		for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); ++curr_id) {
 			curr_hist_mat(curr_id, pix_id) = utils::bSpl3(curr_diff);
@@ -697,7 +708,7 @@ void CCRE::updateSymSimilarity(bool prereq_only){
 }
 void CCRE::updateSymInitGrad(){
 	init_cum_joint_hist_grad.setZero();
-	for(int pix_id = 0; pix_id < patch_size; pix_id++) {
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
 		df_dI0(pix_id) = 0;
 		for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
 			for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
@@ -719,7 +730,7 @@ void  CCRE::cmptSymInitHessian(MatrixXd &hessian, const MatrixXd &init_pix_jacob
 
 
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double hist_hess_term = 0;
 		for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
 			double inner_term = 0;
@@ -764,7 +775,80 @@ void CCRE::updateDistFeat(double* feat_addr){
 		cum_hist_mat(8, patch_id) = utils::bSpl3(pix_diff);
 	}
 }
-double CCRE::operator()(const double* hist1_mat_addr, const double* hist2_mat_addr,
+
+//----------------------------------- Second order Hessians -----------------------------------//
+
+void CCRE::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacobian,
+	const MatrixXd &curr_pix_hessian){
+	int ssm_state_size = curr_pix_jacobian.cols();
+
+	assert(curr_hessian.rows() == ssm_state_size && curr_hessian.cols() == ssm_state_size);
+	assert(curr_pix_jacobian.rows() == patch_size);
+	assert(curr_pix_hessian.rows() == ssm_state_size*ssm_state_size);
+
+	// get first order hessian
+	cmptCurrHessian(curr_hessian, curr_pix_jacobian);
+
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
+		curr_hessian += df_dIt(pix_id) * Map<const MatrixXd>(curr_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size);
+	}
+}
+void CCRE::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jacobian,
+	const MatrixXd &init_pix_hessian){
+
+	int ssm_state_size = init_pix_jacobian.cols();
+
+	assert(init_hessian.rows() == ssm_state_size && init_hessian.cols() == ssm_state_size);
+	assert(init_pix_jacobian.rows() == patch_size);
+	assert(init_pix_hessian.rows() == ssm_state_size*ssm_state_size);
+
+	cmptInitHessian(init_hessian, init_pix_jacobian);
+
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
+		init_hessian += df_dI0(pix_id) * Map<const MatrixXd>(init_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size);
+	}
+}
+void CCRE::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobian,
+	const MatrixXd &curr_pix_hessian){
+	int ssm_state_size = curr_pix_jacobian.cols();
+
+	assert(self_hessian.rows() == ssm_state_size && self_hessian.cols() == ssm_state_size);
+	assert(curr_pix_jacobian.rows() == patch_size);
+	assert(curr_pix_hessian.rows() == ssm_state_size*ssm_state_size);
+
+	cmptCumSelfHist();
+
+	MatrixXd joint_hist_jacobian(joint_hist_size, ssm_state_size);
+	self_hessian.setZero();
+	joint_hist_jacobian.setZero();
+
+
+#pragma omp parallel for schedule(CCRE_OMP_SCHD)
+	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
+		double hist_hess_term = 0, hist_grad_term = 0;
+		for(int r = _curr_bspl_ids(pix_id, 0); r <= _curr_bspl_ids(pix_id, 1); r++) {
+			double inner_term = 0;
+			for(int t = _curr_bspl_ids(pix_id, 0); t <= _curr_bspl_ids(pix_id, 1); t++) {
+				int idx = _linear_idx(r, t);
+				joint_hist_jacobian.row(idx) += curr_cum_hist_grad(r, pix_id) * curr_hist_mat(t, pix_id)*curr_pix_jacobian.row(pix_id);
+				inner_term += curr_hist_mat(t, pix_id) * self_ccre_log_term(r, t);
+			}
+			hist_hess_term += curr_cum_hist_hess(r, pix_id)*inner_term;
+			hist_grad_term += curr_cum_hist_grad(r, pix_id)*inner_term;
+		}
+		self_hessian += hist_hess_term * curr_pix_jacobian.row(pix_id).transpose() * curr_pix_jacobian.row(pix_id)
+			+ hist_grad_term * Map<const MatrixXd>(curr_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size);
+	}
+	for(int r = 0; r < params.n_bins; r++){
+		for(int t = 0; t < params.n_bins; t++){
+			int idx = _linear_idx(r, t);
+			double hist_factor = (1.0 / self_cum_joint_hist(r, t)) - (1.0 / curr_cum_hist(r));
+			self_hessian += joint_hist_jacobian.row(idx).transpose() * joint_hist_jacobian.row(idx) * hist_factor;
+		}
+	}
+}
+
+double CCREDist::operator()(const double* hist1_mat_addr, const double* hist2_mat_addr,
 	size_t hist_mat_size, double worst_dist) const{
 
 	//printf("hist_mat_size: %ld\n", hist_mat_size);
@@ -772,16 +856,17 @@ double CCRE::operator()(const double* hist1_mat_addr, const double* hist2_mat_ad
 
 	assert(hist_mat_size == feat_size);
 
-	VectorXd cum_hist(params.n_bins);
-	VectorXd hist(params.n_bins);
-	MatrixXd cum_joint_hist(params.n_bins, patch_size);
+	VectorXd cum_hist(n_bins);
+	VectorXd hist(n_bins);
+	MatrixXd cum_joint_hist(n_bins, patch_size);
 
 	cum_hist.fill(hist_pre_seed);
 	hist.fill(hist_pre_seed);
-	cum_joint_hist.fill(params.pre_seed);
+	cum_joint_hist.fill(pre_seed);
 
 	Map<const MatrixXdr> cum_hist_mat(hist1_mat_addr, 9, patch_size);
 	Map<const MatrixXdr> hist_mat(hist2_mat_addr, 9, patch_size);
+	Map<const MatrixXi> std_bspl_ids(_std_bspl_ids, n_bins, 2);
 
 	//utils::printMatrixToFile(hist1_mat, "hist1_mat", "log/ccre_log.txt");
 	//utils::printMatrixToFile(hist2_mat, "hist2_mat", "log/ccre_log.txt");
@@ -797,9 +882,9 @@ double CCRE::operator()(const double* hist1_mat_addr, const double* hist2_mat_ad
 		//	utils::printMatrixToFile(hist2_mat, "hist2_mat", "log/ccre_log.txt");
 		//	printf("pix2_floor: %d\n", pix2_floor);
 		//}
-		int bspl_id11 = _std_bspl_ids(pix1_floor, 0);
+		int bspl_id11 = std_bspl_ids(pix1_floor, 0);
 		int bspl_id12 = bspl_id11 + 1, bspl_id13 = bspl_id11 + 2, bspl_id14 = bspl_id11 + 3;
-		int bspl_id21 = _std_bspl_ids(pix2_floor, 0);
+		int bspl_id21 = std_bspl_ids(pix2_floor, 0);
 		int bspl_id22 = bspl_id21 + 1, bspl_id23 = bspl_id21 + 2, bspl_id24 = bspl_id21 + 3;
 
 #ifdef CCRE_ENABLE_TRUE_DIST_FEAT
@@ -843,8 +928,8 @@ double CCRE::operator()(const double* hist1_mat_addr, const double* hist2_mat_ad
 	}
 
 	ResultType result = 0;
-	for(int id1 = 0; id1 < params.n_bins; id1++){
-		for(int id2 = 0; id2 < params.n_bins; id2++){
+	for(int id1 = 0; id1 < n_bins; id1++){
+		for(int id2 = 0; id2 < n_bins; id2++){
 			result -= cum_joint_hist(id1, id2) * (log(cum_joint_hist(id1, id2) / (cum_hist(id1) * hist(id2))) - log_hist_norm_mult);
 		}
 	}
@@ -853,78 +938,6 @@ double CCRE::operator()(const double* hist1_mat_addr, const double* hist2_mat_ad
 #else
 	return result;
 #endif
-}
-
-//----------------------------------- Second order Hessians -----------------------------------//
-
-void CCRE::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacobian,
-	const MatrixXd &curr_pix_hessian){
-	int ssm_state_size = curr_pix_jacobian.cols();
-
-	assert(curr_hessian.rows() == ssm_state_size && curr_hessian.cols() == ssm_state_size);
-	assert(curr_pix_jacobian.rows() == patch_size);
-	assert(curr_pix_hessian.rows() == ssm_state_size*ssm_state_size);
-
-	// get first order hessian
-	cmptCurrHessian(curr_hessian, curr_pix_jacobian);
-
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		curr_hessian += df_dIt(pix_id) * Map<const MatrixXd>(curr_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size);
-	}
-}
-void CCRE::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jacobian,
-	const MatrixXd &init_pix_hessian){
-
-	int ssm_state_size = init_pix_jacobian.cols();
-
-	assert(init_hessian.rows() == ssm_state_size && init_hessian.cols() == ssm_state_size);
-	assert(init_pix_jacobian.rows() == patch_size);
-	assert(init_pix_hessian.rows() == ssm_state_size*ssm_state_size);
-
-	cmptInitHessian(init_hessian, init_pix_jacobian);
-
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		init_hessian += df_dI0(pix_id) * Map<const MatrixXd>(init_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size);
-	}
-}
-void CCRE::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobian,
-	const MatrixXd &curr_pix_hessian){
-	int ssm_state_size = curr_pix_jacobian.cols();
-
-	assert(self_hessian.rows() == ssm_state_size && self_hessian.cols() == ssm_state_size);
-	assert(curr_pix_jacobian.rows() == patch_size);
-	assert(curr_pix_hessian.rows() == ssm_state_size*ssm_state_size);
-
-	cmptCumSelfHist();
-
-	MatrixXd joint_hist_jacobian(joint_hist_size, ssm_state_size);
-	self_hessian.setZero();
-	joint_hist_jacobian.setZero();
-
-
-#pragma omp parallel for schedule(CCRE_OMP_SCHD)
-	for(int pix_id = 0; pix_id < patch_size; pix_id++){
-		double hist_hess_term = 0, hist_grad_term = 0;
-		for(int r = _curr_bspl_ids(pix_id, 0); r <= _curr_bspl_ids(pix_id, 1); r++) {
-			double inner_term = 0;
-			for(int t = _curr_bspl_ids(pix_id, 0); t <= _curr_bspl_ids(pix_id, 1); t++) {
-				int idx = _linear_idx(r, t);
-				joint_hist_jacobian.row(idx) += curr_cum_hist_grad(r, pix_id) * curr_hist_mat(t, pix_id)*curr_pix_jacobian.row(pix_id);
-				inner_term += curr_hist_mat(t, pix_id) * self_ccre_log_term(r, t);
-			}
-			hist_hess_term += curr_cum_hist_hess(r, pix_id)*inner_term;
-			hist_grad_term += curr_cum_hist_grad(r, pix_id)*inner_term;
-		}
-		self_hessian += hist_hess_term * curr_pix_jacobian.row(pix_id).transpose() * curr_pix_jacobian.row(pix_id)
-			+ hist_grad_term * Map<const MatrixXd>(curr_pix_hessian.col(pix_id).data(), ssm_state_size, ssm_state_size);
-	}
-	for(int r = 0; r < params.n_bins; r++){
-		for(int t = 0; t < params.n_bins; t++){
-			int idx = _linear_idx(r, t);
-			double hist_factor = (1.0 / self_cum_joint_hist(r, t)) - (1.0 / curr_cum_hist(r));
-			self_hessian += joint_hist_jacobian.row(idx).transpose() * joint_hist_jacobian.row(idx) * hist_factor;
-		}
-	}
 }
 
 

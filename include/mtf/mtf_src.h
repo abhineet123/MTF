@@ -11,7 +11,7 @@
 #include "../SM/src/FALK.cc"
 #include "../SM/src/IALK.cc"
 #include "../SM/src/PF.cc"
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 #include "../SM/src/NN.cc"
 #include "../SM/src/FGNN.cc"
 #endif
@@ -29,7 +29,7 @@
 #include "../SM/src/GridTrackerFlow.cc"
 #endif
 #ifndef DISABLE_GRID_FEAT
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 #include "../SM/src/GridTrackerFeat.cc"
 #endif
 #endif
@@ -144,7 +144,7 @@
 #include "../SM/src/FALKParams.cc"
 #include "../SM/src/IALKParams.cc"
 #include "../SM/src/PFParams.cc"
-#ifndef DISABLE_NN
+#ifndef DISABLE_FLANN
 #include "../SM/src/NNParams.cc"
 #include "../SM/src/FLANNParams.cc"
 #endif

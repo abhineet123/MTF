@@ -22,6 +22,12 @@ show_template(SSD_SHOW_TEMPLATE){
 	}
 }
 
+SSDDist::SSDDist(const string &_name, bool _dist_from_likelihood,
+	double _likelihood_alpha, unsigned int _patch_size) : 
+	SSDBaseDist(_name), dist_from_likelihood(_dist_from_likelihood),
+	likelihood_alpha(_likelihood_alpha), patch_size(_patch_size){}
+
+
 SSD::SSD(const ParamType *ssd_params, const int _n_channels) :
 SSDBase(ssd_params, _n_channels),
 params(ssd_params), use_running_avg(false),

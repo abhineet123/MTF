@@ -3,15 +3,6 @@
 
 #include "SSDBase.h"
 
-#define RSCV_N_BINS 256
-#define RSCV_USE_BSPL 0
-#define RSCV_POU 0
-#define RSCV_PRE_SEED 0
-#define RSCV_WEIGHTED_MAPPING false
-#define RSCV_MAPPED_GRADIENT false
-#define RSCV_APPROX_DIST_FEAT true
-#define RSCV_DEBUG_MODE 0
-
 _MTF_BEGIN_NAMESPACE
 
 struct RSCVParams : AMParams{
@@ -59,7 +50,9 @@ struct RSCVParams : AMParams{
 	RSCVParams(const RSCVParams *params = nullptr);
 };
 
-struct RSCVDist : SSDDist{
+struct RSCVDist : SSDBaseDist{
+	typedef double ElementType;
+	typedef double ResultType;
 	RSCVDist(const string &_name, unsigned int _patch_size,
 		int _n_bins, bool _approx_dist_feat);
 	double operator()(const double* a, const double* b,
@@ -68,7 +61,6 @@ private:
 	unsigned int patch_size;
 	int n_bins;
 	bool approx_dist_feat;
-	~RSCVDist(){}
 };
 
 //! Reversed Sum of Conditional Variance

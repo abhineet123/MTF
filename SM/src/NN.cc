@@ -161,9 +161,10 @@ void NN<AM, SSM >::initialize(const cv::Mat &corners){
 		if(params.save_index){ saveDataset(); }
 	}
 	double idx_time;
+	std::shared_ptr<const DistType> dist_func(am.getDistPtr());
 	mtf_clock_get(idx_start_time);
 	if(flann_params.index_type == IdxType::GNN){
-		gnn_index.reset(new FGNN(&am, params.n_samples, am_dist_size,
+		gnn_index.reset(new FGNN(dist_func, params.n_samples, am_dist_size,
 			am.isSymmetrical(), &params.gnn));
 		if(params.load_index){
 			gnn_index->loadGraph(saved_idx_path.c_str());
@@ -173,7 +174,7 @@ void NN<AM, SSM >::initialize(const cv::Mat &corners){
 				printf("Using FLANN %s index to build the graph...\n",
 					FLANNParams::toString(flann_params.fgnn_index_type));
 				flann_index.reset(new FLANN(*flann_dataset, flann_params.getIndexParams(
-					flann_params.fgnn_index_type, params.load_index, saved_idx_path), am));
+					flann_params.fgnn_index_type, params.load_index, saved_idx_path), *dist_func));
 				flann_index->buildIndex();
 				gnn_index->buildGraph(eig_dataset.data(), flann_index.get(), flann_params.search);
 			} else{
@@ -183,7 +184,7 @@ void NN<AM, SSM >::initialize(const cv::Mat &corners){
 	} else{
 		printf("building FLANN index...\n");
 		flann_index.reset(new FLANN(*flann_dataset, flann_params.getIndexParams(
-			flann_params.index_type, params.load_index, saved_idx_path), am));
+			flann_params.index_type, params.load_index, saved_idx_path), *dist_func));
 		flann_index->buildIndex();
 	}
 	mtf_clock_get(idx_end_time);

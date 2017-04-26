@@ -3,8 +3,6 @@
 
 #include "AppearanceModel.h"
 
-#define NCC_FAST_HESS 0
-
 _MTF_BEGIN_NAMESPACE
 
 struct NCCParams : AMParams{
@@ -17,10 +15,21 @@ struct NCCParams : AMParams{
 	NCCParams(const NCCParams *params = nullptr);
 };
 
+struct NCCDist : AMDist{
+	typedef bool is_kdtree_distance;
+	typedef double ElementType;
+	typedef double ResultType;
+	NCCDist(const string &_name) : AMDist(_name){}
+	double operator()(const double* a, const double* b,
+		size_t size, double worst_dist = -1) const override;
+	double accum_dist(const double& a, const double& b, int) const{ return -a*b; }
+};
+
 //! Normalized Cross Correlation
 class NCC : public AppearanceModel{
 public:
 	typedef NCCParams ParamType;
+	typedef NCCDist DistType;
 
 	NCC(const ParamType *ncc_params = nullptr, const int _n_channels = 1);
 
@@ -62,17 +71,14 @@ public:
 
 	/*Support for FLANN library*/
 	VectorXd curr_feat_vec;
-	typedef bool is_kdtree_distance;
-	typedef double ElementType;
-	typedef double ResultType;
-	double operator()(const double* a, const double* b, 
-		size_t size, double worst_dist = -1) const override;
-	double accum_dist(const double& a, const double& b, int) const{	return -a*b;}
+	const DistType* getDistPtr() override{
+		return new DistType(name);
+	}
 	void updateDistFeat(double* feat_addr) override;
 	void updateDistFeat() override{
 		updateDistFeat(curr_feat_vec.data());
 	}
-	int  getDistFeatSize() override{ return patch_size; }
+	unsigned int  getDistFeatSize() override{ return patch_size; }
 	void initializeDistFeat() override{
 		curr_feat_vec.resize(getDistFeatSize());
 	}

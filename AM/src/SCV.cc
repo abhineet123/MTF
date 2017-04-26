@@ -3,6 +3,16 @@
 #include "mtf/Utilities/histUtils.h"
 #include "mtf/Utilities/miscUtils.h"
 
+#define SCV_N_BINS 256
+#define SCV_HIST_TYPE HistType::Dirac
+#define SCV_POU false
+#define SCV_PRE_SEED 0
+#define SCV_WEIGHTED_MAPPING false
+#define SCV_MAPPED_GRADIENT false
+#define SCV_APPROX_DIST_FEAT false
+#define SCV_LIKELIHOOD_ALPHA 50
+#define SCV_DEBUG_MODE false
+
 _MTF_BEGIN_NAMESPACE
 
 //! value constructor
@@ -61,7 +71,7 @@ const char* SCVParams::toString(HistType _hist_type){
 }
 
 SCVDist::SCVDist(const string &_name, unsigned int _patch_size,
-	int _n_bins, bool _approx_dist_feat) : SSDDist(_name),
+	int _n_bins, bool _approx_dist_feat) : SSDBaseDist(_name),
 	patch_size(_patch_size), n_bins(_n_bins),
 	approx_dist_feat(_approx_dist_feat){}
 
@@ -319,7 +329,7 @@ double SCVDist::operator()(const double* a, const double* b,
 	assert(size == patch_size);
 
 	if(approx_dist_feat){
-		return SSDDist::operator()(a, b, size, worst_dist);
+		return SSDBaseDist::operator()(a, b, size, worst_dist);
 	}
 	/**
 	this has to be as fast as possible so BSpline histogram option is disabled here
@@ -328,7 +338,7 @@ double SCVDist::operator()(const double* a, const double* b,
 	MatrixXi joint_hist = MatrixXi::Zero(n_bins, n_bins);
 	VectorXi hist = VectorXi::Zero(n_bins);
 	VectorXd intensity_map(n_bins);
-	for(int pix_id = 0; pix_id < size; ++pix_id) {
+	for(unsigned int pix_id = 0; pix_id < size; ++pix_id) {
 		int a_int = static_cast<int>(a[pix_id]);
 		int b_int = static_cast<int>(b[pix_id]);
 		hist(a_int) += 1;

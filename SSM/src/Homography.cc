@@ -1,5 +1,5 @@
 #include "mtf/SSM/Homography.h"
-#include "mtf/SSM/SSMEstimator.h"
+#include "mtf/SSM/HomographyEstimator.h"
 #include "mtf/Utilities/warpUtils.h"
 #include "mtf/Utilities/miscUtils.h"
 
