@@ -3,7 +3,9 @@
 #include "mtf/Utilities/excpUtils.h"
 #include <fstream> 
 #include "opencv2/highgui/highgui.hpp"
+#ifndef DISABLE_HDF5
 #include <flann/io/hdf5.h>
+#endif
 #ifdef _WIN32
 #include <sstream>
 #endif
@@ -197,7 +199,9 @@ void NN<AM, SSM >::initialize(const cv::Mat &corners){
 		}
 	}
 	if(params.debug_mode){
+#ifndef DISABLE_HDF5
 		flann::save_to_file<double>(*flann_dataset, "log/flann_log.hdf5", "flann_dataset");
+#endif
 	}
 	ssm.getCorners(cv_corners_mat);
 

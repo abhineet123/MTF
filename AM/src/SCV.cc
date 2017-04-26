@@ -60,6 +60,11 @@ const char* SCVParams::toString(HistType _hist_type){
 	}
 }
 
+SCVDist::SCVDist(const string &_name, unsigned int _patch_size,
+	int _n_bins, bool _approx_dist_feat) : SSDDist(_name),
+	patch_size(_patch_size), n_bins(_n_bins),
+	approx_dist_feat(_approx_dist_feat){}
+
 SCV::SCV(const ParamType *scv_params, const int _n_channels) :
 SSDBase(scv_params, _n_channels), params(scv_params), init_img(0, 0, 0){
 	name = "scv";

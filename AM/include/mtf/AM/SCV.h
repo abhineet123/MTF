@@ -94,7 +94,6 @@ public:
 
 	void updateSimilarity(bool prereq_only = true) override;
 
-
 	void updatePixHess(const Matrix2Xd &curr_pts) override;
 	using AppearanceModel::updatePixHess;
 	const DistType* getDistPtr() override{
