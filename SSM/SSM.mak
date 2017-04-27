@@ -20,7 +20,7 @@ SSM_ESTIMATORS = SSM Homography Affine
 STATE_SPACE_OBJS = $(addprefix ${BUILD_DIR}/,$(addsuffix .o, ${SSM_MODULES} ${STATE_SPACE_MODELS}))	
 STATE_SPACE_HEADERS = $(addprefix ${SSM_HEADER_DIR}/, $(addsuffix .h, ${SSM_MODULES} ${STATE_SPACE_MODELS}))
 SSM_ESTIMATOR_OBJS = $(addprefix ${BUILD_DIR}/,$(addsuffix Estimator.o, ${SSM_ESTIMATORS}))
-SSM_ESTIMATOR_HEADERS = $(addprefix ${SSM_HEADER_DIR}/, $(addsuffix Params.h, ${SSM_ESTIMATORS}))
+SSM_ESTIMATOR_HEADERS = $(addprefix ${SSM_HEADER_DIR}/, $(addsuffix Estimator.h, ${SSM_ESTIMATORS}))
 STATE_SPACE_HEADERS += ${SSM_BASE_HEADERS} ${SSM_ESTIMATOR_HEADERS}
 STATE_SPACE_OBJS += ${SSM_ESTIMATOR_OBJS}
 
