@@ -201,22 +201,22 @@ void Homography::cmptPixJacobian(MatrixXd &dI_dp,
 		double inv_d = 1.0 / curr_pts_hm(2, pt_id);		
 
 		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
-			double Ix = dI_dw(ch_pt_id, 0);
-			double Iy = dI_dw(ch_pt_id, 1);
+			double Ix = dI_dw(ch_pt_id, 0) * inv_d;
+			double Iy = dI_dw(ch_pt_id, 1) * inv_d;
 
 			double Ixx = Ix * x;
 			double Iyy = Iy * y;
 			double Ixy = Ix * y;
 			double Iyx = Iy * x;
 
-			dI_dp(ch_pt_id, 0) = Ixx * inv_d;
-			dI_dp(ch_pt_id, 1) = Ixy * inv_d;
-			dI_dp(ch_pt_id, 2) = Ix * inv_d;
-			dI_dp(ch_pt_id, 3) = Iyx * inv_d;
-			dI_dp(ch_pt_id, 4) = Iyy * inv_d;
-			dI_dp(ch_pt_id, 5) = Iy * inv_d;
-			dI_dp(ch_pt_id, 6) = (-curr_x*Ixx - curr_y*Iyx) * inv_d;
-			dI_dp(ch_pt_id, 7) = (-curr_x*Ixy - curr_y*Iyy) * inv_d;
+			dI_dp(ch_pt_id, 0) = Ixx;
+			dI_dp(ch_pt_id, 1) = Ixy;
+			dI_dp(ch_pt_id, 2) = Ix;
+			dI_dp(ch_pt_id, 3) = Iyx;
+			dI_dp(ch_pt_id, 4) = Iyy;
+			dI_dp(ch_pt_id, 5) = Iy;
+			dI_dp(ch_pt_id, 6) = (-curr_x*Ixx - curr_y*Iyx);
+			dI_dp(ch_pt_id, 7) = (-curr_x*Ixy - curr_y*Iyy);
 
 			++ch_pt_id;
 		}
