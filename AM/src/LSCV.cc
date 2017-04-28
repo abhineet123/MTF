@@ -200,8 +200,8 @@ init_patch(0, 0, 0), curr_patch(0, 0, 0){
 
 	if(params.show_subregions){
 		_pts_idx.resize(resy, resx);
-		for(int idy = 0; idy < resy; idy++){
-			for(int idx = 0; idx < resx; idx++){
+		for(unsigned int idy = 0; idy < resy; ++idy){
+			for(unsigned int idx = 0; idx < resx; ++idx){
 				_pts_idx(idy, idx) = idy * resx + idx;
 			}
 		}
@@ -294,7 +294,7 @@ void LSCV::updateSimilarity(bool prereq_only){
 					utils::mapPixVals<utils::InterpType::Nearest>(I0_mapped, I0_orig, intensity_map, n_pix);
 				}
 			}
-			for(int pix_id = 0; pix_id < n_pix; ++pix_id){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				I0(pix_id) += I0_mapped(pix_id)*sub_region_wts(pix_id, _subregion_idx(idy, idx));
 			}
 		}
@@ -327,18 +327,18 @@ void  LSCV::showSubRegions(const EigImgT& img, const Matrix2Xd& pts){
 	int y1 = sub_region_y(idy, 0);
 	int y2 = sub_region_y(idy, 1);
 
-	cv::Point ul(pts(0, _pts_idx(y1, x1)), pts(1, _pts_idx(y1, x1)));
-	cv::Point ur(pts(0, _pts_idx(y1, x2)), pts(1, _pts_idx(y1, x2)));
-	cv::Point lr(pts(0, _pts_idx(y2, x2)), pts(1, _pts_idx(y2, x2)));
-	cv::Point ll(pts(0, _pts_idx(y2, x1)), pts(1, _pts_idx(y2, x1)));
-	cv::Point centroid = (ul + ur + lr + ll)*0.25;
+	cv::Point2d ul(pts(0, _pts_idx(y1, x1)), pts(1, _pts_idx(y1, x1)));
+	cv::Point2d ur(pts(0, _pts_idx(y1, x2)), pts(1, _pts_idx(y1, x2)));
+	cv::Point2d lr(pts(0, _pts_idx(y2, x2)), pts(1, _pts_idx(y2, x2)));
+	cv::Point2d ll(pts(0, _pts_idx(y2, x1)), pts(1, _pts_idx(y2, x1)));
+	cv::Point2d centroid = (ul + ur + lr + ll)*0.25;
 
 	cv::line(patch_img_uchar, ul, ur, region_cols[col_id], 2);
 	cv::line(patch_img_uchar, ur, lr, region_cols[col_id], 2);
 	cv::line(patch_img_uchar, lr, ll, region_cols[col_id], 2);
 	cv::line(patch_img_uchar, ll, ul, region_cols[col_id], 2);
 
-	putText(patch_img_uchar, cv::format("%d", _subregion_idx(idy, idx)), centroid,
+	putText(patch_img_uchar, cv_format("%d", _subregion_idx(idy, idx)), centroid,
 		cv::FONT_HERSHEY_SIMPLEX, 0.50, region_cols[col_id]);
 
 	imshow(patch_win_name, patch_img_uchar);

@@ -27,13 +27,24 @@ project(OpenTLD)
 cmake_minimum_required(VERSION 2.6)
 set(CV_BLOBS_LIB_NAME cvblobs CACHE STRING "CV_BLOBS_LIB_NAME")
 set(TLD_LIB_NAME opentld CACHE STRING "TLD_LIB_NAME")
-set(TLD_LIB_INSTALL_DIR /usr/local/lib CACHE PATH "Directory to install OpenTLD tracker library")
-# link_directories(3rdparty/cvblobs ${OpenCV_LIB_DIR})
-find_library(CV_BLOBS_LIB ${CV_BLOBS_LIB_NAME} HINTS ${CMAKE_SOURCE_DIR}/3rdparty/cvblobs)
-find_package(OpenCV REQUIRED)
-# add_subdirectory(3rdparty/cvblobs)
-add_library(${TLD_LIB_NAME} SHARED
-    src/mftracker/BB.cpp
+
+if (WIN32)
+	set(OPENCV_INCLUDE_DIR_WIN "C:/OpenCV/build/include" CACHE PATH "OpenCV header directory")
+	set(OPENCV_LIB_DIR_WIN "C:/OpenCV/build/x86/vc14/lib" CACHE PATH "OpenCV library directory")
+	set(OpenCV_SUFFIX "2410" CACHE STRING "OpenCV Suffix")
+	set(OpenCV_COMPONENTS calib3d contrib core features2d flann gpu highgui imgproc legacy ml nonfree objdetect ocl photo stitching superres video videostab)
+	find_package(OpenCV)
+	if(NOT OpenCV_FOUND)
+		set(OpenCV_INCLUDE_DIRS "${OPENCV_INCLUDE_DIR_WIN}")
+		set(OpenCV_LIBRARY_DIR "${OPENCV_LIB_DIR_WIN}")
+		addPrefixAndSuffix("${OpenCV_COMPONENTS}" "${OpenCV_LIBRARY_DIR}/opencv_" "${OpenCV_SUFFIX}.lib" OpenCV_LIBS)
+	endif()
+else()
+	find_package(OpenCV REQUIRED)
+endif()
+
+set(TLD_SRC
+	src/mftracker/BB.cpp
     src/mftracker/BBPredict.cpp
     src/mftracker/FBTrack.cpp
     src/mftracker/Lk.cpp
@@ -46,9 +57,51 @@ add_library(${TLD_LIB_NAME} SHARED
     src/MedianFlowTracker.cpp
     src/NNClassifier.cpp
     src/TLDUtil.cpp
-    src/VarianceFilter.cpp)	
-target_link_libraries(${TLD_LIB_NAME} ${CV_BLOBS_LIB} ${OpenCV_LIBS})
+    src/VarianceFilter.cpp)
+set(CV_BLOBS_SRC
+    3rdparty/cvblobs/blob.cpp
+    3rdparty/cvblobs/BlobContour.cpp
+    3rdparty/cvblobs/BlobOperators.cpp
+    3rdparty/cvblobs/BlobProperties.cpp
+    3rdparty/cvblobs/BlobResult.cpp
+    3rdparty/cvblobs/ComponentLabeling.cpp
+    3rdparty/cvblobs/blob.h
+    3rdparty/cvblobs/BlobContour.h
+    3rdparty/cvblobs/BlobLibraryConfiguration.h
+    3rdparty/cvblobs/BlobOperators.h
+    3rdparty/cvblobs/BlobProperties.h
+    3rdparty/cvblobs/BlobResult.h
+    3rdparty/cvblobs/ComponentLabeling.h)
+if(WIN32)
+	add_library(${TLD_LIB_NAME} STATIC ${TLD_SRC})	
+	target_compile_definitions(${TLD_LIB_NAME} PUBLIC _CRT_SECURE_NO_WARNINGS)
+	set(TLD_INSTALL_DIR_DEFAULT C:/MTF/lib)
+	add_library(${CV_BLOBS_LIB_NAME} STATIC ${CV_BLOBS_SRC})	
+	set(CVBLOBS_INSTALL_DIR_DEFAULT C:/MTF/lib)
+	target_compile_definitions(${CV_BLOBS_LIB_NAME} PUBLIC _CRT_SECURE_NO_WARNINGS)
+else()
+	add_library(${TLD_LIB_NAME} SHARED ${TLD_SRC})	
+	set(TLD_INSTALL_DIR_DEFAULT /usr/local/lib)
+	add_library(${CV_BLOBS_LIB_NAME} SHARED ${CV_BLOBS_SRC})
+	set(CVBLOBS_INSTALL_DIR_DEFAULT /usr/local/lib)
+	set(CV_BLOBS_FLAGS -std=c++11 -DNDEBUG)
+endif()
+set(TLD_LIB_INSTALL_DIR ${TLD_INSTALL_DIR_DEFAULT} CACHE PATH "Directory to install OpenTLD tracker library")
+
+# set(CVBLOBS_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/cvblobs)
+# add_subdirectory(${CVBLOBS_SRC_DIR})
+# link_directories(${CVBLOBS_SRC_DIR} ${OpenCV_LIB_DIR})
+# message(STATUS "CVBLOBS_SRC_DIR: ${CVBLOBS_SRC_DIR}")
+# find_library(CV_BLOBS_LIB ${CV_BLOBS_LIB_NAME} HINTS ${CVBLOBS_SRC_DIR})
+
+target_compile_options(${CV_BLOBS_LIB_NAME} PUBLIC ${CV_BLOBS_FLAGS})
+target_link_libraries(${TLD_LIB_NAME} ${CV_BLOBS_LIB_NAME} ${OpenCV_LIBS})
 target_include_directories(${TLD_LIB_NAME} PUBLIC include 3rdparty/cvblobs ${OpenCV_INCLUDE_DIRS})
 
 # set_target_properties(${LIB_NAME} PROPERTIES OUTPUT_NAME ${LIB_NAME})
-install(TARGETS ${TLD_LIB_NAME} LIBRARY DESTINATION ${TLD_LIB_INSTALL_DIR})
+if(WIN32)
+	install(TARGETS ${TLD_LIB_NAME} ${CV_BLOBS_LIB_NAME} ARCHIVE DESTINATION ${TLD_LIB_INSTALL_DIR})
+else()	
+	install(TARGETS ${TLD_LIB_NAME} ${CV_BLOBS_LIB_NAME} LIBRARY DESTINATION ${TLD_LIB_INSTALL_DIR})
+endif()
+

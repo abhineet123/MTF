@@ -72,8 +72,10 @@ namespace nt{
 					curr_patch_uchar.create(am->getResY(), am->getResX(), CV_8UC3);
 					break;
 				}
-				curr_patch_resized.create(am->getResY()*params.patch_resize_factor,
-					am->getResX()*params.patch_resize_factor, curr_patch_uchar.type());
+				curr_patch_resized.create(
+					static_cast<unsigned int>(am->getResY()*params.patch_resize_factor),
+					static_cast<unsigned int>(am->getResX()*params.patch_resize_factor),
+					curr_patch_uchar.type());
 				if(params.write_frames){
 					write_frame_dir = cv::format("log/fa_%s_%s_%d_%d", am->name.c_str(),
 						ssm->name.c_str(), am->getResX(), am->getResY());

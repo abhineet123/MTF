@@ -221,13 +221,15 @@ void ViSP::setImage(const cv::Mat &img){
 void ViSP::setOptimalSamplingRatio(const cv::Mat &corners){
 
 	cv::Rect_<double> best_fit_rect = mtf::utils::getBestFitRectangle<double>(corners);
-	int size_x = best_fit_rect.width;
-	int size_y = best_fit_rect.height;
+	int size_x = static_cast<int>(best_fit_rect.width);
+	int size_y = static_cast<int>(best_fit_rect.height);
 
 	int n_pix_desired = params.resx*params.resy;
 
-	int sampling_ratio_x = ceil(static_cast<double>(size_x) / static_cast<double>(params.resx));
-	int sampling_ratio_y = ceil(static_cast<double>(size_y) / static_cast<double>(params.resy));
+	int sampling_ratio_x = static_cast<int>(ceil(static_cast<double>(size_x) /
+		static_cast<double>(params.resx)));
+	int sampling_ratio_y = static_cast<int>(ceil(static_cast<double>(size_y) /
+		static_cast<double>(params.resy)));
 
 	int sampling_res_x = size_x / sampling_ratio_x;
 	int sampling_res_y = size_y / sampling_ratio_y;

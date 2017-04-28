@@ -520,8 +520,8 @@ void NCC::estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, const cv::Mat 
 			//if(opt_flow_x*opt_flow_x + opt_flow_y*opt_flow_y < term_eps){ break; }
 
 			Vector2d opt_flow = -_d2f_dx2.colPivHouseholderQr().solve(_df_dx.transpose());
-			curr_pts[pt_id].x += opt_flow[0];
-			curr_pts[pt_id].y += opt_flow[1];
+			curr_pts[pt_id].x += static_cast<float>(opt_flow[0]);
+			curr_pts[pt_id].y += static_cast<float>(opt_flow[1]);
 			if(opt_flow.squaredNorm() < term_eps){ break; }
 		}
 	}

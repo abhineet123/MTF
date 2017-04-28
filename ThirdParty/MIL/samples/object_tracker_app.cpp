@@ -104,7 +104,7 @@ main(int argc, char** argv)
 #endif
 
   // Instantiate an object tracker
-  cv::ObjectTracker tracker(params);
+  cv::MILTracker tracker(params);
 
   // Read in a sequence of images from disk as the video source
   const char* directory = "/home/abhineet/E/UofA/Thesis/Code/Datasets/TMT";

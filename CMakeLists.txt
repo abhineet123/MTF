@@ -154,6 +154,7 @@ message(STATUS "CMAKE_C_FLAGS: ${CMAKE_C_FLAGS}")
 
 if (WIN32)
 add_library (mtf STATIC ${MTF_SRC})
+set(MTF_DEFINITIONS ${MTF_DEFINITIONS} _CRT_SECURE_NO_WARNINGS)
 else()
 add_library (mtf SHARED ${MTF_SRC})
 endif()

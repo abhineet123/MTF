@@ -43,7 +43,7 @@ int n_pts, ADT data_type, const char* fname){
 	//roi.width += 80;
 	//roi.height += 80;
 
-	for(int state_id = 0; state_id < state_size; state_id++){
+	for(unsigned int state_id = 0; state_id < state_size; ++state_id){
 		//printf("Processing state parameter %d....\n", state_id);
 
 		//if(data_type == ADT::Norm){			
@@ -114,7 +114,7 @@ int n_pts, ADT data_type, const char* fname){
 	}
 }
 void Diagnostics::generateAnalyticalData3D(VectorXd &x_vec, VectorXd &y_vec,
-	const VectorXd &param_range_vec, int n_pts, const Vector2d &state_ids,
+	const VectorXd &param_range_vec, int n_pts, const Vector2i &state_ids,
 	ADT data_type, const char* fname){
 	assert(param_range_vec.size() == state_size);
 

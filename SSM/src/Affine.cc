@@ -152,13 +152,13 @@ void Affine::getInitPixGrad(Matrix2Xd &ssm_grad, int pix_id) {
 void Affine::cmptInitPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dx){
 	validate_ssm_jacobian(dI_dp, dI_dx);
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dx(ch_pt_id, 0);
 			double Iy = dI_dx(ch_pt_id, 1);
 			dI_dp(ch_pt_id, 0) = Ix;
@@ -178,13 +178,13 @@ void Affine::cmptApproxPixJacobian(MatrixXd &dI_dp,
 	double a = curr_state(2) + 1, b = curr_state(3);
 	double c = curr_state(4), d = curr_state(5) + 1;
 	double inv_det = 1.0 / (a*d - b*c);
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dx(ch_pt_id, 0);
 			double Iy = dI_dx(ch_pt_id, 1);
 			double Ixx = Ix * x;
@@ -208,13 +208,13 @@ void Affine::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 	double a = curr_state(2) + 1, b = curr_state(3);
 	double c = curr_state(4), d = curr_state(5) + 1;
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dx(ch_pt_id, 0);
 			double Iy = dI_dx(ch_pt_id, 1);
 			double Ixx = Ix * x;
@@ -236,8 +236,8 @@ void Affine::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 	const PixGradT &dI_dw){
 	validate_ssm_hessian(d2I_dp2, d2I_dw2, dI_dw);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -246,7 +246,7 @@ void Affine::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 		dw_dp <<
 			1, 0, x, y, 0, 0,
 			0, 1, 0, 0, x, y;
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			Map<Matrix6d>(d2I_dp2.col(ch_pt_id).data()) = dw_dp.transpose()*
 				Map<const Matrix2d>(d2I_dw2.col(ch_pt_id).data())*dw_dp;
 			++ch_pt_id;
@@ -263,8 +263,8 @@ void Affine::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 		a2, a3,
 		a4, a5;
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -275,7 +275,7 @@ void Affine::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 			1, 0, x, y, 0, 0,
 			0, 1, 0, 0, x, y;
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			Map<Matrix6d>(d2I_dp2.col(ch_pt_id).data()) = dw_dp.transpose()*
 				dw_dx.transpose()*Map<const Matrix2d>(d2I_dw2.col(ch_pt_id).data())*dw_dx*dw_dp;
 			++ch_pt_id;
@@ -286,7 +286,7 @@ void Affine::updateGradPts(double grad_eps){
 	Vector2d diff_vec_x_warped = curr_warp.topRows<2>().col(0) * grad_eps;
 	Vector2d diff_vec_y_warped = curr_warp.topRows<2>().col(1) * grad_eps;
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check(spi_mask, pt_id);
 
 		grad_pts(0, pt_id) = curr_pts(0, pt_id) + diff_vec_x_warped(0);
@@ -312,7 +312,7 @@ void Affine::updateHessPts(double hess_eps){
 	Vector2d diff_vec_xy_warped = (curr_warp.topRows<2>().col(0) + curr_warp.topRows<2>().col(1)) * hess_eps;
 	Vector2d diff_vec_yx_warped = (curr_warp.topRows<2>().col(0) - curr_warp.topRows<2>().col(1)) * hess_eps;
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check(spi_mask, pt_id);
 
 		hess_pts(0, pt_id) = curr_pts(0, pt_id) + diff_vec_xx_warped(0);
@@ -363,7 +363,7 @@ void Affine::estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mask,
 void Affine::applyWarpToCorners(Matrix24d &warped_corners, const Matrix24d &orig_corners,
 	const VectorXd &ssm_state){
 	getWarpFromState(warp_mat, ssm_state);
-	for(int corner_id = 0; corner_id < 4; corner_id++){
+	for(unsigned int corner_id = 0; corner_id < 4; corner_id++){
 		warped_corners(0, corner_id) = warp_mat(0, 0)*orig_corners(0, corner_id) + warp_mat(0, 1)*orig_corners(1, corner_id) +
 			warp_mat(0, 2);
 		warped_corners(1, corner_id) = warp_mat(1, 0)*orig_corners(0, corner_id) + warp_mat(1, 1)*orig_corners(1, corner_id) +
@@ -374,8 +374,8 @@ void Affine::applyWarpToCorners(Matrix24d &warped_corners, const Matrix24d &orig
 void Affine::applyWarpToPts(Matrix2Xd &warped_pts, const Matrix2Xd &orig_pts,
 	const VectorXd &ssm_state){
 	getWarpFromState(warp_mat, ssm_state);
-	int n_pts = orig_pts.cols();
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int n_pts = orig_pts.cols();
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		warped_pts(0, pt_id) = warp_mat(0, 0)*orig_pts(0, pt_id) + warp_mat(0, 1)*orig_pts(1, pt_id) +
 			warp_mat(0, 2);
 		warped_pts(1, pt_id) = warp_mat(1, 0)*orig_pts(0, pt_id) + warp_mat(1, 1)*orig_pts(1, pt_id) +
@@ -476,7 +476,7 @@ void Affine::generatePerturbation(VectorXd &perturbation){
 			//! different perturbation for x,y coordinates of each corner
 			//! followed by consistent translational perturbation to all corners
 			Matrix23d rand_d;
-			for(int pt_id = 0; pt_id < 3; ++pt_id){
+			for(unsigned int pt_id = 0; pt_id < 3; ++pt_id){
 				rand_d(0, pt_id) = rand_dist[1](rand_gen[1]);
 				rand_d(1, pt_id) = rand_dist[1](rand_gen[1]);
 			}
@@ -487,7 +487,7 @@ void Affine::generatePerturbation(VectorXd &perturbation){
 	} else{
 		//! perform geometric perturbation
 		Vector6d geom_perturbation;
-		for(int state_id = 0; state_id < 6; state_id++){
+		for(unsigned int state_id = 0; state_id < 6; state_id++){
 			geom_perturbation(state_id) = rand_dist[state_id](rand_gen[state_id]);
 		}
 		perturbation = geomToState(geom_perturbation);
@@ -502,7 +502,7 @@ void Affine::additiveRandomWalk(VectorXd &perturbed_state,
 		throw mtf::utils::FunctonNotImplemented("Affine::additiveRandomWalk :: point based sampling is not implemented yet");
 	} else{
 		Vector6d geom_perturbation;
-		for(int state_id = 0; state_id < 6; ++state_id){
+		for(unsigned int state_id = 0; state_id < 6; ++state_id){
 			geom_perturbation(state_id) = rand_dist[state_id](rand_gen[state_id]);
 		}
 		Vector6d base_geom = stateToGeom(base_state);
@@ -518,7 +518,7 @@ void Affine::additiveAutoRegression1(VectorXd &perturbed_state, VectorXd &pertur
 		throw mtf::utils::FunctonNotImplemented("Affine::additiveAutoRegression1 :: point based sampling is not implemented yet");
 	} else{
 		Vector6d geom_perturbation;
-		for(int state_id = 0; state_id < 6; ++state_id){
+		for(unsigned int state_id = 0; state_id < 6; ++state_id){
 			geom_perturbation(state_id) = rand_dist[state_id](rand_gen[state_id]);
 		}
 		Vector6d base_geom = stateToGeom(base_state);

@@ -40,8 +40,8 @@
 //
 //M*/
 
-#ifndef __OPENCV_ONLINE_BOOSTING_H__
-#define __OPENCV_ONLINE_BOOSTING_H__
+#ifndef MTF_ONLINE_BOOSTING_H
+#define MTF_ONLINE_BOOSTING_H
 
 #include <opencv2/core/core.hpp>
 

@@ -74,13 +74,13 @@ private:
 
 	Matrix8d covariance_mat;
 
+	char *log_fname;
+
 	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
 	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
 	void getLieAlgMatFromState(Matrix3d& lie_alg_mat, const VectorXd& ssm_state);
 	void getStateFromLieAlgMat(VectorXd &state_vec,
 		const Matrix3d& lie_alg_mat);
-
-
 };
 
 _MTF_END_NAMESPACE

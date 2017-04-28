@@ -88,7 +88,7 @@ void MCLSCV::updateSimilarity(bool prereq_only){
 					}
 				}
 				updateMappedPixVals(_subregion_idx(idy, idx), ch);
-				for(int pix_id = 0; pix_id < n_pix; ++pix_id){
+				for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 					I0(pix_id * 3 + ch) += I0_mapped(pix_id)*sub_region_wts(pix_id, _subregion_idx(idy, idx));
 				}
 			}
@@ -102,11 +102,11 @@ void MCLSCV::updateMappedPixVals(int index, int ch){
 		I0_mapped = (affine_params(0)*I0_orig_ch).array() + affine_params(1);
 	} else{
 		if(params.weighted_mapping){
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				I0_mapped(pix_id) = utils::mapPixVal<utils::InterpType::Linear>(I0_orig_ch(pix_id), intensity_map);
 			}
 		} else{
-			for(int pix_id = 0; pix_id < n_pix; pix_id++){
+			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 				I0_mapped(pix_id) = utils::mapPixVal<utils::InterpType::Nearest>(I0_orig_ch(pix_id), intensity_map);
 			}
 		}

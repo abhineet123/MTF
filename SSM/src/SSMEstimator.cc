@@ -27,7 +27,7 @@ SSMEstimator::~SSMEstimator() {}
 
 void SSMEstimator::setSeed(int64 seed) {
 	cv_rng = cvRNG(seed);
-	boost_rng.seed(seed);
+	boost_rng.seed(static_cast<const uint32_t>(seed));
 }
 
 

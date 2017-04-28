@@ -80,7 +80,7 @@ public:
 	const DistType* getDistPtr() override{
 		return new DistType(name, am1->getDistPtr(),
 			am2->getDistPtr(), am1_norm_factor, am2_norm_factor,
-			am1_norm_factor, am2_dist_feat_size);
+			am1_dist_feat_size, am2_dist_feat_size);
 	}
 	void updateDistFeat(double* feat_addr) override;
 	void initializeDistFeat() override;

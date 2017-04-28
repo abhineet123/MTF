@@ -170,7 +170,7 @@ void CBH::cmptInitPixJacobian(MatrixXd &dI_dp,
 
 	//MatrixXd jacobian_prod2(n_pts, state_size);
 	//clock_t start_time=clock();
-	//for(int i = 0; i < n_pts; i++){
+	//for(unsigned int i = 0; i < n_pts; i++){
 	//	Eigen::Map< Matrix<double, 2, 8> > ssm_jacobian(init_jacobian.col(i).data());
 	//	jacobian_prod2.row(i) = pix_jacobian.row(i) * ssm_jacobian;
 	//}
@@ -180,9 +180,9 @@ void CBH::cmptInitPixJacobian(MatrixXd &dI_dp,
 	//utils::printMatrixToFile(jacobian_prod2, "ssm jacobian_prod2", "log/mtf_log.txt", "%15.9f", "a");
 
 	//INIT_TIMER(start_time);
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dw(ch_pt_id, 0);
 			double Iy = dI_dw(ch_pt_id, 1);
 			dI_dp(ch_pt_id, 0) = Ix * dw_dp_0(0, pt_id) + Iy * dw_dp_0(1, pt_id);
@@ -213,8 +213,8 @@ void CBH::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 	double a20 = curr_warp(2, 0);
 	double a21 = curr_warp(2, 1);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		double w_x = curr_pts(0, pt_id);
 		double w_y = curr_pts(1, pt_id);
 
@@ -226,7 +226,7 @@ void CBH::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 		double dwy_dx = (a10 - a20*w_y);
 		double dwy_dy = (a11 - a21*w_y);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = (dwx_dx*dI_dw(ch_pt_id, 0) + dwy_dx*dI_dw(ch_pt_id, 1))*inv_det;
 			double Iy = (dwx_dy*dI_dw(ch_pt_id, 0) + dwy_dy*dI_dw(ch_pt_id, 1))*inv_det;
 
@@ -250,9 +250,9 @@ void CBH::cmptPixJacobian(MatrixXd &dI_dp,
 
 	computeJacobian(dw_dp_t, curr_corners, curr_pts_hm);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dw(ch_pt_id, 0);
 			double Iy = dI_dw(ch_pt_id, 1);
 			dI_dp(ch_pt_id, 0) = Ix * dw_dp_t(0, pt_id) + Iy * dw_dp_t(1, pt_id);
@@ -281,8 +281,8 @@ void CBH::cmptApproxPixJacobian(MatrixXd &dI_dp,
 	double h20 = curr_warp(2, 0);
 	double h21 = curr_warp(2, 1);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 
 		double Nx = curr_pts_hm(0, pt_id);
 		double Ny = curr_pts_hm(1, pt_id);
@@ -295,7 +295,7 @@ void CBH::cmptApproxPixJacobian(MatrixXd &dI_dp,
 		double d = (h11_plus_1*D - h21*Ny) * D_sqr_inv;
 		double inv_det = 1.0 / (a*d - b*c);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 
 			double Ix = dI_dw(ch_pt_id, 0);
 			double Iy = dI_dw(ch_pt_id, 1);
@@ -319,7 +319,7 @@ void CBH::computeJacobian(MatrixXd &jacobian, Matrix24d &corners,
 	Matrix3Xd &pts_hm){
 	int state_id = 0;
 	inc_corners = dec_corners = corners;
-	for(int corner_id = 0; corner_id < 4; ++corner_id){
+	for(unsigned int corner_id = 0; corner_id < 4; ++corner_id){
 		inc_corners(0, corner_id) += params.grad_eps;
 		inc_warp = utils::computeHomographyDLT(corners, inc_corners);
 		utils::dehomogenize(inc_warp * pts_hm, inc_pts);
@@ -358,7 +358,7 @@ void CBH::getPixGrad(Matrix2Xd &ssm_grad, int pt_id,
 
 	int state_id = 0;
 	inc_corners = dec_corners = corners;
-	for(int corner_id = 0; corner_id < 4; corner_id++){
+	for(unsigned int corner_id = 0; corner_id < 4; corner_id++){
 		inc_corners(0, corner_id) += params.grad_eps;
 		inc_warp = utils::computeHomographyDLT(corners, inc_corners);
 		applyWarpToPt(inc_x, inc_y, x, y, inc_warp);

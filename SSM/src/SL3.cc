@@ -72,6 +72,8 @@ SL3::SL3(
 	state_size = 8;
 	curr_state.resize(state_size);
 
+	log_fname = log_fname;
+
 	lie_alg_mat = Matrix3d::Zero();
 	warp_mat = Matrix3d::Identity();
 
@@ -120,7 +122,21 @@ SL3::SL3(
 	init_pts_hm = norm_pts_hm;
 
 	if(params.debug_mode){
-		fclose(fopen("log/sl3.txt", "w"));
+#ifdef _WIN32
+		FILE *fid;
+		errno_t err;
+		if((err = fopen_s(&fid, log_fname, "r")) != 0) {
+			throw std::invalid_argument(cv_format("SL3 :: Log file %s could not be opened successfully : %s\n",
+				log_fname, strerror(err)));
+		}
+#else
+		FILE *fid = fopen(log_fname, "w");
+		if(!fid){
+			throw std::invalid_argument(cv_format(("SL3 :: Log file %s could not be opened successfully\n", 
+				fname));
+		}		
+#endif	
+		fclose(fid);
 	}
 }
 
@@ -138,8 +154,8 @@ void SL3::setState(const VectorXd &ssm_state){
 	utils::dehomogenize(curr_pts_hm, curr_pts);
 	utils::dehomogenize(curr_corners_hm, curr_corners);
 	if(params.debug_mode){
-		utils::printMatrixToFile(curr_warp, "setState::curr_warp", "log/sl3.txt");
-		utils::printMatrixToFile(curr_corners, "setState::curr_corners", "log/sl3.txt");
+		utils::printMatrixToFile(curr_warp, "setState::curr_warp", log_fname);
+		utils::printMatrixToFile(curr_corners, "setState::curr_corners", log_fname);
 	}
 }
 
@@ -173,9 +189,9 @@ void SL3::setCorners(const CornersT& corners){
 		curr_state.fill(0);
 	}
 	if(params.debug_mode){
-		utils::printMatrixToFile(init_pts, "setCorners::init_pts", "log/sl3.txt");
-		utils::printMatrixToFile(init_corners, "setCorners::init_corners", "log/sl3.txt");
-		utils::printMatrixToFile(curr_warp, "setCorners::curr_warp", "log/sl3.txt");
+		utils::printMatrixToFile(init_pts, "setCorners::init_pts", log_fname);
+		utils::printMatrixToFile(init_corners, "setCorners::init_corners", log_fname);
+		utils::printMatrixToFile(curr_warp, "setCorners::curr_warp", log_fname);
 	}
 }
 
@@ -265,8 +281,8 @@ void SL3::getStateFromLieAlgMat(VectorXd &ssm_state,
 	ssm_state(6) = lie_alg_mat(2, 0);
 	ssm_state(7) = lie_alg_mat(2, 1);
 	if(params.debug_mode){
-		utils::printMatrixToFile(ssm_state.transpose(), "getStateFromLieAlgMat :: ssm_state", "log/sl3.txt");
-		utils::printMatrixToFile(lie_alg_mat, "getStateFromLieAlgMat :: lie_alg_mat", "log/sl3.txt");
+		utils::printMatrixToFile(ssm_state.transpose(), "getStateFromLieAlgMat :: ssm_state", log_fname);
+		utils::printMatrixToFile(lie_alg_mat, "getStateFromLieAlgMat :: lie_alg_mat", log_fname);
 	}
 }
 
@@ -291,7 +307,7 @@ void SL3::initializeSampler(const VectorXd &state_sigma,
 	rand_dist[0] = SampleDistT(0, 1);
 
 	if(params.debug_mode){
-		utils::printMatrixToFile(covariance_mat, "covariance_mat", "log/sl3.txt");
+		utils::printMatrixToFile(covariance_mat, "covariance_mat", log_fname);
 	}
 	is_initialized.sampler = true;
 }
@@ -310,7 +326,7 @@ VectorXd SL3::getSamplerSigma(){
 void SL3::generatePerturbation(VectorXd &perturbation){
 	assert(perturbation.size() == state_size);
 	Vector8d rand_vec;
-	for(int state_id = 0; state_id < 8; state_id++){
+	for(unsigned int state_id = 0; state_id < 8; state_id++){
 		rand_vec(state_id) = rand_dist[0](rand_gen[0]);
 	}
 	perturbation = covariance_mat*rand_vec;
@@ -335,22 +351,22 @@ void SL3::compositionalRandomWalk(VectorXd &perturbed_state,
 //	ProjWarpT perturbed_warp = base_warp*SL3_perturbation;
 //	ProjWarpT base_warp_inv = base_warp.inverse();
 //	if(params.debug_mode){
-//		utils::printMatrixToFile(state_perturbation.transpose(), "rand_perturbation", "log/sl3.txt");
-//		utils::printMatrixToFile(warp_perturbation.transpose(), "warp_perturbation", "log/sl3.txt");
-//		utils::printMatrixToFile(sl3_perturbation, "sl3_perturbation", "log/sl3.txt");
-//		utils::printMatrixToFile(base_ar.transpose(), "base_ar", "log/sl3.txt");
-//		utils::printMatrixToFile(sl3_base_ar, "sl3_base_ar", "log/sl3.txt");
-//		utils::printMatrixToFile(SL3_perturbation, "SL3_perturbation", "log/sl3.txt");
-//		utils::printMatrixToFile(base_warp, "base_warp", "log/sl3.txt");
-//		utils::printMatrixToFile(base_warp_inv, "base_warp_inv", "log/sl3.txt");
-//		utils::printMatrixToFile(perturbed_warp, "perturbed_warp", "log/sl3.txt");
-//		utils::printMatrixToFile(perturbed_state.transpose(), "perturbed_state", "log/sl3.txt");
-//		utils::printMatrixToFile(perturbed_ar.transpose(), "perturbed_ar", "log/sl3.txt");
+//		utils::printMatrixToFile(state_perturbation.transpose(), "rand_perturbation", log_fname);
+//		utils::printMatrixToFile(warp_perturbation.transpose(), "warp_perturbation", log_fname);
+//		utils::printMatrixToFile(sl3_perturbation, "sl3_perturbation", log_fname);
+//		utils::printMatrixToFile(base_ar.transpose(), "base_ar", log_fname);
+//		utils::printMatrixToFile(sl3_base_ar, "sl3_base_ar", log_fname);
+//		utils::printMatrixToFile(SL3_perturbation, "SL3_perturbation", log_fname);
+//		utils::printMatrixToFile(base_warp, "base_warp", log_fname);
+//		utils::printMatrixToFile(base_warp_inv, "base_warp_inv", log_fname);
+//		utils::printMatrixToFile(perturbed_warp, "perturbed_warp", log_fname);
+//		utils::printMatrixToFile(perturbed_state.transpose(), "perturbed_state", log_fname);
+//		utils::printMatrixToFile(perturbed_ar.transpose(), "perturbed_ar", log_fname);
 //	}
 //	ProjWarpT SL3_perturbed_ar = a*(base_warp_inv*perturbed_warp);
 //	ProjWarpT sl3_perturbed_ar = SL3_perturbed_ar.log();
 //	if(params.debug_mode){
-//		utils::printMatrixToFile(sl3_perturbed_ar, "sl3_perturbed_ar", "log/sl3.txt");
+//		utils::printMatrixToFile(sl3_perturbed_ar, "sl3_perturbed_ar", log_fname);
 //	}
 //	getStateFromWarp(perturbed_state, perturbed_warp);
 //	getStateFromLieAlgMat(perturbed_ar, sl3_perturbed_ar);
@@ -370,14 +386,14 @@ void SL3::compositionalAutoRegression1(VectorXd &perturbed_state, VectorXd &pert
 	getStateFromWarp(perturbed_state, perturbed_warp);
 	getStateFromLieAlgMat(perturbed_ar, lie_alg_perturbed_ar);
 	if(params.debug_mode){
-		utils::printMatrixToFile(state_perturbation.transpose(), "state_perturbation", "log/sl3.txt");
-		utils::printMatrixToFile(sl3_perturbation, "sl3_perturbation", "log/sl3.txt");
-		utils::printMatrixToFile(base_ar.transpose(), "base_ar", "log/sl3.txt");
-		utils::printMatrixToFile(lie_alg_base_ar, "lie_alg_base_ar", "log/sl3.txt");
-		utils::printMatrixToFile(SL3_perturbation, "SL3_perturbation", "log/sl3.txt");
-		utils::printMatrixToFile(base_warp, "base_warp", "log/sl3.txt");
-		utils::printMatrixToFile(perturbed_warp, "perturbed_warp", "log/sl3.txt");
-		utils::printMatrixToFile(lie_alg_perturbed_ar, "lie_alg_perturbed_ar", "log/sl3.txt");
+		utils::printMatrixToFile(state_perturbation.transpose(), "state_perturbation", log_fname);
+		utils::printMatrixToFile(sl3_perturbation, "sl3_perturbation", log_fname);
+		utils::printMatrixToFile(base_ar.transpose(), "base_ar", log_fname);
+		utils::printMatrixToFile(lie_alg_base_ar, "lie_alg_base_ar", log_fname);
+		utils::printMatrixToFile(SL3_perturbation, "SL3_perturbation", log_fname);
+		utils::printMatrixToFile(base_warp, "base_warp", log_fname);
+		utils::printMatrixToFile(perturbed_warp, "perturbed_warp", log_fname);
+		utils::printMatrixToFile(lie_alg_perturbed_ar, "lie_alg_perturbed_ar", log_fname);
 	}
 }
 
@@ -436,12 +452,12 @@ void SL3::cmptInitPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dw){
 	validate_ssm_jacobian(dI_dp, dI_dw);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dw(ch_pt_id, 0);
 			double Iy = dI_dw(ch_pt_id, 1);
 
@@ -475,8 +491,8 @@ void SL3::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 	double a20 = curr_warp(2, 0);
 	double a21 = curr_warp(2, 1);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		double w_x = curr_pts(0, pt_id);
 		double w_y = curr_pts(1, pt_id);
 
@@ -493,7 +509,7 @@ void SL3::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 
 		//double Ix = pix_grad(pt_id, 0);
 		//double Iy = pix_grad(pt_id, 1);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = (dwx_dx*dI_dw(ch_pt_id, 0) + dwy_dx*dI_dw(ch_pt_id, 1))*inv_det;
 			double Iy = (dwx_dy*dI_dw(ch_pt_id, 0) + dwy_dy*dI_dw(ch_pt_id, 1))*inv_det;
 
@@ -520,7 +536,7 @@ void SL3::cmptPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &pix_jacobian){
 	validate_ssm_jacobian(dI_dp, pix_jacobian);
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
 		double Ix = pix_jacobian(pt_id, 0);
@@ -561,11 +577,11 @@ void SL3::cmptApproxPixJacobian(MatrixXd &dI_dp,
 	double h20 = curr_warp(2, 0);
 	double h21 = curr_warp(2, 1);
 
-	for(int i = 0; i < n_pts; i++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 
-		double Nx = curr_pts_hm(0, i);
-		double Ny = curr_pts_hm(1, i);
-		double D = curr_pts_hm(2, i);
+		double Nx = curr_pts_hm(0, pt_id);
+		double Ny = curr_pts_hm(1, pt_id);
+		double D = curr_pts_hm(2, pt_id);
 		double D_sqr_inv = 1.0 / (D*D);
 
 		double a = (h00_plus_1*D - h21*Nx) * D_sqr_inv;
@@ -574,14 +590,14 @@ void SL3::cmptApproxPixJacobian(MatrixXd &dI_dp,
 		double d = (h11_plus_1*D - h21*Ny) * D_sqr_inv;
 		double inv_det = 1.0 / ((a*d - b*c)*D);
 
-		double x = init_pts(0, i);
-		double y = init_pts(1, i);
+		double x = init_pts(0, pt_id);
+		double y = init_pts(1, pt_id);
 
-		double curr_x = curr_pts(0, i);
-		double curr_y = curr_pts(1, i);
+		double curr_x = curr_pts(0, pt_id);
+		double curr_y = curr_pts(1, pt_id);
 
-		double Ix = pix_jacobian(i, 0);
-		double Iy = pix_jacobian(i, 1);
+		double Ix = pix_jacobian(pt_id, 0);
+		double Iy = pix_jacobian(pt_id, 1);
 
 		double Ixx = Ix * x;
 		double Ixy = Ix * y;
@@ -591,14 +607,14 @@ void SL3::cmptApproxPixJacobian(MatrixXd &dI_dp,
 		double factor1 = b*curr_y - d*curr_x;
 		double factor2 = c*curr_x - a*curr_y;
 
-		dI_dp(i, 0) = (Ixx*d + Ixy*b - Iyx*c - Iyy*a) * inv_det;
-		dI_dp(i, 1) = (Ixy*d - Iyy*c) * inv_det;
-		dI_dp(i, 2) = (Ix*d - Iy*c) * inv_det;
-		dI_dp(i, 3) = (Iyx*a - Ixx*b) * inv_det;
-		dI_dp(i, 4) = (Iyy*a - Ix*factor1 - Ixy*b - Iy*factor2) * inv_det;
-		dI_dp(i, 5) = (Iy*a - Ix*b) * inv_det;
-		dI_dp(i, 6) = (Ixx*factor1 + Iyx*factor2) * inv_det;
-		dI_dp(i, 7) = (Ixy*factor1 + Iyy*factor2) * inv_det;
+		dI_dp(pt_id, 0) = (Ixx*d + Ixy*b - Iyx*c - Iyy*a) * inv_det;
+		dI_dp(pt_id, 1) = (Ixy*d - Iyy*c) * inv_det;
+		dI_dp(pt_id, 2) = (Ix*d - Iy*c) * inv_det;
+		dI_dp(pt_id, 3) = (Iyx*a - Ixx*b) * inv_det;
+		dI_dp(pt_id, 4) = (Iyy*a - Ix*factor1 - Ixy*b - Iy*factor2) * inv_det;
+		dI_dp(pt_id, 5) = (Iy*a - Ix*b) * inv_det;
+		dI_dp(pt_id, 6) = (Ixx*factor1 + Iyx*factor2) * inv_det;
+		dI_dp(pt_id, 7) = (Ixy*factor1 + Iyy*factor2) * inv_det;
 
 		//dI_dp(i, 0) = (Ix*(d*x + b*y) - Iy*(c*x + a*y)) * inv_det;
 		//dI_dp(i, 1) = (Ix*d*y - Iy*c*y) * inv_det;
@@ -632,7 +648,7 @@ void SL3::estimateMeanOfSamples(VectorXd &sample_mean,
 		vector<ProjWarpT> lie_group_samples;
 		lie_group_samples.resize(n_samples);
 		// convert state vectors to SL3 matrices
-		for(int sample_id = 0; sample_id < n_samples; sample_id++){
+		for(int sample_id = 0; sample_id < n_samples; ++sample_id){
 			getWarpFromState(lie_group_samples[sample_id], samples[sample_id]);
 		}
 		ProjWarpT lie_group_mean = lie_group_samples[0];

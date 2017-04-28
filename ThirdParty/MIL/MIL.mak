@@ -34,6 +34,6 @@ ${BUILD_DIR}/MIL.o: ${MIL_SRC_DIR}/MIL.cc ${MIL_HEADERS} ${UTILITIES_HEADER_DIR}
 ${MTF_LIB_INSTALL_DIR}/${MIL_LIB_SO}: ${MIL_ROOT_DIR}/${MIL_LIB_SO}
 	${MTF_LIB_INSTALL_CMD_PREFIX} cp -f $< $@	
 ${MIL_ROOT_DIR}/${MIL_LIB_SO}: ${MIL_LIB_SRC} ${MIL_LIB_HEADERS}
-	cd ${MIL_ROOT_DIR}; rm -rf Build; mkdir Build; cd Build; cmake -D LIB_NAME=${MIL_LIB_NAME} ..
+	cd ${MIL_ROOT_DIR}; rm -rf Build; mkdir Build; cd Build; cmake -D MIL_LIB_NAME=${MIL_LIB_NAME} ..
 	$(MAKE) -C ${MIL_ROOT_DIR}/Build --no-print-directory
 	mv ${MIL_ROOT_DIR}/Build/${MIL_LIB_SO} ${MIL_ROOT_DIR}/

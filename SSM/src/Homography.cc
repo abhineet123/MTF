@@ -155,14 +155,14 @@ void Homography::cmptInitPixJacobian(MatrixXd &dI_dp,
 	validate_ssm_jacobian(dI_dp, dI_dw);
 
 	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts;  ++pt_id){
 
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 		
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 
 			double Ix = dI_dw(ch_pt_id, 0);
 			double Iy = dI_dw(ch_pt_id, 1);
@@ -190,7 +190,7 @@ void Homography::cmptPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dw){
 	validate_ssm_jacobian(dI_dp, dI_dw);
 	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts;  ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -200,7 +200,7 @@ void Homography::cmptPixJacobian(MatrixXd &dI_dp,
 		double curr_y = curr_pts(1, pt_id);
 		double inv_d = 1.0 / curr_pts_hm(2, pt_id);		
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dw(ch_pt_id, 0) * inv_d;
 			double Iy = dI_dw(ch_pt_id, 1) * inv_d;
 
@@ -236,7 +236,7 @@ void Homography::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 	double a21 = curr_warp(2, 1);
 
 	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	for(unsigned int pt_id = 0; pt_id < n_pts;  ++pt_id) {
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double w_x = curr_pts(0, pt_id);
@@ -255,7 +255,7 @@ void Homography::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 
 		//double Ix = pix_grad(pt_id, 0);
 		//double Iy = pix_grad(pt_id, 1);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = (dwx_dx*dI_dw(ch_pt_id, 0) + dwy_dx*dI_dw(ch_pt_id, 1))*inv_det;
 			double Iy = (dwx_dy*dI_dw(ch_pt_id, 0) + dwy_dy*dI_dw(ch_pt_id, 1))*inv_det;
 
@@ -301,7 +301,7 @@ void Homography::cmptApproxPixJacobian(MatrixXd &dI_dp,
 	double h21 = curr_warp(2, 1);
 
 	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts;  ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double curr_x = curr_pts(0, pt_id);
@@ -317,7 +317,7 @@ void Homography::cmptApproxPixJacobian(MatrixXd &dI_dp,
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 
 			double Ix = (d*dI_dw(ch_pt_id, 0) - c*dI_dw(ch_pt_id, 1))*inv_factor;
 			double Iy = (a*dI_dw(ch_pt_id, 1) - b*dI_dw(ch_pt_id, 0))*inv_factor;
@@ -357,7 +357,7 @@ void Homography::cmptInitPixHessian(MatrixXd &_d2I_dp2, const PixHessT &d2I_dw2,
 	const PixGradT &dI_dw){
 	validate_ssm_hessian(_d2I_dp2, d2I_dw2, dI_dw);
 	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts;  ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -368,7 +368,7 @@ void Homography::cmptInitPixHessian(MatrixXd &_d2I_dp2, const PixHessT &d2I_dw2,
 			x, y, 1, 0, 0, 0, -x*x, -x*y,
 			0, 0, 0, x, y, 1, -y*x, -y*y;
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 
 			double Ix = dI_dw(ch_pt_id, 0);
 			double Iy = dI_dw(ch_pt_id, 1);
@@ -423,7 +423,7 @@ void Homography::cmptPixHessian(MatrixXd &_d2I_dp2, const PixHessT &d2I_dw2,
 	validate_ssm_hessian(_d2I_dp2, d2I_dw2, dI_dw);
 
 	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts;  ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -440,7 +440,7 @@ void Homography::cmptPixHessian(MatrixXd &_d2I_dp2, const PixHessT &d2I_dw2,
 
 		double inv_d_squared = 1.0 / (curr_pts_hm(2, pt_id)*curr_pts_hm(2, pt_id));
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 
 			Map<Matrix8d> d2I_dp2(_d2I_dp2.col(ch_pt_id).data());
 			d2I_dp2 = dw_dp.transpose()*Map<const Matrix2d>(d2I_dw2.col(ch_pt_id).data())*dw_dp;
@@ -521,7 +521,7 @@ void Homography::cmptWarpedPixHessian(MatrixXd &_d2I_dp2, const PixHessT &d2I_dw
 	double a21 = curr_warp(2, 1);
 
 	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	for(unsigned int pt_id = 0; pt_id < n_pts;  ++pt_id) {
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		Matrix2d dw_dX, d2wx_dX2, d2wy_dX2;
@@ -561,7 +561,7 @@ void Homography::cmptWarpedPixHessian(MatrixXd &_d2I_dp2, const PixHessT &d2I_dw
 			x, y, 1, 0, 0, 0, -x*x, -y*x,
 			0, 0, 0, x, y, 1, -x*y, -y*y;
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 
 			Map<Matrix8d> d2I_dp2(_d2I_dp2.col(ch_pt_id).data());
 
@@ -625,7 +625,7 @@ void Homography::cmptWarpedPixHessian2(MatrixXd &d2I_dp2, const PixHessT &d2I_dw
 	double h21 = curr_warp(2, 1);
 
 	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	for(unsigned int pt_id = 0; pt_id < n_pts;  ++pt_id) {
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double curr_x = curr_pts(0, pt_id);
@@ -650,7 +650,7 @@ void Homography::cmptWarpedPixHessian2(MatrixXd &d2I_dp2, const PixHessT &d2I_dw
 			x, y, 1, 0, 0, 0, -x*x, -y*x,
 			0, 0, 0, x, y, 1, -x*y, -y*y;
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dw(ch_pt_id, 0);
 			double Iy = dI_dw(ch_pt_id, 1);
 
@@ -701,7 +701,7 @@ void Homography::cmptApproxPixHessian(MatrixXd &pix_hess_ssm, const PixHessT &pi
 	double h21 = curr_warp(2, 1);
 	
 	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	for(unsigned int pt_id = 0; pt_id < n_pts;  ++pt_id) {
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double curr_x = curr_pts(0, pt_id);
@@ -743,7 +743,7 @@ void Homography::cmptApproxPixHessian(MatrixXd &pix_hess_ssm, const PixHessT &pi
 			x, y, 1, 0, 0, 0, -x*x, -y*x,
 			0, 0, 0, x, y, 1, -x*y, -y*y;
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 
 			Map<Matrix8d> d2I_dp2(pix_hess_ssm.col(ch_pt_id).data());
 
@@ -801,7 +801,7 @@ void Homography::updateGradPts(double grad_eps){
 	Vector3d diff_vec_y_warped = curr_warp.col(1) * grad_eps;
 
 	Vector3d pt_inc_warped, pt_dec_warped;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts;  ++pt_id){
 		spi_pt_check(spi_mask, pt_id);
 
 		pt_inc_warped = curr_pts_hm.col(pt_id) + diff_vec_x_warped;
@@ -832,7 +832,7 @@ void Homography::updateHessPts(double hess_eps){
 
 	Vector3d pt_inc_warped, pt_dec_warped;
 
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts;  ++pt_id){
 
 		spi_pt_check(spi_mask, pt_id);
 
@@ -896,7 +896,7 @@ void Homography::generatePerturbation(VectorXd &state_update){
 	if(params.corner_based_sampling){
 		rand_t(0) = rand_dist[0](rand_gen[0]);
 		rand_t(1) = rand_dist[0](rand_gen[0]);
-		for(int corner_id = 0; corner_id < 4; corner_id++){
+		for(unsigned int corner_id = 0; corner_id < 4; ++corner_id){
 			rand_d(0, corner_id) = rand_dist[1](rand_gen[1]);
 			rand_d(1, corner_id) = rand_dist[1](rand_gen[1]);
 		}
@@ -904,7 +904,7 @@ void Homography::generatePerturbation(VectorXd &state_update){
 		disturbed_corners = disturbed_corners.colwise() + rand_t;
 		estimateWarpFromCorners(state_update, init_corners, disturbed_corners);
 	} else{
-		for(int state_id = 0; state_id < 8; state_id++){
+		for(unsigned int state_id = 0; state_id < 8; ++state_id){
 			state_update(state_id) = rand_dist[state_id](rand_gen[state_id]);
 		}
 	}

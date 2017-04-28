@@ -5,6 +5,10 @@
 //! Provides functions to create trackers corresponding to different combinations of 
 //! search methods, appearance models and state space models as well as some third party trackers
 
+#ifdef _WIN32
+#pragma warning(disable:4800)
+#endif
+
 //! parameters for the different modules
 #include "mtf/Config/parameters.h"
 
@@ -132,12 +136,14 @@
 #include "mtf/ThirdParty/Struck/Struck.h"
 #include "mtf/ThirdParty/CMT/CMT.h"
 #include "mtf/ThirdParty/FRG/FRG.h"
-#ifndef _WIN32
-//! thirdparty trackers with Cmake build systems do not compile in Windows yet
+#ifndef DISABLE_TLD
 #include "mtf/ThirdParty/TLD/TLD.h"
+#endif
 #ifndef DISABLE_MIL
 #include "mtf/ThirdParty/MIL/MIL.h"
 #endif
+#ifndef _WIN32
+//! some thirdparty trackers do not compile in Windows yet
 #ifndef DISABLE_DFT
 #include "mtf/ThirdParty/DFT/DFT.h"
 #endif
@@ -516,8 +522,8 @@ TrackerBase *getTracker(const char *sm_type,
 				return nullptr;
 			}
 			if(pyr_scale_res){
-				resx *= pyr_scale_factor;
-				resy *= pyr_scale_factor;
+				resx = static_cast<unsigned int>(resx * pyr_scale_factor);
+				resy = static_cast<unsigned int>(resy * pyr_scale_factor);
 				_am_params.resx = resx;
 				_am_params.resy = resy;
 				_ssm_params.resx = resx;
@@ -660,8 +666,8 @@ TrackerBase *getTracker(const char *sm_type,
 				getTracker<AMType, SSMType>(pyr_sm.c_str(), &_am_params, &_ssm_params);
 			if(!trackers[tracker_id]){ return nullptr; }
 			if(pyr_scale_res){
-				resx *= pyr_scale_factor;
-				resy *= pyr_scale_factor;
+				resx = static_cast<unsigned int>(resx * pyr_scale_factor);
+				resy = static_cast<unsigned int>(resy * pyr_scale_factor);
 				_am_params.resx = resx;
 				_am_params.resy = resy;
 				_ssm_params.resx = resx;
@@ -1728,12 +1734,13 @@ inline TrackerBase *getTracker(const char *tracker_type){
 			frg_resize_factor, frg_show_window);
 		return new FRG(&frg_params);
 	}
-#ifndef _WIN32
+#ifndef DISABLE_TLD
 	else if(!strcmp(tracker_type, "tld")){
 		TLDParams tld_params(tld_tracker_enabled, tld_detector_enabled,
 			tld_learning_enabled, tld_alternating);
 		return new tld::TLD(&tld_params);
 	}
+#endif
 #ifndef DISABLE_MIL
 	else if(!strcmp(tracker_type, "mil")){
 		MILParams mil_params(
@@ -1748,6 +1755,7 @@ inline TrackerBase *getTracker(const char *tracker_type){
 		return new MIL(&mil_params);
 	}
 #endif
+#ifndef _WIN32
 #ifndef DISABLE_DFT
 	else if(!strcmp(tracker_type, "dft")){
 		dft::DFTParams dft_params(dft_res_to_l, dft_p_to_l, dft_max_iter,

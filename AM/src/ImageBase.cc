@@ -33,8 +33,8 @@ uchar_input(UCHAR_INPUT){
 		if(img_params->resx <= 0 || img_params->resy <= 0) {
 			throw std::invalid_argument("ImageBase::Invalid sampling resolution provided");
 		}
-		resx = img_params->resx;
-		resy = img_params->resy;
+		resx = static_cast<unsigned int>(img_params->resx);
+		resy = static_cast<unsigned int>(img_params->resy);
 		n_pix = resx*resy;
 		grad_eps = img_params->grad_eps;
 		hess_eps = img_params->hess_eps;

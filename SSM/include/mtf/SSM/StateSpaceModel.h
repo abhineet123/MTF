@@ -49,21 +49,32 @@ struct SSMParams{
 class StateSpaceModel{
 
 protected:
-	int state_size;
-	int resx, resy;
-	int n_pts;
-	int n_channels;
+	unsigned int state_size;
+	unsigned int resx, resy;
+	unsigned int n_pts;
+	unsigned int n_channels;
 
-	// parameters defining the SSM state
+	//! parameters defining the SSM state
 	VectorXd curr_state;
 
-	// grid points and corners that define the object's location in
-	// the frame
+	/**
+	grid points and corners that define the object's location in the frame
+	*/
 	PtsT init_pts, curr_pts;
 	CornersT init_corners, curr_corners;
 	GradPtsT grad_pts;
 	HessPtsT hess_pts;
 	bool identity_jacobian;
+	/**
+	keep track of what state variables have been initialized
+	*/
+	SSMStatus is_initialized;
+	/**
+	indicator variable that can be set by the search method to indicate when a new frame has been acquired;
+	can be used to perform some costly operations/updates only once per frame rather than at every iteration
+	of the same frame
+	*/
+	bool first_iter;
 
 public:
 	string name;
@@ -76,8 +87,8 @@ public:
 			if(params->resx <= 0 || params->resy <= 0) {
 				throw std::invalid_argument("StateSpaceModel::Invalid sampling resolution provided");
 			}
-			resx = params->resx;
-			resy = params->resy;
+			resx = static_cast<unsigned int>(params->resx);
+			resy = static_cast<unsigned int>(params->resy);
 		}
 		n_pts = resx*resy;
 		init_pts.resize(Eigen::NoChange, n_pts);
@@ -89,11 +100,11 @@ public:
 	// ---------------------------accessors--------------------------- //
 	// --------------------------------------------------------------- //
 
-	virtual int getStateSize(){ return state_size; }
-	virtual int getResX(){ return resx; }
-	virtual int getResY(){ return resy; }
-	virtual int getNPts(){ return n_pts; }
-	virtual int getNChannels(){ return n_channels; }
+	virtual unsigned int getStateSize(){ return state_size; }
+	virtual unsigned int getResX(){ return resx; }
+	virtual unsigned int getResY(){ return resy; }
+	virtual unsigned int getNPts(){ return n_pts; }
+	virtual unsigned int getNChannels(){ return n_channels; }
 
 	virtual const PtsT& getPts(){ return curr_pts; }
 	virtual const CornersT& getCorners(){ return curr_corners; }
@@ -373,14 +384,9 @@ public:
 		ssm_func_not_implemeted(getCurrPixGrad);
 	}
 
-	SSMStatus is_initialized;
 	virtual void setInitStatus(){ is_initialized.set(); }
 	virtual void clearInitStatus(){ is_initialized.clear(); }
 
-	// indicator variable that can be set by the search method to indicate when a new frame has been acquired;
-	// can be used to perform some costly operations/updates only once per frame rather than at every iteration
-	// of the same frame
-	bool first_iter;
 	//should be called before performing the first iteration on a new frame to indicate that the image
 	// that will subsequently be passed to the update functions is a new one, i.e. different from 
 	// the one passed the last time these were called

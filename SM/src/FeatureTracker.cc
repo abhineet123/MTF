@@ -235,8 +235,8 @@ void FeatureTracker<SSM>::initialize(const cv::Mat &corners) {
 	if(params.detector_type == DetectorType::NONE){
 		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 			Vector2d patch_centroid = ssm.getPts().col(pt_id);
-			prev_key_pts[pt_id].pt.x = patch_centroid(0);
-			prev_key_pts[pt_id].pt.y = patch_centroid(1);
+			prev_key_pts[pt_id].pt.x = static_cast<float>(patch_centroid(0));
+			prev_key_pts[pt_id].pt.y = static_cast<float>(patch_centroid(1));
 		}
 	}
 	(*feat)(curr_img, mask, prev_key_pts, prev_descriptors,
@@ -387,7 +387,7 @@ void FeatureTracker<SSM>::matchKeyPoints() {
 		} else{
 			matcher.knnMatch(curr_descriptors, prev_descriptors, matches, 2);
 		}
-		for(int match_id = 0; match_id < matches.size(); ++match_id){
+		for(unsigned int match_id = 0; match_id < matches.size(); ++match_id){
 			best_distances.at<float>(match_id, 0) = matches[match_id][0].distance;
 			best_distances.at<float>(match_id, 1) = matches[match_id][1].distance;
 			best_idices.at<int>(match_id, 0) = matches[match_id][0].trainIdx;
@@ -446,8 +446,8 @@ void FeatureTracker<SSM>::setRegion(const cv::Mat& corners) {
 	if(params.detector_type == DetectorType::NONE){
 		for(int pt_id = 0; pt_id < n_pts; pt_id++){
 			Vector2d patch_centroid = ssm.getPts().col(pt_id);
-			prev_key_pts[pt_id].pt.x = patch_centroid(0);
-			prev_key_pts[pt_id].pt.y = patch_centroid(1);
+			prev_key_pts[pt_id].pt.x = static_cast<float>(patch_centroid(0));
+			prev_key_pts[pt_id].pt.y = static_cast<float>(patch_centroid(1));
 		}
 	}
 	cv::Mat mask = cv::Mat::zeros(curr_img.rows, curr_img.cols, CV_8U);
@@ -476,7 +476,7 @@ void FeatureTracker<SSM>::showKeyPoints(){
 			pix_mask[pt_id] ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255), 2);
 		matches.push_back(cv::DMatch(pt_id,
 			best_idices.at<int>(good_indices[pt_id], 0),
-			best_distances.at<int>(good_indices[pt_id], 0)));
+			best_distances.at<float>(good_indices[pt_id], 0)));
 	}
 	imshow(patch_win_name, curr_img_disp);
 	if(params.show_matches){

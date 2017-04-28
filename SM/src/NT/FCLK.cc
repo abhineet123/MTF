@@ -78,19 +78,21 @@ namespace nt{
 			if(params.show_patch){
 				curr_patch_eig.resize(am->getPatchSize());	
 				printf("curr_patch_eig size: %ld\n", curr_patch_eig.size());
+				int type_f, type_u;
 				if(am->getCurrImg().type() == CV_32FC1){
 					printf("Using single channel images\n");
-					curr_patch = cv::Mat(am->getResY(), am->getResX(), CV_64FC1, curr_patch_eig.data());
-					curr_patch_uchar.create(am->getResY(), am->getResX(), CV_8UC1);
-					curr_patch_resized.create(am->getResY()*params.patch_resize_factor,
-						am->getResX()*params.patch_resize_factor, CV_8UC1);
+					type_f = CV_64FC1;
+					type_u = CV_8UC1;
 				} else{
 					printf("Using multi channel images\n");
-					curr_patch = cv::Mat(am->getResY(), am->getResX(), CV_64FC3, curr_patch_eig.data());
-					curr_patch_uchar.create(am->getResY(), am->getResX(), CV_8UC3);
-					curr_patch_resized.create(am->getResY()*params.patch_resize_factor,
-						am->getResX()*params.patch_resize_factor, CV_8UC3);
-				}				
+					type_f = CV_64FC3;
+					type_u = CV_8UC3;
+				}	
+				curr_patch = cv::Mat(am->getResY(), am->getResX(), type_f, curr_patch_eig.data());
+				curr_patch_uchar.create(am->getResY(), am->getResX(), type_u);
+				curr_patch_resized.create(
+					static_cast<unsigned int>(am->getResY()*params.patch_resize_factor),
+					static_cast<unsigned int>(am->getResX()*params.patch_resize_factor), type_u);
 
 			}
 			cv::namedWindow("FCLK::Grid");

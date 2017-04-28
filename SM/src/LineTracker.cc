@@ -232,20 +232,20 @@ void LineTracker::initGridPositions(const cv::Mat& cv_corners) {
 			int start_x = ulx + tracker_dist_x/2;
 			int start_y = uly + tracker_dist_y/2;*/
 
-	int tracker_dist_x = size_x / (params.grid_size_x - 1);
-	int tracker_dist_y = size_y / (params.grid_size_x - 1);
-	int start_x = ulx;
-	int start_y = uly;
+	int tracker_dist_x = static_cast<int>(size_x / (params.grid_size_x - 1));
+	int tracker_dist_y = static_cast<int>(size_y / (params.grid_size_x - 1));
+	int start_x = static_cast<int>(ulx);
+	int start_y = static_cast<int>(uly);
 
-	for(int i = 0; i < n_trackers; i++) {
-		int grid_id_x = i % params.grid_size_x;
-		int grid_id_y = i / params.grid_size_x;
+	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++) {
+		int grid_id_x = tracker_id % params.grid_size_x;
+		int grid_id_y = tracker_id / params.grid_size_x;
 
-		prev_grid_pts[i].x = curr_grid_pts[i].x = start_x + grid_id_x * tracker_dist_x;
-		prev_grid_pts[i].y = curr_grid_pts[i].y = start_y + grid_id_y * tracker_dist_y;
+		prev_grid_pts[tracker_id].x = curr_grid_pts[tracker_id].x = start_x + grid_id_x * tracker_dist_x;
+		prev_grid_pts[tracker_id].y = curr_grid_pts[tracker_id].y = start_y + grid_id_y * tracker_dist_y;
 
-		curr_grid_pts[i].xx = curr_grid_pts[i].x * curr_grid_pts[i].x;
-		curr_grid_pts[i].xy = curr_grid_pts[i].x * curr_grid_pts[i].y;
+		curr_grid_pts[tracker_id].xx = curr_grid_pts[tracker_id].x * curr_grid_pts[tracker_id].x;
+		curr_grid_pts[tracker_id].xy = curr_grid_pts[tracker_id].x * curr_grid_pts[tracker_id].y;
 	}
 }
 void LineTracker::update() {

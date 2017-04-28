@@ -88,10 +88,10 @@ namespace utils{
 		cv_mat.at<double>(0, 3) = eig_mat(0, 3);
 		cv_mat.at<double>(1, 3) = eig_mat(1, 3);
 	}
-	int writeTimesToFile(vector<double> &proc_times,
+	double writeTimesToFile(vector<double> &proc_times,
 		vector<char*> &proc_labels, char *time_fname, int iter_id){
 		MatrixXd iter_times(proc_times.size(), 2);
-		for(int proc_id = 0; proc_id < proc_times.size(); proc_id++){
+		for(unsigned int proc_id = 0; proc_id < proc_times.size(); proc_id++){
 			iter_times(proc_id, 0) = proc_times[proc_id];
 		}
 		double total_iter_time = iter_times.col(0).sum();
@@ -117,10 +117,10 @@ namespace utils{
 			+ abs(corners.at<double>(1, 2) - center_y) + abs(corners.at<double>(1, 3) - center_y)) / 4.0;
 
 		cv::Rect_<ValT> best_fit_rect;
-		best_fit_rect.x = center_x - mean_half_width;
-		best_fit_rect.y = center_y - mean_half_height;
-		best_fit_rect.width = 2 * mean_half_width;
-		best_fit_rect.height = 2 * mean_half_height;
+		best_fit_rect.x = static_cast<ValT>(center_x - mean_half_width);
+		best_fit_rect.y = static_cast<ValT>(center_y - mean_half_height);
+		best_fit_rect.width = static_cast<ValT>(2 * mean_half_width);
+		best_fit_rect.height = static_cast<ValT>(2 * mean_half_height);
 
 		return _img_width > 0 && _img_height > 0 ? getBoundedRectangle<ValT>(best_fit_rect,
 			_img_width, _img_height, border_size) : best_fit_rect;
@@ -298,11 +298,11 @@ namespace utils{
 		cv::minMaxLoc(tracker_corners.row(0), &tracker_min_x, &tracker_max_x);
 		cv::minMaxLoc(tracker_corners.row(1), &tracker_min_y, &tracker_max_y);
 
-		int min_x = gt_min_x < tracker_min_x ? gt_min_x : tracker_min_x;
-		int min_y = gt_min_y < tracker_min_y ? gt_min_y : tracker_min_y;
+		int min_x = static_cast<int>(gt_min_x < tracker_min_x ? gt_min_x : tracker_min_x);
+		int min_y = static_cast<int>(gt_min_y < tracker_min_y ? gt_min_y : tracker_min_y);
 
-		int max_x = gt_max_x > tracker_max_x ? gt_max_x : tracker_max_x;
-		int max_y = gt_max_y > tracker_max_y ? gt_max_y : tracker_max_y;
+		int max_x = static_cast<int>(gt_max_x > tracker_max_x ? gt_max_x : tracker_max_x);
+		int max_y = static_cast<int>(gt_max_y > tracker_max_y ? gt_max_y : tracker_max_y);
 
 		if(max_x < min_x || max_y < min_y){
 			throw invalid_argument("getJaccardError::Invalid GT and/or tracker corners provided\n");

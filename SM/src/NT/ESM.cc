@@ -427,7 +427,7 @@ namespace nt{
 	void ESM::showSPIMask(){
 #ifndef DISABLE_SPI
 		if(params.enable_spi){
-			for(int pix_id = 0; pix_id < am->getPatchSize(); pix_id++){
+			for(unsigned int pix_id = 0; pix_id < am->getPatchSize(); pix_id++){
 				int x = pix_mask(pix_id);
 				pix_mask2(pix_id) = x * 255;
 			}

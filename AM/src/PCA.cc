@@ -8,13 +8,19 @@
 #include "mtf/Utilities/imgUtils.h"
 // #define DEBUG
 
+// Default parameters
+#define PCA_N_EIGENVEC 16 // same as in ivt paper
+#define PCA_BATCHSIZE 5
+#define PCA_F_FACTOR 0.95
+#define PCA_SHOW_BASIS 0
+
 _MTF_BEGIN_NAMESPACE
 
 //! value constructor
 PCAParams::PCAParams(const AMParams *am_params,
 int _n_eigenvec,
 int _batch_size,
-float _f_factor,
+double _f_factor,
 bool _show_basis) :
 AMParams(am_params),
 n_eigenvec(_n_eigenvec),
@@ -214,11 +220,10 @@ void PCA::updateBasis() {
 	}
 }
 
-
 // the core algorithm in ivt tracker: 
 // sklm(Sequential Karhunen-Loeve Transform with Mean update)
 // Notation follows the ivt paper Figure 1.
-void PCA::sklm(MatrixXd &U, VectorXd &sigma, VectorXd &mu_A, MatrixXd &B, int &n, float ff, int max_n_eig){
+void PCA::sklm(MatrixXd &U, VectorXd &sigma, VectorXd &mu_A, MatrixXd &B, int &n, double ff, int max_n_eig){
 	// step 1
 	// mean of additional patches
 	int m = B.cols();
@@ -275,7 +280,7 @@ void PCA::sklm(MatrixXd &U, VectorXd &sigma, VectorXd &mu_A, MatrixXd &B, int &n
 	mu_A = (ff * n * mu_A + m * mu_B) / (ff*n + m);
 
 	// update n <- fn + m
-	n = ff *n + m;
+	n = static_cast<int>(ff*n + m);
 
 }
 
@@ -295,7 +300,7 @@ void PCA::display_basis() {
 	// to display, first reshape the matrix U to (resY * 4) by (resX * 4)
 	// pad zeros if no data
 	int m = getResY();
-	int n = sqrt(params.n_eigenvec);
+	int n = static_cast<int>(sqrt(params.n_eigenvec));
 	int row = m *  n;
 	int col = m *  n;
 	double min_val; // for computing the normalization parameters

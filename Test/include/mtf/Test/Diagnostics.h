@@ -77,7 +77,7 @@ public:
 		int n_pts, ADT data_type, const char* fname = nullptr);
 	void generateAnalyticalData3D(VectorXd &x_vec, VectorXd &y_vec,
 		const VectorXd &param_range, int n_pts,
-		const Vector2d &state_ids, ADT data_type,
+		const Vector2i &state_ids, ADT data_type,
 		const char* fname = nullptr);
 	void generateInverseAnalyticalData(VectorXd &param_range,
 		int n_pts, ADT data_type, const char* fname = nullptr);
@@ -153,8 +153,8 @@ private:
 	void updateAM(const VectorXd &state_update);
 	void resetAM(const VectorXd &state_update);
 
-	void updateState(const VectorXd &state_update, int state_id);
-	void resetState(const VectorXd &state_update, int state_id);
+	void updateState(const VectorXd &state_update, unsigned int state_id);
+	void resetState(const VectorXd &state_update, unsigned int state_id);
 
 	void initializePixJacobian();
 	void updateInitPixJacobian();

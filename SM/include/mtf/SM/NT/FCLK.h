@@ -50,7 +50,7 @@ namespace nt{
 
 		int frame_id;
 
-		int state_size, ssm_state_size, am_state_size;
+		unsigned int state_size, ssm_state_size, am_state_size;
 
 		init_profiling();
 		char *log_fname;

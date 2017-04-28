@@ -24,7 +24,7 @@ void Diagnostics::generateNumericalData(VectorXd &param_range_vec,
 
 	double grad_mult_factor = 1.0 / (2 * grad_diff);
 	double data_val;
-	for(int state_id = 0; state_id < state_size; state_id++){
+	for(unsigned int state_id = 0; state_id < state_size; ++state_id){
 		//printf("Processing state parameter %d....\n", state_id);
 
 		state_update.setZero();
@@ -141,7 +141,7 @@ void Diagnostics::generateInverseNumericalData(VectorXd &param_range_vec,
 	// so the current image  is not needed anymore in this call
 	am->setCurrImg(init_img_cv);
 
-	for(int state_id = 0; state_id < ssm_state_size; state_id++){
+	for(unsigned int state_id = 0; state_id < ssm_state_size; ++state_id){
 		//printf("Processing state parameter %d....\n", state_id);
 
 		state_update.setZero();

@@ -3,26 +3,6 @@
 
 #include "mtf/Macros/common.h"
 
-#define PF_MAX_ITERS 10
-#define PF_N_PARTICLES 200
-#define PF_EPSILON 0.01
-#define PF_DYN_MODEL 0
-#define PF_UPD_TYPE 0
-#define PF_LIKELIHOOD_FUNC 0
-#define PF_RESAMPLING_TYPE 0
-#define PF_RESET_TO_MEAN false
-#define PF_MEAN_TYPE 1
-#define PF_UPDATE_SAMPLER_WTS 0
-#define PF_MIN_DISTR_WT 0.5
-#define PF_ADAPTIVE_RESAMPLING_THRESH 0
-#define PF_CORNER_SIGMA_D 0.06
-#define PF_PIX_SIGMA 0.04
-#define PF_MEASUREMENT_SIGMA 0.1
-#define PF_SHOW_PARTICLES 0
-#define PF_UPDATE_TEMPLATE 0
-#define PF_JACOBIAN_AS_SIGMA false
-#define PF_DEBUG_MODE false
-
 _MTF_BEGIN_NAMESPACE
 
 struct PFParams{
@@ -124,7 +104,7 @@ struct PFParams{
 	*/
 	bool processDistributions(vector<VectorXd> &state_sigma,
 		vector<VectorXd> &state_mean, VectorXi &distr_n_samples,
-		int &n_distr, int ssm_state_size);
+		unsigned int &n_distr, unsigned int ssm_state_size);
 };
 
 _MTF_END_NAMESPACE

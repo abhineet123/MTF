@@ -101,7 +101,7 @@ params(lrscv_params), init_patch(0, 0, 0), curr_patch(0, 0, 0){
 	printf("norm_pix_min: %f\n", norm_pix_min);
 	printf("norm_pix_max: %f\n", norm_pix_max);
 
-	int intensity_range = norm_pix_max - norm_pix_min + 1;
+	int intensity_range = static_cast<int>(norm_pix_max - norm_pix_min + 1);
 	intensity_vals.resize(intensity_range, Eigen::NoChange);
 	intensity_vals.col(0) = VectorXd::LinSpaced(intensity_range, norm_pix_min, norm_pix_max);
 	intensity_vals.col(1).fill(1);
@@ -160,14 +160,14 @@ params(lrscv_params), init_patch(0, 0, 0), curr_patch(0, 0, 0){
 	}
 
 	sub_region_wts.resize(n_pix, n_sub_regions);
-	for(int pix_id = 0; pix_id < n_pix; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 		int pix_x = pix_id % patch_size_x;
 		int pix_y = pix_id / patch_size_x;
 		double pix_wt_sum = 0;
 		for(int idy = 0; idy < params.sub_regions_y; idy++){
 			for(int idx = 0; idx < params.sub_regions_x; idx++){
-				int diff_x = pix_x - sub_region_centers(_subregion_idx(idy, idx), 0);
-				int diff_y = pix_y - sub_region_centers(_subregion_idx(idy, idx), 1);
+				int diff_x = static_cast<int>(pix_x - sub_region_centers(_subregion_idx(idy, idx), 0));
+				int diff_y = static_cast<int>(pix_y - sub_region_centers(_subregion_idx(idy, idx), 1));
 				double pix_wt = 1.0 / static_cast<double>(1.0 + diff_x*diff_x + diff_y*diff_y);
 				pix_wt_sum += sub_region_wts(pix_id, _subregion_idx(idy, idx)) = pix_wt;
 			}
@@ -183,8 +183,8 @@ params(lrscv_params), init_patch(0, 0, 0), curr_patch(0, 0, 0){
 
 	if(params.show_subregions){
 		_pts_idx.resize(resy, resx);
-		for(int idy = 0; idy < resy; idy++){
-			for(int idx = 0; idx < resx; idx++){
+		for(unsigned int idy = 0; idy < resy; ++idy){
+			for(unsigned int idx = 0; idx < resx; ++idx){
 				_pts_idx(idy, idx) = idy * resx + idx;
 			}
 		}
@@ -247,7 +247,7 @@ void LRSCV::updatePixVals(const Matrix2Xd& curr_pts){
 			updateMappedPixVals(_subregion_idx(idy, idx));
 		}
 	}
-	for(int pix_id = 0; pix_id < n_pix; pix_id++){
+	for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
 		It(pix_id) = 0;
 		for(int region_id = 0; region_id < n_sub_regions; region_id++){
 			It(pix_id) += mapped_pix_vals[region_id](pix_id)*sub_region_wts(pix_id, region_id);
@@ -291,7 +291,7 @@ void LRSCV::updateMappedPixVals(int index){
 }
 
 #ifdef _WIN32
-#define snprintf  _snprintf
+#define snprintf  _snprintf_s
 #endif
 void  LRSCV::showSubRegions(const ImageT &img, const Matrix2Xd& pts){
 	patch_img = cv::Mat(img.rows(), img.cols(), CV_32FC1, const_cast<float*>(img.data()));
@@ -317,20 +317,18 @@ void  LRSCV::showSubRegions(const ImageT &img, const Matrix2Xd& pts){
 	int y1 = sub_region_y(idy, 0);
 	int y2 = sub_region_y(idy, 1);
 
-	cv::Point ul(pts(0, _pts_idx(y1, x1)), pts(1, _pts_idx(y1, x1)));
-	cv::Point ur(pts(0, _pts_idx(y1, x2)), pts(1, _pts_idx(y1, x2)));
-	cv::Point lr(pts(0, _pts_idx(y2, x2)), pts(1, _pts_idx(y2, x2)));
-	cv::Point ll(pts(0, _pts_idx(y2, x1)), pts(1, _pts_idx(y2, x1)));
-	cv::Point centroid = (ul + ur + lr + ll)*0.25;
+	cv::Point2d ul(pts(0, _pts_idx(y1, x1)), pts(1, _pts_idx(y1, x1)));
+	cv::Point2d ur(pts(0, _pts_idx(y1, x2)), pts(1, _pts_idx(y1, x2)));
+	cv::Point2d lr(pts(0, _pts_idx(y2, x2)), pts(1, _pts_idx(y2, x2)));
+	cv::Point2d ll(pts(0, _pts_idx(y2, x1)), pts(1, _pts_idx(y2, x1)));
+	cv::Point2d centroid = (ul + ur + lr + ll)*0.25;
 
 	cv::line(patch_img_uchar, ul, ur, region_cols[col_id], 2);
 	cv::line(patch_img_uchar, ur, lr, region_cols[col_id], 2);
 	cv::line(patch_img_uchar, lr, ll, region_cols[col_id], 2);
 	cv::line(patch_img_uchar, ll, ul, region_cols[col_id], 2);
 
-	char buffer[20];
-	snprintf(buffer, 20, "%d", _subregion_idx(idy, idx));
-	putText(patch_img_uchar, buffer, centroid,
+	putText(patch_img_uchar, cv_format("%d", _subregion_idx(idy, idx)), centroid,
 		cv::FONT_HERSHEY_SIMPLEX, 0.50, region_cols[col_id]);
 
 	imshow(patch_win_name, patch_img_uchar);

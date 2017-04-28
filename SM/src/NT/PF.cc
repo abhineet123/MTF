@@ -79,7 +79,8 @@ namespace nt{
 			}
 		}
 
-		min_particles = (params.n_particles*params.min_distr_wt) / static_cast<double>(n_distr);
+		min_particles = static_cast<int>((params.n_particles*params.min_distr_wt) / 
+			static_cast<double>(n_distr));
 		dynamic_particles = (params.n_particles - min_particles*n_distr);
 
 		curr_set_id = 0;
@@ -140,7 +141,7 @@ namespace nt{
 
 		if(using_pix_sigma){
 			//! estimate SSM parameter sigma from pixel sigma
-			for(int distr_id = 0; distr_id < n_distr; ++distr_id){
+			for(unsigned int distr_id = 0; distr_id < n_distr; ++distr_id){
 				state_sigma[distr_id].resize(ssm_state_size);
 				state_mean[distr_id] = VectorXd::Zero(ssm_state_size);
 				ssm->estimateStateSigma(state_sigma[distr_id], params.pix_sigma[distr_id]);
@@ -172,7 +173,7 @@ namespace nt{
 		if(params.debug_mode){
 			//! print the sigma for the SSM distributions
 			printf("state_sigma:\n");
-			for(int distr_id = 0; distr_id < n_distr; ++distr_id){
+			for(unsigned int distr_id = 0; distr_id < n_distr; ++distr_id){
 				if(n_distr > 1){ printf("%d: ", distr_id); }
 				utils::printMatrix(state_sigma[distr_id].transpose(), nullptr, "%e");
 			}
@@ -197,7 +198,7 @@ namespace nt{
 	}
 	void PF::initializeDistributions(){
 		double init_distr_wt = 1.0 / n_distr;
-		for(int distr_id = 0; distr_id < n_distr; ++distr_id){
+		for(unsigned int distr_id = 0; distr_id < n_distr; ++distr_id){
 			distr_wts[distr_id] = init_distr_wt;
 			distr_n_particles[distr_id] = 0;
 		}
@@ -353,14 +354,14 @@ namespace nt{
 			if(params.update_distr_wts){
 				double wt_sum = 0;
 				//! set distribution weights to average particle weights
-				for(int i = 0; i < n_distr; ++i){
+				for(unsigned int i = 0; i < n_distr; ++i){
 					if(distr_n_particles[i]>0){
 						distr_wts[i] /= distr_n_particles[i];
 						wt_sum += distr_wts[i];
 					}
 				}
 				//! normalize weights to sum to 1 while maintaining the minimum threshold
-				for(int i = 0; i < n_distr; ++i){
+				for(unsigned int i = 0; i < n_distr; ++i){
 					distr_wts[i] /= wt_sum;
 					if(distr_wts[i] < params.min_distr_wt){
 						distr_wts[i] = params.min_distr_wt;
@@ -554,7 +555,7 @@ namespace nt{
 		int particles_found = 0;
 		for(int particle_id = 0; particle_id < params.n_particles; ++particle_id) {
 			int resample_id = particle_idx[particle_id];
-			int particle_copies = round(particle_wts[resample_id] * params.n_particles);
+			int particle_copies = static_cast<int>(round(particle_wts[resample_id] * params.n_particles));
 			for(int copy_id = 0; copy_id < particle_copies; ++copy_id) {
 				particle_states[1 - curr_set_id][particles_found] = particle_states[curr_set_id][resample_id];
 				particle_ar[1 - curr_set_id][particles_found] = particle_ar[curr_set_id][resample_id];

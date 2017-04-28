@@ -151,7 +151,7 @@ void LieHomography::getWarpFromState(Matrix3d &warp_mat,
 	validate_ssm_state(ssm_state);
 
 	assert(ssm_state.size() == state_size);
-	//for(int i=0;i<state_size;i++){
+	//for(unsigned int i=0;i<state_size;i++){
 	//	lie_alg_mat += ssm_state(i) * lieAlgBasis[i];
 	//}
 
@@ -281,11 +281,11 @@ void LieHomography::cmptInitPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dw){
 	validate_ssm_jacobian(dI_dp, dI_dw);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dw(ch_pt_id, 0);
 			double Iy = dI_dw(ch_pt_id, 1);
 
@@ -319,8 +319,8 @@ void LieHomography::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 	double a20 = curr_warp(2, 0);
 	double a21 = curr_warp(2, 1);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		double w_x = curr_pts(0, pt_id);
 		double w_y = curr_pts(1, pt_id);
 
@@ -335,7 +335,7 @@ void LieHomography::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = (dwx_dx*dI_dw(ch_pt_id, 0) + dwy_dx*dI_dw(ch_pt_id, 1))*inv_det;
 			double Iy = (dwx_dy*dI_dw(ch_pt_id, 0) + dwy_dy*dI_dw(ch_pt_id, 1))*inv_det;
 
@@ -365,13 +365,13 @@ void LieHomography::cmptPixJacobian(MatrixXd &dI_dp,
 	MatrixXd dw_dp_t(16, n_pts);
 	computeJacobian(dw_dp_t, init_pts_hm);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 
 		//Matrix2Xd dw_dp(2, 8);
 		//getCurrPixGrad(dw_dp, pt_id);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			//dI_dp.row(ch_pt_id) = dI_dw.row(ch_pt_id)*dw_dp;
 
 			double Ix = dI_dw(ch_pt_id, 0);
@@ -398,7 +398,7 @@ void LieHomography::computeJacobian(MatrixXd &dw_dp, Matrix3Xd &pts_hm){
 	Matrix3d inc_warp, dec_warp;
 	Matrix2Xd inc_pts(2, n_pts), dec_pts(2, n_pts);
 	inc_state = dec_state = curr_state;
-	for(int state_id = 0; state_id < 8; ++state_id){
+	for(unsigned int state_id = 0; state_id < 8; ++state_id){
 		inc_state(state_id) += params.grad_eps;
 		getWarpFromState(inc_warp, inc_state);
 		utils::dehomogenize(inc_warp * pts_hm, inc_pts);
@@ -430,8 +430,8 @@ void LieHomography::cmptApproxPixJacobian(MatrixXd &dI_dp,
 	double h20 = curr_warp(2, 0);
 	double h21 = curr_warp(2, 1);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 
 		double Nx = curr_pts_hm(0, pt_id);
 		double Ny = curr_pts_hm(1, pt_id);
@@ -450,7 +450,7 @@ void LieHomography::cmptApproxPixJacobian(MatrixXd &dI_dp,
 		//double curr_x = curr_pts(0, pt_id);
 		//double curr_y = curr_pts(1, pt_id);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 
 			double Ix = dI_dw(ch_pt_id, 0);
 			double Iy = dI_dw(ch_pt_id, 1);

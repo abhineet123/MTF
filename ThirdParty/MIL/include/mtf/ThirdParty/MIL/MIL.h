@@ -9,18 +9,17 @@ struct MILParams{
 	MILParams(int _algorithm, int _num_classifiers, float _overlap, float _search_factor,
 		float _pos_radius_train, int _neg_num_train, int _num_features);
 	MILParams(const MILParams *params = nullptr);
-	const cv::ObjectTrackerParams& get() const{ return _params; }
+	const cv::MILTrackerParams& get() const{ return _params; }
 private:
-	cv::ObjectTrackerParams _params;
+	cv::MILTrackerParams _params;
 };
 
 
 class MIL : public mtf::TrackerBase{
 public:
 	typedef MILParams ParamType;
-	typedef std::unique_ptr<cv::ObjectTracker> ObjectTrackerPtr;
+	typedef std::unique_ptr<cv::MILTracker> MILTrackerPtr;
 
-	MIL();
 	MIL(const ParamType *mil_params = nullptr);
 	~MIL(){
 		/**
@@ -35,7 +34,7 @@ public:
 	void update() override;
 private:
 	ParamType params;
-	cv::ObjectTracker *tracker;
+	cv::MILTracker *tracker;
 	cv::Mat curr_img;
 	cv::Rect curr_location;
 	CvRect init_bb;

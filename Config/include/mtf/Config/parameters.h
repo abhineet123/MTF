@@ -375,17 +375,17 @@ namespace mtf{
 		int nn_km_branching = 32;
 		int nn_km_iterations = 11;
 		int nn_km_centers_init = 0;
-		float nn_km_cb_index = 0.2;
+		float nn_km_cb_index = 0.2f;
 		int nn_kdts_leaf_max_size = 10;
 		int nn_kdtc_leaf_max_size = 64;
 		int nn_hc_branching = 32;
 		int nn_hc_trees = 4;
 		int nn_hc_leaf_max_size = 100;
 		int nn_hc_centers_init = 0;
-		float nn_auto_target_precision = 0.9;
-		float nn_auto_build_weight = 0.01;
-		float nn_auto_memory_weight = 0;
-		float nn_auto_sample_fraction = 0.1;
+		float nn_auto_target_precision = 0.9f;
+		float nn_auto_build_weight = 0.01f;
+		float nn_auto_memory_weight = 0.0f;
+		float nn_auto_sample_fraction = 0.1f;
 
 		// Multi Layer Nearest Filter
 		int nnk_n_layers;
@@ -636,9 +636,9 @@ namespace mtf{
 
 		int mil_algorithm = 100;
 		int mil_num_classifiers = 100;
-		float mil_overlap = 0.99;
-		float mil_search_factor = 2.0;
-		float mil_pos_radius_train = 4.0;
+		float mil_overlap = 0.99f;
+		float mil_search_factor = 2.0f;
+		float mil_pos_radius_train = 4.0f;
 		int mil_neg_num_train = 65;
 		int mil_num_features = 250;
 
@@ -701,7 +701,7 @@ namespace mtf{
 		int pfsl3_len = 100;
 		int pfsl3_init_size = 15;
 		int pfsl3_update_period = 5;
-		float pfsl3_ff = 0.99;
+		float pfsl3_ff = 0.99f;
 		double pfsl3_basis_thr = 0.95;
 		int pfsl3_max_num_basis = 30;
 		int pfsl3_max_num_used_basis = 10;
@@ -717,8 +717,8 @@ namespace mtf{
 		std::string gtrn_trained_file = "Data/GOTURN/solver.prototxt";
 
 		//! DFT
-		float dft_res_to_l = 1e-10;
-		float dft_p_to_l = 5e-5;
+		float dft_res_to_l = 1e-10f;
+		float dft_p_to_l = 5e-5f;
 		int dft_max_iter = 50;
 		int dft_max_iter_single_level = 10;
 		std::vector<float> dft_pyramid_smoothing_variance = { 7 };
@@ -740,7 +740,7 @@ namespace mtf{
 		// PCA
 		int pca_n_eigenvec = 16;
 		int pca_batchsize = 5;
-		float pca_f_factor = 0.95;
+		float pca_f_factor = 0.95f;
 		bool pca_show_basis = false;
 
 		//! DFM
@@ -814,11 +814,22 @@ namespace mtf{
 		}
 
 		inline int readParams(std::vector<char*> &fargv, const char* fname = "mtf.cfg"){
+#ifdef _WIN32
+			FILE *fid;
+			errno_t err;
+			if((err = fopen_s(&fid, fname, "r")) != 0) {
+				printf("\n Parameter file: %s not found: %s\n",
+					fname, strerror(err));
+				return 0;
+			}
+#else
 			FILE *fid = fopen(fname, "r");
 			if(!fid){
 				printf("\n Parameter file: %s not found\n", fname);
 				return 0;
 			}
+#endif
+
 			// one extra entry at the beginning to maintain compatibilty with the C/C++
 			// command line argument convention
 			fargv.push_back(nullptr);

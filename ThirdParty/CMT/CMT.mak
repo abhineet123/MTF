@@ -26,6 +26,6 @@ ${BUILD_DIR}/CMT.o: ${CMT_SRC_DIR}/CMT.cc ${CMT_HEADERS} ${UTILITIES_HEADER_DIR}
 ${MTF_LIB_INSTALL_DIR}/${CMT_LIB_SO}: ${CMT_ROOT_DIR}/${CMT_LIB_SO}
 	${MTF_LIB_INSTALL_CMD_PREFIX} cp -f $< $@	
 ${CMT_ROOT_DIR}/${CMT_LIB_SO}: ${CMT_LIB_SRC} ${CMT_LIB_HEADERS}
-	cd ${CMT_ROOT_DIR}; rm -rf Build; mkdir Build; cd Build; cmake -D LIB_NAME=${CMT_LIB_NAME} ..
+	cd ${CMT_ROOT_DIR}; rm -rf Build; mkdir Build; cd Build; cmake -D CMT_LIB_NAME=${CMT_LIB_NAME} ..
 	$(MAKE) -C ${CMT_ROOT_DIR}/Build --no-print-directory
 	mv ${CMT_ROOT_DIR}/Build/${CMT_LIB_SO} ${CMT_ROOT_DIR}/

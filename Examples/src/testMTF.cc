@@ -347,7 +347,7 @@ void generateData(int data_id, int adt_len, int diag_len){
 			printf("Generating %s data\t", diag->toString(static_cast<ADT>(data_id)));
 		}
 		if(diag_3d){
-			Vector2d state_ids(diag_3d_ids[0], diag_3d_ids[1]);
+			Vector2i state_ids(diag_3d_ids[0], diag_3d_ids[1]);
 			diag->generateAnalyticalData3D(x_vec, y_vec, param_range, diag_res, state_ids,
 				static_cast<ADT>(data_id), out_fname);
 		} else{

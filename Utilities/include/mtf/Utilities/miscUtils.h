@@ -28,7 +28,7 @@ namespace utils{
 		Corners(const cv::Point_<PtScalarT>(&pt_corners)[4],
 			PtScalarT offset_x = 0, PtScalarT offset_y = 0){
 			corners.create(2, 4, CV_64FC1);
-			for(int corner_id = 0; corner_id < 4; corner_id++) {
+			for(unsigned int corner_id = 0; corner_id < 4; ++corner_id) {
 				corners.at<double>(0, corner_id) = pt_corners[corner_id].x + offset_x;
 				corners.at<double>(1, corner_id) = pt_corners[corner_id].y + offset_y;
 			}
@@ -53,7 +53,7 @@ namespace utils{
 		Corners(const CornersT &eig_corners,
 			double offset_x = 0, double offset_y = 0){
 			corners.create(2, 4, CV_64FC1);
-			for(int corner_id = 0; corner_id < 4; ++corner_id){
+			for(unsigned int corner_id = 0; corner_id < 4; ++corner_id){
 				corners.at<double>(0, corner_id) = eig_corners(0, corner_id) + offset_x;
 				corners.at<double>(1, corner_id) = eig_corners(1, corner_id) + offset_y;
 			}
@@ -64,9 +64,11 @@ namespace utils{
 		}
 		template<typename PtScalarT>
 		void points(cv::Point_<PtScalarT>(&pt_corners)[4]){
-			for(int corner_id = 0; corner_id < 4; ++corner_id) {
-				pt_corners[corner_id].x = corners.at<double>(0, corner_id);
-				pt_corners[corner_id].y = corners.at<double>(1, corner_id);
+			for(unsigned int corner_id = 0; corner_id < 4; ++corner_id) {
+				pt_corners[corner_id].x = static_cast<PtScalarT>(
+					corners.at<double>(0, corner_id));
+				pt_corners[corner_id].y = static_cast<PtScalarT>(
+					corners.at<double>(1, corner_id));
 			}
 		}
 		cv::Mat mat(){ return corners; }
@@ -77,7 +79,7 @@ namespace utils{
 			return eig_corners;
 		}
 		void eig(CornersT &eig_corners){
-			for(int corner_id = 0; corner_id < 4; ++corner_id){
+			for(unsigned int corner_id = 0; corner_id < 4; ++corner_id){
 				eig_corners(0, corner_id) = corners.at<double>(0, corner_id);
 				eig_corners(1, corner_id) = corners.at<double>(1, corner_id);
 			}
@@ -117,11 +119,20 @@ namespace utils{
 		const char* header_fmt = "%15s", const char *name_sep = "\n"){
 		//typedef typename ImageT::RealScalar ScalarT;
 		//printf("Opening file: %s to write %s\n", fname, mat_name);
+#ifdef _WIN32
+		FILE *fid;
+		errno_t err;
+		if((err = fopen_s(&fid, fname, mode)) != 0) {
+			printf("File %s could not be opened successfully: %s\n",
+				fname, strerror(err));
+	}
+#else
 		FILE *fid = fopen(fname, mode);
 		if(!fid){
 			printf("File %s could not be opened successfully\n", fname);
 			return;
 		}
+#endif
 		if(mat_name)
 			fprintf(fid, "%s:%s", mat_name, name_sep);
 		if(mat_header){
@@ -150,11 +161,21 @@ namespace utils{
 		const char* fname, const char* fmt = "%15.9f", const char* mode = "a",
 		const char *name_sep = "\t", const char *val_sep = "\n"){
 		//typedef typename ImageT::RealScalar ScalarT;
+#ifdef _WIN32
+		FILE *fid;
+		errno_t err;
+		if((err = fopen_s(&fid, fname, mode)) != 0) {
+			printf("File %s could not be opened successfully: %s\n",
+				fname, strerror(err));
+		}
+#else
 		FILE *fid = fopen(fname, mode);
 		if(!fid){
 			printf("File %s could not be opened successfully\n", fname);
 			return;
 		}
+#endif
+
 		if(scalar_name)
 			fprintf(fid, "%s:%s", scalar_name, name_sep);
 		fprintf(fid, fmt, scalar_val);
@@ -396,7 +417,7 @@ namespace utils{
 		copyEigenToCV<EigT, ScalarT>(cv_mat, eig_mat);
 		return cv_mat;
 	}
-	int writeTimesToFile(vector<double> &proc_times,
+	double writeTimesToFile(vector<double> &proc_times,
 		vector<char*> &proc_labels, char *time_fname, int iter_id);
 	//! draw the boundary of the image region represented by the polygon formed by the specified vertices
 	void drawRegion(cv::Mat &img, const cv::Mat &vertices, cv::Scalar col = cv::Scalar(0, 255, 0),

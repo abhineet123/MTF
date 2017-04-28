@@ -102,13 +102,13 @@ void Isometry::cmptInitPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dx){
 	validate_ssm_jacobian(dI_dp, dI_dx);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dx(ch_pt_id, 0);
 			double Iy = dI_dx(ch_pt_id, 1);
 
@@ -124,8 +124,8 @@ void Isometry::cmptPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dx){
 	validate_ssm_jacobian(dI_dp, dI_dx);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 		//double x = init_pts(0, i);
 		//double y = init_pts(1, i);
@@ -133,7 +133,7 @@ void Isometry::cmptPixJacobian(MatrixXd &dI_dp,
 		double curr_x = curr_pts(0, pt_id);
 		double curr_y = curr_pts(1, pt_id);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dx(ch_pt_id, 0);
 			double Iy = dI_dx(ch_pt_id, 1);
 
@@ -151,14 +151,14 @@ void Isometry::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 	double cos_theta = curr_warp(0, 0);
 	double sin_theta = curr_warp(1, 0);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = cos_theta*dI_dx(ch_pt_id, 0) + sin_theta*dI_dx(ch_pt_id, 1);
 			double Iy = cos_theta*dI_dx(ch_pt_id, 1) - sin_theta*dI_dx(ch_pt_id, 0);
 
@@ -176,14 +176,14 @@ void Isometry::cmptApproxPixJacobian(MatrixXd &dI_dp,
 	double cos_theta = curr_warp(0, 0);
 	double sin_theta = curr_warp(1, 0);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double curr_x = curr_pts(0, pt_id);
 		double curr_y = curr_pts(1, pt_id);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = cos_theta*dI_dx(ch_pt_id, 0) - sin_theta*dI_dx(ch_pt_id, 1);
 			double Iy = sin_theta*dI_dx(ch_pt_id, 0) + cos_theta*dI_dx(ch_pt_id, 1);
 
@@ -199,8 +199,8 @@ void Isometry::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dx2,
 	const PixGradT &dI_dx){
 	validate_ssm_hessian(d2I_dp2, d2I_dx2, dI_dx);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -209,7 +209,7 @@ void Isometry::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dx2,
 		dw_dp <<
 			1, 0, -y,
 			0, 1, x;
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			Map<Matrix3d>(d2I_dp2.col(ch_pt_id).data()) = dw_dp.transpose()*
 				Map<const Matrix2d>(d2I_dx2.col(ch_pt_id).data())*dw_dp;
 			++ch_pt_id;
@@ -221,8 +221,8 @@ void Isometry::cmptPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dx2,
 	const PixGradT &dI_dx){
 	validate_ssm_hessian(d2I_dp2, d2I_dx2, dI_dx);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double curr_x = curr_pts(0, pt_id);
@@ -231,7 +231,7 @@ void Isometry::cmptPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dx2,
 		dw_dp <<
 			1, 0, -curr_y,
 			0, 1, curr_x;
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dx(ch_pt_id, 0);
 			double Iy = dI_dx(ch_pt_id, 1);
 			Map<Matrix3d> curr_pix_hess_ssm(d2I_dp2.col(ch_pt_id).data());
@@ -252,8 +252,8 @@ void Isometry::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 		cos_theta, -sin_theta,
 		sin_theta, cos_theta;
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -263,7 +263,7 @@ void Isometry::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 			1, 0, -y,
 			0, 1, x;
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dw(ch_pt_id, 0);
 			double Iy = dI_dw(ch_pt_id, 1);
 			Map<Matrix3d> _d2I_dp2(d2I_dp2.col(pt_id).data());
@@ -335,7 +335,7 @@ void Isometry::updateGradPts(double grad_eps){
 	Vector2d diff_vec_x_warped = curr_warp.topRows<2>().col(0) * grad_eps;
 	Vector2d diff_vec_y_warped = curr_warp.topRows<2>().col(1) * grad_eps;
 
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check(spi_mask, pt_id);
 
 		grad_pts(0, pt_id) = curr_pts(0, pt_id) + diff_vec_x_warped(0);
@@ -361,7 +361,7 @@ void Isometry::updateHessPts(double hess_eps){
 	Vector2d diff_vec_xy_warped = (curr_warp.topRows<2>().col(0) + curr_warp.topRows<2>().col(1)) * hess_eps;
 	Vector2d diff_vec_yx_warped = (curr_warp.topRows<2>().col(0) - curr_warp.topRows<2>().col(1)) * hess_eps;
 
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check(spi_mask, pt_id);
 
 		hess_pts(0, pt_id) = curr_pts(0, pt_id) + diff_vec_xx_warped(0);
@@ -401,7 +401,7 @@ void Isometry::setState(const VectorXd &ssm_state){
 void Isometry::applyWarpToCorners(Matrix24d &warped_corners, const Matrix24d &orig_corners,
 	const VectorXd &ssm_state){
 	getWarpFromState(warp_mat, ssm_state);
-	for(int corner_id = 0; corner_id < 4; ++corner_id){
+	for(unsigned int corner_id = 0; corner_id < 4; ++corner_id){
 		warped_corners(0, corner_id) = warp_mat(0, 0)*orig_corners(0, corner_id) + warp_mat(0, 1)*orig_corners(1, corner_id) +
 			warp_mat(0, 2);
 		warped_corners(1, corner_id) = warp_mat(1, 0)*orig_corners(0, corner_id) + warp_mat(1, 1)*orig_corners(1, corner_id) +
@@ -412,8 +412,8 @@ void Isometry::applyWarpToCorners(Matrix24d &warped_corners, const Matrix24d &or
 void Isometry::applyWarpToPts(Matrix2Xd &warped_pts, const Matrix2Xd &orig_pts,
 	const VectorXd &ssm_state){
 	getWarpFromState(warp_mat, ssm_state);
-	int n_pts = orig_pts.cols();
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int n_pts = orig_pts.cols();
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		warped_pts(0, pt_id) = warp_mat(0, 0)*orig_pts(0, pt_id) + warp_mat(0, 1)*orig_pts(1, pt_id) +
 			warp_mat(0, 2);
 		warped_pts(1, pt_id) = warp_mat(1, 0)*orig_pts(0, pt_id) + warp_mat(1, 1)*orig_pts(1, pt_id) +
@@ -628,8 +628,8 @@ bool IsometryEstimator::refine(const CvMat* m1, const CvMat* m2,
 					{ 1, 0, -_yi },
 					{ 0, 1, _xi }
 				};
-				for(int j = 0; j < 3; j++) {
-					for(int k = j; k < 3; k++)
+				for(unsigned int j = 0; j < 3; j++) {
+					for(unsigned int k = j; k < 3; k++)
 						_JtJ->data.db[j * 3 + k] += J[0][j] * J[0][k] + J[1][j] * J[1][k];
 					_JtErr->data.db[j] += J[0][j] * err[0] + J[1][j] * err[1];
 				}

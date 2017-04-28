@@ -181,7 +181,7 @@ void Diagnostics::resetAM(const VectorXd &state_update){
 
 
 }
-void Diagnostics::updateState(const VectorXd &state_update, int state_id){
+void Diagnostics::updateState(const VectorXd &state_update, unsigned int state_id){
 	if(state_id < ssm_state_size){
 		VectorXd ssm_state_update = state_update.head(ssm_state_size);
 		updateSSM(ssm_state_update);
@@ -190,7 +190,7 @@ void Diagnostics::updateState(const VectorXd &state_update, int state_id){
 		updateAM(am_state_update);
 	}}
 
-void Diagnostics::resetState(const VectorXd &state_update, int state_id){	if(state_id < ssm_state_size){
+void Diagnostics::resetState(const VectorXd &state_update, unsigned int state_id){	if(state_id < ssm_state_size){
 		VectorXd ssm_state_update = state_update.head(ssm_state_size);
 		resetSSM(ssm_state_update);
 	} else{

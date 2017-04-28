@@ -1,4 +1,4 @@
-option(WITH_MIL "Enable Multiple Instance Learning (MIL) Tracker" OFF)
+option(WITH_MIL "Enable Multiple Instance Learning (MIL) Tracker" ON)
 if(WITH_MIL)
 	set(THIRD_PARTY_LIBS ${THIRD_PARTY_LIBS} mil)
 	set(THIRD_PARTY_TRACKERS ${THIRD_PARTY_TRACKERS} MIL/src/MIL)

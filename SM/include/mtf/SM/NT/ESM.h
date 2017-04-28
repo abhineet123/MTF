@@ -45,7 +45,7 @@ namespace nt{
 
 		VectorXd state_update, ssm_update, am_update;
 		VectorXd inv_ssm_update, inv_am_update;
-		int state_size, ssm_state_size, am_state_size;
+		unsigned int state_size, ssm_state_size, am_state_size;
 
 		//! 1 x S Jacobian of the AM error norm w.r.t. SSM state vector
 		RowVectorXd jacobian;

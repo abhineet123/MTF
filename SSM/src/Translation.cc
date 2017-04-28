@@ -99,49 +99,49 @@ void Translation::invertState(VectorXd& inv_state, const VectorXd& state){
 
 void Translation::updateGradPts(double grad_eps){
 
-	for(int pix_id = 0; pix_id < n_pts; pix_id++){
-		grad_pts(0, pix_id) = curr_pts(0, pix_id) + grad_eps;
-		grad_pts(1, pix_id) = curr_pts(1, pix_id);
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
+		grad_pts(0, pt_id) = curr_pts(0, pt_id) + grad_eps;
+		grad_pts(1, pt_id) = curr_pts(1, pt_id);
 
-		grad_pts(2, pix_id) = curr_pts(0, pix_id) - grad_eps;
-		grad_pts(3, pix_id) = curr_pts(1, pix_id);
+		grad_pts(2, pt_id) = curr_pts(0, pt_id) - grad_eps;
+		grad_pts(3, pt_id) = curr_pts(1, pt_id);
 
-		grad_pts(4, pix_id) = curr_pts(0, pix_id);
-		grad_pts(5, pix_id) = curr_pts(1, pix_id) + grad_eps;
+		grad_pts(4, pt_id) = curr_pts(0, pt_id);
+		grad_pts(5, pt_id) = curr_pts(1, pt_id) + grad_eps;
 
-		grad_pts(6, pix_id) = curr_pts(0, pix_id);
-		grad_pts(7, pix_id) = curr_pts(1, pix_id) - grad_eps;
+		grad_pts(6, pt_id) = curr_pts(0, pt_id);
+		grad_pts(7, pt_id) = curr_pts(1, pt_id) - grad_eps;
 	}
 }
 
 void Translation::updateHessPts(double hess_eps){
 	double hess_eps2 = 2 * hess_eps;
 
-	for(int pix_id = 0; pix_id < n_pts; pix_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 
-		hess_pts(0, pix_id) = curr_pts(0, pix_id) + hess_eps2;
-		hess_pts(1, pix_id) = curr_pts(1, pix_id);
+		hess_pts(0, pt_id) = curr_pts(0, pt_id) + hess_eps2;
+		hess_pts(1, pt_id) = curr_pts(1, pt_id);
 
-		hess_pts(2, pix_id) = curr_pts(0, pix_id) - hess_eps2;
-		hess_pts(3, pix_id) = curr_pts(1, pix_id);
+		hess_pts(2, pt_id) = curr_pts(0, pt_id) - hess_eps2;
+		hess_pts(3, pt_id) = curr_pts(1, pt_id);
 
-		hess_pts(4, pix_id) = curr_pts(0, pix_id);
-		hess_pts(5, pix_id) = curr_pts(1, pix_id) + hess_eps2;
+		hess_pts(4, pt_id) = curr_pts(0, pt_id);
+		hess_pts(5, pt_id) = curr_pts(1, pt_id) + hess_eps2;
 
-		hess_pts(6, pix_id) = curr_pts(0, pix_id);
-		hess_pts(7, pix_id) = curr_pts(1, pix_id) - hess_eps2;
+		hess_pts(6, pt_id) = curr_pts(0, pt_id);
+		hess_pts(7, pt_id) = curr_pts(1, pt_id) - hess_eps2;
 
-		hess_pts(8, pix_id) = curr_pts(0, pix_id) + hess_eps;
-		hess_pts(9, pix_id) = curr_pts(1, pix_id) + hess_eps;
+		hess_pts(8, pt_id) = curr_pts(0, pt_id) + hess_eps;
+		hess_pts(9, pt_id) = curr_pts(1, pt_id) + hess_eps;
 
-		hess_pts(10, pix_id) = curr_pts(0, pix_id) - hess_eps;
-		hess_pts(11, pix_id) = curr_pts(1, pix_id) - hess_eps;
+		hess_pts(10, pt_id) = curr_pts(0, pt_id) - hess_eps;
+		hess_pts(11, pt_id) = curr_pts(1, pt_id) - hess_eps;
 
-		hess_pts(12, pix_id) = curr_pts(0, pix_id) + hess_eps;
-		hess_pts(13, pix_id) = curr_pts(1, pix_id) - hess_eps;
+		hess_pts(12, pt_id) = curr_pts(0, pt_id) + hess_eps;
+		hess_pts(13, pt_id) = curr_pts(1, pt_id) - hess_eps;
 
-		hess_pts(14, pix_id) = curr_pts(0, pix_id) - hess_eps;
-		hess_pts(15, pix_id) = curr_pts(1, pix_id) + hess_eps;
+		hess_pts(14, pt_id) = curr_pts(0, pt_id) - hess_eps;
+		hess_pts(15, pt_id) = curr_pts(1, pt_id) + hess_eps;
 	}
 }
 
@@ -189,7 +189,7 @@ void Translation::estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mas
 		int n_pts = in_pts.size();
 		vector<cv::Point2f> diff_between_pts(n_pts);
 		vector<uchar> test_mask(n_pts);
-		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 			diff_between_pts[pt_id].x = out_pts[pt_id].x - in_pts[pt_id].x;
 			diff_between_pts[pt_id].y = out_pts[pt_id].y - in_pts[pt_id].y;
 		}
@@ -198,11 +198,11 @@ void Translation::estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mas
 		case EstType::LeastMedian:
 			throw std::domain_error("translation::Least median estimator is not implemented yet");
 		case EstType::RANSAC:
-			for(int test_pt_id = 0; test_pt_id < n_pts; ++test_pt_id){
+			for(unsigned int test_pt_id = 0; test_pt_id < n_pts; ++test_pt_id){
 				float tx = out_pts[test_pt_id].x - in_pts[test_pt_id].x;
 				float ty = out_pts[test_pt_id].y - in_pts[test_pt_id].y;
 				int n_inliers = 0;
-				for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+				for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 					float dx = diff_between_pts[pt_id].x - diff_between_pts[test_pt_id].x;
 					float dy = diff_between_pts[pt_id].y - diff_between_pts[test_pt_id].y;
 					float err = dx*dx + dy*dy;
@@ -221,7 +221,7 @@ void Translation::estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mas
 
 		state_update[0] = 0, state_update[1] = 0;
 		int pts_found = 0;
-		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 			if(!mask[pt_id]){ continue; }
 			++pts_found;
 			state_update[0] += (diff_between_pts[pt_id].x - state_update[0]) / pts_found;
@@ -248,7 +248,7 @@ int TranslationEstimator::runKernel(const CvMat* m1, const CvMat* m2, CvMat* H) 
 
 	double mean_tx = 0, mean_ty = 0;
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++) {
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		double tx = m[pt_id].x - M[pt_id].x;
 		double ty = m[pt_id].y - M[pt_id].y;
 		mean_tx += (tx - mean_tx) / (pt_id + 1);
@@ -261,7 +261,6 @@ int TranslationEstimator::runKernel(const CvMat* m1, const CvMat* m2, CvMat* H) 
 	return 1;
 }
 
-
 void TranslationEstimator::computeReprojError(const CvMat* m1, const CvMat* m2,
 	const CvMat* model, CvMat* _err) {
 	int n_pts = m1->rows * m1->cols;
@@ -270,7 +269,7 @@ void TranslationEstimator::computeReprojError(const CvMat* m1, const CvMat* m2,
 	const double* H = model->data.db;
 	float* err = _err->data.fl;
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++) {
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		double dx = (H[0] + M[pt_id].x) - m[pt_id].x;
 		double dy = (H[1] + M[pt_id].y) - m[pt_id].y;
 		err[pt_id] = (float)(dx * dx + dy * dy);
@@ -294,7 +293,7 @@ bool TranslationEstimator::refine(const CvMat* m1, const CvMat* m2,
 		if(!solver.updateAlt(_param, _JtJ, _JtErr, _errNorm))
 			break;
 
-		for(int pt_id = 0; pt_id < n_pts; pt_id++)	{
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id)	{
 			const double* h = _param->data.db;
 			double Mx = M[pt_id].x, My = M[pt_id].y;
 			double _xi = (h[0] + Mx);
@@ -305,8 +304,8 @@ bool TranslationEstimator::refine(const CvMat* m1, const CvMat* m2,
 					{ 1, 0 },
 					{ 0, 1 }
 				};
-				for(int j = 0; j < 2; j++) {
-					for(int k = j; k < 2; k++)
+				for(unsigned int j = 0; j < 2; j++) {
+					for(unsigned int k = j; k < 2; k++)
 						_JtJ->data.db[j * 2 + k] += J[0][j] * J[0][k] + J[1][j] * J[1][k];
 					_JtErr->data.db[j] += J[0][j] * err[0] + J[1][j] * err[1];
 				}

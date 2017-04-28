@@ -1,7 +1,7 @@
 #include "mtf/ThirdParty/MIL/MIL.h"
 #include "mtf/Utilities/miscUtils.h"
 
-#define MIL_ALGORITHM cv::ObjectTrackerParams::CV_ONLINEMIL
+#define MIL_ALGORITHM cv::MILTrackerParams::CV_ONLINEMIL
 #define MIL_NUM_CLASSIFIERS 100
 #define MIL_OVERLAP 0.99f
 #define MIL_SEARCH_FACTOR 2.0f
@@ -34,12 +34,6 @@ MIL_NEG_NUM_TRAIN, MIL_NUM_FEATURES){
 		_params.num_features_ = params->get().num_features_;
 	}
 }
-MIL::MIL() :
-tracker(nullptr){
-	name = "mil";
-	cv_corners_mat.create(2, 4, CV_64FC1);
-	tracker = new cv::ObjectTracker(params.get());
-}
 
 MIL::MIL(const ParamType *mil_params) :
 params(mil_params),
@@ -56,7 +50,7 @@ tracker(nullptr){
 	printf("\n");
 	cv_corners_mat.create(2, 4, CV_64FC1);
 
-	tracker = new cv::ObjectTracker(params.get());
+	tracker = new cv::MILTracker(params.get());
 }
 void MIL::initialize(const cv::Mat& corners){
 	curr_location = mtf::utils::getBestFitRectangle<int>(corners,

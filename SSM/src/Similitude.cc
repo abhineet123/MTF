@@ -152,13 +152,13 @@ void Similitude::cmptInitPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dx){
 	validate_ssm_jacobian(dI_dp, dI_dx);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dx(ch_pt_id, 0);
 			double Iy = dI_dx(ch_pt_id, 1);
 
@@ -177,14 +177,14 @@ void Similitude::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 	double a = curr_state(2) + 1, b = -curr_state(3);
 	double c = curr_state(3), d = curr_state(2) + 1;
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = a*dI_dx(ch_pt_id, 0) + c*dI_dx(ch_pt_id, 1);
 			double Iy = b*dI_dx(ch_pt_id, 0) + d*dI_dx(ch_pt_id, 1);
 
@@ -202,13 +202,13 @@ void Similitude::cmptApproxPixJacobian(MatrixXd &dI_dp, const PixGradT &dI_dx) {
 	double a_plus_1 = curr_state(2) + 1, b = curr_state(3);
 	double inv_det = 1.0 / (a_plus_1*a_plus_1 + b*b);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = (dI_dx(ch_pt_id, 0)*a_plus_1 - dI_dx(ch_pt_id, 1)*b)*inv_det;
 			double Iy = (dI_dx(ch_pt_id, 0)*b + dI_dx(ch_pt_id, 1)*a_plus_1)*inv_det;
 
@@ -234,8 +234,8 @@ void Similitude::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 	const PixGradT &dI_dw){
 	validate_ssm_hessian(d2I_dp2, d2I_dw2, dI_dw);
 	
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -244,7 +244,7 @@ void Similitude::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 		dw_dp <<
 			1, 0, x, -y,
 			0, 1, y, x;
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			Map<Matrix4d>(d2I_dp2.col(ch_pt_id).data()) = dw_dp.transpose()*
 				Map<const Matrix2d>(d2I_dw2.col(ch_pt_id).data())*dw_dp;
 			++ch_pt_id;
@@ -260,8 +260,8 @@ void Similitude::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2
 		a2, -a3,
 		a3, a2;
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -272,7 +272,7 @@ void Similitude::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2
 			1, 0, x, -y,
 			0, 1, y, x;
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			Map<Matrix4d>(d2I_dp2.col(ch_pt_id).data()) = dw_dp.transpose()*
 				dw_dx.transpose()*Map<const Matrix2d>(d2I_dw2.col(ch_pt_id).data())*dw_dx*dw_dp;
 			++ch_pt_id;
@@ -303,7 +303,7 @@ void Similitude::updateGradPts(double grad_eps){
 	Vector2d diff_vec_x_warped = curr_warp.topRows<2>().col(0) * grad_eps;
 	Vector2d diff_vec_y_warped = curr_warp.topRows<2>().col(1) * grad_eps;
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check(spi_mask, pt_id);
 
 		grad_pts(0, pt_id) = curr_pts(0, pt_id) + diff_vec_x_warped(0);
@@ -329,7 +329,7 @@ void Similitude::updateHessPts(double hess_eps){
 	Vector2d diff_vec_xy_warped = (curr_warp.topRows<2>().col(0) + curr_warp.topRows<2>().col(1)) * hess_eps;
 	Vector2d diff_vec_yx_warped = (curr_warp.topRows<2>().col(0) - curr_warp.topRows<2>().col(1)) * hess_eps;
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 
 		spi_pt_check(spi_mask, pt_id);
 
@@ -361,7 +361,7 @@ void Similitude::updateHessPts(double hess_eps){
 void Similitude::applyWarpToCorners(Matrix24d &warped_corners, const Matrix24d &orig_corners,
 	const VectorXd &ssm_state){
 	getWarpFromState(warp_mat, ssm_state);
-	for(int corner_id = 0; corner_id < 4; corner_id++){
+	for(unsigned int corner_id = 0; corner_id < 4; corner_id++){
 		warped_corners(0, corner_id) = warp_mat(0, 0)*orig_corners(0, corner_id) + warp_mat(0, 1)*orig_corners(1, corner_id) +
 			warp_mat(0, 2);
 		warped_corners(1, corner_id) = warp_mat(1, 0)*orig_corners(0, corner_id) + warp_mat(1, 1)*orig_corners(1, corner_id) +
@@ -372,8 +372,8 @@ void Similitude::applyWarpToCorners(Matrix24d &warped_corners, const Matrix24d &
 void Similitude::applyWarpToPts(Matrix2Xd &warped_pts, const Matrix2Xd &orig_pts,
 	const VectorXd &ssm_state){
 	getWarpFromState(warp_mat, ssm_state);
-	int n_pts = orig_pts.cols();
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int n_pts = orig_pts.cols();
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		warped_pts(0, pt_id) = warp_mat(0, 0)*orig_pts(0, pt_id) + warp_mat(0, 1)*orig_pts(1, pt_id) +
 			warp_mat(0, 2);
 		warped_pts(1, pt_id) = warp_mat(1, 0)*orig_pts(0, pt_id) + warp_mat(1, 1)*orig_pts(1, pt_id) +
@@ -406,7 +406,7 @@ void Similitude::generatePerturbation(VectorXd &perturbation){
 	if(params.geom_sampling){
 		//! perform geometric perturbation
 		Vector4d geom_perturbation;
-		for(int state_id = 0; state_id < 4; state_id++){
+		for(unsigned int state_id = 0; state_id < 4; ++state_id){
 			geom_perturbation(state_id) = rand_dist[state_id](rand_gen[state_id]);
 		}
 		perturbation = geomToState(geom_perturbation);
@@ -442,7 +442,7 @@ void Similitude::additiveRandomWalk(VectorXd &perturbed_state,
 	const VectorXd &base_state){
 	if(params.geom_sampling){
 		Vector4d geom_perturbation;
-		for(int state_id = 0; state_id < 4; ++state_id){
+		for(unsigned int state_id = 0; state_id < 4; ++state_id){
 			geom_perturbation(state_id) = rand_dist[state_id](rand_gen[state_id]);
 		}
 		Vector4d base_geom = stateToGeom(base_state);
@@ -458,7 +458,7 @@ void Similitude::additiveAutoRegression1(VectorXd &perturbed_state, VectorXd &pe
 	const VectorXd &base_state, const VectorXd &base_ar, double a){
 	if(params.geom_sampling){
 		Vector4d geom_perturbation;
-		for(int state_id = 0; state_id < 4; ++state_id){
+		for(unsigned int state_id = 0; state_id < 4; ++state_id){
 			geom_perturbation(state_id) = rand_dist[state_id](rand_gen[state_id]);
 		}
 		Vector4d base_geom = stateToGeom(base_state);
@@ -588,7 +588,7 @@ int SimilitudeEstimator::runKernel(const CvMat* m1, const CvMat* m2, CvMat* H) {
 	Matrix2Xd in_pts, out_pts;
 	in_pts.resize(Eigen::NoChange, n_pts);
 	out_pts.resize(Eigen::NoChange, n_pts);
-	for(int pt_id = 0; pt_id < n_pts; pt_id++) {
+	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		in_pts(0, pt_id) = M[pt_id].x;
 		in_pts(1, pt_id) = M[pt_id].y;
 
@@ -614,7 +614,7 @@ void SimilitudeEstimator::computeReprojError(const CvMat* m1, const CvMat* m2,
 	const double* H = model->data.db;
 	float* err = _err->data.fl;
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++) {
+	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		double dx = (H[0] * M[pt_id].x - H[2] * M[pt_id].y + H[1]) - m[pt_id].x;
 		double dy = (H[2] * M[pt_id].x + H[0] * M[pt_id].y + H[3]) - m[pt_id].y;
 		err[pt_id] = (float)(dx * dx + dy * dy);
@@ -638,7 +638,7 @@ bool SimilitudeEstimator::refine(const CvMat* m1, const CvMat* m2,
 		if(!solver.updateAlt(_param, _JtJ, _JtErr, _errNorm))
 			break;
 
-		for(int pt_id = 0; pt_id < n_pts; pt_id++)	{
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id)	{
 			const double* h = _param->data.db;
 			double Mx = M[pt_id].x, My = M[pt_id].y;
 			double _xi = (h[0] * Mx - h[2] * My + h[1]);
@@ -649,8 +649,8 @@ bool SimilitudeEstimator::refine(const CvMat* m1, const CvMat* m2,
 					{ Mx, 1, -My, 0 },
 					{ My, 0, Mx, 1 }
 				};
-				for(int j = 0; j < 4; j++) {
-					for(int k = j; k < 4; k++)
+				for(unsigned int j = 0; j < 4; j++) {
+					for(unsigned int k = j; k < 4; k++)
 						_JtJ->data.db[j * 4 + k] += J[0][j] * J[0][k] + J[1][j] * J[1][k];
 					_JtErr->data.db[j] += J[0][j] * err[0] + J[1][j] * err[1];
 				}

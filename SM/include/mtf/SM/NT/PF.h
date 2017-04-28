@@ -67,9 +67,9 @@ namespace nt{
 		CornersT mean_corners;
 		CornersT prev_corners;
 
-		int ssm_state_size;
+		unsigned int ssm_state_size;
 
-		int n_distr;
+		unsigned int n_distr;
 		VectorXd mean_state;
 		/**
 		SSM states for all particles.

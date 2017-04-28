@@ -155,13 +155,13 @@ void ASRT::cmptInitPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dx){
 	validate_ssm_jacobian(dI_dp, dI_dx);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dx(ch_pt_id, 0);
 			double Iy = dI_dx(ch_pt_id, 1);
 
@@ -181,14 +181,14 @@ void ASRT::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 	double a = curr_state(2) + 1, b = -curr_state(3);
 	double c = curr_state(3), d = curr_state(4) + 1;
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = a*dI_dx(ch_pt_id, 0) + c*dI_dx(ch_pt_id, 1);
 			double Iy = b*dI_dx(ch_pt_id, 0) + d*dI_dx(ch_pt_id, 1);
 
@@ -207,13 +207,13 @@ void ASRT::cmptApproxPixJacobian(MatrixXd &dI_dp, const PixGradT &dI_dx) {
 	double a_plus_1 = curr_state(2) + 1, b = curr_state(3), c_plus_1 = curr_state(4) + 1;
 	double inv_det = 1.0 / (a_plus_1*c_plus_1 + b*b);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = (dI_dx(ch_pt_id, 0)*a_plus_1 - dI_dx(ch_pt_id, 1)*b) * inv_det;
 			double Iy = (dI_dx(ch_pt_id, 0)*b + dI_dx(ch_pt_id, 1)*c_plus_1) * inv_det;
 
@@ -232,8 +232,8 @@ void ASRT::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 	const PixGradT &dI_dw){
 	validate_ssm_hessian(d2I_dp2, d2I_dw2, dI_dw);
 	
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; pt_id++){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -242,7 +242,7 @@ void ASRT::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 		dw_dp <<
 			1, 0, x, -y, 0,
 			0, 1, 0, x, y;
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			Map<Matrix5d>(d2I_dp2.col(ch_pt_id).data()) = dw_dp.transpose()*
 				Map<const Matrix2d>(d2I_dw2.col(ch_pt_id).data())*dw_dp;
 			++ch_pt_id;
@@ -258,8 +258,8 @@ void ASRT::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 		a2, -a3,
 		a3, a4;
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -270,7 +270,7 @@ void ASRT::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 			1, 0, x, -y, 0,
 			0, 1, 0, x, y;
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			Map<Matrix5d>(d2I_dp2.col(ch_pt_id).data()) = dw_dp.transpose()*
 				dw_dx.transpose()*Map<const Matrix2d>(d2I_dw2.col(ch_pt_id).data())*dw_dx*dw_dp;
 			++ch_pt_id;
@@ -302,7 +302,7 @@ void ASRT::updateGradPts(double grad_eps){
 	Vector2d diff_vec_x_warped = curr_warp.topRows<2>().col(0) * grad_eps;
 	Vector2d diff_vec_y_warped = curr_warp.topRows<2>().col(1) * grad_eps;
 
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check(spi_mask, pt_id);
 
 		grad_pts(0, pt_id) = curr_pts(0, pt_id) + diff_vec_x_warped(0);
@@ -328,7 +328,7 @@ void ASRT::updateHessPts(double hess_eps){
 	Vector2d diff_vec_xy_warped = (curr_warp.topRows<2>().col(0) + curr_warp.topRows<2>().col(1)) * hess_eps;
 	Vector2d diff_vec_yx_warped = (curr_warp.topRows<2>().col(0) - curr_warp.topRows<2>().col(1)) * hess_eps;
 
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 
 		spi_pt_check(spi_mask, pt_id);
 
@@ -371,8 +371,8 @@ void ASRT::applyWarpToCorners(Matrix24d &warped_corners, const Matrix24d &orig_c
 void ASRT::applyWarpToPts(Matrix2Xd &warped_pts, const Matrix2Xd &orig_pts,
 	const VectorXd &ssm_state){
 	getWarpFromState(warp_mat, ssm_state);
-	int n_pts = orig_pts.cols();
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int n_pts = orig_pts.cols();
+	for(unsigned int pt_id = 0; pt_id < n_pts; pt_id++){
 		warped_pts(0, pt_id) = warp_mat(0, 0)*orig_pts(0, pt_id) + warp_mat(0, 1)*orig_pts(1, pt_id) +
 			warp_mat(0, 2);
 		warped_pts(1, pt_id) = warp_mat(1, 0)*orig_pts(0, pt_id) + warp_mat(1, 1)*orig_pts(1, pt_id) +
@@ -577,7 +577,6 @@ ASRTEstimator::ASRTEstimator(int _modelPoints, bool _use_boost_rng)
 
 int ASRTEstimator::runKernel(const CvMat* m1, const CvMat* m2, CvMat* H) {
 	int n_pts = m1->rows * m1->cols;
-
 	//if(n_pts != 3) {
 	//    throw invalid_argument(cv::format("Invalid no. of points: %d provided", n_pts));
 	//}

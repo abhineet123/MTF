@@ -4,20 +4,6 @@
 #include "mtf/SM/GNN.h"
 #include "mtf/Macros/common.h"
 
-#define NN_MAX_ITERS 1
-#define NN_EPSILON 0.01
-#define NN_N_SAMPLES 1000
-#define NN_N_TREES 6
-#define NN_ADDITIVE_UPDATE 1
-#define NN_SHOW_SAMPLES 1
-#define NN_ADD_SAMPLES_GAP 0
-#define NN_N_SAMPLES_TO_ADD 10
-#define NN_REMOVE_SAMPLES 0
-#define NN_LOAD_INDEX 0
-#define NN_SAVE_INDEX 0
-#define NN_INDEX_FILE_TEMPLATE "nn_saved_index"
-#define NN_DEBUG_MODE false
-
 _MTF_BEGIN_NAMESPACE
 
 struct NNParams{
@@ -78,7 +64,7 @@ struct NNParams{
 	*/
 	bool processDistributions(vector<VectorXd> &state_sigma,
 		vector<VectorXd> &state_mean, VectorXi &distr_n_samples,
-		int &n_distr, int ssm_state_size);
+		unsigned int &n_distr, unsigned int ssm_state_size);
 };
 
 _MTF_END_NAMESPACE

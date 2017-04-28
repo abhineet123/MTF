@@ -89,13 +89,13 @@ void AST::cmptInitPixJacobian(MatrixXd &dI_dp,
 	const PixGradT &dI_dx){
 	validate_ssm_jacobian(dI_dp, dI_dx);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; pt_id++){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = dI_dx(ch_pt_id, 0);
 			double Iy = dI_dx(ch_pt_id, 1);
 
@@ -113,13 +113,13 @@ void AST::cmptApproxPixJacobian(MatrixXd &dI_dp,
 	validate_ssm_jacobian(dI_dp, dI_dx);
 	double sx_plus_1_inv = 1.0 / (curr_state(2) + 1);
 	double sy_plus_1_inv = 1.0 / (curr_state(3) + 1);
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 
 			double Ix = sx_plus_1_inv * dI_dx(ch_pt_id, 0);
 			double Iy = sy_plus_1_inv * dI_dx(ch_pt_id, 1);
@@ -139,14 +139,14 @@ void AST::cmptWarpedPixJacobian(MatrixXd &dI_dp,
 	double sx = curr_state(2) + 1;
 	double sy = curr_state(3) + 1;
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
 		double y = init_pts(1, pt_id);
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			double Ix = sx*dI_dx(ch_pt_id, 0);
 			double Iy = sy*dI_dx(ch_pt_id, 1);
 
@@ -163,8 +163,8 @@ void AST::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 	const PixGradT &dI_dw){
 	validate_ssm_hessian(d2I_dp2, d2I_dw2, dI_dw);
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -173,7 +173,7 @@ void AST::cmptInitPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 		dw_dp <<
 			1, 0, x, 0,
 			0, 1, 0, y;
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			Map<Matrix4d>(d2I_dp2.col(ch_pt_id).data()) = dw_dp.transpose()*Map<const Matrix2d>(d2I_dw2.col(ch_pt_id).data())*dw_dp;
 			++ch_pt_id;
 		}
@@ -185,8 +185,8 @@ void AST::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 	double s = curr_state(2) + 1;
 	double s2 = s*s;
 
-	int ch_pt_id = 0;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	unsigned int ch_pt_id = 0;
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		spi_pt_check_mc(spi_mask, pt_id, ch_pt_id);
 
 		double x = init_pts(0, pt_id);
@@ -197,7 +197,7 @@ void AST::cmptWarpedPixHessian(MatrixXd &d2I_dp2, const PixHessT &d2I_dw2,
 			1, 0, x, 0,
 			0, 1, 0, y;
 
-		for(int ch_id = 0; ch_id < n_channels; ++ch_id){
+		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 			Map<Matrix4d>(d2I_dp2.col(ch_pt_id).data()) = s2*dw_dp.transpose()*
 				Map<const Matrix2d>(d2I_dw2.col(ch_pt_id).data())*dw_dp;
 			++ch_pt_id;
@@ -227,7 +227,7 @@ void AST::updateGradPts(double grad_eps){
 	double scaled_eps_x = curr_warp(0, 0) * grad_eps;
 	double scaled_eps_y = curr_warp(1, 1) * grad_eps;
 
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		spi_pt_check(spi_mask, pt_id);
 
 		grad_pts(0, pt_id) = curr_pts(0, pt_id) + scaled_eps_x;
@@ -252,7 +252,7 @@ void AST::updateHessPts(double hess_eps){
 	double scaled_eps_y2 = 2 * scaled_eps_y;
 
 
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 
 		spi_pt_check(spi_mask, pt_id);
 
@@ -401,7 +401,7 @@ int ASTEstimator::runKernel(const CvMat* m1, const CvMat* m2, CvMat* H) {
 	Matrix2Xd in_pts, out_pts;
 	in_pts.resize(Eigen::NoChange, n_pts);
 	out_pts.resize(Eigen::NoChange, n_pts);
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		in_pts(0, pt_id) = M[pt_id].x;
 		in_pts(1, pt_id) = M[pt_id].y;
 
@@ -427,7 +427,7 @@ void ASTEstimator::computeReprojError(const CvMat* m1, const CvMat* m2,
 	const double* H = model->data.db;
 	float* err = _err->data.fl;
 
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		double dx = (H[2] * M[pt_id].x + H[0]) - m[pt_id].x;
 		double dy = (H[2] * M[pt_id].y + H[1]) - m[pt_id].y;
 		err[pt_id] = (float)(dx * dx + dy * dy);
@@ -451,7 +451,7 @@ bool ASTEstimator::refine(const CvMat* m1, const CvMat* m2,
 		if(!solver.updateAlt(_param, _JtJ, _JtErr, _errNorm))
 			break;
 
-		for(int pt_id = 0; pt_id < n_pts; ++pt_id)	{
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id)	{
 			const double* h = _param->data.db;
 			double Mx = M[pt_id].x, My = M[pt_id].y;
 			double _xi = (h[2] * Mx + h[0]);
@@ -462,8 +462,8 @@ bool ASTEstimator::refine(const CvMat* m1, const CvMat* m2,
 					{ 1, 0, Mx, 0 },
 					{ 0, 1, 0, My }
 				};
-				for(int j = 0; j < 4; j++) {
-					for(int k = j; k < 4; k++)
+				for(unsigned int j = 0; j < 4; j++) {
+					for(unsigned int k = j; k < 4; k++)
 						_JtJ->data.db[j * 4 + k] += J[0][j] * J[0][k] + J[1][j] * J[1][k];
 					_JtErr->data.db[j] += J[0][j] * err[0] + J[1][j] * err[1];
 				}

@@ -96,8 +96,8 @@ protected:
 	PtsT init_control_pts, curr_control_pts;
 	VectorXd ctrl_idx, ctrl_idy;
 	// resolution of spline control point grid
-	int control_res_x, control_res_y;
-	int n_control_pts;
+	unsigned int control_res_x, control_res_y;
+	unsigned int n_control_pts;
 	//! no. of pts that lie on the region boundary
 	int n_bounding_pts;
 	VectorXd dist_norm_x, dist_norm_y;

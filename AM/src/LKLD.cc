@@ -457,7 +457,7 @@ double LKLDDist::operator()(const double* hist1_addr, const double* hist2_addr,
 	size_t hist_size, double worst_dist) const{
 	assert(hist_size == feat_size);
 	double result = 0;
-	for(int hist_id = 0; hist_id < hist_size; ++hist_id){
+	for(unsigned int hist_id = 0; hist_id < hist_size; ++hist_id){
 		result -= (*hist1_addr) * log((*hist1_addr) / (*hist2_addr));
 		hist1_addr++;
 		hist2_addr++;

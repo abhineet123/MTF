@@ -64,15 +64,15 @@ namespace nt{
 
 		if(using_pix_sigma){
 			//! estimate SSM parameter sigma from pixel sigma
-			for(int sampler_id = 0; sampler_id < n_distr; ++sampler_id){
-				state_sigma[sampler_id].resize(ssm_state_size);
-				state_mean[sampler_id] = VectorXd::Zero(ssm_state_size);
-				ssm->estimateStateSigma(state_sigma[sampler_id], params.pix_sigma[sampler_id]);
+			for(unsigned int distr_id = 0; distr_id < n_distr; ++distr_id){
+				state_sigma[distr_id].resize(ssm_state_size);
+				state_mean[distr_id] = VectorXd::Zero(ssm_state_size);
+				ssm->estimateStateSigma(state_sigma[distr_id], params.pix_sigma[distr_id]);
 			}
 			if(params.debug_mode){
 				//! print the sigma for the SSM samplers
 				printf("state_sigma:\n");
-				for(int distr_id = 0; distr_id < n_distr; ++distr_id){
+				for(unsigned int distr_id = 0; distr_id < n_distr; ++distr_id){
 					if(n_distr > 1){ printf("%d: ", distr_id); }
 					utils::printMatrix(state_sigma[distr_id].transpose(), nullptr, "%e");
 				}
@@ -131,13 +131,13 @@ namespace nt{
 	void NN::generateDataset(){
 		int pause_after_show = 1;
 		int sample_id = 0;
-		for(int sampler_id = 0; sampler_id < n_distr; ++sampler_id){
+		for(unsigned int distr_id = 0; distr_id < n_distr; ++distr_id){
 			if(n_distr > 1){
 				//! need to reset SSM sampler only if multiple samplers are in use
 				//! since it was initialized with the first one
-				ssm->setSampler(state_sigma[sampler_id], state_mean[sampler_id]);
+				ssm->setSampler(state_sigma[distr_id], state_mean[distr_id]);
 			}
-			for(int dist_sample_id = 0; dist_sample_id < distr_n_samples[sampler_id]; ++dist_sample_id){
+			for(int dist_sample_id = 0; dist_sample_id < distr_n_samples[distr_id]; ++dist_sample_id){
 				ssm_perturbations[sample_id].resize(ssm_state_size);
 				//utils::printScalar(sample_id, "sample_id");
 				//utils::printMatrix(ssm->getCorners(), "Corners before");

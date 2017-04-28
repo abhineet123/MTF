@@ -114,13 +114,13 @@ void Spline::setCorners(const CornersT& corners){
 	curr_corners = corners;
 	utils::getPtsFromCorners(curr_pts, corners, norm_pts, norm_corners);
 
-	for(int pt_id = 0; pt_id < n_control_pts; ++pt_id){
-		int pt_id_x = pt_id % control_res_x;
-		int pt_id_y = pt_id / control_res_x;
+	for(unsigned int pt_id = 0; pt_id < n_control_pts; ++pt_id){
+		unsigned int pt_id_x = pt_id % control_res_x;
+		unsigned int pt_id_y = pt_id / control_res_x;
 
-		int ctrl_idx_floor = floor(ctrl_idx(pt_id_x));
+		int ctrl_idx_floor = static_cast<int>(floor(ctrl_idx(pt_id_x)));
 		double ctrl_idx_frac = ctrl_idx(pt_id_x) - ctrl_idx_floor;
-		int ctrl_idy_floor = floor(ctrl_idy(pt_id_y));
+		int ctrl_idy_floor = static_cast<int>(floor(ctrl_idy(pt_id_y)));
 		double ctrl_idy_frac = ctrl_idy(pt_id_y) - ctrl_idy_floor;
 		curr_control_pts(0, pt_id) =
 			curr_pts(0, ctrl_idx_floor) * (1 - ctrl_idx_frac) +
@@ -150,7 +150,7 @@ void Spline::setCorners(const CornersT& corners){
 void Spline::getCorners(cv::Mat &cv_corners){
 	cv_corners.create(2, n_bounding_pts, CV_64FC1);
 	utils::getBoundingPts(cv_corners, curr_pts, resx, resy);
-	for(int corner_id = 0; corner_id < 4; ++corner_id){
+	for(unsigned int corner_id = 0; corner_id < 4; ++corner_id){
 		cv_corners.at<double>(0, corner_id) = curr_corners(0, corner_id);
 		cv_corners.at<double>(1, corner_id) = curr_corners(1, corner_id);
 	}
@@ -158,10 +158,10 @@ void Spline::getCorners(cv::Mat &cv_corners){
 
 void Spline::compositionalUpdate(const VectorXd& state_update){
 	validate_ssm_state(state_update);
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		double pt_disp_x = 0, pt_disp_y = 0;
 		int state_id = -1;
-		for(int ctrl_pt_id = 0; ctrl_pt_id < n_control_pts; ++ctrl_pt_id){
+		for(unsigned int ctrl_pt_id = 0; ctrl_pt_id < n_control_pts; ++ctrl_pt_id){
 			pt_disp_x += interp_wts(pt_id, ctrl_pt_id)*state_update(++state_id);
 			pt_disp_y += interp_wts(pt_id, ctrl_pt_id)*state_update(++state_id);
 		}
@@ -170,7 +170,7 @@ void Spline::compositionalUpdate(const VectorXd& state_update){
 	}
 	curr_state += state_update;
 	int state_id = -1;
-	for(int ctrl_pt_id = 0; ctrl_pt_id < n_control_pts; ++ctrl_pt_id){
+	for(unsigned int ctrl_pt_id = 0; ctrl_pt_id < n_control_pts; ++ctrl_pt_id){
 		curr_control_pts(0, ctrl_pt_id) += state_update(++state_id);
 		curr_control_pts(1, ctrl_pt_id) += state_update(++state_id);
 	}
@@ -184,14 +184,14 @@ void Spline::compositionalUpdate(const VectorXd& state_update){
 
 }
 void Spline::initInterpolationWeights(){
-	for(int ctrl_pt_id = 0; ctrl_pt_id < n_control_pts; ++ctrl_pt_id){
-		int ctrl_pt_id_x = ctrl_pt_id % control_res_x;
-		int ctrl_pt_id_y = ctrl_pt_id / control_res_x;
+	for(unsigned int ctrl_pt_id = 0; ctrl_pt_id < n_control_pts; ++ctrl_pt_id){
+		unsigned int ctrl_pt_id_x = ctrl_pt_id % control_res_x;
+		unsigned int ctrl_pt_id_y = ctrl_pt_id / control_res_x;
 		int max_pt_id_x = ctrl_pt_id_x*params.control_size_x;
 		int max_pt_id_y = ctrl_pt_id_y*params.control_size_y;
 		dist_norm_x(ctrl_pt_id) = abs(max_pt_id_x - ctrl_idx(ctrl_pt_id_x)) + params.control_overlap;
 		dist_norm_y(ctrl_pt_id) = abs(max_pt_id_y - ctrl_idy(ctrl_pt_id_y)) + params.control_overlap;
-		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 			int pt_id_x = pt_id % resx;
 			int pt_id_y = pt_id / resx;
 			norm_dist_x(pt_id, ctrl_pt_id) = (pt_id_x - ctrl_idx(ctrl_pt_id_x)) / dist_norm_x(ctrl_pt_id);
@@ -203,15 +203,15 @@ void Spline::initInterpolationWeights(){
 }
 
 void Spline::updateInterpolationWeights(){
-	for(int ctrl_pt_id = 0; ctrl_pt_id < n_control_pts; ++ctrl_pt_id){
-		int ctrl_pt_id_x = ctrl_pt_id % control_res_x;
-		int ctrl_pt_id_y = ctrl_pt_id / control_res_x;
-		int max_pt_id_x = ctrl_idx(ctrl_pt_id_x) - max_dist_x;
-		int max_pt_id_y = ctrl_idy(ctrl_pt_id_y) - max_dist_y;
+	for(unsigned int ctrl_pt_id = 0; ctrl_pt_id < n_control_pts; ++ctrl_pt_id){
+		unsigned int ctrl_pt_id_x = ctrl_pt_id % control_res_x;
+		unsigned int ctrl_pt_id_y = ctrl_pt_id / control_res_x;
+		int max_pt_id_x = static_cast<int>(ctrl_idx(ctrl_pt_id_x) - max_dist_x);
+		int max_pt_id_y = static_cast<int>(ctrl_idy(ctrl_pt_id_y) - max_dist_y);
 		int max_pt_id = max_pt_id_y*resx + max_pt_id_x;
 		dist_norm_x(ctrl_pt_id) = abs(curr_pts(0, max_pt_id) - curr_control_pts(0, ctrl_pt_id)) + params.control_overlap;
 		dist_norm_y(ctrl_pt_id) = abs(curr_pts(1, max_pt_id) - curr_control_pts(1, ctrl_pt_id)) + params.control_overlap;
-		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 			norm_dist_x(pt_id, ctrl_pt_id) = (curr_pts(0, pt_id) - curr_control_pts(0, ctrl_pt_id)) / dist_norm_x(ctrl_pt_id);
 			norm_dist_y(pt_id, ctrl_pt_id) = (curr_pts(1, pt_id) - curr_control_pts(1, ctrl_pt_id)) / dist_norm_y(ctrl_pt_id);
 			interp_wts(pt_id, ctrl_pt_id) = getWeight(norm_dist_x(pt_id, ctrl_pt_id), norm_dist_y(pt_id, ctrl_pt_id));
@@ -240,7 +240,7 @@ double Spline::getWeight(double x, double y){
 void Spline::setState(const VectorXd& state){
 	curr_state = state;
 	int state_id = -1;
-	for(int ctrl_pt_id = 0; ctrl_pt_id < n_control_pts; ++ctrl_pt_id){
+	for(unsigned int ctrl_pt_id = 0; ctrl_pt_id < n_control_pts; ++ctrl_pt_id){
 		curr_control_pts(0, ctrl_pt_id) = init_control_pts(0, ctrl_pt_id) + curr_state(++state_id);
 		curr_control_pts(1, ctrl_pt_id) = init_control_pts(1, ctrl_pt_id) + curr_state(++state_id);
 	}
@@ -253,7 +253,7 @@ void Spline::cmptInitPixJacobian(MatrixXd &jacobian_prod,
 	const PixGradT &pix_jacobian){
 	validate_ssm_jacobian(jacobian_prod, pix_jacobian);
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		getInitPixGrad(ssm_grad, pt_id);
 		jacobian_prod.row(pt_id) = pix_jacobian.row(pt_id)*ssm_grad;
 	}
@@ -263,7 +263,7 @@ void Spline::cmptPixJacobian(MatrixXd &jacobian_prod,
 	const PixGradT &pix_jacobian){
 	validate_ssm_jacobian(jacobian_prod, pix_jacobian);
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		getCurrPixGrad(ssm_grad, pt_id);
 		jacobian_prod.row(pt_id) = pix_jacobian.row(pt_id)*ssm_grad;
 	}
@@ -273,7 +273,7 @@ void Spline::cmptPixJacobian(MatrixXd &jacobian_prod,
 void Spline::cmptWarpedPixJacobian(MatrixXd &jacobian_prod,
 	const PixGradT &pix_grad) {
 	validate_ssm_jacobian(jacobian_prod, pix_grad);
-	for(int pt_id = 0; pt_id < n_pts; pt_id++) {
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 
 	}
 }
@@ -283,7 +283,7 @@ void Spline::cmptWarpedPixHessian(MatrixXd &pix_hess_ssm, const PixHessT &pix_he
 	validate_ssm_hessian(pix_hess_ssm, pix_hess_coord, pix_grad);
 
 	Matrix28d ssm_jacobian;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++) {
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 	}
 }
 
@@ -294,7 +294,7 @@ void Spline::getInitPixGrad(Matrix2Xd &ssm_grad, int pt_id) {
 void Spline::getCurrPixGrad(Matrix2Xd &_ssm_grad, int pt_id) {
 	_ssm_grad.setZero();
 	int state_id = -1;
-	for(int ctrl_pt_id = 0; ctrl_pt_id < n_control_pts; ++ctrl_pt_id){
+	for(unsigned int ctrl_pt_id = 0; ctrl_pt_id < n_control_pts; ++ctrl_pt_id){
 		_ssm_grad(0, ++state_id) += interp_wts(pt_id, ctrl_pt_id);
 		_ssm_grad(1, ++state_id) += interp_wts(pt_id, ctrl_pt_id);
 	}
@@ -311,7 +311,7 @@ void Spline::cmptApproxPixHessian(MatrixXd &pix_hess_ssm, const PixHessT &pix_he
 	const PixGradT &pix_grad) {
 	validate_ssm_hessian(pix_hess_ssm, pix_hess_coord, pix_grad);
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++) {
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 
 	}
 }
@@ -320,7 +320,7 @@ void Spline::cmptInitPixHessian(MatrixXd &pix_hess_ssm, const PixHessT &pix_hess
 	const PixGradT &pix_grad){
 	validate_ssm_hessian(pix_hess_ssm, pix_hess_coord, pix_grad);
 	Matrix28d ssm_jacobian;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 
 	}
 }
@@ -330,14 +330,14 @@ void Spline::cmptPixHessian(MatrixXd &pix_hess_ssm, const PixHessT &pix_hess_coo
 	validate_ssm_hessian(pix_hess_ssm, pix_hess_coord, pix_grad);
 
 	Matrix28d ssm_jacobian;
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 
 	}
 }
 
 void Spline::updateGradPts(double grad_eps){
 
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 		grad_pts(0, pt_id) = curr_pts(0, pt_id) + grad_eps;
 		grad_pts(1, pt_id) = curr_pts(1, pt_id);
 
@@ -354,7 +354,7 @@ void Spline::updateGradPts(double grad_eps){
 
 void Spline::updateHessPts(double hess_eps){
 	double hess_eps2 = 2 * hess_eps;
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 	}
 }
 

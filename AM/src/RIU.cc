@@ -124,7 +124,7 @@ void RIU::cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dp,
 
 	cmptInitHessian(d2f_dp2, dI0_dp);
 
-	for(int patch_id = 0; patch_id < patch_size; ++patch_id){
+	for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 		d2f_dp2 += Map<const MatrixXd>(d2I0_dp2.col(patch_id).data(), p_size, p_size) * df_dI0(patch_id);;
 	}
 
@@ -200,7 +200,7 @@ void RIU::cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp,
 
 	cmptCurrHessian(d2f_dp2, dIt_dp);
 
-	for(int patch_id = 0; patch_id < patch_size; ++patch_id){
+	for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 		d2f_dp2 += Map<const MatrixXd>(d2It_dp2.col(patch_id).data(), p_size, p_size) * df_dIt(patch_id);
 	}
 	//utils::printMatrix(curr_hessian, "second order curr_hessian");

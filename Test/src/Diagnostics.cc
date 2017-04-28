@@ -300,7 +300,7 @@ void Diagnostics::generateSSMParamData(VectorXd &param_range_vec,
 
 	double corner_change_norm;
 	Matrix24d corner_change;
-	for(int state_id = 0; state_id < ssm_state_size; state_id++){
+	for(unsigned int state_id = 0; state_id < ssm_state_size; ++state_id){
 		printf("Processing state parameter %d....\n", state_id);
 
 		state_update.setZero();

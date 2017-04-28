@@ -44,7 +44,7 @@ int n_pts, ADT data_type, const char* fname){
 	curr_img_cv = am->getCurrImg();
 	am->setCurrImg(init_img_cv);
 
-	for(int state_id = 0; state_id < state_size; ++state_id){
+	for(unsigned int state_id = 0; state_id < state_size; ++state_id){
 		//printf("Processing state parameter %d....\n", state_id);
 
 		state_update.setZero();

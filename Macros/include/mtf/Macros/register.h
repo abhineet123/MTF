@@ -143,37 +143,21 @@
 	template class mtf::SM< mtf::Spline>;
 
 #define _REGISTER_TRACKERS_DIST(SM) \
-	template class mtf::SM< mtf::SSD::DistType >;\
-	template class mtf::SM< mtf::NSSD::DistType >;\
-	template class mtf::SM< mtf::ZNCC::DistType >;\
-	template class mtf::SM< mtf::SCV::DistType >;\
-	template class mtf::SM< mtf::RSCV::DistType >;\
-	template class mtf::SM< mtf::LSCV::DistType >;\
-	template class mtf::SM< mtf::LRSCV::DistType >;\
-	template class mtf::SM< mtf::KLD::DistType >;\
-	template class mtf::SM< mtf::LKLD::DistType >;\
-	template class mtf::SM< mtf::SPSS::DistType >;\
-	template class mtf::SM< mtf::SSIM::DistType >;\
-	template class mtf::SM< mtf::NCC::DistType >;\
-	template class mtf::SM< mtf::CCRE::DistType >;\
-	template class mtf::SM< mtf::MI::DistType >;\
-	template class mtf::SM< mtf::RIU::DistType >;\
-	template class mtf::SM< mtf::NGF::DistType >;\
-	template class mtf::SM< mtf::SAD::DistType >;\
-	template class mtf::SM< mtf::MCSSD::DistType >;\
-	template class mtf::SM< mtf::MCSCV::DistType >;\
-	template class mtf::SM< mtf::MCLSCV::DistType >;\
-	template class mtf::SM< mtf::MCRSCV::DistType >;\
-	template class mtf::SM< mtf::MCZNCC::DistType >;\
-	template class mtf::SM< mtf::MCNCC::DistType >;\
-	template class mtf::SM< mtf::MCMI::DistType >;\
-	template class mtf::SM< mtf::MCSSIM::DistType >;\
-	template class mtf::SM< mtf::MCSPSS::DistType >;\
-	template class mtf::SM< mtf::MCRIU::DistType >;\
-	template class mtf::SM< mtf::MCSAD::DistType >;\
-	template class mtf::SM< mtf::MCCCRE::DistType >;\
-	 _REGISTER_AM_TRACKERS_PCA(SM)\
-	 _REGISTER_AM_TRACKERS_DFM(SM)
+	template class mtf::SM< mtf::SSDBaseDist >;\
+	template class mtf::SM< mtf::SSDDist >;\
+	template class mtf::SM< mtf::SCVDist >;\
+	template class mtf::SM< mtf::RSCVDist >;\
+	template class mtf::SM< mtf::LSCVDist >;\
+	template class mtf::SM< mtf::KLDDist >;\
+	template class mtf::SM< mtf::LKLDDist >;\
+	template class mtf::SM< mtf::SPSSDist >;\
+	template class mtf::SM< mtf::SSIMDist >;\
+	template class mtf::SM< mtf::NCCDist >;\
+	template class mtf::SM< mtf::CCREDist >;\
+	template class mtf::SM< mtf::MIDist >;\
+	template class mtf::SM< mtf::RIUDist >;\
+	template class mtf::SM< mtf::NGFDist >;\
+	template class mtf::SM< mtf::SADDist >;
 
 //registration macros for hierarchical trackers with 2 SSMs
 #define _REGISTER_HTRACKERS_AM(SM, SSM, SSM2) \

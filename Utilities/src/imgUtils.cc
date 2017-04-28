@@ -1288,11 +1288,11 @@ namespace utils{
 		if(checkOverflow(x, y, h, w)){
 			return false;
 		}
-		int x1 = static_cast<int>(x);
-		int y1 = static_cast<int>(y);
+		unsigned int x1 = static_cast<int>(x);
+		unsigned int y1 = static_cast<int>(y);
 
-		int x2 = x1 + 1;
-		int y2 = y1 + 1;
+		unsigned int x2 = x1 + 1;
+		unsigned int y2 = y1 + 1;
 
 		if(checkOverflow(x1, y1, h, w) || checkOverflow(x2, y2, h, w)){
 			return false;
@@ -1300,8 +1300,8 @@ namespace utils{
 		pix_grid(1, 1) = img(y1, x1), pix_grid(1, 2) = img(y1, x2);
 		pix_grid(2, 1) = img(y2, x1), pix_grid(2, 2) = img(y2, x2);
 
-		int x0 = x1 - 1, x3 = x2 + 1;
-		int y0 = y1 - 1, y3 = y2 + 1;
+		unsigned int x0 = x1 - 1, x3 = x2 + 1;
+		unsigned int y0 = y1 - 1, y3 = y2 + 1;
 
 		bool ul = true, ur = true, lr = true, ll = true;
 
@@ -1536,24 +1536,24 @@ namespace utils{
 							}
 
 							cv::Vec3b  pix_val;
-							pix_val[0] = (
+							pix_val[0] = static_cast<uchar>((
 								orig_pix_vals[0][0] * wt_ul +
 								orig_pix_vals[1][0] * wt_ur +
 								orig_pix_vals[2][0] * wt_lr +
 								orig_pix_vals[3][0] * wt_ll
-								) / wt_sum;
-							pix_val[1] = (
+								) / wt_sum);
+							pix_val[1] = static_cast<uchar>((
 								orig_pix_vals[0][1] * wt_ul +
 								orig_pix_vals[1][1] * wt_ur +
 								orig_pix_vals[2][1] * wt_lr +
 								orig_pix_vals[3][1] * wt_ll
-								) / wt_sum;
-							pix_val[2] = (
+								) / wt_sum);
+							pix_val[2] = static_cast<uchar>((
 								orig_pix_vals[0][2] * wt_ul +
 								orig_pix_vals[1][2] * wt_ur +
 								orig_pix_vals[2][2] * wt_lr +
 								orig_pix_vals[3][2] * wt_ll
-								) / wt_sum;
+								) / wt_sum);
 
 							warped_img.at<cv::Vec3b>(row_id, col_id) = pix_val;
 						} else{
@@ -1568,7 +1568,7 @@ namespace utils{
 								orig_pix_vals[2] * wt_lr +
 								orig_pix_vals[3] * wt_ll
 								) / wt_sum;
-							warped_img.at<uchar>(row_id, col_id) = pix_val;
+							warped_img.at<uchar>(row_id, col_id) = static_cast<uchar>(pix_val);
 						}
 					}
 				}
@@ -1642,7 +1642,9 @@ namespace utils{
 					pix_val[channel_id] = max(0.0, pix_val[channel_id]);
 				}
 				warped_img.at<cv::Vec3b>(row_id, col_id) =
-					cv::Vec3b(pix_val[0], pix_val[1], pix_val[2]);
+					cv::Vec3b(static_cast<uchar>(pix_val[0]), 
+					static_cast<uchar>(pix_val[1]),
+					static_cast<uchar>(pix_val[2]));
 			} else{
 				double pix_val = pix_vals[pt_id];
 				pix_val = min(255.0, pix_val);
@@ -1683,8 +1685,10 @@ namespace utils{
 			img.at<uchar>(y, x) = clamp(pix_vals(pt_id));
 			break;
 		case 3:
-			img.at<cv::Vec3b>(y, x) = cv::Vec3b(pix_vals(pt_id*n_channels),
-				pix_vals(pt_id*n_channels + 1), pix_vals(pt_id*n_channels + 2));
+			img.at<cv::Vec3b>(y, x) = cv::Vec3b(
+				static_cast<uchar>(pix_vals(pt_id*n_channels)),
+				static_cast<uchar>(pix_vals(pt_id*n_channels + 1)),
+				static_cast<uchar>(pix_vals(pt_id*n_channels + 2)));
 			break;
 		default:
 			throw std::invalid_argument(

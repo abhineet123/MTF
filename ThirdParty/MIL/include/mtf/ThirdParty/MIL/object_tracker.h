@@ -40,8 +40,8 @@
 //
 //M*/
 
-#ifndef __OPENCV_OBJECT_TRACKER_H__
-#define __OPENCV_OBJECT_TRACKER_H__
+#ifndef MTF_MIL_OBJECT_TRACKER_H
+#define MTF_MIL_OBJECT_TRACKER_H
 
 #include <opencv2/core/core.hpp>
 
@@ -59,15 +59,15 @@ namespace cv
   //
   // :TODO: to be filled-in as needed...
   //
-  struct ObjectTrackerParams
+  struct MILTrackerParams
   {
     enum
     {
       CV_ONLINEBOOSTING = 100, CV_SEMIONLINEBOOSTING, CV_ONLINEMIL, CV_LINEMOD
     };
 
-    ObjectTrackerParams();
-    ObjectTrackerParams(const int algorithm, const int num_classifiers, const float overlap, const float search_factor,
+	MILTrackerParams();
+	MILTrackerParams(const int algorithm, const int num_classifiers, const float overlap, const float search_factor,
                         const float pos_radius_train, const int neg_num_train, const int num_features);
 
     int algorithm_; // CV_ONLINEBOOSTING, CV_SEMIONLINEBOOSTING, CV_ONLINEMIL, CV_LINEMOD
@@ -87,18 +87,18 @@ namespace cv
 
   // The base (abstract) tracking algorithm class, to define the interface
   // for all other specific object tracking algorithm classes.
-  class TrackingAlgorithm
+  class MILTrackingAlgorithm
   {
   public:
-    TrackingAlgorithm();
+    MILTrackingAlgorithm();
     virtual
-    ~TrackingAlgorithm();
+    ~MILTrackingAlgorithm();
 
     virtual bool
-    initialize(const cv::Mat & image, const ObjectTrackerParams& params, const CvRect& init_bounding_box) = 0;
+    initialize(const cv::Mat & image, const MILTrackerParams& params, const CvRect& init_bounding_box) = 0;
 
     virtual bool
-    update(const cv::Mat & image, const ObjectTrackerParams& params, cv::Rect & track_box) = 0;
+    update(const cv::Mat & image, const MILTrackerParams& params, cv::Rect & track_box) = 0;
 
   protected:
     // A method to import an image to the type desired for the current algorithm
@@ -120,17 +120,17 @@ namespace cv
   // H. Grabner, M. Grabner, and H. Bischof.  "Real-time Tracking via On-line Boosting", 
   // In Proceedings British Machine Vision Conference (BMVC), volume 1, pages 47-56, 2006.
   //
-  class OnlineBoostingAlgorithm: public TrackingAlgorithm
+  class MILOnlineBoostingAlgorithm: public MILTrackingAlgorithm
   {
   public:
-    OnlineBoostingAlgorithm();
-    ~OnlineBoostingAlgorithm();
+    MILOnlineBoostingAlgorithm();
+    ~MILOnlineBoostingAlgorithm();
 
     virtual bool
-    initialize(const cv::Mat & image, const ObjectTrackerParams& params, const CvRect& init_bounding_box);
+    initialize(const cv::Mat & image, const MILTrackerParams& params, const CvRect& init_bounding_box);
 
     virtual bool
-    update(const cv::Mat & image, const ObjectTrackerParams& params, cv::Rect & track_box);
+    update(const cv::Mat & image, const MILTrackerParams& params, cv::Rect & track_box);
 
   protected:
     // A method to import an image to the type desired for the current algorithm
@@ -162,17 +162,17 @@ namespace cv
   // Robust Tracking", In Proceedings European Conference on Computer Vision (ECCV), 
   // 2008.
   //
-  class SemiOnlineBoostingAlgorithm: public TrackingAlgorithm
+  class MILSemiOnlineBoostingAlgorithm: public MILTrackingAlgorithm
   {
   public:
-    SemiOnlineBoostingAlgorithm();
-    ~SemiOnlineBoostingAlgorithm();
+    MILSemiOnlineBoostingAlgorithm();
+    ~MILSemiOnlineBoostingAlgorithm();
 
     virtual bool
-    initialize(const cv::Mat & image, const ObjectTrackerParams& params, const CvRect& init_bounding_box);
+    initialize(const cv::Mat & image, const MILTrackerParams& params, const CvRect& init_bounding_box);
 
     virtual bool
-    update(const cv::Mat & image, const ObjectTrackerParams& params, cv::Rect & track_box);
+    update(const cv::Mat & image, const MILTrackerParams& params, cv::Rect & track_box);
 
   protected:
     // A method to import an image to the type desired for the current algorithm
@@ -203,17 +203,17 @@ namespace cv
   // B. Babenko, M.H. Yang, and S. Belongie.  "Visual Tracking with Online Multiple 
   // Instance Learning", CVPR 2009, Miami, Florida.
   //
-  class OnlineMILAlgorithm: public TrackingAlgorithm
+  class MILOnlineMILAlgorithm: public MILTrackingAlgorithm
   {
   public:
-    OnlineMILAlgorithm();
-    ~OnlineMILAlgorithm();
+    MILOnlineMILAlgorithm();
+    ~MILOnlineMILAlgorithm();
 
     virtual bool
-    initialize(const cv::Mat & image, const ObjectTrackerParams& params, const CvRect& init_bounding_box);
+    initialize(const cv::Mat & image, const MILTrackerParams& params, const CvRect& init_bounding_box);
 
     virtual bool
-    update(const cv::Mat & image, const ObjectTrackerParams& params, cv::Rect & track_box);
+    update(const cv::Mat & image, const MILTrackerParams& params, cv::Rect & track_box);
 
   protected:
     // A method to import an image to the type desired for the current algorithm
@@ -242,17 +242,17 @@ namespace cv
   //
   // ... fill-in when paper is accepted and we have permission ...
   //
-  class LINEMODAlgorithm: public TrackingAlgorithm
+  class LINEMODAlgorithm: public MILTrackingAlgorithm
   {
   public:
     LINEMODAlgorithm();
     ~LINEMODAlgorithm();
 
     virtual bool
-    initialize(const cv::Mat & image, const ObjectTrackerParams& params, const CvRect& init_bounding_box);
+    initialize(const cv::Mat & image, const MILTrackerParams& params, const CvRect& init_bounding_box);
 
     virtual bool
-    update(const cv::Mat & image, const ObjectTrackerParams& params, cv::Rect & track_box);
+    update(const cv::Mat & image, const MILTrackerParams& params, cv::Rect & track_box);
 
   protected:
     // A method to import an image to the type desired for the current algorithm
@@ -268,20 +268,20 @@ namespace cv
   // algorithms.  See the specific class instances above.  This is the class
   // that the user will use.  We use an inheritance hierarchy to determine which
   // tracking algorithm to implement, based on the 'algorithm' field
-  // in the ObjectTrackerParams.
+  // in the MILObjectTrackerParams.
   //
-  class ObjectTracker
+  class MILTracker
   {
   public:
     // Default constructor--performs initializations of the class and memory.
     // Input the tracking parameters (which are defaulted if you don't give
     // any).
     //
-    ObjectTracker(const ObjectTrackerParams& params = ObjectTrackerParams());
+    MILTracker(const MILTrackerParams& params = MILTrackerParams());
 
     // Destructor--performs cleanup of memory 
     virtual
-    ~ObjectTracker();
+    ~MILTracker();
 
     // Initialize the tracker (on the first frame only!) with an image
     // and a bounding box representing the region of the object to be tracked.
@@ -320,7 +320,7 @@ namespace cv
 
     // Store the input parameters internally
     void
-    set_params(const ObjectTrackerParams& params);
+    set_params(const MILTrackerParams& params);
 
   private:
     // A flag indicating whether or not this tracker has been initialized yet.
@@ -329,10 +329,10 @@ namespace cv
     bool initialized_;
 
     // The object tracking algorithm parameters
-    ObjectTrackerParams tracker_params_;
+    MILTrackerParams tracker_params_;
 
     // The actual tracking algorithm
-    TrackingAlgorithm* tracker_;
+    MILTrackingAlgorithm* tracker_;
   };
 
 }

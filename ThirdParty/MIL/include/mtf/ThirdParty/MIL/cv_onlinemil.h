@@ -40,8 +40,8 @@
  //
  //M*/
 
-#ifndef __OPENCV_ONLINE_MIL_H__
-#define __OPENCV_ONLINE_MIL_H__
+#ifndef MTF_ONLINE_MIL_H
+#define MTF_ONLINE_MIL_H
 
 #include <fstream>
 #include <iostream>
