@@ -53,10 +53,10 @@ void FRG::initialize(const cv::Mat& cv_corners){
 
 	mtf::Rectd best_fit_rect = mtf::utils::getBestFitRectangle<double>(cv_corners,
 		curr_img_uchar.cols, curr_img_uchar.rows);
-	frg_params.initial_br_x = (best_fit_rect.x + best_fit_rect.width)*params.resize_factor;
-	frg_params.initial_br_y = (best_fit_rect.y + best_fit_rect.height)*params.resize_factor;
-	frg_params.initial_tl_x = best_fit_rect.x*params.resize_factor;
-	frg_params.initial_tl_y = best_fit_rect.y*params.resize_factor;
+	frg_params.initial_br_x = static_cast<int>((best_fit_rect.x + best_fit_rect.width)*params.resize_factor);
+	frg_params.initial_br_y = static_cast<int>((best_fit_rect.y + best_fit_rect.height)*params.resize_factor);
+	frg_params.initial_tl_x = static_cast<int>(best_fit_rect.x*params.resize_factor);
+	frg_params.initial_tl_y = static_cast<int>(best_fit_rect.y*params.resize_factor);
 
 	printf("best_fit_rect: x: %f y:%f width: %f height: %f\n",
 		best_fit_rect.x, best_fit_rect.y, best_fit_rect.width, best_fit_rect.height);
@@ -85,8 +85,9 @@ void FRG::update(){
 }
 void FRG::setImage(const cv::Mat &img){
 	curr_img_uchar = img;
-	curr_img_uchar_resized.create(curr_img_uchar.rows*params.resize_factor,
-		curr_img_uchar.cols*params.resize_factor, CV_8UC1);
+	curr_img_uchar_resized.create(
+		static_cast<int>(curr_img_uchar.rows*params.resize_factor),
+		static_cast<int>(curr_img_uchar.cols*params.resize_factor), CV_8UC1);
 	input_img = curr_img_uchar_resized;
 }
 void FRG::updateCVCorners(){

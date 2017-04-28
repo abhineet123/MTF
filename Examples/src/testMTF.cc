@@ -66,16 +66,6 @@ int main(int argc, char * argv[]) {
 	}
 	printf("n_frames: %d\n", input->n_frames);
 
-	cv::Point fps_origin(10, 20);
-	double fps_font_size = 0.50;
-	cv::Scalar fps_color(0, 255, 0);
-	char fps_text[100];
-
-	cv::Point err_origin(10, 40);
-	double err_font_size = 0.50;
-	cv::Scalar err_color(0, 255, 0);
-	char err_text[100];
-
 	for(int frame_id = 0; frame_id < diag_start_id; ++frame_id){
 		if(!input->update()){
 			printf("Frame %d could not be read from the input pipeline", input->getFrameID() + 1);
@@ -118,8 +108,8 @@ int main(int argc, char * argv[]) {
 	printf("Using diagnostics with object of size %f x %f\n",
 		cv_utils.getObj(0).size_x, cv_utils.getObj(0).size_y);
 	if(res_from_size){
-		resx = res_from_size*cv_utils.getObj(0).size_x;
-		resy = res_from_size*cv_utils.getObj(0).size_y;
+		resx = static_cast<unsigned int>(res_from_size*cv_utils.getObj(0).size_x);
+		resy = static_cast<unsigned int>(res_from_size*cv_utils.getObj(0).size_y);
 	}
 	mtf::AM am(mtf::getAM(diag_am, diag_ilm));
 	mtf::SSM ssm(mtf::getSSM(diag_ssm));
@@ -292,7 +282,7 @@ int main(int argc, char * argv[]) {
 					out_files[data_id]->write((char*)(diag->getData().data()),
 						sizeof(double)*diag->getData().size());
 
-					long curr_pos = out_files[data_id]->tellp();
+					long curr_pos = static_cast<long>(out_files[data_id]->tellp());
 					out_files[data_id]->seekp(0, ios_base::beg);
 					out_files[data_id]->write((char*)(&frame_id), sizeof(int));
 					out_files[data_id]->seekp(curr_pos, ios_base::beg);

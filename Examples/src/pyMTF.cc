@@ -243,8 +243,8 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 		printf("Using tracker %d with object of size %f x %f\n", tracker_id,
 			size_x, size_y);
 		if(res_from_size){
-			resx = size_x / res_from_size;
-			resy = size_y / res_from_size;
+			resx = static_cast<unsigned int>(size_x / res_from_size);
+			resy = static_cast<unsigned int>(size_y / res_from_size);
 		}
 		mtf::TrackerBase* new_tracker = mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm);
 		if(!new_tracker){

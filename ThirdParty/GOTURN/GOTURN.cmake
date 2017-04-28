@@ -1,4 +1,4 @@
-option(WITH_GOTURN "Enable GOTURN Tracker (Requires Caffe and some other libraries)" OFF)
+option(WITH_GOTURN "Enable GOTURN Tracker (Requires a custom version of Caffe along with some other libraries)" OFF)
 if(WITH_GOTURN)
 	set(THIRD_PARTY_LIBS ${THIRD_PARTY_LIBS} goturn)
 	set(THIRD_PARTY_TRACKERS ${THIRD_PARTY_TRACKERS} GOTURN/src/GOTURN)

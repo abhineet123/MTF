@@ -22,7 +22,7 @@ using namespace std;
 //using namespace cv;
 
 
-class DSSTTracker : public mtf::TrackerBase
+class DSST : public mtf::TrackerBase
 {
 	DSSTParams tParams;
 	HOGParams hParams;
@@ -36,7 +36,7 @@ public:
     int *idxs;
 	cv::Mat convertFloatImg(cv::Mat &img);
 
-	DSSTTracker(DSSTParams *params = NULL);
+	DSST(DSSTParams *params = NULL);
 	void initialize(const cv::Mat& corners) override;
     void setRegion(const cv::Mat& corners) override;
 	void update() override;

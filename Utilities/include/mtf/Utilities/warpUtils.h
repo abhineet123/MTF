@@ -133,7 +133,7 @@ namespace utils{
 	void getBilinearPts(cv::Vec4i &neigh_pts_id, std::vector<cv::Vec2d> &neigh_pts_dist,
 		double x, double y, const mtf::PtsT &grid_pts, int n_pts);
 	//! returns the id of the grid point nearest to the given point
-	double getNearestPt(double x, double y, const mtf::PtsT &grid_pts, int n_pts);
+	int getNearestPt(double x, double y, const mtf::PtsT &grid_pts, int n_pts);
 
 	MatrixX2d computeTPS(const CornersT &in_corners, const CornersT &out_corners);
 	void applyTPS(PtsT &out_pts, const PtsT &in_pts,

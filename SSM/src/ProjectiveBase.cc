@@ -66,22 +66,22 @@ void ProjectiveBase::updateGradPts(double grad_eps){
 	Vector3d diff_vec_y_warped = curr_warp.col(1) * grad_eps;
 
 	Vector3d pt_inc_warped, pt_dec_warped;
-	for(int pix_id = 0; pix_id < n_pts; pix_id++){
-		pt_inc_warped = curr_pts_hm.col(pix_id) + diff_vec_x_warped;
-		grad_pts(0, pix_id) = pt_inc_warped(0) / pt_inc_warped(2);
-		grad_pts(1, pix_id) = pt_inc_warped(1) / pt_inc_warped(2);
+	for(unsigned int pt_id = 0; pt_id < n_pts; pt_id++){
+		pt_inc_warped = curr_pts_hm.col(pt_id) + diff_vec_x_warped;
+		grad_pts(0, pt_id) = pt_inc_warped(0) / pt_inc_warped(2);
+		grad_pts(1, pt_id) = pt_inc_warped(1) / pt_inc_warped(2);
 
-		pt_dec_warped = curr_pts_hm.col(pix_id) - diff_vec_x_warped;
-		grad_pts(2, pix_id) = pt_dec_warped(0) / pt_dec_warped(2);
-		grad_pts(3, pix_id) = pt_dec_warped(1) / pt_dec_warped(2);
+		pt_dec_warped = curr_pts_hm.col(pt_id) - diff_vec_x_warped;
+		grad_pts(2, pt_id) = pt_dec_warped(0) / pt_dec_warped(2);
+		grad_pts(3, pt_id) = pt_dec_warped(1) / pt_dec_warped(2);
 
-		pt_inc_warped = curr_pts_hm.col(pix_id) + diff_vec_y_warped;
-		grad_pts(4, pix_id) = pt_inc_warped(0) / pt_inc_warped(2);
-		grad_pts(5, pix_id) = pt_inc_warped(1) / pt_inc_warped(2);
+		pt_inc_warped = curr_pts_hm.col(pt_id) + diff_vec_y_warped;
+		grad_pts(4, pt_id) = pt_inc_warped(0) / pt_inc_warped(2);
+		grad_pts(5, pt_id) = pt_inc_warped(1) / pt_inc_warped(2);
 
-		pt_dec_warped = curr_pts_hm.col(pix_id) - diff_vec_y_warped;
-		grad_pts(6, pix_id) = pt_dec_warped(0) / pt_dec_warped(2);
-		grad_pts(7, pix_id) = pt_dec_warped(1) / pt_dec_warped(2);
+		pt_dec_warped = curr_pts_hm.col(pt_id) - diff_vec_y_warped;
+		grad_pts(6, pt_id) = pt_dec_warped(0) / pt_dec_warped(2);
+		grad_pts(7, pt_id) = pt_dec_warped(1) / pt_dec_warped(2);
 	}
 }
 
@@ -95,46 +95,46 @@ void ProjectiveBase::updateHessPts(double hess_eps){
 
 	Vector3d pt_inc_warped, pt_dec_warped;
 
-	for(int pix_id = 0; pix_id < n_pts; pix_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; pt_id++){
 
-		pt_inc_warped = curr_pts_hm.col(pix_id) + diff_vec_xx_warped;
-		hess_pts(0, pix_id) = pt_inc_warped(0) / pt_inc_warped(2);
-		hess_pts(1, pix_id) = pt_inc_warped(1) / pt_inc_warped(2);
+		pt_inc_warped = curr_pts_hm.col(pt_id) + diff_vec_xx_warped;
+		hess_pts(0, pt_id) = pt_inc_warped(0) / pt_inc_warped(2);
+		hess_pts(1, pt_id) = pt_inc_warped(1) / pt_inc_warped(2);
 
-		pt_dec_warped = curr_pts_hm.col(pix_id) - diff_vec_xx_warped;
-		hess_pts(2, pix_id) = pt_dec_warped(0) / pt_dec_warped(2);
-		hess_pts(3, pix_id) = pt_dec_warped(1) / pt_dec_warped(2);
+		pt_dec_warped = curr_pts_hm.col(pt_id) - diff_vec_xx_warped;
+		hess_pts(2, pt_id) = pt_dec_warped(0) / pt_dec_warped(2);
+		hess_pts(3, pt_id) = pt_dec_warped(1) / pt_dec_warped(2);
 
-		pt_inc_warped = curr_pts_hm.col(pix_id) + diff_vec_yy_warped;
-		hess_pts(4, pix_id) = pt_inc_warped(0) / pt_inc_warped(2);
-		hess_pts(5, pix_id) = pt_inc_warped(1) / pt_inc_warped(2);
+		pt_inc_warped = curr_pts_hm.col(pt_id) + diff_vec_yy_warped;
+		hess_pts(4, pt_id) = pt_inc_warped(0) / pt_inc_warped(2);
+		hess_pts(5, pt_id) = pt_inc_warped(1) / pt_inc_warped(2);
 
-		pt_dec_warped = curr_pts_hm.col(pix_id) - diff_vec_yy_warped;
-		hess_pts(6, pix_id) = pt_dec_warped(0) / pt_dec_warped(2);
-		hess_pts(7, pix_id) = pt_dec_warped(1) / pt_dec_warped(2);
+		pt_dec_warped = curr_pts_hm.col(pt_id) - diff_vec_yy_warped;
+		hess_pts(6, pt_id) = pt_dec_warped(0) / pt_dec_warped(2);
+		hess_pts(7, pt_id) = pt_dec_warped(1) / pt_dec_warped(2);
 
-		pt_inc_warped = curr_pts_hm.col(pix_id) + diff_vec_xy_warped;
-		hess_pts(8, pix_id) = pt_inc_warped(0) / pt_inc_warped(2);
-		hess_pts(9, pix_id) = pt_inc_warped(1) / pt_inc_warped(2);
+		pt_inc_warped = curr_pts_hm.col(pt_id) + diff_vec_xy_warped;
+		hess_pts(8, pt_id) = pt_inc_warped(0) / pt_inc_warped(2);
+		hess_pts(9, pt_id) = pt_inc_warped(1) / pt_inc_warped(2);
 
-		pt_dec_warped = curr_pts_hm.col(pix_id) - diff_vec_xy_warped;
-		hess_pts(10, pix_id) = pt_dec_warped(0) / pt_dec_warped(2);
-		hess_pts(11, pix_id) = pt_dec_warped(1) / pt_dec_warped(2);
+		pt_dec_warped = curr_pts_hm.col(pt_id) - diff_vec_xy_warped;
+		hess_pts(10, pt_id) = pt_dec_warped(0) / pt_dec_warped(2);
+		hess_pts(11, pt_id) = pt_dec_warped(1) / pt_dec_warped(2);
 
-		pt_inc_warped = curr_pts_hm.col(pix_id) + diff_vec_yx_warped;
-		hess_pts(12, pix_id) = pt_inc_warped(0) / pt_inc_warped(2);
-		hess_pts(13, pix_id) = pt_inc_warped(1) / pt_inc_warped(2);
+		pt_inc_warped = curr_pts_hm.col(pt_id) + diff_vec_yx_warped;
+		hess_pts(12, pt_id) = pt_inc_warped(0) / pt_inc_warped(2);
+		hess_pts(13, pt_id) = pt_inc_warped(1) / pt_inc_warped(2);
 
-		pt_dec_warped = curr_pts_hm.col(pix_id) - diff_vec_yx_warped;
-		hess_pts(14, pix_id) = pt_dec_warped(0) / pt_dec_warped(2);
-		hess_pts(15, pix_id) = pt_dec_warped(1) / pt_dec_warped(2);
+		pt_dec_warped = curr_pts_hm.col(pt_id) - diff_vec_yx_warped;
+		hess_pts(14, pt_id) = pt_dec_warped(0) / pt_dec_warped(2);
+		hess_pts(15, pt_id) = pt_dec_warped(1) / pt_dec_warped(2);
 	}
 }
 
 void ProjectiveBase::applyWarpToCorners(Matrix24d &warped_corners, const Matrix24d &orig_corners,
 	const VectorXd &ssm_state){
 	getWarpFromState(warp_mat, ssm_state);
-	for(int corner_id = 0; corner_id < 4; corner_id++){
+	for(unsigned int corner_id = 0; corner_id < 4; corner_id++){
 		applyWarpToPt(warped_corners(0, corner_id), warped_corners(1, corner_id),
 			orig_corners(0, corner_id), orig_corners(1, corner_id), warp_mat);
 	}
@@ -143,7 +143,7 @@ void ProjectiveBase::applyWarpToPts(Matrix2Xd &warped_pts, const Matrix2Xd &orig
 	const VectorXd &ssm_state){
 	getWarpFromState(warp_mat, ssm_state);
 	int n_pts = orig_pts.cols();
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; pt_id++){
 		applyWarpToPt(warped_pts(0, pt_id), warped_pts(1, pt_id),
 			orig_pts(0, pt_id), orig_pts(1, pt_id), warp_mat);
 	}
@@ -202,7 +202,7 @@ void ProjectiveBase::estimateStateSigma(VectorXd &state_sigma, double pix_sigma)
 	MatrixXd ssm_grad_norm(n_pts, state_size);
 	Matrix2Xd pix_ssm_grad;
 	pix_ssm_grad.resize(Eigen::NoChange, state_size);
-	for(int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(unsigned int pt_id = 0; pt_id < n_pts; pt_id++){
 		getCurrPixGrad(pix_ssm_grad, pt_id);
 		ssm_grad_norm.row(pt_id) = pix_ssm_grad.colwise().norm();
 	}

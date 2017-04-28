@@ -34,8 +34,8 @@ int main(int argc, char * argv[]){
 		input->update();
 	}
 	if(res_from_size){
-		resx = (input->getFrame().cols - 2 * mos_track_border) / res_from_size;
-		resy = (input->getFrame().rows - 2 * mos_track_border) / res_from_size;
+		resx = static_cast<unsigned int>((input->getFrame().cols - 2 * mos_track_border) / res_from_size);
+		resy = static_cast<unsigned int>((input->getFrame().rows - 2 * mos_track_border) / res_from_size);
 	}
 	Tracker_ tracker(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
 	if(!tracker){ return EXIT_FAILURE; }
@@ -127,8 +127,8 @@ int main(int argc, char * argv[]){
 		double resize_factor_x = static_cast<double>(mos_disp_width) / static_cast<double>(mos_img.cols);
 		double resize_factor_y = static_cast<double>(mos_disp_height) / static_cast<double>(mos_img.rows);
 		mos_resize_factor = resize_factor_x < resize_factor_y ? resize_factor_x : resize_factor_y;
-		mos_disp_width = mos_width * mos_resize_factor;
-		mos_disp_height = mos_height * mos_resize_factor;
+		mos_disp_width = static_cast<int>(mos_width * mos_resize_factor);
+		mos_disp_height = static_cast<int>(mos_height * mos_resize_factor);
 		mos_disp_img.create(mos_disp_height, mos_disp_width, mos_img_type);
 		mos_disp_img.setTo(cv::Scalar(0));
 		if(mos_use_write_mask && mos_show_mask){

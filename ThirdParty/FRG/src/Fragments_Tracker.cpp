@@ -271,14 +271,13 @@ namespace frg{
 		// compute the integral histogram on the template
 		//
 
-		int i;
-		for(i = 0; i < IIV_T.size(); i++) {
+		for(unsigned int i = 0; i < IIV_T.size(); i++) {
 			cvReleaseMat(&(IIV_T[i]));
 		}
 		IIV_T.clear();
 
 		CvMat* curr_ii;
-		for(i = 0; i < params->B; i++) {
+		for(int i = 0; i < params->B; i++) {
 
 			curr_ii = cvCreateMat(T->height, T->width, CV_32S);
 
@@ -369,8 +368,8 @@ namespace frg{
 		int L, R;
 		for(bi = 0; bi <= params->B - 1; bi++)
 		{
-			L = bi*bin_width;
-			R = L + bin_width - 1;
+			L = static_cast<int>(bi*bin_width);
+			R = static_cast<int>(L + bin_width - 1);
 			if(bi == params->B - 1)
 			{
 				R = 255;
@@ -413,7 +412,7 @@ namespace frg{
 
 	void Fragments_Tracker::define_patches(int height, int width, vector< Patch* >& patch_vec)
 	{
-		for(int i = 0; i < patch_vec.size(); i++)
+		for(unsigned int i = 0; i < patch_vec.size(); i++)
 		{
 			delete patch_vec[i];
 		}
@@ -545,7 +544,7 @@ namespace frg{
 			for(j = 0; j < I->width; j++) {
 
 
-				currBin = cvmGet(curr_bin_mat, i, j);
+				currBin = static_cast<int>(cvmGet(curr_bin_mat, i, j));
 
 				for(it = vec_II.begin(), count = 0; it != vec_II.end(); it++, count++) {
 

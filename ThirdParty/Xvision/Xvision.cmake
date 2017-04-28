@@ -1,4 +1,4 @@
-option(WITH_XVISION "Enable XVision" OFF)
+option(WITH_XVISION "Enable XVision (not recommended)" OFF)
 if(WITH_XVISION)
 	set(XVISION_TRACKERS xvSSDAffine xvSSDGrid xvSSDGridLine xvSSDHelper xvSSDMain xvSSDPyramidAffine xvSSDPyramidRotate xvSSDPyramidRT xvSSDPyramidSE2 xvSSDPyramidTrans xvSSDRotate xvSSDRT xvSSDScaling xvSSDSE2 xvSSDTR xvSSDTrans common xvColor xvEdgeTracker)
 else(WITH_XVISION)	

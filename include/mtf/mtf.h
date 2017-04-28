@@ -123,16 +123,9 @@
 
 //! Third Party Trackers
 #ifndef DISABLE_THIRD_PARTY_TRACKERS
-//! thirdparty learning based trackers
 #include "mtf/ThirdParty/DSST/DSST.h"
-#include "mtf/ThirdParty/KCF/KCFTracker.h"
-#include "mtf/ThirdParty/RCT/CompressiveTracker.h"
-#ifndef DISABLE_VISP
-#include "mtf/ThirdParty/ViSP/ViSP.h"
-#endif
-#ifndef DISABLE_PFSL3
-#include "mtf/ThirdParty/PFSL3/PFSL3.h"
-#endif
+#include "mtf/ThirdParty/KCF/KCF.h"
+#include "mtf/ThirdParty/RCT/RCT.h"
 #include "mtf/ThirdParty/Struck/Struck.h"
 #include "mtf/ThirdParty/CMT/CMT.h"
 #include "mtf/ThirdParty/FRG/FRG.h"
@@ -142,7 +135,12 @@
 #ifndef DISABLE_MIL
 #include "mtf/ThirdParty/MIL/MIL.h"
 #endif
-#ifndef _WIN32
+#ifndef DISABLE_PFSL3
+#include "mtf/ThirdParty/PFSL3/PFSL3.h"
+#endif
+#ifndef DISABLE_VISP
+#include "mtf/ThirdParty/ViSP/ViSP.h"
+#endif
 //! some thirdparty trackers do not compile in Windows yet
 #ifndef DISABLE_DFT
 #include "mtf/ThirdParty/DFT/DFT.h"
@@ -168,7 +166,6 @@
 #include "mtf/ThirdParty/Xvision/xvSSDGrid.h"
 #include "mtf/ThirdParty/Xvision/xvSSDGridLine.h"
 bool using_xv_tracker = false;
-#endif
 #endif
 #endif
 
@@ -1642,7 +1639,7 @@ inline TrackerBase *getTracker(const char *tracker_type){
 		DSSTParams dsst_params(dsst_padding, dsst_sigma, dsst_scale_sigma, dsst_lambda,
 			dsst_learning_rate, dsst_number_scales, dsst_scale_step, dsst_number_rots, dsst_rot_step,
 			dsst_resize_factor, dsst_is_scaling, dsst_is_rotating, dsst_bin_size);
-		return new DSSTTracker(&dsst_params);
+		return new DSST(&dsst_params);
 	} else if(!strcmp(tracker_type, "kcf")){
 		KCFParams kcf_params(
 			kcf_padding,
@@ -1658,12 +1655,45 @@ inline TrackerBase *getTracker(const char *tracker_type){
 			kcf_enableScaling,
 			kcf_resize_factor
 			);
-		return new KCFTracker(&kcf_params);
+		return new KCF(&kcf_params);
 	} else if(!strcmp(tracker_type, "rct")){
 		RCTParams rct_params(rct_min_n_rect, rct_max_n_rect, rct_n_feat,
 			rct_rad_outer_pos, rct_rad_search_win, rct_learning_rate);
-		return new CompressiveTracker(&rct_params);
+		return new RCT(&rct_params);
+	} else if(!strcmp(tracker_type, "cmt")){
+		CMTParams cmt_params(cmt_estimate_scale, cmt_estimate_rotation,
+			cmt_feat_detector, cmt_desc_extractor, cmt_resize_factor);
+		return new cmt::CMT(&cmt_params);
+	} else if(!strcmp(tracker_type, "strk")){
+		struck::StruckParams strk_params(strk_config_path);
+		return new struck::Struck(&strk_params);
+	} else if(!strcmp(tracker_type, "frg")){
+		FRGParams frg_params(frg_n_bins, frg_search_margin,
+			static_cast<FRGParams::HistComparisonMetric>(frg_hist_cmp_metric),
+			frg_resize_factor, frg_show_window);
+		return new FRG(&frg_params);
 	}
+#ifndef DISABLE_TLD
+	else if(!strcmp(tracker_type, "tld")){
+		TLDParams tld_params(tld_tracker_enabled, tld_detector_enabled,
+			tld_learning_enabled, tld_alternating);
+		return new tld::TLD(&tld_params);
+	}
+#endif
+#ifndef DISABLE_MIL
+	else if(!strcmp(tracker_type, "mil")){
+		MILParams mil_params(
+			mil_algorithm,
+			mil_num_classifiers,
+			mil_overlap,
+			mil_search_factor,
+			mil_pos_radius_train,
+			mil_neg_num_train,
+			mil_num_features
+			);
+		return new MIL(&mil_params);
+	}
+#endif
 #ifndef DISABLE_PFSL3
 	else if(!strcmp(tracker_type, "pfsl3")){
 		PFSL3Params pfsl3_params(pfsl3_p_x, pfsl3_p_y,
@@ -1721,41 +1751,6 @@ inline TrackerBase *getTracker(const char *tracker_type){
 		return new ViSP(&visp_params);
 	}
 #endif
-	else if(!strcmp(tracker_type, "cmt")){
-		CMTParams cmt_params(cmt_estimate_scale, cmt_estimate_rotation,
-			cmt_feat_detector, cmt_desc_extractor, cmt_resize_factor);
-		return new cmt::CMT(&cmt_params);
-	} else if(!strcmp(tracker_type, "strk")){
-		struck::StruckParams strk_params(strk_config_path);
-		return new struck::Struck(&strk_params);
-	} else if(!strcmp(tracker_type, "frg")){
-		FRGParams frg_params(frg_n_bins, frg_search_margin,
-			static_cast<FRGParams::HistComparisonMetric>(frg_hist_cmp_metric),
-			frg_resize_factor, frg_show_window);
-		return new FRG(&frg_params);
-	}
-#ifndef DISABLE_TLD
-	else if(!strcmp(tracker_type, "tld")){
-		TLDParams tld_params(tld_tracker_enabled, tld_detector_enabled,
-			tld_learning_enabled, tld_alternating);
-		return new tld::TLD(&tld_params);
-	}
-#endif
-#ifndef DISABLE_MIL
-	else if(!strcmp(tracker_type, "mil")){
-		MILParams mil_params(
-			mil_algorithm,
-			mil_num_classifiers,
-			mil_overlap,
-			mil_search_factor,
-			mil_pos_radius_train,
-			mil_neg_num_train,
-			mil_num_features
-			);
-		return new MIL(&mil_params);
-	}
-#endif
-#ifndef _WIN32
 #ifndef DISABLE_DFT
 	else if(!strcmp(tracker_type, "dft")){
 		dft::DFTParams dft_params(dft_res_to_l, dft_p_to_l, dft_max_iter,
@@ -1819,7 +1814,6 @@ inline TrackerBase *getTracker(const char *tracker_type){
 			throw std::invalid_argument(err_msg.str());
 		}
 	}
-#endif
 #endif
 #endif
 	return nullptr;

@@ -85,10 +85,10 @@ int main(int argc, char * argv[]) {
 	}
 
 	cv::Mat init_corners;
-	int size_x, size_y;
+	double size_x, size_y;
 	if(syn_warp_entire_image){
-		size_x = input->getWidth();
-		size_y = input->getHeight();
+		size_x = static_cast<double>(input->getWidth());
+		size_y = static_cast<double>(input->getHeight());
 		init_corners.create(2, 4, CV_64FC1);
 		//! corners of the image itself
 		init_corners.at<double>(0, 0) = 0;

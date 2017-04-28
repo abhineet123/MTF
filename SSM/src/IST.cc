@@ -295,7 +295,7 @@ int ISTEstimator::runKernel(const CvMat* m1, const CvMat* m2, CvMat* H) {
 	Matrix2Xd in_pts, out_pts;
 	in_pts.resize(Eigen::NoChange, n_pts);
 	out_pts.resize(Eigen::NoChange, n_pts);
-	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		in_pts(0, pt_id) = M[pt_id].x;
 		in_pts(1, pt_id) = M[pt_id].y;
 
@@ -320,7 +320,7 @@ void ISTEstimator::computeReprojError(const CvMat* m1, const CvMat* m2,
 	const double* H = model->data.db;
 	float* err = _err->data.fl;
 
-	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		double dx = (H[2] * M[pt_id].x + H[0]) - m[pt_id].x;
 		double dy = (H[2] * M[pt_id].y + H[1]) - m[pt_id].y;
 		err[pt_id] = (float)(dx * dx + dy * dy);
@@ -344,7 +344,7 @@ bool ISTEstimator::refine(const CvMat* m1, const CvMat* m2,
 		if(!solver.updateAlt(_param, _JtJ, _JtErr, _errNorm))
 			break;
 
-		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id)	{
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id)	{
 			const double* h = _param->data.db;
 			double Mx = M[pt_id].x, My = M[pt_id].y;
 			double _xi = (h[2] * Mx + h[0]);

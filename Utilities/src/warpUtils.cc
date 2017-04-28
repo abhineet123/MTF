@@ -153,7 +153,7 @@ namespace utils{
 	}
 
 	//! returns the id of the grid point nearest to the given point
-	double getNearestPt(double x, double y, const mtf::PtsT &grid_pts, int n_pts){
+	int getNearestPt(double x, double y, const mtf::PtsT &grid_pts, int n_pts){
 		double min_dist = std::numeric_limits<double>::infinity();
 		int nearest_id = 0;
 		for(int pt_id = 0; pt_id < n_pts; ++pt_id){

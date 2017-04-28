@@ -16,6 +16,12 @@
 
 #include <string>
 
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#pragma warning(disable:4800)
+#pragma warning(disable:4101)
+#endif
+
 #define eps 0.0001
 
 // unit vectors used to compute gradient orientation
@@ -49,7 +55,7 @@ return (x <= y ? y : x);
 }
 */
 
-void DSSTTracker::reset_filters()
+void DSST::reset_filters()
 {
     for(int i=0; i<tSetup.nNumTrans; i++)
         tSetup.num_trans[i]= prev_tSetup.num_trans[i];
@@ -68,7 +74,7 @@ void DSSTTracker::reset_filters()
     }
 }
 
-void DSSTTracker::setRegion(const cv::Mat& corners){
+void DSST::setRegion(const cv::Mat& corners){
 
     //Reset Correlation Filters
     reset_filters();
@@ -208,7 +214,7 @@ DSSTParams::DSSTParams(const DSSTParams *params) {
 	}
 }
 
-cv::Mat DSSTTracker::convertFloatImg(cv::Mat &img)
+cv::Mat DSST::convertFloatImg(cv::Mat &img)
 {
 	cv::Mat imgU;
 	double minVal;
@@ -224,7 +230,7 @@ cv::Mat DSSTTracker::convertFloatImg(cv::Mat &img)
 	return imgU;
 }
 
-DSSTTracker::DSSTTracker(DSSTParams *params) :
+DSST::DSST(DSSTParams *params) :
 TrackerBase(), tParams(params)
 {
 	name = "dsst";
@@ -257,7 +263,7 @@ TrackerBase(), tParams(params)
 	//waitKey();
 }
 
-cv::Mat DSSTTracker::rotateBox(float angle, float cx, float cy, cv::Mat corners )
+cv::Mat DSST::rotateBox(float angle, float cx, float cy, cv::Mat corners )
 {
     cv::Mat rotation_mat(3,3,CV_64FC1);
     rotation_mat.at<double>(0,0)= cos(angle*PI/180);
@@ -281,7 +287,7 @@ cv::Mat DSSTTracker::rotateBox(float angle, float cx, float cy, cv::Mat corners 
     return rotated_corners;
 }
 
-cv::RotatedRect DSSTTracker::getBestFitRotatedRect(cv::Point2f tl, cv::Point2f tr, cv::Point2f bl, cv::Point2f br, cv::Mat corners)
+cv::RotatedRect DSST::getBestFitRotatedRect(cv::Point2f tl, cv::Point2f tr, cv::Point2f bl, cv::Point2f br, cv::Mat corners)
 {
     cv::RotatedRect init_bb;
     cv::Point2f A;
@@ -319,7 +325,7 @@ cv::RotatedRect DSSTTracker::getBestFitRotatedRect(cv::Point2f tl, cv::Point2f t
     cout<<"Size "<<init_bb.size<<endl;
     return init_bb;
 }
-void DSSTTracker::initialize(const cv::Mat& corners)
+void DSST::initialize(const cv::Mat& corners)
 {
     cv::Point2f bl((float)corners.at<double>(0,3), (float)corners.at<double>(1,3));
     cv::Point2f br((float)corners.at<double>(0,2), (float)corners.at<double>(1,2));
@@ -356,7 +362,7 @@ void DSSTTracker::initialize(const cv::Mat& corners)
 	currCorners = corners;
 }
 
-int DSSTTracker::getNearest(cv::Point2f pt, std::vector<cv::Point2f> pts)
+int DSST::getNearest(cv::Point2f pt, std::vector<cv::Point2f> pts)
 {
     int minIndex=-1;
     float minD=1000;
@@ -374,14 +380,14 @@ int DSSTTracker::getNearest(cv::Point2f pt, std::vector<cv::Point2f> pts)
     return minIndex;
 }
 
-void DSSTTracker::getIndices(std::vector<cv::Point2f> pts, int *indices)
+void DSST::getIndices(std::vector<cv::Point2f> pts, int *indices)
 {
     for (int i=0; i<4; i++)
     {
         indices[i]= getNearest(cv::Point2f(currCorners.at<double>(0,i), currCorners.at<double>(1,i) ), pts);
     }
 }
-void DSSTTracker::update()
+void DSST::update()
 {
 	cv::Mat scaledCurrFrame;
 	resize(currFrame, scaledCurrFrame, cv::Size(currFrame.cols / tParams.resize_factor, currFrame.rows / tParams.resize_factor));
@@ -418,14 +424,14 @@ void DSSTTracker::update()
     currCorners = corners;
 }
 
-cv::Mat DSSTTracker::inverseFourier(cv::Mat original, int flag)
+cv::Mat DSST::inverseFourier(cv::Mat original, int flag)
 {
 	cv::Mat output;
 	cv::idft(original, output, cv::DFT_REAL_OUTPUT | cv::DFT_SCALE);  // Applying DFT without padding
 	return output;
 }
 
-cv::Mat DSSTTracker::createFourier(cv::Mat original, int flag)
+cv::Mat DSST::createFourier(cv::Mat original, int flag)
 {
 	cv::Mat planes[] = { cv::Mat_<double>(original), cv::Mat::zeros(original.size(), CV_64F) };
 	cv::Mat complexI;
@@ -434,7 +440,7 @@ cv::Mat DSSTTracker::createFourier(cv::Mat original, int flag)
 	return complexI;
 }
 
-cv::Mat DSSTTracker::hann(int size)
+cv::Mat DSST::hann(int size)
 {
 	cv::Mat arr(size, 1, CV_32FC1);
 	float multiplier;
@@ -446,7 +452,7 @@ cv::Mat DSSTTracker::hann(int size)
 	return arr;
 }
 
-cv::Mat DSSTTracker::convert2DImageFloat(double *arr, int w, int h)
+cv::Mat DSST::convert2DImageFloat(double *arr, int w, int h)
 {
 	int k = 0;
 	cv::Mat img(h, w, CV_32FC1);
@@ -461,7 +467,7 @@ cv::Mat DSSTTracker::convert2DImageFloat(double *arr, int w, int h)
 	return img;
 }
 
-cv::Mat DSSTTracker::convertNormalizedFloatImg(cv::Mat &img)
+cv::Mat DSST::convertNormalizedFloatImg(cv::Mat &img)
 {
 	cv::Mat imgU;
 	double minVal;
@@ -475,7 +481,7 @@ cv::Mat DSSTTracker::convertNormalizedFloatImg(cv::Mat &img)
 	return imgU;
 }
 
-double *DSSTTracker::computeMeanVariance(cv::Mat trans_response)
+double *DSST::computeMeanVariance(cv::Mat trans_response)
 {
 	double mean = 0;
 	for(int i = 0; i < trans_response.rows; i++)
@@ -507,7 +513,7 @@ double *DSSTTracker::computeMeanVariance(cv::Mat trans_response)
 	return params;
 }
 
-double DSSTTracker::computeCorrelationVariance(double *arr, int arrW, int arrH)
+double DSST::computeCorrelationVariance(double *arr, int arrW, int arrH)
 {
 	//Assert on the width and height of the image!
 	if(arrW != tSetup.padded.width || arrH != tSetup.padded.height)
@@ -586,7 +592,7 @@ double DSSTTracker::computeCorrelationVariance(double *arr, int arrW, int arrH)
 	return var;
 }
 
-float *DSSTTracker::convert1DArray(cv::Mat &patch)
+float *DSST::convert1DArray(cv::Mat &patch)
 {
 	float *img = (float*)calloc(patch.rows*patch.cols, sizeof(float));
 
@@ -600,7 +606,7 @@ float *DSSTTracker::convert1DArray(cv::Mat &patch)
 	return img;
 }
 
-double *DSSTTracker::convert1DArrayDouble(cv::Mat &patch)
+double *DSST::convert1DArrayDouble(cv::Mat &patch)
 {
 	double *img = (double*)calloc(patch.rows*patch.cols, sizeof(double));
 
@@ -614,7 +620,7 @@ double *DSSTTracker::convert1DArrayDouble(cv::Mat &patch)
 	return img;
 }
 
-cv::Mat DSSTTracker::convert2DImage(float *arr, int w, int h)
+cv::Mat DSST::convert2DImage(float *arr, int w, int h)
 {
 	int k = 0;
 	cv::Mat img(h, w, CV_32F);
@@ -637,7 +643,7 @@ cv::Mat DSSTTracker::convert2DImage(float *arr, int w, int h)
 
 	return imgU;
 }
-cv::Point DSSTTracker::ComputeMaxDisplayfl(cv::Mat &img, string winName)
+cv::Point DSST::ComputeMaxDisplayfl(cv::Mat &img, string winName)
 {
 	cv::Mat imgU;
 	double minVal;
@@ -649,7 +655,7 @@ cv::Point DSSTTracker::ComputeMaxDisplayfl(cv::Mat &img, string winName)
 	return maxLoc;
 }
 
-cv::Mat *DSSTTracker::create_feature_map(cv::Mat& patch, int full, int &nChns, cv::Mat& Gray, bool scaling)
+cv::Mat *DSST::create_feature_map(cv::Mat& patch, int full, int &nChns, cv::Mat& Gray, bool scaling)
 {
 	int h = patch.rows, w = patch.cols;
 	float* M = (float*)calloc(h*w, sizeof(float));
@@ -720,7 +726,7 @@ cv::Mat *DSSTTracker::create_feature_map(cv::Mat& patch, int full, int &nChns, c
 	return featureMap;
 }
 
-void DSSTTracker::getQuadrangleSubPix_8u32f_CnR(const uchar* src, size_t src_step, cv::Size src_size,
+void DSST::getQuadrangleSubPix_8u32f_CnR(const uchar* src, size_t src_step, cv::Size src_size,
 	float* dst, size_t dst_step, cv::Size win_size,
 	const double *matrix, int cn)
 {
@@ -810,7 +816,7 @@ void DSSTTracker::getQuadrangleSubPix_8u32f_CnR(const uchar* src, size_t src_ste
 //----------------------------------------------------------
 // 
 //----------------------------------------------------------
-void DSSTTracker::myGetQuadrangleSubPix(const cv::Mat& src, cv::Mat& dst, cv::Mat& m)
+void DSST::myGetQuadrangleSubPix(const cv::Mat& src, cv::Mat& dst, cv::Mat& m)
 {
 	CV_Assert(src.channels() == dst.channels());
 
@@ -836,7 +842,7 @@ void DSSTTracker::myGetQuadrangleSubPix(const cv::Mat& src, cv::Mat& dst, cv::Ma
 	}
 }
 
-cv::Mat DSSTTracker::extract_rotated_patch(cv::Mat img, cv::RotatedRect bb)
+cv::Mat DSST::extract_rotated_patch(cv::Mat img, cv::RotatedRect bb)
 {
 	//cv::Mat img_clone= img.clone();
 	cv::Mat dst(bb.size, CV_32FC1);
@@ -856,7 +862,7 @@ cv::Mat DSSTTracker::extract_rotated_patch(cv::Mat img, cv::RotatedRect bb)
 	return dst;
 }
 
-cv::Mat DSSTTracker::get_rot_sample(cv::Mat img, trackingSetup tSetup, DSSTParams tParams, int &nDims, bool display)
+cv::Mat DSST::get_rot_sample(cv::Mat img, trackingSetup tSetup, DSSTParams tParams, int &nDims, bool display)
 {
 	cv::Mat featureMapRot;
 	CvRect patchSize;
@@ -929,7 +935,7 @@ cv::Mat DSSTTracker::get_rot_sample(cv::Mat img, trackingSetup tSetup, DSSTParam
 }
 
 
-cv::Mat DSSTTracker::get_scale_sample(cv::Mat img, trackingSetup tSetup, DSSTParams tParams, int &nDims, bool display)
+cv::Mat DSST::get_scale_sample(cv::Mat img, trackingSetup tSetup, DSSTParams tParams, int &nDims, bool display)
 {
 	cv::Mat featureMapScale;
 	CvRect patchSize;
@@ -1005,7 +1011,7 @@ cv::Mat DSSTTracker::get_scale_sample(cv::Mat img, trackingSetup tSetup, DSSTPar
 	return feature_map_scale_fourier_temp;
 }
 
-cv::Mat *DSSTTracker::get_translation_sample(cv::Mat img, trackingSetup tSet, int &nDims)
+cv::Mat *DSST::get_translation_sample(cv::Mat img, trackingSetup tSet, int &nDims)
 {
 	float pw = tSetup.padded.width*tSet.current_scale_factor;
 	float ph = tSetup.padded.height*tSet.current_scale_factor;
@@ -1061,7 +1067,7 @@ cv::Mat *DSSTTracker::get_translation_sample(cv::Mat img, trackingSetup tSet, in
 	return featureMap;
 }
 
-void DSSTTracker::train(bool first, cv::Mat img, bool original)//false when called from setRegion, true otherwise
+void DSST::train(bool first, cv::Mat img, bool original)//false when called from setRegion, true otherwise
 {
 	//cout<<"Entered training "<<endl;
 	//Model update:
@@ -1246,7 +1252,7 @@ void DSSTTracker::train(bool first, cv::Mat img, bool original)//false when call
 	delete[] feature_map_fourier;
 }
 
-cv::Point DSSTTracker::updateCentroid(cv::Point oldC, int w, int h, int imgw, int imgh)
+cv::Point DSST::updateCentroid(cv::Point oldC, int w, int h, int imgw, int imgh)
 {
 	bool outBorder = false;
 	int left = oldC.x - w / 2;
@@ -1283,7 +1289,7 @@ cv::Point DSSTTracker::updateCentroid(cv::Point oldC, int w, int h, int imgw, in
 	return newPt;
 }
 
-cv::RotatedRect DSSTTracker::processFrame_bb(cv::Mat img, bool enableScaling, bool enableRotating, cv::RotatedRect bb)
+cv::RotatedRect DSST::processFrame_bb(cv::Mat img, bool enableScaling, bool enableRotating, cv::RotatedRect bb)
 {
     tSetup.centroid = bb.center;//bb.x + bb.width / 2;                          
     cout<<"Inside process Frame"<<endl;
@@ -1320,7 +1326,7 @@ cv::RotatedRect DSSTTracker::processFrame_bb(cv::Mat img, bool enableScaling, bo
 
 	return rect;
 }
-cv::RotatedRect DSSTTracker::processFrame(cv::Mat img, bool enableScaling, bool enableRotating)
+cv::RotatedRect DSST::processFrame(cv::Mat img, bool enableScaling, bool enableRotating)
 {
 	int nDims = 0;
 	cv::Mat *feature_map = get_translation_sample(img, tSetup, nDims);
@@ -1492,7 +1498,7 @@ delete[] tSetup.scaleFactors;
 }
 }*/
 
-void DSSTTracker::preprocess(cv::Mat img, cv::RotatedRect bb)
+void DSST::preprocess(cv::Mat img, cv::RotatedRect bb)
 {
 	tSetup.centroid = bb.center;//bb.x + bb.width / 2;
 	tSetup.original = bb.size;
@@ -1593,7 +1599,7 @@ void DSSTTracker::preprocess(cv::Mat img, cv::RotatedRect bb)
 	//	cout<<"after train"<<endl;
 }
 
-cv::Mat DSSTTracker::visualize(cv::Rect rect, cv::Mat img, cv::Scalar scalar)
+cv::Mat DSST::visualize(cv::Rect rect, cv::Mat img, cv::Scalar scalar)
 {
 	cv::Mat retImg = img.clone();
 	cv::rectangle(retImg, cvPoint(rect.x, rect.y), cvPoint(rect.x + rect.width, rect.y + rect.height), scalar, 2);
