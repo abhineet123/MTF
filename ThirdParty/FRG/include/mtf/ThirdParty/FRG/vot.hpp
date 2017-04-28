@@ -23,7 +23,7 @@ public:
             float x, y, w, h;
             char ch;
             p_region_stream >> x >> ch >> y >> ch >> w >> ch >> h;
-            p_init_rectangle = cv::Rect(x, y, w, h);
+			p_init_rectangle = cv::Rect(static_cast<int>(x), static_cast<int>(y), static_cast<int>(w), static_cast<int>(h));
         }else{
             std::cerr << "Error loading initial region in file " << region_file << "!" << std::endl;
             p_init_rectangle = cv::Rect(0, 0, 0, 0);

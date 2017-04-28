@@ -92,13 +92,13 @@ inline PreProc_ getPreProc(const vector<PreProc_> &existing_objs, int output_typ
 		}
 		PreProc_ new_obj = getPreProc(existing_objs, supported_output_types[0], _pre_proc_type);
 		PreProc_ curr_obj = new_obj;
-		for(int output_id = 1; output_id < supported_output_types.size(); ++output_id){
+		for(unsigned int output_id = 1; output_id < supported_output_types.size(); ++output_id){
 			curr_obj->next = getPreProc(existing_objs, supported_output_types[output_id], _pre_proc_type);
 			curr_obj = curr_obj->next;
 		}
 		return new_obj;
 	}
-	for(int obj_id = 0; obj_id < existing_objs.size(); ++obj_id){
+	for(unsigned int obj_id = 0; obj_id < existing_objs.size(); ++obj_id){
 		for(PreProc_ curr_obj = existing_objs[obj_id]; curr_obj; curr_obj = curr_obj->next){
 			if(curr_obj->outputType() == output_type){ return curr_obj; }
 		}
@@ -114,7 +114,7 @@ inline PreProc_ getPreProc(int output_type,
 		}
 		PreProc_ new_obj = getPreProc(supported_output_types[0], _pre_proc_type);
 		PreProc_ curr_obj = new_obj;
-		for(int output_id = 1; output_id < supported_output_types.size(); ++output_id){
+		for(unsigned int output_id = 1; output_id < supported_output_types.size(); ++output_id){
 			curr_obj->next = getPreProc(supported_output_types[output_id], _pre_proc_type);
 			curr_obj = curr_obj->next;
 		}

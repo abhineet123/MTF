@@ -1285,9 +1285,9 @@ inline PFParams_ getPFParams(){
 	vectorvd pf_ssm_sigma, pf_ssm_mean;
 	getSamplerParams(pf_ssm_sigma, pf_ssm_mean, pf_ssm_sigma_ids, pf_ssm_mean_ids, "PF");
 	printf("pf_ssm_sigma: \n");
-	for(int i = 0; i < pf_ssm_sigma.size(); ++i){
+	for(unsigned int i = 0; i < pf_ssm_sigma.size(); ++i){
 		printf("%d: \n", i);
-		for(int j = 0; j < pf_ssm_sigma[i].size(); ++j){
+		for(unsigned int j = 0; j < pf_ssm_sigma[i].size(); ++j){
 			printf("%f\t", pf_ssm_sigma[i][j]);
 		}
 		printf("\n");
@@ -1410,14 +1410,14 @@ inline RegNetParams_ getRegNetParams(){
 //! multi layer non templated PF
 inline bool getPFk(vector<TrackerBase*> &trackers, const char *am_type,
 	const char *ssm_type, const char *ilm_type){
-	if(pfk_ssm_sigma_ids.size() < pfk_n_layers){
+	if(pfk_ssm_sigma_ids.size() < static_cast<unsigned int>(pfk_n_layers)){
 		printf("Insufficient sigma IDs specified for %d layer PF: %lu\n", pfk_n_layers, pfk_ssm_sigma_ids.size());
 		return false;
 	}
 	//! take the last 'pfk_n_layers' ssm_sigma_ids added to pfk_ssm_sigma_ids so that the ones specified 
 	//! in modules.cfg can be completely overridden at runtime by command line arguments that are parsed last
-	int start_id = pfk_ssm_sigma_ids.size() - pfk_n_layers;
-	for(int layer_id = start_id; layer_id < pfk_ssm_sigma_ids.size(); ++layer_id){
+	unsigned int start_id = pfk_ssm_sigma_ids.size() - static_cast<unsigned int>(pfk_n_layers);
+	for(unsigned int layer_id = start_id; layer_id < pfk_ssm_sigma_ids.size(); ++layer_id){
 		pf_ssm_sigma_ids = pfk_ssm_sigma_ids[layer_id];
 		trackers.push_back(getSM("pf", am_type, ssm_type, ilm_type));
 		if(!trackers.back()){ return false; }
@@ -1427,14 +1427,14 @@ inline bool getPFk(vector<TrackerBase*> &trackers, const char *am_type,
 //! multi layer non templated NN
 inline bool getNNk(vector<TrackerBase*> &trackers, const char *am_type,
 	const char *ssm_type, const char *ilm_type){
-	if(nnk_ssm_sigma_ids.size() < nnk_n_layers){
+	if(nnk_ssm_sigma_ids.size() < static_cast<unsigned int>(nnk_n_layers)){
 		printf("Insufficient sigma IDs specified for %d layer NN: %lu\n", nnk_n_layers, nnk_ssm_sigma_ids.size());
 		return false;
 	}
 	//! take the last 'nnk_n_layers' ssm_sigma_ids added to nnk_ssm_sigma_ids so that the ones specified 
 	//! in modules.cfg can be completely overridden at runtime by command line arguments that are parsed last
-	int start_id = nnk_ssm_sigma_ids.size() - nnk_n_layers;
-	for(int layer_id = start_id; layer_id < nnk_ssm_sigma_ids.size(); ++layer_id){
+	unsigned int start_id = nnk_ssm_sigma_ids.size() - static_cast<unsigned int>(nnk_n_layers);
+	for(unsigned int layer_id = start_id; layer_id < nnk_ssm_sigma_ids.size(); ++layer_id){
 		nn_ssm_sigma_ids = nnk_ssm_sigma_ids[layer_id];
 		trackers.push_back(getSM("nn", am_type, ssm_type, ilm_type));
 		if(!trackers.back()){ return false; }

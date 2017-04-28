@@ -9,6 +9,12 @@
 #include <opencv2/core/core.hpp>
 #include "mtf/TrackerBase.h"
 
+#define HOG_BINSIZE 1
+#define HOG_SCALEBINSIZE 4
+#define HOG_NORIENTS 9
+#define HOG_CLIPHOG 0.2f
+#define HOG_SOFTBIN -1
+
 struct KCFParams{
 	double padding; //extra area surrounding the target
 	double lambda; //regularization
@@ -59,20 +65,19 @@ public:
 	const cv::Mat& getRegion()  override{ return currCorners; }
 
 private:
+
 	struct HOGParams{
 		int binSize;
 		int scaleBinSize;
 		int nOrients;
-		int softBin;
 		float clipHog;
-		HOGParams()
-		{
-			binSize = 1;
-			scaleBinSize = 4;
-			nOrients = 9;
-			clipHog = 0.2;
-			softBin = -1;
-		}
+		int softBin;
+		HOGParams() :
+			binSize(HOG_BINSIZE),
+			scaleBinSize(HOG_SCALEBINSIZE),
+			nOrients(HOG_NORIENTS),
+			clipHog(HOG_CLIPHOG),
+			softBin(HOG_SOFTBIN){}
 	};
 	struct trackingSetup{
 		cv::Mat trans_cos_win;

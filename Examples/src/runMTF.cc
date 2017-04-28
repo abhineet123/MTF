@@ -136,8 +136,8 @@ int main(int argc, char * argv[]) {
 		printf("Initializing tracker %d with object of size %f x %f\n", tracker_id,
 			cv_utils.getObj(tracker_id).size_x, cv_utils.getObj(tracker_id).size_y);
 		if(res_from_size){
-			resx = cv_utils.getObj(tracker_id).size_x / res_from_size;
-			resy = cv_utils.getObj(tracker_id).size_y / res_from_size;
+			resx = static_cast<unsigned int>(cv_utils.getObj(tracker_id).size_x / res_from_size);
+			resy = static_cast<unsigned int>(cv_utils.getObj(tracker_id).size_y / res_from_size);
 		}
 		mtf::TrackerBase *tracker = mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm);
 		if(!tracker){
@@ -329,7 +329,7 @@ int main(int argc, char * argv[]) {
 
 	if(show_cv_window){
 		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
-			if(tracker_labels.size() < tracker_id + 1){
+			if(static_cast<int>(tracker_labels.size()) < tracker_id + 1){
 				tracker_labels.push_back(trackers[tracker_id]->name);
 			}
 		}
@@ -631,7 +631,7 @@ int main(int argc, char * argv[]) {
 		printf("Number of failures: %d\n", failure_count);
 		if(failure_count > 0){
 			printf("Failures detected in frame(s): %d", failure_frame_ids[0]);
-			for(int i = 1; i < failure_frame_ids.size(); ++i){
+			for(unsigned int i = 1; i < failure_frame_ids.size(); ++i){
 				printf(", %d", failure_frame_ids[i]);
 			}
 			printf("\n");

@@ -15,6 +15,24 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "mtf/Utilities/miscUtils.h"
 
+#define KCF_PADDING 1
+#define KCF_LAMBDA 1e-4
+#define KCF_OUTPUT_SIGMA_FACTOR 0.1
+#define KCF_INTERP_FACTOR 0.02
+#define KCF_KERNEL_SIGMA 0.5
+#define KCF_NUMBER_SCALES 33
+#define KCF_SCALE_STEP 1.02
+#define KCF_SCALE_MODEL_MAX_AREA 512
+#define KCF_SCALE_SIGMA_FACTOR 0.25
+#define KCF_SCALE_LEARNING_RATE 0.025
+#define KCF_ENABLESCALING false
+#define KCF_RESIZE_FACTOR 4
+
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#pragma warning(disable:4101)
+#endif
+
 using namespace cv;
 using namespace std;
 
@@ -30,35 +48,33 @@ KCFParams::KCFParams(
 	double _scale_sigma_factor,
 	double _scale_learning_rate,
 	bool _enableScaling,
-	int _resize_factor){
-	padding = _padding;
-	lambda = _lambda;
-	output_sigma_factor = _output_sigma_factor;
-	interp_factor = _interp_factor;
-	kernel_sigma = _kernel_sigma;
-	number_scales = _number_scales;
-	scale_step = _scale_step;
-	scale_model_max_area = _scale_model_max_area;
-	scale_sigma_factor = _scale_sigma_factor;
-	scale_learning_rate = _scale_learning_rate;
-	enableScaling = _enableScaling;
-	resize_factor = _resize_factor;
-}
+	int _resize_factor):
+	padding(_padding),
+	lambda(_lambda),
+	output_sigma_factor(_output_sigma_factor),
+	interp_factor(_interp_factor),
+	kernel_sigma(_kernel_sigma),
+	number_scales(_number_scales),
+	scale_step(_scale_step),
+	scale_model_max_area(_scale_model_max_area),
+	scale_sigma_factor(_scale_sigma_factor),
+	scale_learning_rate(_scale_learning_rate),
+	enableScaling(_enableScaling),
+	resize_factor(_resize_factor){}
 
 KCFParams::KCFParams(const KCFParams *params) :
-padding(1),
-lambda(1e-4),
-output_sigma_factor(0.1),
-interp_factor(0.02),
-kernel_sigma(0.5),
-
-number_scales(33),
-scale_step(1.02),
-scale_model_max_area(512),
-scale_sigma_factor(0.25),
-scale_learning_rate(0.025),
-enableScaling(false),
-resize_factor(4){
+padding(KCF_PADDING),
+lambda(KCF_LAMBDA),
+output_sigma_factor(KCF_OUTPUT_SIGMA_FACTOR),
+interp_factor(KCF_INTERP_FACTOR),
+kernel_sigma(KCF_KERNEL_SIGMA),
+number_scales(KCF_NUMBER_SCALES),
+scale_step(KCF_SCALE_STEP),
+scale_model_max_area(KCF_SCALE_MODEL_MAX_AREA),
+scale_sigma_factor(KCF_SCALE_SIGMA_FACTOR),
+scale_learning_rate(KCF_SCALE_LEARNING_RATE),
+enableScaling(KCF_ENABLESCALING),
+resize_factor(KCF_RESIZE_FACTOR){
 	if(params){
 		padding = params->padding;
 		lambda = params->lambda;
@@ -75,8 +91,6 @@ resize_factor(4){
 	}
 
 }
-
-
 
 KCFTracker::KCFTracker(const KCFParams *kcf_params) :
 TrackerBase(), tParams(kcf_params){
@@ -127,10 +141,10 @@ void KCFTracker::initialize(const cv::Mat& corners){
 	mtf::Rectd best_fit_rect = mtf::utils::getBestFitRectangle<double>(corners,
 		currFrame.cols, currFrame.rows);
 	cv::Rect rect;
-	rect.x = best_fit_rect.x / tParams.resize_factor;
-	rect.y = best_fit_rect.y / tParams.resize_factor;
-	rect.width = best_fit_rect.width / tParams.resize_factor;
-	rect.height = best_fit_rect.height / tParams.resize_factor;
+	rect.x = static_cast<int>(best_fit_rect.x / tParams.resize_factor);
+	rect.y = static_cast<int>(best_fit_rect.y / tParams.resize_factor);
+	rect.width = static_cast<int>(best_fit_rect.width / tParams.resize_factor);
+	rect.height = static_cast<int>(best_fit_rect.height / tParams.resize_factor);
 
 	cout << "corners:\n" << corners << "\n";
 	printf("best_fit_rect: x: %f y:%f width: %f height: %f\n",
@@ -262,8 +276,8 @@ void KCFTracker::gaussian_shaped_labels(double sigma, int sz_w, int sz_h, Mat& s
 			transFilter.at<double>(r + sz_h / 2, c + sz_w / 2) = exp(-0.5 * ((double) ((r + 1) * (r + 1) + (c + 1) * (c + 1)) / (sigma * sigma)));
 
 	//labels = circshift(labels, -floor(sz(1:2) / 2) + 1);
-	int shiftX = -sz_w / 2.0 + 1;
-	int shiftY = -sz_h / 2.0 + 1;
+	int shiftX = static_cast<int>(-sz_w / 2.0) + 1;
+	int shiftY = static_cast<int>(-sz_h / 2.0) + 1;
 
 	for (int i = 0; i < transFilter.rows; i++)
 		for (int j = 0; j < transFilter.cols; j++)
@@ -279,10 +293,9 @@ void KCFTracker::gaussian_shaped_labels(double sigma, int sz_w, int sz_h, Mat& s
 void KCFTracker::hann(int size, Mat& arr)
 {
 	arr = Mat(size, 1, CV_64FC1);
-	float multiplier;
 	for (int i = 0; i < size; i++)
 	{
-		multiplier = 0.5 * (1 - cos(2 * M_PI * i / (size - 1)));
+		float multiplier = static_cast<float>(0.5 * (1 - cos(2 * M_PI * i / (size - 1))));
 		*((double *) (arr.data + i * arr.step[0])) = multiplier;
 	}
 }
@@ -294,7 +307,7 @@ float *KCFTracker::convertTo1DFloatArray(Mat &patch)
 	int k = 0;
 	for (int i = 0; i < patch.cols; i++)
 		for (int j = 0; j < patch.rows; j++)
-			img[k++] = (float) patch.at<unsigned char>(j, i) / 255.0;
+			img[k++] = static_cast<float>(patch.at<unsigned char>(j, i) / 255.0);
 
 	/*
 	 imshow("", patch);

@@ -42,8 +42,8 @@ simple structure to store an object read from ground truth or selected by the us
 requires that the object location be representable by a quadrilateral
 */
 struct ObjStruct {
-	cv::Point min_point;
-	cv::Point max_point;
+	cv::Point2d min_point;
+	cv::Point2d max_point;
 
 	double size_x;
 	double size_y;
@@ -199,14 +199,14 @@ public:
 				hover_image = input->getFrame().clone();
 			}
 			// draw existing objects
-			for(int obj_id = 0; obj_id < init_objects.size(); obj_id++){
+			for(unsigned int obj_id = 0; obj_id < init_objects.size(); obj_id++){
 				int col_id = obj_id % no_of_cols;
 				cv::rectangle(hover_image, init_objects[obj_id].min_point, init_objects[obj_id].max_point,
 					obj_cols[col_id], line_thickness);
 			}
 			if(clicked_point_count > 0){
-				int hover_width = abs(mouse_hover_point.x - new_obj.min_point.x);
-				int hover_height = abs(mouse_hover_point.y - new_obj.min_point.y);
+				int hover_width = static_cast<int>(abs(mouse_hover_point.x - new_obj.min_point.x));
+				int hover_height = static_cast<int>(abs(mouse_hover_point.y - new_obj.min_point.y));
 				cv::rectangle(hover_image, new_obj.min_point, mouse_hover_point, obj_cols[curr_col_id], line_thickness);
 				cv::putText(hover_image, cv::format("(%d, %d)", hover_width, hover_height),
 					mouse_hover_point, cv::FONT_HERSHEY_SIMPLEX, hover_font_size, hover_color);
@@ -241,12 +241,12 @@ public:
 					new_obj.max_point.y = mouse_click_point.y;
 
 					if(new_obj.min_point.x > new_obj.max_point.x) {
-						int temp = new_obj.min_point.x;
+						double temp = new_obj.min_point.x;
 						new_obj.min_point.x = new_obj.max_point.x;
 						new_obj.max_point.x = temp;
 					}
 					if(new_obj.min_point.y > new_obj.max_point.y) {
-						int temp = new_obj.min_point.y;
+						double temp = new_obj.min_point.y;
 						new_obj.min_point.y = new_obj.max_point.y;
 						new_obj.max_point.y = temp;
 					}
@@ -314,15 +314,15 @@ public:
 			}
 			
 			// draw existing objects
-			for(int obj_id = 0; obj_id < init_objects.size(); obj_id++){
+			for(unsigned int obj_id = 0; obj_id < init_objects.size(); obj_id++){
 				int col_id = obj_id % no_of_cols;
 				for(int pt_id = 0; pt_id < 3; ++pt_id){
-					cv::Point pt1(init_objects[obj_id].corners.at<double>(0, pt_id), init_objects[obj_id].corners.at<double>(1, pt_id));
-					cv::Point pt2(init_objects[obj_id].corners.at<double>(0, pt_id + 1), init_objects[obj_id].corners.at<double>(1, pt_id + 1));
+					cv::Point2d pt1(init_objects[obj_id].corners.at<double>(0, pt_id), init_objects[obj_id].corners.at<double>(1, pt_id));
+					cv::Point2d pt2(init_objects[obj_id].corners.at<double>(0, pt_id + 1), init_objects[obj_id].corners.at<double>(1, pt_id + 1));
 					cv::line(hover_image, pt1, pt2, obj_cols[col_id], line_thickness);
 				}
-				cv::Point pt1(init_objects[obj_id].corners.at<double>(0, 0), init_objects[obj_id].corners.at<double>(1, 0));
-				cv::Point pt2(init_objects[obj_id].corners.at<double>(0, 3), init_objects[obj_id].corners.at<double>(1, 3));
+				cv::Point2d pt1(init_objects[obj_id].corners.at<double>(0, 0), init_objects[obj_id].corners.at<double>(1, 0));
+				cv::Point2d pt2(init_objects[obj_id].corners.at<double>(0, 3), init_objects[obj_id].corners.at<double>(1, 3));
 				cv::line(hover_image, pt1, pt2, obj_cols[col_id], line_thickness);
 			}
 			// draw new (incomplete) object
@@ -493,7 +493,7 @@ public:
 			printf("Ground truth could not be read for frame %d\n", init_frame_id + 1);
 			return false;
 		}
-		if(!_use_reinit_gt && _init_frame_id >= ground_truth.size()){
+		if(!_use_reinit_gt && static_cast<unsigned int>(_init_frame_id) >= ground_truth.size()){
 			printf("The provided init_frame_id: %d is larger than the maximum frame id in the ground truth: %lu\n",
 				_init_frame_id, ground_truth.size() - 1);
 			return false;
@@ -524,14 +524,14 @@ public:
 			if(_reinit_frame_id != reinit_frame_id){
 				readReinitGT(_reinit_frame_id);
 			}
-			if(frame_id - reinit_frame_id >= reinit_ground_truth.size()){
+			if(frame_id - reinit_frame_id >= static_cast<int>(reinit_ground_truth.size())){
 				throw std::invalid_argument(
 					cv::format("Invalid frame ID: %d provided for reinit ground truth for frame %d with only %d entries",
 					frame_id - reinit_frame_id, reinit_frame_id, reinit_ground_truth.size()));
 			}
 			return reinit_ground_truth[frame_id - reinit_frame_id];
 		}
-		if(frame_id >= ground_truth.size()){
+		if(frame_id >= static_cast<int>(ground_truth.size())){
 			throw std::invalid_argument(
 				cv::format("Invalid frame ID: %d provided for ground truth with only %d entries",
 				frame_id, ground_truth.size()));
@@ -547,7 +547,7 @@ public:
 		if(_reinit_frame_id != reinit_frame_id){
 			readReinitGT(_reinit_frame_id);
 		}
-		if(frame_id - _reinit_frame_id >= reinit_ground_truth.size()){
+		if(frame_id - _reinit_frame_id >= static_cast<int>(reinit_ground_truth.size())){
 			throw std::invalid_argument(
 				cv::format("Invalid frame ID: %d provided for reinit ground truth for frame %d with only %d entries",
 				frame_id - _reinit_frame_id, _reinit_frame_id, reinit_ground_truth.size()));
@@ -583,7 +583,7 @@ public:
 		counting the no. of lines in it
 		*/
 		if(n_frames <= 0){
-			int curr_pos = fin.tellg();
+			int curr_pos = static_cast<int>(fin.tellg());
 			std::string line;
 			n_frames = 0;
 			while(std::getline(fin, line)){ ++n_frames; }
@@ -656,7 +656,7 @@ public:
 		}
 		int expected_file_size = (_n_frames*(_n_frames + 1) * 4) * sizeof(double) + sizeof(int);
 		fin.seekg(0, ios_base::end);
-		int actual_file_size = fin.tellg();
+		int actual_file_size = static_cast<int>(fin.tellg());
 		if(actual_file_size != expected_file_size){
 			printf("Size of the file: %d does not match the expected size: %d\n",
 				actual_file_size, expected_file_size);

@@ -61,16 +61,10 @@ public:
 				frame_rgb.create(frame_raw.rows, frame_raw.cols, CV_32FC3);
 			}
 			frame_gs.create(frame_raw.rows, frame_raw.cols, CV_32FC1);
-			if(resize_images){
-				frame_resized.create(frame_raw.rows*resize_factor, frame_raw.cols*resize_factor, CV_32FC1);
-			}
 			break;
 		case CV_8UC1:
 			if(print_types){ printf("Output type: CV_8UC1\n"); }
 			frame_gs.create(frame_raw.rows, frame_raw.cols, CV_8UC1);
-			if(resize_images){
-				frame_resized.create(frame_raw.rows*resize_factor, frame_raw.cols*resize_factor, CV_8UC1);
-			}
 			break;
 		case CV_32FC3:
 			if(print_types){ printf("Output type: CV_32FC3\n"); }
@@ -78,21 +72,17 @@ public:
 				frame_rgb_uchar.create(frame_raw.rows, frame_raw.cols, CV_8UC3);
 			}
 			frame_rgb.create(frame_raw.rows, frame_raw.cols, CV_32FC3);
-			if(resize_images){
-				frame_resized.create(frame_raw.rows*resize_factor, frame_raw.cols*resize_factor, CV_32FC3);
-			}
 			break;
 		case CV_8UC3:
 			if(print_types){ printf("Output type: CV_8UC3\n"); }
 			frame_rgb.create(frame_raw.rows, frame_raw.cols, CV_8UC3);
-			if(resize_images){
-				frame_resized.create(frame_raw.rows*resize_factor, frame_raw.cols*resize_factor, CV_8UC3);
-			}
 			break;
 		default:
 			throw std::invalid_argument("PreProcBase::initialize : Invalid output image type provided");
 		}
 		if(resize_images){
+			frame_resized.create(static_cast<int>(frame_raw.rows*resize_factor), 
+				static_cast<int>(frame_raw.cols*resize_factor), output_type);
 			printf("Resizing images to : %d x %d\n", frame_resized.cols, frame_resized.rows);
 		}
 		processFrame(frame_raw);

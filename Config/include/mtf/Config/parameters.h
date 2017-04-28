@@ -906,7 +906,7 @@ namespace mtf{
 			char *param_str = strtok(str, sep);
 			std::vector<float> param_arr;
 			while(param_str){
-				float param_num = atof(param_str);
+				float param_num = static_cast<float>(atof(param_str));
 				param_arr.push_back(param_num);
 				param_str = strtok(nullptr, sep);
 			}
@@ -918,7 +918,7 @@ namespace mtf{
 			//printf("atof_arr::str: %s\n", str);
 			//printf("atof_arr::param_arr:\n");
 			while(param_str){
-				double param_num = atoi(param_str);
+				int param_num = atoi(param_str);
 				param_arr.push_back(param_num);
 				//printf("%f\t", param_num);
 				param_str = strtok(nullptr, sep);
@@ -2028,7 +2028,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "nn_srch_eps")){
-				nn_srch_eps = atof(arg_val);
+				nn_srch_eps = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "nn_srch_sorted")){
@@ -2092,7 +2092,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "nn_km_cb_index")){
-				nn_km_cb_index = atof(arg_val);
+				nn_km_cb_index = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "nn_kdts_leaf_max_size")){
@@ -2120,19 +2120,19 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "nn_auto_target_precision")){
-				nn_auto_target_precision = atof(arg_val);
+				nn_auto_target_precision = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "ann_uto_build_weight")){
-				nn_auto_build_weight = atof(arg_val);
+				nn_auto_build_weight = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "nn_auto_memory_weight")){
-				nn_auto_memory_weight = atof(arg_val);
+				nn_auto_memory_weight = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "nn_auto_sample_fraction")){
-				nn_auto_sample_fraction = atof(arg_val);
+				nn_auto_sample_fraction = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "nnk_n_layers")){
@@ -2257,7 +2257,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "casc_reinit_frame_gap")) {
-				casc_reinit_frame_gap = atof(arg_val);
+				casc_reinit_frame_gap = atoi(arg_val);
 				return;
 			}
 			//! Grid tracker
@@ -2475,7 +2475,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "prl_reinit_frame_gap")) {
-				prl_reinit_frame_gap = atof(arg_val);
+				prl_reinit_frame_gap = atoi(arg_val);
 				return;
 			}
 			//! Pyramidal Tracker
@@ -2767,15 +2767,15 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "mil_overlap")){
-				mil_overlap = atof(arg_val);
+				mil_overlap = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "mil_search_factor")){
-				mil_search_factor = atof(arg_val);
+				mil_search_factor = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "mil_pos_radius_train")){
-				mil_pos_radius_train = atof(arg_val);
+				mil_pos_radius_train = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "mil_neg_num_train")){
@@ -2960,7 +2960,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "pfsl3_ff")){
-				pfsl3_ff = atof(arg_val);
+				pfsl3_ff = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "pfsl3_basis_thr")){
@@ -3011,11 +3011,11 @@ namespace mtf{
 			}
 			//! DFT
 			if(!strcmp(arg_name, "dft_res_to_l")){
-				dft_res_to_l = atof(arg_val);
+				dft_res_to_l = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "dft_p_to_l")){
-				dft_p_to_l = atof(arg_val);
+				dft_p_to_l = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "dft_max_iter")){
@@ -3031,7 +3031,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "dft_presmoothing_variance")){
-				dft_presmoothing_variance = atof(arg_val);
+				dft_presmoothing_variance = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "dft_n_control_points_on_edge")){
@@ -3119,7 +3119,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "pca_f_factor")){
-				pca_f_factor = atof(arg_val);
+				pca_f_factor = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "pca_show_basis")){
@@ -3559,17 +3559,15 @@ namespace mtf{
 			//	}
 			//	printf("\n");
 			//}
-			for(int i = 0; i < sigma_ids.size(); ++i){
-				int sigma_id = sigma_ids[i];
-				if(sigma_id < 0 || sigma_id >= ssm_sigma.size()){
+			for(auto sigma_id : sigma_ids){
+				if(sigma_id < 0 || static_cast<unsigned int>(sigma_id) >= ssm_sigma.size()){
 					printf("Skipping invalid %s sigma ID: %d\n", name, sigma_id);
 					continue;
 				}
 				sigma.push_back(ssm_sigma[sigma_id]);
 			}
-			for(int i = 0; i < mean_ids.size(); ++i){
-				int mean_id = mean_ids[i];
-				if(mean_id < 0 || mean_id >= ssm_mean.size()){
+			for(auto mean_id : mean_ids){
+				if(mean_id < 0 || static_cast<unsigned int>(mean_id) >= ssm_mean.size()){
 					//printf("Skipping invalid %s SSM mean ID: %d\n", name, mean_id);
 					continue;
 				}
@@ -3579,17 +3577,15 @@ namespace mtf{
 		inline void getAMSamplerParams(vectorvd &sigma, vectorvd &mean,
 			const vectori &sigma_ids, const vectori &mean_ids,
 			const char* name){
-			for(int i = 0; i < sigma_ids.size(); ++i){
-				int sigma_id = sigma_ids[i];
-				if(sigma_id < 0 || sigma_id >= am_sigma.size()){
+			for(auto sigma_id : sigma_ids){
+				if(sigma_id < 0 || static_cast<unsigned int>(sigma_id) >= am_sigma.size()){
 					printf("Skipping invalid %s sigma ID: %d\n", name, sigma_id);
 					continue;
 				}
 				sigma.push_back(am_sigma[sigma_id]);
 			}
-			for(int i = 0; i < mean_ids.size(); ++i){
-				int mean_id = mean_ids[i];
-				if(mean_id < 0 || mean_id >= am_mean.size()){
+			for(auto mean_id : mean_ids){
+				if(mean_id < 0 || static_cast<unsigned int>(mean_id) >= am_mean.size()){
 					continue;
 				}
 				mean.push_back(am_mean[mean_id]);

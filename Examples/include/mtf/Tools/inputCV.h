@@ -64,8 +64,8 @@ public:
 		//img_height=temp_frame.rows;
 		//img_width=temp_frame.cols;
 
-		img_height = cap_obj.get(CV_CAP_PROP_FRAME_HEIGHT);
-		img_width = cap_obj.get(CV_CAP_PROP_FRAME_WIDTH);
+		img_height = static_cast<int>(cap_obj.get(CV_CAP_PROP_FRAME_HEIGHT));
+		img_width = static_cast<int>(cap_obj.get(CV_CAP_PROP_FRAME_WIDTH));
 
 		/*img_height=cap_obj.get(CV_CAP_PROP_FRAME_HEIGHT);
 		img_width=cap_obj.get(CV_CAP_PROP_FRAME_WIDTH);*/

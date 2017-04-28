@@ -867,9 +867,9 @@ namespace cv
     {
       float posmu = 0.0, negmu = 0.0;
       if (posx.size() > 0)
-        posmu = cv::mean(posx.ftrVals(_ind))[0];
+        posmu = static_cast<float>(cv::mean(posx.ftrVals(_ind))[0]);
       if (negx.size() > 0)
-        negmu = cv::mean(negx.ftrVals(_ind))[0];
+		  negmu = static_cast<float>(cv::mean(negx.ftrVals(_ind))[0]);
 
       if (_trained)
       {
@@ -877,13 +877,13 @@ namespace cv
         {
           _mu1 = (_lRate * _mu1 + (1 - _lRate) * posmu);
           cv::Mat diff = posx.ftrVals(_ind) - _mu1;
-          _sig1 = _lRate * _sig1 + (1 - _lRate) * cv::mean(diff.mul(diff))[0];
+		  _sig1 = _lRate * _sig1 + (1 - _lRate) * static_cast<float>(cv::mean(diff.mul(diff))[0]);
         }
         if (negx.size() > 0)
         {
           _mu0 = (_lRate * _mu0 + (1 - _lRate) * negmu);
           cv::Mat diff = negx.ftrVals(_ind) - _mu0;
-          _sig0 = _lRate * _sig0 + (1 - _lRate) * cv::mean(diff.mul(diff))[0];
+		  _sig0 = _lRate * _sig0 + (1 - _lRate) * static_cast<float>(cv::mean(diff.mul(diff))[0]);
         }
 
         _q = (_mu1 - _mu0) / 2;
@@ -904,7 +904,7 @@ namespace cv
           _mu1 = posmu;
           cv::Scalar scal_mean, scal_std_dev;
           cv::meanStdDev(posx.ftrVals(_ind), scal_mean, scal_std_dev);
-          _sig1 = scal_std_dev[0] * scal_std_dev[0] + 1e-9f;
+		  _sig1 = static_cast<float>(scal_std_dev[0] * scal_std_dev[0]) + 1e-9f;
         }
 
         if (negx.size() > 0)
@@ -912,7 +912,7 @@ namespace cv
           _mu0 = negmu;
           cv::Scalar scal_mean, scal_std_dev;
           cv::meanStdDev(negx.ftrVals(_ind), scal_mean, scal_std_dev);
-          _sig0 = scal_std_dev[0] * scal_std_dev[0] + 1e-9f;
+		  _sig0 = static_cast<float>(scal_std_dev[0] * scal_std_dev[0]) + 1e-9f;
         }
 
         _q = (_mu1 - _mu0) / 2;
@@ -971,12 +971,12 @@ namespace cv
       if (posx.size() > 0)
       {
         poswn = posw / (cv::sum(posw)[0] + 1e-6);
-        posmu = cv::mean(posx.ftrVals(_ind).mul(poswn))[0];
+		posmu = static_cast<float>(cv::mean(posx.ftrVals(_ind).mul(poswn))[0]);
       }
       if (negx.size() > 0)
       {
         negwn = negw / (cv::sum(negw)[0] + 1e-6);
-        negmu = cv::mean(negx.ftrVals(_ind).mul(negwn))[0];
+		negmu = static_cast<float>(cv::mean(negx.ftrVals(_ind).mul(negwn))[0]);
       }
 
       if (_trained)
@@ -986,14 +986,14 @@ namespace cv
           _mu1 = (_lRate * _mu1 + (1 - _lRate) * posmu);
           cv::Scalar scal_mean, scal_std_dev;
           cv::meanStdDev(posx.ftrVals(_ind).mul(poswn), scal_mean, scal_std_dev);
-          _sig1 = _lRate * _sig1 + (1 - _lRate) * scal_std_dev[0] * scal_std_dev[0];
+		  _sig1 = static_cast<float>(_lRate * _sig1 + (1 - _lRate) * scal_std_dev[0] * scal_std_dev[0]);
         }
         if (negx.size() > 0)
         {
           _mu0 = (_lRate * _mu0 + (1 - _lRate) * negmu);
           cv::Scalar scal_mean, scal_std_dev;
           cv::meanStdDev(negx.ftrVals(_ind).mul(negwn), scal_mean, scal_std_dev);
-          _sig0 = _lRate * _sig0 + (1 - _lRate) * scal_std_dev[0] * scal_std_dev[0];
+		  _sig0 = static_cast<float>(_lRate * _sig0 + (1 - _lRate) * scal_std_dev[0] * scal_std_dev[0]);
         }
       }
       else
@@ -1005,12 +1005,12 @@ namespace cv
         if (negx.size() > 0)
         {
           cv::meanStdDev(negx.ftrVals(_ind).mul(negwn), scal_mean, scal_std_dev);
-          _sig0 = scal_std_dev[0] * scal_std_dev[0] + 1e-9f;
+		  _sig0 = static_cast<float>(scal_std_dev[0] * scal_std_dev[0]) + 1e-9f;
         }
         if (posx.size() > 0)
         {
           cv::meanStdDev(posx.ftrVals(_ind).mul(poswn), scal_mean, scal_std_dev);
-          _sig1 = scal_std_dev[0] * scal_std_dev[0] + 1e-9f;
+		  _sig1 = static_cast<float>(scal_std_dev[0] * scal_std_dev[0]) + 1e-9f;
         }
       }
 
