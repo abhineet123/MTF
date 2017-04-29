@@ -1591,7 +1591,7 @@ void DSST::preprocess(cv::Mat img, cv::RotatedRect bb)
 
 	hParams.binSize = tParams.bin_size;
 	hParams.nOrients = 9;
-	hParams.clipHog = 0.2;
+	hParams.clipHog = 0.2f;
 	hParams.softBin = -1;
 
 	//	cout<<"before train"<<endl;

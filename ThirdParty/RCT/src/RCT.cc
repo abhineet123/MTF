@@ -3,6 +3,10 @@
 #include <math.h>
 #include <iostream>
 
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#endif
+
 //! minimum distance of the initializing bounding box from the image corners
 //! using no border causes the tracker to segfault on occasions
 #define RCT_INIT_BORDER_SIZE 10
@@ -18,14 +22,14 @@ using namespace std;
 
 RCTParams::RCTParams(int _min_n_rect, int _max_n_rect,
 	int _n_feat, int _rad_outer_pos,
-	int _rad_search_win, double _learning_rate){
-	min_n_rect = _min_n_rect;
-	max_n_rect = _max_n_rect;
-	n_feat = _n_feat;
-	rad_outer_pos = _rad_outer_pos;
-	rad_search_win = _rad_search_win;
-	learning_rate = _learning_rate;
-}
+	int _rad_search_win, double _learning_rate):
+	min_n_rect(_min_n_rect),
+	max_n_rect(_max_n_rect),
+	n_feat(_n_feat),
+	rad_outer_pos(_rad_outer_pos),
+	rad_search_win(_rad_search_win),
+	learning_rate(_learning_rate){}
+
 RCTParams::RCTParams(const RCTParams *params) :
 min_n_rect(RCT_MIN_N_RECT),
 max_n_rect(RCT_MAX_N_RECT),
@@ -67,26 +71,10 @@ TrackerBase(), params(rct_params){
 	muNegative = vector<float>(featureNum, 0.0f);
 	sigmaPositive = vector<float>(featureNum, 1.0f);
 	sigmaNegative = vector<float>(featureNum, 1.0f);
-	learnRate = params.learning_rate;	// Learning rate parameter
+	learnRate = static_cast<float>(params.learning_rate);	// Learning rate parameter
 }
 
-RCT::RCT(void)
-{
-	featureMinNumRect = 2;
-	featureMaxNumRect = 4;	// number of rectangle from 2 to 4
-	featureNum = 50;	// number of all weaker classifiers, i.e,feature pool
-	rOuterPositive = 4;	// radical scope of positive samples
-	rSearchWindow = 25; // size of search window
-	muPositive = vector<float>(featureNum, 0.0f);
-	muNegative = vector<float>(featureNum, 0.0f);
-	sigmaPositive = vector<float>(featureNum, 1.0f);
-	sigmaNegative = vector<float>(featureNum, 1.0f);
-	learnRate = 0.85f;	// Learning rate parameter
-}
-
-RCT::~RCT(void)
-{
-}
+RCT::~RCT(){}
 
 void RCT::initialize(const cv::Mat& init_corners){
 	//double pos_x = (init_corners.at<double>(0, 0) + init_corners.at<double>(0, 1) +

@@ -3,17 +3,24 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include "mtf/Utilities/miscUtils.h"
 
-CMTParams::CMTParams(double estimate_scale, double estimate_rotation,
-	char* feat_detector, char* desc_extractor, double resize_factor){
-	this->estimate_scale = estimate_scale;
-	this->estimate_rotation = estimate_rotation;
-	this->feat_detector = feat_detector;
-	this->desc_extractor = desc_extractor;
-	this->resize_factor = resize_factor;
-}
+#define CMT_ESTIMATE_SCALE true
+#define CMT_ESTIMATE_ROTATION false
+#define CMT_FEAT_DETECTOR "FAST"
+#define CMT_DESC_EXTRACTOR "BRISK"
+#define CMT_RESIZE_FACTOR 0.5
 
-CMTParams::CMTParams(const CMTParams *params) : estimate_scale(true), estimate_rotation(false),
-feat_detector("FAST"), desc_extractor("BRISK"), resize_factor(CMT_RESIZE_FACTOR){
+CMTParams::CMTParams(bool estimate_scale, bool estimate_rotation,
+	const char* feat_detector, const char* desc_extractor, double resize_factor) :
+	estimate_scale(estimate_scale),
+	estimate_rotation(estimate_rotation),
+	feat_detector(feat_detector),
+	desc_extractor(desc_extractor),
+	resize_factor(resize_factor){}
+
+CMTParams::CMTParams(const CMTParams *params) :
+estimate_scale(CMT_ESTIMATE_SCALE), estimate_rotation(CMT_ESTIMATE_ROTATION),
+feat_detector(CMT_FEAT_DETECTOR), desc_extractor(CMT_DESC_EXTRACTOR),
+resize_factor(CMT_RESIZE_FACTOR){
 	if(params){
 		estimate_scale = params->estimate_scale;
 		estimate_rotation = params->estimate_rotation;
@@ -24,9 +31,7 @@ feat_detector("FAST"), desc_extractor("BRISK"), resize_factor(CMT_RESIZE_FACTOR)
 }
 
 namespace cmt {
-	CMT::CMT() : TrackerBase(), str_detector("FAST"), str_descriptor("BRISK"){
-		name = "cmt";
-	}
+
 	CMT::CMT(const CMTParams *cmt_params) : TrackerBase(),
 		params(cmt_params),
 		str_detector("FAST"), str_descriptor("BRISK"){
@@ -66,10 +71,10 @@ namespace cmt {
 			curr_img_gs.cols, curr_img_gs.rows);
 
 		cv::Rect resized_rect;
-		resized_rect.x = best_fit_rect.x * params.resize_factor;
-		resized_rect.y = best_fit_rect.y * params.resize_factor;
-		resized_rect.width = best_fit_rect.width * params.resize_factor;
-		resized_rect.height = best_fit_rect.height * params.resize_factor;
+		resized_rect.x = static_cast<int>(best_fit_rect.x * params.resize_factor);
+		resized_rect.y = static_cast<int>(best_fit_rect.y * params.resize_factor);
+		resized_rect.width = static_cast<int>(best_fit_rect.width * params.resize_factor);
+		resized_rect.height = static_cast<int>(best_fit_rect.height * params.resize_factor);
 		//if(resized_rect.x == 0){
 		//	resized_rect.x = 100;
 		//}
@@ -123,7 +128,8 @@ namespace cmt {
 		im_prev = im_gray;
 
 		//Compute center of rect
-		Point2f center = Point2f(rect.x + rect.width / 2.0, rect.y + rect.height / 2.0);
+		Point2f center = Point2f(rect.x + static_cast<float>(rect.width / 2.0), 
+			rect.y + static_cast<float>(rect.height / 2.0));
 
 		//Initialize rotated bounding box
 		bb_rot = RotatedRect(center, size_initial, 0.0);
@@ -297,7 +303,8 @@ namespace cmt {
 		//FILE_LOG(logDEBUG) << points_active.size() << " final fused points.";
 
 		//TODO: Use theta to suppress result
-		bb_rot = RotatedRect(center, size_initial * scale, rotation / CV_PI * 180);
+		bb_rot = RotatedRect(center, size_initial * scale, 
+			static_cast<float>(rotation / CV_PI * 180));
 
 		//Remember current image
 		im_prev = im_gray;

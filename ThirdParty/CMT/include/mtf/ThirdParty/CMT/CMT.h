@@ -12,8 +12,6 @@
 
 #include "mtf/TrackerBase.h"
 
-#define CMT_RESIZE_FACTOR 0.5
-
 using cv::FeatureDetector;
 using cv::DescriptorExtractor;
 using cv::Ptr;
@@ -26,8 +24,9 @@ struct CMTParams{
 	string feat_detector;
 	string desc_extractor;
 	double resize_factor;
-	CMTParams(double estimate_scale, double estimate_rotation,
-		char* feat_detector, char* desc_extractor, double resize_factor);
+	CMTParams(bool estimate_scale, bool estimate_rotation,
+		const char* feat_detector, const char* desc_extractor,
+		double resize_factor);
 	CMTParams(const CMTParams *params = nullptr);
 };
 
@@ -36,7 +35,6 @@ namespace cmt{
 	class CMT : public mtf::TrackerBase{
 	public:
 		typedef CMTParams ParamType;
-		CMT();
 		CMT(const CMTParams *cmt_params = nullptr);
 		int inputType() const  override{ return CV_8UC1; }
 		void initialize(const cv::Mat& cv_corners) override;

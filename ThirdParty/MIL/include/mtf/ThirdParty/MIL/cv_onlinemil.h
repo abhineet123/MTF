@@ -43,6 +43,9 @@
 #ifndef MTF_ONLINE_MIL_H
 #define MTF_ONLINE_MIL_H
 
+#undef min
+#undef max
+
 #include <fstream>
 #include <iostream>
 #include <limits>
