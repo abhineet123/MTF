@@ -1054,6 +1054,8 @@ inline AMParams_ getAMParams(const char *am_type, const char *ilm_type){
 		return AMParams_(new RIUParams(am_params.get(), debug_mode));
 	} else if(!strcmp(am_type, "ngf")){
 		return AMParams_(new NGFParams(am_params.get(), ngf_eta, ngf_use_ssd));
+	} else if(!strcmp(am_type, "sum")){
+		return am_params;
 	}
 #ifndef DISABLE_DFM
 	else if(!strcmp(am_type, "dfm")){
@@ -1116,7 +1118,8 @@ inline AppearanceModel *getAM(const char *am_type, const char *ilm_type){
 	}
 	//! composite AMs
 	else if(!strcmp(am_type, "sum")){
-		return new SumOfAMs(getAM(sum_am1.c_str(), mtf_ilm), getAM(sum_am2.c_str(), mtf_ilm));
+		return new SumOfAMs(getAM(sum_am1.c_str(), mtf_ilm), 
+			getAM(sum_am2.c_str(), mtf_ilm), params.get());
 	}
 	//! multi channel variants
 	else if(!strcmp(am_type, "mcssd") || !strcmp(am_type, "ssd3")){

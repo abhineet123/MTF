@@ -72,7 +72,6 @@ public:
 	typedef typename SSM::ParamType SSMParams;
 	typedef typename SSM::EstimatorParams EstimatorParams;
 
-
 	GridTrackerCV(const ParamType *grid_params, const EstimatorParams *_est_params,
 		const SSMParams *ssm_params);
 

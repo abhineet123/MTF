@@ -48,8 +48,8 @@ void PyramidalSM<AM,SSM>::setImage(const cv::Mat &img){
 	trackers[0]->setImage(img_pyramid[0]);
 	for(int pyr_level = 1; pyr_level < params.no_of_levels; ++pyr_level){
 		if(img_pyramid[pyr_level].empty()){
-			int n_rows = img_pyramid[pyr_level - 1].rows*params.scale_factor;
-			int n_cols = img_pyramid[pyr_level - 1].cols*params.scale_factor;
+			int n_rows = static_cast<int>(img_pyramid[pyr_level - 1].rows*params.scale_factor);
+			int n_cols = static_cast<int>(img_pyramid[pyr_level - 1].cols*params.scale_factor);
 			img_sizes[pyr_level] = cv::Size(n_cols, n_rows);
 			img_pyramid[pyr_level].create(img_sizes[pyr_level], img.type());
 			printf("Level %d: size: %dx%d\n",

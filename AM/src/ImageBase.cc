@@ -23,24 +23,16 @@ uchar_input(UCHAR_INPUT){
 	}
 }
 
-ImageBase::ImageBase(const ImgParams *img_params, const int _n_channels) :
+ImageBase::ImageBase(const ImgParams *params, const int _n_channels) :
+resx(getResX(params)), resy(getResY(params)), n_pix(resx*resy), 
+n_channels(_n_channels), patch_size(n_pix*n_channels), 
+grad_eps(getGradEps(params)), hess_eps(getHessEps(params)),
+input_type(getInputType(params)),
 curr_img(nullptr, 0, 0), img_height(0), img_width(0),
-resx(MTF_RES), resy(MTF_RES), n_pix(MTF_RES*MTF_RES), n_channels(_n_channels),
-pix_norm_add(0.0), pix_norm_mult(1.0), frame_count(0),
-grad_eps(GRAD_EPS), hess_eps(HESS_EPS),
-uchar_input(UCHAR_INPUT){
-	if(img_params) {
-		if(img_params->resx <= 0 || img_params->resy <= 0) {
-			throw std::invalid_argument("ImageBase::Invalid sampling resolution provided");
-		}
-		resx = static_cast<unsigned int>(img_params->resx);
-		resy = static_cast<unsigned int>(img_params->resy);
-		n_pix = resx*resy;
-		grad_eps = img_params->grad_eps;
-		hess_eps = img_params->hess_eps;
-		uchar_input = img_params->uchar_input;
+pix_norm_add(0.0), pix_norm_mult(1.0), frame_count(0){
+	if(resx == 0 || resy == 0) {
+		throw std::invalid_argument("ImageBase::Invalid sampling resolution provided");
 	}
-	patch_size = n_pix*n_channels;
 }
 
 void ImageBase::setCurrImg(const cv::Mat &cv_img){
@@ -48,14 +40,19 @@ void ImageBase::setCurrImg(const cv::Mat &cv_img){
 	img_height = cv_img.rows;
 	img_width = cv_img.cols;
 	curr_img_cv = cv_img;
-	uchar_input = cv_img.type() == CV_8UC1 || cv_img.type() == CV_8UC3;
+
+	//uchar_input = cv_img.type() == CV_8UC1 || cv_img.type() == CV_8UC3;
+	//input_type = uchar_input ?
+	//	n_channels == 1 ? CV_8UC1 : CV_8UC3 :
+	//	n_channels == 1 ? CV_32FC1 : CV_32FC3;
+
 	if(cv_img.type() != inputType()){
 		throw std::invalid_argument(
 			cv_format("ImageBase::Input image type: %s does not match the required type: %s",
 			utils::getType(cv_img), utils::typeToString(inputType()))
 			);
 	}
-	if(!uchar_input && n_channels == 1){
+	if(input_type==InputType::MTF_32FC1){
 		// single channel image can share data with an Eigen matrix
 		// not really necessary but remains as a relic from the past
 		new (&curr_img) EigImgT((EigPixT*)(cv_img.data), img_height, img_width);
@@ -75,32 +72,25 @@ void ImageBase::initializePixVals(const Matrix2Xd& init_pts){
 #endif
 	}
 	++frame_count;
-	if(uchar_input){
-		switch(n_channels){
-		case 1:
-			utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
-				img_height, img_width, pix_norm_mult, pix_norm_add);
-			break;
-		case 3:
-			utils::mc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
-				img_height, img_width, pix_norm_mult, pix_norm_add);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
-	} else{
-		switch(n_channels){
-		case 1:
-			utils::getPixVals(I0, curr_img, init_pts, n_pix,
-				img_height, img_width, pix_norm_mult, pix_norm_add);
-			break;
-		case 3:
-			utils::mc::getPixVals<float>(I0, curr_img_cv, init_pts, n_pix,
-				img_height, img_width, pix_norm_mult, pix_norm_add);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
+	switch(input_type){
+	case InputType::MTF_8UC1:
+		utils::sc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+		break;
+	case InputType::MTF_8UC3:
+		utils::mc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+		break;
+	case InputType::MTF_32FC1:
+		utils::getPixVals(I0, curr_img, init_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+		break;
+	case InputType::MTF_32FC3:
+		utils::mc::getPixVals<float>(I0, curr_img_cv, init_pts, n_pix,
+			img_height, img_width, pix_norm_mult, pix_norm_add);
+		break;
+	default:
+		throw std::domain_error("ImageBase::Invalid input type found");
 	}
 	if(!isInitialized()->pix_vals){
 		It = I0;
@@ -115,32 +105,25 @@ void ImageBase::initializePixGrad(const Matrix2Xd &init_pts){
 		dI0_dx.resize(patch_size, Eigen::NoChange);
 		dIt_dx.resize(patch_size, Eigen::NoChange);
 	}
-	if(uchar_input){
-		switch(n_channels){
-		case 1:
-			utils::sc::getImgGrad<uchar>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
-				img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getImgGrad<uchar>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
-				img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
-	} else{
-		switch(n_channels){
-		case 1:
-			utils::getImgGrad(dI0_dx, curr_img, init_pts, grad_eps, n_pix,
-				img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getImgGrad<float>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
-				img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
+	switch(input_type){
+	case InputType::MTF_8UC1:
+		utils::sc::getImgGrad<uchar>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
+			img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_8UC3:
+		utils::mc::getImgGrad<uchar>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
+			img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC1:
+		utils::getImgGrad(dI0_dx, curr_img, init_pts, grad_eps, n_pix,
+			img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC3:
+		utils::mc::getImgGrad<float>(dI0_dx, curr_img_cv, init_pts, grad_eps, n_pix,
+			img_height, img_width, pix_norm_mult);
+		break;
+	default:
+		throw std::domain_error("ImageBase::Invalid input type found");
 	}
 	if(!isInitialized()->pix_grad){
 		setCurrPixGrad(getInitPixGrad());
@@ -158,37 +141,29 @@ void ImageBase::initializePixGrad(const Matrix8Xd &warped_offset_pts){
 		dI0_dx.resize(patch_size, Eigen::NoChange);
 		dIt_dx.resize(patch_size, Eigen::NoChange);
 	}
-
-	if(uchar_input){
-		switch(n_channels){
-		case 1:
-			utils::sc::getWarpedImgGrad<uchar>(dI0_dx,
-				curr_img_cv, warped_offset_pts, grad_eps, n_pix,
-				img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getWarpedImgGrad<uchar>(dI0_dx,
-				curr_img_cv, warped_offset_pts, grad_eps, n_pix,
-				img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
-	} else{
-		switch(n_channels){
-		case 1:
-			utils::getWarpedImgGrad(dI0_dx,
-				curr_img, warped_offset_pts, grad_eps, n_pix,
-				img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getWarpedImgGrad<float>(dI0_dx,
-				curr_img_cv, warped_offset_pts, grad_eps, n_pix,
-				img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
+	switch(input_type){
+	case InputType::MTF_8UC1:
+		utils::sc::getWarpedImgGrad<uchar>(dI0_dx,
+			curr_img_cv, warped_offset_pts, grad_eps, n_pix,
+			img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_8UC3:
+		utils::mc::getWarpedImgGrad<uchar>(dI0_dx,
+			curr_img_cv, warped_offset_pts, grad_eps, n_pix,
+			img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC1:
+		utils::getWarpedImgGrad(dI0_dx,
+			curr_img, warped_offset_pts, grad_eps, n_pix,
+			img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC3:
+		utils::mc::getWarpedImgGrad<float>(dI0_dx,
+			curr_img_cv, warped_offset_pts, grad_eps, n_pix,
+			img_height, img_width, pix_norm_mult);
+		break;
+	default:
+		throw std::domain_error("ImageBase::Invalid input type found");
 	}
 	if(!isInitialized()->pix_grad){
 		setCurrPixGrad(getInitPixGrad());
@@ -203,33 +178,25 @@ void ImageBase::initializePixHess(const Matrix2Xd& init_pts,
 		d2I0_dx2.resize(Eigen::NoChange, patch_size);
 		d2It_dx2.resize(Eigen::NoChange, patch_size);
 	}
-
-	if(uchar_input){
-		switch(n_channels){
-		case 1:
-			utils::sc::getWarpedImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getWarpedImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
-	} else{
-		switch(n_channels){
-		case 1:
-			utils::getWarpedImgHess(d2I0_dx2, curr_img, init_pts, warped_offset_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getWarpedImgHess<float>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
+	switch(input_type){
+	case InputType::MTF_8UC1:
+		utils::sc::getWarpedImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_8UC3:
+		utils::mc::getWarpedImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC1:
+		utils::getWarpedImgHess(d2I0_dx2, curr_img, init_pts, warped_offset_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC3:
+		utils::mc::getWarpedImgHess<float>(d2I0_dx2, curr_img_cv, init_pts, warped_offset_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	default:
+		throw std::domain_error("ImageBase::Invalid input type found");
 	}
 	if(!isInitialized()->pix_hess){
 		setCurrPixHess(getInitPixHess());
@@ -246,33 +213,25 @@ void ImageBase::initializePixHess(const Matrix2Xd &init_pts){
 		d2I0_dx2.resize(Eigen::NoChange, patch_size);
 		d2It_dx2.resize(Eigen::NoChange, patch_size);
 	}
-
-	if(uchar_input){
-		switch(n_channels){
-		case 1:
-			utils::sc::getImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
-	} else{
-		switch(n_channels){
-		case 1:
-			utils::getImgHess(d2I0_dx2, curr_img, init_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getImgHess<float>(d2I0_dx2, curr_img_cv, init_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
+	switch(input_type){
+	case InputType::MTF_8UC1:
+		utils::sc::getImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_8UC3:
+		utils::mc::getImgHess<uchar>(d2I0_dx2, curr_img_cv, init_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC1:
+		utils::getImgHess(d2I0_dx2, curr_img, init_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC3:
+		utils::mc::getImgHess<float>(d2I0_dx2, curr_img_cv, init_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	default:
+		throw std::domain_error("ImageBase::Invalid input type found");
 	}
 	if(!isInitialized()->pix_hess){
 		setCurrPixHess(getInitPixHess());
@@ -282,29 +241,21 @@ void ImageBase::initializePixHess(const Matrix2Xd &init_pts){
 
 void ImageBase::extractPatch(VectorXd &pix_vals, const Matrix2Xd& pts){
 	assert(pix_vals.size() == patch_size && pts.cols() == n_pix);
-
-	if(uchar_input){
-		switch(n_channels){
-		case 1:
-			utils::sc::getPixVals<uchar>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
-			break;
-		case 3:
-			utils::mc::getPixVals<uchar>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
-	} else{
-		switch(n_channels){
-		case 1:
-			utils::getPixVals(pix_vals, curr_img, pts, n_pix, img_height, img_width);
-			break;
-		case 3:
-			utils::mc::getPixVals<float>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
+	switch(input_type){
+	case InputType::MTF_8UC1:
+		utils::sc::getPixVals<uchar>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
+		break;
+	case InputType::MTF_8UC3:
+		utils::mc::getPixVals<uchar>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
+		break;
+	case InputType::MTF_32FC1:
+		utils::getPixVals(pix_vals, curr_img, pts, n_pix, img_height, img_width);
+		break;
+	case InputType::MTF_32FC3:
+		utils::mc::getPixVals<float>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
+		break;
+	default:
+		throw std::domain_error("ImageBase::Invalid input type found");
 	}
 }
 
@@ -316,162 +267,122 @@ VectorXd ImageBase::getPatch(const PtsT& curr_pts){
 
 void ImageBase::updatePixVals(const Matrix2Xd& curr_pts){
 	assert(curr_pts.cols() == n_pix);
-
-	if(uchar_input){
-		switch(n_channels){
-		case 1:
-			utils::sc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
-				pix_norm_mult, pix_norm_add);
-			break;
-		case 3:
-			utils::mc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
-				pix_norm_mult, pix_norm_add);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
-	} else{
-		switch(n_channels){
-		case 1:
-			utils::getPixVals(It, curr_img, curr_pts, n_pix, img_height, img_width,
-				pix_norm_mult, pix_norm_add);
-			break;
-		case 3:
-			utils::mc::getPixVals<float>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
-				pix_norm_mult, pix_norm_add);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
+	switch(input_type){
+	case InputType::MTF_8UC1:
+		utils::sc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+			pix_norm_mult, pix_norm_add);
+		break;
+	case InputType::MTF_8UC3:
+		utils::mc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+			pix_norm_mult, pix_norm_add);
+		break;
+	case InputType::MTF_32FC1:
+		utils::getPixVals(It, curr_img, curr_pts, n_pix, img_height, img_width,
+			pix_norm_mult, pix_norm_add);
+		break;
+	case InputType::MTF_32FC3:
+		utils::mc::getPixVals<float>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+			pix_norm_mult, pix_norm_add);
+		break;
+	default:
+		throw std::domain_error("ImageBase::Invalid input type found");
 	}
 }
 
 void ImageBase::updatePixGrad(const Matrix2Xd &curr_pts){
 	assert(curr_pts.cols() == n_pix);
-
-	if(uchar_input){
-		switch(n_channels){
-		case 1:
-			utils::sc::getImgGrad<uchar>(dIt_dx, curr_img_cv, curr_pts,
-				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getImgGrad<uchar>(dIt_dx, curr_img_cv, curr_pts,
-				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
-	} else{
-		switch(n_channels){
-		case 1:
-			utils::getImgGrad(dIt_dx, curr_img, curr_pts,
-				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getImgGrad<float>(dIt_dx, curr_img_cv, curr_pts,
-				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
+	switch(input_type){
+	case InputType::MTF_8UC1:
+		utils::sc::getImgGrad<uchar>(dIt_dx, curr_img_cv, curr_pts,
+			grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_8UC3:
+		utils::mc::getImgGrad<uchar>(dIt_dx, curr_img_cv, curr_pts,
+			grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC1:
+		utils::getImgGrad(dIt_dx, curr_img, curr_pts,
+			grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC3:
+		utils::mc::getImgGrad<float>(dIt_dx, curr_img_cv, curr_pts,
+			grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	default:
+		throw std::domain_error("ImageBase::Invalid input type found");
 	}
 }
 
 void ImageBase::updatePixHess(const Matrix2Xd &curr_pts){
 	assert(curr_pts.cols() == n_pix);
-	if(uchar_input){
-		switch(n_channels){
-		case 1:
-			utils::sc::getImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
-	} else{
-		switch(n_channels){
-		case 1:
-			utils::getImgHess(d2It_dx2, curr_img, curr_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getImgHess<float>(d2It_dx2, curr_img_cv, curr_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
+	switch(input_type){
+	case InputType::MTF_8UC1:
+		utils::sc::getImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_8UC3:
+		utils::mc::getImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC1:
+		utils::getImgHess(d2It_dx2, curr_img, curr_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC3:
+		utils::mc::getImgHess<float>(d2It_dx2, curr_img_cv, curr_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	default:
+		throw std::domain_error("ImageBase::Invalid input type found");
 	}
 }
 
 void ImageBase::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 	assert(warped_offset_pts.cols() == n_pix);
-
-	if(uchar_input){
-		switch(n_channels){
-		case 1:
-			utils::sc::getWarpedImgGrad<uchar>(dIt_dx, curr_img_cv, warped_offset_pts,
-				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getWarpedImgGrad<uchar>(dIt_dx, curr_img_cv, warped_offset_pts,
-				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
-	} else{
-
-		switch(n_channels){
-		case 1:
-			utils::getWarpedImgGrad(dIt_dx, curr_img, warped_offset_pts,
-				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getWarpedImgGrad<float>(dIt_dx, curr_img_cv, warped_offset_pts,
-				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
+	switch(input_type){
+	case InputType::MTF_8UC1:
+		utils::sc::getWarpedImgGrad<uchar>(dIt_dx, curr_img_cv, warped_offset_pts,
+			grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_8UC3:
+		utils::mc::getWarpedImgGrad<uchar>(dIt_dx, curr_img_cv, warped_offset_pts,
+			grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC1:
+		utils::getWarpedImgGrad(dIt_dx, curr_img, warped_offset_pts,
+			grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC3:
+		utils::mc::getWarpedImgGrad<float>(dIt_dx, curr_img_cv, warped_offset_pts,
+			grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	default:
+		throw std::domain_error("ImageBase::Invalid input type found");
 	}
 }
 
 void ImageBase::updatePixHess(const Matrix2Xd& curr_pts,
 	const Matrix16Xd &warped_offset_pts){
 	assert(curr_pts.cols() == n_pix && warped_offset_pts.cols() == n_pix);
-
-	if(uchar_input){
-		switch(n_channels){
-		case 1:
-			utils::sc::getWarpedImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getWarpedImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
-	} else{
-		switch(n_channels){
-		case 1:
-			utils::getWarpedImgHess(d2It_dx2, curr_img, curr_pts, warped_offset_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		case 3:
-			utils::mc::getWarpedImgHess<float>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
-				hess_eps, n_pix, img_height, img_width, pix_norm_mult);
-			break;
-		default:
-			throw std::domain_error(cv::format("%d channel images are not supported yet", n_channels));
-		}
+	switch(input_type){
+	case InputType::MTF_8UC1:
+		utils::sc::getWarpedImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_8UC3:
+		utils::mc::getWarpedImgHess<uchar>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC1:
+		utils::getWarpedImgHess(d2It_dx2, curr_img, curr_pts, warped_offset_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	case InputType::MTF_32FC3:
+		utils::mc::getWarpedImgHess<float>(d2It_dx2, curr_img_cv, curr_pts, warped_offset_pts,
+			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
+		break;
+	default:
+		throw std::domain_error("ImageBase::Invalid input type found");
 	}
 }
 

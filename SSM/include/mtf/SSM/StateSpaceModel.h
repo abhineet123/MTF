@@ -48,49 +48,16 @@ struct SSMParams{
 
 class StateSpaceModel{
 
-protected:
-	unsigned int state_size;
-	unsigned int resx, resy;
-	unsigned int n_pts;
-	unsigned int n_channels;
-
-	//! parameters defining the SSM state
-	VectorXd curr_state;
-
-	/**
-	grid points and corners that define the object's location in the frame
-	*/
-	PtsT init_pts, curr_pts;
-	CornersT init_corners, curr_corners;
-	GradPtsT grad_pts;
-	HessPtsT hess_pts;
-	bool identity_jacobian;
-	/**
-	keep track of what state variables have been initialized
-	*/
-	SSMStatus is_initialized;
-	/**
-	indicator variable that can be set by the search method to indicate when a new frame has been acquired;
-	can be used to perform some costly operations/updates only once per frame rather than at every iteration
-	of the same frame
-	*/
-	bool first_iter;
-
 public:
 	string name;
 
 	StateSpaceModel(const SSMParams *params) :
-		state_size(0), resx(MTF_RES), resy(MTF_RES),
-		identity_jacobian(false), first_iter(false),
+		resx(getResX(params)), resy(getResY(params)), n_pts(resx*resy),
+		state_size(0),  identity_jacobian(false), first_iter(false),
 		spi_mask(nullptr){
-		if(params) {
-			if(params->resx <= 0 || params->resy <= 0) {
-				throw std::invalid_argument("StateSpaceModel::Invalid sampling resolution provided");
-			}
-			resx = static_cast<unsigned int>(params->resx);
-			resy = static_cast<unsigned int>(params->resy);
+		if(resx == 0 || resy == 0) {
+			throw std::invalid_argument("StateSpaceModel::Invalid sampling resolution provided");
 		}
-		n_pts = resx*resy;
 		init_pts.resize(Eigen::NoChange, n_pts);
 		curr_pts.resize(Eigen::NoChange, n_pts);
 	}
@@ -244,7 +211,7 @@ public:
 		CornersT out_corners, in_corners;
 		corners_from_cv(in_corners, in_corners_cv);
 		corners_from_cv(out_corners, out_corners_cv);
-		applyWarpToCorners(out_corners, in_corners, ssm_state);		
+		applyWarpToCorners(out_corners, in_corners, ssm_state);
 	}
 	virtual cv::Mat applyWarpToCorners(const cv::Mat &in_corners, const VectorXd &ssm_state){
 		cv::Mat out_corners(2, 4, CV_64FC1);
@@ -315,8 +282,8 @@ public:
 	// -------------------------------------------------------------------------- //
 	// --------------------------- Stochastic Sampler --------------------------- //
 	// -------------------------------------------------------------------------- //
-		
-	virtual void initializeSampler(const VectorXd &state_sigma, 
+
+	virtual void initializeSampler(const VectorXd &state_sigma,
 		const VectorXd &state_mean){
 		ssm_func_not_implemeted(initializeSampler(VectorXd, VectorXd));
 	}
@@ -394,13 +361,50 @@ public:
 	//should be called after the first iteration on a new frame is done
 	virtual void clearFirstIter(){ first_iter = false; }
 
-	const bool *spi_mask;
 	virtual void setSPIMask(const bool *_spi_mask){ spi_mask = _spi_mask; }
 	virtual void clearSPIMask(){ spi_mask = nullptr; }
 	virtual bool supportsSPI(){ return false; }// should be overridden by an implementing class once 
 	// it implements SPI functionality for all functions where it makes logical sense
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+protected:
+	const unsigned int resx, resy;
+	const unsigned int n_pts;
+
+	unsigned int state_size;
+	unsigned int n_channels;
+
+	//! parameters defining the SSM state
+	VectorXd curr_state;
+
+	/**
+	grid points and corners that define the object's location in the frame
+	*/
+	PtsT init_pts, curr_pts;
+	CornersT init_corners, curr_corners;
+	GradPtsT grad_pts;
+	HessPtsT hess_pts;
+	bool identity_jacobian;
+	/**
+	keep track of what state variables have been initialized
+	*/
+	SSMStatus is_initialized;
+	/**
+	indicator variable that can be set by the search method to indicate when a new frame has been acquired;
+	can be used to perform some costly operations/updates only once per frame rather than at every iteration
+	of the same frame
+	*/
+	bool first_iter;
+	const bool *spi_mask;
+
+private:
+	unsigned int getResX(const SSMParams *params){
+		return params ? static_cast<unsigned int>(params->resx) : MTF_RES;
+	}
+	unsigned int getResY(const SSMParams *params){
+		return params ? static_cast<unsigned int>(params->resy) : MTF_RES;
+	}
 };
 _MTF_END_NAMESPACE
 

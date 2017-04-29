@@ -157,7 +157,7 @@ namespace gnn{
 		}
 
 		int r = start_node_idx;
-		int parent_dist = (*dist_func)(query, &dataset[r*n_dims], n_dims);
+		double parent_dist = (*dist_func)(query, &dataset[r*n_dims], n_dims);
 
 		visited_nodes[0].idx = r;
 		visited_nodes[0].dist = parent_dist;
@@ -302,10 +302,8 @@ namespace gnn{
 	template <class DistType>
 	int GNN<DistType>::searchGraph(const double *query, const double *X, int NNs, int K){
 
-		IndxDist *gnn_dists, *knns, *visited_nodes;
-
 		int gnns_cap = K; //NNs*3;
-		gnn_dists = static_cast<IndxDist*>(malloc(gnns_cap * sizeof(IndxDist))); // graph nn-dists
+		IndxDist *gnn_dists = static_cast<IndxDist*>(malloc(gnns_cap * sizeof(IndxDist))); // graph nn-dists
 
 		int dist_cnt, depth;
 		//tnn_dists = realloc(tnn_dists, K * sizeof(struct indx_dist)); // shrinks the size to K   
@@ -313,7 +311,7 @@ namespace gnn{
 		// Graph search time 
 		int visited_cap = K * 4;  //avg depth = 4
 		int visited = 0;   // number of visited nodes
-		visited_nodes = static_cast<IndxDist*>(malloc(visited_cap * sizeof(IndxDist)));
+		IndxDist *visited_nodes = static_cast<IndxDist*>(malloc(visited_cap * sizeof(IndxDist)));
 
 		double parent_dist, dd;
 

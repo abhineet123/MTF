@@ -150,21 +150,21 @@ bool NNParams::processDistributions(vector<VectorXd> &state_sigma,
 	for(unsigned int distr_id = 0; distr_id < n_distr; ++distr_id){
 		distr_n_samples[distr_id] = samples_per_distr;
 	}
-	int residual_samples = n_samples - n_distr*samples_per_distr;
-	if(residual_samples >= n_distr){
+	unsigned int n_residual_samples = static_cast<unsigned int>(n_samples - n_distr*samples_per_distr);
+	if(n_residual_samples >= n_distr){
 		throw std::logic_error(
 			cv::format("NNParams :: Residual sample count: %d exceeds the no. of distributions: %d",
-			residual_samples, n_distr));
+			n_residual_samples, n_distr));
 	}
 	//! distribute the residual samples evenly among the distributions;
-	for(int distr_id = 0; distr_id < residual_samples; ++distr_id){
+	for(unsigned int distr_id = 0; distr_id < n_residual_samples; ++distr_id){
 		++distr_n_samples[distr_id];
 	}
 
 	if(!using_pix_sigma){
 		if(n_distr > 1){
 			printf("Using a mixture of %d distributions:\n", n_distr);
-			for(int distr_id = 0; distr_id < n_distr; ++distr_id){
+			for(unsigned int distr_id = 0; distr_id < n_distr; ++distr_id){
 				printf("%d: ", distr_id);
 				utils::printMatrix(state_sigma[distr_id].transpose(), nullptr, "%e");
 			}

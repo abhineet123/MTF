@@ -20,10 +20,11 @@ private:
 // Sum of AMs
 class SumOfAMs : public AppearanceModel{
 public:
-	typedef void ParamType;
+	typedef AMParams ParamType;
 	typedef SumOfAMsDist DistType;
 
-	SumOfAMs(AppearanceModel *_am1, AppearanceModel *_am2);
+	SumOfAMs(AppearanceModel *_am1, AppearanceModel *_am2,
+		const ParamType *_params = nullptr, const int _n_channels = 1);
 	int inputType() const override{
 		return am1->inputType() == am2->inputType() ? am1->inputType() : HETEROGENEOUS_INPUT;
 	}

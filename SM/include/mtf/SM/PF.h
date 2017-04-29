@@ -87,7 +87,7 @@ protected:
 	//! similarity of the initial patch (or template) with itself
 	double max_similarity;
 
-	int ssm_state_size;
+	unsigned int ssm_state_size;
 	int frame_id;
 
 	Matrix3d warp_update;

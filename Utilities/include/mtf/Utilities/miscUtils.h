@@ -456,10 +456,10 @@ namespace utils{
 	template<typename ScalarT>
 	inline void getCentroid(cv::Point_<ScalarT> &centroid,
 		const cv::Mat &corners){
-		centroid.x = (corners.at<double>(0, 0) + corners.at<double>(0, 1)
-			+ corners.at<double>(0, 2) + corners.at<double>(0, 3)) / 4.0;
-		centroid.y = (corners.at<double>(1, 0) + corners.at<double>(1, 1)
-			+ corners.at<double>(1, 2) + corners.at<double>(1, 3)) / 4.0;
+		centroid.x = static_cast<ScalarT>((corners.at<double>(0, 0) + corners.at<double>(0, 1)
+			+ corners.at<double>(0, 2) + corners.at<double>(0, 3)) / 4.0);
+		centroid.y = static_cast<ScalarT>((corners.at<double>(1, 0) + corners.at<double>(1, 1)
+			+ corners.at<double>(1, 2) + corners.at<double>(1, 3)) / 4.0);
 
 	}
 	inline void getCentroid(Vector2d &centroid,

@@ -2,20 +2,14 @@
 
 _MTF_BEGIN_NAMESPACE
 
-SumOfAMs::SumOfAMs(AppearanceModel *_am1, AppearanceModel *_am2) :
-AppearanceModel(),
-am1(_am1), am2(_am2){
+SumOfAMs::SumOfAMs(AppearanceModel *_am1, AppearanceModel *_am2,
+const ParamType *_params, const int _n_channels) :
+AppearanceModel(_params, _n_channels), am1(_am1), am2(_am2){
 	name = "sum";
 	printf("\n");
 	printf("Using Sum of AMs with...\n");
 	printf("am1: %s\n", am1->name.c_str());
 	printf("am2: %s\n", am2->name.c_str());
-	resx = am1->getResX();
-	resy = am1->getResY();
-	n_pix = am1->getNPix();
-	patch_size = am1->getPatchSize();
-	grad_eps = am1->getGradOffset();
-	hess_eps = am1->getHessOffset();
 }
 
 SumOfAMsDist::SumOfAMsDist(const string &_name, const AMDist *_am1,
@@ -38,7 +32,6 @@ void SumOfAMs::initializePixVals(const Matrix2Xd& init_pts){
 		I0.resize(patch_size);
 		It.resize(patch_size);
 	}
-
 	am1->initializePixVals(init_pts);
 	am2->initializePixVals(init_pts);
 

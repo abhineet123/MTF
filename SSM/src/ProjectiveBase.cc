@@ -143,7 +143,7 @@ void ProjectiveBase::applyWarpToPts(Matrix2Xd &warped_pts, const Matrix2Xd &orig
 	const VectorXd &ssm_state){
 	getWarpFromState(warp_mat, ssm_state);
 	int n_pts = orig_pts.cols();
-	for(unsigned int pt_id = 0; pt_id < n_pts; pt_id++){
+	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 		applyWarpToPt(warped_pts(0, pt_id), warped_pts(1, pt_id),
 			orig_pts(0, pt_id), orig_pts(1, pt_id), warp_mat);
 	}
@@ -190,7 +190,7 @@ void ProjectiveBase::initializeSampler(const VectorXd &_state_sigma,
 	rand_dist.resize(state_size);
 
 	boost::random_device r;
-	for(int state_id = 0; state_id < state_size; state_id++) {
+	for(unsigned int state_id = 0; state_id < state_size; ++state_id) {
 		boost::random::seed_seq seed{ r(), r(), r(), r(), r(), r(), r(), r() };
 		rand_gen[state_id] = SampleGenT(seed);
 		rand_dist[state_id] = SampleDistT(state_mean[state_id], state_sigma[state_id]);
@@ -207,7 +207,7 @@ void ProjectiveBase::estimateStateSigma(VectorXd &state_sigma, double pix_sigma)
 		ssm_grad_norm.row(pt_id) = pix_ssm_grad.colwise().norm();
 	}
 	VectorXd ssm_grad_norm_mean = ssm_grad_norm.colwise().mean();
-	for(int state_id = 0; state_id < state_size; state_id++){
+	for(unsigned int state_id = 0; state_id < state_size; ++state_id){
 		state_sigma(state_id) = pix_sigma / ssm_grad_norm_mean(state_id);
 	}
 }
@@ -216,21 +216,21 @@ void ProjectiveBase::setSampler(const VectorXd &state_sigma,
 	const VectorXd &state_mean){
 	assert(state_sigma.size() == state_size);
 	assert(state_mean.size() == state_size);
-	for(int state_id = 0; state_id < state_size; ++state_id){
+	for(unsigned int state_id = 0; state_id < state_size; ++state_id){
 		rand_dist[state_id].param(DistParamT(state_mean[state_id], state_sigma[state_id]));
 	}
 }
 
 void ProjectiveBase::setSamplerMean(const VectorXd &state_mean){
 	assert(state_mean.size() == state_size);
-	for(int state_id = 0; state_id < state_size; state_id++){
+	for(unsigned int state_id = 0; state_id < state_size; ++state_id){
 		double state_sigma = rand_dist[state_id].sigma();
 		rand_dist[state_id].param(DistParamT(state_mean[state_id], state_sigma));
 	}
 }
 void ProjectiveBase::setSamplerSigma(const VectorXd &state_sigma){
 	assert(state_sigma.size() == state_size);
-	for(int state_id = 0; state_id < state_size; state_id++){
+	for(unsigned int state_id = 0; state_id < state_size; ++state_id){
 		double state_mean = rand_dist[state_id].mean();
 		rand_dist[state_id].param(DistParamT(state_mean, state_sigma[state_id]));
 	}
@@ -238,14 +238,14 @@ void ProjectiveBase::setSamplerSigma(const VectorXd &state_sigma){
 
 VectorXd ProjectiveBase::getSamplerSigma(){
 	VectorXd sampler_sigma(state_size);
-	for(int state_id = 0; state_id < state_size; state_id++){
+	for(unsigned int state_id = 0; state_id < state_size; ++state_id){
 		sampler_sigma(state_id) = rand_dist[state_id].sigma();
 	}
 	return sampler_sigma;
 }
 VectorXd ProjectiveBase::getSamplerMean(){
 	VectorXd sampler_mean(state_size);
-	for(int state_id = 0; state_id < state_size; state_id++){
+	for(unsigned int state_id = 0; state_id < state_size; ++state_id){
 		sampler_mean(state_id) = rand_dist[state_id].mean();
 	}
 	return sampler_mean;
@@ -293,7 +293,7 @@ void ProjectiveBase::compositionalAutoRegression1(VectorXd &perturbed_state, Vec
 
 void ProjectiveBase::generatePerturbation(VectorXd &perturbation){
 	assert(perturbation.size() == state_size);
-	for(int state_id = 0; state_id < state_size; state_id++){
+	for(unsigned int state_id = 0; state_id < state_size; ++state_id){
 		perturbation(state_id) = rand_dist[state_id](rand_gen[state_id]);
 	}
 }

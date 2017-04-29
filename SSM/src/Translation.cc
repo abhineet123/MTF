@@ -189,7 +189,7 @@ void Translation::estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mas
 		int n_pts = in_pts.size();
 		vector<cv::Point2f> diff_between_pts(n_pts);
 		vector<uchar> test_mask(n_pts);
-		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 			diff_between_pts[pt_id].x = out_pts[pt_id].x - in_pts[pt_id].x;
 			diff_between_pts[pt_id].y = out_pts[pt_id].y - in_pts[pt_id].y;
 		}
@@ -202,7 +202,7 @@ void Translation::estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mas
 				float tx = out_pts[test_pt_id].x - in_pts[test_pt_id].x;
 				float ty = out_pts[test_pt_id].y - in_pts[test_pt_id].y;
 				int n_inliers = 0;
-				for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
+				for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 					float dx = diff_between_pts[pt_id].x - diff_between_pts[test_pt_id].x;
 					float dy = diff_between_pts[pt_id].y - diff_between_pts[test_pt_id].y;
 					float err = dx*dx + dy*dy;
@@ -221,7 +221,7 @@ void Translation::estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mas
 
 		state_update[0] = 0, state_update[1] = 0;
 		int pts_found = 0;
-		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 			if(!mask[pt_id]){ continue; }
 			++pts_found;
 			state_update[0] += (diff_between_pts[pt_id].x - state_update[0]) / pts_found;
@@ -248,7 +248,7 @@ int TranslationEstimator::runKernel(const CvMat* m1, const CvMat* m2, CvMat* H) 
 
 	double mean_tx = 0, mean_ty = 0;
 
-	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		double tx = m[pt_id].x - M[pt_id].x;
 		double ty = m[pt_id].y - M[pt_id].y;
 		mean_tx += (tx - mean_tx) / (pt_id + 1);
@@ -269,7 +269,7 @@ void TranslationEstimator::computeReprojError(const CvMat* m1, const CvMat* m2,
 	const double* H = model->data.db;
 	float* err = _err->data.fl;
 
-	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
+	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
 		double dx = (H[0] + M[pt_id].x) - m[pt_id].x;
 		double dy = (H[1] + M[pt_id].y) - m[pt_id].y;
 		err[pt_id] = (float)(dx * dx + dy * dy);
@@ -293,7 +293,7 @@ bool TranslationEstimator::refine(const CvMat* m1, const CvMat* m2,
 		if(!solver.updateAlt(_param, _JtJ, _JtErr, _errNorm))
 			break;
 
-		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id)	{
+		for(int pt_id = 0; pt_id < n_pts; ++pt_id)	{
 			const double* h = _param->data.db;
 			double Mx = M[pt_id].x, My = M[pt_id].y;
 			double _xi = (h[0] + Mx);

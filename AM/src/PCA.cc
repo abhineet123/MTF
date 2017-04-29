@@ -136,32 +136,25 @@ void PCA::updateSimilarity(bool prereq_only/*=true*/) {
 
 void PCA::updateModel(const Matrix2Xd& curr_pts){
 	//display_images(getCurrPixVals(), I_diff);
-	if(uchar_input){
-		switch(n_channels){
-		case 1:
-			utils::sc::getPixVals<uchar>(max_patch_eachframe, curr_img_cv, curr_pts, n_pix, img_height, img_width,
-				pix_norm_mult, pix_norm_add);
-			break;
-		case 3:
-			utils::mc::getPixVals<uchar>(max_patch_eachframe, curr_img_cv, curr_pts, n_pix, img_height, img_width,
-				pix_norm_mult, pix_norm_add);
-			break;
-		default:
-			throw std::domain_error(cv::format("PCA :: updateModel : %d channel images are not supported yet", n_channels));
-		}
-	} else{
-		switch(n_channels){
-		case 1:
-			utils::getPixVals(max_patch_eachframe, curr_img, curr_pts, n_pix, img_height, img_width,
-				pix_norm_mult, pix_norm_add);
-			break;
-		case 3:
-			utils::mc::getPixVals<float>(max_patch_eachframe, curr_img_cv, curr_pts, n_pix, img_height, img_width,
-				pix_norm_mult, pix_norm_add);
-			break;
-		default:
-			throw std::domain_error(cv::format("PCA :: updateModel : %d channel images are not supported yet", n_channels));
-		}
+	switch(input_type){
+	case InputType::MTF_8UC1:
+		utils::sc::getPixVals<uchar>(max_patch_eachframe, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+			pix_norm_mult, pix_norm_add);
+		break;
+	case InputType::MTF_8UC3:
+		utils::mc::getPixVals<uchar>(max_patch_eachframe, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+			pix_norm_mult, pix_norm_add);
+		break;
+	case InputType::MTF_32FC1:
+		utils::getPixVals(max_patch_eachframe, curr_img, curr_pts, n_pix, img_height, img_width,
+			pix_norm_mult, pix_norm_add);
+		break;
+	case InputType::MTF_32FC3:
+		utils::mc::getPixVals<float>(max_patch_eachframe, curr_img_cv, curr_pts, n_pix, img_height, img_width,
+			pix_norm_mult, pix_norm_add);
+		break;
+	default:
+		throw std::domain_error("PCA :: updateModel::Invalid input type found");
 	}
 	//! update the basis
 	updateBasis();

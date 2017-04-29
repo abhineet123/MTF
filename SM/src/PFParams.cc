@@ -100,9 +100,8 @@ PFParams::PFParams(int _max_iters, int _n_particles, double _epsilon,
 	update_type(_update_type),
 	likelihood_func(_likelihood_func),
 	resampling_type(_resampling_type),
-	reset_to_mean(_reset_to_mean),
 	mean_type(_mean_type),
-	ssm_mean(_ssm_mean),
+	reset_to_mean(_reset_to_mean),
 	update_distr_wts(_update_distr_wts),
 	min_distr_wt(_min_distr_wt),
 	adaptive_resampling_thresh(_adaptive_resampling_thresh),
@@ -112,6 +111,7 @@ PFParams::PFParams(int _max_iters, int _n_particles, double _epsilon,
 	jacobian_as_sigma(_jacobian_as_sigma),
 	debug_mode(_debug_mode){
 	ssm_sigma = _ssm_sigma;
+	ssm_mean = _ssm_mean;
 	pix_sigma = _pix_sigma;
 }
 
@@ -239,14 +239,14 @@ bool PFParams::processDistributions(vector<VectorXd> &state_sigma,
 	for(unsigned int distr_id = 0; distr_id < n_distr; ++distr_id){
 		distr_n_samples[distr_id] = particles_per_distr;
 	}
-	int residual_particles = n_particles - n_distr*particles_per_distr;
-	if(residual_particles >= n_distr){
+	unsigned int n_residual_particles = static_cast<unsigned int>(n_particles - n_distr*particles_per_distr);
+	if(n_residual_particles >= n_distr){
 		throw std::logic_error(
 			cv::format("PFParams :: Residual particle count: %d exceeds the no. of distributions: %d",
-			residual_particles, n_distr));
+			n_residual_particles, n_distr));
 	}
 	//! distribute the residual samples evenly among the distributions;
-	for(int distr_id = 0; distr_id < residual_particles; ++distr_id){
+	for(unsigned int distr_id = 0; distr_id < n_residual_particles; ++distr_id){
 		++distr_n_samples[distr_id];
 	}
 	return using_pix_sigma;

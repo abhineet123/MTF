@@ -241,17 +241,17 @@ namespace nt{
 				distr_id_dist = DistrDistT(distr_wts.begin(), distr_wts.end());
 				if(params.show_particles){
 					cout << "Distribution weights:\n";
-					for(int i = 0; i < n_distr; ++i){
+					for(unsigned int i = 0; i < n_distr; ++i){
 						std::cout << distr_wts[i] << ' ';
 					}
 					std::cout << "\n";
 					cout << "Distribution probablities:\n";
-					for(int i = 0; i < n_distr; ++i){
+					for(unsigned int i = 0; i < n_distr; ++i){
 						std::cout << distr_id_dist.probabilities()[i] << ' ';
 					}
 					std::cout << "\n";
 				}
-				for(int i = 0; i < n_distr; ++i){
+				for(unsigned int i = 0; i < n_distr; ++i){
 					distr_wts[i] = 0;
 					distr_n_particles[i] = 0;
 				}

@@ -123,7 +123,8 @@ void Diagnostics::generateAnalyticalData3D(VectorXd &x_vec, VectorXd &y_vec,
 	//utils::printMatrix(param_range_vec, "parameter range");
 	//utils::printMatrixToFile(init_dist_vec.transpose().eval(), "init_dist_vec", "log/diag_log.txt");
 
-	if((state_ids[0]<ssm_state_size) != (state_ids[1]<ssm_state_size)){
+	if((state_ids[0] < static_cast<int>(ssm_state_size)) !=
+		(state_ids[1] < static_cast<int>(ssm_state_size))){
 		throw std::invalid_argument("Diagnostics::generateAnalyticalData3D::Both state IDs must be either for SSM or AM\n");
 	}
 

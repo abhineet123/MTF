@@ -15,7 +15,7 @@ void MCLSCV::initializePixVals(const Matrix2Xd& init_pts){
 		I0.resize(patch_size);
 		It.resize(patch_size);
 	}
-	if(uchar_input){
+	if(params.uchar_input){
 		utils::mc::getPixVals<uchar>(I0, curr_img_cv, init_pts, n_pix,
 			img_height, img_width, pix_norm_mult, pix_norm_add);
 	} else{
@@ -37,7 +37,7 @@ void MCLSCV::initializePixVals(const Matrix2Xd& init_pts){
 }
 
 void MCLSCV::updatePixVals(const Matrix2Xd& curr_pts){
-	if(uchar_input){
+	if(params.uchar_input){
 		utils::mc::getPixVals<uchar>(It, curr_img_cv, curr_pts, n_pix,
 			img_height, img_width, pix_norm_mult, pix_norm_add);
 	} else{

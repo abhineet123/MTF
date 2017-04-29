@@ -153,7 +153,7 @@ void SCV::initializePixVals(const Matrix2Xd& init_pts){
 		// save a copy of the initial image to recompute the mapped image gradient when the intensity
 		// map is updated with a new image
 
-		if(!uchar_input && n_channels == 1){
+		if(input_type==InputType::MTF_32FC1){
 			_init_img = curr_img;
 			new (&init_img) EigImgT(_init_img.data(), _init_img.rows(), _init_img.cols());
 		} else{
@@ -224,32 +224,25 @@ void SCV::updateSimilarity(bool prereq_only){
 void SCV::updatePixGrad(const Matrix2Xd &curr_pts){
 	ImageBase::updatePixGrad(curr_pts);
 	if(params.mapped_gradient){
-		if(uchar_input){
-			switch(n_channels){
-			case 1:
-				utils::sc::getImgGrad<uchar>(dI0_dx, init_img_cv, params.weighted_mapping,
-					intensity_map, init_pts, grad_eps, n_pix, img_height, img_width);
-				break;
-			case 3:
-				utils::mc::getImgGrad<uchar>(dI0_dx, init_img_cv, params.weighted_mapping,
-					intensity_map, init_pts, grad_eps, n_pix, img_height, img_width);
-				break;
-			default:
-				mc_not_implemeted(SCV::updatePixGrad, n_channels);
-			}
-		} else{
-			switch(n_channels){
-			case 1:
-				utils::getImgGrad(dI0_dx, init_img, params.weighted_mapping,
-					intensity_map, init_pts, grad_eps, n_pix, img_height, img_width);
-				break;
-			case 3:
-				utils::mc::getImgGrad<float>(dI0_dx, init_img_cv, params.weighted_mapping,
-					intensity_map, init_pts, grad_eps, n_pix, img_height, img_width);
-				break;
-			default:
-				mc_not_implemeted(SCV::updatePixGrad, n_channels);
-			}
+		switch(input_type){
+		case InputType::MTF_8UC1:
+			utils::sc::getImgGrad<uchar>(dI0_dx, init_img_cv, params.weighted_mapping,
+				intensity_map, init_pts, grad_eps, n_pix, img_height, img_width);
+			break;
+		case InputType::MTF_8UC3:
+			utils::mc::getImgGrad<uchar>(dI0_dx, init_img_cv, params.weighted_mapping,
+				intensity_map, init_pts, grad_eps, n_pix, img_height, img_width);
+			break;
+		case InputType::MTF_32FC1:
+			utils::getImgGrad(dI0_dx, init_img, params.weighted_mapping,
+				intensity_map, init_pts, grad_eps, n_pix, img_height, img_width);
+			break;
+		case InputType::MTF_32FC3:
+			utils::mc::getImgGrad<float>(dI0_dx, init_img_cv, params.weighted_mapping,
+				intensity_map, init_pts, grad_eps, n_pix, img_height, img_width);
+			break;
+		default:
+			throw std::domain_error("SCV::Invalid input type found");
 		}
 	}
 }
@@ -257,36 +250,29 @@ void SCV::updatePixGrad(const Matrix2Xd &curr_pts){
 void SCV::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 	ImageBase::updatePixGrad(warped_offset_pts);
 	if(params.mapped_gradient){
-		if(uchar_input){
-			switch(n_channels){
-			case 1:
-				utils::sc::getWarpedImgGrad<uchar>(dI0_dx, init_img_cv, params.weighted_mapping,
-					intensity_map, init_warped_offset_pts,
-					grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-				break;
-			case 3:
-				utils::mc::getWarpedImgGrad<uchar>(dI0_dx, init_img_cv, params.weighted_mapping,
-					intensity_map, init_warped_offset_pts,
-					grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-				break;
-			default:
-				mc_not_implemeted(SCV::updatePixGrad, n_channels);
-			}
-		} else{
-			switch(n_channels){
-			case 1:
-				utils::getWarpedImgGrad(dI0_dx, init_img, params.weighted_mapping,
-					intensity_map, init_warped_offset_pts,
-					grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-				break;
-			case 3:
-				utils::mc::getWarpedImgGrad<float>(dI0_dx, init_img_cv, params.weighted_mapping,
-					intensity_map, init_warped_offset_pts,
-					grad_eps, n_pix, img_height, img_width, pix_norm_mult);
-				break;
-			default:
-				mc_not_implemeted(SCV::updatePixGrad, n_channels);
-			}
+		switch(input_type){
+		case InputType::MTF_8UC1:
+			utils::sc::getWarpedImgGrad<uchar>(dI0_dx, init_img_cv, params.weighted_mapping,
+				intensity_map, init_warped_offset_pts,
+				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+			break;
+		case InputType::MTF_8UC3:
+			utils::mc::getWarpedImgGrad<uchar>(dI0_dx, init_img_cv, params.weighted_mapping,
+				intensity_map, init_warped_offset_pts,
+				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+			break;
+		case InputType::MTF_32FC1:
+			utils::getWarpedImgGrad(dI0_dx, init_img, params.weighted_mapping,
+				intensity_map, init_warped_offset_pts,
+				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+			break;
+		case InputType::MTF_32FC3:
+			utils::mc::getWarpedImgGrad<float>(dI0_dx, init_img_cv, params.weighted_mapping,
+				intensity_map, init_warped_offset_pts,
+				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
+			break;
+		default:
+			throw std::domain_error("SCV::Invalid input type found");
 		}
 	}
 }
@@ -294,34 +280,26 @@ void SCV::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 void SCV::updatePixHess(const Matrix2Xd &curr_pts){
 	ImageBase::updatePixHess(curr_pts);
 	if(params.mapped_gradient){
-		if(uchar_input){
-			switch(n_channels){
-			case 1:
-				utils::sc::getImgHess<uchar>(d2I0_dx2, init_img_cv, params.weighted_mapping,
-					intensity_map, init_pts, hess_eps, n_pix, img_height, img_width);
-				break;
-			case 3:
-				utils::mc::getImgHess<uchar>(d2I0_dx2, init_img_cv, params.weighted_mapping,
-					intensity_map, init_pts, hess_eps, n_pix, img_height, img_width);
-				break;
-			default:
-				mc_not_implemeted(SCV::updatePixHess, n_channels);
-			}
-		} else{
-			switch(n_channels){
-			case 1:
-				utils::getImgHess(d2I0_dx2, init_img, params.weighted_mapping,
-					intensity_map, init_pts, hess_eps, n_pix, img_height, img_width);
-				break;
-			case 3:
-				utils::mc::getImgHess<float>(d2I0_dx2, init_img_cv, params.weighted_mapping,
-					intensity_map, init_pts, hess_eps, n_pix, img_height, img_width);
-				break;
-			default:
-				mc_not_implemeted(SCV::updatePixHess, n_channels);
-			}
+		switch(input_type){
+		case InputType::MTF_8UC1:
+			utils::sc::getImgHess<uchar>(d2I0_dx2, init_img_cv, params.weighted_mapping,
+				intensity_map, init_pts, hess_eps, n_pix, img_height, img_width);
+			break;
+		case InputType::MTF_8UC3:
+			utils::mc::getImgHess<uchar>(d2I0_dx2, init_img_cv, params.weighted_mapping,
+				intensity_map, init_pts, hess_eps, n_pix, img_height, img_width);
+			break;
+		case InputType::MTF_32FC1:
+			utils::getImgHess(d2I0_dx2, init_img, params.weighted_mapping,
+				intensity_map, init_pts, hess_eps, n_pix, img_height, img_width);
+			break;
+		case InputType::MTF_32FC3:
+			utils::mc::getImgHess<float>(d2I0_dx2, init_img_cv, params.weighted_mapping,
+				intensity_map, init_pts, hess_eps, n_pix, img_height, img_width);
+			break;
+		default:
+			throw std::domain_error("SCV::Invalid input type found");
 		}
-
 	}
 }
 double SCVDist::operator()(const double* a, const double* b,

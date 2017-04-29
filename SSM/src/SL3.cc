@@ -132,8 +132,7 @@ SL3::SL3(
 #else
 		FILE *fid = fopen(log_fname, "w");
 		if(!fid){
-			throw std::invalid_argument(cv_format(("SL3 :: Log file %s could not be opened successfully\n", 
-				fname));
+			throw std::invalid_argument(cv_format("SL3 :: Log file %s could not be opened successfully\n", log_fname));
 		}		
 #endif	
 		fclose(fid);

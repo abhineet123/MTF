@@ -316,7 +316,7 @@ void GridTracker<SSM>::backwardEstimation(){
 			curr_pts_masked.push_back(curr_pts[tracker_id]);
 		}
 	}
-	if(prev_pts_masked.size() < est_params.n_model_pts){
+	if(static_cast<int>(prev_pts_masked.size()) < est_params.n_model_pts){
 		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
 			if(fb_err_mask[tracker_id]){ continue; }
 			prev_pts_masked.push_back(prev_pts[tracker_id]);

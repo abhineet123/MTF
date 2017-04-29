@@ -52,7 +52,7 @@ Spline::Spline(
 	const ParamType *spl_params) : StateSpaceModel(spl_params),
 	params(spl_params){
 	printf("\n");
-	printf("Initializing Spline based state space model with:\n");
+	printf("Using Spline based SSM with:\n");
 	printf("resx: %d\n", resx);
 	printf("resy: %d\n", resy);
 	printf("control_size: %dx%d\n", params.control_size_x, params.control_size_y);
@@ -66,14 +66,9 @@ Spline::Spline(
 	int mod_x = resx % params.control_size_x;
 	int mod_y = resy % params.control_size_y;
 	if(mod_x != 0 || mod_y != 0){
-		printf("Pixel sampling resolution %dx%d is not divided evenly by the control patch size %dx%d\n",
-			resx, resy, params.control_size_x, params.control_size_y);
-		resx += mod_x;
-		resy += mod_y;
-		n_pts = resx*resy;
-		init_pts.resize(Eigen::NoChange, n_pts);
-		curr_pts.resize(Eigen::NoChange, n_pts);
-		printf("Changing it to %dx%d...\n", resx, resy);
+		throw std::invalid_argument(
+			cv_format("Sampling resolution %dx%d is not divided evenly by the control patch size %dx%d\n",
+			resx, resy, params.control_size_x, params.control_size_y));
 	}
 	control_res_x = resx / params.control_size_x;
 	control_res_y = resy / params.control_size_y;

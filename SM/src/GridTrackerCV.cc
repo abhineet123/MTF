@@ -260,7 +260,7 @@ void GridTrackerCV<SSM>::backwardEstimation(){
 			curr_pts_masked.push_back(curr_pts[pt_id]);
 		}
 	}
-	if(prev_pts_masked.size() < est_params.n_model_pts){
+	if(static_cast<int>(prev_pts_masked.size()) < est_params.n_model_pts){
 		for(int pt_id = 0; pt_id < n_pts; ++pt_id){
 			if(fb_err_mask[pt_id]){ continue; }
 			prev_pts_masked.push_back(prev_pts[pt_id]);
@@ -304,8 +304,8 @@ void GridTrackerCV<SSM>::resetPts(){
 
 			utils::getCentroid(prev_pts[pt_id], patch_corners);
 		} else{
-			prev_pts[pt_id].x = ssm.getPts()(0, pt_id);
-			prev_pts[pt_id].y = ssm.getPts()(1, pt_id);
+			prev_pts[pt_id].x = static_cast<float>(ssm.getPts()(0, pt_id));
+			prev_pts[pt_id].y = static_cast<float>(ssm.getPts()(1, pt_id));
 		}
 	}
 }
