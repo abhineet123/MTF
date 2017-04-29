@@ -24,34 +24,8 @@
 #include <Python.h>
 #include <numpy/arrayobject.h>
 
-#ifdef _WIN32
-#define start_input_timer() \
-	clock_t start_time_with_input = clock()
-#define start_tracking_timer() \
-	clock_t start_time = clock()
-#define end_both_timers(fps, fps_win) \
-	clock_t end_time = clock();\
-	fps = CLOCKS_PER_SEC / static_cast<double>(end_time - start_time);\
-	fps_win = CLOCKS_PER_SEC / static_cast<double>(end_time - start_time_with_input)
-#else
-#define start_input_timer() \
-	timespec start_time_with_input;\
-	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time_with_input)
-#define start_tracking_timer() \
-	timespec start_time;\
-	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time)
-#define end_both_timers(fps, fps_win) \
-	timespec end_time;\
-	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_time);\
-	fps = 1.0 / ((double)(end_time.tv_sec - start_time.tv_sec) +\
-		1e-9*(double)(end_time.tv_nsec - start_time.tv_nsec));\
-	fps_win = 1.0 / ((double)(end_time.tv_sec - start_time_with_input.tv_sec) +\
-		1e-9*(double)(end_time.tv_nsec - start_time_with_input.tv_nsec))
-#endif
-
 using namespace std;
 using namespace mtf::params;
-
 
 static PyObject* initInput(PyObject* self, PyObject* args);
 static PyObject* initialize(PyObject* self, PyObject* args);
@@ -81,7 +55,6 @@ static double fps_font_size = 0.50;
 static cv::Scalar fps_color(0, 255, 0);
 static char fps_text[100];
 static int frame_id;
-double fps, fps_win;
 static char* config_root_dir = "C++/MTF/Config";
 bool using_input_pipeline = false;
 
@@ -300,19 +273,25 @@ static PyObject* update(PyObject* self, PyObject* args) {
 		}
 		curr_img_cv = input->getFrame();
 	}
+	double fps, fps_win;
+	double tracking_time, tracking_time_with_input;
 	++frame_id;
-	start_input_timer();
+	mtf_clock_get(start_time_with_input);
 	//update trackers
 	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++) {
 		// update pre processed image
 		pre_proc[tracker_id]->update(curr_img_cv);
-		start_tracking_timer();
+		mtf_clock_get(start_time);
 		trackers[tracker_id]->update();// this is equivalent to :             
 		// trackers[tracker_id]->update(pre_proc->getFrame());        
 		// as the image has been passed at the time of initialization 
 		// and does not need to be passed again as long as the new 
 		// image is read into the same locatioon
-		end_both_timers(fps, fps_win);
+		mtf_clock_get(end_time);
+		mtf_clock_measure(start_time, end_time, tracking_time);
+		mtf_clock_measure(start_time_with_input, end_time, tracking_time_with_input);
+		fps = 1.0 / tracking_time;
+		fps_win = 1.0 / tracking_time_with_input;
 		if(reset_template){
 			trackers[tracker_id]->initialize(trackers[tracker_id]->getRegion());
 		}

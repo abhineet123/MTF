@@ -45,11 +45,11 @@
 
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
-#include <time.h>
+#include <chrono>
 #define mtf_clock_get(time_instant) \
-	clock_t time_instant = clock()
+	std::chrono::steady_clock::time_point time_instant = std::chrono::steady_clock::now();
 #define mtf_clock_measure(start_time, end_time, elapsed_time) \
-	elapsed_time = static_cast<double>(end_time - start_time)/CLOCKS_PER_SEC
+	elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>>(end_time - start_time).count();
 //! disable the annoying: warning C4503: 'Eigen::DenseBase<Derived>': decorated name length exceeded, name was truncated
 //! error in VS
 #pragma warning(disable:4503)
