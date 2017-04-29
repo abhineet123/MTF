@@ -19,8 +19,8 @@ debug_mode(RIU_DEBUG){
 	}
 }
 
-RIUDist::RIUDist(const string &_name, bool _dist_from_likelihood,
-	double _likelihood_alpha) : AMDist(_name),
+RIUDist::RIUDist(const string &_name, const bool _dist_from_likelihood,
+	const double _likelihood_alpha) : AMDist(_name),
 	dist_from_likelihood(_dist_from_likelihood),
 	likelihood_alpha(_likelihood_alpha){}
 

@@ -161,7 +161,7 @@ void NN<AM, SSM >::initialize(const cv::Mat &corners){
 		if(params.save_index){ saveDataset(); }
 	}
 	double idx_time;
-	std::shared_ptr<const DistType> dist_func(am.getDistPtr());
+	std::shared_ptr<const DistType> dist_func(am.getDistFunc());
 	mtf_clock_get(idx_start_time);
 	if(flann_params.index_type == IdxType::GNN){
 		gnn_index.reset(new FGNN(dist_func, params.n_samples, am_dist_size,

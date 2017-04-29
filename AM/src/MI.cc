@@ -42,13 +42,14 @@ debug_mode(MI_DEBUG_MODE){
 	}
 }
 
-MIDist::MIDist(const string &_name, int _n_bins,
-	unsigned int _feat_size, unsigned int _patch_size,
-	double _hist_pre_seed, double _pre_seed,
-	const int *__std_bspl_ids, double _log_hist_norm_mult) :
+MIDist::MIDist(const string &_name, const int _n_bins,
+	const unsigned int _feat_size, const unsigned int _patch_size,
+	const double _hist_pre_seed, const double _pre_seed,
+	const MatrixX2i *_std_bspl_ids,
+	const double _log_hist_norm_mult) :
 	AMDist(_name), n_bins(_n_bins), feat_size(_feat_size),
 	patch_size(_patch_size), pre_seed(_pre_seed),
-	hist_pre_seed(_hist_pre_seed), _std_bspl_ids(__std_bspl_ids),
+	hist_pre_seed(_hist_pre_seed), std_bspl_ids(_std_bspl_ids),
 	log_hist_norm_mult(_log_hist_norm_mult){}
 
 MI::MI(const ParamType *mi_params, const int _n_channels) :
@@ -105,16 +106,16 @@ AppearanceModel(mi_params, _n_channels), params(mi_params){
 	/* denominator of this factor is equal to the sum of all entries in the individual histograms,
 	so multiplying hist with this factor will give the normalized hist whose entries sum to 1*/
 
-	_std_bspl_ids.resize(params.n_bins, Eigen::NoChange);
+	std_bspl_ids.resize(params.n_bins, Eigen::NoChange);
 	// _linear_idx(i, j) stores the linear index of element (i,j) of a matrix
 	// of dimensions params.n_bins x params.n_bins if it is to be flattened into a vector
 	// in row major order; 
-	_linear_idx.resize(params.n_bins, params.n_bins);
+	linear_idx.resize(params.n_bins, params.n_bins);
 	for(int i = 0; i < params.n_bins; i++) {
-		_std_bspl_ids(i, 0) = max(0, i - 1);
-		_std_bspl_ids(i, 1) = min(params.n_bins - 1, i + 2);
+		std_bspl_ids(i, 0) = max(0, i - 1);
+		std_bspl_ids(i, 1) = min(params.n_bins - 1, i + 2);
 		for(int j = 0; j < params.n_bins; j++) {
-			_linear_idx(i, j) = i * params.n_bins + j;
+			linear_idx(i, j) = i * params.n_bins + j;
 		}
 	}
 	//for functor support
@@ -217,8 +218,8 @@ void MI::initializeSimilarity(){
 		curr_hist_log.resize(params.n_bins);
 		joint_hist_log.resize(params.n_bins, params.n_bins);
 
-		_init_bspl_ids.resize(patch_size, Eigen::NoChange);
-		_curr_bspl_ids.resize(patch_size, Eigen::NoChange);
+		init_bspl_ids.resize(patch_size, Eigen::NoChange);
+		curr_bspl_ids.resize(patch_size, Eigen::NoChange);
 
 		// since histogram and its gradients are computed simultaneously, both must be resized here too
 		init_hist_grad.resize(params.n_bins, patch_size);
@@ -230,9 +231,9 @@ void MI::initializeSimilarity(){
 	init_hist_mat.setZero();
 	init_hist_grad.setZero();
 	for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++) {
-		_init_bspl_ids.row(pix_id) = _std_bspl_ids.row(static_cast<int>(I0(pix_id)));
-		double curr_diff = _init_bspl_ids(pix_id, 0) - I0(pix_id);
-		for(int id1 = _init_bspl_ids(pix_id, 0); id1 <= _init_bspl_ids(pix_id, 1); id1++) {
+		init_bspl_ids.row(pix_id) = std_bspl_ids.row(static_cast<int>(I0(pix_id)));
+		double curr_diff = init_bspl_ids(pix_id, 0) - I0(pix_id);
+		for(int id1 = init_bspl_ids(pix_id, 0); id1 <= init_bspl_ids(pix_id, 1); id1++) {
 			utils::bSpl3WithGrad(init_hist_mat(id1, pix_id), init_hist_grad(id1, pix_id), curr_diff);
 			init_hist_grad(id1, pix_id) *= -hist_norm_mult;
 			init_hist(id1) += init_hist_mat(id1, pix_id);
@@ -253,8 +254,8 @@ void MI::initializeSimilarity(){
 	if(!is_initialized.similarity){
 		joint_hist.fill(params.pre_seed);
 		for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++) {
-			for(int id1 = _init_bspl_ids(pix_id, 0); id1 <= _init_bspl_ids(pix_id, 1); id1++) {
-				for(int id2 = _init_bspl_ids(pix_id, 0); id2 <= _init_bspl_ids(pix_id, 1); id2++) {
+			for(int id1 = init_bspl_ids(pix_id, 0); id1 <= init_bspl_ids(pix_id, 1); id1++) {
+				for(int id2 = init_bspl_ids(pix_id, 0); id2 <= init_bspl_ids(pix_id, 1); id2++) {
 					joint_hist(id1, id2) += init_hist_mat(id1, pix_id) * init_hist_mat(id2, pix_id);
 				}
 			}
@@ -271,7 +272,7 @@ void MI::initializeSimilarity(){
 		}
 		max_similarity = f;
 
-		_curr_bspl_ids = _init_bspl_ids;
+		curr_bspl_ids = init_bspl_ids;
 		curr_hist = init_hist;
 		curr_hist_mat = init_hist_mat;
 		curr_hist_log = init_hist_log;
@@ -312,9 +313,9 @@ void MI::initializeGrad(){
 		init_joint_hist_grad.setZero();
 		df_dI0.setZero();
 		for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++) {
-			for(int curr_id = _init_bspl_ids(pix_id, 0); curr_id <= _init_bspl_ids(pix_id, 1); curr_id++) {
-				for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
-					int joint_id = _linear_idx(curr_id, init_id);
+			for(int curr_id = init_bspl_ids(pix_id, 0); curr_id <= init_bspl_ids(pix_id, 1); curr_id++) {
+				for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
+					int joint_id = linear_idx(curr_id, init_id);
 					init_joint_hist_grad(joint_id, pix_id) = init_hist_grad(curr_id, pix_id) * init_hist_mat(init_id, pix_id);
 					df_dI0(pix_id) += init_joint_hist_grad(joint_id, pix_id) * init_grad_factor(curr_id, init_id);
 				}
@@ -351,14 +352,14 @@ void MI::updateSimilarity(bool prereq_only){
 	curr_hist_mat.setZero();
 	curr_hist_grad.setZero();
 	for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++) {
-		_curr_bspl_ids.row(pix_id) = _std_bspl_ids.row(static_cast<int>(It(pix_id)));
-		double curr_diff = _curr_bspl_ids(pix_id, 0) - It(pix_id);
-		for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
+		curr_bspl_ids.row(pix_id) = std_bspl_ids.row(static_cast<int>(It(pix_id)));
+		double curr_diff = curr_bspl_ids(pix_id, 0) - It(pix_id);
+		for(int curr_id = curr_bspl_ids(pix_id, 0); curr_id <= curr_bspl_ids(pix_id, 1); curr_id++) {
 			utils::bSpl3WithGrad(curr_hist_mat(curr_id, pix_id), curr_hist_grad(curr_id, pix_id), curr_diff);
 			++curr_diff;
 			curr_hist_grad(curr_id, pix_id) *= -hist_norm_mult;
 			curr_hist(curr_id) += curr_hist_mat(curr_id, pix_id);
-			for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
+			for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
 				joint_hist(curr_id, init_id) += curr_hist_mat(curr_id, pix_id) * init_hist_mat(init_id, pix_id);
 			}
 		}
@@ -405,9 +406,9 @@ void MI::updateInitGrad(){
 	init_joint_hist_grad.setZero();
 	for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++) {
 		df_dI0(pix_id) = 0;
-		for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
-			for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
-				int joint_id = _linear_idx(init_id, curr_id);
+		for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
+			for(int curr_id = curr_bspl_ids(pix_id, 0); curr_id <= curr_bspl_ids(pix_id, 1); curr_id++) {
+				int joint_id = linear_idx(init_id, curr_id);
 				init_joint_hist_grad(joint_id, pix_id) = init_hist_grad(init_id, pix_id) * curr_hist_mat(curr_id, pix_id);
 				df_dI0(pix_id) += init_joint_hist_grad(joint_id, pix_id) * init_grad_factor(init_id, curr_id);
 			}
@@ -431,9 +432,9 @@ void MI::updateCurrGrad(){
 	curr_joint_hist_grad.setZero();
 	for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++){
 		df_dIt(pix_id) = 0;
-		for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
-			for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
-				int joint_id = _linear_idx(curr_id, init_id);
+		for(int curr_id = curr_bspl_ids(pix_id, 0); curr_id <= curr_bspl_ids(pix_id, 1); curr_id++) {
+			for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
+				int joint_id = linear_idx(curr_id, init_id);
 				curr_joint_hist_grad(joint_id, pix_id) = curr_hist_grad(curr_id, pix_id) * init_hist_mat(init_id, pix_id);
 				df_dIt(pix_id) += curr_joint_hist_grad(joint_id, pix_id) * curr_grad_factor(curr_id, init_id);
 			}
@@ -450,7 +451,7 @@ void MI::initializeHess(){
 		self_grad_factor.resize(params.n_bins, params.n_bins);
 	}
 
-	utils::getBSplHistHess(init_hist_hess, I0, _init_bspl_ids, patch_size, hist_norm_mult);
+	utils::getBSplHistHess(init_hist_hess, I0, init_bspl_ids, patch_size, hist_norm_mult);
 
 	if(!is_initialized.hess){
 		curr_hist_hess = init_hist_hess;
@@ -477,13 +478,13 @@ void  MI::cmptInitHessian(MatrixXd &hessian, const MatrixXd &init_pix_jacobian){
 
 	for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++){
 		double hist_hess_term = 0;
-		for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
+		for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
 			double inner_term = 0;
-			for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
-				int joint_id = _linear_idx(curr_id, init_id);
+			for(int curr_id = curr_bspl_ids(pix_id, 0); curr_id <= curr_bspl_ids(pix_id, 1); curr_id++) {
+				int joint_id = linear_idx(curr_id, init_id);
 				//init_joint_hist_grad(joint_id, pix_id) = init_hist_grad(curr_id, pix_id) * init_hist_mat(init_id, pix_id);
 				//init_grad_factor(curr_id, init_id) = 1 + joint_hist_log(curr_id, init_id) - init_hist_log(curr_id);				
-				joint_hist_jacobian.row(joint_id) += init_joint_hist_grad(_linear_idx(init_id, curr_id), pix_id)*init_pix_jacobian.row(pix_id);
+				joint_hist_jacobian.row(joint_id) += init_joint_hist_grad(linear_idx(init_id, curr_id), pix_id)*init_pix_jacobian.row(pix_id);
 				inner_term += curr_hist_mat(curr_id, pix_id) * init_grad_factor(init_id, curr_id);
 
 				//joint_hist_jacobian.row(joint_id) += init_hist_grad(init_id, pix_id)*curr_hist_mat(curr_id, pix_id)*init_pix_jacobian.row(pix_id);
@@ -505,7 +506,7 @@ void  MI::cmptInitHessian(MatrixXd &hessian, const MatrixXd &init_pix_jacobian){
 
 	for(int curr_id = 0; curr_id < params.n_bins; curr_id++){
 		for(int init_id = 0; init_id < params.n_bins; init_id++){
-			int joint_id = _linear_idx(curr_id, init_id);
+			int joint_id = linear_idx(curr_id, init_id);
 			double hist_factor = (1.0 / joint_hist(curr_id, init_id)) - (1.0 / init_hist(init_id));
 			hessian += joint_hist_jacobian.row(joint_id).transpose() * joint_hist_jacobian.row(joint_id) * hist_factor;
 		}
@@ -532,10 +533,10 @@ void MI::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobi
 	//utils::printMatrix(self_hessian2, "self: self_hessian2 start", "%e");
 	for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++){
 		double hist_hess_term2 = 0;
-		for(int init_id = _curr_bspl_ids(pix_id, 0); init_id <= _curr_bspl_ids(pix_id, 1); init_id++) {
+		for(int init_id = curr_bspl_ids(pix_id, 0); init_id <= curr_bspl_ids(pix_id, 1); init_id++) {
 			double inner_term2 = 0;
-			for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
-				int joint_id = _linear_idx(curr_id, init_id);
+			for(int curr_id = curr_bspl_ids(pix_id, 0); curr_id <= curr_bspl_ids(pix_id, 1); curr_id++) {
+				int joint_id = linear_idx(curr_id, init_id);
 				joint_hist_jacobian2.row(joint_id) += curr_hist_grad(init_id, pix_id)*curr_hist_mat(curr_id, pix_id)*curr_pix_jacobian.row(pix_id);
 				inner_term2 += curr_hist_mat(curr_id, pix_id) * self_grad_factor2(curr_id, init_id);
 			}
@@ -554,7 +555,7 @@ void MI::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobi
 
 	for(int curr_id = 0; curr_id < params.n_bins; curr_id++){
 		for(int init_id = 0; init_id < params.n_bins; init_id++){
-			int joint_id = _linear_idx(curr_id, init_id);
+			int joint_id = linear_idx(curr_id, init_id);
 			double hist_factor = (1.0 / self_joint_hist(curr_id, init_id)) - (1.0 / curr_hist(init_id));
 			self_hessian2 += joint_hist_jacobian2.row(joint_id).transpose() * joint_hist_jacobian2.row(joint_id) * hist_factor;
 		}
@@ -565,14 +566,14 @@ void MI::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobi
 	self_hessian.setZero();
 	joint_hist_jacobian.setZero();
 	for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++){
-		double curr_diff = _curr_bspl_ids(pix_id, 0) - It(pix_id);
+		double curr_diff = curr_bspl_ids(pix_id, 0) - It(pix_id);
 		double hist_hess_term = 0;
-		for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
+		for(int curr_id = curr_bspl_ids(pix_id, 0); curr_id <= curr_bspl_ids(pix_id, 1); curr_id++) {
 			curr_hist_hess(curr_id, pix_id) = hist_norm_mult*utils::bSpl3Hess(curr_diff);
 			++curr_diff;
 			double inner_term = 0;
-			for(int init_id = _curr_bspl_ids(pix_id, 0); init_id <= _curr_bspl_ids(pix_id, 1); init_id++) {
-				int idx = _linear_idx(curr_id, init_id);
+			for(int init_id = curr_bspl_ids(pix_id, 0); init_id <= curr_bspl_ids(pix_id, 1); init_id++) {
+				int idx = linear_idx(curr_id, init_id);
 				joint_hist_jacobian.row(idx) += curr_hist_grad(curr_id, pix_id)*curr_hist_mat(init_id, pix_id)*curr_pix_jacobian.row(pix_id);
 				inner_term += curr_hist_mat(init_id, pix_id) * self_grad_factor(curr_id, init_id);
 			}
@@ -582,7 +583,7 @@ void MI::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobi
 	}
 	for(int curr_id = 0; curr_id < params.n_bins; curr_id++){
 		for(int init_id = 0; init_id < params.n_bins; init_id++){
-			int joint_id = _linear_idx(curr_id, init_id);
+			int joint_id = linear_idx(curr_id, init_id);
 			double hist_factor = (1.0 / self_joint_hist(curr_id, init_id)) - (1.0 / curr_hist(curr_id));
 			self_hessian += joint_hist_jacobian.row(joint_id).transpose() * joint_hist_jacobian.row(joint_id) * hist_factor;
 		}
@@ -611,14 +612,14 @@ void  MI::cmptCurrHessian(MatrixXd &hessian, const MatrixXd &curr_pix_jacobian){
 	hessian.setZero();
 	joint_hist_jacobian.setZero();
 	for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++){
-		double curr_diff = _curr_bspl_ids(pix_id, 0) - It(pix_id);
+		double curr_diff = curr_bspl_ids(pix_id, 0) - It(pix_id);
 		double hist_hess_term = 0;
-		for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
+		for(int curr_id = curr_bspl_ids(pix_id, 0); curr_id <= curr_bspl_ids(pix_id, 1); curr_id++) {
 			curr_hist_hess(curr_id, pix_id) = hist_norm_mult*utils::bSpl3Hess(curr_diff);
 			++curr_diff;
 			double inner_term = 0;
-			for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
-				int idx = _linear_idx(curr_id, init_id);
+			for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
+				int idx = linear_idx(curr_id, init_id);
 				joint_hist_jacobian.row(idx) += curr_joint_hist_grad(idx, pix_id)*curr_pix_jacobian.row(pix_id);
 				inner_term += init_hist_mat(init_id, pix_id) * curr_grad_factor(curr_id, init_id);
 			}
@@ -628,7 +629,7 @@ void  MI::cmptCurrHessian(MatrixXd &hessian, const MatrixXd &curr_pix_jacobian){
 	}
 	for(int curr_id = 0; curr_id < params.n_bins; curr_id++){
 		for(int init_id = 0; init_id < params.n_bins; init_id++){
-			int idx = _linear_idx(curr_id, init_id);
+			int idx = linear_idx(curr_id, init_id);
 			double hist_factor = (1.0 / joint_hist(curr_id, init_id)) - (1.0 / curr_hist(curr_id));
 			hessian += joint_hist_jacobian.row(idx).transpose() * joint_hist_jacobian.row(idx) * hist_factor;
 		}
@@ -639,8 +640,8 @@ void MI::cmptSelfHist(){
 	//! current joint histogram computed wrt itself
 	self_joint_hist.fill(params.pre_seed);
 	for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++) {
-		for(int id1 = _curr_bspl_ids(pix_id, 0); id1 <= _curr_bspl_ids(pix_id, 1); id1++) {
-			for(int id2 = _curr_bspl_ids(pix_id, 0); id2 <= _curr_bspl_ids(pix_id, 1); id2++) {
+		for(int id1 = curr_bspl_ids(pix_id, 0); id1 <= curr_bspl_ids(pix_id, 1); id1++) {
+			for(int id2 = curr_bspl_ids(pix_id, 0); id2 <= curr_bspl_ids(pix_id, 1); id2++) {
 				self_joint_hist(id1, id2) += curr_hist_mat(id1, pix_id) * curr_hist_mat(id2, pix_id);
 			}
 		}
@@ -705,13 +706,13 @@ void MI::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobi
 	self_hessian.setZero();
 	joint_hist_jacobian.setZero();
 	for(unsigned int pix_id = 0; pix_id < patch_size; pix_id++){
-		double curr_diff = _curr_bspl_ids(pix_id, 0) - It(pix_id);
+		double curr_diff = curr_bspl_ids(pix_id, 0) - It(pix_id);
 		double hist_hess_term = 0, hist_grad_term = 0;
-		for(int r = _curr_bspl_ids(pix_id, 0); r <= _curr_bspl_ids(pix_id, 1); r++) {
+		for(int r = curr_bspl_ids(pix_id, 0); r <= curr_bspl_ids(pix_id, 1); r++) {
 			curr_hist_hess(r, pix_id) = hist_norm_mult*utils::bSpl3Hess(curr_diff++);
 			double inner_term = 0;
-			for(int t = _curr_bspl_ids(pix_id, 0); t <= _curr_bspl_ids(pix_id, 1); t++) {
-				int idx = _linear_idx(r, t);
+			for(int t = curr_bspl_ids(pix_id, 0); t <= curr_bspl_ids(pix_id, 1); t++) {
+				int idx = linear_idx(r, t);
 				joint_hist_jacobian.row(idx) += curr_hist_grad(r, pix_id)*curr_hist_mat(t, pix_id)*curr_pix_jacobian.row(pix_id);
 				inner_term += curr_hist_mat(t, pix_id) * self_grad_factor(r, t);
 			}
@@ -723,7 +724,7 @@ void MI::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jacobi
 	}
 	for(int r = 0; r < params.n_bins; r++){
 		for(int t = 0; t < params.n_bins; t++){
-			int idx = _linear_idx(r, t);
+			int idx = linear_idx(r, t);
 			double hist_factor = (1.0 / self_joint_hist(r, t)) - (1.0 / curr_hist(r));
 			self_hessian += joint_hist_jacobian.row(idx).transpose() * joint_hist_jacobian.row(idx) * hist_factor;
 		}
@@ -736,7 +737,7 @@ void MI::updateDistFeat(double* feat_addr){
 	Map<MatrixXdr> hist_mat(feat_addr, 5, patch_size);
 	for(size_t pix_id = 0; pix_id < patch_size; pix_id++) {
 		int pix_val_floor = static_cast<int>(It(pix_id));
-		double pix_diff = _std_bspl_ids(pix_val_floor, 0) - It(pix_id);
+		double pix_diff = std_bspl_ids(pix_val_floor, 0) - It(pix_id);
 		hist_mat(0, pix_id) = pix_val_floor;
 		hist_mat(1, pix_id) = utils::bSpl3(pix_diff);
 		hist_mat(2, pix_id) = utils::bSpl3(++pix_diff);
@@ -763,7 +764,6 @@ double MIDist::operator()(const double* hist1_mat_addr, const double* hist2_mat_
 
 	Map<const MatrixXdr> hist1_mat(hist1_mat_addr, 5, patch_size);
 	Map<const MatrixXdr> hist2_mat(hist2_mat_addr, 5, patch_size);
-	Map<const MatrixXi> std_bspl_ids(_std_bspl_ids, n_bins, 2);
 
 	//utils::printMatrixToFile(hist1_mat, "hist1_mat", "log/mi_log.txt");
 	//utils::printMatrixToFile(hist2_mat, "hist2_mat", "log/mi_log.txt");
@@ -780,9 +780,9 @@ double MIDist::operator()(const double* hist1_mat_addr, const double* hist2_mat_
 		//}
 
 
-		int bspl_id11 = std_bspl_ids(pix1_floor, 0);
+		int bspl_id11 = (*std_bspl_ids)(pix1_floor, 0);
 		int bspl_id12 = bspl_id11 + 1, bspl_id13 = bspl_id11 + 2, bspl_id14 = bspl_id11 + 3;
-		int bspl_id21 = std_bspl_ids(pix2_floor, 0);
+		int bspl_id21 = (*std_bspl_ids)(pix2_floor, 0);
 		int bspl_id22 = bspl_id21 + 1, bspl_id23 = bspl_id21 + 2, bspl_id24 = bspl_id21 + 3;
 
 		hist1(bspl_id11) += hist1_mat(1, pix_id);
@@ -824,8 +824,8 @@ double MIDist::operator()(const double* hist1_mat_addr, const double* hist2_mat_
 	//utils::printMatrixToFile(hist2, "hist2", "log/mi_log.txt");
 
 	ResultType result = 0;
-	for(int id1 = 0; id1 < n_bins; id1++){
-		for(int id2 = 0; id2 < n_bins; id2++){
+	for(int id1 = 0; id1 < n_bins; ++id1){
+		for(int id2 = 0; id2 < n_bins; ++id2){
 			result -= joint_hist(id1, id2) * (log(joint_hist(id1, id2) / (hist1(id1) * hist2(id2))) - log_hist_norm_mult);
 		}
 	}

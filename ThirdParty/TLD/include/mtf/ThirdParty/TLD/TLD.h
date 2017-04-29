@@ -51,7 +51,6 @@ namespace tld{
 	public:
 		typedef TLDParams ParamType;
 
-		TLD();
 		TLD(const ParamType *tld_params = nullptr);
 		virtual ~TLD();
 

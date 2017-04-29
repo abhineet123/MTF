@@ -48,6 +48,7 @@ set(STRK_SRC src/Config.cpp
 	
 if(WIN32)
 	add_library (${STRK_LIB_NAME} STATIC ${STRK_SRC})
+	target_compile_definitions(${STRK_LIB_NAME} PUBLIC _CRT_SECURE_NO_WARNINGS)
 	set(STRUCK_INSTALL_DIR_DEFAULT C:/MTF/lib)
 else()
 	add_library (${STRK_LIB_NAME} SHARED ${STRK_SRC})

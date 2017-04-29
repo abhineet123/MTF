@@ -44,16 +44,17 @@
 
 //! State Space Models
 #include "mtf/SSM/Homography.h"
+#include "mtf/SSM/LieHomography.h"
+#include "mtf/SSM/CBH.h"
+#include "mtf/SSM/SL3.h"
 #include "mtf/SSM/Affine.h"
+#include "mtf/SSM/LieAffine.h"
 #include "mtf/SSM/ASRT.h"
 #include "mtf/SSM/Similitude.h"
 #include "mtf/SSM/Isometry.h"
 #include "mtf/SSM/AST.h"
 #include "mtf/SSM/IST.h"
 #include "mtf/SSM/Translation.h"
-#include "mtf/SSM/LieHomography.h"
-#include "mtf/SSM/CBH.h"
-#include "mtf/SSM/SL3.h"
 #include "mtf/SSM/Spline.h"	
 
 #ifndef DISABLE_DFM
@@ -120,6 +121,7 @@
 	_REGISTER_TRACKERS_AM(SM, SL3)\
 	_REGISTER_TRACKERS_AM(SM, Homography)\
 	_REGISTER_TRACKERS_AM(SM, Affine)\
+	_REGISTER_TRACKERS_AM(SM, LieAffine)\
 	_REGISTER_TRACKERS_AM(SM, ASRT)\
 	_REGISTER_TRACKERS_AM(SM, Similitude)\
 	_REGISTER_TRACKERS_AM(SM, Isometry)\
@@ -134,6 +136,7 @@
 	template class mtf::SM< mtf::SL3>;\
 	template class mtf::SM< mtf::Homography>;\
 	template class mtf::SM< mtf::Affine>;\
+	template class mtf::SM< mtf::LieAffine>;\
 	template class mtf::SM< mtf::ASRT>;\
 	template class mtf::SM< mtf::Similitude>;\
 	template class mtf::SM< mtf::Isometry>;\
@@ -197,6 +200,7 @@
 	_REGISTER_HTRACKERS_AM(SM, SSM, SL3)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Homography)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Affine)\
+	_REGISTER_HTRACKERS_AM(SM, SSM, LieAffine)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, ASRT)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Similitude)\
 	_REGISTER_HTRACKERS_AM(SM, SSM, Isometry)\
@@ -211,6 +215,7 @@
 	_REGISTER_HTRACKERS_SSM(SM, SL3)\
 	_REGISTER_HTRACKERS_SSM(SM, Homography)\
 	_REGISTER_HTRACKERS_SSM(SM, Affine)\
+	_REGISTER_HTRACKERS_SSM(SM, LieAffine)\
 	_REGISTER_HTRACKERS_SSM(SM, ASRT)\
 	_REGISTER_HTRACKERS_SSM(SM, Similitude)\
 	_REGISTER_HTRACKERS_SSM(SM, Isometry)\
@@ -256,6 +261,7 @@
 	_REGISTER_ESM_AM(HT, JT, SL3)\
 	_REGISTER_ESM_AM(HT, JT, Homography)\
 	_REGISTER_ESM_AM(HT, JT, Affine)\
+	_REGISTER_ESM_AM(HT, JT, LieAffine)\
 	_REGISTER_ESM_AM(HT, JT, ASRT)\
 	_REGISTER_ESM_AM(HT, JT, Similitude)\
 	_REGISTER_ESM_AM(HT, JT, Isometry)\

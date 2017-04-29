@@ -14,7 +14,7 @@ SSM_BASE_HEADERS += ${SSM_HEADER_DIR}/SSMEstimatorParams.h
 
 MTF_INCLUDE_DIRS += ${SSM_INCLUDE_DIR}
 
-STATE_SPACE_MODELS = Spline LieHomography CBH Homography SL3 Affine ASRT Similitude Isometry AST IST Translation
+STATE_SPACE_MODELS = Spline LieHomography CBH Homography SL3 Affine LieAffine ASRT Similitude Isometry AST IST Translation
 SSM_MODULES = ProjectiveBase SSMEstimatorParams 
 SSM_ESTIMATORS = SSM Homography Affine 
 STATE_SPACE_OBJS = $(addprefix ${BUILD_DIR}/,$(addsuffix .o, ${SSM_MODULES} ${STATE_SPACE_MODELS}))	
@@ -34,6 +34,9 @@ ${BUILD_DIR}/ProjectiveBase.o: ${SSM_SRC_DIR}/ProjectiveBase.cc ${SSM_HEADER_DIR
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< -o $@
 	
 ${BUILD_DIR}/LieHomography.o: ${SSM_SRC_DIR}/LieHomography.cc ${SSM_HEADER_DIR}/LieHomography.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h ${SSM_HEADER_DIR}/HomographyEstimator.h ${MACROS_HEADER_DIR}/common.h ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< -o $@
+	
+${BUILD_DIR}/LieAffine.o: ${SSM_SRC_DIR}/LieAffine.cc ${SSM_HEADER_DIR}/LieAffine.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h ${SSM_HEADER_DIR}/AffineEstimator.h ${MACROS_HEADER_DIR}/common.h ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< -o $@
 
 ${BUILD_DIR}/CBH.o: ${SSM_SRC_DIR}/CBH.cc ${SSM_HEADER_DIR}/CBH.h ${SSM_HEADER_DIR}/ProjectiveBase.h ${SSM_BASE_HEADERS} ${SSM_HEADER_DIR}/SSMEstimator.h ${SSM_HEADER_DIR}/HomographyEstimator.h ${MACROS_HEADER_DIR}/common.h ${UTILITIES_HEADER_DIR}/warpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h

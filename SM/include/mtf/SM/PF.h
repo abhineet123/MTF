@@ -60,7 +60,8 @@ public:
 	using SearchMethod<AM, SSM> ::update;
 
 	PF(const ParamType *pf_params = nullptr,
-		const AMParams *am_params = nullptr, const SSMParams *ssm_params = nullptr);
+		const AMParams *am_params = nullptr, 
+		const SSMParams *ssm_params = nullptr);
 	~PF(){}
 
 	void initialize(const cv::Mat &corners) override;

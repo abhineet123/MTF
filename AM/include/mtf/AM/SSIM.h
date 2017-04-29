@@ -16,12 +16,12 @@ struct SSIMParams : AMParams{
 struct SSIMDist : AMDist{
 	typedef double ElementType;
 	typedef double ResultType;
-	SSIMDist(const string &_name, double _c1, double _c2) : 
+	SSIMDist(const string &_name, const double _c1, const double _c2) :
 		AMDist(_name), c1(_c1), c2(_c2){}
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 private:
-	double c1, c2;
+	const double c1, c2;
 };
 
 
@@ -63,7 +63,7 @@ public:
 	}
 
 	/*Support for FLANN library*/
-	const DistType* getDistPtr() override{
+	const DistType* getDistFunc() override{
 		return new DistType(name, c1, c2);
 	}
 	void updateDistFeat(double* feat_addr) override;

@@ -452,26 +452,26 @@ void LieHomography::cmptApproxPixJacobian(MatrixXd &dI_dp,
 
 		for(unsigned int ch_id = 0; ch_id < n_channels; ++ch_id){
 
-			double Ix = dI_dw(ch_pt_id, 0);
-			double Iy = dI_dw(ch_pt_id, 1);
+			double Ix = dI_dw(ch_pt_id, 0)*inv_det;
+			double Iy = dI_dw(ch_pt_id, 1)*inv_det;
 
 
-			dI_dp(ch_pt_id, 0) = (Ix * (d*dw_dp_t(0, pt_id) - b*dw_dp_t(1, pt_id)) + 
-				Iy * (a*dw_dp_t(1, pt_id) - c*dw_dp_t(0, pt_id)))*inv_det;
-			dI_dp(ch_pt_id, 1) = (Ix * (d*dw_dp_t(2, pt_id) - b*dw_dp_t(3, pt_id)) + 
-				Iy * (a*dw_dp_t(3, pt_id) - c*dw_dp_t(2, pt_id)))*inv_det;
-			dI_dp(ch_pt_id, 2) = (Ix * (d*dw_dp_t(4, pt_id) - b*dw_dp_t(5, pt_id)) + 
-				Iy * (a*dw_dp_t(5, pt_id) - c*dw_dp_t(4, pt_id)))*inv_det;
-			dI_dp(ch_pt_id, 3) = (Ix * (d*dw_dp_t(6, pt_id) - b*dw_dp_t(7, pt_id)) + 
-				Iy * (a*dw_dp_t(7, pt_id) - c*dw_dp_t(6, pt_id)))*inv_det;
-			dI_dp(ch_pt_id, 4) = (Ix * (d*dw_dp_t(8, pt_id) - b*dw_dp_t(9, pt_id)) +
-				Iy * (a*dw_dp_t(9, pt_id) - c*dw_dp_t(8, pt_id)))*inv_det;
-			dI_dp(ch_pt_id, 5) = (Ix * (d*dw_dp_t(10, pt_id) - b*dw_dp_t(11, pt_id)) + 
-				Iy * (a*dw_dp_t(11, pt_id) - c*dw_dp_t(10, pt_id)))*inv_det;
-			dI_dp(ch_pt_id, 6) = (Ix * (d*dw_dp_t(12, pt_id) - b*dw_dp_t(13, pt_id)) + 
-				Iy * (a*dw_dp_t(13, pt_id) - c*dw_dp_t(12, pt_id)))*inv_det;
-			dI_dp(ch_pt_id, 7) = (Ix * (d*dw_dp_t(14, pt_id) - b*dw_dp_t(15, pt_id)) + 
-				Iy * (a*dw_dp_t(15, pt_id) - c*dw_dp_t(14, pt_id)))*inv_det;
+			dI_dp(ch_pt_id, 0) = Ix * (d*dw_dp_t(0, pt_id) - b*dw_dp_t(1, pt_id)) + 
+				Iy * (a*dw_dp_t(1, pt_id) - c*dw_dp_t(0, pt_id));
+			dI_dp(ch_pt_id, 1) = Ix * (d*dw_dp_t(2, pt_id) - b*dw_dp_t(3, pt_id)) + 
+				Iy * (a*dw_dp_t(3, pt_id) - c*dw_dp_t(2, pt_id));
+			dI_dp(ch_pt_id, 2) = Ix * (d*dw_dp_t(4, pt_id) - b*dw_dp_t(5, pt_id)) + 
+				Iy * (a*dw_dp_t(5, pt_id) - c*dw_dp_t(4, pt_id));
+			dI_dp(ch_pt_id, 3) = Ix * (d*dw_dp_t(6, pt_id) - b*dw_dp_t(7, pt_id)) + 
+				Iy * (a*dw_dp_t(7, pt_id) - c*dw_dp_t(6, pt_id));
+			dI_dp(ch_pt_id, 4) = Ix * (d*dw_dp_t(8, pt_id) - b*dw_dp_t(9, pt_id)) +
+				Iy * (a*dw_dp_t(9, pt_id) - c*dw_dp_t(8, pt_id));
+			dI_dp(ch_pt_id, 5) = Ix * (d*dw_dp_t(10, pt_id) - b*dw_dp_t(11, pt_id)) + 
+				Iy * (a*dw_dp_t(11, pt_id) - c*dw_dp_t(10, pt_id));
+			dI_dp(ch_pt_id, 6) = Ix * (d*dw_dp_t(12, pt_id) - b*dw_dp_t(13, pt_id)) + 
+				Iy * (a*dw_dp_t(13, pt_id) - c*dw_dp_t(12, pt_id));
+			dI_dp(ch_pt_id, 7) = Ix * (d*dw_dp_t(14, pt_id) - b*dw_dp_t(15, pt_id)) + 
+				Iy * (a*dw_dp_t(15, pt_id) - c*dw_dp_t(14, pt_id));
 
 
 			//double Ixx = Ix * x;

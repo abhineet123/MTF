@@ -27,7 +27,7 @@ typedef std::shared_ptr<mtf::TrackerBase> Tracker_;
 typedef std::unique_ptr<mtf::FeatureBase> Detector_;
 
 bool isDuplicate(const cv::Mat &qr_location, const std::vector<Tracker_> &trackers){
-	for(int tracker_id = 0; tracker_id < trackers.size(); ++tracker_id) {
+	for(unsigned int tracker_id = 0; tracker_id < trackers.size(); ++tracker_id) {
 		// center location error between the QR and tracker locations
 		double dist = mtf::utils::getTrackingError(TrackErrT::CL, qr_location, trackers[tracker_id]->getRegion());
 		if(dist < qr_duplicate_min_dist){ return true; }
@@ -88,7 +88,7 @@ int main(int argc, char * argv[]) {
 	//cv::waitKey(0);
 	//cv::destroyAllWindows();
 
-	for(int img_id = 0; img_id < marker_images_orig.size(); ++img_id){
+	for(unsigned int img_id = 0; img_id < marker_images_orig.size(); ++img_id){
 		marker_pre_proc->initialize(marker_images_orig[img_id]);
 		marker_images_proc.push_back(marker_pre_proc->getFrame().clone());
 	}
@@ -110,7 +110,7 @@ int main(int argc, char * argv[]) {
 		}
 		cv::Mat detector_mask(img_height, img_width, CV_8U);
 		detector_mask.setTo(255);
-		for(int tracker_id = 0; tracker_id < trackers.size(); ++tracker_id) {
+		for(unsigned int tracker_id = 0; tracker_id < trackers.size(); ++tracker_id) {
 			pre_procs[tracker_id]->update(input->getFrame(), input->getFrameID());
 			trackers[tracker_id]->update();
 			cv::Rect curr_location_rect = mtf::utils::getBestFitRectangle<int>(
@@ -169,7 +169,7 @@ int main(int argc, char * argv[]) {
 			cv::destroyWindow(marker_window);
 			destroy_marker_window = false;
 		}
-		for(int tracker_id = 0; tracker_id < trackers.size(); ++tracker_id) {
+		for(unsigned int tracker_id = 0; tracker_id < trackers.size(); ++tracker_id) {
 			mtf::utils::drawRegion(input->getFrame(MUTABLE), trackers[tracker_id]->getRegion());
 		}
 		if(qr_n_markers >= 3 && trackers.size() == qr_n_markers){

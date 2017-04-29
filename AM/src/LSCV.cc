@@ -76,20 +76,20 @@ approx_dist_feat(LSCV_APPROX_DIST_FEAT){
 	}
 }
 
-LSCVDist::LSCVDist(const string &_name, bool _approx_dist_feat,
-	int _n_bins, int _n_sub_regions_x, int _n_sub_regions_y,
-	int _n_sub_regions, int _intensity_range,
-	unsigned int _n_pix, unsigned int _resx, unsigned int _resy,
-	const int *__sub_region_x, const int *__sub_region_y,
-	const double *__sub_region_wts, const int *__subregion_idx,
-	double *__intensity_vals) :
+LSCVDist::LSCVDist(const string &_name, const bool _approx_dist_feat,
+	const int _n_bins, const int _n_sub_regions_x, const int _n_sub_regions_y,
+	const int _n_sub_regions, const unsigned int _n_pix,
+	const unsigned int _resx, const unsigned int _resy,
+	const MatrixX2i *_sub_region_x, const MatrixX2i *_sub_region_y,
+	const MatrixXd *_sub_region_wts, const MatrixXi *_subregion_idx,
+	const ColPivHouseholderQR<MatrixX2d> *_intensity_vals_dec) :
 	SSDBaseDist(_name), approx_dist_feat(_approx_dist_feat),
 	n_pix(_n_pix), resx(_resx), resy(_resy), n_bins(_n_bins),
 	n_sub_regions_x(_n_sub_regions_x), n_sub_regions_y(_n_sub_regions_y),
-	n_sub_regions(_n_sub_regions), intensity_range(_intensity_range),
-	_sub_region_x(__sub_region_x), _sub_region_y(_sub_region_y),
-	_sub_region_wts(__sub_region_wts), _subregion_idx(__subregion_idx),
-	_intensity_vals(__intensity_vals){}
+	n_sub_regions(_n_sub_regions), 
+	sub_region_x(_sub_region_x), sub_region_y(_sub_region_y),
+	sub_region_wts(_sub_region_wts), subregion_idx(_subregion_idx),
+	intensity_vals_dec(_intensity_vals_dec){}
 
 LSCV::LSCV(const ParamType *lscv_params, int _n_channels) :
 SSDBase(lscv_params, _n_channels), params(lscv_params),
@@ -359,21 +359,15 @@ double LSCVDist::operator()(const double* a, const double* b,
 	}
 	Map<const MatrixXdr> _init_patch(a, resy, resx);
 	Map<const MatrixXdr> _curr_patch(b, resy, resx);
-	Map<const MatrixXi> sub_region_x(_sub_region_x, n_sub_regions_x, 2);
-	Map<const MatrixXi> sub_region_y(_sub_region_y, n_sub_regions_y, 2);
-	Map<const MatrixXd> sub_region_wts(_sub_region_wts, n_pix, n_sub_regions);
-	Map<const MatrixXi> subregion_idx(_subregion_idx, n_sub_regions_y, n_sub_regions_x);
-	Map<MatrixXd> intensity_vals(_intensity_vals, intensity_range, 2);
-	ColPivHouseholderQR<Map<MatrixXd>> intensity_vals_dec(intensity_vals);
 
 	VectorXd _mapped_a = VectorXd::Zero(size);
 	for(int idx = 0; idx < n_sub_regions_x; ++idx){
-		int start_x = sub_region_x(idx, 0);
-		int end_x = sub_region_x(idx, 1);
+		int start_x = (*sub_region_x)(idx, 0);
+		int end_x = (*sub_region_x)(idx, 1);
 		for(int idy = 0; idy < n_sub_regions_y; ++idy){
 			MatrixXi _joint_hist = MatrixXi::Zero(n_bins, n_bins);
 			VectorXi _hist = VectorXi::Zero(n_bins);
-			for(int y = sub_region_y(idy, 0); y <= sub_region_y(idy, 1); ++y) {
+			for(int y = (*sub_region_y)(idy, 0); y <= (*sub_region_y)(idy, 1); ++y) {
 				for(int x = start_x; x <= end_x; ++x) {
 					int pix1_int = static_cast<int>(_init_patch(y, x));
 					int pix2_int = static_cast<int>(_curr_patch(y, x));
@@ -393,10 +387,10 @@ double LSCVDist::operator()(const double* a, const double* b,
 					_intensity_map(bin_id) = wt_sum / _hist(bin_id);
 				}
 			}
-			Vector2d _affine_params = intensity_vals_dec.solve(_intensity_map);
+			Vector2d _affine_params = intensity_vals_dec->solve(_intensity_map);
 			for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
-				_mapped_a(pix_id) += (_affine_params(0)*a[pix_id] + _affine_params(1))
-					*sub_region_wts(pix_id, subregion_idx(idy, idx));
+				_mapped_a(pix_id) += (_affine_params(0)*a[pix_id] + _affine_params(1))*
+					(*sub_region_wts)(pix_id, (*subregion_idx)(idy, idx));
 			}
 		}
 	}

@@ -48,24 +48,23 @@ struct LSCVParams : AMParams{
 struct LSCVDist : SSDBaseDist{
 	typedef double ElementType;
 	typedef double ResultType;
-	LSCVDist(const string &_name, bool _approx_dist_feat,
-		int _n_bins, int _n_sub_regions_x, int _n_sub_regions_y,
-		int _n_sub_regions, int _intensity_range,
-		unsigned int _n_pix, unsigned int _resx, unsigned int _resy,
-		const int *__sub_region_x, const int *__sub_region_y,
-		const double *__sub_region_wts, const int *__subregion_idx,
-		double *_intensity_vals);
+	LSCVDist(const string &_name, const bool _approx_dist_feat,
+		const int _n_bins, const int _n_sub_regions_x, const int _n_sub_regions_y,
+		const int _n_sub_regions, const unsigned int _n_pix,
+		const unsigned int _resx, const unsigned int _resy,
+		const MatrixX2i *_sub_region_x, const MatrixX2i *_sub_region_y,
+		const MatrixXd *_sub_region_wts, const MatrixXi *_subregion_idx,
+		const ColPivHouseholderQR<MatrixX2d> *_intensity_vals_dec);
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 private:
-	bool approx_dist_feat;
-	unsigned int n_pix, resx, resy;
-	int n_bins, n_sub_regions_x, n_sub_regions_y, n_sub_regions;
-	int intensity_range;
-	const int *_sub_region_x, *_sub_region_y;
-	const double *_sub_region_wts;
-	const int *_subregion_idx;
-	double *_intensity_vals;
+	const bool approx_dist_feat;
+	const unsigned int n_pix, resx, resy;
+	const int n_bins, n_sub_regions_x, n_sub_regions_y, n_sub_regions;
+	const MatrixX2i *sub_region_x, *sub_region_y;
+	const MatrixXd *sub_region_wts;
+	const MatrixXi *subregion_idx;
+	const ColPivHouseholderQR<MatrixX2d> *intensity_vals_dec;
 };
 
 //! Locally adaptive Sum of Conditional Variance
@@ -83,11 +82,11 @@ public:
 
 	void updateSimilarity(bool prereq_only = true) override;
 
-	const DistType* getDistPtr() override{
+	const DistType* getDistFunc() override{
 		return new DistType(name, params.approx_dist_feat, n_pix, resx, resy,
 			params.n_bins, params.n_sub_regions_x, params.n_sub_regions_y, 
-			n_sub_regions, intensity_range, sub_region_x.data(), sub_region_y.data(), 
-			sub_region_wts.data(), _subregion_idx.data(), intensity_vals.data());
+			n_sub_regions, &sub_region_x, &sub_region_y, &sub_region_wts, 
+			&_subregion_idx, &intensity_vals_dec);
 	}
 
 protected:

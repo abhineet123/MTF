@@ -58,14 +58,14 @@ struct SCVParams : AMParams{
 struct SCVDist : SSDBaseDist{
 	typedef double ElementType;
 	typedef double ResultType;
-	SCVDist(const string &_name, unsigned int _patch_size,
-		int _n_bins, bool _approx_dist_feat);
+	SCVDist(const string &_name, const unsigned int _patch_size,
+		const int _n_bins, const bool _approx_dist_feat);
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 private:
-	unsigned int patch_size;
-	int n_bins;
-	bool approx_dist_feat;
+	const unsigned int patch_size;
+	const int n_bins;
+	const bool approx_dist_feat;
 };
 
 //! Sum of Conditional Variance
@@ -87,7 +87,7 @@ public:
 
 	void updatePixHess(const Matrix2Xd &curr_pts) override;
 	using AppearanceModel::updatePixHess;
-	const DistType* getDistPtr() override{
+	const DistType* getDistFunc() override{
 		return new DistType(name, patch_size, params.n_bins, params.approx_dist_feat);
 	}
 

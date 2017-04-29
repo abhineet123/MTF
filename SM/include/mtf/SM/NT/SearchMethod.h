@@ -16,11 +16,6 @@ namespace nt{
 		typedef std::shared_ptr<mtf::AppearanceModel> AM;
 		typedef std::shared_ptr<mtf::StateSpaceModel> SSM;
 
-	protected:
-		AM am;
-		SSM ssm;
-
-	public:
 		using TrackerBase::initialize;
 		using TrackerBase::update;
 
@@ -48,8 +43,6 @@ namespace nt{
 			ssm->setCorners(corners);
 			ssm->getCorners(cv_corners_mat);
 		}
-
-		const bool *spi_mask;
 		virtual void setSPIMask(const bool *_spi_mask){
 			spi_mask = _spi_mask;
 			am->setSPIMask(_spi_mask);
@@ -59,6 +52,9 @@ namespace nt{
 			spi_mask = nullptr;
 			am->clearSPIMask();
 			ssm->clearSPIMask();
+		}
+		virtual const bool* getSPIMask(){
+			return spi_mask;
 		}
 
 		virtual void setInitStatus(){
@@ -78,6 +74,11 @@ namespace nt{
 		virtual SSM getSSM() const { return ssm; }
 
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+	protected:
+		AM am;
+		SSM ssm;
+		const bool *spi_mask;
 	};
 }
 

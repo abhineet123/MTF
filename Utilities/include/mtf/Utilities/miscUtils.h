@@ -486,7 +486,7 @@ namespace utils{
 		const std::vector<int> &indices){
 		assert(indices.size() == vec.size());
 		auto vec_copy(vec);
-		for(int id = 0; id < vec.size(); ++id) {
+		for(unsigned int id = 0; id < vec.size(); ++id) {
 			vec[indices[id]] = vec_copy[id];
 		}
 	}

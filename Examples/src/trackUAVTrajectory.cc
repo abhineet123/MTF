@@ -94,7 +94,7 @@ int main(int argc, char * argv[]) {
 	ifstream gt_kpt(gt_kpt_flnm);
 	vector<cv::Point2d> gt_kpt_corners;
 	cv::Point2d tmp;
-	int i = 0;
+	unsigned int i = 0;
 	while(gt_kpt >> tmp.x >> tmp.y) {
 		gt_kpt_corners.push_back(tmp);
 		cout << gt_kpt_corners.at(i).x << " " << gt_kpt_corners.at(i).y << endl;
@@ -122,18 +122,16 @@ int main(int argc, char * argv[]) {
 		cv::namedWindow(satellite_win_name, cv::WINDOW_AUTOSIZE);
 	}
 
-	double fps = 0, fps_win = 0;
+	double fps, fps_win;
 	double tracking_time, tracking_time_with_input;
 	double avg_fps = 0, avg_fps_win = 0;
 	int fps_count = 0;
 	double avg_err = 0;
 
-	double tracking_err = 0;
 	int valid_frame_count = 0;
 	cv::Point2d corners[4];
-	double fps_font_size = 1.00, err_font_size = 1.00;
-	cv::Point err_origin(10, 40), fps_origin(10, 20);
-	cv::Scalar gt_color(255, 0, 0), uav_color(0, 255, 0), err_color(0, 255, 0), fps_color(0, 255, 0);
+	double fps_font_size = 1.00;
+	cv::Scalar gt_color(255, 0, 0), uav_color(0, 255, 0);
 
 	CVUtils cv_utils;
 	cv::Mat satellite_img_copy, satellite_img_copy1, satellite_img_small;
@@ -268,7 +266,7 @@ int main(int argc, char * argv[]) {
 		outtrajectory << ctr_pts.at(i).x << " " << ctr_pts.at(i).y << endl;
 	}
 	outtrajectory.close();
-	printf("The number of points: %lu\n", ctr_pts.size());
+	printf("Number of points: %lu\n", ctr_pts.size());
 
 	cv::waitKey(0);
 	cv::destroyAllWindows();

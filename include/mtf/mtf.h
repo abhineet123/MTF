@@ -109,16 +109,17 @@
 
 //! state space models
 #include "mtf/SSM/Homography.h"
+#include "mtf/SSM/LieHomography.h"
+#include "mtf/SSM/CBH.h"
+#include "mtf/SSM/SL3.h"
 #include "mtf/SSM/Affine.h"
+#include "mtf/SSM/LieAffine.h"
 #include "mtf/SSM/ASRT.h"
 #include "mtf/SSM/Similitude.h"
 #include "mtf/SSM/Isometry.h"
 #include "mtf/SSM/AST.h"
 #include "mtf/SSM/IST.h"
 #include "mtf/SSM/Translation.h"
-#include "mtf/SSM/LieHomography.h"
-#include "mtf/SSM/CBH.h"
-#include "mtf/SSM/SL3.h"
 #include "mtf/SSM/Spline.h"
 
 //! Third Party Trackers
@@ -798,6 +799,8 @@ TrackerBase *getTracker(const char *sm_type, const char *ssm_type,
 		return getTracker<AMType, mtf::Homography>(sm_type, am_params, cast_params(Homography));
 	} else if(!strcmp(ssm_type, "aff") || !strcmp(ssm_type, "6")){
 		return getTracker<AMType, mtf::Affine>(sm_type, am_params, cast_params(Affine));
+	} else if(!strcmp(ssm_type, "laff") || !strcmp(ssm_type, "l6")){
+		return getTracker<AMType, mtf::LieAffine>(sm_type, am_params, cast_params(LieAffine));
 	} else if(!strcmp(ssm_type, "asrt") || !strcmp(ssm_type, "5")){
 		return getTracker<AMType, mtf::ASRT>(sm_type, am_params, cast_params(ASRT));
 	} else if(!strcmp(ssm_type, "sim") || !strcmp(ssm_type, "4")){
@@ -928,6 +931,8 @@ inline SSMParams_ getSSMParams(const char *ssm_type){
 			hom_corner_based_sampling, debug_mode));
 	} else if(!strcmp(ssm_type, "aff") || !strcmp(ssm_type, "6")){
 		return SSMParams_(new AffineParams(ssm_params.get(), aff_normalized_init, aff_pt_based_sampling, debug_mode));
+	} else if(!strcmp(ssm_type, "laff") || !strcmp(ssm_type, "l6")){
+		return SSMParams_(new LieAffineParams(ssm_params.get(), laff_normalized_init, laff_grad_eps, debug_mode));
 	} else if(!strcmp(ssm_type, "asrt") || !strcmp(ssm_type, "5")){
 		return SSMParams_(new ASRTParams(ssm_params.get(), sim_normalized_init,
 			sim_geom_sampling, sim_pt_based_sampling, sim_n_model_pts, debug_mode));
@@ -967,6 +972,8 @@ inline StateSpaceModel *getSSM(const char *ssm_type){
 		return new mtf::Homography(cast_params(Homography));
 	} else if(!strcmp(ssm_type, "aff") || !strcmp(ssm_type, "6")){
 		return new mtf::Affine(cast_params(Affine));
+	} else if(!strcmp(ssm_type, "laff") || !strcmp(ssm_type, "l6")){
+		return new mtf::LieAffine(cast_params(LieAffine));
 	} else if(!strcmp(ssm_type, "asrt") || !strcmp(ssm_type, "5")){
 		return new mtf::ASRT(cast_params(ASRT));
 	} else if(!strcmp(ssm_type, "sim") || !strcmp(ssm_type, "4")){

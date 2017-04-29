@@ -57,8 +57,8 @@ debug_mode(RSCV_DEBUG_MODE){
 	}
 }
 
-RSCVDist::RSCVDist(const string &_name, unsigned int _patch_size,
-	int _n_bins, bool _approx_dist_feat) : SSDBaseDist(_name),
+RSCVDist::RSCVDist(const string &_name, const unsigned int _patch_size,
+	const int _n_bins, const bool _approx_dist_feat) : SSDBaseDist(_name),
 	patch_size(_patch_size), n_bins(_n_bins),
 	approx_dist_feat(_approx_dist_feat){}
 

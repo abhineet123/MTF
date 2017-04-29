@@ -449,7 +449,7 @@ void PF<AM, SSM >::residualResampling() {
 	int particles_found = 0;
 	for(int particle_id = 0; particle_id < params.n_particles; ++particle_id) {
 		int resample_id = particle_idx[particle_id];
-		int particle_copies = round(particle_wts[resample_id] * params.n_particles);
+		int particle_copies = static_cast<int>(round(particle_wts[resample_id] * params.n_particles));
 		for(int copy_id = 0; copy_id < particle_copies; ++copy_id) {
 			particle_states[1 - curr_set_id][particles_found] = particle_states[curr_set_id][resample_id];
 			particle_ar[1 - curr_set_id][particles_found] = particle_ar[curr_set_id][resample_id];

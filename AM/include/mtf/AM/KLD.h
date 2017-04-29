@@ -30,7 +30,7 @@ struct KLDDist : AMDist{
 	typedef bool is_kdtree_distance;
 	typedef double ElementType;
 	typedef double ResultType;
-	KLDDist(const string &_name, unsigned int _feat_size) :
+	KLDDist(const string &_name, const unsigned int _feat_size) :
 		AMDist(_name), feat_size(_feat_size){}
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
@@ -39,7 +39,7 @@ struct KLDDist : AMDist{
 		return ratio > 0 ? a * log(ratio) : 0;
 	}
 private:
-	unsigned int feat_size;
+	const unsigned int feat_size;
 };
 
 
@@ -70,7 +70,7 @@ public:
 	/**
 	Support for FLANN library
 	*/
-	const DistType* getDistPtr() override{
+	const DistType* getDistFunc() override{
 		return new DistType(name, feat_size);
 	}
 	void initializeDistFeat() override;

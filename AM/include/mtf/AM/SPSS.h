@@ -19,7 +19,7 @@ struct SPSSDist : AMDist{
 	typedef bool is_kdtree_distance;
 	typedef double ElementType;
 	typedef double ResultType;
-	SPSSDist(const string &_name, double _c) : AMDist(_name), c(_c){}
+	SPSSDist(const string &_name, const double _c) : AMDist(_name), c(_c){}
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 	double accum_dist(const ElementType& a,
@@ -27,7 +27,7 @@ struct SPSSDist : AMDist{
 		return -(2 * a*b + c) / (a*a + b*b + c);
 	}
 private:
-	double c;
+	const double c;
 };
 
 //! Sum of Pixelwise Structural Similarity
@@ -67,7 +67,7 @@ public:
 		const MatrixXd &d2It_dp2) override;
 
 	/*Support for FLANN library*/
-	const DistType* getDistPtr() override{
+	const DistType* getDistFunc() override{
 		return new DistType(name, c);
 	}
 	unsigned int getDistFeatSize() override{ return patch_size; }

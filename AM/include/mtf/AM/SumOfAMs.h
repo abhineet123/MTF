@@ -78,9 +78,9 @@ public:
 
 	/*Support for FLANN library*/
 	VectorXd curr_feat_vec;
-	const DistType* getDistPtr() override{
-		return new DistType(name, am1->getDistPtr(),
-			am2->getDistPtr(), am1_norm_factor, am2_norm_factor,
+	const DistType* getDistFunc() override{
+		return new DistType(name, am1->getDistFunc(),
+			am2->getDistFunc(), am1_norm_factor, am2_norm_factor,
 			am1_dist_feat_size, am2_dist_feat_size);
 	}
 	void updateDistFeat(double* feat_addr) override;

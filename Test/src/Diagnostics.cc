@@ -117,7 +117,7 @@ Diagnostics::Diagnostics(AM _am, SSM _ssm,
 		init_patch_win_name = "Initial Patch";
 		curr_patch_win_name = "Current Patch";
 	}
-	dist_func.reset(am->getDistPtr());
+	dist_func.reset(am->getDistFunc());
 }
 
 

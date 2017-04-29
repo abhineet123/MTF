@@ -20,13 +20,13 @@ struct RIUParams : AMParams{
 struct RIUDist : AMDist{
 	typedef double ElementType;
 	typedef double ResultType;
-	RIUDist(const string &_name, bool _dist_from_likelihood,
-		double _likelihood_alpha);
+	RIUDist(const string &_name, const bool _dist_from_likelihood,
+		const double _likelihood_alpha);
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 private:
-	bool dist_from_likelihood;
-	double likelihood_alpha;
+	const bool dist_from_likelihood;
+	const double likelihood_alpha;
 };
 
 //! Ratio Image Uniformity
@@ -64,7 +64,7 @@ public:
 
 	// -------------------- distance feature functions -------------------- //
 	VectorXd curr_feat_vec;
-	const DistType* getDistPtr() override{
+	const DistType* getDistFunc() override{
 		return new DistType(name, params.dist_from_likelihood, params.likelihood_alpha);
 	}
 	unsigned int getDistFeatSize() override{ return patch_size + 1; }

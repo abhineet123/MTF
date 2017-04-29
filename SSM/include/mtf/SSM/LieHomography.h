@@ -61,9 +61,7 @@ private:
 	Matrix3d lie_alg_mat;
 
 	void computeJacobian(MatrixXd &jacobian, Matrix3Xd &basis_pts_hm);
-
-
-
+	
 };
 
 _MTF_END_NAMESPACE

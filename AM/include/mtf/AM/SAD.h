@@ -40,7 +40,7 @@ public:
 	/**
 	Support for FLANN library
 	*/
-	const DistType* getDistPtr() override{
+	const DistType* getDistFunc() override{
 		return new DistType(name);
 	}
 	void updateDistFeat(double* feat_addr) override{

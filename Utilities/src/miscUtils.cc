@@ -127,6 +127,7 @@ namespace utils{
 	}
 	template cv::Rect_<int> getBestFitRectangle<int>(const cv::Mat &corners, int _img_width, int _img_height, int border_size);
 	template cv::Rect_<double> getBestFitRectangle<double>(const cv::Mat &corners, int _img_width, int _img_height, int border_size);
+	template cv::Rect_<float> getBestFitRectangle<float>(const cv::Mat &corners, int _img_width, int _img_height, int border_size);
 
 	template<typename ValT>
 	cv::Rect_<ValT> getBoundedRectangle(const cv::Rect_<ValT> &_in_rect,
@@ -153,6 +154,8 @@ namespace utils{
 	template cv::Rect_<int> getBoundedRectangle(const cv::Rect_<int> &_in_rect, int _img_width, int _img_height,
 		int border_size);
 	template cv::Rect_<double> getBoundedRectangle(const cv::Rect_<double> &_in_rect, int _img_width, int _img_height,
+		int border_size);
+	template cv::Rect_<float> getBoundedRectangle(const cv::Rect_<float> &_in_rect, int _img_width, int _img_height,
 		int border_size);
 
 

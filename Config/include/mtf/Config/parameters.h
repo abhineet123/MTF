@@ -238,6 +238,10 @@ namespace mtf{
 		int aff_normalized_init = 0;
 		int aff_pt_based_sampling = 0;
 
+		//! Lie Affine
+		int laff_normalized_init = 0;
+		double laff_grad_eps = 1e-8;
+
 		//! Homograhy
 		int hom_normalized_init = 0;
 		bool hom_corner_based_sampling = true;
@@ -1496,6 +1500,15 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "aff_pt_based_sampling")){
 				aff_pt_based_sampling = atoi(arg_val);
+				return;
+			}
+			//! Lie Affine
+			if(!strcmp(arg_name, "laff_normalized_init")){
+				laff_normalized_init = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "laff_grad_eps")){
+				laff_grad_eps = atof(arg_val);
 				return;
 			}
 			//! Homography

@@ -76,8 +76,8 @@ namespace nt{
 
 		for(int pt_id = 0; pt_id < n_pts; pt_id++){
 			Vector2d patch_centroid = ssm->getPts().col(pt_id);
-			prev_pts[pt_id].x = patch_centroid(0);
-			prev_pts[pt_id].y = patch_centroid(1);
+			prev_pts[pt_id].x = static_cast<float>(patch_centroid(0));
+			prev_pts[pt_id].y = static_cast<float>(patch_centroid(1));
 		}
 		am->getCurrImg().copyTo(prev_img);
 
@@ -119,8 +119,8 @@ namespace nt{
 	void GridTrackerFlow::setRegion(const cv::Mat& corners) {
 		ssm->setCorners(corners);
 		for(int pt_id = 0; pt_id < n_pts; pt_id++){
-			prev_pts[pt_id].x = ssm->getPts()(0, pt_id);
-			prev_pts[pt_id].y = ssm->getPts()(1, pt_id);
+			prev_pts[pt_id].x = static_cast<float>(ssm->getPts()(0, pt_id));
+			prev_pts[pt_id].y = static_cast<float>(ssm->getPts()(1, pt_id));
 		}
 		ssm->getCorners(cv_corners_mat);
 	}

@@ -34,7 +34,7 @@ namespace nt{
 		printf("ssm_state_size: %d\n", ssm_state_size);
 		printf("am_dist_size: %d\n", am_dist_size);
 
-		std::shared_ptr<const DistType> dist_func(am->getDistPtr());
+		std::shared_ptr<const DistType> dist_func(am->getDistFunc());
 		gnn_index.reset(new GNN(dist_func, params.n_samples, am_dist_size,
 			am->isSymmetrical(), &params.gnn));
 

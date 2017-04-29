@@ -42,20 +42,20 @@ struct CCREParams : AMParams{
 struct CCREDist : AMDist{
 	typedef double ElementType;
 	typedef double ResultType;
-	CCREDist(const string &_name, int _n_bins,
-		unsigned int _feat_size, unsigned int _patch_size,
-		double _hist_pre_seed, double _pre_seed,
-		const int *__std_bspl_ids, double _hist_norm_mult,
-		double _log_hist_norm_mult);
+	CCREDist(const string &_name, const int _n_bins,
+		const unsigned int _feat_size, const unsigned int _patch_size,
+		const double _hist_pre_seed, const double _pre_seed,
+		const MatrixX2i *_std_bspl_ids, const double _hist_norm_mult,
+		const double _log_hist_norm_mult);
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 private:
-	int n_bins;
-	unsigned int feat_size;
-	unsigned int patch_size;
-	double pre_seed, hist_pre_seed;
-	const int *_std_bspl_ids;
-	double hist_norm_mult, log_hist_norm_mult;
+	const int n_bins;
+	const unsigned int feat_size;
+	const unsigned int patch_size;
+	const double pre_seed, hist_pre_seed;
+	const MatrixX2i *std_bspl_ids;
+	const double hist_norm_mult, log_hist_norm_mult;
 };
 
 
@@ -97,12 +97,10 @@ public:
 		const MatrixXd &curr_pix_hessian) override;
 
 	//-----------------------------------FLANN support-----------------------------------//
-	int feat_size;
-	VectorXd feat_vec;
-	const DistType* getDistPtr() override{
+	const DistType* getDistFunc() override{
 		return new DistType(name, params.n_bins, feat_size,
 			patch_size, hist_pre_seed, params.pre_seed,
-			_std_bspl_ids.data(), hist_norm_mult, log_hist_norm_mult);
+			&std_bspl_ids, hist_norm_mult, log_hist_norm_mult);
 	}
 	void initializeDistFeat() override{
 		feat_vec.resize(feat_size);
@@ -159,11 +157,14 @@ protected:
 	MatrixXd self_cum_joint_hist, self_cum_joint_hist_log;
 	MatrixXd self_ccre_log_term;
 
+	int feat_size;
+	VectorXd feat_vec;
+
 	//! only used internally to increase speed by offlining as many computations as possible;
-	MatrixX2i _std_bspl_ids;
-	MatrixX2i _init_bspl_ids;
-	MatrixX2i _curr_bspl_ids;
-	MatrixXi _linear_idx, _linear_idx2;
+	MatrixX2i std_bspl_ids;
+	MatrixX2i init_bspl_ids;
+	MatrixX2i curr_bspl_ids;
+	MatrixXi linear_idx, linear_idx2;
 
 	MatrixX2i block_extents;
 	char *log_fname;

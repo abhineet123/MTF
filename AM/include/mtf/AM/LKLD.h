@@ -41,12 +41,12 @@ struct LKLDParams : AMParams{
 struct LKLDDist : AMDist{
 	typedef double ElementType;
 	typedef double ResultType;
-	LKLDDist(const string &_name, unsigned int _feat_size) :
+	LKLDDist(const string &_name, const unsigned int _feat_size) :
 		AMDist(_name), feat_size(_feat_size){}
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 private:
-	unsigned int feat_size;
+	const unsigned int feat_size;
 };
 
 
@@ -85,7 +85,7 @@ public:
 	/**
 	Support for FLANN library
 	*/
-	const DistType* getDistPtr() override{
+	const DistType* getDistFunc() override{
 		return new DistType(name, feat_size);
 	}
 	void initializeDistFeat() override;

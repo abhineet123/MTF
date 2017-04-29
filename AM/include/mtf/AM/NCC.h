@@ -19,13 +19,13 @@ struct NCCDist : AMDist{
 	typedef bool is_kdtree_distance;
 	typedef double ElementType;
 	typedef double ResultType;
-	NCCDist(const string &_name, unsigned int _patch_size) : 
+	NCCDist(const string &_name, const unsigned int _patch_size) :
 		AMDist(_name), patch_size(_patch_size){}
 	double operator()(const double* a, const double* b,
 		size_t size, double worst_dist = -1) const override;
 	double accum_dist(const double& a, const double& b, int) const{ return -a*b; }
 private:
-	unsigned int patch_size;
+	const unsigned int patch_size;
 };
 
 //! Normalized Cross Correlation
@@ -74,7 +74,7 @@ public:
 
 	/*Support for FLANN library*/
 	VectorXd curr_feat_vec;
-	const DistType* getDistPtr() override{
+	const DistType* getDistFunc() override{
 		return new DistType(name, patch_size);
 	}
 	void updateDistFeat(double* feat_addr) override;

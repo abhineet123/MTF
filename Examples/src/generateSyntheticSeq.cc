@@ -109,8 +109,8 @@ int main(int argc, char * argv[]) {
 
 	double font_size = 1.00;
 
-	resx = size_x;
-	resy = size_y;
+	resx = static_cast<unsigned int>(size_x);
+	resy = static_cast<unsigned int>(size_y);
 
 	mtf::SSM ssm(mtf::getSSM(syn_ssm.c_str()));
 	if(!ssm){

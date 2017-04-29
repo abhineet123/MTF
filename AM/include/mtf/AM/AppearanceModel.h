@@ -61,74 +61,6 @@ where p_ssm and p_am are respectively the geometric and photometric parameters t
 Appearance Model corresponds to the similarity function f.
 */
 class AppearanceModel : public ImageBase{
-protected:
-	/**
-	f(I_0, I_t, p_am): R(N) x R(N) x R(K) -> R
-	measures the similarity between the current (I_t) and
-	initial (I_0) patches using the photometric parameters (p_am)
-	this is the quantity to be maximized by the optimization process
-	*/
-	double f;
-
-	/**
-	1 x N gradients of the similarity
-	w.r.t. initial and current pixel values;
-	*/
-	RowVectorXd df_dI0, df_dIt;
-
-	/** parameters of the photomtric model */
-	VectorXd p_am;
-
-	/** size of p_am, i.e. number of parameters in the similarity function */
-	int state_size;
-
-	/** 1 x K Jacobian of the similarity function w.r.t. its parameters */
-	RowVectorXd df_dpam;
-
-	/** K x K Hessian of the similarity w.r.t. its parameters */
-	MatrixXd d2f_dpam2;
-
-	/**
-	1 x N gradient of the similarity w.r.t. illumination model
-	if such a one is used: f->f(I_0, g(I_t, p_am))
-	*/
-	RowVectorXd df_dg0, df_dgt;
-
-	/**
-	K x N cross Hessian of the similarity
-	w.r.t. photomtric parameters p_am and the current patch  I_t
-	assuming again that an illumination model is in use;
-	*/
-	MatrixXd d2f_dpam_dIt;
-
-	/**
-	these NxN Hessians of the similarity wrt pixel values are usually not stored or computed explicitly because:
-	1. the matrices are just too large for higher sampling resolutions
-	2. they are often very sparse so allocating so much space is wasteful
-	3. computing the Hessian wrt SSM parameters by multiplying this matrix with the SSM Hessian is highly inefficient is highly inefficient
-	*/
-	MatrixXd d2f_dI02, d2f_dIt2;
-
-	/**
-	indicator variable that can be set by iterative search methods to indicate if the initial or first iteration is being run on the current image;
-	can be used to perform some costly operations/updates only once per frame rather than at every iteration
-	*/
-	bool first_iter;
-
-	/**
-	pixels corresponding to false entries in the mask will be ignored in all respective computations where pixel values are used;
-	it is up to the AM to do this in a way that makes sense; since none of the state variables are actually being resized they will
-	still have entries corresponding to these ignored pixels but the AM s at liberty to put anything there assuming
-	that the SM will not use these entries in its own computations; this is why all of these have default implementations that simply ignore the mask;
-	these can be used by the AM when the non masked entries of the computed variable do not depend on the masked pixels;
-	*/
-	const bool *spi_mask;
-
-	/**
-	indicator variables used to keep track of which state variables have been initialized;
-	*/
-	AMStatus is_initialized;
-
 public:
 	/** name of the appearance model */
 	string name;
@@ -358,8 +290,8 @@ public:
 	virtual unsigned int getDistFeatSize() {
 		am_func_not_implemeted(getDistFeatSize);
 	}
-	virtual const AMDist* getDistPtr() {
-		am_func_not_implemeted(getDistPtr);
+	virtual const AMDist* getDistFunc() {
+		am_func_not_implemeted(getDistFunc);
 	}
 
 	// -------------------------------------------------------------------------- //
@@ -391,6 +323,74 @@ public:
 	}
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+protected:
+	/**
+	f(I_0, I_t, p_am): R(N) x R(N) x R(K) -> R
+	measures the similarity between the current (I_t) and
+	initial (I_0) patches using the photometric parameters (p_am)
+	this is the quantity to be maximized by the optimization process
+	*/
+	double f;
+
+	/**
+	1 x N gradients of the similarity
+	w.r.t. initial and current pixel values;
+	*/
+	RowVectorXd df_dI0, df_dIt;
+
+	/** parameters of the photomtric model */
+	VectorXd p_am;
+
+	/** size of p_am, i.e. number of parameters in the similarity function */
+	int state_size;
+
+	/** 1 x K Jacobian of the similarity function w.r.t. its parameters */
+	RowVectorXd df_dpam;
+
+	/** K x K Hessian of the similarity w.r.t. its parameters */
+	MatrixXd d2f_dpam2;
+
+	/**
+	1 x N gradient of the similarity w.r.t. illumination model
+	if such a one is used: f->f(I_0, g(I_t, p_am))
+	*/
+	RowVectorXd df_dg0, df_dgt;
+
+	/**
+	K x N cross Hessian of the similarity
+	w.r.t. photomtric parameters p_am and the current patch  I_t
+	assuming again that an illumination model is in use;
+	*/
+	MatrixXd d2f_dpam_dIt;
+
+	/**
+	these NxN Hessians of the similarity wrt pixel values are usually not stored or computed explicitly because:
+	1. the matrices are just too large for higher sampling resolutions
+	2. they are often very sparse so allocating so much space is wasteful
+	3. computing the Hessian wrt SSM parameters by multiplying this matrix with the SSM Hessian is highly inefficient is highly inefficient
+	*/
+	MatrixXd d2f_dI02, d2f_dIt2;
+
+	/**
+	indicator variable that can be set by iterative search methods to indicate if the initial or first iteration is being run on the current image;
+	can be used to perform some costly operations/updates only once per frame rather than at every iteration
+	*/
+	bool first_iter;
+
+	/**
+	pixels corresponding to false entries in the mask will be ignored in all respective computations where pixel values are used;
+	it is up to the AM to do this in a way that makes sense; since none of the state variables are actually being resized they will
+	still have entries corresponding to these ignored pixels but the AM s at liberty to put anything there assuming
+	that the SM will not use these entries in its own computations; this is why all of these have default implementations that simply ignore the mask;
+	these can be used by the AM when the non masked entries of the computed variable do not depend on the masked pixels;
+	*/
+	const bool *spi_mask;
+
+	/**
+	indicator variables used to keep track of which state variables have been initialized;
+	*/
+	AMStatus is_initialized;
 };
 
 _MTF_END_NAMESPACE

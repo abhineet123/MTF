@@ -51,14 +51,14 @@ debug_mode(CCRE_DEBUG_MODE){
 	}
 }
 
-CCREDist::CCREDist(const string &_name, int _n_bins,
-	unsigned int _feat_size, unsigned int _patch_size,
-	double _hist_pre_seed, double _pre_seed,
-	const int *__std_bspl_ids, double _hist_norm_mult,
-	double _log_hist_norm_mult) :
+CCREDist::CCREDist(const string &_name, const int _n_bins,
+	const unsigned int _feat_size, const unsigned int _patch_size,
+	const double _hist_pre_seed, const double _pre_seed,
+	const MatrixX2i *_std_bspl_ids, const double _hist_norm_mult,
+	const double _log_hist_norm_mult) :
 	AMDist(_name), n_bins(_n_bins), feat_size(_feat_size),
 	patch_size(_patch_size), pre_seed(_pre_seed),
-	hist_pre_seed(_hist_pre_seed), _std_bspl_ids(__std_bspl_ids),
+	hist_pre_seed(_hist_pre_seed), std_bspl_ids(_std_bspl_ids),
 	hist_norm_mult(_hist_norm_mult),
 	log_hist_norm_mult(_log_hist_norm_mult){}
 
@@ -115,18 +115,18 @@ params(ccre_params){
 	/* denominator of this factor is equal to the sum of all entries in the individual histograms,
 	so multiplying hist with this factor will give the normalized hist whose entries sum to 1*/
 
-	_std_bspl_ids.resize(params.n_bins, Eigen::NoChange);
+	std_bspl_ids.resize(params.n_bins, Eigen::NoChange);
 	// _linear_idx(i, j) stores the linear index of element (i,j) of a matrix
 	// of dimensions params.n_bins x params.n_bins if it is to be flattened into a vector
 	// in row major order; _linear_idx2 stores these for column major order flattening;
-	_linear_idx.resize(params.n_bins, params.n_bins);
-	_linear_idx2.resize(params.n_bins, params.n_bins);
+	linear_idx.resize(params.n_bins, params.n_bins);
+	linear_idx2.resize(params.n_bins, params.n_bins);
 
 	for(int bin_id = 0; bin_id < params.n_bins; bin_id++) {
-		_std_bspl_ids(bin_id, 0) = max(0, bin_id - 1);
-		_std_bspl_ids(bin_id, 1) = min(params.n_bins - 1, bin_id + 2);
+		std_bspl_ids(bin_id, 0) = max(0, bin_id - 1);
+		std_bspl_ids(bin_id, 1) = min(params.n_bins - 1, bin_id + 2);
 		for(int j = 0; j < params.n_bins; j++) {
-			_linear_idx2(j, bin_id) = _linear_idx(bin_id, j) = bin_id * params.n_bins + j;
+			linear_idx2(j, bin_id) = linear_idx(bin_id, j) = bin_id * params.n_bins + j;
 		}
 	}
 	int pix_per_block = patch_size / params.n_blocks;
@@ -162,7 +162,7 @@ void CCRE::initializeSimilarity(){
 		init_hist_mat.resize(params.n_bins, patch_size);
 		init_hist_log.resize(params.n_bins);
 
-		_init_bspl_ids.resize(patch_size, Eigen::NoChange);
+		init_bspl_ids.resize(patch_size, Eigen::NoChange);
 		init_hist_grad.resize(params.n_bins, patch_size);
 
 		init_cum_hist.resize(params.n_bins);
@@ -176,9 +176,9 @@ void CCRE::initializeSimilarity(){
 	init_hist_mat.setZero();
 	init_hist_grad.setZero();
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
-		_init_bspl_ids.row(pix_id) = _std_bspl_ids.row(static_cast<int>(I0(pix_id)));
-		double curr_diff = _init_bspl_ids(pix_id, 0) - I0(pix_id);
-		for(int hist_id = _init_bspl_ids(pix_id, 0); hist_id <= _init_bspl_ids(pix_id, 1); hist_id++) {
+		init_bspl_ids.row(pix_id) = std_bspl_ids.row(static_cast<int>(I0(pix_id)));
+		double curr_diff = init_bspl_ids(pix_id, 0) - I0(pix_id);
+		for(int hist_id = init_bspl_ids(pix_id, 0); hist_id <= init_bspl_ids(pix_id, 1); hist_id++) {
 			utils::bSpl3WithGrad(init_hist_mat(hist_id, pix_id), init_hist_grad(hist_id, pix_id), curr_diff);
 			init_hist_grad(hist_id, pix_id) *= -hist_norm_mult;
 			init_hist(hist_id) += init_hist_mat(hist_id, pix_id);
@@ -193,7 +193,7 @@ void CCRE::initializeSimilarity(){
 		init_cum_hist.fill(hist_pre_seed);
 		for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
 			int cum_hist_id = 0;
-			while(cum_hist_id < _init_bspl_ids(pix_id, 0)){
+			while(cum_hist_id < init_bspl_ids(pix_id, 0)){
 #ifndef CCRE_DISABLE_TRUE_CUM_HIST
 				init_cum_hist_grad(cum_hist_id, pix_id) = 0;
 				init_cum_hist(cum_hist_id) += init_cum_hist_mat(cum_hist_id, pix_id) = 1;
@@ -203,7 +203,7 @@ void CCRE::initializeSimilarity(){
 				++cum_hist_id;
 			}
 			double curr_diff = cum_hist_id - I0(pix_id);
-			while(cum_hist_id <= _init_bspl_ids(pix_id, 1)){
+			while(cum_hist_id <= init_bspl_ids(pix_id, 1)){
 				utils::cumBSpl3WithGrad(init_cum_hist_mat(cum_hist_id, pix_id), init_cum_hist_grad(cum_hist_id, pix_id), curr_diff);
 				init_cum_hist_grad(cum_hist_id, pix_id) *= -hist_norm_mult;
 				init_cum_hist(cum_hist_id) += init_cum_hist_mat(cum_hist_id, pix_id);
@@ -233,17 +233,17 @@ void CCRE::initializeSimilarity(){
 		cum_joint_hist.fill(params.pre_seed);
 		init_cum_joint_hist_grad.setZero();
 		for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
-			for(int hist_id = _init_bspl_ids(pix_id, 0); hist_id <= _init_bspl_ids(pix_id, 1); ++hist_id) {
+			for(int hist_id = init_bspl_ids(pix_id, 0); hist_id <= init_bspl_ids(pix_id, 1); ++hist_id) {
 				int cum_hist_id = 0;
-				while(cum_hist_id < _init_bspl_ids(pix_id, 0)){
+				while(cum_hist_id < init_bspl_ids(pix_id, 0)){
 #ifndef CCRE_DISABLE_TRUE_CUM_HIST
 					cum_joint_hist(cum_hist_id, hist_id) += init_hist_mat(hist_id, pix_id);
 #endif
 					++cum_hist_id;
 				}
-				while(cum_hist_id <= _init_bspl_ids(pix_id, 1)){
+				while(cum_hist_id <= init_bspl_ids(pix_id, 1)){
 					cum_joint_hist(cum_hist_id, hist_id) += init_cum_hist_mat(cum_hist_id, pix_id) * init_hist_mat(hist_id, pix_id);
-					init_cum_joint_hist_grad(_linear_idx(cum_hist_id, hist_id), pix_id) =
+					init_cum_joint_hist_grad(linear_idx(cum_hist_id, hist_id), pix_id) =
 						init_cum_hist_grad(cum_hist_id, pix_id) * init_hist_mat(hist_id, pix_id);
 					++cum_hist_id;
 				}
@@ -264,7 +264,7 @@ void CCRE::initializeSimilarity(){
 		curr_hist = init_hist;
 		curr_hist_mat = init_hist_mat;
 		curr_hist_grad = init_hist_grad;
-		_curr_bspl_ids = _init_bspl_ids;
+		curr_bspl_ids = init_bspl_ids;
 		curr_hist_log = init_hist_log;
 
 		curr_cum_hist = init_cum_hist;
@@ -293,9 +293,9 @@ void CCRE::initializeGrad(){
 
 		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
 			df_dI0(patch_id) = 0;
-			for(int id1 = _init_bspl_ids(patch_id, 0); id1 <= _init_bspl_ids(patch_id, 1); id1++) {
-				for(int id2 = _init_bspl_ids(patch_id, 0); id2 <= _init_bspl_ids(patch_id, 1); id2++) {
-					df_dI0(patch_id) += init_cum_joint_hist_grad(_linear_idx(id1, id2), patch_id) * ccre_log_term(id1, id2);
+			for(int id1 = init_bspl_ids(patch_id, 0); id1 <= init_bspl_ids(patch_id, 1); id1++) {
+				for(int id2 = init_bspl_ids(patch_id, 0); id2 <= init_bspl_ids(patch_id, 1); id2++) {
+					df_dI0(patch_id) += init_cum_joint_hist_grad(linear_idx(id1, id2), patch_id) * ccre_log_term(id1, id2);
 				}
 			}
 		}
@@ -333,14 +333,14 @@ void CCRE::updateSimilarity(bool prereq_only){
 		curr_cum_hist_grad.setZero();
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
 		for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
-			_curr_bspl_ids.row(pix_id) = _std_bspl_ids.row(static_cast<int>(It(pix_id)));
+			curr_bspl_ids.row(pix_id) = std_bspl_ids.row(static_cast<int>(It(pix_id)));
 			int curr_id = 0;
-			while(curr_id < _curr_bspl_ids(pix_id, 0)){
+			while(curr_id < curr_bspl_ids(pix_id, 0)){
 #ifndef CCRE_DISABLE_TRUE_CUM_HIST
 				// curr_cum_hist_mat is unity and curr_cum_hist_grad is zero but the latter has already been zeroed
 				curr_cum_hist_mat(curr_id, pix_id) = 1;
 				++curr_cum_hist(curr_id);
-				for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
+				for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
 					cum_joint_hist(curr_id, init_id) += init_hist_mat(init_id, pix_id);
 			}
 #else
@@ -349,12 +349,12 @@ void CCRE::updateSimilarity(bool prereq_only){
 				++curr_id;
 			}
 			double curr_diff = curr_id - It(pix_id);
-			while(curr_id <= _curr_bspl_ids(pix_id, 1)){
+			while(curr_id <= curr_bspl_ids(pix_id, 1)){
 				utils::cumBSpl3WithGrad(curr_cum_hist_mat(curr_id, pix_id), curr_cum_hist_grad(curr_id, pix_id), curr_diff);
 				curr_cum_hist_grad(curr_id, pix_id) *= -hist_norm_mult;
 
 				curr_cum_hist(curr_id) += curr_cum_hist_mat(curr_id, pix_id);
-				for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
+				for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
 					cum_joint_hist(curr_id, init_id) += curr_cum_hist_mat(curr_id, pix_id) * init_hist_mat(init_id, pix_id);
 				}
 				++curr_diff;
@@ -364,14 +364,14 @@ void CCRE::updateSimilarity(bool prereq_only){
 	} else{
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
 		for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
-			_curr_bspl_ids.row(pix_id) = _std_bspl_ids.row(static_cast<int>(It(pix_id)));
+			curr_bspl_ids.row(pix_id) = std_bspl_ids.row(static_cast<int>(It(pix_id)));
 			int curr_id = 0;
-			while(curr_id < _curr_bspl_ids(pix_id, 0)){
+			while(curr_id < curr_bspl_ids(pix_id, 0)){
 #ifndef CCRE_DISABLE_TRUE_CUM_HIST
 				//! curr_cum_hist_mat is unity
 				curr_cum_hist_mat(curr_id, pix_id) = 1;
 				++curr_cum_hist(curr_id);
-				for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
+				for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
 					cum_joint_hist(curr_id, init_id) += init_hist_mat(init_id, pix_id);
 				}
 #else
@@ -380,10 +380,10 @@ void CCRE::updateSimilarity(bool prereq_only){
 				++curr_id;
 			}
 			double curr_diff = curr_id - It(pix_id);
-			while(curr_id <= _curr_bspl_ids(pix_id, 1)){
+			while(curr_id <= curr_bspl_ids(pix_id, 1)){
 				curr_cum_hist_mat(curr_id, pix_id) = utils::cumBSpl3(curr_diff);
 				curr_cum_hist(curr_id) += curr_cum_hist_mat(curr_id, pix_id);
-				for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
+				for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
 					cum_joint_hist(curr_id, init_id) += curr_cum_hist_mat(curr_id, pix_id) * init_hist_mat(init_id, pix_id);
 				}
 				++curr_diff;
@@ -429,11 +429,11 @@ void CCRE::updateInitGrad(){
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		df_dI0(pix_id) = 0;
-		for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
+		for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
 			int curr_id = 0;
-			while(curr_id < _curr_bspl_ids(pix_id, 0)){
+			while(curr_id < curr_bspl_ids(pix_id, 0)){
 #ifndef CCRE_DISABLE_TRUE_CUM_HIST
-				int joint_id = _linear_idx(curr_id, init_id);
+				int joint_id = linear_idx(curr_id, init_id);
 				init_cum_joint_hist_grad(joint_id, pix_id) = init_hist_grad(init_id, pix_id);
 				df_dI0(pix_id) += init_cum_joint_hist_grad(joint_id, pix_id) * (1 + ccre_log_term(curr_id, init_id))
 					- cum_joint_hist(curr_id, init_id) * init_hist_grad_ratio(init_id, pix_id);
@@ -442,8 +442,8 @@ void CCRE::updateInitGrad(){
 #endif
 				++curr_id;
 			}
-			while(curr_id <= _curr_bspl_ids(pix_id, 1)){
-				int joint_id = _linear_idx(curr_id, init_id);
+			while(curr_id <= curr_bspl_ids(pix_id, 1)){
+				int joint_id = linear_idx(curr_id, init_id);
 				init_cum_joint_hist_grad(joint_id, pix_id) = curr_cum_hist_mat(curr_id, pix_id) * init_hist_grad(init_id, pix_id);
 				df_dI0(pix_id) += init_cum_joint_hist_grad(joint_id, pix_id) * (1 + ccre_log_term(curr_id, init_id))
 					- cum_joint_hist(curr_id, init_id) * init_hist_grad_ratio(init_id, pix_id);
@@ -460,9 +460,9 @@ void CCRE::updateCurrGrad(){
 	curr_cum_joint_hist_grad.setZero();
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		df_dIt(pix_id) = 0;
-		for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
-			for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
-				int joint_id = _linear_idx(curr_id, init_id);
+		for(int curr_id = curr_bspl_ids(pix_id, 0); curr_id <= curr_bspl_ids(pix_id, 1); curr_id++) {
+			for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
+				int joint_id = linear_idx(curr_id, init_id);
 				curr_cum_joint_hist_grad(joint_id, pix_id) = curr_cum_hist_grad(curr_id, pix_id) * init_hist_mat(init_id, pix_id);
 				df_dIt(pix_id) += curr_cum_joint_hist_grad(joint_id, pix_id) * ccre_log_term(curr_id, init_id);
 			}
@@ -502,11 +502,11 @@ void CCRE::initializeHess(){
 			// output arguments
 			init_cum_hist_hess,
 			// input arguments
-			I0, _init_bspl_ids,
+			I0, init_bspl_ids,
 			patch_size, hist_norm_mult
 			);
 	} else{
-		utils::getBSplHistHess(init_hist_hess, I0, _init_bspl_ids, patch_size, hist_norm_mult);
+		utils::getBSplHistHess(init_hist_hess, I0, init_bspl_ids, patch_size, hist_norm_mult);
 		init_hist_hess_ratio = init_hist_hess.array().colwise() / init_hist.array();
 	}
 
@@ -527,7 +527,7 @@ void  CCRE::cmptInitHessian(MatrixXd &hessian, const MatrixXd &init_pix_jacobian
 		cum_joint_hist_sum(init_id) = 0;
 		for(int curr_id = 0; curr_id < params.n_bins; curr_id++) {
 			double joint_hist = cum_joint_hist(curr_id, init_id);
-			int joint_id = _linear_idx(curr_id, init_id);
+			int joint_id = linear_idx(curr_id, init_id);
 
 			hessian += cum_joint_hist_jac.row(joint_id).transpose()*
 				(cum_joint_hist_jac.row(joint_id) / joint_hist
@@ -540,7 +540,7 @@ void  CCRE::cmptInitHessian(MatrixXd &hessian, const MatrixXd &init_pix_jacobian
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double scalar_term = 0;
-		for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
+		for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
 			for(int curr_id = 0; curr_id < params.n_bins; curr_id++) {
 				double joint_hist_hess = init_hist_hess(init_id, pix_id) * curr_cum_hist_mat(curr_id, pix_id);
 				scalar_term += joint_hist_hess*(ccre_log_term(curr_id, init_id) + 1);
@@ -566,12 +566,12 @@ void  CCRE::cmptCurrHessian(MatrixXd &hessian, const MatrixXd &curr_pix_jacobian
 
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
-		double curr_diff = _curr_bspl_ids(pix_id, 0) - It(pix_id);
+		double curr_diff = curr_bspl_ids(pix_id, 0) - It(pix_id);
 		double hist_hess_term = 0;
-		for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
+		for(int curr_id = curr_bspl_ids(pix_id, 0); curr_id <= curr_bspl_ids(pix_id, 1); curr_id++) {
 			double inner_term = 0;
-			for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
-				int joint_id = _linear_idx(curr_id, init_id);
+			for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
+				int joint_id = linear_idx(curr_id, init_id);
 				joint_hist_jacobian.row(joint_id) += curr_cum_joint_hist_grad(joint_id, pix_id)*curr_pix_jacobian.row(pix_id);
 				inner_term += init_hist_mat(init_id, pix_id) * ccre_log_term(curr_id, init_id);
 			}
@@ -584,7 +584,7 @@ void  CCRE::cmptCurrHessian(MatrixXd &hessian, const MatrixXd &curr_pix_jacobian
 
 	for(int curr_id = 0; curr_id < params.n_bins; curr_id++){
 		for(int init_id = 0; init_id < params.n_bins; init_id++){
-			int joint_id = _linear_idx(curr_id, init_id);
+			int joint_id = linear_idx(curr_id, init_id);
 			double hist_factor = (1.0 / cum_joint_hist(curr_id, init_id)) - (1.0 / curr_cum_hist(curr_id));
 			hessian += joint_hist_jacobian.row(joint_id).transpose() * joint_hist_jacobian.row(joint_id) * hist_factor;
 		}
@@ -600,19 +600,19 @@ void CCRE::cmptCumSelfHist(){
 
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
-		double curr_diff = _curr_bspl_ids(pix_id, 0) - It(pix_id);
-		for(int hist_id = _curr_bspl_ids(pix_id, 0); hist_id <= _curr_bspl_ids(pix_id, 1); ++hist_id) {
+		double curr_diff = curr_bspl_ids(pix_id, 0) - It(pix_id);
+		for(int hist_id = curr_bspl_ids(pix_id, 0); hist_id <= curr_bspl_ids(pix_id, 1); ++hist_id) {
 			curr_hist_mat(hist_id, pix_id) = utils::bSpl3(curr_diff);
 			curr_cum_hist_hess(hist_id, pix_id) = hist_norm_mult*utils::cumBSpl3Hess(curr_diff);
 			++curr_diff;
 			curr_hist(hist_id) += curr_hist_mat(hist_id, pix_id);
 
 			int cum_hist_id = 0;
-			while(cum_hist_id < _curr_bspl_ids(pix_id, 0)){
+			while(cum_hist_id < curr_bspl_ids(pix_id, 0)){
 				self_cum_joint_hist(cum_hist_id, hist_id) += curr_hist_mat(hist_id, pix_id);
 				++cum_hist_id;
 			}
-			while(cum_hist_id <= _curr_bspl_ids(pix_id, 1)){
+			while(cum_hist_id <= curr_bspl_ids(pix_id, 1)){
 				self_cum_joint_hist(cum_hist_id, hist_id) += curr_cum_hist_mat(cum_hist_id, pix_id) * curr_hist_mat(hist_id, pix_id);
 				++cum_hist_id;
 			}
@@ -642,10 +642,10 @@ void CCRE::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jaco
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double hist_hess_term = 0;
-		for(int cum_hist_id = _curr_bspl_ids(pix_id, 0); cum_hist_id <= _curr_bspl_ids(pix_id, 1); ++cum_hist_id) {
+		for(int cum_hist_id = curr_bspl_ids(pix_id, 0); cum_hist_id <= curr_bspl_ids(pix_id, 1); ++cum_hist_id) {
 			double inner_term = 0;
-			for(int hist_id = _curr_bspl_ids(pix_id, 0); hist_id <= _curr_bspl_ids(pix_id, 1); ++hist_id) {
-				int joint_id = _linear_idx(cum_hist_id, hist_id);
+			for(int hist_id = curr_bspl_ids(pix_id, 0); hist_id <= curr_bspl_ids(pix_id, 1); ++hist_id) {
+				int joint_id = linear_idx(cum_hist_id, hist_id);
 				joint_hist_jacobian.row(joint_id) += curr_cum_hist_grad(cum_hist_id, pix_id) * curr_hist_mat(hist_id, pix_id) *
 					curr_pix_jacobian.row(pix_id);
 				inner_term += curr_hist_mat(hist_id, pix_id) * self_ccre_log_term(cum_hist_id, hist_id);
@@ -656,7 +656,7 @@ void CCRE::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jaco
 	}
 	for(int r = 0; r < params.n_bins; ++r){
 		for(int t = 0; t < params.n_bins; ++t){
-			int idx = _linear_idx(r, t);
+			int idx = linear_idx(r, t);
 			double hist_factor = (1.0 / self_cum_joint_hist(r, t)) - (1.0 / curr_cum_hist(r));
 			self_hessian += joint_hist_jacobian.row(idx).transpose() * joint_hist_jacobian.row(idx) * hist_factor;
 		}
@@ -671,20 +671,20 @@ void CCRE::updateSymSimilarity(bool prereq_only){
 	curr_hist_mat.setZero();
 	cum_joint_hist.fill(params.pre_seed);
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
-		double curr_diff = _curr_bspl_ids(pix_id, 0) - It(pix_id);
-		for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); ++curr_id) {
+		double curr_diff = curr_bspl_ids(pix_id, 0) - It(pix_id);
+		for(int curr_id = curr_bspl_ids(pix_id, 0); curr_id <= curr_bspl_ids(pix_id, 1); ++curr_id) {
 			curr_hist_mat(curr_id, pix_id) = utils::bSpl3(curr_diff);
 			++curr_diff;
 			curr_hist(curr_id) += curr_hist_mat(curr_id, pix_id);
 			int init_id = 0;
-			while(init_id < _init_bspl_ids(pix_id, 0)){
+			while(init_id < init_bspl_ids(pix_id, 0)){
 #ifndef CCRE_DISABLE_TRUE_CUM_HIST
 				// init_cum_hist_mat is unity
 				cum_joint_hist(init_id, curr_id) += curr_hist_mat(curr_id, pix_id);
 #endif
 				++init_id;
 			}
-			while(init_id <= _init_bspl_ids(pix_id, 1)){
+			while(init_id <= init_bspl_ids(pix_id, 1)){
 				cum_joint_hist(init_id, curr_id) += init_cum_hist_mat(init_id, pix_id) * curr_hist_mat(curr_id, pix_id);
 				++init_id;
 			}
@@ -710,9 +710,9 @@ void CCRE::updateSymInitGrad(){
 	init_cum_joint_hist_grad.setZero();
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
 		df_dI0(pix_id) = 0;
-		for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
-			for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
-				int joint_id = _linear_idx(init_id, curr_id);
+		for(int curr_id = curr_bspl_ids(pix_id, 0); curr_id <= curr_bspl_ids(pix_id, 1); curr_id++) {
+			for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
+				int joint_id = linear_idx(init_id, curr_id);
 				init_cum_joint_hist_grad(joint_id, pix_id) = init_cum_hist_grad(init_id, pix_id) * curr_hist_mat(curr_id, pix_id);
 				df_dI0(pix_id) += init_cum_joint_hist_grad(joint_id, pix_id) * ccre_log_term(init_id, curr_id);
 			}
@@ -732,10 +732,10 @@ void  CCRE::cmptSymInitHessian(MatrixXd &hessian, const MatrixXd &init_pix_jacob
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double hist_hess_term = 0;
-		for(int init_id = _init_bspl_ids(pix_id, 0); init_id <= _init_bspl_ids(pix_id, 1); init_id++) {
+		for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
 			double inner_term = 0;
-			for(int curr_id = _curr_bspl_ids(pix_id, 0); curr_id <= _curr_bspl_ids(pix_id, 1); curr_id++) {
-				int joint_id = _linear_idx(init_id, curr_id);
+			for(int curr_id = curr_bspl_ids(pix_id, 0); curr_id <= curr_bspl_ids(pix_id, 1); curr_id++) {
+				int joint_id = linear_idx(init_id, curr_id);
 				joint_hist_jacobian.row(joint_id) += init_cum_joint_hist_grad(joint_id, pix_id)*init_pix_jacobian.row(pix_id);
 				inner_term += curr_hist_mat(curr_id, pix_id) * ccre_log_term(init_id, curr_id);
 			}
@@ -745,7 +745,7 @@ void  CCRE::cmptSymInitHessian(MatrixXd &hessian, const MatrixXd &init_pix_jacob
 	}
 	for(int init_id = 0; init_id < params.n_bins; init_id++){
 		for(int curr_id = 0; curr_id < params.n_bins; curr_id++){
-			int joint_id = _linear_idx(init_id, curr_id);
+			int joint_id = linear_idx(init_id, curr_id);
 			double hist_factor = (1.0 / cum_joint_hist(init_id, curr_id)) - (1.0 / init_cum_hist(init_id));
 			hessian += joint_hist_jacobian.row(joint_id).transpose() * joint_hist_jacobian.row(joint_id) * hist_factor;
 		}
@@ -760,7 +760,7 @@ void CCRE::updateDistFeat(double* feat_addr){
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
 	for(size_t patch_id = 0; patch_id < patch_size; patch_id++) {
 		int pix_val_floor = static_cast<int>(It(patch_id));
-		double pix_diff = _std_bspl_ids(pix_val_floor, 0) - It(patch_id);
+		double pix_diff = std_bspl_ids(pix_val_floor, 0) - It(patch_id);
 		cum_hist_mat(0, patch_id) = pix_val_floor;
 		cum_hist_mat(1, patch_id) = utils::cumBSpl3(pix_diff);
 		cum_hist_mat(5, patch_id) = utils::bSpl3(pix_diff++);
@@ -826,10 +826,10 @@ void CCRE::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jaco
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double hist_hess_term = 0, hist_grad_term = 0;
-		for(int r = _curr_bspl_ids(pix_id, 0); r <= _curr_bspl_ids(pix_id, 1); r++) {
+		for(int r = curr_bspl_ids(pix_id, 0); r <= curr_bspl_ids(pix_id, 1); r++) {
 			double inner_term = 0;
-			for(int t = _curr_bspl_ids(pix_id, 0); t <= _curr_bspl_ids(pix_id, 1); t++) {
-				int idx = _linear_idx(r, t);
+			for(int t = curr_bspl_ids(pix_id, 0); t <= curr_bspl_ids(pix_id, 1); t++) {
+				int idx = linear_idx(r, t);
 				joint_hist_jacobian.row(idx) += curr_cum_hist_grad(r, pix_id) * curr_hist_mat(t, pix_id)*curr_pix_jacobian.row(pix_id);
 				inner_term += curr_hist_mat(t, pix_id) * self_ccre_log_term(r, t);
 			}
@@ -841,7 +841,7 @@ void CCRE::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jaco
 	}
 	for(int r = 0; r < params.n_bins; r++){
 		for(int t = 0; t < params.n_bins; t++){
-			int idx = _linear_idx(r, t);
+			int idx = linear_idx(r, t);
 			double hist_factor = (1.0 / self_cum_joint_hist(r, t)) - (1.0 / curr_cum_hist(r));
 			self_hessian += joint_hist_jacobian.row(idx).transpose() * joint_hist_jacobian.row(idx) * hist_factor;
 		}
@@ -866,14 +866,12 @@ double CCREDist::operator()(const double* hist1_mat_addr, const double* hist2_ma
 
 	Map<const MatrixXdr> cum_hist_mat(hist1_mat_addr, 9, patch_size);
 	Map<const MatrixXdr> hist_mat(hist2_mat_addr, 9, patch_size);
-	Map<const MatrixXi> std_bspl_ids(_std_bspl_ids, n_bins, 2);
 
 	//utils::printMatrixToFile(hist1_mat, "hist1_mat", "log/ccre_log.txt");
 	//utils::printMatrixToFile(hist2_mat, "hist2_mat", "log/ccre_log.txt");
 
-
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
-	for(size_t patch_id = 0; patch_id < patch_size; patch_id++) {
+	for(size_t patch_id = 0; patch_id < patch_size; ++patch_id) {
 		int pix1_floor = static_cast<int>(cum_hist_mat(0, patch_id));
 		int pix2_floor = static_cast<int>(hist_mat(0, patch_id));
 
@@ -882,9 +880,9 @@ double CCREDist::operator()(const double* hist1_mat_addr, const double* hist2_ma
 		//	utils::printMatrixToFile(hist2_mat, "hist2_mat", "log/ccre_log.txt");
 		//	printf("pix2_floor: %d\n", pix2_floor);
 		//}
-		int bspl_id11 = std_bspl_ids(pix1_floor, 0);
+		int bspl_id11 = (*std_bspl_ids)(pix1_floor, 0);
 		int bspl_id12 = bspl_id11 + 1, bspl_id13 = bspl_id11 + 2, bspl_id14 = bspl_id11 + 3;
-		int bspl_id21 = std_bspl_ids(pix2_floor, 0);
+		int bspl_id21 = (*std_bspl_ids)(pix2_floor, 0);
 		int bspl_id22 = bspl_id21 + 1, bspl_id23 = bspl_id21 + 2, bspl_id24 = bspl_id21 + 3;
 
 #ifdef CCRE_ENABLE_TRUE_DIST_FEAT
@@ -928,8 +926,8 @@ double CCREDist::operator()(const double* hist1_mat_addr, const double* hist2_ma
 	}
 
 	ResultType result = 0;
-	for(int id1 = 0; id1 < n_bins; id1++){
-		for(int id2 = 0; id2 < n_bins; id2++){
+	for(int id1 = 0; id1 < n_bins; ++id1){
+		for(int id2 = 0; id2 < n_bins; ++id2){
 			result -= cum_joint_hist(id1, id2) * (log(cum_joint_hist(id1, id2) / (cum_hist(id1) * hist(id2))) - log_hist_norm_mult);
 		}
 	}

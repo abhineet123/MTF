@@ -2,11 +2,12 @@
 #define MTF_PF_NT_H
 
 #include "SearchMethod.h"
+#include "mtf/SM/PFParams.h"
+
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/discrete_distribution.hpp>
-#include "mtf/SM/PFParams.h"
 
 _MTF_BEGIN_NAMESPACE
 namespace nt{

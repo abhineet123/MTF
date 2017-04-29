@@ -196,7 +196,7 @@ bool PFParams::processDistributions(vector<VectorXd> &state_sigma,
 				state_sigma[sampler_id].fill(ssm_sigma[sigma_id][0]);
 			} else if(ssm_sigma[sigma_id].size() < ssm_state_size){
 				throw std::invalid_argument(
-					cv::format("PFParams :: SSM sigma for distribution %d has invalid size: %d",
+					cv_format("PFParams :: SSM sigma for distribution %d has invalid size: %d",
 					sampler_id, ssm_sigma[sigma_id].size()));
 			} else{
 				state_sigma[sampler_id] = Map<const VectorXd>(ssm_sigma[sigma_id].data(), ssm_state_size);
@@ -206,7 +206,7 @@ bool PFParams::processDistributions(vector<VectorXd> &state_sigma,
 				state_mean[sampler_id].fill(ssm_mean[mean_id][0]);
 			} else if(ssm_mean[mean_id].size() < ssm_state_size){
 				throw std::invalid_argument(
-					cv::format("PFParams :: SSM mean for distribution %d has invalid size: %d",
+					cv_format("PFParams :: SSM mean for distribution %d has invalid size: %d",
 					sampler_id, ssm_mean[mean_id].size()));
 			} else{
 				state_mean[sampler_id] = Map<const VectorXd>(ssm_mean[mean_id].data(), ssm_state_size);
@@ -242,7 +242,7 @@ bool PFParams::processDistributions(vector<VectorXd> &state_sigma,
 	unsigned int n_residual_particles = static_cast<unsigned int>(n_particles - n_distr*particles_per_distr);
 	if(n_residual_particles >= n_distr){
 		throw std::logic_error(
-			cv::format("PFParams :: Residual particle count: %d exceeds the no. of distributions: %d",
+			cv_format("PFParams :: Residual particle count: %d exceeds the no. of distributions: %d",
 			n_residual_particles, n_distr));
 	}
 	//! distribute the residual samples evenly among the distributions;

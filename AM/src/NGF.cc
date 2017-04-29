@@ -24,8 +24,8 @@ use_ssd(NGF_USE_SSD){
 	}
 }
 
-NGFDist::NGFDist(const string &_name, bool _use_ssd,
-	unsigned int _patch_size) : AMDist(_name),
+NGFDist::NGFDist(const string &_name, const bool _use_ssd,
+	const unsigned int _patch_size) : AMDist(_name),
 	use_ssd(_use_ssd), patch_size(_patch_size){}
 
 NGF::NGF(const ParamType *ngf_params, const int _n_channels) :

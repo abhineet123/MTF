@@ -8,10 +8,6 @@ _MTF_BEGIN_NAMESPACE
 
 template<class AM, class SSM>
 class SearchMethod : public TrackerBase{
-protected:
-	AM am;
-	SSM ssm;
-
 public:
 
 	typedef typename  AM::ParamType AMParams;
@@ -45,7 +41,6 @@ public:
 	using TrackerBase::update;
 	using TrackerBase::setRegion;
 
-	const bool *spi_mask;
 	virtual void setSPIMask(const bool *_spi_mask){
 		spi_mask = _spi_mask;
 		am.setSPIMask(_spi_mask);
@@ -56,7 +51,9 @@ public:
 		am.clearSPIMask();
 		ssm.clearSPIMask();
 	}
-
+	virtual const bool* getSPIMask(){
+		return spi_mask;
+	}
 	virtual void setInitStatus(){
 		am.setInitStatus();
 		ssm.setInitStatus();
@@ -75,15 +72,16 @@ public:
 	virtual SSM& getSSM() { return ssm; }
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+protected:
+	AM am;
+	SSM ssm;
+	const bool *spi_mask;
 };
 // partial specialization for a SM with a 
 // composite or implicit appearance model that cannot be expressed as a class
 template <class SSM>
 class SearchMethod<void, SSM> : public TrackerBase{
-protected:
-
-	SSM ssm;
-
 public:
 
 	typedef typename SSM::ParamType SSMParams;
@@ -104,8 +102,6 @@ public:
 		ssm.setCorners(corners);
 		ssm.getCorners(cv_corners_mat);
 	}
-
-	const bool *spi_mask;
 	virtual void setSPIMask(const bool *_spi_mask){
 		spi_mask = _spi_mask;
 		ssm.setSPIMask(_spi_mask);
@@ -114,10 +110,17 @@ public:
 		spi_mask = nullptr;
 		ssm.clearSPIMask();
 	}
+	virtual const bool* getSPIMask(){
+		return spi_mask;
+	}
 	virtual bool supportsSPI(){ return ssm.supportsSPI(); }
 	virtual SSM& getSSM() { return ssm; }
 
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
+protected:
+	SSM ssm;
+	const bool *spi_mask;
 };
 
 _MTF_END_NAMESPACE

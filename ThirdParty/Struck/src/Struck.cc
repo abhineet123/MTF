@@ -44,7 +44,7 @@ namespace struck{
 
 		cv::resize(curr_img, curr_img_resized, cv::Size(conf.frameWidth, conf.frameHeight));
 
-		mtf::Rectd best_fit_rect = mtf::utils::getBestFitRectangle<double>(corners,
+		cv::Rect_<float> best_fit_rect = mtf::utils::getBestFitRectangle<float>(corners,
 			curr_img.cols, curr_img.rows);
 		printf("best_fit_rect: x: %f y:%f width: %f height: %f\n",
 			best_fit_rect.x, best_fit_rect.y, best_fit_rect.width, best_fit_rect.height);
@@ -52,7 +52,7 @@ namespace struck{
 		FloatRect init_bb = FloatRect(best_fit_rect.x*scaleW, best_fit_rect.y*scaleH, 
 			best_fit_rect.width*scaleW, best_fit_rect.height*scaleH);
 
-		printf("init_bb: xXMin %f YMin:%f width: %f height: %f\n",
+		printf("init_bb: XMin %f YMin:%f width: %f height: %f\n",
 			init_bb.XMin(), init_bb.YMin(), init_bb.Width(), init_bb.Height());
 
 		tracker.Initialise(curr_img_resized, init_bb);
