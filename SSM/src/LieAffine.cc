@@ -171,41 +171,28 @@ void LieAffine::getCurrPixGrad(Matrix2Xd &ssm_grad, int pt_id) {
 	double x = init_pts(0, pt_id);
 	double y = init_pts(1, pt_id);
 
-	double curr_x = curr_pts(0, pt_id);
-	double curr_y = curr_pts(1, pt_id);
-
-	double xx = x*curr_x, xy = x*curr_y, yy = y*curr_y, yx = y*curr_x;
-
 	Matrix3d curr_warp;
 	getWarpFromState(curr_warp, curr_state);
 	double a1 = curr_warp(0, 0), a2 = curr_warp(0, 1), a3 = curr_warp(0, 2);
 	double a4 = curr_warp(1, 0), a5 = curr_warp(1, 1), a6 = curr_warp(1, 2);
-	double a7 = curr_warp(2, 0), a8 = curr_warp(2, 1), a9 = curr_warp(2, 2);
 
-	double p11 = a1*x - a2*y - a7*xx + a8*yx;
-	double p12 = a1*y - a7*yx;
-	double p13 = a1 - a7*curr_x;
-	double p14 = a2*x - a8*xx;
-	double p15 = a2*y - a3 - a8*yx + a9*curr_x;
-	double p16 = a2 - a8*curr_x;
-	double p17 = a3*x - a9*xx;
-	double p18 = a3*y - a9*yx;
+	double p11 = a1*x + a2*y;
+	double p12 = a1*x - a2*y;
+	double p13 = a2*x - a1*y;
+	double p14 = a2*x + a1*y;
+	double p15 = a1;
+	double p16 = a2;
 
-	double p21 = a4*x - a5*y - a7*xy + a8*yy;
-	double p22 = a4*y - a7*yy;
-	double p23 = a4 - a7*curr_y;
-	double p24 = a5*x - a8*xy;
-	double p25 = a5*y - a6 - a8*yy + a9*curr_y;
-	double p26 = a5 - a8*curr_y;
-	double p27 = a6*x - a9*xy;
-	double p28 = a6*y - a9*yy;
+	double p21 = a4*x + a5*y;
+	double p22 = a4*x- a5*y;
+	double p23 = a5*x - a4*y;
+	double p24 = a5*x + a4*y;
+	double p25 = a4;
+	double p26 = a5;
 
 	ssm_grad <<
-		p11, p12, p13, p14, p15, p16, p17, p18,
-		p21, p22, p23, p24, p25, p26, p27, p28;
-
-	double inv_d = 1.0 / curr_pts_hm(2, pt_id);
-	ssm_grad *= inv_d;
+		p11, p12, p13, p14, p15, p16,
+		p21, p22, p23, p24, p25, p26;
 }
 
 void LieAffine::cmptInitPixJacobian(MatrixXd &dI_dp,
