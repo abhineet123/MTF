@@ -219,9 +219,9 @@ void ASRT::cmptApproxPixJacobian(MatrixXd &dI_dp, const PixGradT &dI_dx) {
 
 			dI_dp(ch_pt_id, 0) = Ix;
 			dI_dp(ch_pt_id, 1) = Iy;
-			dI_dp(ch_pt_id, 2) = Ix*x + Iy*y;
+			dI_dp(ch_pt_id, 2) = Ix*x;
 			dI_dp(ch_pt_id, 3) = Iy*x - Ix*y;
-			dI_dp(ch_pt_id, 3) = Iy*y;
+			dI_dp(ch_pt_id, 4) = Iy*y;
 
 			++ch_pt_id;
 		}

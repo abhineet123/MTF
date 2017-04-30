@@ -20,9 +20,10 @@ debug_mode(RIU_DEBUG){
 }
 
 RIUDist::RIUDist(const string &_name, const bool _dist_from_likelihood,
-	const double _likelihood_alpha) : AMDist(_name),
+	const double _likelihood_alpha,
+	const unsigned int _patch_size) : AMDist(_name),
 	dist_from_likelihood(_dist_from_likelihood),
-	likelihood_alpha(_likelihood_alpha){}
+	likelihood_alpha(_likelihood_alpha), patch_size(_patch_size){}
 
 RIU::RIU(const ParamType *riu_params, const int _n_channels) :
 AppearanceModel(riu_params, _n_channels), params(riu_params){
