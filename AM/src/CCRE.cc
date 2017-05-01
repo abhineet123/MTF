@@ -331,7 +331,9 @@ void CCRE::updateSimilarity(bool prereq_only){
 		to take advantage of the many common computations involved
 		*/
 		curr_cum_hist_grad.setZero();
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
+#endif	
 		for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 			curr_bspl_ids.row(pix_id) = std_bspl_ids.row(static_cast<int>(It(pix_id)));
 			int curr_id = 0;
@@ -362,7 +364,9 @@ void CCRE::updateSimilarity(bool prereq_only){
 			}
 		}
 	} else{
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
+#endif	
 		for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 			curr_bspl_ids.row(pix_id) = std_bspl_ids.row(static_cast<int>(It(pix_id)));
 			int curr_id = 0;
@@ -426,7 +430,9 @@ void CCRE::updateInitGrad(){
 	// compute differential of the current joint histogram w.r.t. initial pixel values simultaneously with init_grad;
 	// this does not need to be normalized since init_hist_grad has already been normalized
 	init_cum_joint_hist_grad.setZero();
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
+#endif	
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		df_dI0(pix_id) = 0;
 		for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
@@ -537,7 +543,9 @@ void  CCRE::cmptInitHessian(MatrixXd &hessian, const MatrixXd &init_pix_jacobian
 		}
 		hessian += cum_joint_hist_sum(init_id)*init_hist_grad_ratio_jac.row(init_id).transpose()*init_hist_grad_ratio_jac.row(init_id);
 	}
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
+#endif	
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double scalar_term = 0;
 		for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
@@ -564,7 +572,9 @@ void  CCRE::cmptCurrHessian(MatrixXd &hessian, const MatrixXd &curr_pix_jacobian
 	joint_hist_jacobian.setZero();
 	curr_cum_hist_hess.setZero();
 
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
+#endif	
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double curr_diff = curr_bspl_ids(pix_id, 0) - It(pix_id);
 		double hist_hess_term = 0;
@@ -598,7 +608,9 @@ void CCRE::cmptCumSelfHist(){
 	curr_hist_mat.setZero();
 	curr_cum_hist_hess.setZero();
 
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
+#endif	
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id) {
 		double curr_diff = curr_bspl_ids(pix_id, 0) - It(pix_id);
 		for(int hist_id = curr_bspl_ids(pix_id, 0); hist_id <= curr_bspl_ids(pix_id, 1); ++hist_id) {
@@ -639,7 +651,9 @@ void CCRE::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jaco
 	MatrixXd joint_hist_jacobian(joint_hist_size, ssm_state_size);
 	self_hessian.setZero();
 	joint_hist_jacobian.setZero();
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
+#endif	
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double hist_hess_term = 0;
 		for(int cum_hist_id = curr_bspl_ids(pix_id, 0); cum_hist_id <= curr_bspl_ids(pix_id, 1); ++cum_hist_id) {
@@ -727,9 +741,9 @@ void  CCRE::cmptSymInitHessian(MatrixXd &hessian, const MatrixXd &init_pix_jacob
 	MatrixXd joint_hist_jacobian(joint_hist_size, ssm_state_size);
 	joint_hist_jacobian.setZero();
 	hessian.setZero();
-
-
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
+#endif	
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double hist_hess_term = 0;
 		for(int init_id = init_bspl_ids(pix_id, 0); init_id <= init_bspl_ids(pix_id, 1); init_id++) {
@@ -757,7 +771,9 @@ void  CCRE::cmptSymInitHessian(MatrixXd &hessian, const MatrixXd &init_pix_jacob
 void CCRE::updateDistFeat(double* feat_addr){
 	MatrixXdMr cum_hist_mat(feat_addr, 9, patch_size);
 
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
+#endif	
 	for(size_t patch_id = 0; patch_id < patch_size; patch_id++) {
 		int pix_val_floor = static_cast<int>(It(patch_id));
 		double pix_diff = std_bspl_ids(pix_val_floor, 0) - It(patch_id);
@@ -821,9 +837,9 @@ void CCRE::cmptSelfHessian(MatrixXd &self_hessian, const MatrixXd &curr_pix_jaco
 	MatrixXd joint_hist_jacobian(joint_hist_size, ssm_state_size);
 	self_hessian.setZero();
 	joint_hist_jacobian.setZero();
-
-
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
+#endif	
 	for(unsigned int pix_id = 0; pix_id < patch_size; ++pix_id){
 		double hist_hess_term = 0, hist_grad_term = 0;
 		for(int r = curr_bspl_ids(pix_id, 0); r <= curr_bspl_ids(pix_id, 1); r++) {
@@ -869,8 +885,9 @@ double CCREDist::operator()(const double* hist1_mat_addr, const double* hist2_ma
 
 	//utils::printMatrixToFile(hist1_mat, "hist1_mat", "log/ccre_log.txt");
 	//utils::printMatrixToFile(hist2_mat, "hist2_mat", "log/ccre_log.txt");
-
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(CCRE_OMP_SCHD)
+#endif	
 	for(size_t patch_id = 0; patch_id < patch_size; ++patch_id) {
 		int pix1_floor = static_cast<int>(cum_hist_mat(0, patch_id));
 		int pix2_floor = static_cast<int>(hist_mat(0, patch_id));

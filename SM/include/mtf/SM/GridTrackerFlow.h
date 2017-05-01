@@ -49,6 +49,7 @@ private:
 	cv::Mat curr_pts_mat, prev_pts_mat;
 
 	std::vector<cv::Point2f> curr_pts, prev_pts;
+	std::vector<VectorXd> win_x, win_y;
 	int n_pts;
 	cv::Size search_window;
 	cv::TermCriteria lk_termination_criteria;

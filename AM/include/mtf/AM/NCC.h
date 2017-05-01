@@ -67,9 +67,11 @@ public:
 		cmptSelfHessian(self_hessian, curr_pix_jacobian);
 	}
 
-	void estimateOpticalFlow(std::vector<cv::Point2f> &out_pts, const cv::Mat &prev_img,
-		const std::vector<cv::Point2f> &prev_pts, cv::Size search_window, int n_pts,
-		int max_iters, double term_eps, bool const_grad=true) const override;
+	void estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, 
+		std::vector<VectorXd> &win_x, std::vector<VectorXd> &win_y,
+		const cv::Mat &prev_img, const std::vector<cv::Point2f> &prev_pts,
+		const cv::Size &win_size, unsigned int n_pts, int max_iters,
+		double term_eps, bool const_grad=true) const override;
 	void updateModel(const Matrix2Xd& curr_pts) override;
 
 	/*Support for FLANN library*/

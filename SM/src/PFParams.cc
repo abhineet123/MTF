@@ -4,83 +4,24 @@
 #define PF_MAX_ITERS 10
 #define PF_N_PARTICLES 200
 #define PF_EPSILON 0.01
-#define PF_DYN_MODEL 0
-#define PF_UPD_TYPE 0
+#define PF_DYNAMIC_MODEL 0
+#define PF_UPDATE_TYPE 0
 #define PF_LIKELIHOOD_FUNC 0
 #define PF_RESAMPLING_TYPE 0
-#define PF_RESET_TO_MEAN false
 #define PF_MEAN_TYPE 1
-#define PF_UPDATE_SAMPLER_WTS 0
+#define PF_RESET_TO_MEAN false
+#define PF_UPDATE_DISTR_WTS 0
 #define PF_MIN_DISTR_WT 0.5
 #define PF_ADAPTIVE_RESAMPLING_THRESH 0
 #define PF_CORNER_SIGMA_D 0.06
 #define PF_PIX_SIGMA 0.04
 #define PF_MEASUREMENT_SIGMA 0.1
 #define PF_SHOW_PARTICLES 0
-#define PF_UPDATE_TEMPLATE 0
+#define PF_ENABLE_LEARNING 0
 #define PF_JACOBIAN_AS_SIGMA false
 #define PF_DEBUG_MODE false
 
 _MTF_BEGIN_NAMESPACE
-
-const char* PFParams::toString(DynamicModel _dyn_model){
-	switch(_dyn_model){
-	case DynamicModel::RandomWalk:
-		return "RandomWalk";
-	case DynamicModel::AutoRegression1:
-		return "AutoRegression(1)";
-	default:
-		throw std::invalid_argument("Invalid dynamic model provided");
-	}
-}
-const char* PFParams::toString(UpdateType _upd_type){
-	switch(_upd_type){
-	case UpdateType::Additive:
-		return "Additive";
-	case UpdateType::Compositional:
-		return "Compositional";
-	default:
-		throw std::invalid_argument("Invalid dynamic model provided");
-	}
-}
-const char* PFParams::toString(ResamplingType _resampling_type){
-	switch(_resampling_type){
-	case ResamplingType::None:
-		return "None";
-	case ResamplingType::BinaryMultinomial:
-		return "BinaryMultinomial";
-	case ResamplingType::LinearMultinomial:
-		return "LinearMultinomial";
-	case ResamplingType::Residual:
-		return "Residual";
-	default:
-		throw std::invalid_argument("Invalid resampling type provided");
-	}
-}
-const char* PFParams::toString(LikelihoodFunc _likelihood_func){
-	switch(_likelihood_func){
-	case LikelihoodFunc::AM:
-		return "AM";
-	case LikelihoodFunc::Gaussian:
-		return "Gaussian";
-	case LikelihoodFunc::Reciprocal:
-		return "Reciprocal";
-	default:
-		throw std::invalid_argument("Invalid likelihood function provided");
-	}
-}
-const char* PFParams::toString(MeanType _likelihood_func){
-	switch(_likelihood_func){
-	case MeanType::None:
-		return "None";
-	case MeanType::SSM:
-		return "SSM";
-	case MeanType::Corners:
-		return "Corners";
-	default:
-		throw std::invalid_argument("Invalid mean type provided");
-	}
-}
 
 PFParams::PFParams(int _max_iters, int _n_particles, double _epsilon,
 	DynamicModel _dynamic_model, UpdateType _update_type,
@@ -119,19 +60,19 @@ PFParams::PFParams(const PFParams *params) :
 max_iters(PF_MAX_ITERS),
 n_particles(PF_N_PARTICLES),
 epsilon(PF_EPSILON),
-dynamic_model(static_cast<DynamicModel>(PF_DYN_MODEL)),
-update_type(static_cast<UpdateType>(PF_UPD_TYPE)),
+dynamic_model(static_cast<DynamicModel>(PF_DYNAMIC_MODEL)),
+update_type(static_cast<UpdateType>(PF_UPDATE_TYPE)),
 likelihood_func(static_cast<LikelihoodFunc>(PF_LIKELIHOOD_FUNC)),
 resampling_type(static_cast<ResamplingType>(PF_RESAMPLING_TYPE)),
 mean_type(static_cast<MeanType>(PF_MEAN_TYPE)),
 reset_to_mean(PF_RESET_TO_MEAN),
-update_distr_wts(PF_UPDATE_SAMPLER_WTS),
+update_distr_wts(PF_UPDATE_DISTR_WTS),
 min_distr_wt(PF_MIN_DISTR_WT),
 adaptive_resampling_thresh(PF_ADAPTIVE_RESAMPLING_THRESH),
 pix_sigma(PF_PIX_SIGMA),
 measurement_sigma(PF_MEASUREMENT_SIGMA),
 show_particles(PF_SHOW_PARTICLES),
-enable_learning(PF_UPDATE_TEMPLATE),
+enable_learning(PF_ENABLE_LEARNING),
 jacobian_as_sigma(PF_JACOBIAN_AS_SIGMA),
 debug_mode(PF_DEBUG_MODE){
 	if(params){
@@ -157,7 +98,6 @@ debug_mode(PF_DEBUG_MODE){
 		debug_mode = params->debug_mode;
 	}
 }
-
 
 bool PFParams::processDistributions(vector<VectorXd> &state_sigma,
 	vector<VectorXd> &state_mean, VectorXi &distr_n_samples,
@@ -250,6 +190,66 @@ bool PFParams::processDistributions(vector<VectorXd> &state_sigma,
 		++distr_n_samples[distr_id];
 	}
 	return using_pix_sigma;
+}
+
+
+const char* PFParams::toString(DynamicModel _dyn_model){
+	switch(_dyn_model){
+	case DynamicModel::RandomWalk:
+		return "RandomWalk";
+	case DynamicModel::AutoRegression1:
+		return "AutoRegression(1)";
+	default:
+		throw std::invalid_argument("Invalid dynamic model provided");
+	}
+}
+const char* PFParams::toString(UpdateType _upd_type){
+	switch(_upd_type){
+	case UpdateType::Additive:
+		return "Additive";
+	case UpdateType::Compositional:
+		return "Compositional";
+	default:
+		throw std::invalid_argument("Invalid dynamic model provided");
+	}
+}
+const char* PFParams::toString(ResamplingType _resampling_type){
+	switch(_resampling_type){
+	case ResamplingType::None:
+		return "None";
+	case ResamplingType::BinaryMultinomial:
+		return "BinaryMultinomial";
+	case ResamplingType::LinearMultinomial:
+		return "LinearMultinomial";
+	case ResamplingType::Residual:
+		return "Residual";
+	default:
+		throw std::invalid_argument("Invalid resampling type provided");
+	}
+}
+const char* PFParams::toString(LikelihoodFunc _likelihood_func){
+	switch(_likelihood_func){
+	case LikelihoodFunc::AM:
+		return "AM";
+	case LikelihoodFunc::Gaussian:
+		return "Gaussian";
+	case LikelihoodFunc::Reciprocal:
+		return "Reciprocal";
+	default:
+		throw std::invalid_argument("Invalid likelihood function provided");
+	}
+}
+const char* PFParams::toString(MeanType _likelihood_func){
+	switch(_likelihood_func){
+	case MeanType::None:
+		return "None";
+	case MeanType::SSM:
+		return "SSM";
+	case MeanType::Corners:
+		return "Corners";
+	default:
+		throw std::invalid_argument("Invalid mean type provided");
+	}
 }
 
 _MTF_END_NAMESPACE

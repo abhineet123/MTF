@@ -43,6 +43,7 @@ namespace nt{
 
 		cv::Mat curr_img, prev_img;
 		cv::Mat curr_pts_mat, prev_pts_mat;
+		std::vector<VectorXd> win_x, win_y;
 
 		std::vector<cv::Point2f> curr_pts, prev_pts;
 		int n_pts;

@@ -86,7 +86,7 @@ namespace nt{
 	}
 	
 	void GridTrackerFlow::update() {
-		am->estimateOpticalFlow(curr_pts, prev_img, prev_pts, search_window, n_pts,
+		am->estimateOpticalFlow(curr_pts, win_x, win_y, prev_img, prev_pts, search_window, n_pts,
 			params.max_iters, params.epsilon, params.use_const_grad);
 		ssm->estimateWarpFromPts(ssm_update, pix_mask, prev_pts, curr_pts, est_params);
 

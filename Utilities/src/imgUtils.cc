@@ -170,7 +170,6 @@ namespace utils{
 			pix_vals(i) = norm_mult * getPixVal<PIX_INTERP_TYPE, PIX_BORDER_TYPE>(img, pts(0, i), pts(1, i), h, w) + norm_add;
 		}
 	}
-
 	/****************************************************************/
 	/******************** Gradient of Warped Image********************/
 	/****************************************************************/

@@ -6,7 +6,7 @@ Each tracker within this framework comprises the following 3 modules:
 1. **Search Method (SM)**: [ESM](http://far.in.tum.de/pub/benhimane2007ijcv/benhimane2007ijcv.pdf), [IC](http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=990652&url=http%3A%2F%2Fieeexplore.ieee.org%2Fiel5%2F7768%2F21353%2F00990652.pdf%3Farnumber%3D990652), [IA](http://dl.acm.org/citation.cfm?id=290123), [FC](http://link.springer.com/article/10.1023%2FA%3A1008195814169), [FA](http://dl.acm.org/citation.cfm?id=1623280), [LM](https://en.wikipedia.org/wiki/Levenberg%E2%80%93Marquardt_algorithm), [NN](http://www.comp.nus.edu.sg/~haoyu/rss/rss09/p44.html), [PF](http://ieeexplore.ieee.org/document/6589599/?tp=&arnumber=6589599), [RANSAC](http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7158323&url=http%3A%2F%2Fieeexplore.ieee.org%2Fiel7%2F7158225%2F7158304%2F07158323.pdf%3Farnumber%3D7158323) or [LMS](http://www.tandfonline.com/doi/abs/10.1080/01621459.1984.10477105)
 2. **Appearance Model (AM)**: [SSD](http://dl.acm.org/citation.cfm?id=290123), [SAD](https://en.wikipedia.org/wiki/Sum_of_absolute_differences), [ZNCC](http://www.sciencedirect.com/science/article/pii/S0031320305000592), [SCV](http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=6094650&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D6094650), [LSCV](http://ieeexplore.ieee.org/document/7025074/), [NCC](http://link.springer.com/chapter/10.1007%2F978-3-642-33783-3_32), [MI](https://www.irisa.fr/lagadic/pdf/2010_ismar_dame.pdf), [CCRE](http://link.springer.com/article/10.1007%2Fs11263-006-0011-2), [KLD](https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence), [SSIM](http://link.springer.com/article/10.1007/s00138-007-0107-x), [SPSS](http://arxiv.org/abs/1607.04673), [RIU](http://www.ncbi.nlm.nih.gov/pubmed/1629424), [NGF](http://link.springer.com/chapter/10.1007%2F11866763_89), [PCA](http://link.springer.com/article/10.1007/s11263-007-0075-7) or [DFM](http://webdocs.cs.ualberta.ca/~vis/mtf/dfm_report.pdf)
     *  **Illumination Model (ILM)**: [GB](http://www.ncbi.nlm.nih.gov/pubmed/18988945), [PGB](http://ieeexplore.ieee.org/document/4270018/) and [RBF](http://ieeexplore.ieee.org/document/4270018/)
-3. **State Space Model (SSM)**: [Spline](http://www.hpl.hp.com/techreports/Compaq-DEC/CRL-94-1.html) (50+ DOF), [TPS](http://dl.acm.org/citation.cfm?id=66134) (50+ DOF), [Homography](https://en.wikipedia.org/wiki/Homography) (8 DOF), [Affine](https://en.wikipedia.org/wiki/Affine_transformation) (6 DOF), [Similitude](https://en.wikipedia.org/wiki/Similarity_%28geometry%29) (4 DOF), AST (Anisotropic Scaling and Translation - 4 DOF ), [Isometry](http://mathworld.wolfram.com/Isometry.html) (3 DOF), IST (Isotropic Scaling and Translation - 3 DOF ) or [Translation](https://en.wikipedia.org/wiki/Translation_%28geometry%29) (2 DOF)
+3. **State Space Model (SSM)**: [Spline](http://www.hpl.hp.com/techreports/Compaq-DEC/CRL-94-1.html) (50+ DOF), [TPS](http://dl.acm.org/citation.cfm?id=66134) (50+ DOF), [Homography](https://en.wikipedia.org/wiki/Homography) (8 DOF), [Affine](https://en.wikipedia.org/wiki/Affine_transformation) (6 DOF), ASRT (Anisotropic Scaling, Rotation and Translation - 5 DOF ), [Similitude](https://en.wikipedia.org/wiki/Similarity_%28geometry%29) (4 DOF), AST (Anisotropic Scaling and Translation - 4 DOF ), [Isometry](http://mathworld.wolfram.com/Isometry.html) (3 DOF), IST (Isotropic Scaling and Translation - 3 DOF ) or [Translation](https://en.wikipedia.org/wiki/Translation_%28geometry%29) (2 DOF)
 
 Please refer
 [**this paper**](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_icra17.pdf)
@@ -32,8 +32,7 @@ Installation:
 		- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) module should be [installed too](http://stackoverflow.com/a/31097788) if the feature tracker is enabled during compilation
     * [Boost](http://www.boost.org/) should be installed
     * [FLANN](http://www.cs.ubc.ca/research/flann/) should be installed for the NN search method
-	    - NN can be disabled at compile time using `nn=0` switch if these are not available (see [compile time switches](#compile-time-switches))
-		- its dependency [HDF5](https://www.hdfgroup.org/HDF5/release/obtain5.html) can optionally be installed to enable some debugging code within this module	
+	    - NN can be disabled at compile time using `nn=0` switch if this is not available (see [compile time switches](#compile-time-switches))
     * [Intel TBB](https://www.threadingbuildingblocks.org/) / [OpenMP](http://openmp.org/wp/) should be installed if parallelization is to be enabled.
     * [ViSP](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see [compile time switches](#compile-time-switches)).
 	    - Note that [version 3.0.0](http://gforge.inria.fr/frs/download.php/latestfile/475/visp-3.0.0.zip)+ is required. The Ubuntu apt package is 2.8 and is therefore incompatible.
@@ -42,7 +41,20 @@ Installation:
 	    - **Not recommended** as Xvision is very difficult to install and configure on modern systems
 	* **Installation in Windows**
 		* Using CMake with Visual Studio (Recommended)
-		    - 
+		    - Install a recent version of Visual Studio
+			    - the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine
+				- the freely available [Express edition](https://www.visualstudio.com/vs/visual-studio-express/) can be used too
+		    - [Build OpenCV from source using Visual Studio](http://docs.opencv.org/2.4/doc/tutorials/introduction/windows_install/windows_install.html#installation-by-making-your-own-libraries-from-the-source-files) or download the [pre built binaries](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/) built with the correct version of visual studio if available.	
+		        - set environment variable `OPENCV_DIR` to the folder where the binaries have been built or downloaded; this should contain the `OpenCVConfig.cmake` file along with the `lib` and `bin` folders
+				- add the location of the `bin` folder to the `Path` environment variable if dynamic librararies have been built
+		        - if cmake still fails to find OpenCV, set `OPENCV_INCLUDE_DIR_WIN`, `OPENCV_LIB_DIR_WIN` and `OpenCV_SUFFIX` variables in `CMakeLists.txt` (line 14-16) to the respective values
+		    - [Build Boost from source using Visual Studio (`toolset=msvc`)](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary).
+			    - using the steps under [Simplified Build From Source](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#simplified-build-from-source) should work too
+			    - set `BOOST_INCLUDEDIR` and `BOOST_LIBRARYDIR` environment variables to the locations of the header and library (*.lib) files respectively.
+		        - if cmake still fails to find Boost, set `BOOST_INCLUDE_DIR_WIN`, `BOOST_LIB_DIR_WIN` and `Boost_SUFFIX` variables in `CMakeLists.txt` (line 17-19) to the respective values
+		    - Set `EIGEN3_ROOT`, `EIGEN3_DIR` and `EIGEN_INCLUDE_DIR` environment variables to the folder containing the Eigen header files; this folder should contain the subfolders `Eigen` and `unsupported`
+		        - if cmake still fails to find Eigen, set `EIGEN_INCLUDE_DIR_WIN` variable in `CMakeLists.txt` (line 13) to this folder
+			
 		* Using GNU Make with MinGW
 		    - Install [MinGW](http://www.mingw.org/), [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm) and [CoreUtils for Windows](http://gnuwin32.sourceforge.net/packages/coreutils.htm)
 		    - [Build OpenCV from source using MinGW](http://kevinhughes.ca/tutorials/opencv-install-on-windows-with-codeblocks-and-mingw) and set `OPENCV_INCLUDE_DIRS` and `OPENCV_LIB_DIRS` in the makefile to the locations of header and library files respectively. 

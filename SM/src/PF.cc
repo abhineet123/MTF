@@ -192,7 +192,9 @@ void PF<AM, SSM >::update(){
 			am.getCurrImg().convertTo(curr_img_uchar, CV_8UC1);
 		}
 		double max_wt = std::numeric_limits<double>::lowest();
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(PF_OMP_SCHD)
+#endif	
 		for(int particle_id = 0; particle_id < params.n_particles; ++particle_id){
 #ifdef ENABLE_PARALLEL
 			SSM &ssm = *ssm_vec[particle_id];

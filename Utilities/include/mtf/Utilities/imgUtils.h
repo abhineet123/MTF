@@ -313,6 +313,57 @@ namespace utils{
 					img.at<ScalarType>(uy, ux) * dx*dy;
 			}
 		};
+		//! fast inline variant for optical flow computation
+		template<typename ScalarType>
+		void getPixVals(VectorXd &val, const cv::Mat &img, const VectorXd &win_x, const VectorXd &win_y,
+			unsigned int win_h, unsigned int win_w,	unsigned int img_h, unsigned int img_w){
+			assert(val.size() == win_h*win_w);
+			assert(win_x.size() == win_w);
+			assert(win_y.size() == win_h);
+			int win_id = 0;
+			for(unsigned int y_id = 0; y_id < win_h; ++y_id){
+				double y = win_y(y_id);
+				for(unsigned int x_id = 0; x_id < win_w; ++x_id){
+					double x = win_x(x_id);
+					val(win_id) = PixVal<ScalarType, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(
+						img, x, y, img_h, img_w);
+					++win_id;
+				}
+			}
+		}
+		//! both pixel values and gradients
+		template<typename ScalarType>
+		void getPixValsWithGrad(VectorXd &val, PixGradT &grad, const cv::Mat &img, 
+			const VectorXd &win_x, const VectorXd &win_y, unsigned int win_h, unsigned int win_w,
+			unsigned int h, unsigned int w, double grad_eps, double grad_mult_factor){
+			//printf("n_pix: %d\t pix_vals.size(): %l\t pts.cols(): %l", n_pix, pix_vals.size(),  pts.cols());
+			assert(val.size() == win_h*win_w);
+			assert(win_x.size() == win_w);
+			assert(win_y.size() == win_h);
+			int win_id = 0;
+			for(unsigned int y_id = 0; y_id < win_h; ++y_id){
+				double y = win_y(y_id);
+				for(unsigned int x_id = 0; x_id < win_w; ++x_id){
+					double x = win_x(x_id);
+					val(win_id) = utils::sc::PixVal<ScalarType, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(
+						img, x, y, h, w);
+
+					double pix_val_inc = utils::sc::PixVal<ScalarType, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(
+						img, x + grad_eps, y, h, w);
+					double  pix_val_dec = utils::sc::PixVal<ScalarType, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(
+						img, x - grad_eps, y, h, w);
+					grad(win_id, 0) = (pix_val_inc - pix_val_dec)*grad_mult_factor;
+
+					pix_val_inc = utils::sc::PixVal<ScalarType, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(
+						img, x, y + grad_eps, h, w);
+					pix_val_dec = utils::sc::PixVal<ScalarType, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(
+						img, x, y - grad_eps, h, w);
+					grad(win_id, 1) = (pix_val_inc - pix_val_dec)*grad_mult_factor;
+					++win_id;
+				}
+			}
+		}
+
 		template<typename ScalarType, typename PtsT>
 		void getPixVals(VectorXd &pix_vals,
 			const cv::Mat &img, const PtsT &pts, unsigned int n_pix, unsigned int h, unsigned int w,
@@ -334,6 +385,7 @@ namespace utils{
 			const  cv::Mat &img, const PtsT &pts,
 			double grad_eps, unsigned int n_pix, unsigned int h, unsigned int w,
 			double pix_mult_factor = 1.0);
+
 		template<typename ScalarType>
 		void getWarpedImgHess(PixHessT &warped_img_hess,
 			const cv::Mat &img, const PtsT &warped_pts,

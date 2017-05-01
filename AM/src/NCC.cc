@@ -12,7 +12,7 @@
 #define NCC_FAST_HESS 0
 //! OpenMP scheduler
 #ifndef NCC_OMP_SCHD
-#define NCC_OMP_SCHD auto
+#define NCC_OMP_SCHD dynamic
 #endif
 
 _MTF_BEGIN_NAMESPACE
@@ -383,61 +383,57 @@ void NCC::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacob
 	}
 }
 
-void NCC::estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, const cv::Mat &prev_img,
-	const std::vector<cv::Point2f> &prev_pts, cv::Size search_window, int n_pts,
-	int max_iters, double term_eps, bool const_grad) const{
+void NCC::estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, std::vector<VectorXd> &win_x,
+	std::vector<VectorXd> &win_y, const cv::Mat &prev_img,	const std::vector<cv::Point2f> &prev_pts,
+	const cv::Size &win_size, unsigned int n_pts, int max_iters, double term_eps, bool const_grad) const{
 	assert(curr_pts.size() == n_pts && prev_pts.size() == n_pts);
+	if(input_type != InputType::MTF_32FC1){
+		throw utils::FunctonNotImplemented(
+			cv_format("NCC::estimateOpticalFlow::Image type %s is currently not supported",
+			utils::typeToString(inputType())));
+	}
+	unsigned int win_height = win_size.height;
+	unsigned int win_width = win_size.width;
+	unsigned int srch_size = win_height*win_width;
+	double half_width = win_size.width / 2.0, half_height = win_size.height / 2.0;
 
-	double half_width = search_window.width / 2.0, half_height = search_window.height / 2.0;
-	int srch_size = search_window.width*search_window.height;
 	double grad_mult_factor = 1.0 / (2 * grad_eps);
+
+	if(win_x.empty() || win_y.empty()){
+		win_x.resize(n_pts);
+		win_y.resize(n_pts);
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
+			win_x[pt_id] = VectorXd::LinSpaced(win_size.width,
+				prev_pts[pt_id].x - half_width, prev_pts[pt_id].x + half_width);
+			win_y[pt_id] = VectorXd::LinSpaced(win_size.height,
+				prev_pts[pt_id].y - half_height, prev_pts[pt_id].y + half_height);
+		}
+	}
 
 #ifdef ENABLE_TBB
 	parallel_for(tbb::blocked_range<size_t>(0, n_pts),
 		[&](const tbb::blocked_range<size_t>& r){
 		for(size_t pt_id = r.begin(); pt_id != r.end(); ++pt_id){
 #else
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(NCC_OMP_SCHD)
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id){
+#endif	
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 #endif	
 		VectorXd _I0(srch_size),_I0_cntr(srch_size);		
 		PixGradT _dIt_dx(srch_size, 2);
-
-		VectorXd x_vals = VectorXd::LinSpaced(search_window.width,
-			prev_pts[pt_id].x - half_width, prev_pts[pt_id].x + half_width);
-		VectorXd y_vals = VectorXd::LinSpaced(search_window.height,
-			prev_pts[pt_id].y - half_height, prev_pts[pt_id].y + half_height);
-
-		double _I0_mean = 0;
-		RowVector2d _dIt_dx_mean(0, 0);
-		for(int srch_id = 0; srch_id < srch_size; ++srch_id){
-			double x = x_vals(srch_id % search_window.width), y = y_vals(srch_id / search_window.width);
-
-			_I0(srch_id) = utils::sc::PixVal<float, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(prev_img,
-				x, y, img_height, img_width);
-			_I0_mean += _I0(srch_id);
-
-			if(!const_grad){ continue; }
-
-			double pix_val_inc = utils::sc::PixVal<float, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(prev_img,
-				x + grad_eps, y, img_height, img_width);
-			double  pix_val_dec = utils::sc::PixVal<float, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(prev_img,
-				x - grad_eps, y, img_height, img_width);
-			_dIt_dx(srch_id, 0) = (pix_val_inc - pix_val_dec)*grad_mult_factor;
-
-			pix_val_inc = utils::sc::PixVal<float, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(prev_img,
-				x, y + grad_eps, img_height, img_width);
-			pix_val_dec = utils::sc::PixVal<float, PIX_INTERP_TYPE, PIX_BORDER_TYPE>::get(prev_img,
-				x, y - grad_eps, img_height, img_width);
-
-			_dIt_dx(srch_id, 1) = (pix_val_inc - pix_val_dec)*grad_mult_factor;
-			_dIt_dx_mean += _dIt_dx.row(srch_id);
-		}
-		_I0_mean /= srch_size;
-		if(const_grad){ _dIt_dx_mean.array() /= srch_size; }
-
+		RowVector2d _dIt_dx_mean;
+		if(const_grad){
+			utils::sc::getPixValsWithGrad<float>(_I0, _dIt_dx, prev_img, win_x[pt_id], win_y[pt_id],
+				win_height, win_width, img_height, img_width, grad_eps, grad_mult_factor);
+			_dIt_dx_mean = _dIt_dx.colwise().mean();
+		} else{
+			utils::sc::getPixVals<float>(_I0, prev_img, win_x[pt_id], win_y[pt_id],
+				win_height, win_width, img_height, img_width);
+		}		
+		double _I0_mean = _I0.mean();
 		double _c = 0;
-		for(int srch_id = 0; srch_id < srch_size; ++srch_id){
+		for(unsigned int srch_id = 0; srch_id < srch_size; ++srch_id){
 			_I0_cntr[srch_id] = _I0[srch_id] - _I0_mean;
 			_c += _I0_cntr[srch_id] * _I0_cntr[srch_id];
 		}
@@ -445,45 +441,21 @@ void NCC::estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, const cv::Mat 
 		VectorXd _I0_cntr_c = _I0_cntr.array() / _c;
 
 		curr_pts[pt_id] = prev_pts[pt_id];
-		for(int iter_id = 0; iter_id < max_iters; ++iter_id){			
-			if(iter_id > 0){
-				x_vals = VectorXd::LinSpaced(search_window.width,
-					curr_pts[pt_id].x - half_width, curr_pts[pt_id].x + half_width);
-				y_vals = VectorXd::LinSpaced(search_window.height,
-					curr_pts[pt_id].y - half_height, curr_pts[pt_id].y + half_height);
-			}
-			double _It_mean = 0;
+		for(int iter_id = 0; iter_id < max_iters; ++iter_id){	
 			VectorXd _It(srch_size), _It_cntr(srch_size);
-			if(!const_grad){ _dIt_dx_mean.setZero(); }
-			for(int srch_id = 0; srch_id < srch_size; ++srch_id){
-				double x = x_vals(srch_id % search_window.width), y = y_vals(srch_id / search_window.width);
-				_It(srch_id) = utils::getPixVal<PIX_INTERP_TYPE, PIX_BORDER_TYPE>(curr_img,
-					x, y, img_height, img_width);
-				_It_mean += _It(srch_id);
-
-				if(const_grad){ continue; }
-
-				double pix_val_inc = utils::getPixVal<GRAD_INTERP_TYPE, PIX_BORDER_TYPE>(curr_img,
-					x + grad_eps, y, img_height, img_width);
-				double  pix_val_dec = utils::getPixVal<GRAD_INTERP_TYPE, PIX_BORDER_TYPE>(curr_img,
-					x - grad_eps, y, img_height, img_width);
-				_dIt_dx(srch_id, 0) = (pix_val_inc - pix_val_dec)*grad_mult_factor;
-
-				pix_val_inc = utils::getPixVal<GRAD_INTERP_TYPE, PIX_BORDER_TYPE>(curr_img,
-					x, y + grad_eps, img_height, img_width);
-				pix_val_dec = utils::getPixVal<GRAD_INTERP_TYPE, PIX_BORDER_TYPE>(curr_img,
-					x, y - grad_eps, img_height, img_width);
-
-				_dIt_dx(srch_id, 1) = (pix_val_inc - pix_val_dec)*grad_mult_factor;
-				_dIt_dx_mean += _dIt_dx.row(srch_id);
+			if(const_grad){
+				utils::sc::getPixVals<float>(_It, curr_img_cv, win_x[pt_id], win_y[pt_id],
+					win_height, win_width, img_height, img_width);
+			} else{
+				utils::sc::getPixValsWithGrad<float>(_It, _dIt_dx, curr_img_cv, win_x[pt_id], win_y[pt_id],
+					win_height, win_width, img_height, img_width, grad_eps, grad_mult_factor);
+				_dIt_dx_mean = _dIt_dx.colwise().mean();
 			}
-			_It_mean /= srch_size;
-			if(!const_grad){ _dIt_dx_mean.array() /= srch_size; }
+			double _It_mean = _It.mean();		
 
 			double _a = 0, _b = 0;
-			for(int srch_id = 0; srch_id < srch_size; ++srch_id){
+			for(unsigned int srch_id = 0; srch_id < srch_size; ++srch_id){
 				_It_cntr[srch_id] = _It[srch_id] - _It_mean;
-
 				_a += _I0_cntr[srch_id] * _It_cntr[srch_id];
 				_b += _It_cntr[srch_id] * _It_cntr[srch_id];
 			}
@@ -493,7 +465,7 @@ void NCC::estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, const cv::Mat 
 
 			double _df_dIt_ncntr_mean = 0;
 			VectorXd _df_dIt_ncntr(srch_size), _It_cntr_b(srch_size);
-			for(int srch_id = 0; srch_id < srch_size; ++srch_id){
+			for(unsigned int srch_id = 0; srch_id < srch_size; ++srch_id){
 				_It_cntr_b(srch_id) = _It_cntr(srch_id) / _b;
 				_df_dIt_ncntr(srch_id) = (_I0_cntr_c(srch_id) - _f*_It_cntr_b(srch_id)) / _b;
 				_df_dIt_ncntr_mean += _df_dIt_ncntr(srch_id);
@@ -502,7 +474,7 @@ void NCC::estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, const cv::Mat 
 
 			RowVector2d _df_dx(0, 0);
 			PixGradT _dIt_dx_cntr(srch_size, 2);
-			for(int srch_id = 0; srch_id < srch_size; ++srch_id){
+			for(unsigned int srch_id = 0; srch_id < srch_size; ++srch_id){
 				_df_dx += (_df_dIt_ncntr(srch_id) - _df_dIt_ncntr_mean)*_dIt_dx.row(srch_id);
 				_dIt_dx_cntr.row(srch_id) = (_dIt_dx.row(srch_id) - _dIt_dx_mean).array() / _b;
 			}
@@ -522,6 +494,8 @@ void NCC::estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, const cv::Mat 
 			Vector2d opt_flow = -_d2f_dx2.colPivHouseholderQr().solve(_df_dx.transpose());
 			curr_pts[pt_id].x += static_cast<float>(opt_flow[0]);
 			curr_pts[pt_id].y += static_cast<float>(opt_flow[1]);
+			win_x[pt_id].array() += opt_flow[0];
+			win_y[pt_id].array() += opt_flow[1];
 			if(opt_flow.squaredNorm() < term_eps){ break; }
 		}
 	}

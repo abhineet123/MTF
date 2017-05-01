@@ -250,7 +250,9 @@ void GridTracker<SSM>::update() {
 		[&](const tbb::blocked_range<size_t>& r){
 		for(size_t tracker_id = r.begin(); tracker_id != r.end(); ++tracker_id){
 #else
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(GRID_OMP_SCHD)
+#endif	
 	for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
 #endif		
 		trackers[tracker_id]->update();
@@ -346,7 +348,9 @@ void GridTracker<SSM>::resetTrackers(bool reinit){
 		[&](const tbb::blocked_range<size_t>& r){
 		for(size_t tracker_id = r.begin(); tracker_id != r.end(); ++tracker_id){
 #else
+#ifdef ENABLE_OMP
 #pragma omp parallel for schedule(GRID_OMP_SCHD)
+#endif	
 	for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id){
 
 #endif

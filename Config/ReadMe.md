@@ -404,16 +404,18 @@ MTF Tracker specific parameters:
 		Description:
 			State space model to use for the MTF tracker
 		Possible Values:
-			hom or 8:	Homography (8 dof)
-			lhom or l8:	Homography with Lie parametrization(8 dof)
+			hom/8:	Homography (8 dof)
+			lhom/l8:	Homography with Lie parametrization(8 dof)
 			sl3: Homography with an alternative Lie parametrization using a different basis
-			cbh or c8:	Corner based Homography (8 dof)
-			aff or 6:	Affine (6 dof)	
-			sim or 4:	Similarity (rotation + isotropic scaling + translation)(4 dof)
-			ast or 4s:	AST (anisotropic scaling + translation) (4 dof)
-			iso or 3:	Isometry (rotation + translation)(3 dof)
-			ist or 3s:	IST (isotropic Scaling  + translation) (3 dof)
-			trans or 2:	Translation (2 dof)	
+			cbh/c8:	Corner based Homography (8 dof)
+			aff/6:	Affine (6 dof)	
+			laff/l6:	Affine with Lie parametrization(6 dof)	
+			asrt/5:	ASRT (anisotropic scaling + rotation + translation) (5 dof)
+			sim/4:	Similarity (isotropic scaling + rotation + translation)(4 dof)
+			ast/4s:	AST (anisotropic scaling + translation) (4 dof)
+			iso/3:	Isometry (rotation + translation)(3 dof)
+			ist/3s:	IST (isotropic Scaling  + translation) (3 dof)
+			trans/2:	Translation (2 dof)	
 			spl:	Spline based SSM with piecewise translation
 			
 	 Parameter:	'mtf_ilm'
