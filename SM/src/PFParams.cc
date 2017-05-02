@@ -15,7 +15,6 @@
 #define PF_MIN_DISTR_WT 0.5
 #define PF_ADAPTIVE_RESAMPLING_THRESH 0
 #define PF_CORNER_SIGMA_D 0.06
-#define PF_PIX_SIGMA 0.04
 #define PF_MEASUREMENT_SIGMA 0.1
 #define PF_SHOW_PARTICLES 0
 #define PF_ENABLE_LEARNING 0
@@ -70,7 +69,6 @@ reset_to_mean(PF_RESET_TO_MEAN),
 update_distr_wts(PF_UPDATE_DISTR_WTS),
 min_distr_wt(PF_MIN_DISTR_WT),
 adaptive_resampling_thresh(PF_ADAPTIVE_RESAMPLING_THRESH),
-pix_sigma(PF_PIX_SIGMA),
 measurement_sigma(PF_MEASUREMENT_SIGMA),
 show_particles(PF_SHOW_PARTICLES),
 enable_learning(PF_ENABLE_LEARNING),

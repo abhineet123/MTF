@@ -13,6 +13,10 @@
     E-Mail: rubner@cs.stanford.edu   URL: http://vision.stanford.edu/~rubner
 */
 
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

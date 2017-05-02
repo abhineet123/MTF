@@ -43,10 +43,9 @@ namespace nt{
 
 		cv::Mat curr_img, prev_img;
 		cv::Mat curr_pts_mat, prev_pts_mat;
-		std::vector<VectorXd> win_x, win_y;
 
 		std::vector<cv::Point2f> curr_pts, prev_pts;
-		int n_pts;
+		unsigned int n_pts;
 		cv::Size search_window;
 		cv::TermCriteria lk_termination_criteria;
 
@@ -68,7 +67,7 @@ namespace nt{
 		int pause_seq;
 
 		~GridTrackerFlow(){}
-		void showTrackers();
+		void showPts();
 	};
 }
 

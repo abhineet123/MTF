@@ -24,6 +24,10 @@
  *      Author: Georg Nebehay
  */
 
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#endif
+
 #include "mtf/ThirdParty/TLD/MedianFlowTracker.h"
 
 #include <cmath>

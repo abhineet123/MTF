@@ -15,7 +15,7 @@
 #include "mtf/Utilities/miscUtils.h"
 #include "mtf/Utilities/excpUtils.h"
 
-#include "inputBase.h"
+#include "InputBase.h"
 
 #define MAX_HOVER_TEXT_SIZE 100
 

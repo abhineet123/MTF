@@ -120,7 +120,7 @@ int main(int argc, char * argv[]){
 	mtf::PixValT mos_patch = Map<mtf::VectorXc>(input->getFrame().data, img_size).cast<double>();
 	mtf::PixValT prev_patch = mos_patch;
 	mtf::utils::writePixelsToImage(mos_img, mos_patch, mos_pts, n_channels, mos_mask);
-	std::string mos_disp_win = cv_format("Mosaic :: %s", source_name.c_str()), mos_mask_win = "Mask",
+	std::string mos_disp_win = cv::format("Mosaic :: %s", source_name.c_str()), mos_mask_win = "Mask",
 		mos_patch_win = "Current Patch", img_win = "Current Image";
 	double mos_resize_factor;
 	if(show_cv_window){
@@ -257,7 +257,7 @@ int main(int argc, char * argv[]){
 	if(show_cv_window){ cv::destroyAllWindows(); }
 	if(mos_save_img){
 		if(mos_out_fname.empty()){
-			mos_out_fname = cv_format("mosaic_%s_%s_%s_%s_inv%d_norm%d_mask%d_%ld.%s",
+			mos_out_fname = cv::format("mosaic_%s_%s_%s_%s_inv%d_norm%d_mask%d_%ld.%s",
 				source_name.c_str(), mtf_sm, mtf_am, mtf_ssm, mos_inv_tracking,
 				mos_use_norm_corners, mos_use_write_mask, time(0), mos_out_fmt.c_str());
 		}

@@ -130,7 +130,7 @@ int main(int argc, char * argv[]) {
 	//char feat_norm_fname[100], norm_fname[100], jac_fname[100], hess_fname[100], hess2_fname[100];
 	//char jac_num_fname[100], hess_num_fname[100], nhess_num_fname[100];
 	//char ssm_fname[100];
-	std::string diag_data_dir = cv_format("log/diagnostics/%s", source_name.c_str());
+	std::string diag_data_dir = cv::format("log/diagnostics/%s", source_name.c_str());
 	if(diag_3d){
 		diag_data_dir = diag_data_dir + "/3D";
 	}
@@ -202,9 +202,9 @@ int main(int argc, char * argv[]) {
 		printf("Generating diagnostics data for frame %d\n", start_id);
 	}
 	if(diag_out_prefix.empty()){
-		diag_out_prefix = cv_format("%s_%s", diag_am, diag_ssm);
+		diag_out_prefix = cv::format("%s_%s", diag_am, diag_ssm);
 		if(std::string(diag_ilm) != "0"){
-			diag_out_prefix = cv_format("%s_%s", diag_out_prefix.c_str(), diag_ilm);
+			diag_out_prefix = cv::format("%s_%s", diag_out_prefix.c_str(), diag_ilm);
 		}
 	}
 	std::string bin_out_fname;
@@ -215,11 +215,11 @@ int main(int argc, char * argv[]) {
 			if(diag_gen[data_id] - '0'){
 				const char* data_name = getDataTypeName(data_id, adt_len, diag_len);
 				if(diag_inv){
-					bin_out_fname = cv_format("%s/%s_%d_inv_%s_%d_%d_%d.bin",
+					bin_out_fname = cv::format("%s/%s_%d_inv_%s_%d_%d_%d.bin",
 						diag_data_dir.c_str(), diag_out_prefix.c_str(), diag_update_type, data_name, 
 						diag_frame_gap, start_id, end_id);
 				} else{
-					bin_out_fname = cv_format("%s/%s_%d_%s_%d_%d_%d.bin",
+					bin_out_fname = cv::format("%s/%s_%d_%s_%d_%d_%d.bin",
 						diag_data_dir.c_str(), diag_out_prefix.c_str(), diag_update_type, data_name,
 						diag_frame_gap, start_id, end_id);
 				}

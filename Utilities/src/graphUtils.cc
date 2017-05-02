@@ -136,10 +136,10 @@ namespace mtf {
 			// Write the scale of the y axis
 			if(showScale) {
 				cv::Scalar clr = GREY;
-				std::string text = cv_format("%e", maxV);
+				std::string text = cv::format("%e", maxV);
 				cv::putText(imageGraph, text, cv::Point(1, b + 4), cv::FONT_HERSHEY_PLAIN, 1, clr);
 				// Write the scale of the x axis
-				text = cv_format("%d", (nArrayLength - 1));
+				text = cv::format("%d", (nArrayLength - 1));
 				cv::putText(imageGraph, text, cv::Point(w - b + 4 - 10 * text.size(), (h / 2) + 10), 
 					cv::FONT_HERSHEY_PLAIN, 1, clr);
 			}
@@ -222,10 +222,10 @@ namespace mtf {
 			if(showScale) {
 				//cvInitFont(cv::FONT_HERSHEY_PLAIN, 1,CV_FONT_HERSHEY_PLAIN,0.5,0.6, 0,1, CV_AA);	// For OpenCV 2.0
 				cv::Scalar clr = GREY;
-				std::string text = cv_format("%d", maxV);
+				std::string text = cv::format("%d", maxV);
 				cv::putText(imageGraph, text, cv::Point(1, b + 4), cv::FONT_HERSHEY_PLAIN, 1, clr);
 				// Write the scale of the x axis
-				text = cv_format("%d", nArrayLength - 1);
+				text = cv::format("%d", nArrayLength - 1);
 				cv::putText(imageGraph, text, cv::Point(w - b + 4 - 10 * text.size(), (h / 2) + 10), cv::FONT_HERSHEY_PLAIN, 1, clr);
 			}
 
@@ -306,10 +306,10 @@ namespace mtf {
 			// Write the scale of the y axis
 			if(showScale) {
 				cv::Scalar clr = GREY;
-				std::string text = cv_format("%d", maxV);
+				std::string text = cv::format("%d", maxV);
 				cv::putText(imageGraph, text, cv::Point(1, b + 4), cv::FONT_HERSHEY_PLAIN, 1, clr);
 				// Write the scale of the x axis
-				text = cv_format("%d", nArrayLength - 1);
+				text = cv::format("%d", nArrayLength - 1);
 				cv::putText(imageGraph, text, cv::Point(w - b + 4 - 5 * text.size(), (h / 2) + 10), cv::FONT_HERSHEY_PLAIN, 1, clr);
 			}
 

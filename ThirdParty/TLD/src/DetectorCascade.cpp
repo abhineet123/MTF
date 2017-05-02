@@ -24,6 +24,10 @@
  *      Author: Georg Nebehay
  */
 
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#endif
+
 #include "mtf/ThirdParty/TLD/DetectorCascade.h"
 
 #include <algorithm>
@@ -46,7 +50,7 @@ DetectorCascade::DetectorCascade()
     imgHeight = -1;
     imgWidth = -1;
 
-    shift = 0.1;
+    shift = 0.1f;
     minScale = -10;
     maxScale = 10;
     minSize = 25;

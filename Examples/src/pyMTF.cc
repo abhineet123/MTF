@@ -53,7 +53,6 @@ static vector<cv::Scalar> obj_cols;
 static cv::Point fps_origin(10, 20);
 static double fps_font_size = 0.50;
 static cv::Scalar fps_color(0, 255, 0);
-static char fps_text[100];
 static int frame_id;
 static char* config_root_dir = "C++/MTF/Config";
 bool using_input_pipeline = false;
@@ -114,22 +113,22 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 		if(!PyArg_ParseTuple(args, "O!O!z", &PyArray_Type, &img_py, &PyArray_Type,
 			&init_corners_py, &config_root_dir)) {
 			printf("\n----pyMTF::initialize: Input arguments could not be parsed----\n\n");
-			return NULL;
+			return Py_BuildValue("i", 0);
 		}
 
 		if(img_py == NULL) {
 			printf("\n----pyMTF::initialize::init_img is NULL----\n\n");
-			return NULL;
+			return Py_BuildValue("i", 0);
 		}
 		if(init_corners_py == NULL) {
 			printf("\n----pyMTF::initialize::init_corners is NULL----\n\n");
-			return NULL;
+			return Py_BuildValue("i", 0);
 		}
 
 		if(init_corners_py->dimensions[0] != 2 || init_corners_py->dimensions[1] != 4){
 			printf("pyMTF::Initial corners matrix has incorrect dimensions: %ld, %ld\n",
 				init_corners_py->dimensions[0], init_corners_py->dimensions[1]);
-			return NULL;
+			return Py_BuildValue("i", 0);
 		}
 #ifdef USE_TBB
 		Eigen::initParallel();
@@ -168,8 +167,8 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 		init_corners_cv.at<double>(1, 3) = temp.at<double>(1, 3);
 		
 		printf("init_corners_cv:\n");
-		for(int i = 0; i < 4; ++i) {
-			printf("%d: (%f, %f)\n", i, init_corners_cv.at<double>(0, i), init_corners_cv.at<double>(1, i));
+		for(unsigned int corner_id = 0; corner_id < 4; ++corner_id) {
+			printf("%d: (%f, %f)\n", corner_id, init_corners_cv.at<double>(0, corner_id), init_corners_cv.at<double>(1, corner_id));
 		}
 
 		min_x = init_corners_cv.at<double>(0, 0);
@@ -209,42 +208,59 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 		printf("Getting sampling resolution from object size...\n");
 	}
 	FILE *multi_fid = NULL;
-	for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
-		if(n_trackers > 1){
-			multi_fid = readTrackerParams(multi_fid);
-		}
-		printf("Using tracker %d with object of size %f x %f\n", tracker_id,
-			size_x, size_y);
-		if(res_from_size){
-			resx = static_cast<unsigned int>(size_x / res_from_size);
-			resy = static_cast<unsigned int>(size_y / res_from_size);
-		}
-		mtf::TrackerBase* new_tracker = mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm);
-		if(!new_tracker){
-			printf("Tracker could not be initialized successfully\n");
+	trackers.resize(n_trackers);
+	pre_proc.resize(n_trackers);
+	for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
+		try{
+			if(n_trackers > 1){
+				multi_fid = readTrackerParams(multi_fid);
+			}
+			if(res_from_size){
+				resx = static_cast<unsigned int>(size_x / res_from_size);
+				resy = static_cast<unsigned int>(size_y / res_from_size);
+			}
+			trackers[tracker_id].reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
+			if(!trackers[tracker_id]){
+				printf("Tracker could not be created successfully\n");
+				return Py_BuildValue("i", 0);
+			}
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception of type %s encountered while creating the tracker: %s\n", 
+				err.type(), err.what());
 			return Py_BuildValue("i", 0);
 		}
-		PreProc_ new_pre_proc = getPreProc(new_tracker->inputType(), pre_proc_type);
-		new_pre_proc->initialize(init_img_cv);
-		for(PreProc_ curr_obj = new_pre_proc; curr_obj; curr_obj = curr_obj->next){
-			new_tracker->setImage(curr_obj->getFrame());
+		try{
+			pre_proc[tracker_id] = getPreProc(trackers[tracker_id]->inputType(), pre_proc_type);
+			pre_proc[tracker_id]->initialize(init_img_cv);
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception of type %s encountered while initializing the pre processor: %s\n",
+				err.type(), err.what());
+			return Py_BuildValue("i", 0);
 		}
-		new_tracker->initialize(init_corners_cv);
-		trackers.push_back(Tracker_(new_tracker));
-		pre_proc.push_back(new_pre_proc);
+		try{
+			for(PreProc_ curr_obj = pre_proc[tracker_id]; curr_obj; curr_obj = curr_obj->next){
+				trackers[tracker_id]->setImage(curr_obj->getFrame());
+			}
+			printf("Initializing tracker %d with object of size %f x %f\n", tracker_id,
+				size_x, size_y);
+			trackers[tracker_id]->initialize(init_corners_cv);
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception of type %s encountered while initializing the tracker: %s\n", 
+				err.type(), err.what());
+			return Py_BuildValue("i", 0);
+		}		
 	}
 	if(show_cv_window) {
 		cv::namedWindow("PyMTF", cv::WINDOW_AUTOSIZE);
+		obj_cols.push_back(cv::Scalar(0, 0, 255));
+		obj_cols.push_back(cv::Scalar(0, 255, 0));
+		obj_cols.push_back(cv::Scalar(255, 0, 0));
+		obj_cols.push_back(cv::Scalar(255, 255, 0));
+		obj_cols.push_back(cv::Scalar(255, 0, 255));
+		obj_cols.push_back(cv::Scalar(0, 255, 255));
+		obj_cols.push_back(cv::Scalar(255, 255, 255));
+		obj_cols.push_back(cv::Scalar(0, 0, 0));
 	}
-	obj_cols.push_back(cv::Scalar(0, 0, 255));
-	obj_cols.push_back(cv::Scalar(0, 255, 0));
-	obj_cols.push_back(cv::Scalar(255, 0, 0));
-	obj_cols.push_back(cv::Scalar(255, 255, 0));
-	obj_cols.push_back(cv::Scalar(255, 0, 255));
-	obj_cols.push_back(cv::Scalar(0, 255, 255));
-	obj_cols.push_back(cv::Scalar(255, 255, 255));
-	obj_cols.push_back(cv::Scalar(0, 0, 0));
-
 	int dims[] = { 2, 4 };
 	out_corners_py = (PyArrayObject *)PyArray_FromDims(2, dims, NPY_DOUBLE);
 	out_corners_data = (double*)out_corners_py->data;
@@ -259,49 +275,51 @@ static PyObject* update(PyObject* self, PyObject* args) {
 		/*parse first input array*/
 		if(!PyArg_ParseTuple(args, "O!", &PyArray_Type, &img_py)) {
 			printf("\n----pyMTF::update: Input arguments could not be parsed----\n\n");
-			return NULL;
+			return Py_BuildValue("i", 0);
 		}
 		if(img_py == NULL) {
 			printf("\n----pyMTF::img_py is NULL----\n\n");
-			return NULL;
+			return Py_BuildValue("i", 0);
 		}
 		curr_img_cv = cv::Mat(img_height, img_width, CV_8UC3, img_py->data);
 	} else{
 		if(!input->update()){
 			printf("Frame %d could not be read from the input pipeline\n", input->getFrameID() + 1);
-			return NULL;
+			return Py_BuildValue("i", 0);
 		}
 		curr_img_cv = input->getFrame();
 	}
-	double fps, fps_win;
+	double fps=0, fps_win=0;
 	double tracking_time, tracking_time_with_input;
 	++frame_id;
 	mtf_clock_get(start_time_with_input);
 	//update trackers
-	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++) {
-		// update pre processed image
-		pre_proc[tracker_id]->update(curr_img_cv);
-		mtf_clock_get(start_time);
-		trackers[tracker_id]->update();// this is equivalent to :             
-		// trackers[tracker_id]->update(pre_proc->getFrame());        
-		// as the image has been passed at the time of initialization 
-		// and does not need to be passed again as long as the new 
-		// image is read into the same locatioon
-		mtf_clock_get(end_time);
-		mtf_clock_measure(start_time, end_time, tracking_time);
-		mtf_clock_measure(start_time_with_input, end_time, tracking_time_with_input);
-		fps = 1.0 / tracking_time;
-		fps_win = 1.0 / tracking_time_with_input;
-		if(reset_template){
-			trackers[tracker_id]->initialize(trackers[tracker_id]->getRegion());
+	for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
+		try{
+			//! update pre processor
+			pre_proc[tracker_id]->update(curr_img_cv);
+			mtf_clock_get(start_time);
+			//! update tracker
+			trackers[tracker_id]->update();
+			mtf_clock_get(end_time);
+			mtf_clock_measure(start_time, end_time, tracking_time);
+			mtf_clock_measure(start_time_with_input, end_time, tracking_time_with_input);
+			fps = 1.0 / tracking_time;
+			fps_win = 1.0 / tracking_time_with_input;
+			if(reset_template){
+				trackers[tracker_id]->initialize(trackers[tracker_id]->getRegion());
+			}
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception of type %s encountered while updating the tracker: %s\n",
+				err.type(), err.what());
+			return Py_BuildValue("i", 0);
 		}
-	}
-
-	cv::Point2d corners[4];
+	}	
 	if(show_cv_window) {
 		/* draw tracker positions to OpenCV window */
-		for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++) {
+		for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
 			int col_id = tracker_id % obj_cols.size();
+			cv::Point2d corners[4];
 			mtf::utils::Corners(trackers[tracker_id]->getRegion()).points(corners);
 			line(curr_img_cv, corners[0], corners[1], obj_cols[col_id], line_thickness);
 			line(curr_img_cv, corners[1], corners[2], obj_cols[col_id], line_thickness);
@@ -310,16 +328,15 @@ static PyObject* update(PyObject* self, PyObject* args) {
 			putText(curr_img_cv, trackers[tracker_id]->name, corners[0],
 				cv::FONT_HERSHEY_SIMPLEX, fps_font_size, obj_cols[col_id]);
 		}
-		snprintf(fps_text, 100, "frame: %d c: %12.6f cw: %12.6f", frame_id, fps, fps_win);
+		std::string fps_text=cv::format("frame: %d c: %12.6f cw: %12.6f", frame_id, fps, fps_win);
 		putText(curr_img_cv, fps_text, fps_origin, cv::FONT_HERSHEY_SIMPLEX, fps_font_size, fps_color);
 		imshow("PyMTF", curr_img_cv);
 		cv::waitKey(1);
 	}
-	mtf::utils::Corners(trackers[0]->getRegion()).points(corners);
-	//mtf::utils::printMatrix<double>(trackers[0]->getRegion(), "mtf corners");
-	for(int corner_id = 0; corner_id < 4; corner_id++) {
-		out_corners_data[corner_id] = corners[corner_id].x;
-		out_corners_data[corner_id + 4] = corners[corner_id].y;
+	cv::Mat out_corners = trackers[0]->getRegion();
+	for(unsigned int corner_id = 0; corner_id < 4; corner_id++) {
+		out_corners_data[corner_id] = out_corners.at<double>(0, corner_id);
+		out_corners_data[corner_id + 4] = out_corners.at<double>(1, corner_id);
 	}
 	return Py_BuildValue("O", out_corners_py);
 }

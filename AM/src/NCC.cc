@@ -383,9 +383,9 @@ void NCC::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacob
 	}
 }
 
-void NCC::estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, std::vector<VectorXd> &win_x,
-	std::vector<VectorXd> &win_y, const cv::Mat &prev_img,	const std::vector<cv::Point2f> &prev_pts,
-	const cv::Size &win_size, unsigned int n_pts, int max_iters, double term_eps, bool const_grad) const{
+void NCC::estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, const cv::Mat &prev_img,	
+	const std::vector<cv::Point2f> &prev_pts, const cv::Size &win_size, 
+	unsigned int n_pts, int max_iters, double term_eps, bool const_grad) const{
 	assert(curr_pts.size() == n_pts && prev_pts.size() == n_pts);
 	if(input_type != InputType::MTF_32FC1){
 		throw utils::FunctonNotImplemented(
@@ -398,18 +398,13 @@ void NCC::estimateOpticalFlow(std::vector<cv::Point2f> &curr_pts, std::vector<Ve
 	double half_width = win_size.width / 2.0, half_height = win_size.height / 2.0;
 
 	double grad_mult_factor = 1.0 / (2 * grad_eps);
-
-	if(win_x.empty() || win_y.empty()){
-		win_x.resize(n_pts);
-		win_y.resize(n_pts);
-		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
-			win_x[pt_id] = VectorXd::LinSpaced(win_size.width,
-				prev_pts[pt_id].x - half_width, prev_pts[pt_id].x + half_width);
-			win_y[pt_id] = VectorXd::LinSpaced(win_size.height,
-				prev_pts[pt_id].y - half_height, prev_pts[pt_id].y + half_height);
-		}
+	std::vector<VectorXd> win_x(n_pts), win_y(n_pts);
+	for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
+		win_x[pt_id] = VectorXd::LinSpaced(win_size.width,
+			prev_pts[pt_id].x - half_width, prev_pts[pt_id].x + half_width);
+		win_y[pt_id] = VectorXd::LinSpaced(win_size.height,
+			prev_pts[pt_id].y - half_height, prev_pts[pt_id].y + half_height);
 	}
-
 #ifdef ENABLE_TBB
 	parallel_for(tbb::blocked_range<size_t>(0, n_pts),
 		[&](const tbb::blocked_range<size_t>& r){

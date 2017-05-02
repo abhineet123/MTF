@@ -23,6 +23,10 @@
  *      Author: Georg Nebehay
  */
 
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#endif
+
 #include "mtf/ThirdParty/TLD/NNClassifier.h"
 
 #include "mtf/ThirdParty/TLD/DetectorCascade.h"
@@ -37,7 +41,7 @@ namespace tld
 NNClassifier::NNClassifier()
 {
     thetaFP = .5;
-    thetaTP = .65;
+    thetaTP = .65f;
 
     truePositives = new vector<NormalizedPatch>();
     falsePositives = new vector<NormalizedPatch>();

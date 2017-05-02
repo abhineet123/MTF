@@ -62,7 +62,7 @@ EnsembleClassifier::~EnsembleClassifier()
 
 void EnsembleClassifier::init()
 {
-    numIndices = pow(2.0f, numFeatures);
+    numIndices = static_cast<int>(pow(2.0f, numFeatures));
 
     initFeatureLocations();
     initFeatureOffsets();

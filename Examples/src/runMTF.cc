@@ -46,7 +46,7 @@ int main(int argc, char * argv[]) {
 #endif
 	printf("*******************************\n");
 	printf("Using parameters:\n");
-	printf("n_trackers: %d\n", n_trackers);
+	printf("n_trackers: %u\n", n_trackers);
 	printf("actor_id: %d\n", actor_id);
 	printf("source_id: %d\n", source_id);
 	printf("source_name: %s\n", source_name.c_str());
@@ -65,9 +65,16 @@ int main(int argc, char * argv[]) {
 	// ********************************** initialize input pipeline ********************************** //
 	// *********************************************************************************************** //
 
-	Input_ input(getInput(pipeline));
-	if(!input->initialize()){
-		printf("Pipeline could not be initialized successfully. Exiting...\n");
+	Input_ input;
+	try{
+		input.reset(getInput(pipeline));
+		if(!input->initialize()){
+			printf("Pipeline could not be initialized successfully. Exiting...\n");
+			return EXIT_FAILURE;
+		}
+	} catch(const mtf::utils::Exception &err){
+		printf("Exception of type %s encountered while initializing the input pipeline: %s\n",
+			err.type(), err.what());
 		return EXIT_FAILURE;
 	}
 	//printf("done getting no. of frames\n");
@@ -109,8 +116,14 @@ int main(int argc, char * argv[]) {
 	// **************************************************************************************************** //
 
 	CVUtils cv_utils(img_resize_factor);
-	if(!getObjectsToTrack(cv_utils, input.get())){
-		printf("Object(s) to be tracked could not be read\n");
+	try{
+		if(!getObjectsToTrack(cv_utils, input.get())){
+			printf("Object(s) to be tracked could not be read\n");
+			return EXIT_FAILURE;
+		}
+	} catch(const mtf::utils::Exception &err){
+		printf("Exception of type %s encountered while obtaining the object to track: %s\n",
+			err.type(), err.what());
 		return EXIT_FAILURE;
 	}
 	//! no. of frames for which ground truth is available
@@ -129,40 +142,44 @@ int main(int argc, char * argv[]) {
 	}
 
 	FILE *multi_fid = nullptr;
-	vector<Tracker_> trackers;
-	vector<PreProc_> pre_procs;
-	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++) {
+	vector<Tracker_> trackers(n_trackers);
+	vector<PreProc_> pre_procs(n_trackers);
+	for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
 		if(n_trackers > 1){ multi_fid = readTrackerParams(multi_fid); }
-		printf("Initializing tracker %d with object of size %f x %f\n", tracker_id,
-			cv_utils.getObj(tracker_id).size_x, cv_utils.getObj(tracker_id).size_y);
-		if(res_from_size){
-			resx = static_cast<unsigned int>(cv_utils.getObj(tracker_id).size_x / res_from_size);
-			resy = static_cast<unsigned int>(cv_utils.getObj(tracker_id).size_y / res_from_size);
-		}
-		mtf::TrackerBase *tracker;
 		try{
-			tracker = mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm);
+			if(res_from_size){
+				resx = static_cast<unsigned int>(cv_utils.getObj(tracker_id).size_x / res_from_size);
+				resy = static_cast<unsigned int>(cv_utils.getObj(tracker_id).size_y / res_from_size);
+			}
+			trackers[tracker_id].reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
+			if(!trackers[tracker_id]){
+				printf("Tracker could not be created successfully\n");
+				return EXIT_FAILURE;
+			}
 		} catch(const mtf::utils::Exception &err){
-			printf("Exception of type %s encountered while creating tracker: %s\n", err.type(), err.what());
+			printf("Exception of type %s encountered while creating the tracker: %s\n", err.type(), err.what());
 			return EXIT_FAILURE;
 		}
-		if(!tracker){
-			printf("Tracker could not be created successfully\n");
-			return EXIT_FAILURE;
-		}
-		PreProc_ pre_proc = getPreProc(pre_procs, tracker->inputType(), pre_proc_type);
-		pre_proc->initialize(input->getFrame(), input->getFrameID());
-		for(PreProc_ curr_obj = pre_proc; curr_obj; curr_obj = curr_obj->next){
-			tracker->setImage(curr_obj->getFrame());
-		}
-		pre_procs.push_back(pre_proc);
 		try{
-			tracker->initialize(cv_utils.getObj(tracker_id).corners);
+			pre_procs[tracker_id] = getPreProc(pre_procs, trackers[tracker_id]->inputType(), pre_proc_type);
+			pre_procs[tracker_id]->initialize(input->getFrame(), input->getFrameID());
 		} catch(const mtf::utils::Exception &err){
-			printf("Exception of type %s encountered while initializing tracker: %s\n", err.type(), err.what());
+			printf("Exception of type %s encountered while initializing the pre processor: %s\n",
+				err.type(), err.what());
 			return EXIT_FAILURE;
-		}		
-		trackers.push_back(Tracker_(tracker));
+		}
+		try{
+			for(PreProc_ curr_obj = pre_procs[tracker_id]; curr_obj; curr_obj = curr_obj->next){
+				trackers[tracker_id]->setImage(curr_obj->getFrame());
+			}
+			printf("Initializing tracker %d with object of size %f x %f\n", tracker_id,
+				cv_utils.getObj(tracker_id).size_x, cv_utils.getObj(tracker_id).size_y);
+			trackers[tracker_id]->initialize(cv_utils.getObj(tracker_id).corners);
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception of type %s encountered while initializing the tracker: %s\n",
+				err.type(), err.what());
+			return EXIT_FAILURE;
+		}
 	}
 
 	if(input->n_frames == 0){
@@ -185,9 +202,15 @@ int main(int argc, char * argv[]) {
 				return EXIT_FAILURE;
 			}
 		}
-		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
-			pre_procs[tracker_id]->update(input->getFrame(), input->getFrameID());
-			trackers[tracker_id]->setRegion(cv_utils.getGT(input->getFrameID()));
+		try{
+			for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
+				pre_procs[tracker_id]->update(input->getFrame(), input->getFrameID());
+				trackers[tracker_id]->setRegion(cv_utils.getGT(input->getFrameID()));
+			}
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception of type %s encountered while resetting the tracker location: %s\n",
+				err.type(), err.what());
+			return EXIT_FAILURE;
 		}
 	}
 
@@ -256,7 +279,7 @@ int main(int argc, char * argv[]) {
 	if(write_tracking_data){
 		string tracking_data_dir, tracking_data_path;
 		if(tracking_data_fname.empty()){
-			tracking_data_fname = cv_format("%s_%s_%s_%d_%ld", mtf_sm, mtf_am, mtf_ssm,
+			tracking_data_fname = cv::format("%s_%s_%s_%d_%ld", mtf_sm, mtf_am, mtf_ssm,
 				1 - hom_normalized_init, time(nullptr));
 		} else{
 			//! externally specified tracking_data_fname is assumed to indicate batch mode 
@@ -268,37 +291,37 @@ int main(int argc, char * argv[]) {
 			tracking_data_fname = source_name;
 		} else{
 			if(reinit_at_each_frame){
-				tracking_data_dir = cv_format("log/tracking_data/reinit/%s/%s",
+				tracking_data_dir = cv::format("log/tracking_data/reinit/%s/%s",
 					actor.c_str(), source_name.c_str());
 			} else if(reset_at_each_frame){
-				tracking_data_dir = cv_format("log/tracking_data/%s/%s/%s",
+				tracking_data_dir = cv::format("log/tracking_data/%s/%s/%s",
 					reset_to_init ? "reset_to_init" : "reset",
 					actor.c_str(), source_name.c_str());
 			} else if(reinit_on_failure){
 				std::string reinit_data_dir = std::floor(reinit_err_thresh) == reinit_err_thresh ?
 					//! reinit_err_thresh is an integer
-					cv_format("reinit_%d_%d", static_cast<int>(reinit_err_thresh), reinit_frame_skip) :
+					cv::format("reinit_%d_%d", static_cast<int>(reinit_err_thresh), reinit_frame_skip) :
 					//! reinit_err_thresh is not an integer
-					cv_format("reinit_%4.2f_%d", reinit_err_thresh, reinit_frame_skip);
-				tracking_data_dir = cv_format("log/tracking_data/%s/%s/%s",
+					cv::format("reinit_%4.2f_%d", reinit_err_thresh, reinit_frame_skip);
+				tracking_data_dir = cv::format("log/tracking_data/%s/%s/%s",
 					reinit_data_dir.c_str(), actor.c_str(), source_name.c_str());
 			} else{
-				tracking_data_dir = cv_format("log/tracking_data/%s/%s", actor.c_str(), source_name.c_str());;
+				tracking_data_dir = cv::format("log/tracking_data/%s/%s", actor.c_str(), source_name.c_str());;
 			}
 			if(init_frame_id > 0){
-				tracking_data_fname = cv_format("%s_init_%d", tracking_data_fname.c_str(), init_frame_id);
+				tracking_data_fname = cv::format("%s_init_%d", tracking_data_fname.c_str(), init_frame_id);
 			}
 		}
 		if(!fs::exists(tracking_data_dir)){
 			printf("Tracking data directory: %s does not exist. Creating it...\n", tracking_data_dir.c_str());
 			fs::create_directories(tracking_data_dir);
 		}
-		tracking_data_path = cv_format("%s/%s.txt", tracking_data_dir.c_str(), tracking_data_fname.c_str());
+		tracking_data_path = cv::format("%s/%s.txt", tracking_data_dir.c_str(), tracking_data_fname.c_str());
 		if(overwrite_gt){
 			printf("Overwriting existing GT at %s with the tracking data\n", tracking_data_path.c_str());
 			//! create backup of existing GT if any
 			if(fs::exists(tracking_data_path)){
-				string backup_gt_path = cv_format("%s/%s.back_mtf", tracking_data_dir.c_str(), tracking_data_fname.c_str());
+				string backup_gt_path = cv::format("%s/%s.back_mtf", tracking_data_dir.c_str(), tracking_data_fname.c_str());
 				printf("Backing up existing GT to: %s\n", backup_gt_path.c_str());
 				fs::rename(tracking_data_path, backup_gt_path);
 			}
@@ -314,7 +337,7 @@ int main(int argc, char * argv[]) {
 			}
 		}
 		if(write_tracking_error){
-			std::string tracking_err_path = cv_format("%s/%s.err", tracking_data_dir.c_str(), tracking_data_fname.c_str());
+			std::string tracking_err_path = cv::format("%s/%s.err", tracking_data_dir.c_str(), tracking_data_fname.c_str());
 			printf("Writing tracking errors to: %s\n", tracking_err_path.c_str());
 			tracking_error_fid = fopen(tracking_err_path.c_str(), "w");
 			fprintf(tracking_error_fid, "frame\t MCD\t CLE\t Jaccard\n");
@@ -331,22 +354,22 @@ int main(int argc, char * argv[]) {
 		}
 		if(record_frames_fname.empty()){
 			record_frames_fname = write_tracking_data ? tracking_data_fname :
-				cv_format("%s_%s_%s_%d", mtf_sm, mtf_am, mtf_ssm, 1 - hom_normalized_init);
+				cv::format("%s_%s_%s_%d", mtf_sm, mtf_am, mtf_ssm, 1 - hom_normalized_init);
 		}
-		std::string record_frames_path = cv_format("%s/%s.avi", record_frames_dir.c_str(), tracking_data_fname.c_str());
+		std::string record_frames_path = cv::format("%s/%s.avi", record_frames_dir.c_str(), tracking_data_fname.c_str());
 		printf("Recording tracking video to: %s\n", record_frames_path.c_str());
 		output.open(record_frames_path, CV_FOURCC('M', 'J', 'P', 'G'), 24, input->getFrame().size());
 	}
 
 	if(show_cv_window){
-		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
+		for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
 			if(static_cast<int>(tracker_labels.size()) < tracker_id + 1){
 				tracker_labels.push_back(trackers[tracker_id]->name);
 			}
 		}
 	}
 	double fps = 0, fps_win = 0;
-	double tracking_time = 0, tracking_time_with_input = 0;
+	double tracking_time, tracking_time_with_input;
 	double avg_fps = 0, avg_fps_win = 0;
 	int fps_count = 0;
 	double avg_err = 0;
@@ -448,20 +471,26 @@ int main(int argc, char * argv[]) {
 				if(!skip_success){ break; }
 				printf("Reinitializing in frame %5d...\n", input->getFrameID() + 1);
 				reinit_frame_id = input->getFrameID();
-				if(reinit_with_new_obj){
-					//! delete the old tracker instance and create a new one before reinitializing
-					trackers[0].reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
-					if(!trackers[0]){
-						printf("Tracker could not be created successfully\n");
-						return EXIT_FAILURE;
+				try{
+					if(reinit_with_new_obj){
+						//! delete the old tracker instance and create a new one before reinitializing
+						trackers[0].reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
+						if(!trackers[0]){
+							printf("Tracker could not be created successfully\n");
+							return EXIT_FAILURE;
+						}
+						pre_procs[0]->update(input->getFrame(), input->getFrameID());
+						for(PreProc_ curr_obj = pre_procs[0]; curr_obj; curr_obj = curr_obj->next){
+							trackers[0]->setImage(curr_obj->getFrame());
+						}
 					}
-					pre_procs[0]->update(input->getFrame(), input->getFrameID());
-					for(PreProc_ curr_obj = pre_procs[0]; curr_obj; curr_obj = curr_obj->next){
-						trackers[0]->setImage(curr_obj->getFrame());
-					}
+					trackers[0]->initialize(cv_utils.getGT(reinit_frame_id));
+					tracker_corners = trackers[0]->getRegion().clone();
+				} catch(const mtf::utils::Exception &err){
+					printf("Exception of type %s encountered while reinitializing the tracker: %s\n",
+						err.type(), err.what());
+					return EXIT_FAILURE;
 				}
-				trackers[0]->initialize(cv_utils.getGT(reinit_frame_id));
-				tracker_corners = trackers[0]->getRegion().clone();
 				if(resized_images){ tracker_corners /= img_resize_factor; }
 
 				is_initialized = true;
@@ -475,24 +504,37 @@ int main(int argc, char * argv[]) {
 				avg_err += (tracking_err - avg_err) / valid_frame_count;
 			}
 		}
+
 		if(reinit_at_each_frame){
-			if(reinit_with_new_obj){
-				//! delete the old tracker instance and create a new one before reinitializing
-				trackers[0].reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
-				if(!trackers[0]){
-					printf("Tracker could not be created successfully\n");
-					return EXIT_FAILURE;
+			try{
+				if(reinit_with_new_obj){
+					//! delete the old tracker instance and create a new one before reinitializing
+					trackers[0].reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
+					if(!trackers[0]){
+						printf("Tracker could not be created successfully\n");
+						return EXIT_FAILURE;
+					}
+					for(PreProc_ pre_proc = pre_procs[0]; pre_proc; pre_proc = pre_proc->next){
+						trackers[0]->setImage(pre_proc->getFrame());
+					}
 				}
-				for(PreProc_ pre_proc = pre_procs[0]; pre_proc; pre_proc = pre_proc->next){
-					trackers[0]->setImage(pre_proc->getFrame());
-				}
+				trackers[0]->initialize(cv_utils.getGT(input->getFrameID()));
+			} catch(const mtf::utils::Exception &err){
+				printf("Exception of type %s encountered while reinitializing the tracker: %s\n",
+					err.type(), err.what());
+				return EXIT_FAILURE;
 			}
-			trackers[0]->initialize(cv_utils.getGT(input->getFrameID()));
 			invalid_tracker_state = tracker_failed = false;
 		} else if(reset_at_each_frame){
-			cv::Mat reset_location = reset_to_init ? cv_utils.getGT(init_frame_id) :
-				cv_utils.getGT(input->getFrameID());
-			trackers[0]->setRegion(reset_location);
+			try{
+				cv::Mat reset_location = reset_to_init ? cv_utils.getGT(init_frame_id) :
+					cv_utils.getGT(input->getFrameID());
+				trackers[0]->setRegion(reset_location);
+			} catch(const mtf::utils::Exception &err){
+				printf("Exception of type %s encountered while resetting the tracker: %s\n",
+					err.type(), err.what());
+				return EXIT_FAILURE;
+			}
 			invalid_tracker_state = tracker_failed = false;
 		}
 		if(invalid_tracker_state){
@@ -509,7 +551,7 @@ int main(int argc, char * argv[]) {
 			/**
 			draw tracker positions on OpenCV window
 			*/
-			for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
+			for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
 				cv::Mat drawn_corners = tracker_id == 0 ? tracker_corners :
 					resized_images ? trackers[tracker_id]->getRegion() / img_resize_factor :
 					trackers[tracker_id]->getRegion();
@@ -529,19 +571,19 @@ int main(int argc, char * argv[]) {
 			write tracker speed in FPS - both current and average as well as
 			with and without considering input/pre processing pipeline delay
 			*/
-			std::string fps_text = cv_format("frame: %d c: %9.3f a: %9.3f cw: %9.3f aw: %9.3f fps",
+			std::string fps_text = cv::format("frame: %d c: %9.3f a: %9.3f cw: %9.3f aw: %9.3f fps",
 				input->getFrameID() + 1, fps, avg_fps, fps_win, avg_fps_win);
 			putText(input->getFrame(MUTABLE), fps_text, fps_origin, cv::FONT_HERSHEY_SIMPLEX, fps_font_size, fps_color);
 			/**
 			write tracking error for the first tracker - both current and average
 			*/
 			if(show_tracking_error){
-				std::string err_text = cv_format("ce: %12.8f ae: %12.8f", tracking_err, avg_err);
+				std::string err_text = cv::format("ce: %12.8f ae: %12.8f", tracking_err, avg_err);
 				if(show_jaccard_error){
 					double jaccard_error = static_cast<TrackErrT>(tracking_err_type) == TrackErrT::Jaccard ? tracking_err :
 						mtf::utils::getJaccardError(gt_corners, tracker_corners,
 						input->getFrame().cols, input->getFrame().rows);
-					err_text = err_text + cv_format(" je: %12.8f", jaccard_error);
+					err_text = err_text + cv::format(" je: %12.8f", jaccard_error);
 				}
 				putText(input->getFrame(MUTABLE), err_text, err_origin, cv::FONT_HERSHEY_SIMPLEX, err_font_size, err_color);
 			}
@@ -587,7 +629,7 @@ int main(int argc, char * argv[]) {
 			}
 		}
 		//! update trackers       
-		for(int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
+		for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
 			//! update pre processor
 			pre_procs[tracker_id]->update(input->getFrame(), input->getFrameID());
 			try{
@@ -611,7 +653,8 @@ int main(int argc, char * argv[]) {
 				//! allow the tracker to be reinitialized if this option is enabled otherwise exit
 				continue;
 			} catch(const mtf::utils::Exception &err){
-				printf("Exception of type %s encountered while updating tracker: %s\n", err.type(), err.what());
+				printf("Exception of type %s encountered while updating the tracker: %s\n", 
+					err.type(), err.what());
 				return EXIT_FAILURE;
 			}
 			fps = 1.0 / tracking_time;

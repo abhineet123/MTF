@@ -55,7 +55,7 @@ namespace mtf{
 		/* default parameters */
 		int source_id = 0;
 		int actor_id = 0;
-		int n_trackers = 1;
+		unsigned int n_trackers = 1;
 		bool track_single_obj = false;
 		char pipeline = 'c';
 		char img_source = 'j';
@@ -977,7 +977,7 @@ namespace mtf{
 			char *arg_prefix = nullptr){
 			if(arg_val[0] == '#'){ return; }
 			if(!strcmp(arg_name, "n_trackers")){
-				n_trackers = atoi(arg_val);
+				n_trackers = static_cast<unsigned int>(atoi(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "track_single_obj")){

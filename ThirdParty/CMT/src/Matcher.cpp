@@ -1,5 +1,9 @@
 #include "mtf/ThirdParty/CMT/Matcher.h"
 
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#endif
+
 using cv::vconcat;
 using cv::DMatch;
 

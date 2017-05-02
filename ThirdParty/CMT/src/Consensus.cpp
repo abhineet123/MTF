@@ -1,5 +1,9 @@
 #include "mtf/ThirdParty/CMT/Consensus.h"
 
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#endif
+
 #define _USE_MATH_DEFINES //Necessary for M_PI to be available on Windows
 #include <cmath>
 

@@ -25,6 +25,10 @@
  * @brief
  */
 
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#endif
+
 #include "mtf/ThirdParty/TLD/mftracker/BBPredict.h"
 
 #include <cmath>

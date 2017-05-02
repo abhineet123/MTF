@@ -30,7 +30,7 @@ namespace nt{
 		printf("Using %s estimator with:\n", ssm->name.c_str());
 		est_params.print();
 
-		name = "grid_flow";
+		name = "grid_flow_nt";
 
 		if(ssm->getResX() != params.getResX() || ssm->getResY() != params.getResY()){
 			throw utils::InvalidArgument(
@@ -38,7 +38,7 @@ namespace nt{
 				ssm->getResX(), ssm->getResY()));
 		}
 
-		n_pts = params.grid_size_x *params.grid_size_y;
+		n_pts = static_cast<unsigned int>(params.grid_size_x *params.grid_size_y);
 		search_window = cv::Size(params.search_window_x, params.search_window_y);
 		lk_termination_criteria = cv::TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS,
 			params.max_iters, params.epsilon);
@@ -74,7 +74,7 @@ namespace nt{
 	void GridTrackerFlow::initialize(const cv::Mat &corners) {
 		ssm->initialize(corners);
 
-		for(int pt_id = 0; pt_id < n_pts; pt_id++){
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 			Vector2d patch_centroid = ssm->getPts().col(pt_id);
 			prev_pts[pt_id].x = static_cast<float>(patch_centroid(0));
 			prev_pts[pt_id].y = static_cast<float>(patch_centroid(1));
@@ -82,11 +82,11 @@ namespace nt{
 		am->getCurrImg().copyTo(prev_img);
 
 		ssm->getCorners(cv_corners_mat);
-		if(params.show_trackers){ showTrackers(); }
+		if(params.show_trackers){ showPts(); }
 	}
 	
 	void GridTrackerFlow::update() {
-		am->estimateOpticalFlow(curr_pts, win_x, win_y, prev_img, prev_pts, search_window, n_pts,
+		am->estimateOpticalFlow(curr_pts, prev_img, prev_pts, search_window, n_pts,
 			params.max_iters, params.epsilon, params.use_const_grad);
 		ssm->estimateWarpFromPts(ssm_update, pix_mask, prev_pts, curr_pts, est_params);
 
@@ -94,14 +94,14 @@ namespace nt{
 		ssm->applyWarpToCorners(opt_warped_corners, ssm->getCorners(), ssm_update);
 		ssm->setCorners(opt_warped_corners);
 
-		for(int pt_id = 0; pt_id < n_pts; pt_id++){
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 			prev_pts[pt_id].x = curr_pts[pt_id].x;
 			prev_pts[pt_id].y = curr_pts[pt_id].y;
 		}
 		ssm->getCorners(cv_corners_mat);
 		am->getCurrImg().copyTo(prev_img);
 
-		if(params.show_trackers){ showTrackers(); }
+		if(params.show_trackers){ showPts(); }
 	}
 	
 	void GridTrackerFlow::setImage(const cv::Mat &img){
@@ -118,7 +118,7 @@ namespace nt{
 	
 	void GridTrackerFlow::setRegion(const cv::Mat& corners) {
 		ssm->setCorners(corners);
-		for(int pt_id = 0; pt_id < n_pts; pt_id++){
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id){
 			prev_pts[pt_id].x = static_cast<float>(ssm->getPts()(0, pt_id));
 			prev_pts[pt_id].y = static_cast<float>(ssm->getPts()(1, pt_id));
 		}
@@ -126,19 +126,19 @@ namespace nt{
 	}
 
 	
-	void GridTrackerFlow::showTrackers(){
+	void GridTrackerFlow::showPts(){
 		curr_img.convertTo(curr_img_disp, curr_img_disp.type());
 
 		cv::cvtColor(curr_img_disp, curr_img_disp, CV_GRAY2BGR);
 		utils::drawRegion(curr_img_disp, cv_corners_mat, CV_RGB(0, 0, 255), 2);
-		for(int tracker_id = 0; tracker_id < n_pts; tracker_id++) {
+		for(unsigned int pt_id = 0; pt_id < n_pts; ++pt_id) {
 			cv::Scalar tracker_color;
-			if(pix_mask[tracker_id]){
+			if(pix_mask[pt_id]){
 				tracker_color = cv::Scalar(0, 255, 0);
 			} else{
 				tracker_color = cv::Scalar(0, 0, 255);
 			}
-			circle(curr_img_disp, curr_pts[tracker_id], 2, tracker_color, 2);
+			circle(curr_img_disp, curr_pts[pt_id], 2, tracker_color, 2);
 		}
 		imshow(patch_win_name, curr_img_disp);
 		//int key = cv::waitKey(1 - pause_seq);

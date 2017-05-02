@@ -49,8 +49,7 @@ private:
 	cv::Mat curr_pts_mat, prev_pts_mat;
 
 	std::vector<cv::Point2f> curr_pts, prev_pts;
-	std::vector<VectorXd> win_x, win_y;
-	int n_pts;
+	unsigned int n_pts;
 	cv::Size search_window;
 	cv::TermCriteria lk_termination_criteria;
 
@@ -72,7 +71,7 @@ private:
 	int pause_seq;
 
 	~GridTrackerFlow(){}
-	void showTrackers();
+	void showPts();
 };
 
 _MTF_END_NAMESPACE

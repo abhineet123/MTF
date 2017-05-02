@@ -13,9 +13,11 @@ MODIFICATIONS (Modification, Author, Date):
 
 **************************************************************************/
 
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#endif
 
 #include "blob.h"
-
 
 CBlob::CBlob()
 {

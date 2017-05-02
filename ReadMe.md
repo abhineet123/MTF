@@ -45,32 +45,48 @@ Installation:
 		- Install a recent version of Visual Studio
 			- the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine
 			- the freely available [Express edition](https://www.visualstudio.com/vs/visual-studio-express/) can be used too
+		- Set `EIGEN3_ROOT`, `EIGEN3_DIR` and `EIGEN3_ROOT_DIR` [environment variables](http://www.computerhope.com/issues/ch000549.htm) to the folder containing the Eigen header files
+		    - this folder should contain the sub folders `Eigen` and `unsupported` and a file called `signature_of_eigen3_matrix_library`
+			- if cmake still fails to find Eigen, set `EIGEN_INCLUDE_DIR_WIN` variable in `CMakeLists.txt` (line 13) to this folder
 		- [Build OpenCV from source using Visual Studio](http://docs.opencv.org/2.4/doc/tutorials/introduction/windows_install/windows_install.html#installation-by-making-your-own-libraries-from-the-source-files) or download the [pre built binaries](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/) built with the correct version of visual studio if available.	
 			- set environment variable `OPENCV_DIR` to the folder where the binaries have been built or downloaded; this should contain the `OpenCVConfig.cmake` file along with the `lib` and `bin` folders
-			- add the location of the `bin` folder to the `Path` environment variable if dynamic librararies have been built
+			- add the location of the `bin` folder to the `Path` environment variable
 			- if cmake still fails to find OpenCV, set `OPENCV_INCLUDE_DIR_WIN`, `OPENCV_LIB_DIR_WIN` and `OpenCV_SUFFIX` variables in `CMakeLists.txt` (line 14-16) to the respective values
 		- [Build Boost from source using Visual Studio (`toolset=msvc`)](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary).
 			- using the steps under [Simplified Build From Source](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#simplified-build-from-source) should work too
 			- set `BOOST_INCLUDEDIR` and `BOOST_LIBRARYDIR` environment variables to the locations of the header and library (*.lib) files respectively.
-			- if cmake still fails to find Boost, set `BOOST_INCLUDE_DIR_WIN`, `BOOST_LIB_DIR_WIN` and `Boost_SUFFIX` variables in `CMakeLists.txt` (line 17-19) to the respective values
-		- Set `EIGEN3_ROOT`, `EIGEN3_DIR` and `EIGEN3_ROOT_DIR` environment variables to the folder containing the Eigen header files; this folder should contain the sub folders `Eigen` and `unsupported` and a file called `signature_of_eigen3_matrix_library`
-			- if cmake still fails to find Eigen, set `EIGEN_INCLUDE_DIR_WIN` variable in `CMakeLists.txt` (line 13) to this folder
+			- add the location of the `bin` folder containing the *.dll files to the `Path` environment variable
+			- if cmake still fails to find Boost, set `BOOST_INCLUDE_DIR_WIN`, `BOOST_LIB_DIR_WIN` and `Boost_SUFFIX` variables in `CMakeLists.txt` (line 17-19) to the respective values		
+		- If [FLANN](http://www.cs.ubc.ca/research/flann/) is needed, build it from source using Visual Studio and set `FLANN_ROOT` to the folder containing the compiled library and header files respectively
+			- this folder should have sub folders called `lib`, `bin` and `include` that contain the *.lib, *.dll and the header files 
+			- add the `bin` sub folder to the `Path` environment variable
+		- If [ViSP](http://www.cs.ubc.ca/research/flann/) is needed, [build ViSP from source using Visual Studio](http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win10-msvc14.html) and set `VISP_DIR` to the folder containing the library and header files
+			- this folder should have files called `VISPConfigVersion.cmake` and `VISPConfig.cmake` along with sub folders called `x86/vc<version>/lib`, `x86/vc<version>/bin` and `include` that contain the *.lib, *.dll and the header files respectively.
+			- add the path of the `bin` folder to the `Path` environment variable	
+		- if the Python interface is to be built, install [Python 2.7.x](https://www.python.org/downloads/windows/) and [Numpy](http://www.numpy.org/).
+		    - cmake should normally be able to find the needed Python/Numpy libraries and headers without any other setup
+			- if any problems are encountered, please open an issue to let us know about it
 		
 	* Using GNU Make with MinGW
+	    - **Note**:  This method is not recommended due to the following issues:
+		    - it is known to run into "out of memory" exceptions while compiling some of the executables
+		    - importing pyMTF from a Python script results in an error: `ImportError: DLL load failed: A dynamic link library (DLL) initialization routine failed.` due to an incompatibility between the python import system and third party modules compiled with MinGW.
 		- Install [MinGW](http://www.mingw.org/), [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm) and [CoreUtils for Windows](http://gnuwin32.sourceforge.net/packages/coreutils.htm)
 		- [Build OpenCV from source using MinGW](http://kevinhughes.ca/tutorials/opencv-install-on-windows-with-codeblocks-and-mingw) and set `OPENCV_INCLUDE_DIRS` and `OPENCV_LIB_DIRS` in the makefile to the locations of header and library files respectively. 
 		- [Build Boost from source using MinGW (`toolset=gcc`)](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary) and set `BOOST_LIB_DIRS` and `BOOST_INCLUDE_DIRS` in the makefile to the locations of the header and library (`*.dll.a`) files respectively.
 		- Set `EIGEN_INCLUDE_DIRS` in the makefile to the location containing Eigen header files. 
 		- Set appropriate values for `BOOST_LIBS_SUFFIX`, and `OPENCV_LIBS_SUFFIX` based on the installed versions of the respective libraries.
-		- if the Python interface is to be built, install [Python 2.7.x](https://www.python.org/downloads/windows/) and set appropriate locations for `PYTHON_INCLUDE_DIR`, `PYTHON_LIBS_DIR`, `NUMPY_INCLUDE_DIR` and `MTF_PY_INSTALL_DIR` in `Examples/Examples.mak`.
+		- if the Python interface is to be built, install [Python 2.7.x](https://www.python.org/downloads/windows/) and [Numpy](http://www.numpy.org/) and set appropriate locations for `PYTHON_INCLUDE_DIR`, `PYTHON_LIBS_DIR`, `NUMPY_INCLUDE_DIR` and `MTF_PY_INSTALL_DIR` in `Examples/Examples.mak`.
 		- Add the `bin` folders of the MinGW and GnuWin32 installations (e.g. `C:\MinGW\bin`, `C:\Program Files (x86)\GnuWin32\bin`) along with folders containing the `*.dll` files of OpenCV and Boost installations (e.g. `C:\OpenCV\build\x86\mingw\bin`) to the [`PATH` environment variable](https://www.java.com/en/download/help/path.xml) and reboot the system for the changes to take effect.
-	    - Note: this method has been known to run into "out of memory" exceptions while compiling some of the executables so is not recommended
 		
 * **Download** the source code as zip file or clone using `git clone https://github.com/abhineet123/MTF.git`.
-* MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the former is recommended for developers/contributors as it offers finer level of control while the latter is for users of the library who only want to install it once (or when the former does not work). 
-For cmake, first use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile for Unix or Visual Studio solution for Windows and then either use one of the make commands specified below or open `MTF.sln` in Visual Studio and run `Build->Build Solution` to build MTF.
+* MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the former is recommended for developers/contributors as it offers finer level of control while the latter is for users of the library who only want to install it once. For cmake:
+    * use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile for Unix or Visual Studio solution for Windows
+	* in the former case, use one of the make commands specified below
+    * in the latter case, open `MTF.sln` in Visual Studio and run `Build->Build Solution`
+	    - change the solution configuration to `Release` from the default `Debug` before building for the faster version
 
-* On Unix or when using Make for Windows, run one of the following **make commands** to compile and install the library and the example applications:
+* On Unix or when using MinGW on Windows, run one of the following make commands to compile and install the library and the example applications:
     * `make` or `make mtf` : compiles the shared library (_libmtf.so_) to the build directory (_Build/Release_)
     * `make install` : compiles the shared library if needed and copies it to _/usr/local/lib_; also copies the headers to _/usr/local/include/mtf_; (use `make install_lib` or `make install_header` for only one of the two); if third party trackers are enabled, their respective library files will be installed too;
 	    - this needs administrative (sudo) privilege; if not available, the variables `MTF_LIB_INSTALL_DIR` and `MTF_HEADER_INSTALL_DIR` in the makefile can be modified to install elsewhere. This can be done either by editing the file itself or providing these with the make command as: `make install MTF_LIB_INSTALL_DIR=<library_installation_dir> MTF_HEADER_INSTALL_DIR=<header_installation_dir>`
@@ -83,7 +99,6 @@ For cmake, first use the [standard method](https://cmake.org/runningcmake/) (i.e
 	    - usage of this module is fully demonstrated in the `mtfTracker.py` file in our [Python Tracking Framework](https://github.com/abhineet123/PTF)
 	    -  installation location can be specified through `MTF_PY_INSTALL_DIR` (defaults to _/usr/local/lib/python2.7/dist-packages/_)
 		- currently only supports Python 2.7 so will give compilation errors if Python 3 is also installed and set as default
-		- importing pyMTF from a Python script in Windows currently results in an error: `ImportError: DLL load failed: A dynamic link library (DLL) initialization routine failed.` due to an incompatibility between the python import system and third party modules compiled with MinGW. We are working on fixing this issue.
     * `make uav`/`make install_uav` : compile/install an application called `trackUAVTrajectory` that tracks the trajectory of a UAV in a satellite image of the area over which it flew while capturing images from above
     * `make mos`/`make install_mos` : compile/install an application called `createMosaic` that constructs a live mosaic from a video of the region to be stitched
     * `make qr`/`make install_qr` : compile/install an application called `trackMarkers` that automatically detects one or more markers in the input stream and starts tracking them
