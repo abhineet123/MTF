@@ -28,7 +28,7 @@ MIL_LIB_SRC = $(addprefix ${MIL_SRC_DIR}/,$(addsuffix .cpp, ${MIL_LIB_MODULES}))
 MIL_LIB_SRC += $(addprefix ${MIL_ROOT_DIR}/samples/,$(addsuffix .cpp, object_tracker_app))
 
 
-${BUILD_DIR}/MIL.o: ${MIL_SRC_DIR}/MIL.cc ${MIL_HEADERS} ${UTILITIES_HEADER_DIR}/miscUtils.h ${MACROS_HEADER_DIR}/common.h ${ROOT_HEADER_DIR}/TrackerBase.h
+${BUILD_DIR}/MIL.o: ${MIL_SRC_DIR}/MIL.cc ${MIL_HEADERS} ${UTILITIES_HEADER_DIR}/miscUtils.h  ${UTILITIES_HEADER_DIR}/excpUtils.h  ${MACROS_HEADER_DIR}/common.h ${ROOT_HEADER_DIR}/TrackerBase.h
 	${CXX} ${MTF_PIC_FLAG} -c ${WARNING_FLAGS} ${OPT_FLAGS} $< -std=c++11 ${OPENCV_FLAGS} ${MTF_COMPILETIME_FLAGS} -I${MIL_INCLUDE_DIR} -I${UTILITIES_INCLUDE_DIR} -I${MACROS_INCLUDE_DIR} -I${ROOT_INCLUDE_DIR} -o  $@
 
 ${MTF_LIB_INSTALL_DIR}/${MIL_LIB_SO}: ${MIL_ROOT_DIR}/${MIL_LIB_SO}
