@@ -1,4 +1,5 @@
 #include "mtf/Utilities/miscUtils.h"
+#include "mtf/Utilities/excpUtils.h"
 #include "opencv2/highgui/highgui.hpp"
 #if CV_MAJOR_VERSION == 3
 #include "opencv2/imgproc/imgproc.hpp"
@@ -211,7 +212,7 @@ namespace utils{
 	void drawPatch(cv::Mat &img, const cv::Mat &patch, int n_channels,
 		int start_x, int start_y){
 		if((patch.channels() > 1) && (patch.channels() != img.channels())){
-			throw std::invalid_argument(
+			throw InvalidArgument(
 				cv::format("No. of channels in the image: %d does not match that in the patch: %d",
 				img.channels(), patch.channels()));
 		}
@@ -228,8 +229,8 @@ namespace utils{
 						patch.at< cv::Vec<PatchValT, 3> >(row_id, col_id);
 					break;
 				default:
-					throw std::domain_error(
-						cv::format("drawPatch :: %d channel images are not supported", n_channels));
+					throw FunctonNotImplemented(
+						cv_format("drawPatch :: %d channel images are not supported", n_channels));
 				}
 			}
 		}
@@ -258,7 +259,7 @@ namespace utils{
 		case TrackErrT::Jaccard:
 			return "Jaccard";
 		default:
-			throw std::invalid_argument(
+			throw InvalidArgument(
 				cv::format("Invalid tracking error type provided: %d\n",
 				_er_type));
 		}

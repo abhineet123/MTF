@@ -87,7 +87,7 @@ SSDBase(rscv_params, _n_channels), params(rscv_params){
 
 	if(params.use_bspl && params.partition_of_unity){
 		if(params.n_bins < 4){
-			throw std::invalid_argument(
+			throw utils::InvalidArgument(
 				cv::format("RSCV::Too few bins %d specified to enforce partition of unity constraint", params.n_bins));
 		}
 		norm_pix_min = 1;
@@ -145,7 +145,7 @@ void RSCV::initializePixVals(const Matrix2Xd& init_pts){
 			img_height, img_width, pix_norm_mult, pix_norm_add);
 		break;
 	default:
-		throw std::domain_error("RSCV::initializePixVals::Invalid input type found");
+		throw utils::InvalidArgument("RSCV::initializePixVals::Invalid input type found");
 	}
 	//printf("here we are in RSCV::initializePixVals\n");
 	//utils::printMatrixToFile(init_pix_vals, "initializePixVals::init_pix_vals", "log/mtf_log.txt");
@@ -186,7 +186,7 @@ void RSCV::updatePixVals(const Matrix2Xd& curr_pts){
 			pix_norm_mult, pix_norm_add);
 		break;
 	default:
-		throw std::domain_error("RSCV::updatePixVals::Invalid input type found");
+		throw utils::InvalidArgument("RSCV::updatePixVals::Invalid input type found");
 	}
 	//if (params.debug_mode){
 	//	utils::printMatrixToFile(curr_pix_vals, "orig curr_pix_vals", "log/mtf_log.txt");
@@ -258,7 +258,7 @@ void RSCV::updatePixGrad(const Matrix2Xd &curr_pts){
 				intensity_map, curr_pts, grad_eps, n_pix, img_height, img_width);
 			break;
 		default:
-			throw std::domain_error("RSCV::updatePixGrad::Invalid input type found");
+			throw utils::InvalidArgument("RSCV::updatePixGrad::Invalid input type found");
 		}
 	} else{
 		ImageBase::updatePixGrad(curr_pts);
@@ -285,7 +285,7 @@ void RSCV::updatePixHess(const Matrix2Xd &curr_pts){
 				curr_pts, hess_eps, n_pix, img_height, img_width);
 			break;
 		default:
-			throw std::domain_error("RSCV::updatePixHess::Invalid input type found");
+			throw utils::InvalidArgument("RSCV::updatePixHess::Invalid input type found");
 		}
 	} else{
 		ImageBase::updatePixHess(curr_pts);
@@ -311,7 +311,7 @@ void RSCV::updatePixHess(const Matrix2Xd& curr_pts, const Matrix16Xd &warped_off
 				curr_pts, warped_offset_pts, hess_eps, n_pix, img_height, img_width);
 			break;
 		default:
-			throw std::domain_error("RSCV::updatePixHess::Invalid input type found");
+			throw utils::InvalidArgument("RSCV::updatePixHess::Invalid input type found");
 		}
 	} else{
 		ImageBase::updatePixHess(curr_pts, warped_offset_pts);
@@ -340,7 +340,7 @@ void RSCV::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 				intensity_map, warped_offset_pts, grad_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
-			throw std::domain_error("RSCV::updatePixGrad::Invalid input type found");
+			throw utils::InvalidArgument("RSCV::updatePixGrad::Invalid input type found");
 		}
 	} else{
 		ImageBase::updatePixGrad(warped_offset_pts);

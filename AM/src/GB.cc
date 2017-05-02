@@ -132,7 +132,7 @@ void GB::parseSamplerSigma(VectorXd &out_sigma, const VectorXd &in_sigma){
 		out_sigma.fill(in_sigma[0]);
 	} else{
 		if(in_sigma.size() != 2){
-			throw std::invalid_argument(
+			throw utils::InvalidArgument(
 				cv::format("GB::parseSamplerSigma :: sampler sigma has invalid size %d\n",
 				in_sigma.size()));
 		}
@@ -145,7 +145,7 @@ void GB::parseSamplerMean(VectorXd &out_mean, const VectorXd &in_mean){
 		out_mean.fill(in_mean[0]);
 	} else{
 		if(in_mean.size() != 2){
-			throw std::invalid_argument(
+			throw utils::InvalidArgument(
 				cv::format("GB::parseSamplerMean :: sampler mean has invalid size %d\n",
 				in_mean.size()));
 		}

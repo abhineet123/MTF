@@ -243,13 +243,13 @@ void SSIM::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jaco
 	//utils::printMatrix(curr_hessian_3, "curr_hessian_3");
 	//utils::printMatrix(curr_hessian, "first order curr_hessian");
 
-	if(curr_hessian.rows() != ssm_state_size || curr_hessian.cols() != ssm_state_size){
-		//utils::printMatrix(curr_hessian_1, "curr_hessian_1");
-		//utils::printMatrix(curr_hessian_2, "curr_hessian_2");
-		//utils::printMatrix(curr_hessian_3, "curr_hessian_3");
-		utils::printMatrix(curr_hessian, "first order curr_hessian");
-		throw std::domain_error("curr_hessian is not of correct size");
-	}
+	//if(curr_hessian.rows() != ssm_state_size || curr_hessian.cols() != ssm_state_size){
+	//	utils::printMatrix(curr_hessian_1, "curr_hessian_1");
+	//	utils::printMatrix(curr_hessian_2, "curr_hessian_2");
+	//	utils::printMatrix(curr_hessian_3, "curr_hessian_3");
+	//	utils::printMatrix(curr_hessian, "first order curr_hessian");
+	//	throw LogicError("curr_hessian is not of correct size");
+	//}
 
 }
 

@@ -236,7 +236,7 @@ void SSDBase::cmptILMHessian(MatrixXd &d2f_dp2, const MatrixXd &dI_dpssm,
 		break;
 	}
 	default:
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("SSDBase :: ILM has invalid hessian type provided: %d", ilm_d2f_dIt_type));
 	}
 	if(df_dg){

@@ -147,7 +147,7 @@ init_patch(0, 0, 0), curr_patch(0, 0, 0){
 	sub_region_size_y = resy - (params.n_sub_regions_y - 1)*params.spacing_y;
 
 	if(sub_region_size_x <= 0 || sub_region_size_y <= 0){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("LSCV :: Patch size : %dx%d is not enough to use the specified region spacing and / or count",
 			resx, resy));
 	}

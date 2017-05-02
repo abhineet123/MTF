@@ -10,12 +10,12 @@ PyramidalSM<AM,SSM>::PyramidalSM(const vector<SM*> &_trackers,
 	const ParamType *parl_params) : CompositeSM<AM, SSM>(_trackers),
 	params(parl_params), external_img_pyramid(false){
 	if(n_trackers != params.no_of_levels){
-		throw std::domain_error(
+		throw utils::InvalidArgument(
 			cv::format("PyramidalSM :: no. of trackers: %d does not match the no. of levels in the pyramid: %d",
 			n_trackers, params.no_of_levels));
 	}
 	if(trackers[0]->inputType() == HETEROGENEOUS_INPUT){
-		throw std::domain_error("PyramidalSM :: Heterogeneous input is currently not supported");
+		throw utils::FunctonNotImplemented("PyramidalSM :: Heterogeneous input is currently not supported");
 	}
 	printf("\n");
 	printf("Using Pyramidal SM with:\n");
@@ -63,7 +63,7 @@ void PyramidalSM<AM,SSM>::setImage(const cv::Mat &img){
 template<class AM, class SSM>
 void PyramidalSM<AM,SSM>::setImagePyramid(const vector<cv::Mat> &_img_pyramid){
 	if(_img_pyramid.size() != params.no_of_levels){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format(
 			"PyramidalSM::setImagePyramid :: Mismatch between the no. of levels in the provided pyramid: %d and the expected: %d", 
 			_img_pyramid.size(), params.no_of_levels)

@@ -199,9 +199,9 @@ template <class AM, class SSM>
 void FESMBase<AM, SSM >::initializeSPIMask(){
 #ifndef DISABLE_SPI
 	if(!ssm.supportsSPI())
-		throw std::domain_error("FESMBase::initialize : SSM does not support SPI");
+		throw utils::InvalidArgument("FESMBase::initialize : SSM does not support SPI");
 	if(!am.supportsSPI())
-		throw std::domain_error("FESMBase::initialize : AM does not support SPI");
+		throw utils::InvalidArgument("FESMBase::initialize : AM does not support SPI");
 
 	printf("Using Selective Pixel Integration\n");
 	pix_mask.resize(am.getPixCount());

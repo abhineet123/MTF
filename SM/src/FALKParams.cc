@@ -77,7 +77,7 @@ const char* FALKParams::toString(HessType hess_type){
 	case HessType::Std:
 		return "Standard";
 	default:
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("FALKParams :: Invalid hessian type provided: %d", hess_type));
 	}
 }

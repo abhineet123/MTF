@@ -32,7 +32,7 @@ PF<AM, SSM >::PF(const ParamType *pf_params,
 	ssm_state_size = ssm.getStateSize();
 	if(params.pix_sigma.empty() || params.pix_sigma[0] <= 0){
 		if(params.ssm_sigma.empty()){
-			throw std::invalid_argument("Sigma must be provided for at least one sampler");
+			throw utils::InvalidArgument("Sigma must be provided for at least one sampler");
 		}
 		using_pix_sigma = false;
 	} else{
@@ -76,7 +76,7 @@ PF<AM, SSM >::PF(const ParamType *pf_params,
 
 	if(!using_pix_sigma){
 		if(params.ssm_sigma[0].size() < ssm_state_size){
-			throw std::invalid_argument(
+			throw utils::InvalidArgument(
 				cv::format("SSM sigma has invalid size: %d",
 				params.ssm_sigma[0].size()));
 		}
@@ -84,7 +84,7 @@ PF<AM, SSM >::PF(const ParamType *pf_params,
 			state_mean = VectorXd::Zero(ssm_state_size);
 		} else{
 			if(params.ssm_mean[0].size() < ssm_state_size){
-				throw std::invalid_argument(
+				throw utils::InvalidArgument(
 					cv::format("SSM ssm_mean has invalid size: %d",
 					params.ssm_mean[0].size()));
 			}

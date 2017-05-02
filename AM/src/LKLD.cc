@@ -86,14 +86,14 @@ AppearanceModel(kld_params), params(kld_params){
 		stringstream err_msg;
 		err_msg << "LKLD :: Patch size : " << patch_size_x << "x" << patch_size_y <<
 			"is not enough to use the specified region spacing and / or count";
-		throw std::invalid_argument(err_msg.str());
+		throw utils::InvalidArgument(err_msg.str());
 	}
 	printf("Using sub regions of size: %d x %d\n", sub_region_size_x, sub_region_size_y);
 
 	double norm_pix_min = 0, norm_pix_max = params.n_bins - 1;
 	if(params.partition_of_unity){
 		if(params.n_bins < 4){
-			throw std::invalid_argument("LKLD::Too few bins specified to enforce partition of unity constraint");
+			throw utils::InvalidArgument("LKLD::Too few bins specified to enforce partition of unity constraint");
 		}
 		norm_pix_min = 1;
 		norm_pix_max = params.n_bins - 2;

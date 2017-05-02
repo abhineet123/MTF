@@ -188,7 +188,7 @@ const char* FLANNCVParams::toString(IdxType index_type){
 	case IdxType::Autotuned:
 		return "Autotuned";
 	default:
-		throw std::invalid_argument("FLANNCVParams :: Invalid index type provided");
+		throw utils::InvalidArgument("FLANNCVParams :: Invalid index type provided");
 	}
 }
 

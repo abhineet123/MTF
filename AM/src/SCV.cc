@@ -66,7 +66,7 @@ const char* SCVParams::toString(HistType _hist_type){
 	case HistType::BSpline:
 		return "BSpline";
 	default:
-		throw std::invalid_argument("Invalid histogram type provided");
+		throw utils::InvalidArgument("Invalid histogram type provided");
 	}
 }
 
@@ -97,7 +97,7 @@ SSDBase(scv_params, _n_channels), params(scv_params), init_img(0, 0, 0){
 
 	if(params.hist_type == HistType::BSpline && params.partition_of_unity){
 		if(params.n_bins < 4){
-			throw std::invalid_argument(
+			throw utils::InvalidArgument(
 				cv::format("SCV::Too few bins %d specified to enforce partition of unity constraint", params.n_bins));
 		}
 		norm_pix_min = 1;
@@ -196,7 +196,7 @@ void SCV::updateSimilarity(bool prereq_only){
 			hist_pre_seed, params.pre_seed, patch_size);
 		break;
 	default:
-		throw std::invalid_argument("Invalid histogram type provided");
+		throw utils::InvalidArgument("Invalid histogram type provided");
 	}
 	for(int bin_id = 0; bin_id < params.n_bins; ++bin_id){
 		if(init_hist(bin_id) == 0){
@@ -242,7 +242,7 @@ void SCV::updatePixGrad(const Matrix2Xd &curr_pts){
 				intensity_map, init_pts, grad_eps, n_pix, img_height, img_width);
 			break;
 		default:
-			throw std::domain_error("SCV::Invalid input type found");
+			throw utils::InvalidArgument("SCV::Invalid input type found");
 		}
 	}
 }
@@ -272,7 +272,7 @@ void SCV::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 				grad_eps, n_pix, img_height, img_width, pix_norm_mult);
 			break;
 		default:
-			throw std::domain_error("SCV::Invalid input type found");
+			throw utils::InvalidArgument("SCV::Invalid input type found");
 		}
 	}
 }
@@ -298,7 +298,7 @@ void SCV::updatePixHess(const Matrix2Xd &curr_pts){
 				intensity_map, init_pts, hess_eps, n_pix, img_height, img_width);
 			break;
 		default:
-			throw std::domain_error("SCV::Invalid input type found");
+			throw utils::InvalidArgument("SCV::Invalid input type found");
 		}
 	}
 }

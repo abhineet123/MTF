@@ -125,7 +125,7 @@ void Diagnostics::generateAnalyticalData3D(VectorXd &x_vec, VectorXd &y_vec,
 
 	if((state_ids[0] < static_cast<int>(ssm_state_size)) !=
 		(state_ids[1] < static_cast<int>(ssm_state_size))){
-		throw std::invalid_argument("Diagnostics::generateAnalyticalData3D::Both state IDs must be either for SSM or AM\n");
+		throw utils::InvalidArgument("Diagnostics::generateAnalyticalData3D::Both state IDs must be either for SSM or AM\n");
 	}
 
 	//VectorXd param_range_vec = param_range_vec.array() / ssm_grad_norm_mean.array();
@@ -289,7 +289,7 @@ double Diagnostics::getADTVal(ADT data_type, int state_id){
 		hessian += init_self_hessian2;
 		return hessian(state_id, state_id) / 2.0;
 	default:
-		throw std::invalid_argument(cv::format("Diagnostics :: Invalid data type specified: %d", data_type));
+		throw utils::InvalidArgument(cv::format("Diagnostics :: Invalid data type specified: %d", data_type));
 	}
 }
 _MTF_END_NAMESPACE

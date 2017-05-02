@@ -1,4 +1,5 @@
 #include "mtf/SM/FCLKParams.h"
+#include "mtf/Utilities/excpUtils.h"
 
 #define FC_MAX_ITERS 30
 #define FC_EPSILON 1e-4
@@ -81,7 +82,7 @@ const char* FCLKParams::toString(HessType hess_type){
 	case HessType::Std:
 		return "Standard";
 	default:
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("FCLKParams :: Invalid hessian type provided: %d", hess_type));
 	}
 }

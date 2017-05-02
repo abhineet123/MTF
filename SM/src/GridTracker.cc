@@ -125,10 +125,10 @@ GridTracker<SSM>::GridTracker(const vector<TrackerBase*> _trackers,
 	if(grid_size != n_trackers){
 		printf("No. of trackers provided: %d\n", n_trackers);
 		printf("No. of trackers needed for the grid: %d\n", grid_size);
-		throw std::invalid_argument("GridTracker :: Mismatch between grid dimensions and no. of trackers");
+		throw utils::InvalidArgument("GridTracker :: Mismatch between grid dimensions and no. of trackers");
 	}
 	if(ssm.getResX() != params.getResX() || ssm.getResY() != params.getResY()){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("GridTrackerCV: SSM has invalid sampling resolution: %d x %d",
 			ssm.getResX(), ssm.getResY()));
 	}
@@ -178,7 +178,7 @@ GridTracker<SSM>::GridTracker(const vector<TrackerBase*> _trackers,
 	//}
 	if(input_type == HETEROGENEOUS_INPUT){
 		if(params.enable_pyr){
-			throw std::invalid_argument("GridTracker::Pyramidal patch trackers with heterogeneous inputs are currently not supported");
+			throw utils::InvalidArgument("GridTracker::Pyramidal patch trackers with heterogeneous inputs are currently not supported");
 		}
 		printf("Warning: Grid tracker used with heterogeneous patch trackers\n");
 	}
@@ -206,13 +206,13 @@ void GridTracker<SSM>::setImage(const cv::Mat &img) {
 	if(params.enable_pyr){
 		PyramidalTracker *init_pyr_tracker = dynamic_cast<PyramidalTracker*>(trackers[0]);
 		if(!init_pyr_tracker){
-			throw std::invalid_argument("GridTracker:: Patch tracker 0 is not a valid pyramidal tracker");
+			throw utils::InvalidArgument("GridTracker:: Patch tracker 0 is not a valid pyramidal tracker");
 		}
 		trackers[0]->setImage(img);
 		for(int tracker_id = 1; tracker_id < n_trackers; ++tracker_id){
 			PyramidalTracker *curr_pyr_tracker = dynamic_cast<PyramidalTracker*>(trackers[tracker_id]);
 			if(!curr_pyr_tracker){
-				throw std::invalid_argument(cv::format("GridTracker:: Patch tracker %d is not a valid pyramidal tracker", tracker_id));
+				throw utils::InvalidArgument(cv::format("GridTracker:: Patch tracker %d is not a valid pyramidal tracker", tracker_id));
 			}
 			curr_pyr_tracker->setImagePyramid(init_pyr_tracker->getImagePyramid());
 		}

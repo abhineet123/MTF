@@ -23,7 +23,7 @@ namespace utils{
 		case InterpType::CubicBSpl:
 			return "CubicBSpl";
 		default:
-			throw std::invalid_argument("Invalid interpolation type provided");
+			throw InvalidArgument("Invalid interpolation type provided");
 		}
 	}
 	const char* toString(BorderType border_type){
@@ -33,7 +33,7 @@ namespace utils{
 		case BorderType::Replicate:
 			return "Replicate";
 		default:
-			throw std::invalid_argument("Invalid border type provided");
+			throw InvalidArgument("Invalid border type provided");
 		}
 	}
 	const char* typeToString(int img_type){
@@ -74,7 +74,7 @@ namespace utils{
 		case CV_64FC4: return "CV_64FC4";
 
 		default:
-			throw std::invalid_argument(
+			throw InvalidArgument(
 				cv_format("typeToString::Invalid image type provided: %d", img_type)
 				);
 		}
@@ -1494,7 +1494,7 @@ namespace utils{
 							warped_img.at<uchar>(row_id, col_id) =
 								static_cast<uchar>(orig_img.at<float>(row_id, col_id));
 						}
-						//throw std::logic_error("Neighboring points ID are invalid");
+						//throw LogicError("Neighboring points ID are invalid");
 					} else{
 						//int ulx = original_pts(0, neigh_pts_id[0]), uly = original_pts(1, neigh_pts_id[0]);
 						//int urx = original_pts(0, neigh_pts_id[1]), ury = original_pts(1, neigh_pts_id[1]);
@@ -1690,7 +1690,7 @@ namespace utils{
 				static_cast<uchar>(pix_vals(pt_id*n_channels + 2)));
 			break;
 		default:
-			throw std::invalid_argument(
+			throw InvalidArgument(
 				cv::format("Invalid channel count provided: %d", n_channels));
 		}
 		if(use_mask){ mask.at<uchar>(y, x) = 255; }		

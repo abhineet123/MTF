@@ -56,7 +56,7 @@ public:
 		state_size(0),  identity_jacobian(false), first_iter(false),
 		spi_mask(nullptr){
 		if(resx == 0 || resy == 0) {
-			throw std::invalid_argument("StateSpaceModel::Invalid sampling resolution provided");
+			throw utils::InvalidArgument("StateSpaceModel::Invalid sampling resolution provided");
 		}
 		init_pts.resize(Eigen::NoChange, n_pts);
 		curr_pts.resize(Eigen::NoChange, n_pts);

@@ -1,4 +1,5 @@
 #include "mtf/SM/IALKParams.h"
+#include "mtf/Utilities/excpUtils.h"
 
 #define IALK_MAX_ITERS 10
 #define IALK_EPSILON 0.01
@@ -54,7 +55,7 @@ const char* IALKParams::toString(HessType hess_type){
 	case HessType::Std:
 		return "Standard";
 	default:
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("IALKParams :: Invalid hessian type provided: %d", hess_type));
 	}
 }

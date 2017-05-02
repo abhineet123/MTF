@@ -34,9 +34,9 @@ namespace nt{
 
 		if(params.enable_spi){
 			if(!templ_tracker->supportsSPI()){
-				throw std::invalid_argument("Template tracker does not support SPI\n");
+				throw utils::InvalidArgument("Template tracker does not support SPI\n");
 			} else if(templ_resx % grid_resx != 0 || templ_resy % grid_resy != 0){
-				throw std::invalid_argument(
+				throw utils::InvalidArgument(
 					cv::format("Sampling resolution of the template tracker: %d x %d is not compatible with the grid size: %d x %d\n",
 					templ_resx, templ_resy, grid_resx, grid_resy));
 			} else{

@@ -2,6 +2,7 @@
 #define MTF_IMG_UTILS_H
 
 #include "mtf/Macros/common.h"
+#include "mtf/Utilities/excpUtils.h"
 
 #ifndef PIX_INTERP_TYPE
 #define PIX_INTERP_TYPE utils::InterpType::Linear
@@ -54,7 +55,7 @@ namespace utils{
 	template<InterpType interp_type, BorderType border_type>
 	inline double getPixVal(const EigImgT &img, double x, double y,
 		unsigned int h, unsigned int w, double overflow_val = 128.0){
-		throw std::invalid_argument(
+		throw InvalidArgument(
 			cv::format("getPixVal :: Invalid interpolation type specified: %d",
 			interp_type));
 	}
@@ -226,7 +227,7 @@ namespace utils{
 		struct PixVal{
 			static inline double get(const cv::Mat &img, double x, double y,
 				unsigned int h, unsigned int w, double overflow_val = 128.0){
-				throw std::invalid_argument(
+				throw InvalidArgument(
 					cv::format("get :: Invalid interpolation type specified: %d",
 					interp_type));
 			}
@@ -448,7 +449,7 @@ namespace utils{
 		struct PixVal{
 			static inline void get(double *pix_val, const cv::Mat &img, double x, double y,
 				unsigned int h, unsigned int w, double overflow_val = 128.0){
-				throw std::invalid_argument(
+				throw InvalidArgument(
 					cv::format("get :: Invalid interpolation type specified: %d",
 					interp_type));
 			}

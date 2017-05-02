@@ -35,6 +35,9 @@
   exception if a NaN distance value occurs.
 */
 
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#endif
 
 #include "mtf/ThirdParty/CMT/fastcluster/fastcluster.h"
 

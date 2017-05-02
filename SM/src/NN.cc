@@ -81,7 +81,7 @@ NN<AM, SSM >::NN(const ParamType *nn_params,
 		}
 		unsigned int residual_samples = params.n_samples_to_add - n_distr*samples_per_distr;
 		if(residual_samples >= n_distr){
-			throw std::logic_error(
+			throw utils::LogicError(
 				cv::format("NNParams :: Residual sample count: %d exceeds the no. of distributions: %d",
 				residual_samples, n_distr));
 		}

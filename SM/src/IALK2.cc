@@ -40,7 +40,7 @@ IALK2<AM, SSM >::IALK2(const ParamType *ialk2_params,
 		printf("Using %s order Standard Hessian\n", hess_order);
 		break;
 	default:
-		throw std::invalid_argument("Invalid Hessian type provided");
+		throw utils::InvalidArgument("Invalid Hessian type provided");
 	}
 	init_pix_jacobian.resize(am.getNPix(), ssm.getStateSize());
 	jacobian.resize(ssm.getStateSize());

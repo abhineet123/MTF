@@ -108,7 +108,7 @@ warp(nullptr), tracker(nullptr){
 		printf("Using ESM SM\n");
 		break;
 	default:
-		throw std::invalid_argument("Invalid search method provided");
+		throw mtf::utils::InvalidArgument("Invalid search method provided");
 	}
 
 	switch(params.ssm_type) {
@@ -139,7 +139,7 @@ warp(nullptr), tracker(nullptr){
 		break;
 #endif
 	default:
-		throw std::invalid_argument("Invalid state space model provided");
+		throw mtf::utils::InvalidArgument("Invalid state space model provided");
 	}
 
 	switch(params.am_type) {
@@ -158,14 +158,14 @@ warp(nullptr), tracker(nullptr){
 			tracker.reset(new vpTemplateTrackerSSDESM(warp.get()));
 			break;
 		default:
-			throw std::invalid_argument("Invalid search method provided for SSD");
+			throw mtf::utils::InvalidArgument("Invalid search method provided for SSD");
 		}
 		printf("Using SSD AM\n");
 		break;
 	case AMType::ZNCC:
 		switch(params.sm_type) {
 		case SMType::FCLK:
-			throw std::invalid_argument("Invalid search method provided for ZNCC");
+			throw mtf::utils::InvalidArgument("Invalid search method provided for ZNCC");
 		case SMType::ICLK:
 			tracker.reset(new vpTemplateTrackerZNCCInverseCompositional(warp.get()));
 			break;
@@ -173,9 +173,9 @@ warp(nullptr), tracker(nullptr){
 			tracker.reset(new vpTemplateTrackerZNCCForwardAdditional(warp.get()));
 			break;
 		case SMType::ESM:
-			throw std::invalid_argument("Invalid search method provided for ZNCC");
+			throw mtf::utils::InvalidArgument("Invalid search method provided for ZNCC");
 		default:
-			throw std::invalid_argument("Invalid search method provided for ZNCC");
+			throw mtf::utils::InvalidArgument("Invalid search method provided for ZNCC");
 		}
 		printf("Using ZNCC AM\n");
 		break;
@@ -194,12 +194,12 @@ warp(nullptr), tracker(nullptr){
 			tracker.reset(new vpTemplateTrackerMIESM(warp.get()));
 			break;
 		default:
-			throw std::invalid_argument("Invalid search method provided for MI");
+			throw mtf::utils::InvalidArgument("Invalid search method provided for MI");
 		}
 		printf("Using MI AM\n");
 		break;
 	default:
-		throw std::invalid_argument("Invalid appearance model provided");
+		throw mtf::utils::InvalidArgument("Invalid appearance model provided");
 	}
 
 

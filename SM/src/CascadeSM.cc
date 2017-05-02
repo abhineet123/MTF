@@ -16,7 +16,7 @@ buffer_filled(false) {
 	name = "casc: ";
 	for(int tracker_id = 0; tracker_id < n_trackers; tracker_id++){
 		if(!trackers[tracker_id]){
-			throw std::invalid_argument(cv::format("CascadeSM :: tracker %d is invalid\n", tracker_id));
+			throw utils::InvalidArgument(cv::format("CascadeSM :: tracker %d is invalid\n", tracker_id));
 		}
 		name = name + trackers[tracker_id]->name + " ";
 		printf("%d: %s ", tracker_id + 1, trackers[tracker_id]->name.c_str());

@@ -108,7 +108,7 @@ LineTracker::LineTracker(const vector<TrackerBase*> trackers,
 	if(grid_size != n_trackers){
 		printf("No. of trackers provided: %d\n", n_trackers);
 		printf("No. of trackers needed for the grid: %d\n", grid_size);
-		throw std::invalid_argument("LineTracker :: Mismatch between grid dimensions and no. of trackers");
+		throw utils::InvalidArgument("LineTracker :: Mismatch between grid dimensions and no. of trackers");
 	}
 
 	corner_tracker_ids[0] = 0;

@@ -47,7 +47,7 @@ IlluminationModel(_pgb_params), params(_pgb_params){
 	region_size_y = resy / params.n_ctrl_pts_y;
 
 	if(region_size_x <= 0 || region_size_y <= 0){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("RBF :: Patch size : %d x %d is not enough to use the specified region spacing and / or count",
 			resx, resy));
 	}
@@ -163,7 +163,7 @@ void RBF::cmptParamHessian(double *_d2f_dp2, const double *_d2f_dg2,
 
 	}
 	default:
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("RBF::cmptParamHessian :: Invalid hessian type provided: %d", d2f_dg2_type));
 	}
 }
@@ -194,7 +194,7 @@ void RBF::cmptPixHessian(double *_d2f_dI2, const double *_d2f_dg2,
 
 	}
 	default:
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("RBF::cmptPixHessian :: Invalid hessian type provided: %d", d2f_dg2_type));
 	}
 }
@@ -247,7 +247,7 @@ IlluminationModel::PixHessType RBF::getPixHessType(){
 	case  PixHessType::General:
 		return  PixHessType::General;
 	default:
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("RBF:: d2f_dg2 has nvalid type : %d", d2f_dg2_type));
 	}
 }
@@ -261,7 +261,7 @@ void RBF::parseSamplerSigma(VectorXd &out_sigma, const VectorXd &in_sigma){
 		out_sigma[state_size - 1] = in_sigma[1];
 	} else{
 		if(in_sigma.size() != state_size){
-			throw std::invalid_argument(
+			throw utils::InvalidArgument(
 				cv::format("RBF::parseSamplerSigma :: sampler sigma has invalid size %d which should be %d\n",
 				in_sigma.size(), state_size));
 		}
@@ -277,7 +277,7 @@ void RBF::parseSamplerMean(VectorXd &out_mean, const VectorXd &in_mean){
 		out_mean[state_size - 1] = in_mean[1];
 	} else{
 		if(in_mean.size() != state_size){
-			throw std::invalid_argument(
+			throw utils::InvalidArgument(
 				cv::format("RBF::parseSamplerMean :: sampler mean has invalid size %d which should be %d\n",
 				in_mean.size(), state_size));
 		}

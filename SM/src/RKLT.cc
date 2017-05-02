@@ -23,10 +23,10 @@ RKLT<AM, SSM>::RKLT(const ParamType *rklt_params,
 
 	if(params.enable_spi){
 		if(!templ_tracker->supportsSPI()){
-			throw std::invalid_argument("Template tracker does not support SPI\n");
+			throw utils::InvalidArgument("Template tracker does not support SPI\n");
 		} else if(grid_tracker->getResX() != templ_tracker->getAM().getResX() ||
 			grid_tracker->getResY() != templ_tracker->getAM().getResY()){
-			throw std::invalid_argument(
+			throw utils::InvalidArgument(
 				cv::format("Sampling resolution of the template tracker: %d x %d is not same as the grid size: %d x %d\n",
 				templ_tracker->getAM().getResX(), templ_tracker->getAM().getResY(),
 				grid_tracker->getResX(), grid_tracker->getResY()));

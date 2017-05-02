@@ -58,7 +58,7 @@ void ZNCC::initializePixVals(const Matrix2Xd& init_pts) {
 			img_height, img_width);
 		break;
 	default:
-		throw std::domain_error("ZNCC::initializePixVals::Invalid input type found");
+		throw utils::InvalidArgument("ZNCC::initializePixVals::Invalid input type found");
 	}
 
 	I0_mean = I0.mean();
@@ -96,7 +96,7 @@ void ZNCC::updatePixVals(const Matrix2Xd& curr_pts) {
 		utils::mc::getPixVals<float>(It, curr_img_cv, curr_pts, n_pix, img_height, img_width);
 		break;
 	default:
-		throw std::domain_error("ZNCC::updatePixVals::Invalid input type found");
+		throw utils::InvalidArgument("ZNCC::updatePixVals::Invalid input type found");
 	}
 
 	It_mean = It.mean();

@@ -196,7 +196,7 @@ double Diagnostics::getInvADTVal(ADT data_type, int state_id){
 		hessian += curr_self_hessian2;
 		return hessian(state_id, state_id) / 2.0;		
 	default:
-		throw std::invalid_argument("Diagnostics :: Invalid data type specified");
+		throw utils::InvalidArgument("Diagnostics :: Invalid data type specified");
 	}
 }
 

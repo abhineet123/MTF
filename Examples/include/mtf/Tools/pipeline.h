@@ -17,6 +17,7 @@
 #include "cvUtils.h"
 //! parameters for various components of the pipeline
 #include "mtf/Config/parameters.h"
+#include "mtf/Utilities/excpUtils.h"
 
 #include <memory>
 
@@ -54,7 +55,7 @@ inline InputBase* getInput(char _pipeline_type){
 			);
 #endif
 	default:
-		throw std::invalid_argument(
+		throw mtf::utils::InvalidArgument(
 			cv::format("Invalid pipeline type specified: %c\n",
 			_pipeline_type));
 	}
@@ -77,7 +78,7 @@ inline PreProcBase* createPreProc(int output_type, const std::string &_pre_proc_
 		return new BilateralFiltering(output_type, img_resize_factor, pre_proc_hist_eq,
 			bil_diameter, bil_sigma_col, bil_sigma_space);
 	} else{
-		throw std::invalid_argument(
+		throw mtf::utils::InvalidArgument(
 			cv::format("Invalid image pre processing type specified: %s\n",
 			_pre_proc_type.c_str()));
 	}
@@ -87,7 +88,7 @@ inline PreProc_ getPreProc(const vector<PreProc_> &existing_objs, int output_typ
 	const std::string &_pre_proc_type){
 	if(output_type == HETEROGENEOUS_INPUT){
 		if(atoi(_pre_proc_type.c_str()) < 0 || _pre_proc_type == "raw"){
-			throw std::invalid_argument(
+			throw mtf::utils::InvalidArgument(
 				"getPreProc : Heterogeneos output cannot be used without pre processing");
 		}
 		PreProc_ new_obj = getPreProc(existing_objs, supported_output_types[0], _pre_proc_type);
@@ -109,7 +110,7 @@ inline PreProc_ getPreProc(int output_type,
 	const std::string &_pre_proc_type){
 	if(output_type == HETEROGENEOUS_INPUT){
 		if(atoi(_pre_proc_type.c_str()) < 0 || _pre_proc_type == "raw"){
-			throw std::invalid_argument(
+			throw mtf::utils::InvalidArgument(
 				"getPreProc : Heterogeneos output cannot be used without pre processing");
 		}
 		PreProc_ new_obj = getPreProc(supported_output_types[0], _pre_proc_type);

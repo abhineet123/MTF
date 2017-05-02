@@ -7,8 +7,10 @@ using filtering, resizing and histogram equalization
 before using it for tracking
 */
 
-#include "opencv2/imgproc/imgproc.hpp"
 #include "mtf/Config/parameters.h"
+#include "mtf/Utilities/excpUtils.h"
+
+#include "opencv2/imgproc/imgproc.hpp"
 #include <memory>
 
 const vector<int> supported_output_types = { CV_32FC3, CV_32FC1, CV_8UC3, CV_8UC1 };
@@ -51,7 +53,7 @@ public:
 			rgb_input = false;
 			break;
 		default:
-			throw std::invalid_argument(
+			throw mtf::utils::InvalidArgument(
 				cv::format("Invalid input image type provided: %d", frame_raw.type()));
 		}
 		switch(output_type){
@@ -78,7 +80,7 @@ public:
 			frame_rgb.create(frame_raw.rows, frame_raw.cols, CV_8UC3);
 			break;
 		default:
-			throw std::invalid_argument("PreProcBase::initialize : Invalid output image type provided");
+			throw mtf::utils::InvalidArgument("PreProcBase::initialize : Invalid output image type provided");
 		}
 		if(resize_images){
 			frame_resized.create(static_cast<int>(frame_raw.rows*resize_factor), 
@@ -127,7 +129,7 @@ public:
 			imshow(window_name, resize_images ? frame_resized : frame_rgb);
 			break;
 		default:
-			throw std::invalid_argument("Invalid output image type provided");
+			throw mtf::utils::InvalidArgument("Invalid output image type provided");
 		}
 	}
 	virtual int outputType() const{ return output_type; }
@@ -196,7 +198,7 @@ protected:
 			}
 			break;
 		default:
-			throw std::invalid_argument(
+			throw mtf::utils::InvalidArgument(
 				cv::format("Invalid output image type provided: %d", output_type));
 		}
 	}
@@ -323,14 +325,14 @@ struct NoPreProcessing : public PreProcBase{
 				printf("CV_8UC3\n");
 				break;
 			default:
-				throw std::invalid_argument(
+				throw mtf::utils::InvalidArgument(
 					cv::format("Invalid image type provided: %d", output_type));
 			}
 		}
 	}
 	void update(const cv::Mat &frame_raw, int _frame_id = -1) override{
 		if(frame_raw.data != curr_frame.data){
-			throw std::invalid_argument("NoPreProcessing::update : Input image location in memory has changed");
+			throw mtf::utils::InvalidArgument("NoPreProcessing::update : Input image location in memory has changed");
 		}
 		frame_id = _frame_id;
 	}

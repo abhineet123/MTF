@@ -63,7 +63,7 @@ Diagnostics::Diagnostics(AM _am, SSM _ssm,
 		update_name = "Compositional";
 		break;
 	default:
-		throw std::invalid_argument("Diagnostics :: Invalid update type specified");
+		throw utils::InvalidArgument("Diagnostics :: Invalid update type specified");
 	}
 
 	n_pix = am->getNPix();
@@ -132,7 +132,7 @@ bool Diagnostics::validateHessians(const MatrixXd &self_hessian){
 		double relative_diff = 2 * init_hessian_diff_norm / (init_hessian.squaredNorm() + self_hessian.squaredNorm());
 		utils::printScalar(relative_diff, "relative_diff", "%e");
 		matching_hess = false;
-		//throw std::logic_error("Diagnostics:: Init Self Hessian does not match Init Hessian");
+		//throw utils::LogicError("Diagnostics:: Init Self Hessian does not match Init Hessian");
 	}
 	double curr_hessian_diff_norm = (self_hessian - hessian).squaredNorm();
 	if(curr_hessian_diff_norm > params.validation_prec){
@@ -185,12 +185,12 @@ void Diagnostics::initialize(const cv::Mat &corners,
 		am->cmptInitHessian(init_hessian, init_pix_jacobian);
 		am->cmptCurrHessian(hessian, init_pix_jacobian);
 		if(!validateHessians(init_self_hessian)){
-			throw std::logic_error("Diagnostics:: First Order Hessian Mismatch Encountered");
+			throw utils::LogicError("Diagnostics:: First Order Hessian Mismatch Encountered");
 		}
 		am->cmptInitHessian(init_hessian, init_pix_jacobian, init_pix_hessian);
 		am->cmptCurrHessian(hessian, init_pix_jacobian, init_pix_hessian);
 		if(!validateHessians(init_self_hessian2)){
-			throw std::logic_error("Diagnostics:: Second Order Hessian Mismatch Encountered");
+			throw utils::LogicError("Diagnostics:: Second Order Hessian Mismatch Encountered");
 		}
 	}
 	if(gen_flags[3]){
@@ -365,7 +365,7 @@ const char*  Diagnostics::toString(ADT data_type){
 		return "SumOfSelf2";
 	default:
 		printf("Data type: %d\n", data_type);
-		throw std::invalid_argument("Diagnostics :: Invalid analytical  data type specified");
+		throw utils::InvalidArgument("Diagnostics :: Invalid analytical  data type specified");
 	}
 }
 const char*  Diagnostics::toString(NDT data_type){
@@ -378,7 +378,7 @@ const char*  Diagnostics::toString(NDT data_type){
 		return "NHessian";
 	default:
 		printf("Data type: %d\n", data_type);
-		throw std::invalid_argument("Diagnostics :: Invalid numerical data type specified");
+		throw utils::InvalidArgument("Diagnostics :: Invalid numerical data type specified");
 	}
 }
 

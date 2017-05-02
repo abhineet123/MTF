@@ -126,13 +126,13 @@ SL3::SL3(
 		FILE *fid;
 		errno_t err;
 		if((err = fopen_s(&fid, log_fname, "r")) != 0) {
-			throw std::invalid_argument(cv_format("SL3 :: Log file %s could not be opened successfully : %s\n",
+			throw utils::InvalidArgument(cv_format("SL3 :: Log file %s could not be opened successfully : %s\n",
 				log_fname, strerror(err)));
 		}
 #else
 		FILE *fid = fopen(log_fname, "w");
 		if(!fid){
-			throw std::invalid_argument(cv_format("SL3 :: Log file %s could not be opened successfully\n", log_fname));
+			throw utils::InvalidArgument(cv_format("SL3 :: Log file %s could not be opened successfully\n", log_fname));
 		}		
 #endif	
 		fclose(fid);
@@ -288,7 +288,7 @@ void SL3::getStateFromLieAlgMat(VectorXd &ssm_state,
 void SL3::initializeSampler(const VectorXd &state_sigma, 
 	const VectorXd &state_mean){
 	if(state_sigma.size() != 8){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("SL3::initializeSampler :: SSM sigma has invalid size: %d\n",
 			state_sigma.size()));
 	}

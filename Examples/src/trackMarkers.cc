@@ -65,11 +65,11 @@ int main(int argc, char * argv[]) {
 	Detector_ marker_detector(dynamic_cast<Detector_::element_type*>(
 		mtf::getTracker("feat", "ncc", qr_detector_ssm.c_str(), "0")));
 	if(!marker_detector){
-		throw std::invalid_argument("Marker detector could not be created successfully\n");
+		throw mtf::utils::InvalidArgument("Marker detector could not be created successfully\n");
 	}
 	PreProc_ marker_pre_proc = getPreProc(marker_detector->inputType(), pre_proc_type);
 	if(qr_input.empty()){
-		throw std::invalid_argument("No input files provided");
+		throw mtf::utils::InvalidArgument("No input files provided");
 	}
 	// ********************************** read QR images ********************************** //
 	if(qr_n_markers < 0){
@@ -80,7 +80,7 @@ int main(int argc, char * argv[]) {
 	for(int i = 0; i < qr_n_markers; ++i){
 		marker_images_orig.push_back(cv::imread(qr_root_dir + "/" + qr_input[i]));
 		if(marker_images_orig.back().empty()){
-			throw std::invalid_argument(cv_format("Input image %s could not be read",
+			throw mtf::utils::InvalidArgument(cv_format("Input image %s could not be read",
 				qr_input[i].c_str()));
 		}
 		//cv::imshow(input_fname, qr_images.back());

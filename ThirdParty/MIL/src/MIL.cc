@@ -1,5 +1,6 @@
 #include "mtf/ThirdParty/MIL/MIL.h"
 #include "mtf/Utilities/miscUtils.h"
+#include "mtf/Utilities/excpUtils.h"
 
 #define MIL_ALGORITHM cv::MILTrackerParams::CV_ONLINEMIL
 #define MIL_NUM_CLASSIFIERS 100
@@ -61,13 +62,13 @@ void MIL::initialize(const cv::Mat& corners){
 	printf("Using MIL tracker at: %d, %d with region of size %dx%d\n",
 		curr_location.x, curr_location.y, curr_location.width, curr_location.height);
 	if(!tracker->initialize(curr_img, curr_location)){
-		throw std::runtime_error("MIL::Tracker could not be initialized successfully\n");
+		throw mtf::utils::InvalidTrackerState("MIL::Tracker could not be initialized successfully\n");
 	}
 	updateCVCorners();
 }
 void MIL::update(){
 	if(!tracker->update(curr_img, curr_location)){
-		throw std::runtime_error("MIL::Tracker could not be updated successfully\n");
+		throw mtf::utils::InvalidTrackerState("MIL::Tracker could not be updated successfully\n");
 	}
 	updateCVCorners();
 }

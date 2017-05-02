@@ -1,5 +1,6 @@
 #include "mtf/SM/PFParams.h"
 #include "mtf/Utilities/miscUtils.h"
+#include "mtf/Utilities/excpUtils.h"
 
 #define PF_MAX_ITERS 10
 #define PF_N_PARTICLES 200
@@ -105,7 +106,7 @@ bool PFParams::processDistributions(vector<VectorXd> &state_sigma,
 	bool using_pix_sigma;
 	if(pix_sigma.empty() || pix_sigma[0] <= 0){
 		if(ssm_sigma.empty()){
-			throw std::invalid_argument("Sigma must be provided for at least one sampler");
+			throw utils::InvalidArgument("Sigma must be provided for at least one sampler");
 		}
 		using_pix_sigma = false;
 		n_distr = max(ssm_sigma.size(), ssm_mean.size());
@@ -135,7 +136,7 @@ bool PFParams::processDistributions(vector<VectorXd> &state_sigma,
 				state_sigma[sampler_id].resize(ssm_state_size);
 				state_sigma[sampler_id].fill(ssm_sigma[sigma_id][0]);
 			} else if(ssm_sigma[sigma_id].size() < ssm_state_size){
-				throw std::invalid_argument(
+				throw utils::InvalidArgument(
 					cv_format("PFParams :: SSM sigma for distribution %d has invalid size: %d",
 					sampler_id, ssm_sigma[sigma_id].size()));
 			} else{
@@ -145,7 +146,7 @@ bool PFParams::processDistributions(vector<VectorXd> &state_sigma,
 				state_mean[sampler_id].resize(ssm_state_size);
 				state_mean[sampler_id].fill(ssm_mean[mean_id][0]);
 			} else if(ssm_mean[mean_id].size() < ssm_state_size){
-				throw std::invalid_argument(
+				throw utils::InvalidArgument(
 					cv_format("PFParams :: SSM mean for distribution %d has invalid size: %d",
 					sampler_id, ssm_mean[mean_id].size()));
 			} else{
@@ -153,12 +154,12 @@ bool PFParams::processDistributions(vector<VectorXd> &state_sigma,
 			}
 
 			//if(ssm_sigma[sigma_id].size() < ssm_state_size){
-			//	throw std::invalid_argument(
+			//	throw utils::InvalidArgument(
 			//		cv::format("PFParams :: SSM sigma for distribution %d has invalid size: %d",
 			//		sampler_id, ssm_sigma[sigma_id].size()));
 			//}
 			//if(ssm_mean[mean_id].size() < ssm_state_size){
-			//	throw std::invalid_argument(
+			//	throw utils::InvalidArgument(
 			//		cv::format("PFParams :: SSM mean for distribution %d has invalid size: %d",
 			//		sampler_id, ssm_mean[mean_id].size()));
 			//}
@@ -181,7 +182,7 @@ bool PFParams::processDistributions(vector<VectorXd> &state_sigma,
 	}
 	unsigned int n_residual_particles = static_cast<unsigned int>(n_particles - n_distr*particles_per_distr);
 	if(n_residual_particles >= n_distr){
-		throw std::logic_error(
+		throw utils::LogicError(
 			cv_format("PFParams :: Residual particle count: %d exceeds the no. of distributions: %d",
 			n_residual_particles, n_distr));
 	}
@@ -200,7 +201,7 @@ const char* PFParams::toString(DynamicModel _dyn_model){
 	case DynamicModel::AutoRegression1:
 		return "AutoRegression(1)";
 	default:
-		throw std::invalid_argument("Invalid dynamic model provided");
+		throw utils::InvalidArgument("Invalid dynamic model provided");
 	}
 }
 const char* PFParams::toString(UpdateType _upd_type){
@@ -210,7 +211,7 @@ const char* PFParams::toString(UpdateType _upd_type){
 	case UpdateType::Compositional:
 		return "Compositional";
 	default:
-		throw std::invalid_argument("Invalid dynamic model provided");
+		throw utils::InvalidArgument("Invalid dynamic model provided");
 	}
 }
 const char* PFParams::toString(ResamplingType _resampling_type){
@@ -224,7 +225,7 @@ const char* PFParams::toString(ResamplingType _resampling_type){
 	case ResamplingType::Residual:
 		return "Residual";
 	default:
-		throw std::invalid_argument("Invalid resampling type provided");
+		throw utils::InvalidArgument("Invalid resampling type provided");
 	}
 }
 const char* PFParams::toString(LikelihoodFunc _likelihood_func){
@@ -236,7 +237,7 @@ const char* PFParams::toString(LikelihoodFunc _likelihood_func){
 	case LikelihoodFunc::Reciprocal:
 		return "Reciprocal";
 	default:
-		throw std::invalid_argument("Invalid likelihood function provided");
+		throw utils::InvalidArgument("Invalid likelihood function provided");
 	}
 }
 const char* PFParams::toString(MeanType _likelihood_func){
@@ -248,7 +249,7 @@ const char* PFParams::toString(MeanType _likelihood_func){
 	case MeanType::Corners:
 		return "Corners";
 	default:
-		throw std::invalid_argument("Invalid mean type provided");
+		throw utils::InvalidArgument("Invalid mean type provided");
 	}
 }
 

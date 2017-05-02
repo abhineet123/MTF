@@ -141,7 +141,7 @@ public:
 			printf("Using Difference of Jacobians\n");
 			break;
 		default:
-			throw std::invalid_argument("Invalid Jacobian type provided");
+			throw utils::InvalidArgument("Invalid Jacobian type provided");
 		}
 
 		const char *hess_order = params.sec_ord_hess ? "Second" : "First";
@@ -165,7 +165,7 @@ public:
 			printf("Using %s order Standard Hessian\n", hess_order);
 			break;
 		default:
-			throw std::invalid_argument("Invalid Hessian type provided");
+			throw utils::InvalidArgument("Invalid Hessian type provided");
 		}
 
 		ssm_update.resize(ssm.getStateSize());
@@ -199,9 +199,9 @@ public:
 
 		if(params.enable_spi){
 			if(!ssm.supportsSPI())
-				throw std::domain_error("ESM::initialize : SSM does not support SPI");
+				throw utils::InvalidArgument("ESM::initialize : SSM does not support SPI");
 			if(!am.supportsSPI())
-				throw std::domain_error("ESM::initialize : AM does not support SPI");
+				throw utils::InvalidArgument("ESM::initialize : AM does not support SPI");
 
 			printf("Using Selective Pixel Integration\n");
 			pix_mask.resize(am.getNPix());

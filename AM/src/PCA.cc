@@ -63,7 +63,7 @@ SSDBase(pca_params, _n_channels), params(pca_params){
 		cv_img_type_float = CV_64FC3;
 		break;
 	default:
-		throw std::domain_error(cv::format("PCA :: %d channel images are not supported yet", n_channels));
+		throw utils::FunctonNotImplemented(cv_format("PCA :: %d channel images are not supported yet", n_channels));
 	}
 }
 
@@ -154,7 +154,7 @@ void PCA::updateModel(const Matrix2Xd& curr_pts){
 			pix_norm_mult, pix_norm_add);
 		break;
 	default:
-		throw std::domain_error("PCA :: updateModel::Invalid input type found");
+		throw utils::InvalidArgument("PCA :: updateModel::Invalid input type found");
 	}
 	//! update the basis
 	updateBasis();

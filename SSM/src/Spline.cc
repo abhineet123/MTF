@@ -43,7 +43,7 @@ const char*  SplineParams::toString(InterpolationType interp_type){
 	case InterpolationType::Bicubic:
 		return "Bicubic";
 	default:
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("SplineParams :: Invalid interpolation type specified: %d", interp_type)
 			);
 	}
@@ -66,7 +66,7 @@ Spline::Spline(
 	int mod_x = resx % params.control_size_x;
 	int mod_y = resy % params.control_size_y;
 	if(mod_x != 0 || mod_y != 0){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv_format("Sampling resolution %dx%d is not divided evenly by the control patch size %dx%d\n",
 			resx, resy, params.control_size_x, params.control_size_y));
 	}
@@ -223,11 +223,11 @@ double Spline::getWeight(double x, double y){
 		}
 		return (1 - abs(x))*(1 - abs(y));
 	case InterpolationType::Biquadratic:
-		throw std::domain_error("Spline::Biquadratic interpolation is not implemented yet");
+		throw utils::FunctonNotImplemented("Spline::Biquadratic interpolation is not implemented yet");
 	case InterpolationType::Bicubic:
-		throw std::domain_error("Spline::Bicubic interpolation is not implemented yet");
+		throw utils::FunctonNotImplemented("Spline::Bicubic interpolation is not implemented yet");
 	default:
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("Spline::getWeight :: Invalid interpolation type specified: %d", params.interp_type));
 	}
 }

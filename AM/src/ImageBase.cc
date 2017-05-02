@@ -31,7 +31,7 @@ input_type(getInputType(params)),
 curr_img(nullptr, 0, 0), img_height(0), img_width(0),
 pix_norm_add(0.0), pix_norm_mult(1.0), frame_count(0){
 	if(resx == 0 || resy == 0) {
-		throw std::invalid_argument("ImageBase::Invalid sampling resolution provided");
+		throw utils::InvalidArgument("ImageBase::Invalid sampling resolution provided");
 	}
 }
 
@@ -47,7 +47,7 @@ void ImageBase::setCurrImg(const cv::Mat &cv_img){
 	//	n_channels == 1 ? CV_32FC1 : CV_32FC3;
 
 	if(cv_img.type() != inputType()){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv_format("ImageBase::Input image type: %s does not match the required type: %s",
 			utils::getType(cv_img), utils::typeToString(inputType()))
 			);
@@ -90,7 +90,7 @@ void ImageBase::initializePixVals(const Matrix2Xd& init_pts){
 			img_height, img_width, pix_norm_mult, pix_norm_add);
 		break;
 	default:
-		throw std::domain_error("ImageBase::Invalid input type found");
+		throw utils::InvalidArgument("ImageBase::Invalid input type found");
 	}
 	if(!isInitialized()->pix_vals){
 		It = I0;
@@ -123,7 +123,7 @@ void ImageBase::initializePixGrad(const Matrix2Xd &init_pts){
 			img_height, img_width, pix_norm_mult);
 		break;
 	default:
-		throw std::domain_error("ImageBase::Invalid input type found");
+		throw utils::InvalidArgument("ImageBase::Invalid input type found");
 	}
 	if(!isInitialized()->pix_grad){
 		setCurrPixGrad(getInitPixGrad());
@@ -163,7 +163,7 @@ void ImageBase::initializePixGrad(const Matrix8Xd &warped_offset_pts){
 			img_height, img_width, pix_norm_mult);
 		break;
 	default:
-		throw std::domain_error("ImageBase::Invalid input type found");
+		throw utils::InvalidArgument("ImageBase::Invalid input type found");
 	}
 	if(!isInitialized()->pix_grad){
 		setCurrPixGrad(getInitPixGrad());
@@ -196,7 +196,7 @@ void ImageBase::initializePixHess(const Matrix2Xd& init_pts,
 			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 		break;
 	default:
-		throw std::domain_error("ImageBase::Invalid input type found");
+		throw utils::InvalidArgument("ImageBase::Invalid input type found");
 	}
 	if(!isInitialized()->pix_hess){
 		setCurrPixHess(getInitPixHess());
@@ -231,7 +231,7 @@ void ImageBase::initializePixHess(const Matrix2Xd &init_pts){
 			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 		break;
 	default:
-		throw std::domain_error("ImageBase::Invalid input type found");
+		throw utils::InvalidArgument("ImageBase::Invalid input type found");
 	}
 	if(!isInitialized()->pix_hess){
 		setCurrPixHess(getInitPixHess());
@@ -255,7 +255,7 @@ void ImageBase::extractPatch(VectorXd &pix_vals, const Matrix2Xd& pts){
 		utils::mc::getPixVals<float>(pix_vals, curr_img_cv, pts, n_pix, img_height, img_width);
 		break;
 	default:
-		throw std::domain_error("ImageBase::Invalid input type found");
+		throw utils::InvalidArgument("ImageBase::Invalid input type found");
 	}
 }
 
@@ -285,7 +285,7 @@ void ImageBase::updatePixVals(const Matrix2Xd& curr_pts){
 			pix_norm_mult, pix_norm_add);
 		break;
 	default:
-		throw std::domain_error("ImageBase::Invalid input type found");
+		throw utils::InvalidArgument("ImageBase::Invalid input type found");
 	}
 }
 
@@ -309,7 +309,7 @@ void ImageBase::updatePixGrad(const Matrix2Xd &curr_pts){
 			grad_eps, n_pix, img_height, img_width, pix_norm_mult);
 		break;
 	default:
-		throw std::domain_error("ImageBase::Invalid input type found");
+		throw utils::InvalidArgument("ImageBase::Invalid input type found");
 	}
 }
 
@@ -333,7 +333,7 @@ void ImageBase::updatePixHess(const Matrix2Xd &curr_pts){
 			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 		break;
 	default:
-		throw std::domain_error("ImageBase::Invalid input type found");
+		throw utils::InvalidArgument("ImageBase::Invalid input type found");
 	}
 }
 
@@ -357,7 +357,7 @@ void ImageBase::updatePixGrad(const Matrix8Xd &warped_offset_pts){
 			grad_eps, n_pix, img_height, img_width, pix_norm_mult);
 		break;
 	default:
-		throw std::domain_error("ImageBase::Invalid input type found");
+		throw utils::InvalidArgument("ImageBase::Invalid input type found");
 	}
 }
 
@@ -382,7 +382,7 @@ void ImageBase::updatePixHess(const Matrix2Xd& curr_pts,
 			hess_eps, n_pix, img_height, img_width, pix_norm_mult);
 		break;
 	default:
-		throw std::domain_error("ImageBase::Invalid input type found");
+		throw utils::InvalidArgument("ImageBase::Invalid input type found");
 	}
 }
 

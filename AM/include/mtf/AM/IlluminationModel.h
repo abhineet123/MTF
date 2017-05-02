@@ -2,7 +2,7 @@
 #define MTF_ILLUMINATION_MODEL_H
 
 #include "mtf/Macros/common.h"
-#include <stdexcept>
+#include "mtf/Utilities/excpUtils.h"
 
 #define ilm_not_implemeted(func_name) \
 	throw mtf::utils::FunctonNotImplemented(cv::format("%s :: %s :: Not implemented Yet", name.c_str(), #func_name))
@@ -37,7 +37,7 @@ public:
 		resx(MTF_RES), resy(MTF_RES), d2f_dg2_type(PixHessType::General){
 		if(ilm_params) {
 			if(ilm_params->resx <= 0 || ilm_params->resy <= 0) {
-				throw std::invalid_argument("IlluminationModel::Invalid sampling resolution provided");
+				throw utils::InvalidArgument("IlluminationModel::Invalid sampling resolution provided");
 			}
 			resx = ilm_params->resx;
 			resy = ilm_params->resy;			

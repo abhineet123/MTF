@@ -166,7 +166,7 @@ void ProjectiveBase::initializeSampler(const VectorXd &_state_sigma,
 	if(_state_sigma.size() == 1){
 		state_sigma.fill(_state_sigma[0]);
 	} else if(_state_sigma.size() != state_size){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("ProjectiveBase::initializeSampler :: SSM sigma has invalid size %d\n",
 			_state_sigma.size()));
 	} else{
@@ -175,7 +175,7 @@ void ProjectiveBase::initializeSampler(const VectorXd &_state_sigma,
 	if(_state_mean.size() == 1){
 		state_mean.fill(_state_mean[0]);
 	} else if(_state_mean.size() != state_size){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("ProjectiveBase::initializeSampler :: SSM mean has invalid size %d\n",
 			_state_mean.size()));
 	} else{

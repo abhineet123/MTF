@@ -27,6 +27,7 @@ Installation:
 * **Prerequisites**:
     *  MTF uses some [C++11](https://en.wikipedia.org/wiki/C%2B%2B11) features so a supporting compiler is needed ([GCC 4.7](https://gcc.gnu.org/projects/cxx0x.html) or newer)
     * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) should be installed and added to the C/C++ include paths. This can be done, for instance, by running `echo "export C_INCLUDE_PATH=${C_INCLUDE_PATH}:/usr/include/eigen3" >> ~/.bashrc` and `echo "export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:/usr/include/eigen3" >> ~/.bashrc` assuming that Eigen is installed in _/usr/include/eigen3_
+	    - version 3.2.10 or newer is needed
     * [OpenCV](http://opencv.org/) should be installed.
 		- **OpenCV 2.4.x is recommended since possible compatibility issues with OpenCV 3.x may prevent successful compilation** (see [Compile/Runtime Notes](#compileruntime-notes) section below)
 		- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) module should be [installed too](http://stackoverflow.com/a/31097788) if the feature tracker is enabled during compilation
@@ -39,35 +40,37 @@ Installation:
     * [Caffe](http://caffe.berkeleyvision.org/) is needed for some optional modules including FMaps, Regnet and GOTURN if these are enabled during compilation
 	* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see [compile time switches](#compile-time-switches)).
 	    - **Not recommended** as Xvision is very difficult to install and configure on modern systems
-	* **Installation in Windows**
-		* Using CMake with Visual Studio (Recommended)
-		    - Install a recent version of Visual Studio
-			    - the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine
-				- the freely available [Express edition](https://www.visualstudio.com/vs/visual-studio-express/) can be used too
-		    - [Build OpenCV from source using Visual Studio](http://docs.opencv.org/2.4/doc/tutorials/introduction/windows_install/windows_install.html#installation-by-making-your-own-libraries-from-the-source-files) or download the [pre built binaries](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/) built with the correct version of visual studio if available.	
-		        - set environment variable `OPENCV_DIR` to the folder where the binaries have been built or downloaded; this should contain the `OpenCVConfig.cmake` file along with the `lib` and `bin` folders
-				- add the location of the `bin` folder to the `Path` environment variable if dynamic librararies have been built
-		        - if cmake still fails to find OpenCV, set `OPENCV_INCLUDE_DIR_WIN`, `OPENCV_LIB_DIR_WIN` and `OpenCV_SUFFIX` variables in `CMakeLists.txt` (line 14-16) to the respective values
-		    - [Build Boost from source using Visual Studio (`toolset=msvc`)](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary).
-			    - using the steps under [Simplified Build From Source](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#simplified-build-from-source) should work too
-			    - set `BOOST_INCLUDEDIR` and `BOOST_LIBRARYDIR` environment variables to the locations of the header and library (*.lib) files respectively.
-		        - if cmake still fails to find Boost, set `BOOST_INCLUDE_DIR_WIN`, `BOOST_LIB_DIR_WIN` and `Boost_SUFFIX` variables in `CMakeLists.txt` (line 17-19) to the respective values
-		    - Set `EIGEN3_ROOT`, `EIGEN3_DIR` and `EIGEN_INCLUDE_DIR` environment variables to the folder containing the Eigen header files; this folder should contain the subfolders `Eigen` and `unsupported`
-		        - if cmake still fails to find Eigen, set `EIGEN_INCLUDE_DIR_WIN` variable in `CMakeLists.txt` (line 13) to this folder
-			
-		* Using GNU Make with MinGW
-		    - Install [MinGW](http://www.mingw.org/), [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm) and [CoreUtils for Windows](http://gnuwin32.sourceforge.net/packages/coreutils.htm)
-		    - [Build OpenCV from source using MinGW](http://kevinhughes.ca/tutorials/opencv-install-on-windows-with-codeblocks-and-mingw) and set `OPENCV_INCLUDE_DIRS` and `OPENCV_LIB_DIRS` in the makefile to the locations of header and library files respectively. 
-		    - [Build Boost from source using MinGW (`toolset=gcc`)](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary) and set `BOOST_LIB_DIRS` and `BOOST_INCLUDE_DIRS` in the makefile to the locations of the header and library (`*.dll.a`) files respectively.
-		    - Set `EIGEN_INCLUDE_DIRS` in the makefile to the location containing Eigen header files. 
-		    - Set appropriate values for `BOOST_LIBS_SUFFIX`, and `OPENCV_LIBS_SUFFIX` based on the installed versions of the respective libraries.
-		    - if the Python interface is to be built, install [Python 2.7.x](https://www.python.org/downloads/windows/) and set appropriate locations for `PYTHON_INCLUDE_DIR`, `PYTHON_LIBS_DIR`, `NUMPY_INCLUDE_DIR` and `MTF_PY_INSTALL_DIR` in `Examples/Examples.mak`.
-		    - Add the `bin` folders of the MinGW and GnuWin32 installations (e.g. `C:\MinGW\bin`, `C:\Program Files (x86)\GnuWin32\bin`) along with folders containing the `*.dll` files of OpenCV and Boost installations (e.g. `C:\OpenCV\build\x86\mingw\bin`) to the [`PATH` environment variable](https://www.java.com/en/download/help/path.xml) and reboot the system for the changes to take effect.
+* **Installation in Windows**
+	* Using CMake with Visual Studio (**Recommended**)
+		- Install a recent version of Visual Studio
+			- the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine
+			- the freely available [Express edition](https://www.visualstudio.com/vs/visual-studio-express/) can be used too
+		- [Build OpenCV from source using Visual Studio](http://docs.opencv.org/2.4/doc/tutorials/introduction/windows_install/windows_install.html#installation-by-making-your-own-libraries-from-the-source-files) or download the [pre built binaries](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/) built with the correct version of visual studio if available.	
+			- set environment variable `OPENCV_DIR` to the folder where the binaries have been built or downloaded; this should contain the `OpenCVConfig.cmake` file along with the `lib` and `bin` folders
+			- add the location of the `bin` folder to the `Path` environment variable if dynamic librararies have been built
+			- if cmake still fails to find OpenCV, set `OPENCV_INCLUDE_DIR_WIN`, `OPENCV_LIB_DIR_WIN` and `OpenCV_SUFFIX` variables in `CMakeLists.txt` (line 14-16) to the respective values
+		- [Build Boost from source using Visual Studio (`toolset=msvc`)](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary).
+			- using the steps under [Simplified Build From Source](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#simplified-build-from-source) should work too
+			- set `BOOST_INCLUDEDIR` and `BOOST_LIBRARYDIR` environment variables to the locations of the header and library (*.lib) files respectively.
+			- if cmake still fails to find Boost, set `BOOST_INCLUDE_DIR_WIN`, `BOOST_LIB_DIR_WIN` and `Boost_SUFFIX` variables in `CMakeLists.txt` (line 17-19) to the respective values
+		- Set `EIGEN3_ROOT`, `EIGEN3_DIR` and `EIGEN3_ROOT_DIR` environment variables to the folder containing the Eigen header files; this folder should contain the sub folders `Eigen` and `unsupported` and a file called `signature_of_eigen3_matrix_library`
+			- if cmake still fails to find Eigen, set `EIGEN_INCLUDE_DIR_WIN` variable in `CMakeLists.txt` (line 13) to this folder
+		
+	* Using GNU Make with MinGW
+		- Install [MinGW](http://www.mingw.org/), [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm) and [CoreUtils for Windows](http://gnuwin32.sourceforge.net/packages/coreutils.htm)
+		- [Build OpenCV from source using MinGW](http://kevinhughes.ca/tutorials/opencv-install-on-windows-with-codeblocks-and-mingw) and set `OPENCV_INCLUDE_DIRS` and `OPENCV_LIB_DIRS` in the makefile to the locations of header and library files respectively. 
+		- [Build Boost from source using MinGW (`toolset=gcc`)](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary) and set `BOOST_LIB_DIRS` and `BOOST_INCLUDE_DIRS` in the makefile to the locations of the header and library (`*.dll.a`) files respectively.
+		- Set `EIGEN_INCLUDE_DIRS` in the makefile to the location containing Eigen header files. 
+		- Set appropriate values for `BOOST_LIBS_SUFFIX`, and `OPENCV_LIBS_SUFFIX` based on the installed versions of the respective libraries.
+		- if the Python interface is to be built, install [Python 2.7.x](https://www.python.org/downloads/windows/) and set appropriate locations for `PYTHON_INCLUDE_DIR`, `PYTHON_LIBS_DIR`, `NUMPY_INCLUDE_DIR` and `MTF_PY_INSTALL_DIR` in `Examples/Examples.mak`.
+		- Add the `bin` folders of the MinGW and GnuWin32 installations (e.g. `C:\MinGW\bin`, `C:\Program Files (x86)\GnuWin32\bin`) along with folders containing the `*.dll` files of OpenCV and Boost installations (e.g. `C:\OpenCV\build\x86\mingw\bin`) to the [`PATH` environment variable](https://www.java.com/en/download/help/path.xml) and reboot the system for the changes to take effect.
+	    - Note: this method has been known to run into "out of memory" exceptions while compiling some of the executables so is not recommended
 		
 * **Download** the source code as zip file or clone using `git clone https://github.com/abhineet123/MTF.git`.
-* MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the former is recommended for developers/contributors as it offers finer level of control while the latter is for users of the library who only want to install it once (or when the former does not work). For cmake, first use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile and then use one of the make commands as specified below.
+* MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the former is recommended for developers/contributors as it offers finer level of control while the latter is for users of the library who only want to install it once (or when the former does not work). 
+For cmake, first use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile for Unix or Visual Studio solution for Windows and then either use one of the make commands as specified below or open `MTF.sln` in Visual Studio and run `Build->Build Solution`
 
-* Use one of the following **make commands** to compile and install the library and the demo application:
+* On Unix or when using Make for Windows, run one of the following **make commands** to compile and install the library and the example applications:
     * `make` or `make mtf` : compiles the shared library (_libmtf.so_) to the build directory (_Build/Release_)
     * `make install` : compiles the shared library if needed and copies it to _/usr/local/lib_; also copies the headers to _/usr/local/include/mtf_; (use `make install_lib` or `make install_header` for only one of the two); if third party trackers are enabled, their respective library files will be installed too;
 	    - this needs administrative (sudo) privilege; if not available, the variables `MTF_LIB_INSTALL_DIR` and `MTF_HEADER_INSTALL_DIR` in the makefile can be modified to install elsewhere. This can be done either by editing the file itself or providing these with the make command as: `make install MTF_LIB_INSTALL_DIR=<library_installation_dir> MTF_HEADER_INSTALL_DIR=<header_installation_dir>`

@@ -86,7 +86,7 @@ params(ccre_params){
 	double norm_pix_min = 0, norm_pix_max = params.n_bins - 1;
 	if(params.partition_of_unity){
 		if(params.n_bins < 4){
-			throw std::invalid_argument(
+			throw utils::InvalidArgument(
 				cv::format("CCRE::Too few bins %d specified to enforce partition of unity constraint", params.n_bins));
 		}
 		norm_pix_min = 1;

@@ -1,4 +1,5 @@
 #include "mtf/SM/ICLKParams.h"
+#include "mtf/Utilities/excpUtils.h"
 
 #define IC_MAX_ITERS 30
 #define IC_EPSILON 1e-4
@@ -67,7 +68,7 @@ const char*  ICLKParams::toString(HessType hess_type){
 	case HessType::Std:
 		return "Standard";
 	default:
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("ICLKParams :: Invalid hessian type provided: %d", hess_type));
 	}
 }

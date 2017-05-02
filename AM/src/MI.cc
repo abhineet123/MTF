@@ -68,7 +68,7 @@ AppearanceModel(mi_params, _n_channels), params(mi_params){
 
 	if(params.pix_mapper){
 		if(params.pix_mapper->getNChannels() != n_channels){
-			throw std::invalid_argument(
+			throw utils::InvalidArgument(
 				cv::format("MI::No. of channels in the pixel mapper %d is incorrect", 
 				params.pix_mapper->getNChannels()));
 		}		
@@ -79,7 +79,7 @@ AppearanceModel(mi_params, _n_channels), params(mi_params){
 	double norm_pix_min = 0, norm_pix_max = params.n_bins - 1;
 	if(params.partition_of_unity){
 		if(params.n_bins < 4){
-			throw std::invalid_argument(
+			throw utils::InvalidArgument(
 				cv::format("MI::Too few bins %d specified to enforce partition of unity constraint", params.n_bins));
 		}
 		norm_pix_min = 1;
@@ -149,7 +149,7 @@ void MI::initializePixVals(const Matrix2Xd& init_pts){
 				img_height, img_width, pix_norm_mult, pix_norm_add);
 			break;
 		default:
-			throw std::domain_error("MI::Invalid input type found");
+			throw utils::InvalidArgument("MI::Invalid input type found");
 		}
 	}
 	if(!is_initialized.pix_vals){
@@ -186,7 +186,7 @@ void MI::updatePixVals(const Matrix2Xd& curr_pts){
 				pix_norm_mult, pix_norm_add);
 			break;
 		default:
-			throw std::domain_error("MI::Invalid input type found");
+			throw utils::InvalidArgument("MI::Invalid input type found");
 		}
 	}
 }

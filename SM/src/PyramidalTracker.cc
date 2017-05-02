@@ -9,12 +9,12 @@ PyramidalTracker::PyramidalTracker(const vector<TrackerBase*> _trackers,
 const ParamType *parl_params) : CompositeBase(_trackers),
 params(parl_params), external_img_pyramid(false){
 	if(n_trackers != params.no_of_levels){
-		throw std::domain_error(
+		throw utils::InvalidArgument(
 			cv::format("PyramidalTracker :: no. of trackers: %d does not match the no. of levels in the pyramid: %d",
 			n_trackers, params.no_of_levels));
 	}
 	if(input_type == HETEROGENEOUS_INPUT){
-		throw std::domain_error("PyramidalTracker :: Heterogeneous input is currently not supported");
+		throw utils::FunctonNotImplemented("PyramidalTracker :: Heterogeneous input is currently not supported");
 	}
 	printf("\n");
 	printf("Using Pyramidal tracker with:\n");
@@ -60,7 +60,7 @@ void PyramidalTracker::setImage(const cv::Mat &img){
 
 void PyramidalTracker::setImagePyramid(const vector<cv::Mat> &_img_pyramid){
 	if(_img_pyramid.size() != params.no_of_levels){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format(
 			"PyramidalTracker::setImagePyramid :: Mismatch between the no. of levels in the provided pyramid: %d and the expected: %d",
 			_img_pyramid.size(), params.no_of_levels)

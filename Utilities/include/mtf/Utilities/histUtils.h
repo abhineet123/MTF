@@ -4,6 +4,8 @@
 //------ Functions for computing histograms, joint histograms and their derivatives------//
 
 #include "mtf/Macros/common.h"
+#include "mtf/Utilities/excpUtils.h"
+
 // precomputed constants for BSpl function
 #define _1_BY_3 0.33333333333
 #define _2_BY_3 0.66666666666
@@ -64,7 +66,7 @@ namespace utils{
 	template<int bspl_id>
 	inline void cumBSpl3WithGradFast(double &val, double &diff, double x){
 		printf("bspl_id: %d\n", bspl_id);
-		throw std::invalid_argument("cumBSpl3WithGradFast :: Invalid bspl_id specified");
+		throw utils::InvalidArgument("cumBSpl3WithGradFast :: Invalid bspl_id specified");
 	}
 	template<>
 	inline void cumBSpl3WithGradFast<0>(double &val, double &diff, double x){
@@ -119,7 +121,7 @@ namespace utils{
 	template<int bspl_id>
 	inline double cumBSpl3HessFast(double x){
 		printf("bspl_id: %d\n", bspl_id);
-		throw std::invalid_argument("cumBSpl3HessFast :: Invalid bspl_id specified");
+		throw utils::InvalidArgument("cumBSpl3HessFast :: Invalid bspl_id specified");
 	}
 	template<>
 	inline double cumBSpl3HessFast<0>(double x){
@@ -174,7 +176,7 @@ namespace utils{
 	template<int bspl_id>
 	void bSpl3WithGradFast(double &val, double &diff, double x){	
 		printf("bspl_id: %d\n", bspl_id);
-		throw std::invalid_argument("bSpl3WithGradFast :: Invalid bspl_id specified");
+		throw utils::InvalidArgument("bSpl3WithGradFast :: Invalid bspl_id specified");
 	}
 	template<>
 	inline void bSpl3WithGradFast<0>(double &val, double &diff, double x){
@@ -242,7 +244,7 @@ namespace utils{
 	template<int bspl_id>
 	inline double bSpl3HessFast(double x){
 		printf("bspl_id: %d\n", bspl_id);
-		throw std::invalid_argument("bSpl3HessFast :: Invalid bspl_id specified");
+		throw utils::InvalidArgument("bSpl3HessFast :: Invalid bspl_id specified");
 	}
 	template<>
 	inline double bSpl3HessFast<0>(double x){

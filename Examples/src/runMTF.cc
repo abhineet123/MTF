@@ -139,7 +139,13 @@ int main(int argc, char * argv[]) {
 			resx = static_cast<unsigned int>(cv_utils.getObj(tracker_id).size_x / res_from_size);
 			resy = static_cast<unsigned int>(cv_utils.getObj(tracker_id).size_y / res_from_size);
 		}
-		mtf::TrackerBase *tracker = mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm);
+		mtf::TrackerBase *tracker;
+		try{
+			tracker = mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm);
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception encountered while creating the tracker: %s\n", err.what());
+			return EXIT_FAILURE;
+		}
 		if(!tracker){
 			printf("Tracker could not be created successfully\n");
 			return EXIT_FAILURE;
@@ -150,7 +156,12 @@ int main(int argc, char * argv[]) {
 			tracker->setImage(curr_obj->getFrame());
 		}
 		pre_procs.push_back(pre_proc);
-		tracker->initialize(cv_utils.getObj(tracker_id).corners);
+		try{
+			tracker->initialize(cv_utils.getObj(tracker_id).corners);
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception encountered while initializing tracker: %s\n", err.what());
+			return EXIT_FAILURE;
+		}		
 		trackers.push_back(Tracker_(tracker));
 	}
 
@@ -335,7 +346,7 @@ int main(int argc, char * argv[]) {
 		}
 	}
 	double fps = 0, fps_win = 0;
-	double tracking_time, tracking_time_with_input;
+	double tracking_time = 0, tracking_time_with_input = 0;
 	double avg_fps = 0, avg_fps_win = 0;
 	int fps_count = 0;
 	double avg_err = 0;
@@ -599,6 +610,9 @@ int main(int argc, char * argv[]) {
 				invalid_tracker_state = true;
 				//! allow the tracker to be reinitialized if this option is enabled otherwise exit
 				continue;
+			} catch(const mtf::utils::Exception &err){
+				printf("Exception encountered while updating tracker: %s\n", err.what());
+				return EXIT_FAILURE;
 			}
 			fps = 1.0 / tracking_time;
 			fps_win = 1.0 / tracking_time_with_input;

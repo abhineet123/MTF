@@ -126,7 +126,7 @@ params(lrscv_params), init_patch(0, 0, 0), curr_patch(0, 0, 0){
 	sub_region_size_y = patch_size_y - (params.sub_regions_y - 1)*params.spacing_y;
 
 	if(sub_region_size_x <= 0 || sub_region_size_y <= 0){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("LRSCV :: Patch size : %dx%d is not enough to use the specified region spacing and / or count",
 			patch_size_x, patch_size_y)
 			);

@@ -173,7 +173,7 @@ FeatureTracker<SSM>::FeatureTracker(const ParamType *grid_params,
 	name = "feat";
 
 	if(ssm.getResX() != params.getResX() || ssm.getResY() != params.getResY()){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("FeatureTracker: SSM has invalid sampling resolution: %d x %d",
 			ssm.getResX(), ssm.getResY()));
 	}
@@ -205,7 +205,7 @@ template<class SSM>
 void FeatureTracker<SSM>::setImage(const cv::Mat &img){
 	params.uchar_input = img.type() == CV_8UC1;
 	if(img.type() != inputType()){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv_format("FeatureTracker::Input image type: %s does not match the required type: %s",
 			utils::getType(img), utils::typeToString(inputType())));
 	}

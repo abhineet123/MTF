@@ -95,7 +95,7 @@ void Diagnostics::generateNumericalData(VectorXd &param_range_vec,
 				break;
 			}
 			default:
-				throw std::invalid_argument("Diagnostics :: Invalid numerical data type specified");
+				throw utils::InvalidArgument("Diagnostics :: Invalid numerical data type specified");
 			}
 			diagnostics_data(pt_id, 2 * state_id + 1) = data_val;
 			resetState(state_update, state_id);
@@ -214,7 +214,7 @@ void Diagnostics::generateInverseNumericalData(VectorXd &param_range_vec,
 				break;
 			}
 			default:
-				throw std::invalid_argument("Diagnostics :: Invalid numerical data type specified");
+				throw utils::InvalidArgument("Diagnostics :: Invalid numerical data type specified");
 			}
 			diagnostics_data(pt_id, 2 * state_id + 1) = data_val;
 			resetState(state_update, state_id);

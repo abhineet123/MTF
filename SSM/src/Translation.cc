@@ -196,7 +196,7 @@ void Translation::estimateWarpFromPts(VectorXd &state_update, vector<uchar> &mas
 		int max_inliers = -1, best_pt_id = -1;
 		switch(est_params.method){
 		case EstType::LeastMedian:
-			throw std::domain_error("translation::Least median estimator is not implemented yet");
+			throw utils::FunctonNotImplemented("translation::Least median estimator is not implemented yet");
 		case EstType::RANSAC:
 			for(int test_pt_id = 0; test_pt_id < n_pts; ++test_pt_id){
 				float tx = out_pts[test_pt_id].x - in_pts[test_pt_id].x;

@@ -1,6 +1,7 @@
 #include "mtf/SM/NNParams.h"
-#include "mtf/Utilities/miscUtils.h"
 #include "mtf/SM/GNN.h"
+#include "mtf/Utilities/miscUtils.h"
+#include "mtf/Utilities/excpUtils.h"
 
 #define NN_MAX_ITERS 1
 #define NN_EPSILON 0.01
@@ -100,7 +101,7 @@ bool NNParams::processDistributions(vector<VectorXd> &state_sigma,
 	bool using_pix_sigma;
 	if(pix_sigma.empty() || pix_sigma[0] <= 0){
 		if(ssm_sigma.empty()){
-			throw std::invalid_argument("Sigma must be provided for at least one sampler");
+			throw utils::InvalidArgument("Sigma must be provided for at least one sampler");
 		}
 		using_pix_sigma = false;
 		n_distr = max(ssm_sigma.size(), ssm_mean.size());
@@ -124,7 +125,7 @@ bool NNParams::processDistributions(vector<VectorXd> &state_sigma,
 				state_sigma[sampler_id].resize(ssm_state_size);
 				state_sigma[sampler_id].fill(ssm_sigma[sigma_id][0]);
 			} else if(ssm_sigma[sigma_id].size() < ssm_state_size){
-				throw std::invalid_argument(
+				throw utils::InvalidArgument(
 					cv::format("NNParams :: SSM sigma for distribution %d has invalid size: %d",
 					sampler_id, ssm_sigma[sigma_id].size()));
 			} else{
@@ -134,7 +135,7 @@ bool NNParams::processDistributions(vector<VectorXd> &state_sigma,
 				state_mean[sampler_id].resize(ssm_state_size);
 				state_mean[sampler_id].fill(ssm_mean[mean_id][0]);
 			} else if(ssm_mean[mean_id].size() < ssm_state_size){
-				throw std::invalid_argument(
+				throw utils::InvalidArgument(
 					cv::format("NNParams :: SSM mean for distribution %d has invalid size: %d",
 					sampler_id, ssm_mean[mean_id].size()));
 			} else{
@@ -152,7 +153,7 @@ bool NNParams::processDistributions(vector<VectorXd> &state_sigma,
 	}
 	unsigned int n_residual_samples = static_cast<unsigned int>(n_samples - n_distr*samples_per_distr);
 	if(n_residual_samples >= n_distr){
-		throw std::logic_error(
+		throw utils::LogicError(
 			cv::format("NNParams :: Residual sample count: %d exceeds the no. of distributions: %d",
 			n_residual_samples, n_distr));
 	}

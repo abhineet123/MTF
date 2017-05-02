@@ -1,10 +1,12 @@
 #ifndef MTF_INPUT_BASE
 #define MTF_INPUT_BASE
 
+#include "mtf/Config/parameters.h"
+#include "mtf/Utilities/excpUtils.h"
+
 #include <stdio.h>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
-#include "mtf/Config/parameters.h"
 #include "boost/filesystem/operations.hpp"
 
 #ifdef _WIN32
@@ -60,7 +62,7 @@ public:
 			if(dev_path.empty()){ dev_path = "."; }
 			file_path = dev_path + "/" + dev_name + "." + dev_fmt;
 			if(!fs::exists(file_path)){
-				throw std::invalid_argument(
+				throw mtf::utils::InvalidArgument(
 					cv::format("InputBase :: Video file %s does not exist", file_path.c_str()));
 			}
 			n_frames = getNumberOfVideoFrames(file_path.c_str());
@@ -69,7 +71,7 @@ public:
 			if(dev_path.empty()){ dev_path = "."; }
 			std::string img_folder_path = dev_path + "/" + dev_name;
 			if(!fs::exists(img_folder_path)){
-				throw std::invalid_argument(
+				throw mtf::utils::InvalidArgument(
 					cv::format("InputBase :: Image sequence folder %s does not exist", img_folder_path.c_str()));
 			}
 

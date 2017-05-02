@@ -46,7 +46,7 @@ HACLK<AM, SSM >::HACLK(const ParamType *haclk_params,
 		} else if(params.hess_type == ConvergedNewton){
 			printf("Using Newton method with Hessian at convergence\n");
 		} else{
-			throw std::invalid_argument("HACLK :: Invalid Hessian type provided");
+			throw utils::InvalidArgument("HACLK :: Invalid Hessian type provided");
 		}
 	} else{
 		printf("Using Gauss Newton method\n");

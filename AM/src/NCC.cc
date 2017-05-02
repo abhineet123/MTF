@@ -538,7 +538,7 @@ void NCC::updateModel(const Matrix2Xd& curr_pts){
 			use_running_avg, n_pix, img_height, img_width, pix_norm_mult, pix_norm_add);
 		break;
 	default:
-		throw std::domain_error("ImageBase::Invalid input type found");
+		throw mtf::utils::InvalidArgument("ImageBase::Invalid input type found");
 	}
 	//! re initialize any quantities that depend on the template
 	reinitialize();

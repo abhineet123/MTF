@@ -13,6 +13,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "mtf/Utilities/miscUtils.h"
+#include "mtf/Utilities/excpUtils.h"
 
 #include "inputBase.h"
 
@@ -518,21 +519,21 @@ public:
 		if(_reinit_frame_id < 0){ _reinit_frame_id = frame_id; }
 		if(use_reinit_gt){
 			if(frame_id < _reinit_frame_id){
-				throw std::invalid_argument(
+				throw mtf::utils::InvalidArgument(
 					cv::format("getGT :: frame_id: %d is less than reinit_frame_id: %d", frame_id, _reinit_frame_id));
 			}
 			if(_reinit_frame_id != reinit_frame_id){
 				readReinitGT(_reinit_frame_id);
 			}
 			if(frame_id - reinit_frame_id >= static_cast<int>(reinit_ground_truth.size())){
-				throw std::invalid_argument(
+				throw mtf::utils::InvalidArgument(
 					cv::format("Invalid frame ID: %d provided for reinit ground truth for frame %d with only %d entries",
 					frame_id - reinit_frame_id, reinit_frame_id, reinit_ground_truth.size()));
 			}
 			return reinit_ground_truth[frame_id - reinit_frame_id];
 		}
 		if(frame_id >= static_cast<int>(ground_truth.size())){
-			throw std::invalid_argument(
+			throw mtf::utils::InvalidArgument(
 				cv::format("Invalid frame ID: %d provided for ground truth with only %d entries",
 				frame_id, ground_truth.size()));
 		}
@@ -541,14 +542,14 @@ public:
 	const cv::Mat &getReinitGT(int frame_id, int _reinit_frame_id = -1){
 		if(_reinit_frame_id < 0){ _reinit_frame_id = reinit_frame_id; }
 		if(frame_id < _reinit_frame_id){
-			throw std::invalid_argument(
+			throw mtf::utils::InvalidArgument(
 				cv::format("getReinitGT :: frame_id: %d is less than reinit_frame_id: %d", frame_id, _reinit_frame_id));
 		}
 		if(_reinit_frame_id != reinit_frame_id){
 			readReinitGT(_reinit_frame_id);
 		}
 		if(frame_id - _reinit_frame_id >= static_cast<int>(reinit_ground_truth.size())){
-			throw std::invalid_argument(
+			throw mtf::utils::InvalidArgument(
 				cv::format("Invalid frame ID: %d provided for reinit ground truth for frame %d with only %d entries",
 				frame_id - _reinit_frame_id, _reinit_frame_id, reinit_ground_truth.size()));
 		}

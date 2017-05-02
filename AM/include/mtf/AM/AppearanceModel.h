@@ -136,8 +136,8 @@ public:
 	virtual void updateCurrGrad() { am_func_not_implemeted(updateCurrGrad); }
 	virtual void updateParamGrad() { am_func_not_implemeted(updateParamGrad); }
 
-	//virtual void updateInitHess() { throw std::domain_error("updateInitHess :: Not implemented Yet"); }
-	//virtual void updateCurrHess() { throw std::domain_error("updateCurrHess :: Not implemented Yet"); }
+	//virtual void updateInitHess() { am_func_not_implemeted(updateInitHess); }
+	//virtual void updateCurrHess() { am_func_not_implemeted(updateCurrHess); }
 
 	/**
 	// ----- interfacing functions that take pixel jacobians/Hessians w.r.t. SSM parameters and combine them with AM jacobians/Hessians w.r.t. pixel values ---- //

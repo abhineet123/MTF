@@ -33,7 +33,7 @@ namespace nt{
 		name = "grid_flow";
 
 		if(ssm->getResX() != params.getResX() || ssm->getResY() != params.getResY()){
-			throw std::invalid_argument(
+			throw utils::InvalidArgument(
 				cv::format("GridTrackerFlow: SSM has invalid sampling resolution: %d x %d",
 				ssm->getResX(), ssm->getResY()));
 		}

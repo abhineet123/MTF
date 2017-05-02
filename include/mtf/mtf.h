@@ -578,7 +578,7 @@ TrackerBase *getTracker(const char *sm_type,
 		SMType *templ_tracker = dynamic_cast<SMType*>(getTracker<AMType, SSMType>(rkl_sm, am_params, ssm_params));
 		if(!templ_tracker){
 			// invalid or third party tracker has been specified in 'rkl_sm'
-			throw std::invalid_argument("Search method provided is not compatible with RKLT");
+			throw utils::InvalidArgument("Search method provided is not compatible with RKLT");
 		}
 		RKLTParams rkl_params(rkl_enable_spi, rkl_enable_feedback,
 			rkl_failure_detection, rkl_failure_thresh, debug_mode);
@@ -1601,7 +1601,7 @@ inline TrackerBase *getCompositeSM(const char *sm_type,
 		nt::SearchMethod *templ_tracker = getSM(rkl_sm, am_type, ssm_type, ilm_type);
 		if(!templ_tracker){
 			// invalid or third party tracker has been specified in 'rkl_sm'
-			throw std::invalid_argument(cv::format("Search method provided: %s is not compatible with RKLT", rkl_sm));
+			throw utils::InvalidArgument(cv::format("Search method provided: %s is not compatible with RKLT", rkl_sm));
 		}
 		RKLTParams rkl_params(rkl_enable_spi, rkl_enable_feedback,
 			rkl_failure_detection, rkl_failure_thresh, debug_mode);
@@ -1639,7 +1639,7 @@ inline ImageBase *getPixMapper(const char *pix_mapper_type){
 	} else if(!strcmp(pix_mapper_type, "mcrscv") || !strcmp(pix_mapper_type, "rscv3")){
 		return new MCRSCV(cast_params(MCRSCV));
 	} else{
-		throw std::invalid_argument("getPixMapper::Invalid pixel mapper type provided");
+		throw utils::InvalidArgument("getPixMapper::Invalid pixel mapper type provided");
 	}
 }
 //! Third Party Trackers
@@ -1821,7 +1821,7 @@ inline TrackerBase *getTracker(const char *tracker_type){
 		} else{
 			stringstream err_msg;
 			err_msg << "Invalid Xvision tracker type provided : " << tracker_type << "\n";
-			throw std::invalid_argument(err_msg.str());
+			throw utils::InvalidArgument(err_msg.str());
 		}
 	}
 #endif

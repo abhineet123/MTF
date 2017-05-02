@@ -1,4 +1,5 @@
 #include "mtf/SSM/SSMEstimatorParams.h"
+#include "mtf/Utilities/excpUtils.h"
 #include "opencv2/calib3d/calib3d.hpp"
 
 #define SSM_EST_METHOD EstType::RANSAC
@@ -22,7 +23,7 @@ const char* SSMEstimatorParams::toString(EstType est_type){
 	case EstType::LeastMedian:
 		return "LeastMedian";
 	default:
-		throw std::invalid_argument("Invalid estimation method specified");
+		throw utils::InvalidArgument("Invalid estimation method specified");
 	}
 }
 int SSMEstimatorParams::toCV(EstType est_type){
@@ -34,7 +35,7 @@ int SSMEstimatorParams::toCV(EstType est_type){
 	case EstType::LeastMedian:
 		return CV_LMEDS;
 	default:
-		throw std::invalid_argument("Invalid estimation method specified");
+		throw utils::InvalidArgument("Invalid estimation method specified");
 	}
 }
 

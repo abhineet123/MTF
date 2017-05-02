@@ -109,7 +109,7 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 	name = "grid_cv";
 
 	if(ssm.getResX() != params.getResX() || ssm.getResY() != params.getResY()){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("GridTrackerCV: SSM has invalid sampling resolution: %d x %d",
 			ssm.getResX(), ssm.getResY()));
 	}
@@ -166,7 +166,7 @@ GridTrackerCV<SSM>::GridTrackerCV(const ParamType *grid_params,
 template<class SSM>
 void GridTrackerCV<SSM>::setImage(const cv::Mat &img){
 	if(img.type() != inputType()){
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv_format("GridTrackerCV::Input image type: %s does not match the required type: %s",
 			utils::getType(img), utils::typeToString(inputType())));
 	}

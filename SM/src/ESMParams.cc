@@ -1,4 +1,5 @@
 #include "mtf/SM/ESMParams.h"
+#include "mtf/Utilities/excpUtils.h"
 
 #define ESM_MAX_ITERS 30
 #define ESM_EPSILON 1e-4
@@ -73,7 +74,7 @@ const char* ESMParams::toString(JacType _jac_type){
 	case JacType::DiffOfJacs:
 		return "Difference of Jacobians";
 	default:
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("ESMParams :: Invalid jacobian type provided: %d", _jac_type));
 	}
 }
@@ -93,7 +94,7 @@ const char* ESMParams::toString(HessType _hess_type){
 	case HessType::SumOfSelf:
 		return "Sum of Self Hessians";
 	default:
-		throw std::invalid_argument(
+		throw utils::InvalidArgument(
 			cv::format("ESMParams :: Invalid hessian type provided: %d", _hess_type));
 	}
 }

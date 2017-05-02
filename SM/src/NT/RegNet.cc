@@ -16,7 +16,7 @@ namespace nt{
 		printf("epsilon: %f\n", params.epsilon);
 		if(params.pix_sigma.empty() || params.pix_sigma[0] <= 0){
 			if(params.ssm_sigma.empty()){
-				throw std::invalid_argument("Sigma must be provided for at least one sampler");
+				throw utils::InvalidArgument("Sigma must be provided for at least one sampler");
 			}
 			using_pix_sigma = false;
 			n_samplers = max(params.ssm_sigma.size(), params.ssm_mean.size());
@@ -50,12 +50,12 @@ namespace nt{
 			int sampler_id = 0, sigma_id = 0, mean_id = 0;
 			while(sampler_id < n_samplers){
 				if(params.ssm_sigma[sigma_id].size() < ssm_state_size){
-					throw std::invalid_argument(
+					throw utils::InvalidArgument(
 						cv::format("NN :: SSM sigma for sampler %d has invalid size: %d",
 						sampler_id, params.ssm_sigma[sigma_id].size()));
 				}
 				if(params.ssm_mean[mean_id].size() < ssm_state_size){
-					throw std::invalid_argument(
+					throw utils::InvalidArgument(
 						cv::format("NN :: SSM mean for sampler %d has invalid size: %d",
 						sampler_id, params.ssm_mean[mean_id].size()));
 				}
@@ -73,7 +73,7 @@ namespace nt{
 		}
 		int residual_samples = params.n_samples - n_samplers*samples_per_sampler;
 		if(residual_samples >= n_samplers){
-			throw std::logic_error(
+			throw utils::LogicError(
 				cv::format("Residual particle count: %d exceeds the no. of samplers: %d",
 				residual_samples, n_samplers));
 		}

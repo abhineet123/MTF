@@ -9,7 +9,7 @@ const char* ParallelParams::toString(PrlEstMethod _estimation_method){
 	case PrlEstMethod::MeanOfState:
 		return "MeanOfState";
 	default:
-		throw std::invalid_argument("Invalid dynamic model provided");
+		throw utils::InvalidArgument("Invalid dynamic model provided");
 	}
 }
 ParallelParams::ParallelParams(PrlEstMethod _estimation_method, bool _reset_to_mean,

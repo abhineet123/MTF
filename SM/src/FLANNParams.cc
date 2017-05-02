@@ -1,4 +1,5 @@
 #include "mtf/SM/FLANNParams.h"
+#include "mtf/Utilities/excpUtils.h"
 
 #define NN_SEARCH_TYPE 0
 #define NN_INDEX_TYPE 1
@@ -162,7 +163,7 @@ const flann::IndexParams FLANNParams::getIndexParams(IdxType _index_type,
 	}
 	switch(_index_type){
 	case IdxType::GNN:
-		throw std::invalid_argument("GNN is not a valid FLANN index type");
+		throw utils::InvalidArgument("GNN is not a valid FLANN index type");
 	case IdxType::Linear:
 		printf("Using Linear index\n");
 		return flann::LinearIndexParams();
@@ -258,7 +259,7 @@ const char* FLANNParams::toString(IdxType index_type){
 	case IdxType::Autotuned:
 		return "Autotuned";
 	default:
-		throw std::invalid_argument("Invalid index type provided");
+		throw utils::InvalidArgument("Invalid index type provided");
 	}
 }
 
@@ -269,7 +270,7 @@ const char* FLANNParams::toString(SearchType search_type){
 	case SearchType::Radius:
 		return "Radius";
 	default:
-		throw std::invalid_argument("Invalid search type provided");
+		throw utils::InvalidArgument("Invalid search type provided");
 	}
 }
 

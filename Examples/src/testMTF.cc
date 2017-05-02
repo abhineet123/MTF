@@ -6,6 +6,7 @@
 
 #include "mtf/Tools/cvUtils.h"
 #include "mtf/Tools/pipeline.h"
+#include "mtf/Utilities//excpUtils.h"
 
 #include <time.h>
 #include <numeric>
@@ -145,14 +146,14 @@ int main(int argc, char * argv[]) {
 	} else{
 		diag_ssm_range = ssm_sigma[diag_ssm_range_id];
 		if(diag_ssm_range.size() < diag->ssm_state_size){
-			throw std::invalid_argument("testMTF:: Insufficient number of SSM range parameters provided");
+			throw mtf::utils::InvalidArgument("testMTF:: Insufficient number of SSM range parameters provided");
 		}
 		param_range.head(diag->ssm_state_size) = Map<const VectorXd>(diag_ssm_range.data(),
 			diag->ssm_state_size);
 		if(diag->am_state_size){
 			diag_am_range = am_sigma[diag_am_range_id];
 			if(diag_am_range.size() < diag->am_state_size){
-				throw std::invalid_argument("testMTF:: Insufficient number of AM range parameters provided");
+				throw mtf::utils::InvalidArgument("testMTF:: Insufficient number of AM range parameters provided");
 			}
 			param_range.tail(diag->am_state_size) = Map<const VectorXd>(diag_am_range.data(),
 				diag->am_state_size);
@@ -359,7 +360,7 @@ void generateData(int data_id, int adt_len, int diag_len){
 		diag->generateSSMParamData(param_range, diag_res, out_fname);
 	} else{
 		printf("Data type: %d\n", data_id);
-		throw std::invalid_argument("generateData:: Invalid data type provided");
+		throw mtf::utils::InvalidArgument("generateData:: Invalid data type provided");
 	}
 }
 
@@ -381,7 +382,7 @@ void generateInverseData(int data_id, int adt_len, int diag_len){
 		diag->generateSSMParamData(param_range, diag_res, out_fname);
 	} else{
 		printf("Data type: %d\n", data_id);
-		throw std::invalid_argument("generateInverseData:: Invalid data type provided");
+		throw mtf::utils::InvalidArgument("generateInverseData:: Invalid data type provided");
 	}
 }
 
@@ -393,7 +394,7 @@ const char* getDataTypeName(int data_id, int adt_len, int diag_len){
 	} else if(data_id == diag_len - 1){// ssm
 		return "ssm_param";
 	} else{
-		throw std::invalid_argument("getDataTypeName:: Invalid datay type provided");
+		throw mtf::utils::InvalidArgument("getDataTypeName:: Invalid datay type provided");
 	}
 
 }
