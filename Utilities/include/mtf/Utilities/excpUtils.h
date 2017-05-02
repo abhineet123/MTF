@@ -13,8 +13,9 @@ namespace utils{
 		Exception(const std::string  _error = "Exception encountered") :
 			std::exception(), error(_error){}
 		const char* what() const noexcept override{ return error.c_str(); }
+		virtual	const char* type() const noexcept = 0;
 	private:
-		const std::string  error;
+		const std::string  error;		
 	};
 
 	class InvalidTrackerState : public Exception {
@@ -23,6 +24,7 @@ namespace utils{
 			Exception(error){}
 		InvalidTrackerState(const std::string  error = "Invalid Tracker State found") :
 			Exception(error){}
+		const char* type() const noexcept override{ return "InvalidTrackerState"; }
 	};
 
 	class FunctonNotImplemented : public Exception {
@@ -31,6 +33,7 @@ namespace utils{
 			Exception(error){}
 		FunctonNotImplemented(const std::string error = "Function has not been implemented yet") :
 			Exception(error){}
+		const char* type() const noexcept override{ return "FunctonNotImplemented"; }
 	};
 
 	class InvalidArgument : public Exception {
@@ -39,6 +42,7 @@ namespace utils{
 			Exception(error){}
 		InvalidArgument(const std::string error = "Invalid argument provided") :
 			Exception(error){}
+		const char* type() const noexcept override{ return "InvalidArgument"; }
 	};
 
 	class LogicError : public Exception {
@@ -47,6 +51,7 @@ namespace utils{
 			Exception(error){}
 		LogicError(const std::string error = "Logical error encountered") :
 			Exception(error){}
+		const char* type() const noexcept override{ return "LogicError"; }
 	};
 }
 _MTF_END_NAMESPACE

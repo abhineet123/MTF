@@ -68,7 +68,7 @@ Installation:
 		
 * **Download** the source code as zip file or clone using `git clone https://github.com/abhineet123/MTF.git`.
 * MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the former is recommended for developers/contributors as it offers finer level of control while the latter is for users of the library who only want to install it once (or when the former does not work). 
-For cmake, first use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile for Unix or Visual Studio solution for Windows and then either use one of the make commands as specified below or open `MTF.sln` in Visual Studio and run `Build->Build Solution`
+For cmake, first use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile for Unix or Visual Studio solution for Windows and then either use one of the make commands specified below or open `MTF.sln` in Visual Studio and run `Build->Build Solution` to build MTF.
 
 * On Unix or when using Make for Windows, run one of the following **make commands** to compile and install the library and the example applications:
     * `make` or `make mtf` : compiles the shared library (_libmtf.so_) to the build directory (_Build/Release_)
