@@ -84,7 +84,7 @@ Installation:
     * use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile for Unix or Visual Studio solution for Windows
 	* in the former case, use one of the make commands specified below
     * in the latter case, open `MTF.sln` in Visual Studio and run `Build->Build Solution`
-	    - change the solution configuration to `Release` from the default `Debug` before building for the faster version
+	    - if needed, change the solution configuration to `Release` from `Debug` to build the faster version
 
 * On Unix or when using MinGW on Windows, run one of the following make commands to compile and install the library and the example applications:
     * `make` or `make mtf` : compiles the shared library (_libmtf.so_) to the build directory (_Build/Release_)
