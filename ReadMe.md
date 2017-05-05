@@ -44,7 +44,7 @@ Installation:
 	* Using CMake with Visual Studio (**Recommended**)
 		- Install a recent version of Visual Studio
 			- the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine; **Update**: it seems that the `OpenCVConfig.cmake` file that comes with the latest version of OpenCV simply does not recognize Visual C++ 2017 so cmake might not be able to find it and will instead exit with the erroneous message: `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`; a similar issue is exhibited by ViSP so it is best to use 2015 or older versions of Visual Studio.		
-			- the freely available [Express edition](https://www.visualstudio.com/vs/visual-studio-express/) can be used too
+			- the freely available [Express/Community edition](https://www.visualstudio.com/vs/visual-studio-express/) can be used too
 		- Set `EIGEN3_ROOT`, `EIGEN3_DIR` and `EIGEN3_ROOT_DIR` [environment variables](http://www.computerhope.com/issues/ch000549.htm) to the folder containing the Eigen header files
 		    - this folder should contain the sub folders `Eigen` and `unsupported` and a file called `signature_of_eigen3_matrix_library`
 			- if cmake still fails to find Eigen, set `EIGEN_INCLUDE_DIR_WIN` variable in `CMakeLists.txt` (line 13) to this folder
