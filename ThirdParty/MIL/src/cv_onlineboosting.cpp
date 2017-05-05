@@ -40,6 +40,10 @@
  //
  //M*/
 
+#ifdef _WIN32
+#pragma warning(disable:4244)
+#endif
+
 #include <iostream>
 
 #include <opencv2/imgproc/imgproc.hpp>
