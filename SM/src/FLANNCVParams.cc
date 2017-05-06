@@ -1,24 +1,25 @@
 #include "mtf/SM/FLANNCVParams.h"
+#include "mtf/Utilities/excpUtils.h"
 
-#define NNCV_INDEX_TYPE 1
-#define NNCV_SRCH_CHECKS 50
-#define NNCV_SRCH_EPS 0.0
-#define NNCV_SRCH_SORTED true
-#define NNCV_KDT_TREES 6
-#define NNCV_KM_BRANCHING 32
-#define NNCV_KM_ITERATIONS 11
-#define NNCV_KM_CENTERS_INIT cvflann::FLANN_CENTERS_RANDOM
-#define NNCV_KM_CB_INDEX 0.2
-#define NNCV_KDTS_LEAF_MAX_SIZE 10
-#define NNCV_KDTC_LEAF_MAX_SIZE 64
-#define NNCV_HC_BRANCHING 32
-#define NNCV_HC_CENTERS_INIT cvflann::FLANN_CENTERS_RANDOM
-#define NNCV_HC_TREES 4
-#define NNCV_HC_LEAF_MAX_SIZE 100
-#define NNCV_AUTO_TARGET_PRECISION 0.9
-#define NNCV_AUTO_BUILD_WEIGHT 0.01
-#define NNCV_AUTO_MEMORY_WEIGHT 0
-#define NNCV_AUTO_SAMPLE_FRACTION 0.1
+#define FLANNCV_INDEX_TYPE 1
+#define FLANNCV_SRCH_CHECKS 50
+#define FLANNCV_SRCH_EPS 0.0f
+#define FLANNCV_SRCH_SORTED true
+#define FLANNCV_KDT_TREES 6
+#define FLANNCV_KM_BRANCHING 32
+#define FLANNCV_KM_ITERATIONS 11
+#define FLANNCV_KM_CENTERS_INIT cvflann::FLANN_CENTERS_RANDOM
+#define FLANNCV_KM_CB_INDEX 0.2f
+#define FLANNCV_KDTS_LEAF_MAX_SIZE 10
+#define FLANNCV_KDTC_LEAF_MAX_SIZE 64
+#define FLANNCV_HC_BRANCHING 32
+#define FLANNCV_HC_CENTERS_INIT cvflann::FLANN_CENTERS_RANDOM
+#define FLANNCV_HC_TREES 4
+#define FLANNCV_HC_LEAF_MAX_SIZE 100
+#define FLANNCV_AUTO_TARGET_PRECISION 0.9f
+#define FLANNCV_AUTO_BUILD_WEIGHT 0.01f
+#define FLANNCV_AUTO_MEMORY_WEIGHT 0.0f
+#define FLANNCV_AUTO_SAMPLE_FRACTION 0.1f
 
 _MTF_BEGIN_NAMESPACE
 
@@ -63,25 +64,25 @@ auto_memory_weight(_auto_memory_weight),
 auto_sample_fraction(_auto_sample_fraction){}
 
 FLANNCVParams::FLANNCVParams(const FLANNCVParams *params) :
-index_type(static_cast<IdxType>(NNCV_INDEX_TYPE)),
-srch_checks(NNCV_SRCH_CHECKS),
-srch_eps(NNCV_SRCH_EPS),
-srch_sorted(NNCV_SRCH_SORTED),
-kdt_trees(NNCV_KDT_TREES),
-km_branching(NNCV_KM_BRANCHING),
-km_iterations(NNCV_KM_ITERATIONS),
-km_centers_init(NNCV_KM_CENTERS_INIT),
-km_cb_index(NNCV_KM_CB_INDEX),
-kdts_leaf_max_size(NNCV_KDTS_LEAF_MAX_SIZE),
-kdtc_leaf_max_size(NNCV_KDTC_LEAF_MAX_SIZE),
-hc_branching(NNCV_HC_BRANCHING),
-hc_centers_init(NNCV_HC_CENTERS_INIT),
-hc_trees(NNCV_HC_TREES),
-hc_leaf_max_size(NNCV_HC_LEAF_MAX_SIZE),
-auto_target_precision(NNCV_AUTO_TARGET_PRECISION),
-auto_build_weight(NNCV_AUTO_BUILD_WEIGHT),
-auto_memory_weight(NNCV_AUTO_MEMORY_WEIGHT),
-auto_sample_fraction(NNCV_AUTO_SAMPLE_FRACTION){
+index_type(static_cast<IdxType>(FLANNCV_INDEX_TYPE)),
+srch_checks(FLANNCV_SRCH_CHECKS),
+srch_eps(FLANNCV_SRCH_EPS),
+srch_sorted(FLANNCV_SRCH_SORTED),
+kdt_trees(FLANNCV_KDT_TREES),
+km_branching(FLANNCV_KM_BRANCHING),
+km_iterations(FLANNCV_KM_ITERATIONS),
+km_centers_init(FLANNCV_KM_CENTERS_INIT),
+km_cb_index(FLANNCV_KM_CB_INDEX),
+kdts_leaf_max_size(FLANNCV_KDTS_LEAF_MAX_SIZE),
+kdtc_leaf_max_size(FLANNCV_KDTC_LEAF_MAX_SIZE),
+hc_branching(FLANNCV_HC_BRANCHING),
+hc_centers_init(FLANNCV_HC_CENTERS_INIT),
+hc_trees(FLANNCV_HC_TREES),
+hc_leaf_max_size(FLANNCV_HC_LEAF_MAX_SIZE),
+auto_target_precision(FLANNCV_AUTO_TARGET_PRECISION),
+auto_build_weight(FLANNCV_AUTO_BUILD_WEIGHT),
+auto_memory_weight(FLANNCV_AUTO_MEMORY_WEIGHT),
+auto_sample_fraction(FLANNCV_AUTO_SAMPLE_FRACTION){
 	if(params){
 		index_type = params->index_type;
 		srch_checks = params->srch_checks;
