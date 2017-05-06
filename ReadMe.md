@@ -72,7 +72,7 @@ Installation:
 	* Using GNU Make with MinGW
 	    - **Note**:  This method is not recommended due to the following issues:
 		    - it is known to run into "out of memory" exceptions while compiling some of the executables
-		    - importing pyMTF from a Python script results in an error: `ImportError: DLL load failed: A dynamic link library (DLL) initialization routine failed.` due to an incompatibility between the python import system and third party modules compiled with MinGW.
+		    - importing pyMTF from a Python script results in an error: `ImportError: DLL load failed: A dynamic link library (DLL) initialization routine failed.` due to an obscure incompatibility issue between the python import system and third party modules compiled with MinGW.
 		- Install [MinGW](http://www.mingw.org/), [Make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm) and [CoreUtils for Windows](http://gnuwin32.sourceforge.net/packages/coreutils.htm)
 		- [Build OpenCV from source using MinGW](http://kevinhughes.ca/tutorials/opencv-install-on-windows-with-codeblocks-and-mingw) and set `OPENCV_INCLUDE_DIRS` and `OPENCV_LIB_DIRS` in the makefile to the locations of header and library files respectively. 
 		- [Build Boost from source using MinGW (`toolset=gcc`)](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary) and set `BOOST_LIB_DIRS` and `BOOST_INCLUDE_DIRS` in the makefile to the locations of the header and library (`*.dll.a`) files respectively.
