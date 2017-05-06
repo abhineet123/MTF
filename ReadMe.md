@@ -43,12 +43,14 @@ Installation:
 * **Installation in Windows**
 	* Using CMake with Visual Studio (**Recommended**)
 		- Install a recent version of Visual Studio
-			- the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine; **Update**: it seems that the `OpenCVConfig.cmake` file that comes with the latest version of OpenCV simply does not recognize Visual C++ 2017 so cmake might not be able to find it and will instead exit with the erroneous message: `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`; a similar issue is exhibited by ViSP so it is best to use 2015 or older versions of Visual Studio.		
+			- the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine; 
+			- it seems that the `OpenCVConfig.cmake` file that comes with the latest version of OpenCV simply does not recognize Visual C++ 2017 so cmake might not be able to find it and instead exit with the erroneous message: `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`; a similar issue is exhibited by ViSP so it is best to use 2015 or older versions of Visual Studio.		
 			- the freely available [Express/Community edition](https://www.visualstudio.com/vs/visual-studio-express/) can be used too
 		- Set `EIGEN3_ROOT`, `EIGEN3_DIR` and `EIGEN3_ROOT_DIR` [environment variables](http://www.computerhope.com/issues/ch000549.htm) to the folder containing the Eigen header files
 		    - this folder should contain the sub folders `Eigen` and `unsupported` and a file called `signature_of_eigen3_matrix_library`
-			- if cmake still fails to find Eigen, set `EIGEN_INCLUDE_DIR_WIN` variable in `CMakeLists.txt` (line 13) to this folder
+			- if cmake still fails to find Eigen, set `EIGEN_INCLUDE_DIR_WIN` variable in `CMakeLists.txt` (line 13) to the location of this folder
 		- [Build OpenCV from source using Visual Studio](http://docs.opencv.org/2.4/doc/tutorials/introduction/windows_install/windows_install.html#installation-by-making-your-own-libraries-from-the-source-files) or download the [pre built binaries](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/) built with the correct version of visual studio if available.	
+		    - as mentioned before, version 2.4.x is recommended; if 3.x is used instead and compile time errors occur, try disabling third party trackers by passing the switch `-DWITH_THIRD_PARTY=0` to cmake
 			- [set environment variable](http://www.computerhope.com/issues/ch000549.htm) `OpenCV_DIR` to the folder where the binaries have been built or downloaded; this should contain the `OpenCVConfig.cmake` file along with the `lib` and `bin` folders
 			- add the location of the `bin` folder to the `Path` environment variable
 			- if cmake still fails to find OpenCV, set `OPENCV_INCLUDE_DIR_WIN`, `OPENCV_LIB_DIR_WIN` and `OpenCV_SUFFIX` variables in `CMakeLists.txt` (line 14-16) to the respective values
@@ -57,11 +59,11 @@ Installation:
 			- set `BOOST_INCLUDEDIR` and `BOOST_LIBRARYDIR` environment variables to the locations of the header and library (*.lib) files respectively.
 			- add the location of the `bin` folder containing the *.dll files to the `Path` environment variable
 			- if cmake still fails to find Boost, set `BOOST_INCLUDE_DIR_WIN`, `BOOST_LIB_DIR_WIN` and `Boost_SUFFIX` variables in `CMakeLists.txt` (line 17-19) to the respective values		
-		- If [FLANN](http://www.cs.ubc.ca/research/flann/) is needed, build it from source using Visual Studio and set `FLANN_ROOT` to the folder containing the compiled library and header files respectively
+		- If [FLANN](http://www.cs.ubc.ca/research/flann/) is needed, build it from source using Visual Studio and set `FLANN_ROOT` environment variable to the folder containing the compiled library and header files respectively
 			- this folder should have sub folders called `lib`, `bin` and `include` that contain the *.lib, *.dll and the header files 
 			- add the `bin` sub folder to the `Path` environment variable
-		- If [ViSP](http://www.cs.ubc.ca/research/flann/) is needed, [build ViSP from source using Visual Studio](http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win10-msvc14.html) and set `VISP_DIR` to the folder containing the library and header files
-			- this folder should have files called `VISPConfigVersion.cmake` and `VISPConfig.cmake` along with sub folders called `x86/vc<version>/lib`, `x86/vc<version>/bin` and `include` that contain the *.lib, *.dll and the header files respectively.
+		- If [ViSP](http://www.cs.ubc.ca/research/flann/) is needed, [build ViSP from source using Visual Studio](http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win10-msvc14.html) and set `VISP_DIR` environment variable to the folder containing the library and header files
+			- this folder should have a file called `VISPConfig.cmake` along with sub folders called `x86/vc<version>/lib`, `x86/vc<version>/bin` and `include` that contain the *.lib, *.dll and the header files respectively.
 			- add the path of the `bin` folder to the `Path` environment variable	
 		- if the Python interface is to be built, install [Python 2.7.x](https://www.python.org/downloads/windows/) and [Numpy](http://www.numpy.org/).
 		    - cmake should normally be able to find the needed Python/Numpy libraries and headers without any other setup
