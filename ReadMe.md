@@ -87,6 +87,7 @@ Installation:
 	* in the former case, use one of the make commands specified below
     * in the latter case, open `MTF.sln` in Visual Studio and run `Build->Build Solution`
 	    - if needed, change the solution configuration to `Release` from `Debug` to build the faster version
+		- right click on `Solution Explorer->INSTALL` and select `Build` to install the library, header and executable files to the installation directory (`C:/MTF` by default); add `<installation_folder>/bin` to `Path` environment variable to be able to run the executables from any location;
 
 * On Unix or when using MinGW on Windows, run one of the following make commands to compile and install the library and the example applications:
     * `make` or `make mtf` : compiles the shared library (_libmtf.so_) to the build directory (_Build/Release_)
