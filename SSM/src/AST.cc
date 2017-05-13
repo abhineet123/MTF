@@ -5,6 +5,13 @@
 #include "opencv2/core/core_c.h"
 #include "opencv2/calib3d/calib3d.hpp"
 
+#define VALIDATE_AST_WARP(warp) \
+	assert(warp(0, 1) == 0 && warp(1, 0) == 0); \
+	assert(warp(2, 0) == 0 && warp(2, 1) == 0); \
+	assert(warp(2, 2) == 1)
+
+#define AST_DEBUG_MODE 0
+
 
 _MTF_BEGIN_NAMESPACE
 

@@ -1,10 +1,6 @@
 #ifndef MTF_HOMOGRAPHY_H
 #define MTF_HOMOGRAPHY_H
 
-#define HOM_DIRECT_SAMPLES 0
-#define HOM_NORMALIZED_BASIS false
-#define HOM_DEBUG_MODE 0
-
 #include "ProjectiveBase.h"
 
 _MTF_BEGIN_NAMESPACE

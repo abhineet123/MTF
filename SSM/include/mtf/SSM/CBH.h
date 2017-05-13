@@ -1,10 +1,6 @@
 #ifndef MTF_CHOMOGRAPHY_H
 #define MTF_CHOMOGRAPHY_H
 
-#define CBH_NORMALIZED_BASIS false
-#define CBH_GRAD_EPS 1e-8
-#define CBH_DEBUG_MODE 0
-
 #include "ProjectiveBase.h"
 
 _MTF_BEGIN_NAMESPACE

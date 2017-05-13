@@ -1,12 +1,6 @@
 #ifndef MTF_SPLINE_H
 #define MTF_SPLINE_H
 
-#define SPLINE_CONTROL_SIZE 10
-#define SPLINE_CONTROL_OVERLAP 1.0
-#define SPLINE_INTERP_TYPE InterpolationType::Bilinear
-#define SPLINE_STATIC_WTS true
-#define SPLINE_DEBUG_MODE false
-
 #include "StateSpaceModel.h"
 
 _MTF_BEGIN_NAMESPACE

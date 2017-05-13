@@ -1,14 +1,6 @@
 #ifndef MTF_AFFINE_H
 #define MTF_AFFINE_H
 
-#define VALIDATE_AFFINE_WARP(warp)\
-	assert(warp(2, 0) == 0.0 && warp(2, 1) == 0.0);\
-	assert(warp(2, 2) == 1.0)
-
-#define AFF_NORMALIZED_INIT 0
-#define AFF_PT_BASED_SAMPLING 0
-#define AFF_DEBUG_MODE 0
-
 #include "ProjectiveBase.h"
 
 _MTF_BEGIN_NAMESPACE

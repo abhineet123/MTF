@@ -5,6 +5,14 @@
 
 #include <Eigen/SVD>
 
+#define VALIDATE_AFFINE_WARP(warp)\
+	assert(warp(2, 0) == 0.0 && warp(2, 1) == 0.0);\
+	assert(warp(2, 2) == 1.0)
+
+#define AFF_NORMALIZED_INIT 0
+#define AFF_PT_BASED_SAMPLING 0
+#define AFF_DEBUG_MODE 0
+
 _MTF_BEGIN_NAMESPACE
 
 AffineParams::AffineParams(const SSMParams *ssm_params,

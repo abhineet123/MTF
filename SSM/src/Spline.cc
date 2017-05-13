@@ -2,6 +2,11 @@
 #include "mtf/Utilities/warpUtils.h"
 #include "mtf/Utilities/miscUtils.h"
 
+#define SPLINE_CONTROL_SIZE 10
+#define SPLINE_CONTROL_OVERLAP 1.0
+#define SPLINE_INTERP_TYPE InterpolationType::Bilinear
+#define SPLINE_STATIC_WTS true
+#define SPLINE_DEBUG_MODE false
 
 _MTF_BEGIN_NAMESPACE
 

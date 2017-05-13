@@ -3,6 +3,10 @@
 #include "mtf/Utilities/warpUtils.h"
 #include "mtf/Utilities/miscUtils.h"
 
+#define HOM_DIRECT_SAMPLES 0
+#define HOM_NORMALIZED_BASIS false
+#define HOM_DEBUG_MODE 0
+
 _MTF_BEGIN_NAMESPACE
 
 HomographyParams::HomographyParams(const SSMParams *ssm_params, 

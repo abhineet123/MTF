@@ -1,20 +1,6 @@
 #ifndef MTF_ISOMETRY_H
 #define MTF_ISOMETRY_H
 
-#define validate_iso_warp(warp) \
-	assert(warp(0, 0) == warp(1, 1)); \
-	assert(warp(0, 1) == -warp(1, 0)); \
-	assert(warp(0, 0) >= -1 && warp(0, 0) <= 1); \
-	assert(warp(1, 0) >= -1 && warp(1, 0) <= 1); \
-	assert(warp(2, 0) == 0); \
-	assert(warp(2, 1) == 0); \
-	assert(warp(2, 2) == 1)
-
-#define validate_iso_state(state) \
-	assert(state.size() == 3)
-
-#define ISO_PT_BASED_SAMPLING true
-
 #include "ProjectiveBase.h"
 #include "SSMEstimator.h"
 #include "SSMEstimatorParams.h"

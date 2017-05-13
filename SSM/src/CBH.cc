@@ -2,8 +2,12 @@
 #include "mtf/SSM/HomographyEstimator.h"
 #include "mtf/Utilities/warpUtils.h"
 #include "mtf/Utilities/miscUtils.h"
-#include <time.h>
 #include "opencv2/calib3d/calib3d.hpp"
+//#include <time.h>
+
+#define CBH_NORMALIZED_BASIS false
+#define CBH_GRAD_EPS 1e-8
+#define CBH_DEBUG_MODE 0
 
 _MTF_BEGIN_NAMESPACE
 

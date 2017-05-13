@@ -1,14 +1,6 @@
 #ifndef MTF_IST_H
 #define MTF_IST_H
 
-#define VALIDATE_IST_WARP(warp) \
-	assert(warp(0, 0) == warp(1, 1)); \
-	assert(warp(0, 1) == 0 && warp(1, 0) == 0); \
-	assert(warp(2, 0) == 0 && warp(2, 1) == 0); \
-	assert(warp(2, 2) == 1)
-
-#define IST_DEBUG_MODE 0
-
 #include "ProjectiveBase.h"
 #include "SSMEstimator.h"
 #include "SSMEstimatorParams.h"

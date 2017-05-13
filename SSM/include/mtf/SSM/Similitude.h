@@ -1,18 +1,6 @@
 #ifndef MTF_SIMILITUDE_H
 #define MTF_SIMILITUDE_H
 
-#define validate_sim_warp(warp) \
-	assert(warp(0, 0) == warp(1, 1)); \
-	assert(warp(0, 1) == -warp(1, 0)); \
-	assert(warp(2, 0) == 0 && warp(2, 1) == 0); \
-	assert(warp(2, 2) == 1)
-
-#define SIM_NORMALIZED_INIT false
-#define SIM_GEOM_SAMPLING true
-#define SIM_PT_BASED_SAMPLING 0
-#define SIM_N_MODEL_PTS 2
-#define SIM_DEBUG_MODE 0
-
 #include "ProjectiveBase.h"
 #include "SSMEstimator.h"
 #include "SSMEstimatorParams.h"
