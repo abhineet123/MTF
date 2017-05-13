@@ -3,7 +3,7 @@
 
 namespace mtf{
 	namespace params{
-		char* sources_tmt[] = {
+		char* sequences_tmt[] = {
 			"nl_bookI_s3",//0
 			"nl_bookII_s3",//1
 			"nl_bookIII_s3",//2
@@ -130,7 +130,7 @@ namespace mtf{
 			"robot_mugIII"//108
 		};
 
-		char* sources_ucsb[] = {
+		char* sequences_ucsb[] = {
 			"bricks_dynamic_lighting",//0
 			"bricks_motion1",//1
 			"bricks_motion2",//2
@@ -229,12 +229,12 @@ namespace mtf{
 			"wood_zoom"//95
 		};
 
-		char* sources_lintrack[] = {
+		char* sequences_lintrack[] = {
 			"mouse_pad",//0
 			"phone",//1
 			"towel"//2
 		};
-		char* sources_lintrack_short[] = {
+		char* sequences_lintrack_short[] = {
 			"mouse_pad_1",//0
 			"mouse_pad_2",//1
 			"mouse_pad_3",//2
@@ -250,7 +250,7 @@ namespace mtf{
 			"towel_3",//12
 			"towel_4"//13
 		};
-		char* sources_pami[] = {
+		char* sequences_pami[] = {
 			"acronis",//0
 			"bass",//1
 			"bear",//2
@@ -281,7 +281,7 @@ namespace mtf{
 			"tea"//27
 		};
 
-		char* sources_cmt[] = {
+		char* sequences_cmt[] = {
 			"board_robot",//0
 			"box_robot",//1
 			"cup_on_table",//2
@@ -305,7 +305,7 @@ namespace mtf{
 		};
 
 
-		char* sources_metaio[] = {
+		char* sequences_metaio[] = {
 			"bump_angle",//0
 			"bump_fast_close",//1
 			"bump_fast_far",//2
@@ -348,7 +348,7 @@ namespace mtf{
 			"wall_range"//39
 		};
 
-		char* sources_vot[] = {
+		char* sequences_vot[] = {
 			"woman",//0
 			"ball",//1
 			"basketball",//2
@@ -376,7 +376,7 @@ namespace mtf{
 			"tunnel"//24
 		};
 
-		char* sources_vot16[] = {
+		char* sequences_vot16[] = {
 			"bag",//0
 			"ball1",//1
 			"ball2",//2
@@ -439,7 +439,7 @@ namespace mtf{
 			"wiper"//59
 		};
 
-		char* sources_vtb[] = {
+		char* sequences_vtb[] = {
 			"Basketball",//0
 			"Biker",//1
 			"Bird1",//2
@@ -542,7 +542,7 @@ namespace mtf{
 			"Woman"//99
 		};
 
-		char* sources_vivid[] = {
+		char* sequences_vivid[] = {
 			"pktest03",//0
 			"egtest01",//1
 			"egtest02",//2
@@ -554,7 +554,7 @@ namespace mtf{
 			"redteam"//8
 		};
 
-		char* sources_trakmark[] = {
+		char* sequences_trakmark[] = {
 			"CV00_00",//0
 			"CV00_01",//1
 			"CV00_02",//2
@@ -577,7 +577,7 @@ namespace mtf{
 			"NH00_00",//19
 			"NH00_01"//20
 		};
-		char* sources_tmt_fine[] = {
+		char* sequences_tfmt[] = {
 			"fish_lure_left",//0
 			"fish_lure_right",//1
 			"fish_lure_fast_left",//2
@@ -603,7 +603,7 @@ namespace mtf{
 			"hexagon_task_fast_cam1",//22
 			"hexagon_task_fast_cam2"//23
 		};
-		char* sources_mosaic[] = {
+		char* sequences_mosaic[] = {
 			"book_1",//0
 			"book_2",//1
 			"book_3",//2
@@ -623,14 +623,14 @@ namespace mtf{
 			"poster_9"//16
 		};
 
-		char* sources_misc[] = {
+		char* sequences_misc[] = {
 			"uav_sim",//0
 			"chess_board_1",//1
 			"chess_board_2",//2
 			"chess_board_3",//3
 			"chess_board_4"//4
 		};
-		char* sources_synthetic[] = {
+		char* sequences_synthetic[] = {
 			"bear",//0
 			"board_robot",//1
 			"book4",//2
@@ -658,7 +658,7 @@ namespace mtf{
 			"wood_dynamic_lighting"//24
 		};
 
-		char* sources_live[] = {
+		char* sequences_live[] = {
 			"usb_cam",//0
 			"firewire_cam"//1
 		};
@@ -681,44 +681,44 @@ namespace mtf{
 			"Synthetic",//15
 			"Live"//16
 		};
-		char** combined_sources[] = {
-			sources_tmt,//0
-			sources_ucsb,//1
-			sources_lintrack,//2
-			sources_pami,//3
-			sources_lintrack_short,//4
-			sources_metaio,//5
-			sources_cmt,//6
-			sources_vot,//7
-			sources_vot16,//8
-			sources_vtb,//9
-			sources_vivid,//10
-			sources_trakmark,//11
-			sources_tmt_fine,//12
-			sources_mosaic,//13
-			sources_misc,//14
-			sources_synthetic,//15
-			sources_live//16
+		char** combined_sequences[] = {
+			sequences_tmt,//0
+			sequences_ucsb,//1
+			sequences_lintrack,//2
+			sequences_pami,//3
+			sequences_lintrack_short,//4
+			sequences_metaio,//5
+			sequences_cmt,//6
+			sequences_vot,//7
+			sequences_vot16,//8
+			sequences_vtb,//9
+			sequences_vivid,//10
+			sequences_trakmark,//11
+			sequences_tfmt,//12
+			sequences_mosaic,//13
+			sequences_misc,//14
+			sequences_synthetic,//15
+			sequences_live//16
 		};
 
-		int combined_n_sources[] = {
-			sizeof(sources_tmt) / sizeof(sources_tmt[0]),
-			sizeof(sources_ucsb) / sizeof(sources_ucsb[0]),
-			sizeof(sources_lintrack) / sizeof(sources_lintrack[0]),
-			sizeof(sources_pami) / sizeof(sources_pami[0]),
-			sizeof(sources_lintrack_short) / sizeof(sources_lintrack_short[0]),
-			sizeof(sources_metaio) / sizeof(sources_metaio[0]),
-			sizeof(sources_cmt) / sizeof(sources_cmt[0]),
-			sizeof(sources_vot) / sizeof(sources_vot[0]),
-			sizeof(sources_vot16) / sizeof(sources_vot16[0]),
-			sizeof(sources_vtb) / sizeof(sources_vtb[0]),
-			sizeof(sources_vivid) / sizeof(sources_vivid[0]),
-			sizeof(sources_trakmark) / sizeof(sources_trakmark[0]),
-			sizeof(sources_tmt_fine) / sizeof(sources_tmt_fine[0]),
-			sizeof(sources_mosaic) / sizeof(sources_mosaic[0]),
-			sizeof(sources_misc) / sizeof(sources_misc[0]),
-			sizeof(sources_synthetic) / sizeof(sources_synthetic[0]),
-			sizeof(sources_live) / sizeof(sources_live[0])
+		int combined_n_sequences[] = {
+			sizeof(sequences_tmt) / sizeof(sequences_tmt[0]),
+			sizeof(sequences_ucsb) / sizeof(sequences_ucsb[0]),
+			sizeof(sequences_lintrack) / sizeof(sequences_lintrack[0]),
+			sizeof(sequences_pami) / sizeof(sequences_pami[0]),
+			sizeof(sequences_lintrack_short) / sizeof(sequences_lintrack_short[0]),
+			sizeof(sequences_metaio) / sizeof(sequences_metaio[0]),
+			sizeof(sequences_cmt) / sizeof(sequences_cmt[0]),
+			sizeof(sequences_vot) / sizeof(sequences_vot[0]),
+			sizeof(sequences_vot16) / sizeof(sequences_vot16[0]),
+			sizeof(sequences_vtb) / sizeof(sequences_vtb[0]),
+			sizeof(sequences_vivid) / sizeof(sequences_vivid[0]),
+			sizeof(sequences_trakmark) / sizeof(sequences_trakmark[0]),
+			sizeof(sequences_tfmt) / sizeof(sequences_tfmt[0]),
+			sizeof(sequences_mosaic) / sizeof(sequences_mosaic[0]),
+			sizeof(sequences_misc) / sizeof(sequences_misc[0]),
+			sizeof(sequences_synthetic) / sizeof(sequences_synthetic[0]),
+			sizeof(sequences_live) / sizeof(sequences_live[0])
 		};
 	}
 }

@@ -11,9 +11,8 @@ public:
 	InputCV(char img_source = 'u', string _dev_name = "", string _dev_fmt = "",
 		string _dev_path = "", int _n_buffers = 1, bool _invert_seq = false,
 		int _img_type = CV_8UC3) :
-		InputBase(img_source, _dev_name, _dev_fmt, _dev_path, _n_buffers),
-		img_type(_img_type), frame_id(0), invert_seq(_invert_seq){}
-
+		InputBase(img_source, _dev_name, _dev_fmt, _dev_path, _n_buffers, _invert_seq),
+		img_type(_img_type), frame_id(0){}
 	~InputCV(){
 		cv_buffer.clear();
 		cap_obj.release();
@@ -35,10 +34,6 @@ public:
 			}
 			cap_obj.open(file_path);
 		} else if(img_source == SRC_USB_CAM) {
-			if(invert_seq){
-				printf("InputCV::Inverted sequence cannot be used with live input");
-				return false;
-			}
 			if(dev_path.empty()){
 				cap_obj.open(0);
 			} else{
@@ -49,12 +44,10 @@ public:
 			return false;
 		}
 		if(!(cap_obj.isOpened())) {
-			printf("OpenCV stream could not be initialized successfully\n");
+			printf("OpenCV pipeline could not be initialized successfully\n");
 			return false;
-		} else{
-			printf("OpenCV stream initialized successfully\n");
-		}
-
+		} 
+			
 		//Mat temp_frame;
 		//*cap_obj>>temp_frame;
 		//frames_captured++;
@@ -67,25 +60,16 @@ public:
 
 		/*img_height=cap_obj.get(CV_CAP_PROP_FRAME_HEIGHT);
 		img_width=cap_obj.get(CV_CAP_PROP_FRAME_WIDTH);*/
-		if(invert_seq && n_frames <= 0){
-			printf("InputCV :: Inverted sequence cannot be used without valid frame count");
-			return false;
-		}
-		printf("Images are of size: %d x %d\n", img_width, img_height);
-		if(invert_seq){
-			printf("Using inverted sequence.\n");
-			n_buffers = n_frames;
-		}
+		printf("OpenCV pipeline initialized successfully to grab frames of size: %d x %d\n", 
+			img_width, img_height);
 		cv_buffer.resize(n_buffers);
-		for(int i = 0; i < n_buffers; i++){
+		for(int i = 0; i < n_buffers; ++i){
 			cv_buffer[i].create(img_height, img_width, img_type);
 		}
-		buffer_id = -1;
-
+		buffer_id = 0;
 		frame_id = 0;
-		buffer_id = (buffer_id + 1) % n_buffers;
 		if(invert_seq){
-			printf("Reading sequence images into buffer....\n");
+			printf("Reading sequence into buffer....\n");
 			for(int i = 0; i < n_buffers; ++i){
 				if(!cap_obj.read(cv_buffer[n_buffers - i - 1])){ return false; };
 			}
@@ -124,13 +108,13 @@ public:
 		return cv_buffer[buffer_id];
 	}
 	int getFrameID() const override{ return frame_id; }
+
 private:
+
 	cv::VideoCapture cap_obj;
 	vector<cv::Mat> cv_buffer;
-
 	int img_type;
 	int frame_id;
-	bool invert_seq;
 };
 
 #endif

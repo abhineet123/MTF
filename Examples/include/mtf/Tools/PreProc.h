@@ -46,15 +46,15 @@ public:
 		frame_id = _frame_id;
 		switch(frame_raw.type()){
 		case CV_8UC3:
-			if(print_types){ printf("PreProc::Input type: CV_8UC3 "); }
+			if(print_types){ printf("Input type: CV_8UC3 "); }
 			break;
 		case CV_8UC1:
-			if(print_types){ printf("PreProc::Input type: CV_8UC1 "); }
+			if(print_types){ printf("Input type: CV_8UC1 "); }
 			rgb_input = false;
 			break;
 		default:
 			throw mtf::utils::InvalidArgument(
-				cv::format("Invalid input image type provided: %d", frame_raw.type()));
+				cv::format("PreProcBase::initialize : Invalid input image type provided: %d", frame_raw.type()));
 		}
 		switch(output_type){
 		case CV_32FC1:
@@ -80,7 +80,8 @@ public:
 			frame_rgb.create(frame_raw.rows, frame_raw.cols, CV_8UC3);
 			break;
 		default:
-			throw mtf::utils::InvalidArgument("PreProcBase::initialize : Invalid output image type provided");
+			throw mtf::utils::InvalidArgument(
+				cv::format("PreProcBase::initialize : Invalid output image type provided: %d", output_type));
 		}
 		if(resize_images){
 			frame_resized.create(static_cast<int>(frame_raw.rows*resize_factor), 
@@ -129,7 +130,8 @@ public:
 			imshow(window_name, resize_images ? frame_resized : frame_rgb);
 			break;
 		default:
-			throw mtf::utils::InvalidArgument("Invalid output image type provided");
+			throw mtf::utils::InvalidArgument(
+				cv::format("PreProcBase::showFrame : Invalid output image type provided: %d", output_type));
 		}
 	}
 	virtual int outputType() const{ return output_type; }
@@ -199,7 +201,7 @@ protected:
 			break;
 		default:
 			throw mtf::utils::InvalidArgument(
-				cv::format("Invalid output image type provided: %d", output_type));
+				cv::format("PreProcBase::processFrame : Invalid output image type provided: %d", output_type));
 		}
 	}
 	virtual void apply(cv::Mat &img_gs) const = 0;
@@ -326,7 +328,7 @@ struct NoPreProcessing : public PreProcBase{
 				break;
 			default:
 				throw mtf::utils::InvalidArgument(
-					cv::format("Invalid image type provided: %d", output_type));
+					cv::format("NoPreProcessing::initialize : Invalid image type provided: %d", output_type));
 			}
 		}
 	}

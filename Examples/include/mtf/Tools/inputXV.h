@@ -51,10 +51,7 @@ I: input
 #include <XVImageRGB.h>
 #include <XVImageSeq.h>
 
-typedef float PIX_TYPE_GS;
-typedef XV_RGB24 PIX_TYPE;
-typedef XVImageRGB<PIX_TYPE> IMAGE_TYPE;
-typedef XVImageScalar<PIX_TYPE_GS> IMAGE_TYPE_GS;
+#include <memory>
 
 class InputXVSource{
 public:
@@ -71,6 +68,9 @@ public:
 	typedef XVImageSeq< IMAGE_TYPE24 > IMG;
 	typedef XVMpeg< IMAGE_TYPE32 >  MPG;
 
+	InputXVSource(){}
+	virtual ~InputXVSource(){}
+
 	int img_height, img_width;
 	virtual void initFrame(int) = 0;
 	virtual void updateFrame(int) = 0;
@@ -80,27 +80,23 @@ public:
 
 class InputXV24 : public InputXVSource{
 public:
-	VID24 *vid = NULL;
-	IMAGE_TYPE24 *vid_buffers;
-	int n_buffers;
-
 	InputXV24(char img_source,
 		string dev_path, string dev_fmt, string file_path,
-		int n_buffers_in, int n_frames) : n_buffers(n_buffers_in){
+		int n_buffers_in, int n_frames) : vid(nullptr), n_buffers(n_buffers_in){
 		switch(img_source) {
 		case SRC_IMG: {
 			fprintf(stdout, "Opening jpeg file at %s with %d frames\n", file_path.c_str(), n_frames);
-			vid = new IMG(file_path, 1, n_frames, n_buffers);
+			vid.reset(new IMG(file_path.c_str(), 1, n_frames, n_buffers));
 			break;
 		}
 		case SRC_USB_CAM: {
 			fprintf(stdout, "Opening USB camera %s with format %s\n", dev_path.c_str(), dev_fmt.c_str());
-			vid = new V4L2(dev_path, dev_fmt);
+			vid.reset(new V4L2(dev_path.c_str(), dev_fmt.c_str()));
 			break;
 		}
 		case SRC_FW_CAM: {
 			fprintf(stdout, "Opening FIREWIRE camera %s  with format %s\n", dev_path.c_str(), dev_fmt.c_str());
-			vid = new DIG1394(dev_path, dev_fmt, DIG1394_NTH_CAMERA(0));
+			vid.reset(new DIG1394(dev_path.c_str(), dev_fmt.c_str(), DIG1394_NTH_CAMERA(0)));
 			break;
 		}
 		default: {
@@ -111,7 +107,7 @@ public:
 		XVSize img_size = vid->get_size();
 		img_height = img_size.Height();
 		img_width = img_size.Width();
-	}
+	}	
 	void initFrame(int init_buffer_id) override{
 		if(vid->initiate_acquire(init_buffer_id) < 0){
 			cout << "Error in InputXV24: Frame could not be acquired\n";
@@ -140,22 +136,23 @@ public:
 			vid_buffers[i].remap(new_addrs[i], false);
 		}
 	}
+
+private:
+
+	std::unique_ptr<VID24> vid;
+	IMAGE_TYPE24 *vid_buffers;
+	int n_buffers;
 };
 
 class InputXV32 : public InputXVSource{
 
 public:
-	VID32 *vid = NULL;
-	IMAGE_TYPE24 *buffer24;
-
-	int buffer_id32;
-
-	InputXV32(int img_source, string file_path){
+	InputXV32(int img_source, string file_path) : vid(nullptr){
 
 		switch(img_source) {
 		case SRC_VID: {
 			fprintf(stdout, "Opening video file %s\n", file_path.c_str());
-			vid = new MPG(file_path.c_str());
+			vid.reset(new MPG(file_path.c_str()));
 			break;
 		}
 		default: {
@@ -201,8 +198,8 @@ public:
 
 	// copy image data from 32 bit source image to 24 bit buffer image
 	void copyFrame32ToBuffer24(IMAGE_TYPE32 &src_frame, int buffer_id24) {
-		uchar* src_data = (uchar*)(src_frame.data());
-		uchar* dst_data = (uchar*)(buffer24[buffer_id24].data());
+		unsigned char* src_data = (unsigned char*)(src_frame.data());
+		unsigned char* dst_data = (unsigned char*)(buffer24[buffer_id24].data());
 
 		for(int row = 0; row < img_height; row++) {
 			for(int col = 0; col < img_width; col++) {
@@ -212,19 +209,27 @@ public:
 			}
 		}
 	}
+
+private:
+
+	std::unique_ptr<VID32> vid;
+	IMAGE_TYPE24 *buffer24;
+
+	int buffer_id32;
 };
 
 class InputXV : public InputBase {
 
 public:
-	vector<IMAGE_TYPE> xv_buffer;
-	vector<cv::Mat> cv_buffer;
+	typedef float PIX_TYPE_GS;
+	typedef XV_RGB24 PIX_TYPE;
+	typedef XVImageRGB<PIX_TYPE> IMAGE_TYPE;
+	typedef XVImageScalar<PIX_TYPE_GS> IMAGE_TYPE_GS;
 
-	int frame_id;
-	InputXVSource *src;
 	InputXV(char img_source, string _dev_name, string _dev_fmt,
-		string _dev_path, int _n_buffers = 1) :
-		InputBase(img_source, _dev_name, _dev_fmt, _dev_path, _n_buffers){}
+		string _dev_path, int _n_buffers = 1, bool _invert_seq = false) :
+		InputBase(img_source, _dev_name, _dev_fmt, _dev_path, _n_buffers, _invert_seq),
+		src(nullptr){}
 
 	~InputXV(){
 		cv_buffer.clear();
@@ -232,12 +237,17 @@ public:
 	}
 
 	bool initialize() override{
+		if(invert_seq && (img_source == SRC_FW_CAM || img_source == SRC_USB_CAM)){
+			printf("InputXV :: Inverted sequence cannot be used with live input");
+			return false;
+		}
+
 		n_channels = sizeof(PIX_TYPE);
 
 		if(img_source == SRC_VID){
-			src = new InputXV32(img_source, file_path);
+			src.reset(new InputXV32(img_source, file_path));
 		} else{
-			src = new InputXV24(img_source, dev_path, dev_fmt, file_path, n_buffers, n_frames);
+			src.reset(new InputXV24(img_source, dev_path, dev_fmt, file_path, n_buffers, n_frames));
 		}
 
 		img_height = src->img_height;
@@ -247,39 +257,46 @@ public:
 			return false;
 		}
 
-		fprintf(stdout, "InputXV :: img_height=%d\n", img_height);
-		fprintf(stdout, "InputXV :: img_width=%d\n", img_width);
+		printf("Xvision pipeline initialized successfully to grab frames of size: %d x %d\n",
+			img_width, img_height);
 
 		vector<PIX_TYPE*> data_addrs;
 		cv_buffer.resize(n_buffers);
 		xv_buffer.resize(n_buffers);
-		for(int i = 0; i < n_buffers; i++){
+		for(int i = 0; i < n_buffers; ++i){
 			cv_buffer[i].create(img_height, img_width, CV_8UC3);
 			xv_buffer[i] = IMAGE_TYPE(img_width, img_height);
 			data_addrs.push_back((PIX_TYPE*)(xv_buffer[i].data()));
-			cv_buffer[i].data = (uchar*)xv_buffer[i].data();
+			cv_buffer[i].data = (unsigned char*)xv_buffer[i].data();
 		}
-		frame_id = 0;
 		src->initBuffer(data_addrs.data(), xv_buffer.data());
 		buffer_id = 0;
-		src->updateFrame(buffer_id);
-
-		++frame_id;
+		frame_id = 0;
+		if(invert_seq){
+			printf("Reading sequence into buffer....\n");
+			for(int i = 0; i < n_buffers; ++i){
+				src->updateFrame(n_buffers - i - 1);
+			}
+			return true;
+		}		
+		src->updateFrame(buffer_id);		
 		return true;
 	}
 
 	bool update() override{
-		buffer_id = (buffer_id + 1) % n_buffers;
-		src->updateFrame(buffer_id);
 		++frame_id;
+		buffer_id = (buffer_id + 1) % n_buffers;
+		if(!invert_seq){
+			src->updateFrame(buffer_id);
+		}		
 		return true;
 	}
 
-	void remapBuffer(uchar** new_addr) override{
+	void remapBuffer(unsigned char** new_addr) override{
 		//vid->own_buffers=0;
 		//vid_buffers=vid->remap((PIX_TYPE**)new_addr, n_buffers);
 		src->updateBuffer((PIX_TYPE**)new_addr);
-		for(int i = 0; i < n_buffers; i++){
+		for(int i = 0; i < n_buffers; ++i){
 			//vid_buffers[i].resize(img_width, img_height);			
 			/*IMAGE_TYPE* temp_frame=&(vid->frame(i));
 
@@ -305,6 +322,13 @@ public:
 	}
 	int getFrameID() const override{ return frame_id; }
 
+private:
+
+	std::unique_ptr<InputXVSource> src;
+	vector<IMAGE_TYPE> xv_buffer;
+	vector<cv::Mat> cv_buffer;
+	int frame_id;
+
 	void copyXVToCV(IMAGE_TYPE_GS &xv_img, cv::Mat &cv_img) {
 		//printf("Copying XV to CV\n");
 		int img_height = xv_img.SizeY();
@@ -314,14 +338,14 @@ public:
 		printf("created image with img_height: %d, img_width: %d\n",
 		cv_img->rows, cv_img->cols);*/
 		PIX_TYPE_GS* xv_data = (PIX_TYPE_GS*)xv_img.data();
-		uchar* cv_data = cv_img.data;
+		unsigned char* cv_data = cv_img.data;
 		for(int row = 0; row < img_height; row++) {
 			//printf("row: %d\n", row);
 			for(int col = 0; col < img_width; col++) {
 				//printf("\tcol: %d\n", col);
 				int xv_location = col + row * img_width;
 				int cv_location = (col + row * img_width);
-				cv_data[cv_location] = (uchar)xv_data[xv_location];
+				cv_data[cv_location] = (unsigned char)xv_data[xv_location];
 			}
 		}
 		//printf("done\n");
@@ -333,7 +357,7 @@ public:
 		//printf("img_height: %d, img_width=%d\n", img_height, img_width);
 		int cv_location = 0;
 		XVImageIterator<PIX_TYPE_GS> iter(xv_img);
-		uchar* cv_data = cv_img.data;
+		unsigned char* cv_data = cv_img.data;
 		for(; !iter.end(); ++iter){
 			cv_data[cv_location++] = *iter;
 		}
@@ -344,7 +368,7 @@ public:
 		//printf("img_height: %d, img_width=%d\n", img_height, img_width);
 		int cv_location = 0;
 		XVImageIterator<PIX_TYPE> iter(xv_img);
-		uchar* cv_data = cv_img.data;
+		unsigned char* cv_data = cv_img.data;
 		for(; !iter.end(); ++iter){
 			cv_data[cv_location++] = iter->b;
 			cv_data[cv_location++] = iter->g;

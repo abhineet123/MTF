@@ -17,6 +17,8 @@
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
+#include <memory>
+
 enum class VpResUSB{
 	Default, res640x480, res800x600, res1024x768, res1280x720, res1920x1080
 };
@@ -26,19 +28,22 @@ enum class VpResFW{
 enum class VpFpsUSB{ Default, fps25, fps50 };
 enum class VpFpsFW{ Default, fps15, fps30, fps60, fps120, fps240 };
 
-// ViSP input pipeline
+//! ViSP input pipeline
 class InputVP : public InputBase {
+
 public:
 
-	InputVP(char img_source, string dev_name_in, string dev_fmt_in,
-		string dev_path_in, int n_buffers = 1, int _usb_n_buffers = 3,
+	InputVP(char img_source, string _dev_name, string _dev_fmt,
+		string _dev_path, int _n_buffers = 1, int _usb_n_buffers = 3,
+		bool _invert_seq = false,
 		VpResUSB _usb_res = VpResUSB::Default,
 		VpFpsUSB _usb_fps = VpFpsUSB::Default,
 		VpResFW _fw_res = VpResFW::Default,
 		VpFpsFW _fw_fps = VpFpsFW::Default) :
-		InputBase(img_source, dev_name_in, dev_fmt_in, dev_path_in, n_buffers),
-		cap_obj(nullptr), usb_res(_usb_res), usb_fps(_usb_fps),
-		fw_res(_fw_res), fw_fps(_fw_fps), frame_id(0), usb_n_buffers(_usb_n_buffers){}
+		InputBase(img_source, _dev_name, _dev_fmt, _dev_path, _n_buffers, _invert_seq),
+		frame_id(0), cap_obj(nullptr), usb_res(_usb_res), usb_fps(_usb_fps),
+		fw_res(_fw_res), fw_fps(_fw_fps), usb_n_buffers(_usb_n_buffers){}
+
 	~InputVP(){
 		vp_buffer.clear();
 		if(cap_obj){
@@ -58,7 +63,7 @@ public:
 			} else{
 				printf("Opening %s image files at %s with %d frames\n", dev_fmt.c_str(), file_path.c_str(), n_frames);
 			}
-			cap_obj = vid_cap;
+			cap_obj.reset(vid_cap);
 		} else if(img_source == SRC_DISK) {
 			vpDiskGrabber *disk_cap = new vpDiskGrabber;
 			disk_cap->setDirectory((dev_path + "/" + dev_name).c_str());
@@ -67,7 +72,7 @@ public:
 			disk_cap->setNumberOfZero(5);
 			disk_cap->setImageNumber(1);
 			disk_cap->setExtension(dev_fmt.c_str());
-			cap_obj = disk_cap;
+			cap_obj.reset(disk_cap);
 		}
 #if defined( VISP_HAVE_V4L2 )
 		else if(img_source == SRC_USB_CAM) {
@@ -115,7 +120,7 @@ public:
 				printf("Invalid frame rate provided for ViSP USB pipeline\n");
 				return false;
 			}
-			cap_obj = v4l2_cap;
+			cap_obj.reset(v4l2_cap);
 		} 
 #endif
 #if defined( VISP_HAVE_DC1394 )
@@ -170,11 +175,11 @@ public:
 				printf("Invalid frame rate provided for ViSP firewire pipeline\n");
 				return false;
 			}			
-			cap_obj = dc1394_cap;
+			cap_obj.reset(dc1394_cap);
 		}
 #endif
 		else {
-			std::cout << "==========Invalid source provided for ViSP Pipeline==========\n";
+			printf("Invalid source provided for ViSP Pipeline: %c\n", img_source);
 			return false;
 		}
 		VPImgType temp_img;
@@ -183,51 +188,57 @@ public:
 		if(cap_obj->getWidth() == 0 || cap_obj->getHeight() == 0) {
 			printf("ViSP pipeline could not be initialized successfully\n");
 			return false;
-		} else{
-			img_width = cap_obj->getWidth();
-			img_height = cap_obj->getHeight();
-			printf("ViSP pipeline initialized successfully to grab frames of size: %d x %d\n",
-				img_width, img_height);
-			}
-
+		} 
+		img_width = cap_obj->getWidth();
+		img_height = cap_obj->getHeight();
+		printf("ViSP pipeline initialized successfully to grab frames of size: %d x %d\n",
+			img_width, img_height);
 		vp_buffer.resize(n_buffers);
 		for(int i = 0; i < n_buffers; ++i){
 			vp_buffer[i].init(img_height, img_width);
 		}
-		cv_frame.create(img_height, img_width, CV_8UC3);
 		buffer_id = 0;
-		vp_buffer[buffer_id] = temp_img;
+		frame_id = 0;
+		if(invert_seq){
+			printf("Reading sequence into buffer....\n");
+			for(int i = 1; i < n_buffers; ++i){
+				cap_obj->acquire(vp_buffer[n_buffers - i - 1]);
+			}
+			vp_buffer[n_buffers-1] = temp_img;
+		} else{
+			vp_buffer[buffer_id] = temp_img;
+		}		
+		cv_frame.create(img_height, img_width, CV_8UC3);	
+#ifdef VISP_HAVE_OPENCV
+		vpImageConvert::convert(vp_buffer[buffer_id], cv_frame);
+#else
+		convert(vp_buffer[buffer_id], cv_frame);
+#endif		
+		return true;
+	}
+	bool update() override{
+		buffer_id = (buffer_id + 1) % n_buffers;
+		++frame_id;
+		if(!invert_seq){
+			cap_obj->acquire(vp_buffer[buffer_id]);
+		}		
 #ifdef VISP_HAVE_OPENCV
 		vpImageConvert::convert(vp_buffer[buffer_id], cv_frame);
 #else
 		convert(vp_buffer[buffer_id], cv_frame);
 #endif
-		frame_id = 0;
 		return true;
-		}
-
+	}
 	const cv::Mat& getFrame() const override{
 		return cv_frame;
 	}
 	cv::Mat& getFrame(FrameType frame_type) override{
 		return cv_frame;
 	}
-	bool update() override{
-		buffer_id = (buffer_id + 1) % n_buffers;
-		++frame_id;
-		cap_obj->acquire(vp_buffer[buffer_id]);
-#ifdef VISP_HAVE_OPENCV
-		vpImageConvert::convert(vp_buffer[buffer_id], cv_frame);
-#else
-		convert(vp_buffer[buffer_id], cv_frame);
-#endif
-		return true;
-	}
 	int getFrameID() const override{ return frame_id; }
 
 	void remapBuffer(unsigned char** new_addr) override{
-		for(int i = 0; i < n_buffers; i++){
-			//printf("Remapping CV buffer %d to: %lu\n", i, (unsigned long)new_addr[i]);
+		for(int i = 0; i < n_buffers; ++i){
 			vp_buffer[i].bitmap = (vpRGBa*)(new_addr[i]);
 		}
 		buffer_id = -1;
@@ -239,24 +250,24 @@ private:
 	typedef vpImage<vpRGBa> VPImgType;
 	vector<VPImgType> vp_buffer;
 	cv::Mat cv_frame;
+	int frame_id;
 
-	vpFrameGrabber *cap_obj;
+	std::unique_ptr<vpFrameGrabber> cap_obj;
 	VpResUSB usb_res;
 	VpFpsUSB usb_fps;
 	VpResFW fw_res;
 	VpFpsFW fw_fps;
 	int usb_n_buffers;
 
-	int frame_id;
 	void convert(const VPImgType &vp_img, cv::Mat &cv_img){
 		for(unsigned int row_id = 0; row_id < vp_img.getHeight(); ++row_id){
 			for(unsigned int col_id = 0; col_id < vp_img.getWidth(); ++col_id){
 				vpRGBa vp_val = vp_img(row_id, col_id);
 				cv_img.at<cv::Vec3b>(row_id, col_id) = cv::Vec3b(vp_val.B, vp_val.G, vp_val.R);
 			}
-		}		
+		}
 	}
-	};
+};
 
 #endif
 

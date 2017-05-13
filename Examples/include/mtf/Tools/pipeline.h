@@ -44,20 +44,19 @@ inline InputBase* getInput(char _pipeline_type){
 		return new InputCV(img_source, seq_name, seq_fmt, seq_path, input_buffer_size, invert_seq);
 #ifndef DISABLE_XVISION
 	case XVISION_PIPELINE:
-		return new InputXV(img_source, seq_name, seq_fmt, seq_path, input_buffer_size);
+		return new InputXV(img_source, seq_name, seq_fmt, seq_path, input_buffer_size, invert_seq);
 #endif
 #ifndef DISABLE_VISP
 	case VISP_PIPELINE:
 		return new InputVP(
-			img_source, seq_name, seq_fmt, seq_path, input_buffer_size, visp_usb_n_buffers,
+			img_source, seq_name, seq_fmt, seq_path, input_buffer_size, visp_usb_n_buffers, invert_seq,
 			static_cast<VpResUSB>(visp_usb_res), static_cast<VpFpsUSB>(visp_usb_fps),
 			static_cast<VpResFW>(visp_fw_res), static_cast<VpFpsFW>(visp_fw_fps)
 			);
 #endif
 	default:
 		throw mtf::utils::InvalidArgument(
-			cv::format("Invalid pipeline type specified: %c\n",
-			_pipeline_type));
+			cv::format("Invalid pipeline type specified: %c\n",	_pipeline_type));
 	}
 }
 

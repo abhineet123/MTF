@@ -3470,13 +3470,13 @@ namespace mtf{
 					actor = actors[actor_id];
 
 					if(seq_id >= 0){
-						int n_sources = combined_n_sources[actor_id];
+						int n_sources = combined_n_sequences[actor_id];
 						if(seq_id >= n_sources){
 							printf("Invalid source id %d specified for actor %s with %d sources\n",
 								seq_id, actor.c_str(), n_sources);
 							return false;
 						}
-						seq_name = combined_sources[actor_id][seq_id];
+						seq_name = combined_sequences[actor_id][seq_id];
 					}
 					if(actor == "Synthetic"){
 						//! synthetic sequence

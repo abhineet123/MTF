@@ -73,11 +73,11 @@ Input/Output related parameters:
 				
 	 Parameter:	'seq_id'/'source_id'
 		Description:
-			integral index of the sequence name to use out of the sequences hard coded in parameters.h;
+			integral index of the sequence name to use out of the sequences hard coded in datasets.h;
 			used in conjunction with the parameter 'actor_id' to get the sequence name;
 			only matters if both are non negative
 		Possible Values:
-			refer parameters.h for details of what each index means for each actor type; 
+			refer datasets.h for details of what each index means for each actor type; 
 			following are the valid (inclusive) ranges for different actors:
 				TMT:	0-108
 				UCSB:	0-95

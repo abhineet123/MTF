@@ -19,11 +19,12 @@ public:
 	int n_frames;
 
 	InputBase() : n_frames(0), img_width(0), img_height(0), n_buffers(0),
-		n_channels(0), buffer_id(0), img_source('j'){}
+		n_channels(0), buffer_id(0), img_source('j'), invert_seq(false){}
+
 	InputBase(char _img_source, string _dev_name, string _dev_fmt,
-		string _dev_path, int _n_buffers = 1) : n_frames(0),
-		n_buffers(_n_buffers),	img_source(_img_source),dev_name(_dev_name),
-		dev_fmt(_dev_fmt),	dev_path(_dev_path){
+		string _dev_path, int _n_buffers = 1, bool _invert_seq=false) : n_frames(0),
+		n_buffers(_n_buffers),	img_source(_img_source), dev_name(_dev_name),
+		dev_fmt(_dev_fmt), dev_path(_dev_path), invert_seq(_invert_seq){
 
 		//printf("InputBase :: img_source: %c\n", img_source);
 
@@ -48,6 +49,18 @@ public:
 			file_path = img_folder_path + "/frame%05d." + dev_fmt;
 
 			n_frames = getNumberOfFrames(file_path.c_str());
+		}
+		if(invert_seq){
+			if(n_frames <= 0){
+				throw mtf::utils::InvalidArgument(
+					cv::format("InputBase :: Inverted sequence cannot be used without valid frame count"));
+			}
+			if(img_source == SRC_USB_CAM || img_source == SRC_FW_CAM){
+				throw mtf::utils::InvalidArgument(
+					cv::format("InputBase :: Inverted sequence cannot be used with live input"));
+			}
+			printf("Using inverted sequence.\n");
+			n_buffers = n_frames;
 		}
 		const_buffer = n_buffers == 1;
 
@@ -91,19 +104,18 @@ public:
 	}
 
 protected:
+
 	int img_width;
 	int img_height;
 	int n_buffers;
 	int n_channels;
 	int buffer_id;
-
 	bool const_buffer;
-
-
 	char img_source;
 	string file_path;
 	string dev_name;
 	string dev_fmt;
 	string dev_path;
+	bool invert_seq;
 };
 #endif
