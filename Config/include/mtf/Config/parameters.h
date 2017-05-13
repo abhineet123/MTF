@@ -254,6 +254,11 @@ namespace mtf{
 		int cbh_normalized_init = 0;
 		double cbh_grad_eps = 1e-8;
 
+		//! ASRT
+		bool asrt_normalized_init = false;
+		bool asrt_geom_sampling = true;
+		int asrt_pt_based_sampling = 0;
+
 		//! Similitude
 		bool sim_normalized_init = false;
 		bool sim_geom_sampling = true;
@@ -1531,6 +1536,19 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "lhom_grad_eps")){
 				lhom_grad_eps = atof(arg_val);
+				return;
+			}
+			//! ASRT
+			if(!strcmp(arg_name, "asrt_normalized_init")){
+				asrt_normalized_init = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "asrt_geom_sampling")){
+				asrt_geom_sampling = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "asrt_pt_based_sampling")){
+				asrt_pt_based_sampling = atoi(arg_val);
 				return;
 			}
 			//! Similitude

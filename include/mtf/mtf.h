@@ -934,8 +934,8 @@ inline SSMParams_ getSSMParams(const char *ssm_type){
 	} else if(!strcmp(ssm_type, "laff") || !strcmp(ssm_type, "l6")){
 		return SSMParams_(new LieAffineParams(ssm_params.get(), laff_normalized_init, laff_grad_eps, debug_mode));
 	} else if(!strcmp(ssm_type, "asrt") || !strcmp(ssm_type, "5")){
-		return SSMParams_(new ASRTParams(ssm_params.get(), sim_normalized_init,
-			sim_geom_sampling, sim_pt_based_sampling, sim_n_model_pts, debug_mode));
+		return SSMParams_(new ASRTParams(ssm_params.get(), asrt_normalized_init,
+			asrt_geom_sampling, asrt_pt_based_sampling, debug_mode));
 	} else if(!strcmp(ssm_type, "sim") || !strcmp(ssm_type, "4")){
 		return SSMParams_(new SimilitudeParams(ssm_params.get(), sim_normalized_init,
 			sim_geom_sampling, sim_pt_based_sampling, sim_n_model_pts, debug_mode));

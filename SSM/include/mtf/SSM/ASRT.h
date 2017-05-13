@@ -1,17 +1,6 @@
 #ifndef MTF_ASRT_H
 #define MTF_ASRT_H
 
-#define validate_asrt_warp(warp) \
-	assert(warp(0, 1) == -warp(1, 0)); \
-	assert(warp(2, 0) == 0 && warp(2, 1) == 0); \
-	assert(warp(2, 2) == 1)
-
-#define ASRT_NORMALIZED_INIT false
-#define ASRT_GEOM_SAMPLING true
-#define ASRT_PT_BASED_SAMPLING 0
-#define ASRT_N_MODEL_PTS 2
-#define ASRT_DEBUG_MODE 0
-
 #include "ProjectiveBase.h"
 #include "SSMEstimator.h"
 #include "SSMEstimatorParams.h"
@@ -22,12 +11,10 @@ struct ASRTParams : SSMParams{
 	bool normalized_init;
 	bool geom_sampling;
 	int pt_based_sampling;
-	int n_model_pts;
 	bool debug_mode;
 	ASRTParams(const SSMParams *ssm_params, 
 		bool _normalized_init, bool _geom_sampling,
-		int pt_based_sampling, int _n_model_pts,
-		bool _debug_mode);
+		int pt_based_sampling, bool _debug_mode);
 	ASRTParams(const ASRTParams *params = nullptr);
 };
 
@@ -93,14 +80,6 @@ public:
 		const VectorXd &state_update) override;
 
 	void generatePerturbation(VectorXd &perturbation) override;
-	// use Random Walk model to generate perturbed sample
-	void additiveRandomWalk(VectorXd &perturbed_state,
-		const VectorXd &base_state) override;
-	// use first order Auto Regressive model to generate perturbed sample
-	void additiveAutoRegression1(VectorXd &perturbed_state, VectorXd &perturbed_ar,
-		const VectorXd &base_state, const VectorXd &base_ar, double a = 0.5) override;
-	void compositionalRandomWalk(VectorXd &perturbed_state,
-		const VectorXd &base_state) override;
 
 	void getWarpFromState(Matrix3d &warp_mat, const VectorXd& ssm_state) override;
 	void getStateFromWarp(VectorXd &state_vec, const Matrix3d& warp_mat) override;
@@ -111,9 +90,6 @@ public:
 
 private:
 	ParamType params;
-
-	Vector4d geomToState(const Vector4d &geom);
-	Vector4d stateToGeom(const Vector4d &est);
 
 	cv::Mat estimateASRT(cv::InputArray _points1, cv::InputArray _points2,
 		cv::OutputArray _mask, const SSMEstimatorParams &est_params);
