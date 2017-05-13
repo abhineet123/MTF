@@ -41,15 +41,15 @@ typedef PreProcBase::Ptr PreProc_;
 inline InputBase* getInput(char _pipeline_type){
 	switch(_pipeline_type){
 	case OPENCV_PIPELINE:
-		return new InputCV(img_source, source_name, source_fmt, source_path, input_buffer_size);
+		return new InputCV(img_source, seq_name, seq_fmt, seq_path, input_buffer_size, invert_seq);
 #ifndef DISABLE_XVISION
 	case XVISION_PIPELINE:
-		return new InputXV(img_source, source_name, source_fmt, source_path, input_buffer_size);
+		return new InputXV(img_source, seq_name, seq_fmt, seq_path, input_buffer_size);
 #endif
 #ifndef DISABLE_VISP
 	case VISP_PIPELINE:
 		return new InputVP(
-			img_source, source_name, source_fmt, source_path, input_buffer_size, visp_usb_n_buffers,
+			img_source, seq_name, seq_fmt, seq_path, input_buffer_size, visp_usb_n_buffers,
 			static_cast<VpResUSB>(visp_usb_res), static_cast<VpFpsUSB>(visp_usb_fps),
 			static_cast<VpResFW>(visp_fw_res), static_cast<VpFpsFW>(visp_fw_fps)
 			);
@@ -129,8 +129,8 @@ inline bool getObjectsToTrack(CVUtils &cv_utils, InputBase *input){
 	bool init_obj_read = false;
 	int n_objs_to_get = track_single_obj ? 1 : n_trackers;
 	if(read_obj_from_gt){
-		init_obj_read = cv_utils.readObjectFromGT(source_name, source_path, input->n_frames,
-			init_frame_id, use_opt_gt, opt_gt_ssm, use_reinit_gt, debug_mode);
+		init_obj_read = cv_utils.readObjectFromGT(seq_name, seq_path, input->n_frames,
+			init_frame_id, use_opt_gt, opt_gt_ssm, use_reinit_gt, invert_seq, debug_mode);
 		if(!init_obj_read){
 			printf("Failed to read initial object from ground truth; using manual selection...\n");
 			read_obj_from_gt = 0;

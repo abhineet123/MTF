@@ -4,24 +4,10 @@
 #include "mtf/Config/parameters.h"
 #include "mtf/Utilities/excpUtils.h"
 
-#include <stdio.h>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "boost/filesystem/operations.hpp"
-
-#ifdef _WIN32
-#define snprintf  _snprintf
-#endif
-
-#define NCHANNELS 3
-
-#define SRC_VID 'm'
-#define SRC_USB_CAM 'u'
-#define SRC_FW_CAM 'f'
-#define SRC_IMG 'j'
-#define SRC_DISK 'd'
-
-#define MAX_PATH_SIZE 500
+#include <stdio.h>
 
 using namespace std;
 namespace fs = boost::filesystem;
@@ -29,33 +15,17 @@ namespace fs = boost::filesystem;
 enum FrameType{ MUTABLE };
 
 class InputBase {
-protected:
-	int img_width;
-	int img_height;
-	int n_buffers;
-	int n_channels;
-	int buffer_id;
-
-	bool const_buffer;
-
-
-	char img_source;
-	string file_path;
-	string dev_name;
-	string dev_fmt;
-	string dev_path;
-
 public:
 	int n_frames;
 
-	InputBase() : img_width(0), img_height(0), n_buffers(0),
-		n_channels(0), buffer_id(0), img_source('j'), n_frames(0){}
+	InputBase() : n_frames(0), img_width(0), img_height(0), n_buffers(0),
+		n_channels(0), buffer_id(0), img_source('j'){}
 	InputBase(char _img_source, string _dev_name, string _dev_fmt,
-		string _dev_path, int _n_buffers = 1) :
+		string _dev_path, int _n_buffers = 1) : n_frames(0),
 		n_buffers(_n_buffers),	img_source(_img_source),dev_name(_dev_name),
-		dev_fmt(_dev_fmt),	dev_path(_dev_path),n_frames(0){
+		dev_fmt(_dev_fmt),	dev_path(_dev_path){
 
-		printf("InputBase :: img_source: %c\n", img_source);
+		//printf("InputBase :: img_source: %c\n", img_source);
 
 		if(img_source == SRC_VID){
 			if(dev_fmt.empty()){ dev_fmt = "mpg"; }
@@ -81,9 +51,9 @@ public:
 		}
 		const_buffer = n_buffers == 1;
 
-		printf("dev_name: %s\n", dev_name.c_str());
-		printf("dev_path: %s\n", dev_path.c_str());
-		printf("dev_fmt: %s\n", dev_fmt.c_str());
+		//printf("dev_name: %s\n", dev_name.c_str());
+		//printf("dev_path: %s\n", dev_path.c_str());
+		//printf("dev_fmt: %s\n", dev_fmt.c_str());
 	}
 
 	virtual ~InputBase(){}
@@ -119,5 +89,21 @@ public:
 		cap_obj.release();
 		return frame_id;
 	}
+
+protected:
+	int img_width;
+	int img_height;
+	int n_buffers;
+	int n_channels;
+	int buffer_id;
+
+	bool const_buffer;
+
+
+	char img_source;
+	string file_path;
+	string dev_name;
+	string dev_fmt;
+	string dev_path;
 };
 #endif

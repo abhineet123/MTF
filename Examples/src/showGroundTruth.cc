@@ -33,8 +33,8 @@ int main(int argc, char * argv[]) {
 	printf("*******************************\n");
 	printf("Using parameters:\n");
 	printf("actor_id: %d\n", actor_id);
-	printf("source_id: %d\n", source_id);
-	printf("source_name: %s\n", source_name.c_str());
+	printf("source_id: %d\n", seq_id);
+	printf("source_name: %s\n", seq_name.c_str());
 	printf("actor: %s\n", actor.c_str());
 	printf("pipeline: %c\n", pipeline);
 	printf("img_source: %c\n", img_source);
@@ -67,11 +67,11 @@ int main(int argc, char * argv[]) {
 
 	CVUtils cv_utils;
 	if(use_reinit_gt){
-		if(!cv_utils.readReinitGT(source_name, source_path, init_frame_id, input->n_frames, use_opt_gt, opt_gt_ssm)){
+		if(!cv_utils.readReinitGT(seq_name, seq_path, init_frame_id, input->n_frames, use_opt_gt, opt_gt_ssm)){
 			printf("Reinitialization ground truth could not be read for frame %d\n", init_frame_id + 1);
 			return false;
 		}
-	} else if(!cv_utils.readGT(source_name, source_path, input->n_frames, init_frame_id, debug_mode, use_opt_gt, opt_gt_ssm)){
+	} else if(!cv_utils.readGT(seq_name, seq_path, input->n_frames, init_frame_id, debug_mode, use_opt_gt, opt_gt_ssm)){
 		printf("Ground truth could not be read for frame %d\n", init_frame_id + 1);
 		return false;
 	}
@@ -80,7 +80,7 @@ int main(int argc, char * argv[]) {
 	// *************************************** setup output *************************************** //
 	// ******************************************************************************************** //
 
-	string cv_win_name = "showGroundTruth :: " + source_name;
+	string cv_win_name = "showGroundTruth :: " + seq_name;
 	if(show_cv_window) {
 		cv::namedWindow(cv_win_name, cv::WINDOW_AUTOSIZE);
 	}
@@ -117,7 +117,7 @@ int main(int argc, char * argv[]) {
 			fs::create_directories(out_dir);
 		}
 		ssm.reset(mtf::getSSM(mtf_ssm));
-		out_fname = out_dir + "/" + source_name + "." + ssm->name;
+		out_fname = out_dir + "/" + seq_name + "." + ssm->name;
 		printf("Writing GT SSM parameters to: %s\n", out_fname.c_str());
 		fclose(fopen(out_fname.c_str(), "w"));
 		ssm_params.resize(ssm->getStateSize());

@@ -46,8 +46,8 @@ int main(int argc, char * argv[]) {
 	printf("Using parameters:\n");
 	printf("n_trackers: %d\n", n_trackers);
 	printf("actor_id: %d\n", actor_id);
-	printf("source_id: %d\n", source_id);
-	printf("source_name: %s\n", source_name.c_str());
+	printf("source_id: %d\n", seq_id);
+	printf("source_name: %s\n", seq_name.c_str());
 	printf("actor: %s\n", actor.c_str());
 	printf("pipeline: %c\n", pipeline);
 	printf("img_source: %c\n", img_source);

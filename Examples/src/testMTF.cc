@@ -43,8 +43,8 @@ int main(int argc, char * argv[]) {
 
 	cout << "*******************************\n";
 	cout << "Using parameters:\n";
-	cout << "source_id: " << source_id << "\n";
-	cout << "source_name: " << source_name << "\n";
+	cout << "source_id: " << seq_id << "\n";
+	cout << "source_name: " << seq_name << "\n";
 	cout << "actor: " << actor << "\n";
 	cout << "steps_per_frame: " << steps_per_frame << "\n";
 	cout << "pipeline: " << pipeline << "\n";
@@ -75,31 +75,14 @@ int main(int argc, char * argv[]) {
 	}
 
 	CVUtils cv_utils;
-	bool init_obj_read = false;
-	if(read_obj_from_gt){
-		init_obj_read = cv_utils.readObjectFromGT(source_name, source_path, input->n_frames,
-			init_frame_id, use_opt_gt, opt_gt_ssm, use_reinit_gt, debug_mode);
-		if(!init_obj_read){
-			printf("Failed to read initial object from ground truth; using manual selection...\n");
+	try{
+		if(!getObjectsToTrack(cv_utils, input.get())){
+			printf("Object(s) to be tracked could not be read\n");
+			return EXIT_FAILURE;
 		}
-	}
-	if(!init_obj_read && read_obj_from_file) {
-		init_obj_read = cv_utils.readObjectsFromFile(n_trackers, read_obj_fname.c_str(), debug_mode);
-		if(!init_obj_read){
-			printf("Failed to read initial object location from file; using manual selection...\n");
-		}
-	}
-	if(!init_obj_read){
-		if(img_source == SRC_IMG || img_source == SRC_DISK || img_source == SRC_VID){
-			init_obj_read = cv_utils.selectObjects(input->getFrame(), n_trackers,
-				patch_size, line_thickness, write_objs, sel_quad_obj, write_obj_fname.c_str());
-		} else{
-			init_obj_read = cv_utils.selectObjects(input.get(), n_trackers,
-				patch_size, line_thickness, write_objs, sel_quad_obj, write_obj_fname.c_str());
-		}
-	}
-	if(!init_obj_read){
-		printf("Initial object could not be read\n");
+	} catch(const mtf::utils::Exception &err){
+		printf("Exception of type %s encountered while obtaining the objects to track: %s\n",
+			err.type(), err.what());
 		return EXIT_FAILURE;
 	}
 
@@ -130,7 +113,7 @@ int main(int argc, char * argv[]) {
 	//char feat_norm_fname[100], norm_fname[100], jac_fname[100], hess_fname[100], hess2_fname[100];
 	//char jac_num_fname[100], hess_num_fname[100], nhess_num_fname[100];
 	//char ssm_fname[100];
-	std::string diag_data_dir = cv::format("log/diagnostics/%s", source_name.c_str());
+	std::string diag_data_dir = cv::format("log/diagnostics/%s", seq_name.c_str());
 	if(diag_3d){
 		diag_data_dir = diag_data_dir + "/3D";
 	}

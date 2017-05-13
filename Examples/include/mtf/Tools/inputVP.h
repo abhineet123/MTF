@@ -28,23 +28,10 @@ enum class VpFpsFW{ Default, fps15, fps30, fps60, fps120, fps240 };
 
 // ViSP input pipeline
 class InputVP : public InputBase {
-	typedef vpImage<vpRGBa> VPImgType;
-	vector<VPImgType> vp_buffer;
-	cv::Mat cv_frame;
-
-	vpFrameGrabber *cap_obj;
-	VpResUSB usb_res;
-	VpFpsUSB usb_fps;
-	VpResFW fw_res;
-	VpFpsFW fw_fps;
-	int usb_n_buffers;
-
-	int frame_id;
-
 public:
 
 	InputVP(char img_source, string dev_name_in, string dev_fmt_in,
-		string dev_path_in, int n_buffers = 1, int _usb_n_buffers=3,
+		string dev_path_in, int n_buffers = 1, int _usb_n_buffers = 3,
 		VpResUSB _usb_res = VpResUSB::Default,
 		VpFpsUSB _usb_fps = VpFpsUSB::Default,
 		VpResFW _fw_res = VpResFW::Default,
@@ -56,7 +43,7 @@ public:
 		vp_buffer.clear();
 		if(cap_obj){
 			cap_obj->close();
-		}		
+		}
 	}
 
 	bool initialize() override{
@@ -81,7 +68,7 @@ public:
 			disk_cap->setImageNumber(1);
 			disk_cap->setExtension(dev_fmt.c_str());
 			cap_obj = disk_cap;
-		} 
+		}
 #if defined( VISP_HAVE_V4L2 )
 		else if(img_source == SRC_USB_CAM) {
 			printf("Opening USB camera %s\n", dev_path.c_str());
@@ -199,9 +186,9 @@ public:
 		} else{
 			img_width = cap_obj->getWidth();
 			img_height = cap_obj->getHeight();
-			printf("ViSP pipeline initialized successfully to grab frames of size: %d x %d\n", 
+			printf("ViSP pipeline initialized successfully to grab frames of size: %d x %d\n",
 				img_width, img_height);
-		}
+			}
 
 		vp_buffer.resize(n_buffers);
 		for(int i = 0; i < n_buffers; ++i){
@@ -210,10 +197,14 @@ public:
 		cv_frame.create(img_height, img_width, CV_8UC3);
 		buffer_id = 0;
 		vp_buffer[buffer_id] = temp_img;
+#ifdef VISP_HAVE_OPENCV
 		vpImageConvert::convert(vp_buffer[buffer_id], cv_frame);
+#else
+		convert(vp_buffer[buffer_id], cv_frame);
+#endif
 		frame_id = 0;
 		return true;
-	}
+		}
 
 	const cv::Mat& getFrame() const override{
 		return cv_frame;
@@ -225,21 +216,47 @@ public:
 		buffer_id = (buffer_id + 1) % n_buffers;
 		++frame_id;
 		cap_obj->acquire(vp_buffer[buffer_id]);
+#ifdef VISP_HAVE_OPENCV
 		vpImageConvert::convert(vp_buffer[buffer_id], cv_frame);
-		return true;		
+#else
+		convert(vp_buffer[buffer_id], cv_frame);
+#endif
+		return true;
 	}
 	int getFrameID() const override{ return frame_id; }
 
 	void remapBuffer(unsigned char** new_addr) override{
 		for(int i = 0; i < n_buffers; i++){
 			//printf("Remapping CV buffer %d to: %lu\n", i, (unsigned long)new_addr[i]);
-			vp_buffer[i].bitmap = (vpRGBa*) (new_addr[i]);
+			vp_buffer[i].bitmap = (vpRGBa*)(new_addr[i]);
 		}
 		buffer_id = -1;
 		update();
 	}
 	bool constBuffer() override{ return true; }
-};
+
+private:
+	typedef vpImage<vpRGBa> VPImgType;
+	vector<VPImgType> vp_buffer;
+	cv::Mat cv_frame;
+
+	vpFrameGrabber *cap_obj;
+	VpResUSB usb_res;
+	VpFpsUSB usb_fps;
+	VpResFW fw_res;
+	VpFpsFW fw_fps;
+	int usb_n_buffers;
+
+	int frame_id;
+	void convert(const VPImgType &vp_img, cv::Mat &cv_img){
+		for(unsigned int row_id = 0; row_id < vp_img.getHeight(); ++row_id){
+			for(unsigned int col_id = 0; col_id < vp_img.getWidth(); ++col_id){
+				vpRGBa vp_val = vp_img(row_id, col_id);
+				cv_img.at<cv::Vec3b>(row_id, col_id) = cv::Vec3b(vp_val.B, vp_val.G, vp_val.R);
+			}
+		}		
+	}
+	};
 
 #endif
 

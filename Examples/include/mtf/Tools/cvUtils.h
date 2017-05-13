@@ -145,21 +145,10 @@ utility functions to obtain initial object location for tracking -
 either read from a ground truth file or selected interactively by the user
 */
 class CVUtils {
-private:
-	vector<ObjStruct> init_objects;
-	vector<cv::Mat> ground_truth;
-	vector<cv::Mat> reinit_ground_truth;
-	int init_frame_id, reinit_frame_id;
-	int reinit_n_frames;
-	bool use_reinit_gt;
-	string reinit_gt_filename;
-	vector<cv::Scalar> obj_cols;
-	int no_of_cols;
-	double resize_factor;
 public:
 	CVUtils(double _resize_factor = 1.0) : init_frame_id(0),
-		use_reinit_gt(false),
-		resize_factor(_resize_factor){
+		use_reinit_gt(false), resize_factor(_resize_factor),
+		invert_seq(false){
 		obj_cols.push_back(cv::Scalar(0, 0, 255));
 		obj_cols.push_back(cv::Scalar(0, 255, 0));
 		obj_cols.push_back(cv::Scalar(255, 0, 0));
@@ -313,7 +302,7 @@ public:
 			} else{
 				hover_image = input->getFrame().clone();
 			}
-			
+
 			// draw existing objects
 			for(unsigned int obj_id = 0; obj_id < init_objects.size(); obj_id++){
 				int col_id = obj_id % no_of_cols;
@@ -469,10 +458,11 @@ public:
 	}
 	bool readObjectFromGT(string source_name, string source_path, int n_frames,
 		int _init_frame_id = 0, bool use_opt_gt = false, string opt_gt_ssm = "2",
-		bool _use_reinit_gt = false, int debug_mode = 0){
+		bool _use_reinit_gt = false, bool _invert_seq = false, int debug_mode = 0){
 
 		init_frame_id = _init_frame_id;
 		use_reinit_gt = _use_reinit_gt;
+		invert_seq = _invert_seq;
 
 		if(n_frames <= 0){
 			printf("Error while reading objects from ground truth: n_frames: %d is too small\n", n_frames);
@@ -511,7 +501,7 @@ public:
 	}
 
 	bool getObjStatus() const{ return !init_objects.empty(); }
-	const ObjStruct &getObj(int obj_id=0) const{
+	const ObjStruct &getObj(int obj_id = 0) const{
 		return init_objects.size() == 1 ? init_objects[0] : init_objects[obj_id];
 	}
 
@@ -594,6 +584,8 @@ public:
 		//cout << "n_frames: " << n_frames << "\n";
 		//cout << "init_frame_id: " << init_frame_id << "\n";
 
+		ground_truth.resize(n_frames);
+
 		for(int frame_id = 0; frame_id < n_frames; ++frame_id) {
 			fin >> header;
 			if(!fin.good()){
@@ -622,17 +614,16 @@ public:
 				cout << ulx << "\t" << uly << "\t" << urx << "\t" << ury << "\t" << lrx << "\t" << lry << "\t" << llx << "\t" << lly << "\n";
 				return false;
 			}
-
-			cv::Mat curr_gt(2, 4, CV_64FC1);
-			curr_gt.at<double>(0, 0) = ulx;
-			curr_gt.at<double>(0, 1) = urx;
-			curr_gt.at<double>(0, 2) = lrx;
-			curr_gt.at<double>(0, 3) = llx;
-			curr_gt.at<double>(1, 0) = uly;
-			curr_gt.at<double>(1, 1) = ury;
-			curr_gt.at<double>(1, 2) = lry;
-			curr_gt.at<double>(1, 3) = lly;
-			ground_truth.push_back(curr_gt);
+			int gt_id = invert_seq ? n_frames - frame_id - 1 : frame_id;
+			ground_truth[gt_id].create(2, 4, CV_64FC1);
+			ground_truth[gt_id].at<double>(0, 0) = ulx;
+			ground_truth[gt_id].at<double>(0, 1) = urx;
+			ground_truth[gt_id].at<double>(0, 2) = lrx;
+			ground_truth[gt_id].at<double>(0, 3) = llx;
+			ground_truth[gt_id].at<double>(1, 0) = uly;
+			ground_truth[gt_id].at<double>(1, 1) = ury;
+			ground_truth[gt_id].at<double>(1, 2) = lry;
+			ground_truth[gt_id].at<double>(1, 3) = lly;
 		}
 		fin.close();
 		return true;
@@ -645,10 +636,15 @@ public:
 			printf("Error while reading reinit ground truth: n_frames: %d is too small\n", _n_frames);
 			return false;
 		}
-		reinit_gt_filename = use_opt_gt ?
-			cv::format("%s/ReinitGT/%s_%s.bin", source_path.c_str(), source_name.c_str(), opt_gt_ssm.c_str()) :
-			cv::format("%s/ReinitGT/%s.bin", source_path.c_str(), source_name.c_str());
-
+		if(invert_seq){
+			reinit_gt_filename = use_opt_gt ?
+				cv::format("%s/ReinitGT/%s_%s_inv.bin", source_path.c_str(), source_name.c_str(), opt_gt_ssm.c_str()) :
+				cv::format("%s/ReinitGT/%s_inv.bin", source_path.c_str(), source_name.c_str());
+		} else{
+			reinit_gt_filename = use_opt_gt ?
+				cv::format("%s/ReinitGT/%s_%s.bin", source_path.c_str(), source_name.c_str(), opt_gt_ssm.c_str()) :
+				cv::format("%s/ReinitGT/%s.bin", source_path.c_str(), source_name.c_str());
+		}
 		printf("Reading reinit ground truth from file: %s\n", reinit_gt_filename.c_str());
 		ifstream fin(reinit_gt_filename, ios::in | ios::binary);
 		if(!fin.good()) {
@@ -841,6 +837,17 @@ public:
 	}
 
 private:
+	vector<ObjStruct> init_objects;
+	vector<cv::Mat> ground_truth;
+	vector<cv::Mat> reinit_ground_truth;
+	int init_frame_id, reinit_frame_id;
+	int reinit_n_frames;
+	bool use_reinit_gt;
+	string reinit_gt_filename;
+	vector<cv::Scalar> obj_cols;
+	int no_of_cols;
+	double resize_factor;
+	bool invert_seq;
 	//! read reinit GT for a speciic frame
 	void readReinitGT(int _reinit_frame_id){
 		reinit_frame_id = _reinit_frame_id;
@@ -858,5 +865,6 @@ private:
 		fin.close();
 	}
 	const vector<cv::Mat> &getReinitGT(){ return reinit_ground_truth; }
+
 };
 #endif

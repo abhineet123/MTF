@@ -30,8 +30,8 @@ int main(int argc, char * argv[]) {
 	printf("Using parameters:\n");
 	printf("n_trackers: %d\n", n_trackers);
 	printf("actor_id: %d\n", actor_id);
-	printf("source_id: %d\n", source_id);
-	printf("source_name: %s\n", source_name.c_str());	
+	printf("source_id: %d\n", seq_id);
+	printf("source_name: %s\n", seq_name.c_str());	
 	printf("actor: %s\n", actor.c_str());
 	printf("pipeline: %c\n", pipeline);
 	printf("img_source: %c\n", img_source);
@@ -45,10 +45,10 @@ int main(int argc, char * argv[]) {
 		return EXIT_FAILURE;
 	}
 	printf("n_frames=%d\n", input->n_frames);
-	printf("source_path: %s\n", source_path.c_str());
+	printf("source_path: %s\n", seq_path.c_str());
 
 	CVUtils cv_utils;
-	if(!cv_utils.readObjectFromGT(source_name, source_path, input->n_frames,
+	if(!cv_utils.readObjectFromGT(seq_name, seq_path, input->n_frames,
 		init_frame_id, use_opt_gt, opt_gt_ssm, use_reinit_gt, debug_mode)){
 		printf("Failed to read initial object from ground truth; using manual selection...\n");
 		read_obj_from_gt = 0;
@@ -89,7 +89,7 @@ int main(int argc, char * argv[]) {
 		else frame_id = extracted_frame_ids[patch_id];
 
 		char img_fname[500];
-		snprintf(img_fname, 500, "%s/%s/frame%05d.jpg", source_path.c_str(), source_name.c_str(), frame_id);
+		snprintf(img_fname, 500, "%s/%s/frame%05d.jpg", seq_path.c_str(), seq_name.c_str(), frame_id);
 		printf("Reading image: %s\n", img_fname);
 		cv::Mat img_raw = cv::imread(img_fname);
 		// Allocate memory for rgb and gray scale of type CV_32F 
@@ -132,7 +132,7 @@ int main(int argc, char * argv[]) {
 	}
 
 	string out_fname = cv::format("%s/%s/%s_%dx%d_%d.bin",
-		db_root_path.c_str(), actor.c_str(), source_name.c_str(), 
+		db_root_path.c_str(), actor.c_str(), seq_name.c_str(), 
 		resx, resy, extraction_id);
 	cout << "Saving to file: " << out_fname << endl;
 	ofstream out_file;

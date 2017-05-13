@@ -43,7 +43,7 @@ Input/Output related parameters:
 	 Parameter:	'actor_id'
 		Description:
 			integral index of the dataset (or "actor") to use out of the possible datasets hard coded in datasets.h;
-			used in conjunction with the parameter 'source_id'  to get the source name;
+			used in conjunction with the parameter 'seq_id'  to get the source name;
 			only matters if both are non negative
 		Possible Values:
 				0: TMT
@@ -68,10 +68,10 @@ Input/Output related parameters:
 	 Parameter:	'db_root_path'
 		Description:
 			location of the root directory that contains the files for all datasets (or 'actors');
-			for JPEG file the full path is constructed as: db_root_path/actor/source_name/*.source_fmt;
-			for MPEG/Video file the full path is constructed as: db_root_path/actor/source_name.source_fmt;
+			for JPEG file the full path is constructed as: db_root_path/actor/seq_name/*.seq_fmt;
+			for MPEG/Video file the full path is constructed as: db_root_path/actor/seq_name.seq_fmt;
 				
-	 Parameter:	'source_id'
+	 Parameter:	'seq_id'
 		Description:
 			integral index of the source name to use out of the sources hard coded in parameters.h;
 			used in conjunction with the parameter 'actor_id' to get the source name;
@@ -91,13 +91,13 @@ Input/Output related parameters:
 				Synthetic:	0-2
 				Live:	0-1
 				
-	 Parameter:	'source_name'
+	 Parameter:	'seq_name'
 		Description:
 			name of the input video file (for MPEG source) or folder (for JPEG source); 
-				overridden if both the parameters 'source_id' and 'actor_id' are non-negative;
+				overridden if both the parameters 'seq_id' and 'actor_id' are non-negative;
 				does not matter if a camera stream is being used;
 			
-	 Parameter:	'source_path'
+	 Parameter:	'seq_path'
 		Description:
 			only matters for Xvision pipeline and camera streams; 
 			specifies the path of the camera device to use
@@ -108,7 +108,7 @@ Input/Output related parameters:
 				/dev/fw1:	Firewire
 				for OpenCV pipeline with USB camera source, it should be an integer ID specifying the camera (e.g. 0 for the first camera, 1 for the second camera and so on.)
 			
-	 Parameter:	'source_fmt'
+	 Parameter:	'seq_fmt'
 		Description:
 			file extension for image and video file streams;
 			any special formatting strings to be passed to the Xvision initializer for camera streams;

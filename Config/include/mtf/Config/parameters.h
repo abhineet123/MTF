@@ -53,8 +53,14 @@ namespace mtf{
 		std::string config_dir = "Config";
 
 		/* default parameters */
-		int source_id = 0;
+		int seq_id = 0;
 		int actor_id = 0;
+		std::string db_root_path = "../../../Datasets";
+		std::string actor;
+		std::string seq_path;
+		std::string seq_name;
+		std::string seq_fmt;
+		bool invert_seq = false;
 		unsigned int n_trackers = 1;
 		bool track_single_obj = false;
 		char pipeline = 'c';
@@ -108,12 +114,6 @@ namespace mtf{
 		std::string write_obj_fname = "sel_objs/selected_objects.txt";
 		std::string tracking_data_fname;
 		std::string record_frames_fname, record_frames_dir;
-
-		std::string db_root_path = "../../../Datasets";
-		std::string actor;
-		std::string source_path;
-		std::string source_name;
-		std::string source_fmt;
 
 		//! for Xvision trackers
 		int steps_per_frame = 1;
@@ -948,7 +948,7 @@ namespace mtf{
 			if(arg_val[0] == '#'){ return; }
 			parse_param(n_trackers, atoi);
 			parse_param(track_single_obj, atoi);
-			parse_param(source_id, atoi);
+			parse_param(seq_id, atoi);
 			parse_param(actor_id, atoi);
 			parse_param(pipeline, atoc);
 			parse_param(img_source, atoc);
@@ -984,8 +984,8 @@ namespace mtf{
 				track_single_obj = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "source_id")){
-				source_id = atoi(arg_val);
+			if(!strcmp(arg_name, "source_id") || !strcmp(arg_name, "seq_id")){
+				seq_id = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "actor_id")){
@@ -1104,20 +1104,24 @@ namespace mtf{
 				record_frames = arg_val[0] - '0';
 				return;
 			}
-			if(!strcmp(arg_name, "source_name")){
-				source_name = std::string(arg_val);
+			if(!strcmp(arg_name, "source_name") || !strcmp(arg_name, "seq_name")){
+				seq_name = std::string(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "source_path")){
-				source_path = std::string(arg_val);
+			if(!strcmp(arg_name, "source_path") || !strcmp(arg_name, "seq_path")){
+				seq_path = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "source_fmt") || !strcmp(arg_name, "seq_fmt")){
+				seq_fmt = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "invert_seq")){
+				invert_seq = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "patch_size")){
 				patch_size = atoi(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "source_fmt")){
-				source_fmt = std::string(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "db_root_path") || !strcmp(arg_name, "root_path")){
@@ -3431,7 +3435,7 @@ namespace mtf{
 						syn_noise_mean, syn_noise_sigma);
 				}
 			}
-			return cv::format("%s_%d_%s", source_name.c_str(), syn_frame_id, syn_out_suffix.c_str());
+			return cv::format("%s_%d_%s", seq_name.c_str(), syn_frame_id, syn_out_suffix.c_str());
 		}
 		inline bool postProcessParams(){
 			if(mtf_res > 0){ resx = resy = mtf_res; }
@@ -3447,40 +3451,40 @@ namespace mtf{
 					}
 					actor = actors[actor_id];
 
-					if(source_id >= 0){
+					if(seq_id >= 0){
 						int n_sources = combined_n_sources[actor_id];
-						if(source_id >= n_sources){
+						if(seq_id >= n_sources){
 							printf("Invalid source id %d specified for actor %s with %d sources\n",
-								source_id, actor.c_str(), n_sources);
+								seq_id, actor.c_str(), n_sources);
 							return false;
 						}
-						source_name = combined_sources[actor_id][source_id];
+						seq_name = combined_sources[actor_id][seq_id];
 					}
 					if(actor == "Synthetic"){
 						//! synthetic sequence
-						source_name = getSyntheticSeqName();
+						seq_name = getSyntheticSeqName();
 					}
-					if(source_name.empty()){
+					if(seq_name.empty()){
 						printf("Source name must be specified if source ID is invalid\n");
 						return false;
 					}
-					source_path = db_root_path + "/" + actor;
+					seq_path = db_root_path + "/" + actor;
 				} else{
 					actor = "None";
-					if(source_path.empty()){ source_path = "."; }
-					source_path = db_root_path + "/" + source_path;
+					if(seq_path.empty()){ seq_path = "."; }
+					seq_path = db_root_path + "/" + seq_path;
 				}
-				if(source_fmt.empty()){
-					source_fmt = (img_source == SRC_IMG || img_source == SRC_DISK) ? IMG_FMT : VID_FMT;
+				if(seq_fmt.empty()){
+					seq_fmt = (img_source == SRC_IMG || img_source == SRC_DISK) ? IMG_FMT : VID_FMT;
 				}
 			} else {
 				actor = "Live";
-				source_name = (img_source == SRC_USB_CAM) ? USB_DEV_NAME : FW_DEV_NAME;
-				if(source_path.empty()){
-					source_path = (img_source == SRC_USB_CAM) ? USB_DEV_PATH : FW_DEV_PATH;
+				seq_name = (img_source == SRC_USB_CAM) ? USB_DEV_NAME : FW_DEV_NAME;
+				if(seq_path.empty()){
+					seq_path = (img_source == SRC_USB_CAM) ? USB_DEV_PATH : FW_DEV_PATH;
 				}
-				if(source_fmt.empty()){
-					source_fmt = (img_source == SRC_USB_CAM) ? USB_DEV_FMT : FW_DEV_FMT;
+				if(seq_fmt.empty()){
+					seq_fmt = (img_source == SRC_USB_CAM) ? USB_DEV_FMT : FW_DEV_FMT;
 				}
 				show_tracking_error = reinit_on_failure = read_obj_from_gt = read_obj_from_file = pause_after_frame = 0;
 			}

@@ -118,6 +118,23 @@ ifeq (${o}, 1)
 	_MTF_REC_EXE_NAME = recordSeq
 	_MTF_QR_EXE_NAME = trackMarkers
 	_MTF_APP_EXE_NAME = ${app}
+else ifeq (${o}, 2)
+	# LIBS_PARALLEL += -ltbb
+	MTF_RUNTIME_FLAGS += -Ofast -D NDEBUG -D EIGEN_NO_DEBUG
+	ifeq (${header_only}, 1)
+		_MTF_EXE_NAME = runMTFh_fast
+	else
+		_MTF_EXE_NAME = runMTF_fast
+	endif
+	_MTF_TEST_EXE_NAME = testMTF_fast
+	_MTF_PATCH_EXE_NAME = extractPatch_fast
+	_MTF_UAV_EXE_NAME = trackUAVTrajectory_fast
+	_MTF_GT_EXE_NAME = showGroundTruth_fast
+	_MTF_SYN_EXE_NAME = generateSyntheticSeq_fast
+	_MTF_MOS_EXE_NAME = createMosaic_fast
+	_MTF_REC_EXE_NAME = recordSeq_fast
+	_MTF_QR_EXE_NAME = trackMarkers_fast
+	_MTF_APP_EXE_NAME = $(addsuffix _fast, ${app})	
 else
 	MTF_RUNTIME_FLAGS += -g -O0
 	ifeq (${header_only}, 1)

@@ -1313,7 +1313,7 @@ inline PFParams_ getPFParams(){
 }
 inline NNParams_ getNNParams(){
 	string saved_index_dir = cv::format("log/NN/%s/%s",
-		actor.c_str(), source_name.c_str());
+		actor.c_str(), seq_name.c_str());
 	if(nn_save_index && !boost::filesystem::exists(saved_index_dir)){
 		printf("NN data directory: %s does not exist. Creating it...\n", saved_index_dir.c_str());
 		boost::filesystem::create_directories(saved_index_dir);
@@ -1399,7 +1399,7 @@ inline FLANNParams_ getFLANNParams(){
 //! params for RegNet SM
 inline RegNetParams_ getRegNetParams(){
 	string saved_index_dir = cv::format("log/RegNet/%s/%s",
-		actor.c_str(), source_name.c_str());
+		actor.c_str(), seq_name.c_str());
 	if(!boost::filesystem::exists(saved_index_dir)){
 		printf("RegNet data directory: %s does not exist. Creating it...\n", saved_index_dir.c_str());
 		boost::filesystem::create_directories(saved_index_dir);

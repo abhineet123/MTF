@@ -48,8 +48,8 @@ int main(int argc, char * argv[]) {
 	printf("Using parameters:\n");
 	printf("n_trackers: %u\n", n_trackers);
 	printf("actor_id: %d\n", actor_id);
-	printf("source_id: %d\n", source_id);
-	printf("source_name: %s\n", source_name.c_str());
+	printf("source_id: %d\n", seq_id);
+	printf("source_name: %s\n", seq_name.c_str());
 	printf("actor: %s\n", actor.c_str());
 	printf("pipeline: %c\n", pipeline);
 	printf("img_source: %c\n", img_source);
@@ -122,7 +122,7 @@ int main(int argc, char * argv[]) {
 			return EXIT_FAILURE;
 		}
 	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while obtaining the object to track: %s\n",
+		printf("Exception of type %s encountered while obtaining the objects to track: %s\n",
 			err.type(), err.what());
 		return EXIT_FAILURE;
 	}
@@ -218,8 +218,8 @@ int main(int argc, char * argv[]) {
 	// *************************************** setup output *************************************** //
 	// ******************************************************************************************** //
 
-	string cv_win_name = "MTF :: " + source_name;
-	string proc_win_name = "Processed Image :: " + source_name;
+	string cv_win_name = "MTF :: " + seq_name;
+	string proc_win_name = "Processed Image :: " + seq_name;
 	try{
 		if(show_cv_window) {
 			cv::namedWindow(cv_win_name, cv::WINDOW_AUTOSIZE);
@@ -287,16 +287,16 @@ int main(int argc, char * argv[]) {
 			overwrite_gt = false;
 		}
 		if(overwrite_gt){
-			tracking_data_dir = source_path;
-			tracking_data_fname = source_name;
+			tracking_data_dir = seq_path;
+			tracking_data_fname = seq_name;
 		} else{
 			if(reinit_at_each_frame){
 				tracking_data_dir = cv::format("log/tracking_data/reinit/%s/%s",
-					actor.c_str(), source_name.c_str());
+					actor.c_str(), seq_name.c_str());
 			} else if(reset_at_each_frame){
 				tracking_data_dir = cv::format("log/tracking_data/%s/%s/%s",
 					reset_to_init ? "reset_to_init" : "reset",
-					actor.c_str(), source_name.c_str());
+					actor.c_str(), seq_name.c_str());
 			} else if(reinit_on_failure){
 				std::string reinit_data_dir = std::floor(reinit_err_thresh) == reinit_err_thresh ?
 					//! reinit_err_thresh is an integer
@@ -304,9 +304,9 @@ int main(int argc, char * argv[]) {
 					//! reinit_err_thresh is not an integer
 					cv::format("reinit_%4.2f_%d", reinit_err_thresh, reinit_frame_skip);
 				tracking_data_dir = cv::format("log/tracking_data/%s/%s/%s",
-					reinit_data_dir.c_str(), actor.c_str(), source_name.c_str());
+					reinit_data_dir.c_str(), actor.c_str(), seq_name.c_str());
 			} else{
-				tracking_data_dir = cv::format("log/tracking_data/%s/%s", actor.c_str(), source_name.c_str());;
+				tracking_data_dir = cv::format("log/tracking_data/%s/%s", actor.c_str(), seq_name.c_str());;
 			}
 			if(init_frame_id > 0){
 				tracking_data_fname = cv::format("%s_init_%d", tracking_data_fname.c_str(), init_frame_id);
@@ -703,7 +703,7 @@ int main(int argc, char * argv[]) {
 		fclose(tracking_data_fid);
 		FILE *tracking_stats_fid = fopen("log/tracking_stats.txt", "a");
 		fprintf(tracking_stats_fid, "%s\t %s\t %s\t %s\t %d\t %s\t %15.9f\t %15.9f",
-			source_name.c_str(), mtf_sm, mtf_am, mtf_ssm, hom_normalized_init,
+			seq_name.c_str(), mtf_sm, mtf_am, mtf_ssm, hom_normalized_init,
 			tracking_data_fname.c_str(), avg_fps, avg_fps_win);
 		if(show_tracking_error){
 			fprintf(tracking_stats_fid, "\t %15.9f", avg_err);

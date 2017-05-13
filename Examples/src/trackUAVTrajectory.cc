@@ -41,15 +41,15 @@ int main(int argc, char * argv[]) {
 #endif
 
 	actor = "Misc";
-	source_name = "uav_sim";
-	source_path = db_root_path + "/" + actor;
+	seq_name = "uav_sim";
+	seq_path = db_root_path + "/" + actor;
 
 	printf("*******************************\n");
 	printf("Using parameters:\n");
 	printf("n_trackers: %d\n", n_trackers);
 	printf("actor_id: %d\n", actor_id);
-	printf("source_id: %d\n", source_id);
-	printf("source_name: %s\n", source_name.c_str());
+	printf("source_id: %d\n", seq_id);
+	printf("source_name: %s\n", seq_name.c_str());
 	printf("actor: %s\n", actor.c_str());
 	printf("pipeline: %c\n", pipeline);
 	printf("img_source: %c\n", img_source);
@@ -66,7 +66,7 @@ int main(int argc, char * argv[]) {
 		return EXIT_FAILURE;
 	}
 	cv::Mat satellite_img = cv::imread(cv::format("%s/%s/YJ_map_right.bmp", 
-		source_path.c_str(), source_name.c_str()));
+		seq_path.c_str(), seq_name.c_str()));
 	/**
 	leave one pixel border arund the bounding box
 	so numerical image derivatives can be computed more easily
@@ -76,7 +76,7 @@ int main(int argc, char * argv[]) {
 
 	/*********************************** initialize tracker ***********************************/
 	cv::Mat init_location = mtf::utils::readTrackerLocation(std::string(cv::format(
-		"%s/%s/initial_location.txt", source_path.c_str(), source_name.c_str()).c_str())
+		"%s/%s/initial_location.txt", seq_path.c_str(), seq_name.c_str()).c_str())
 		);
 
 	cout << "init_location:\n" << init_location << "\n";
@@ -90,7 +90,7 @@ int main(int argc, char * argv[]) {
 
 	printf("+++++++++++++++read ground truth trajectory key points+++++++++++++\n");
 
-	string gt_kpt_flnm = string(source_path) + "/" + string(source_name) + "/uav_trajectory_groundtruth.txt";
+	string gt_kpt_flnm = string(seq_path) + "/" + string(seq_name) + "/uav_trajectory_groundtruth.txt";
 	ifstream gt_kpt(gt_kpt_flnm);
 	vector<cv::Point2d> gt_kpt_corners;
 	cv::Point2d tmp;
@@ -259,7 +259,7 @@ int main(int argc, char * argv[]) {
 		printf("Average Tracking Error: %15.10f\n", avg_err);
 		printf("Frames used for computing the average: %d\n", valid_frame_count);
 	}
-	string outfl = string(source_path) + "/" + string(source_name) + "/uav_trajectory_traj_results.txt";
+	string outfl = string(seq_path) + "/" + string(seq_name) + "/uav_trajectory_traj_results.txt";
 	ofstream outtrajectory(outfl);
 	//if(!outtrajectory)return;
 	for(i = 0; i < ctr_pts.size(); i++){
