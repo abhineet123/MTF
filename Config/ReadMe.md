@@ -71,10 +71,10 @@ Input/Output related parameters:
 			for JPEG file the full path is constructed as: db_root_path/actor/seq_name/*.seq_fmt;
 			for MPEG/Video file the full path is constructed as: db_root_path/actor/seq_name.seq_fmt;
 				
-	 Parameter:	'seq_id'
+	 Parameter:	'seq_id'/'source_id'
 		Description:
-			integral index of the source name to use out of the sources hard coded in parameters.h;
-			used in conjunction with the parameter 'actor_id' to get the source name;
+			integral index of the sequence name to use out of the sequences hard coded in parameters.h;
+			used in conjunction with the parameter 'actor_id' to get the sequence name;
 			only matters if both are non negative
 		Possible Values:
 			refer parameters.h for details of what each index means for each actor type; 
@@ -91,13 +91,13 @@ Input/Output related parameters:
 				Synthetic:	0-2
 				Live:	0-1
 				
-	 Parameter:	'seq_name'
+	 Parameter:	'seq_name'/'source_name'
 		Description:
 			name of the input video file (for MPEG source) or folder (for JPEG source); 
 				overridden if both the parameters 'seq_id' and 'actor_id' are non-negative;
-				does not matter if a camera stream is being used;
+				ignored if a camera stream is being used;
 			
-	 Parameter:	'seq_path'
+	 Parameter:	'seq_path'/'source_path'
 		Description:
 			only matters for Xvision pipeline and camera streams; 
 			specifies the path of the camera device to use
@@ -108,7 +108,7 @@ Input/Output related parameters:
 				/dev/fw1:	Firewire
 				for OpenCV pipeline with USB camera source, it should be an integer ID specifying the camera (e.g. 0 for the first camera, 1 for the second camera and so on.)
 			
-	 Parameter:	'seq_fmt'
+	 Parameter:	'seq_fmt'/'source_fmt'
 		Description:
 			file extension for image and video file streams;
 			any special formatting strings to be passed to the Xvision initializer for camera streams;
@@ -144,6 +144,15 @@ Input/Output related parameters:
 		Description:
 			use 8 bit unsigned integral images of type CV_8UC1/CV_8UC3 as input to trackers rather than 32 bit floating point variants (CV_32FC1/CV_32FC3) 
 			enabling this can provide a small increase in speed but sometimes at the cost of a slight loss in precision especially if filtering or gray scale conversion is enabled
+		Possible Values:
+			0: Disable (default)
+			1: Enable
+	 
+	 Parameter:	'invert_seq'
+		Description:
+			invert the input sequence, i.e. read its images in the reverse order with the last image being read first and the first one last;
+			ignored if a camera stream is being used;
+
 		Possible Values:
 			0: Disable (default)
 			1: Enable

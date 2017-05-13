@@ -3486,7 +3486,8 @@ namespace mtf{
 				if(seq_fmt.empty()){
 					seq_fmt = (img_source == SRC_USB_CAM) ? USB_DEV_FMT : FW_DEV_FMT;
 				}
-				show_tracking_error = reinit_on_failure = read_obj_from_gt = read_obj_from_file = pause_after_frame = 0;
+				show_tracking_error = reinit_on_failure = read_obj_from_gt = 
+					read_obj_from_file = pause_after_frame = invert_seq = 0;
 			}
 			if(atoi(pre_proc_type.c_str()) < 0){
 				//! input images must be read into the same location for pre processing to be disabled
