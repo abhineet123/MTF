@@ -38,7 +38,7 @@ Input/Output related parameters:
 			j: JPEG image files (some other common formats line PNG and BMP are supported too)
 			u: USB camera
 			f: Firewire camera (only ViSP and Xvision  pipelines; 
-				USB camera option(u) can be used to access Firewire cameras with OpenCV as long as no USB cameras are attached)
+				USB camera option(u) can be used to access Firewire cameras with OpenCV as long as no USB cameras are attached too)
 			
 	 Parameter:	'actor_id'
 		Description:
@@ -50,7 +50,7 @@ Input/Output related parameters:
 				1: UCSB
 				2: LinTrack
 				3: PAMI
-				4: LinTrackShort
+				4: TFMT
 				5: METAIO
 				6: CMT
 				7: VOT
@@ -58,12 +58,12 @@ Input/Output related parameters:
 				9: VTB
 				10: VIVID
 				11: TrakMark
-				12: TMT_FINE
+				12: LinTrackShort
 				13: Mosaic
 				14: Misc
 				15: Synthetic
 				16: Live
-			Note: the first 10 datasets (except LinTrackShort) in a ready to use form can be downloaded from the MTF website: http://webdocs.cs.ualberta.ca/~vis/mtf/
+			Note: the first 10 datasets in a ready to use format can be downloaded from the MTF website: http://webdocs.cs.ualberta.ca/~vis/mtf/
 
 	 Parameter:	'db_root_path'
 		Description:
@@ -137,7 +137,7 @@ Input/Output related parameters:
 			perform histogram equalization as part of pre processing
 		Possible Values:
 			0: Disable (default)
-			1: Enable			
+			1: Enable		
 
 			
 	 Parameter:	'uchar_input'

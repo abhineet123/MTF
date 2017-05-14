@@ -280,31 +280,32 @@ namespace mtf{
 			"table_top",//26
 			"tea"//27
 		};
-
-		char* sequences_cmt[] = {
-			"board_robot",//0
-			"box_robot",//1
-			"cup_on_table",//2
-			"juice",//3
-			"lemming",//4
-			"liquor",//5
-			"sylvester",//6
-			"ball",//7
-			"car",//8
-			"car_2",//9
-			"carchase",//10
-			"dog1",//11
-			"gym",//12
-			"jumping",//13
-			"mountain_bike",//14
-			"person",//15
-			"person_crossing",//16
-			"person_partially_occluded",//17
-			"singer",//18
-			"track_running"//19
+		char* sequences_tfmt[] = {
+			"fish_lure_left",//0
+			"fish_lure_right",//1
+			"fish_lure_fast_left",//2
+			"fish_lure_fast_right",//3
+			"key_task_left",//4
+			"key_task_right",//5
+			"key_task_fast_left",//6
+			"key_task_fast_right",//7
+			"hexagon_task_left",//8
+			"hexagon_task_right",//9
+			"hexagon_task_fast_left",//10
+			"hexagon_task_fast_right",//11
+			"fish_lure_cam1",//12
+			"fish_lure_cam2",//13
+			"fish_lure_fast_cam1",//14
+			"fish_lure_fast_cam2",//15
+			"key_task_cam1",//16
+			"key_task_cam2",//17
+			"key_task_fast_cam1",//18
+			"key_task_fast_cam2",//19
+			"hexagon_task_cam1",//20
+			"hexagon_task_cam2",//21
+			"hexagon_task_fast_cam1",//22
+			"hexagon_task_fast_cam2"//23
 		};
-
-
 		char* sequences_metaio[] = {
 			"bump_angle",//0
 			"bump_fast_close",//1
@@ -347,7 +348,28 @@ namespace mtf{
 			"wall_illumination",//38
 			"wall_range"//39
 		};
-
+		char* sequences_cmt[] = {
+			"board_robot",//0
+			"box_robot",//1
+			"cup_on_table",//2
+			"juice",//3
+			"lemming",//4
+			"liquor",//5
+			"sylvester",//6
+			"ball",//7
+			"car",//8
+			"car_2",//9
+			"carchase",//10
+			"dog1",//11
+			"gym",//12
+			"jumping",//13
+			"mountain_bike",//14
+			"person",//15
+			"person_crossing",//16
+			"person_partially_occluded",//17
+			"singer",//18
+			"track_running"//19
+		};
 		char* sequences_vot[] = {
 			"woman",//0
 			"ball",//1
@@ -577,32 +599,6 @@ namespace mtf{
 			"NH00_00",//19
 			"NH00_01"//20
 		};
-		char* sequences_tfmt[] = {
-			"fish_lure_left",//0
-			"fish_lure_right",//1
-			"fish_lure_fast_left",//2
-			"fish_lure_fast_right",//3
-			"key_task_left",//4
-			"key_task_right",//5
-			"key_task_fast_left",//6
-			"key_task_fast_right",//7
-			"hexagon_task_left",//8
-			"hexagon_task_right",//9
-			"hexagon_task_fast_left",//10
-			"hexagon_task_fast_right",//11
-			"fish_lure_cam1",//12
-			"fish_lure_cam2",//13
-			"fish_lure_fast_cam1",//14
-			"fish_lure_fast_cam2",//15
-			"key_task_cam1",//16
-			"key_task_cam2",//17
-			"key_task_fast_cam1",//18
-			"key_task_fast_cam2",//19
-			"hexagon_task_cam1",//20
-			"hexagon_task_cam2",//21
-			"hexagon_task_fast_cam1",//22
-			"hexagon_task_fast_cam2"//23
-		};
 		char* sequences_mosaic[] = {
 			"book_1",//0
 			"book_2",//1
@@ -667,7 +663,7 @@ namespace mtf{
 			"UCSB",//1
 			"LinTrack",//2
 			"PAMI",//3
-			"LinTrackShort",//4
+			"TFMT",//4
 			"METAIO",//5
 			"CMT",//6
 			"VOT",//7
@@ -675,7 +671,7 @@ namespace mtf{
 			"VTB",//9
 			"VIVID",//10
 			"TrakMark",//11
-			"TMT_FINE",//12
+			"LinTrackShort",//12
 			"Mosaic",//13
 			"Misc",//14
 			"Synthetic",//15
@@ -686,7 +682,7 @@ namespace mtf{
 			sequences_ucsb,//1
 			sequences_lintrack,//2
 			sequences_pami,//3
-			sequences_lintrack_short,//4
+			sequences_tfmt,//4
 			sequences_metaio,//5
 			sequences_cmt,//6
 			sequences_vot,//7
@@ -694,7 +690,7 @@ namespace mtf{
 			sequences_vtb,//9
 			sequences_vivid,//10
 			sequences_trakmark,//11
-			sequences_tfmt,//12
+			sequences_lintrack_short,//12
 			sequences_mosaic,//13
 			sequences_misc,//14
 			sequences_synthetic,//15
@@ -706,7 +702,7 @@ namespace mtf{
 			sizeof(sequences_ucsb) / sizeof(sequences_ucsb[0]),
 			sizeof(sequences_lintrack) / sizeof(sequences_lintrack[0]),
 			sizeof(sequences_pami) / sizeof(sequences_pami[0]),
-			sizeof(sequences_lintrack_short) / sizeof(sequences_lintrack_short[0]),
+			sizeof(sequences_tfmt) / sizeof(sequences_tfmt[0]),
 			sizeof(sequences_metaio) / sizeof(sequences_metaio[0]),
 			sizeof(sequences_cmt) / sizeof(sequences_cmt[0]),
 			sizeof(sequences_vot) / sizeof(sequences_vot[0]),
@@ -714,7 +710,7 @@ namespace mtf{
 			sizeof(sequences_vtb) / sizeof(sequences_vtb[0]),
 			sizeof(sequences_vivid) / sizeof(sequences_vivid[0]),
 			sizeof(sequences_trakmark) / sizeof(sequences_trakmark[0]),
-			sizeof(sequences_tfmt) / sizeof(sequences_tfmt[0]),
+			sizeof(sequences_lintrack_short) / sizeof(sequences_lintrack_short[0]),
 			sizeof(sequences_mosaic) / sizeof(sequences_mosaic[0]),
 			sizeof(sequences_misc) / sizeof(sequences_misc[0]),
 			sizeof(sequences_synthetic) / sizeof(sequences_synthetic[0]),

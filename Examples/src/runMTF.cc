@@ -308,6 +308,9 @@ int main(int argc, char * argv[]) {
 			} else{
 				tracking_data_dir = cv::format("log/tracking_data/%s/%s", actor.c_str(), seq_name.c_str());;
 			}
+			if(invert_seq){
+				tracking_data_fname = cv::format("%s_inv", tracking_data_fname.c_str());
+			}
 			if(init_frame_id > 0){
 				tracking_data_fname = cv::format("%s_init_%d", tracking_data_fname.c_str(), init_frame_id);
 			}
