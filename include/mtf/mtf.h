@@ -1650,6 +1650,9 @@ inline TrackerBase *getTracker(const char *tracker_type){
 			dsst_learning_rate, dsst_number_scales, dsst_scale_step, dsst_number_rots, dsst_rot_step,
 			dsst_resize_factor, dsst_is_scaling, dsst_is_rotating, dsst_bin_size);
 		return new DSST(&dsst_params);
+	} else if(!strcmp(tracker_type, "rsst")){
+		dsst_is_rotating = 1;
+		return getTracker("dsst");
 	} else if(!strcmp(tracker_type, "kcf")){
 		KCFParams kcf_params(
 			kcf_padding,

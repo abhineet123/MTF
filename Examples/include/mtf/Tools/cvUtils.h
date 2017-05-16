@@ -171,7 +171,7 @@ public:
 	/**
 	allows the user to select a rectangle by clicking on its opposite corners
 	*/
-	void addRectObject(InputBase *input, string selection_window,
+	bool addRectObject(InputBase *input, string selection_window,
 		int line_thickness = 2, int patch_size = 0) {
 		//cout<<"Start getObject\n";
 		ObjStruct new_obj;
@@ -256,10 +256,9 @@ public:
 			}
 			imshow(selection_window, hover_image);
 			int pressed_key = cv::waitKey(1);
-			if(pressed_key == 27) {
-				cv::destroyAllWindows();
-				exit(0);
-			} else if(pressed_key == 8){
+			if(pressed_key % 256 == 27) {
+				return false;
+			} else if(pressed_key % 256 == 8){
 				if(clicked_point_count > 0){
 					--clicked_point_count;
 				}
@@ -274,12 +273,13 @@ public:
 		new_obj.updateCornerMat();
 
 		init_objects.push_back(new_obj);
+		return true;
 	}
 
 	/**
 	allows the user to select a quadrilateral by clicking on its 4 corners
 	*/
-	void addQuadObject(InputBase *input, string selection_window,
+	bool addQuadObject(InputBase *input, string selection_window,
 		int line_thickness = 2, int patch_size = 0) {
 		//cout<<"Start getObject\n";
 
@@ -364,10 +364,9 @@ public:
 			}
 			imshow(selection_window, hover_image);
 			int pressed_key = cv::waitKey(1);
-			if(pressed_key == 27) {
-				cv::destroyAllWindows();
-				exit(0);
-			} else if(pressed_key == 8){
+			if(pressed_key % 256 == 27) {
+				return false;
+			} else if(pressed_key % 256 == 8){
 				if(clicked_point_count > 0){
 					--clicked_point_count;
 				}
@@ -388,6 +387,7 @@ public:
 		new_obj.pos_y = (new_obj.min_point.y + new_obj.max_point.y) / 2;
 
 		init_objects.push_back(new_obj);
+		return true;
 	}
 	//! overloaded variant for non-live input feed
 	bool selectObjects(const cv::Mat &img, int no_of_objs,
@@ -426,9 +426,15 @@ public:
 		for(int i = 0; i < no_of_objs; i++) {
 			if(sel_quad_obj){
 				printf("selecting quadrilateral object...\n");
-				addQuadObject(input, window_title, line_thickness, patch_size);
+				if(!addQuadObject(input, window_title, line_thickness, patch_size)){
+					cv::destroyWindow(window_title);
+					return false;
+				};
 			} else{
-				addRectObject(input, window_title, line_thickness, patch_size);
+				if(!addRectObject(input, window_title, line_thickness, patch_size)){
+					cv::destroyWindow(window_title);
+					return false;
+				};
 			}
 		}
 		cv::destroyWindow(window_title);

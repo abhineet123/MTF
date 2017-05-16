@@ -118,7 +118,7 @@ int main(int argc, char * argv[]) {
 	CVUtils cv_utils(img_resize_factor);
 	try{
 		if(!getObjectsToTrack(cv_utils, input.get())){
-			printf("Object(s) to be tracked could not be read\n");
+			printf("Object(s) to be tracked could not be obtained.\n");
 			return EXIT_FAILURE;
 		}
 	} catch(const mtf::utils::Exception &err){
