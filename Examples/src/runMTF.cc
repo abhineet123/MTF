@@ -251,10 +251,18 @@ int main(int argc, char * argv[]) {
 	normally used for testing trackers with synthetic sequences
 	*/
 	if(reinit_at_each_frame){
-		printf("Reinitializing tracker at each frame...\n");
+		if(reinit_at_each_frame == 1){
+			printf("Reinitializing tracker at each frame...\n");
+		} else{
+			printf("Reinitializing tracker every %d frames...\n", reinit_at_each_frame);
+		}		
 		reinit_on_failure = false;
 	} else if(reset_at_each_frame){
-		printf("Resetting tracker at each frame...\n");
+		if(reset_at_each_frame == 1){
+			printf("Resetting tracker at each frame...\n");
+		} else{
+			printf("Resetting tracker every %d frames...\n", reinit_at_each_frame);
+		}
 		reinit_on_failure = false;
 	}
 
@@ -291,12 +299,18 @@ int main(int argc, char * argv[]) {
 			tracking_data_fname = seq_name;
 		} else{
 			if(reinit_at_each_frame){
-				tracking_data_dir = cv::format("log/tracking_data/reinit/%s/%s",
-					actor.c_str(), seq_name.c_str());
+				std::string reinit_dir = "reinit";
+				if(reinit_at_each_frame>1){
+					reinit_dir = cv::format("%s_%d", reinit_dir.c_str(), reinit_at_each_frame);
+				}
+				tracking_data_dir = cv::format("log/tracking_data/%s/%s/%s", reinit_dir.c_str(), actor.c_str(), seq_name.c_str());
 			} else if(reset_at_each_frame){
+				std::string reset_dir = reset_to_init ? "reset_to_init" : "reset";
+				if(reset_at_each_frame>1){
+					reset_dir = cv::format("%s_%d", reset_dir.c_str(), reset_at_each_frame);
+				}
 				tracking_data_dir = cv::format("log/tracking_data/%s/%s/%s",
-					reset_to_init ? "reset_to_init" : "reset",
-					actor.c_str(), seq_name.c_str());
+					reset_dir.c_str(), actor.c_str(), seq_name.c_str());
 			} else if(reinit_on_failure){
 				std::string reinit_data_dir = std::floor(reinit_err_thresh) == reinit_err_thresh ?
 					//! reinit_err_thresh is an integer
@@ -509,36 +523,44 @@ int main(int argc, char * argv[]) {
 		}
 
 		if(reinit_at_each_frame){
-			try{
-				if(reinit_with_new_obj){
-					//! delete the old tracker instance and create a new one before reinitializing
-					trackers[0].reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
-					if(!trackers[0]){
-						printf("Tracker could not be created successfully\n");
-						return EXIT_FAILURE;
+			if((input->getFrameID() - init_frame_id) % reinit_at_each_frame == 0){
+				try{
+					if(reinit_with_new_obj){
+						//! delete the old tracker instance and create a new one before reinitializing
+						trackers[0].reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
+						if(!trackers[0]){
+							printf("Tracker could not be created successfully\n");
+							return EXIT_FAILURE;
+						}
+						for(PreProc_ pre_proc = pre_procs[0]; pre_proc; pre_proc = pre_proc->next){
+							trackers[0]->setImage(pre_proc->getFrame());
+						}
 					}
-					for(PreProc_ pre_proc = pre_procs[0]; pre_proc; pre_proc = pre_proc->next){
-						trackers[0]->setImage(pre_proc->getFrame());
-					}
+					trackers[0]->initialize(cv_utils.getGT(input->getFrameID()));
+					tracker_corners = trackers[0]->getRegion().clone();
+					if(resized_images){ tracker_corners /= img_resize_factor; }
+				} catch(const mtf::utils::Exception &err){
+					printf("Exception of type %s encountered while reinitializing the tracker: %s\n",
+						err.type(), err.what());
+					return EXIT_FAILURE;
 				}
-				trackers[0]->initialize(cv_utils.getGT(input->getFrameID()));
-			} catch(const mtf::utils::Exception &err){
-				printf("Exception of type %s encountered while reinitializing the tracker: %s\n",
-					err.type(), err.what());
-				return EXIT_FAILURE;
+				invalid_tracker_state = tracker_failed = false;
 			}
-			invalid_tracker_state = tracker_failed = false;
 		} else if(reset_at_each_frame){
-			try{
-				cv::Mat reset_location = reset_to_init ? cv_utils.getGT(init_frame_id) :
-					cv_utils.getGT(input->getFrameID());
-				trackers[0]->setRegion(reset_location);
-			} catch(const mtf::utils::Exception &err){
-				printf("Exception of type %s encountered while resetting the tracker: %s\n",
-					err.type(), err.what());
-				return EXIT_FAILURE;
+			if((input->getFrameID() - init_frame_id) % reset_at_each_frame == 0){
+				try{
+					cv::Mat reset_location = reset_to_init ? cv_utils.getGT(init_frame_id) :
+						cv_utils.getGT(input->getFrameID());
+					trackers[0]->setRegion(reset_location);
+					tracker_corners = trackers[0]->getRegion().clone();
+					if(resized_images){ tracker_corners /= img_resize_factor; }
+				} catch(const mtf::utils::Exception &err){
+					printf("Exception of type %s encountered while resetting the tracker: %s\n",
+						err.type(), err.what());
+					return EXIT_FAILURE;
+				}
+				invalid_tracker_state = tracker_failed = false;
 			}
-			invalid_tracker_state = tracker_failed = false;
 		}
 		if(invalid_tracker_state){
 			printf("Unrecoverable tracking loss detected. Exiting...\n");

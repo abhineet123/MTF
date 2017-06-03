@@ -254,14 +254,17 @@ Input/Output related parameters:
 	 Parameter:	'reinit_at_each_frame'
 		Description:
 			reinitialize tracker from ground truth at each frame so that tracking is only done from frame to frame;
-			only works when a dataset sequence is used and its ground truth is available;
-			normally used for testing tracker on synthetic sequences;
+			if it is > 1, reinitialization is done after the specified number of frames rather than at each frame;
+			only works when a dataset sequence is used and its ground truth is available;			
+			normally used for testing tracker on synthetic sequences or for filling in incomplete ground truth;
 			
 	 Parameter:	'reset_at_each_frame'
 		Description:
 			reset tracker to the ground truth at each frame; 
+			if it is > 1, resetting is done after the specified number of frames rather than at each frame;
 			unlike the previous option, here the template remains unchanged;
 			only works when a dataset sequence is used and its ground truth is available;
+			only matters if reinit_at_each_frame is 0;
 			
 	 Parameter:	'reinit_on_failure'
 		Description:

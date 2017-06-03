@@ -96,8 +96,8 @@ namespace mtf{
 		int rec_fps = 24;
 		std::vector<std::string> tracker_labels;
 
-		bool reinit_at_each_frame = false;
-		bool reset_at_each_frame = false;
+		int reinit_at_each_frame = 0;
+		int reset_at_each_frame = 0;
 		bool reset_to_init = false;
 		int reinit_on_failure = false;
 		double reinit_err_thresh = 5.0;

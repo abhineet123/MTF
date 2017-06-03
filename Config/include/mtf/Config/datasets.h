@@ -306,6 +306,218 @@ namespace mtf{
 			"hexagon_task_fast_cam1",//22
 			"hexagon_task_fast_cam2"//23
 		};
+		char* sequences_ptw[] = {
+			"Amish_1",//0
+			"Amish_2",//1
+			"Amish_3",//2
+			"Amish_4",//3
+			"Amish_5",//4
+			"Amish_6",//5
+			"Amish_7",//6
+			"Burger_1",//7
+			"Burger_2",//8
+			"Burger_3",//9
+			"Burger_4",//10
+			"Burger_5",//11
+			"Burger_6",//12
+			"Burger_7",//13
+			"BusStop_1",//14
+			"BusStop_2",//15
+			"BusStop_3",//16
+			"BusStop_4",//17
+			"BusStop_5",//18
+			"BusStop_6",//19
+			"BusStop_7",//20
+			"Citibank_1",//21
+			"Citibank_2",//22
+			"Citibank_3",//23
+			"Citibank_4",//24
+			"Citibank_5",//25
+			"Citibank_6",//26
+			"Citibank_7",//27
+			"Coke_1",//28
+			"Coke_2",//29
+			"Coke_3",//30
+			"Coke_4",//31
+			"Coke_5",//32
+			"Coke_6",//33
+			"Coke_7",//34
+			"Fruit_1",//35
+			"Fruit_2",//36
+			"Fruit_3",//37
+			"Fruit_4",//38
+			"Fruit_5",//39
+			"Fruit_6",//40
+			"Fruit_7",//41
+			"IndegoStation_1",//42
+			"IndegoStation_2",//43
+			"IndegoStation_3",//44
+			"IndegoStation_4",//45
+			"IndegoStation_5",//46
+			"IndegoStation_6",//47
+			"IndegoStation_7",//48
+			"Lottery_1_1",//49
+			"Lottery_1_2",//50
+			"Lottery_1_3",//51
+			"Lottery_1_4",//52
+			"Lottery_1_5",//53
+			"Lottery_1_6",//54
+			"Lottery_1_7",//55
+			"Lottery_2_1",//56
+			"Lottery_2_2",//57
+			"Lottery_2_3",//58
+			"Lottery_2_4",//59
+			"Lottery_2_5",//60
+			"Lottery_2_6",//61
+			"Lottery_2_7",//62
+			"Map_1_1",//63
+			"Map_1_2",//64
+			"Map_1_3",//65
+			"Map_1_4",//66
+			"Map_1_5",//67
+			"Map_1_6",//68
+			"Map_1_7",//69
+			"Map_2_1",//70
+			"Map_2_2",//71
+			"Map_2_3",//72
+			"Map_2_4",//73
+			"Map_2_5",//74
+			"Map_2_6",//75
+			"Map_2_7",//76
+			"Map_3_1",//77
+			"Map_3_2",//78
+			"Map_3_3",//79
+			"Map_3_4",//80
+			"Map_3_5",//81
+			"Map_3_6",//82
+			"Map_3_7",//83
+			"Melts_1",//84
+			"Melts_2",//85
+			"Melts_3",//86
+			"Melts_4",//87
+			"Melts_5",//88
+			"Melts_6",//89
+			"Melts_7",//90
+			"NoStopping_1",//91
+			"NoStopping_2",//92
+			"NoStopping_3",//93
+			"NoStopping_4",//94
+			"NoStopping_5",//95
+			"NoStopping_6",//96
+			"NoStopping_7",//97
+			"OneWay_1",//98
+			"OneWay_2",//99
+			"OneWay_3",//100
+			"OneWay_4",//101
+			"OneWay_5",//102
+			"OneWay_6",//103
+			"OneWay_7",//104
+			"Painting_1_1",//105
+			"Painting_1_2",//106
+			"Painting_1_3",//107
+			"Painting_1_4",//108
+			"Painting_1_5",//109
+			"Painting_1_6",//110
+			"Painting_1_7",//111
+			"Painting_2_1",//112
+			"Painting_2_2",//113
+			"Painting_2_3",//114
+			"Painting_2_4",//115
+			"Painting_2_5",//116
+			"Painting_2_6",//117
+			"Painting_2_7",//118
+			"Pizza_1",//119
+			"Pizza_2",//120
+			"Pizza_3",//121
+			"Pizza_4",//122
+			"Pizza_5",//123
+			"Pizza_6",//124
+			"Pizza_7",//125
+			"Poster_1_1",//126
+			"Poster_1_2",//127
+			"Poster_1_3",//128
+			"Poster_1_4",//129
+			"Poster_1_5",//130
+			"Poster_1_6",//131
+			"Poster_1_7",//132
+			"Poster_2_1",//133
+			"Poster_2_2",//134
+			"Poster_2_3",//135
+			"Poster_2_4",//136
+			"Poster_2_5",//137
+			"Poster_2_6",//138
+			"Poster_2_7",//139
+			"Pretzel_1",//140
+			"Pretzel_2",//141
+			"Pretzel_3",//142
+			"Pretzel_4",//143
+			"Pretzel_5",//144
+			"Pretzel_6",//145
+			"Pretzel_7",//146
+			"ShuttleStop_1",//147
+			"ShuttleStop_2",//148
+			"ShuttleStop_3",//149
+			"ShuttleStop_4",//150
+			"ShuttleStop_5",//151
+			"ShuttleStop_6",//152
+			"ShuttleStop_7",//153
+			"SmokeFree_1",//154
+			"SmokeFree_2",//155
+			"SmokeFree_3",//156
+			"SmokeFree_4",//157
+			"SmokeFree_5",//158
+			"SmokeFree_6",//159
+			"SmokeFree_7",//160
+			"Snack_1",//161
+			"Snack_2",//162
+			"Snack_3",//163
+			"Snack_4",//164
+			"Snack_5",//165
+			"Snack_6",//166
+			"Snack_7",//167
+			"Snap_1",//168
+			"Snap_2",//169
+			"Snap_3",//170
+			"Snap_4",//171
+			"Snap_5",//172
+			"Snap_6",//173
+			"Snap_7",//174
+			"StopSign_1",//175
+			"StopSign_2",//176
+			"StopSign_3",//177
+			"StopSign_4",//178
+			"StopSign_5",//179
+			"StopSign_6",//180
+			"StopSign_7",//181
+			"Sundae_1",//182
+			"Sundae_2",//183
+			"Sundae_3",//184
+			"Sundae_4",//185
+			"Sundae_5",//186
+			"Sundae_6",//187
+			"Sundae_7",//188
+			"Sunoco_1",//189
+			"Sunoco_2",//190
+			"Sunoco_3",//191
+			"Sunoco_4",//192
+			"Sunoco_5",//193
+			"Sunoco_6",//194
+			"Sunoco_7",//195
+			"WalkYourBike_1",//196
+			"WalkYourBike_2",//197
+			"WalkYourBike_3",//198
+			"WalkYourBike_4",//199
+			"WalkYourBike_5",//200
+			"WalkYourBike_6",//201
+			"WalkYourBike_7",//202
+			"Woman_1",//203
+			"Woman_2",//204
+			"Woman_3",//205
+			"Woman_4",//206
+			"Woman_5",//207
+			"Woman_6",//208
+			"Woman_7"//209
+		};
 		char* sequences_metaio[] = {
 			"bump_angle",//0
 			"bump_fast_close",//1
@@ -397,7 +609,6 @@ namespace mtf{
 			"trellis",//23
 			"tunnel"//24
 		};
-
 		char* sequences_vot16[] = {
 			"bag",//0
 			"ball1",//1
@@ -460,7 +671,6 @@ namespace mtf{
 			"tunnel",//58
 			"wiper"//59
 		};
-
 		char* sequences_vtb[] = {
 			"Basketball",//0
 			"Biker",//1
@@ -563,7 +773,6 @@ namespace mtf{
 			"Walking2",//98
 			"Woman"//99
 		};
-
 		char* sequences_vivid[] = {
 			"pktest03",//0
 			"egtest01",//1
@@ -575,7 +784,6 @@ namespace mtf{
 			"pktest02",//7
 			"redteam"//8
 		};
-
 		char* sequences_trakmark[] = {
 			"CV00_00",//0
 			"CV00_01",//1
@@ -618,7 +826,6 @@ namespace mtf{
 			"poster_8",//15
 			"poster_9"//16
 		};
-
 		char* sequences_misc[] = {
 			"uav_sim",//0
 			"chess_board_1",//1
@@ -653,7 +860,6 @@ namespace mtf{
 			"towel",//23
 			"wood_dynamic_lighting"//24
 		};
-
 		char* sequences_live[] = {
 			"usb_cam",//0
 			"firewire_cam"//1
@@ -663,19 +869,20 @@ namespace mtf{
 			"UCSB",//1
 			"LinTrack",//2
 			"PAMI",//3
-			"TFMT",//4
-			"METAIO",//5
-			"CMT",//6
-			"VOT",//7
-			"VOT16",//8
-			"VTB",//9
-			"VIVID",//10
-			"TrakMark",//11
-			"LinTrackShort",//12
-			"Mosaic",//13
-			"Misc",//14
-			"Synthetic",//15
-			"Live"//16
+			"TMT_FINE",//4
+			"PTW",//5
+			"METAIO",//6
+			"CMT",//7
+			"VOT",//8
+			"VOT16",//9
+			"VTB",//10
+			"VIVID",//11
+			"TrakMark",//12
+			"LinTrackShort",//13
+			"Mosaic",//14
+			"Misc",//15
+			"Synthetic",//16
+			"Live"//17
 		};
 		char** combined_sequences[] = {
 			sequences_tmt,//0
@@ -683,26 +890,27 @@ namespace mtf{
 			sequences_lintrack,//2
 			sequences_pami,//3
 			sequences_tfmt,//4
-			sequences_metaio,//5
-			sequences_cmt,//6
-			sequences_vot,//7
-			sequences_vot16,//8
-			sequences_vtb,//9
-			sequences_vivid,//10
-			sequences_trakmark,//11
-			sequences_lintrack_short,//12
-			sequences_mosaic,//13
-			sequences_misc,//14
-			sequences_synthetic,//15
-			sequences_live//16
+			sequences_ptw,//5
+			sequences_metaio,//6
+			sequences_cmt,//7
+			sequences_vot,//8
+			sequences_vot16,//9
+			sequences_vtb,//10
+			sequences_vivid,//11
+			sequences_trakmark,//12
+			sequences_lintrack_short,//13
+			sequences_mosaic,//14
+			sequences_misc,//15
+			sequences_synthetic,//16
+			sequences_live//17
 		};
-
 		int combined_n_sequences[] = {
 			sizeof(sequences_tmt) / sizeof(sequences_tmt[0]),
 			sizeof(sequences_ucsb) / sizeof(sequences_ucsb[0]),
 			sizeof(sequences_lintrack) / sizeof(sequences_lintrack[0]),
 			sizeof(sequences_pami) / sizeof(sequences_pami[0]),
 			sizeof(sequences_tfmt) / sizeof(sequences_tfmt[0]),
+			sizeof(sequences_ptw) / sizeof(sequences_ptw[0]),
 			sizeof(sequences_metaio) / sizeof(sequences_metaio[0]),
 			sizeof(sequences_cmt) / sizeof(sequences_cmt[0]),
 			sizeof(sequences_vot) / sizeof(sequences_vot[0]),
