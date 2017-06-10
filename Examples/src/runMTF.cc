@@ -265,9 +265,12 @@ int main(int argc, char * argv[]) {
 		}
 		reinit_on_failure = false;
 	}
-
-	if(show_tracking_error || write_tracking_error || reinit_on_failure){
+	//! functionality that needs the full ground truth
+	bool full_gt_needed = show_tracking_error || write_tracking_error || reinit_on_failure || 
+		reset_at_each_frame || reinit_at_each_frame || show_ground_truth;
+	if(full_gt_needed){
 		if(input->n_frames <= 0 || valid_gt_frames < input->n_frames){
+			//! full ground truth is not available
 			if(input->n_frames <= 0){
 				printf("Disabling tracking error computation\n");
 			} else if(valid_gt_frames > 0){
