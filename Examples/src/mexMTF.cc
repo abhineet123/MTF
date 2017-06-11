@@ -19,6 +19,11 @@
 #define MEX_TRACKER_UPDATE 3
 #define MEX_TRACKER_SET_REGION 4
 
+#define _A3D_IDX_COLUMN_MAJOR(i,j,k,nrows,ncols) ((i)+((j)+(k)*ncols)*nrows)
+// interleaved row-major indexing for 2-D OpenCV images
+//#define _A3D_IDX_OPENCV(x,y,c,mat) (((y)*mat.step[0]) + ((x)*mat.step[1]) + (c))
+#define _A3D_IDX_OPENCV(i,j,k,nrows,ncols,nchannels) (((i*ncols + j)*nchannels) + (k))
+
 using namespace std;
 using namespace mtf::params;
 typedef unique_ptr<mtf::TrackerBase> Tracker_;
@@ -47,7 +52,7 @@ static bool tracker_created = false, tracker_initialized = false;
 
 bool createTracker() {
 	if(!config_root_dir){
-		config_root_dir = "C++/MTF/Config";
+		config_root_dir = "../../Config";
 		printf("Using default configuration folder: %s\n", config_root_dir);
 	} else{
 		printf("Reading MTF configuration files from: %s\n", config_root_dir);
@@ -154,6 +159,29 @@ bool setRegion(const cv::Mat &corners) {
 	}
 	return true;
 }
+/**
+* Copy the (image) data from Matlab-algorithm compatible (column-major) representation to cv::Mat.
+* The information about the image are taken from the OpenCV cv::Mat structure.
+adapted from OpenCV-Matlab package available at: https://se.mathworks.com/matlabcentral/fileexchange/41530-opencv-matlab
+*/
+template <typename T>
+inline void
+copyMatrixFromMatlab(const T* from, cv::Mat& to, int n_channels){
+
+	const int n_rows = to.rows;
+	const int n_cols = to.cols;
+
+	T* pdata = (T*)to.data;
+
+	for(int c = 0; c < n_channels; ++c){
+		for(int x = 0; x < n_cols; ++x){
+			for(int y = 0; y < n_rows; ++y){
+				const T element = from[_A3D_IDX_COLUMN_MAJOR(y, x, c, n_rows, n_cols)];
+				pdata[_A3D_IDX_OPENCV(y, x, c, rows, n_cols, n_channels)] = element;
+			}
+		}
+	}
+}
 cv::Mat getImage(const mxArray *mx_img){
 	int img_n_dims = mxGetNumberOfDimensions(mx_img);
 	if(!mxIsClass(mx_img, "uint8")){
@@ -167,10 +195,14 @@ cv::Mat getImage(const mxArray *mx_img){
 	int height = img_dims[0];
 	int width = img_dims[1];
 	//printf("width: %d\t height=%d\t img_n_dims: %d\n", width, height, img_n_dims);
-	double *img_ptr = mxGetPr(mx_img);
-	cv::Mat img_transpose(width, height, img_type, img_ptr);
+	unsigned char *img_ptr = (unsigned char*)mxGetData(mx_img);
 	cv::Mat img(height, width, img_type);
-	cv::transpose(img_transpose, img);
+	if(img_n_dims == 2){
+		cv::Mat img_transpose(width, height, img_type, img_ptr);		
+		cv::transpose(img_transpose, img);
+	} else{
+		copyMatrixFromMatlab(img_ptr, img, 3);
+	}
 	return img;
 }
 cv::Mat getCorners(const mxArray *mx_corners){

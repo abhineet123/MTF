@@ -5,20 +5,22 @@ import numpy as np
 import math
 import time
 import pyMTF
+from datasets import sequences, actors
 
-
-def readTrackingData(filename):
+def readGroundTruth(filename):
     if not os.path.isfile(filename):
         print "Tracking data file not found:\n ", filename
         sys.exit()
 
     data_file = open(filename, 'r')
+    header = data_file.readline()
     lines = data_file.readlines()
     no_of_lines = len(lines)
     data_array = np.zeros((no_of_lines, 8))
     line_id = 0
     for line in lines:
         words = line.split()
+        del words[0]
         if len(words) != 8:
             msg = "Invalid formatting on line %d" % line_id + " in file %s" % filename + ":\n%s" % line
             raise SyntaxError(msg)
@@ -46,27 +48,14 @@ def drawRegion(img, corners, color, thickness=1):
         p2 = (int(corners[0, (i + 1) % 4]), int(corners[1, (i + 1) % 4]))
         cv2.line(img, p1, p2, color, thickness)
 
-
-def initTracker(img, corners):
-    # initialize your tracker with the first frame from the sequence and
-    # the corresponding corners from the ground truth
-    # this function does not return anything
-	
-	pyMTF.initInput();
-    pyMTF.initialize()
-
-
-def updateTracker(img):
-    # update your tracker with the current image and return the current corners
-    # at present it simply returns the actual corners with an offset so that
-    # a valid value is returned for the code to run without errors
-    # this is only for demonstration purpose and your code must NOT use actual corners in any way
-    return pyMTF.update()
-
-
 if __name__ == '__main__':
-    sequences = ['bookI', 'bookII', 'bookIII', 'bus', 'cereal']
+
+    config_root_dir = '../../Config'
+    db_root_dir = '../../../../../Datasets';
+    actor_id = 0
     seq_id = 0
+    seq_fmt = 'jpg';
+    use_rgb_input = 0;
 
     write_stats_to_file = 0
     show_tracking_output = 1
@@ -86,15 +75,20 @@ if __name__ == '__main__':
         print 'Invalid dataset_id: ', seq_id
         sys.exit()
 
-    seq_name = sequences[seq_id]
+    actor = actors[actor_id]
+    seq_name = sequences[actor][seq_id]
     print 'seq_id: ', seq_id
     print 'seq_name: ', seq_name
 
-    src_fname = seq_name + '/img%03d.jpg'
-    ground_truth_fname = seq_name + '.txt'
+    src_fname =  '{:s}/{:s}/{:s}/frame%05d.{:s}'.format(db_root_dir, actor, seq_name, seq_fmt)
+    ground_truth_fname =  '{:s}/{:s}/{:s}.txt'.format(db_root_dir, actor, seq_name)
     result_fname = seq_name + '_res.txt'
 
     result_file = open(result_fname, 'w')
+
+    if not pyMTF.create(config_root_dir):
+        print 'Tracker creation was unsuccessful'
+        sys.exit()
 
     cap = cv2.VideoCapture()
     if not cap.open(src_fname):
@@ -109,9 +103,8 @@ if __name__ == '__main__':
     result_color = (0, 0, 255)
 
     # read the ground truth
-    ground_truth = readTrackingData(ground_truth_fname)
+    ground_truth = readGroundTruth(ground_truth_fname)
     no_of_frames = ground_truth.shape[0]
-
 
     print 'no_of_frames: ', no_of_frames
 
@@ -129,8 +122,13 @@ if __name__ == '__main__':
     # write the initial corners to the result file
     writeCorners(result_file, init_corners)
 
+
     # initialize tracker with the first frame and the initial corners
-    initTracker(init_img, init_corners)
+    if not use_rgb_input:
+        init_img = cv2.cvtColor(init_img, cv2.COLOR_RGB2GRAY)
+    if not pyMTF.initialize(init_img.astype(np.uint8), init_corners.astype(np.float64)):
+        print 'Tracker initialization was unsuccessful'
+        sys.exit()
 
     if show_tracking_output:
         # window for displaying the tracking result
@@ -152,9 +150,17 @@ if __name__ == '__main__':
                           ground_truth[frame_id, 6:8].tolist()]
         actual_corners = np.array(actual_corners).T
 
+        if not use_rgb_input:
+            src_img = cv2.cvtColor(src_img, cv2.COLOR_RGB2GRAY)
         start_time = time.clock()
+
         # update the tracker with the current frame
-        tracker_corners = updateTracker(src_img)
+        tracker_corners = pyMTF.update(src_img.astype(np.uint8))
+
+        if not isinstance(tracker_corners, np.ndarray):
+            print 'Tracker update was unsuccessful'
+            sys.exit()
+
         end_time = time.clock()
 
         # write the current tracker location to the result text file
