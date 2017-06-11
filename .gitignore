@@ -36,3 +36,4 @@ ThirdParty/Struck/Build/
 ThirdParty/FRG/Build/
 ThirdParty/DFT/src/ISMAR_Demo/DFTDemo
 ThirdParty/DFT/src/*.o
+Examples/python/*.txt
