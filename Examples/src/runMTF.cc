@@ -687,7 +687,7 @@ int main(int argc, char * argv[]) {
 			}
 			fps = 1.0 / tracking_time;
 			fps_win = 1.0 / tracking_time_with_input;
-			if(reset_template){
+			if(reset_template && (input->getFrameID() - init_frame_id) % reset_template == 0){
 				trackers[tracker_id]->initialize(trackers[tracker_id]->getRegion());
 			}
 		}

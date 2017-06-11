@@ -73,6 +73,7 @@ namespace mtf{
 		int show_xv_window = 0;
 		int pause_after_frame = 0;
 		bool print_corners = false;
+		bool print_fps = false;
 		int show_corner_ids = 0;
 		int show_cv_window = 1;
 		int show_ground_truth = 0;
@@ -1191,6 +1192,10 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "print_corners")){
 				print_corners = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "print_fps")){
+				print_fps = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "xvg_show_tracked_pts")){

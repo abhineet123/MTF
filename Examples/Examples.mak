@@ -7,6 +7,7 @@ ifeq ($(OS),Windows_NT)
 	NUMPY_INCLUDE_DIR ?= C:/Python27/Lib/site-packages/numpy/core/include
 	MTF_PY_LIB_NAME ?= pyMTF.pyd
 	PYTHON_LIB_NAME ?= python27
+	MATLAB_DIR ?= E:/Program Files/MATLAB/R2013a
 else
 	MTF_EXEC_INSTALL_DIR ?= /usr/local/bin
 	MTF_TEST_INSTALL_DIR ?= /usr/local/bin
@@ -30,7 +31,9 @@ else
 		MTF_APP_INSTALL_CMD_PREFIX = sudo
 	endif
 	FLAGS_TBB +=  -L/opt/intel/composer_xe_2015/tbb/lib/intel64/gcc4.4
+	MATLAB_DIR ?= /usr/local/MATLAB/MATLAB_Production_Server/R2013a/
 endif
+MTF_MEX_INSTALL_DIR = $(MATLAB_DIR)/toolbox/local
 
 EXAMPLE_TARGETS = exe uav mos syn qr gt patch rec py test
 ifeq (${feat}, 1)
@@ -117,6 +120,7 @@ ifeq (${o}, 1)
 	_MTF_MOS_EXE_NAME = createMosaic
 	_MTF_REC_EXE_NAME = recordSeq
 	_MTF_QR_EXE_NAME = trackMarkers
+	_MTF_MEX_MODULE_NAME = mexMTF
 	_MTF_APP_EXE_NAME = ${app}
 else ifeq (${o}, 2)
 	# LIBS_PARALLEL += -ltbb
@@ -134,6 +138,7 @@ else ifeq (${o}, 2)
 	_MTF_MOS_EXE_NAME = createMosaic_fast
 	_MTF_REC_EXE_NAME = recordSeq_fast
 	_MTF_QR_EXE_NAME = trackMarkers_fast
+	_MTF_MEX_MODULE_NAME = mexMTF_fast
 	_MTF_APP_EXE_NAME = $(addsuffix _fast, ${app})	
 else
 	MTF_RUNTIME_FLAGS += -g -O0
@@ -150,6 +155,7 @@ else
 	_MTF_MOS_EXE_NAME = createMosaic_debug
 	_MTF_REC_EXE_NAME = recordSeq_debug
 	_MTF_QR_EXE_NAME = trackMarkers_debug
+	_MTF_MEX_MODULE_NAME = mexMTF_debug
 	_MTF_APP_EXE_NAME = $(addsuffix _debug, ${app})				
 endif
 
@@ -163,6 +169,14 @@ MTF_MOS_EXE_NAME = $(addsuffix ${LIB_POST_FIX}${MTF_EXE_EXT}, ${_MTF_MOS_EXE_NAM
 MTF_REC_EXE_NAME = $(addsuffix ${LIB_POST_FIX}${MTF_EXE_EXT}, ${_MTF_REC_EXE_NAME})
 MTF_QR_EXE_NAME = $(addsuffix ${LIB_POST_FIX}${MTF_EXE_EXT}, ${_MTF_QR_EXE_NAME})
 MTF_APP_EXE_NAME = $(addsuffix ${LIB_POST_FIX}${MTF_EXE_EXT}, ${_MTF_APP_EXE_NAME})
+
+MEX_CFLAGS =  -fPIC ${WARNING_FLAGS} ${OPENCV_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} 
+MEX = $(MATLAB_DIR)/bin/mex
+MEX_OPTION = CC='$(CXX)' CXX='$(CXX)' CFLAGS='$(MEX_CFLAGS)' CXXFLAGS='$(MEX_CFLAGS)'
+# MEX_OPTION += -largeArrayDims
+MEX_LIBS = ${MTF_LIBS_DIRS} ${MTF_LIB_LINK} ${LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS} ${OPENCV_LIBS}
+MEX_EXT = $(shell $(MATLAB_DIR)/bin/mexext)
+MTF_MEX_MODULE_NAME = $(addsuffix ${LIB_POST_FIX}.${MEX_EXT}, ${_MTF_MEX_MODULE_NAME})
 
 ifeq (${vp}, 1)
 	EXAMPLES_TOOLS += inputVP
@@ -179,6 +193,7 @@ uav: ${BUILD_DIR}/${MTF_UAV_EXE_NAME}
 mos: ${BUILD_DIR}/${MTF_MOS_EXE_NAME}
 syn: ${BUILD_DIR}/${MTF_SYN_EXE_NAME}
 py: ${BUILD_DIR}/${MTF_PY_LIB_NAME}
+mex: ${BUILD_DIR}/${MTF_MEX_MODULE_NAME}
 test: ${BUILD_DIR}/${MTF_TEST_EXE_NAME}
 gt: ${BUILD_DIR}/${MTF_GT_EXE_NAME}
 patch: ${BUILD_DIR}/${MTF_PATCH_EXE_NAME}
@@ -196,6 +211,7 @@ install_syn: ${MTF_EXEC_INSTALL_DIR}/${MTF_SYN_EXE_NAME}
 install_rec: ${MTF_EXEC_INSTALL_DIR}/${MTF_REC_EXE_NAME}
 install_qr: ${MTF_EXEC_INSTALL_DIR}/${MTF_QR_EXE_NAME}
 install_py: ${MTF_PY_INSTALL_DIR}/${MTF_PY_LIB_NAME}
+install_mex: ${MTF_MEX_INSTALL_DIR}/${MTF_MEX_MODULE_NAME}
 install_test: ${MTF_TEST_INSTALL_DIR}/${MTF_TEST_EXE_NAME}
 install_app: ${MTF_APP_INSTALL_DIR}/${MTF_APP_EXE_NAME}
 install_all: ${EXAMPLE_INSTALL_TARGETS}
@@ -203,6 +219,7 @@ install_all: ${EXAMPLE_INSTALL_TARGETS}
 mtfi: install install_exe
 mtfpa: install install_patch
 mtfp: install install_py
+mtfx: install install_mex
 mtfu: install install_uav
 mtfg: install install_gt
 mtfs: install install_syn
@@ -233,10 +250,13 @@ ${MTF_EXEC_INSTALL_DIR}/${MTF_REC_EXE_NAME}: ${BUILD_DIR}/${MTF_REC_EXE_NAME}
 	${MTF_EXE_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@
 ${MTF_EXEC_INSTALL_DIR}/${MTF_QR_EXE_NAME}: ${BUILD_DIR}/${MTF_QR_EXE_NAME}
 	${MTF_EXE_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@
+${MTF_MEX_INSTALL_DIR}/${MTF_MEX_MODULE_NAME}: ${BUILD_DIR}/${MTF_MEX_MODULE_NAME}
+	${MTF_EXE_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@
 ${MTF_APP_INSTALL_DIR}/${MTF_APP_EXE_NAME}: ${BUILD_DIR}/${MTF_APP_EXE_NAME}
 	${MTF_APP_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@	
 ${MTF_PY_INSTALL_DIR}/${MTF_PY_LIB_NAME}: ${BUILD_DIR}/${MTF_PY_LIB_NAME}
 	${MTF_PY_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@
+	
 ${MTF_TEST_INSTALL_DIR}/${MTF_TEST_EXE_NAME}: ${BUILD_DIR}/${MTF_TEST_EXE_NAME}
 	${MTF_TEST_INSTALL_CMD_PREFIX} ${CP_CMD} $< $@	
 
@@ -249,6 +269,7 @@ ${BUILD_DIR}/${MTF_GT_EXE_NAME}: | ${BUILD_DIR}
 ${BUILD_DIR}/${MTF_SYN_EXE_NAME}: | ${BUILD_DIR}	
 ${BUILD_DIR}/${MTF_MOS_EXE_NAME}: | ${BUILD_DIR}	
 ${BUILD_DIR}/${MTF_QR_EXE_NAME}: | ${BUILD_DIR}	
+${BUILD_DIR}/${MTF_MEX_MODULE_NAME}: | ${BUILD_DIR}	
 ${BUILD_DIR}/${MTF_PATCH_EXE_NAME}: | ${BUILD_DIR}	
 ${BUILD_DIR}/${MTF_APP_EXE_NAME}: | ${BUILD_DIR}	
 
@@ -270,6 +291,9 @@ ${BUILD_DIR}/${MTF_PY_LIB_NAME}: ${BUILD_DIR}/pyMTF.o
 ${BUILD_DIR}/pyMTF.o: ${EXAMPLES_SRC_DIR}/pyMTF.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
 	${CXX} -w -c -fPIC $< ${WARNING_FLAGS} -D_hypot=hypot ${OPENCV_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} -I${PYTHON_INCLUDE_DIR} -I${NUMPY_INCLUDE_DIR} -o $@
 
+${BUILD_DIR}/${MTF_MEX_MODULE_NAME}: ${EXAMPLES_SRC_DIR}/mexMTF.cc ${MTF_HEADERS} ${ROOT_HEADER_DIR}/mtf.h
+	$(MEX) $(MEX_OPTION) $(MEX_LIBS) $< -o $@
+	
 ${BUILD_DIR}/${MTF_GT_EXE_NAME}: ${EXAMPLES_SRC_DIR}/showGroundTruth.cc ${EXAMPLES_TOOLS_HEADERS} ${UTILITIES_HEADER_DIR}/miscUtils.h  ${ROOT_HEADER_DIR}/mtf.h
 	${CXX}  $< -o $@ -w ${WARNING_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} ${EXAMPLES_INCLUDE_FLAGS} ${OPENCV_FLAGS} ${LIBS} ${MTF_LIB_LINK} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS_DIRS} ${MTF_LIBS} ${OPENCV_LIBS} 
 	
