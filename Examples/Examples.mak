@@ -8,6 +8,7 @@ ifeq ($(OS),Windows_NT)
 	MTF_PY_LIB_NAME ?= pyMTF.pyd
 	PYTHON_LIB_NAME ?= python27
 	MATLAB_DIR ?= E:/Program\ Files/MATLAB/R2013a
+	MEX_EXT = mexw64
 else
 	MTF_EXEC_INSTALL_DIR ?= /usr/local/bin
 	MTF_TEST_INSTALL_DIR ?= /usr/local/bin
@@ -32,12 +33,16 @@ else
 	endif
 	FLAGS_TBB +=  -L/opt/intel/composer_xe_2015/tbb/lib/intel64/gcc4.4
 	MATLAB_DIR ?= /usr/local/MATLAB/MATLAB_Production_Server/R2013a/
+	MEX_EXT = mexa64
 endif
 MTF_MEX_INSTALL_DIR = $(MATLAB_DIR)/toolbox/local
 
 EXAMPLE_TARGETS = exe uav mos syn qr gt patch rec py test
+
+# check if MATLAB folder exists
 ifneq ($(wildcard ${MATLAB_DIR}/.),)
 	EXAMPLE_TARGETS += mex
+	MEX_EXT = $(shell $(MATLAB_DIR)/bin/mexext)
 endif
 # if [ -d "${MATLAB_DIR}" ]; then EXAMPLE_TARGETS += mex; elsefi
 ifeq (${feat}, 1)
@@ -177,7 +182,6 @@ MEX = $(MATLAB_DIR)/bin/mex
 MEX_OPTION = CC='$(CXX)' CXX='$(CXX)' CFLAGS='$(MEX_CFLAGS)' CXXFLAGS='$(MEX_CFLAGS)'
 # MEX_OPTION += -largeArrayDims
 MEX_LIBS = ${MTF_LIBS_DIRS} ${MTF_LIB_LINK} ${LIBS} ${BOOST_LIBS} ${LIBS_PARALLEL} ${MTF_LIBS} ${OPENCV_LIBS}
-MEX_EXT = $(shell $(MATLAB_DIR)/bin/mexext)
 MTF_MEX_MODULE_NAME = $(addsuffix ${LIB_POST_FIX}.${MEX_EXT}, ${_MTF_MEX_MODULE_NAME})
 
 ifeq (${vp}, 1)
