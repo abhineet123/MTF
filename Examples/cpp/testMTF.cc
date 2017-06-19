@@ -5,17 +5,17 @@
 #include "mtf/Utilities/miscUtils.h"
 #include "mtf/Utilities/excpUtils.h"
 
-#include <time.h>
-#include <numeric>
-#include <vector>
-#include <memory>
-
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
 #include "boost/filesystem/operations.hpp"
 #include "boost/filesystem/path.hpp"
 
+#include <time.h>
+#include <numeric>
+#include <vector>
+#include <memory>
+#include <fstream>
 
 using namespace std;
 namespace fs = boost::filesystem;
@@ -188,7 +188,7 @@ int main(int argc, char * argv[]) {
 		}
 	}
 	std::string bin_out_fname;
-	std::vector<std::shared_ptr<ofstream> > out_files;
+	std::vector<std::shared_ptr<std::ofstream> > out_files;
 	out_files.resize(diag_len);
 	if(diag_bin){
 		for(int data_id = 0; data_id < diag_len; data_id++){
@@ -209,8 +209,7 @@ int main(int argc, char * argv[]) {
 				} else{
 					printf("Writing %s data to %s\n", data_name, bin_out_fname.c_str());
 				}
-				;
-				out_files[data_id].reset(new ofstream(bin_out_fname, ios::out | ios::binary));
+				out_files[data_id].reset(new std::ofstream(bin_out_fname, ios::out | ios::binary));
 				if(diag_3d){
 					Vector4i header(start_id - 1, start_id, diag_res, diag_res);
 					out_files[data_id]->write((char*)(header.data()), sizeof(int) * 4);
