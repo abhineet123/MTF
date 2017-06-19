@@ -35,7 +35,7 @@ else
 	MATLAB_DIR ?= /usr/local/MATLAB/MATLAB_Production_Server/R2013a/
 	MEX_EXT = mexa64
 endif
-MTF_MEX_INSTALL_DIR = $(MATLAB_DIR)/toolbox/local
+MTF_MEX_INSTALL_DIR ?= $(MATLAB_DIR)/toolbox/local
 
 EXAMPLE_TARGETS = exe uav mos syn gt patch rec py test
 

@@ -14,9 +14,8 @@ for more details on the system design and
 [**this one**](http://webdocs.cs.ualberta.ca/~asingh1/docs/Modular%20Decomposition%20and%20Analysis%20of%20Registration%20based%20Trackers%20(CRV%202016).pdf)
 for some preliminary results. There is also a [**dedicated website**](http://webdocs.cs.ualberta.ca/~vis/mtf/) where Doxygen documentation will soon be available along with detailed tutorials and examples. It also provides several datasets formatted to work with MTF.
 
-The library is implemented entirely in C++ though a Python interface called `pyMTF` also exists and works seamlessly with our [Python Tracking Framework](https://github.com/abhineet123/PTF). 
-A Matlab interface similar to [Mexvision](http://ugweb.cs.ualberta.ca/~vis/courses/CompVis/lab/mexVision/) is currently under development too.
-We also provide a simple interface for [ROS](http://www.ros.org/) called [mtf_bridge](https://github.com/abhineet123/MTF_BRIDGE) (also present in the `ROS` sub folder) for seamless integration with robotics applications.
+The library is implemented entirely in C++ though interfaces for Python and MATLAB are also provided to aid its use in research applications.
+A simple interface for [ROS](http://www.ros.org/) called [mtf_bridge](https://github.com/abhineet123/MTF_BRIDGE) (present in the `ROS` sub folder) is likewise provided for seamless integration with robotics applications.
 
 **MTF supports both Unix and Windows platforms**. Though it has been tested comprehensively only under Linux, specifically Ubuntu 14.04, it should work on Macintosh systems too (see [Compile/Runtime Notes](#compileruntime-notes) section below for resolving possible issues). The Windows build system is in its early stages and needs some manual setting of variables but it is quite usable and we are working on making it more user friendly.
 
@@ -68,6 +67,8 @@ Installation:
 		- if the Python interface is to be built, install [Python 2.7.x](https://www.python.org/downloads/windows/) and [Numpy](http://www.numpy.org/).
 		    - cmake should normally be able to find the needed Python/Numpy libraries and headers without any other setup
 			- if any problems are encountered, please open an issue to let us know about it
+		- MATLAB interface
+			- the MATLAB interface for MTF is unfortunately currently not available for Windows due to highly complex incompatibilities between [CMake and MATLAB](https://cmake.org/Wiki/CMake/MatlabMex) and also between MATLAB and Visual Studio for which we have not been able to find any convenient solutions.
 		
 	* Using GNU Make with MinGW
 	    - **Note**:  This method is not recommended due to the following issues:
@@ -94,13 +95,18 @@ Installation:
     * `make install` : compiles the shared library if needed and copies it to _/usr/local/lib_; also copies the headers to _/usr/local/include/mtf_; (use `make install_lib` or `make install_header` for only one of the two); if third party trackers are enabled, their respective library files will be installed too;
 	    - this needs administrative (sudo) privilege; if not available, the variables `MTF_LIB_INSTALL_DIR` and `MTF_HEADER_INSTALL_DIR` in the makefile can be modified to install elsewhere. This can be done either by editing the file itself or providing these with the make command as: `make install MTF_LIB_INSTALL_DIR=<library_installation_dir> MTF_HEADER_INSTALL_DIR=<header_installation_dir>`
 		    - these folders should be present in LD_LIBRARY_PATH and C_INCLUDE_PATH/CPLUS_INCLUDE_PATH environment variables respectively so any application using MTF can find the library and headers.
-    * `make exe` : compiles the example file _Examples/src/runMTF.cc_ to create an executable called _runMTF_ that uses this library to track objects. This too is placed in the build directory.
+    * `make exe` : compiles the example file _Examples/cpp/runMTF.cc_ to create an executable called _runMTF_ that uses this library to track objects. This too is placed in the build directory.
 	    - library should be installed before running this, otherwise linking will not succeed
 	* `make install_exe`: creates _runMTF_ if needed and copies it to _/usr/local/bin_; this needs administrative privilege too - change `MTF_EXEC_INSTALL_DIR` in Examples/Examples.mak (or during compilation as above) if this is not available
     * **`make mtfi` : all of the above - recommended command that compiles and installs the library and the executable**
-    * `make py`/`make install_py` : compile/install the Python interface to MTF - this creates a Python module called _pyMTF.so_ that serves as a front end for running these trackers from Python.
-	    - usage of this module is fully demonstrated in the `mtfTracker.py` file in our [Python Tracking Framework](https://github.com/abhineet123/PTF)
+    * `make py`/`make install_py` : compile/install the Python interface to MTF - this creates a Python module called _pyMTF_ that serves as a front end for running these trackers from Python.
+	    - usage of this module is demonstrated in `Examples/python/runMTF.py`
 	    -  installation location can be specified through `MTF_PY_INSTALL_DIR` (defaults to _/usr/local/lib/python2.7/dist-packages/_)
+		- currently only supports Python 2.7 so will give compilation errors if Python 3 is also installed and set as default
+    * `make mex`/`make install_mex` : compile/install the MATLAB interface to MTF - this creates a MATLAB module called _mexMTF_ that serves as a front end for running these trackers from MATLAB.
+	    - set `MATLAB_DIR` variable in `Examples.mak` to the root of the MATLAB installation folder 
+		- usage of this module is demonstrated in `Examples/matlab/runMTF.m`
+	    -  installation location can be specified through `MTF_MEX_INSTALL_DIR` (defaults to _<MATLAB_DIR>/toolbox/local_)
 		- currently only supports Python 2.7 so will give compilation errors if Python 3 is also installed and set as default
     * `make uav`/`make install_uav` : compile/install an application called `trackUAVTrajectory` that tracks the trajectory of a UAV in a satellite image of the area over which it flew while capturing images from above
     * `make mos`/`make install_mos` : compile/install an application called `createMosaic` that constructs a live mosaic from a video of the region to be stitched
@@ -109,7 +115,7 @@ Installation:
 	    - this reads marker images from `Data/Markers` folder by default; this can be changed by adjusting `qr_root_dir` in `Config/examples.cfg` where the names of marker files and the number of markers can also be specified along with some other parameters;
     * `make all`/`make install_all` : compile/install all example applications that come with MTF along with the Python interface
 	* `make app app=<APPLICATION_NAME>`: build a custom application that uses MTF with its source code located in `<APPLICATION_NAME>.cc`; the compiled executable goes in the build directory;
-	    - location of the source file (<APPLICATION_NAME>.cc) can be specified through `MTF_APP_SRC_DIR` (defaults to _Examples/src_)
+	    - location of the source file (<APPLICATION_NAME>.cc) can be specified through `MTF_APP_SRC_DIR` (defaults to _Examples/cpp_)
 	    - `make mtfa` will install it too - installation location can be specified through `MTF_APP_INSTALL_DIR` (defaults to the current folder)
     * <a name="compile-time-switches"/>**Compile time switches**</a> for all of the above commands (only applicable to the **make** build system - for cmake there are corresponding options for some of the switches that can be configured before building its makefile):
 	    - `only_nt=1`/`nt=1` will enable only the **Non Templated (NT)** implementations of SMs and disable their templated versions that are extremely time consuming to compile though being faster at runtime (disabled by default)
