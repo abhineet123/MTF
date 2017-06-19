@@ -73,7 +73,7 @@ for frame_id = init_frame_id + 1:n_frames
     end
     gt_corners(1, :) = gt_data(frame_id, [1, 3, 5, 7]);
     gt_corners(2, :) = gt_data(frame_id, [2, 4, 6, 8]);
-	curr_error = sum((gt_corners - curr_corners).^2);
+	curr_error = norm((gt_corners - curr_corners), 'fro')';
 	avg_error = avg_error + (curr_error - avg_error)/(frame_id - init_frame_id);
 	if show_window
 		imshow(curr_img);
