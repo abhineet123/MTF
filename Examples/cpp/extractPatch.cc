@@ -5,12 +5,14 @@
 #include "mtf/Config/parameters.h"
 #include "mtf/Config/datasets.h"
 
-#include <string.h>
-#include <vector>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
 #include "boost/filesystem/path.hpp"
+
+#include <string.h>
+#include <vector>
+#include <fstream>
 
 using namespace std;
 using namespace mtf::params;
