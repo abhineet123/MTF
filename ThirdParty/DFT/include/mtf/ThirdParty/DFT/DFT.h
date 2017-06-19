@@ -47,7 +47,6 @@ namespace dft{
 	public:
 		typedef DFTParams ParamType;
 
-		DFT();
 		DFT(const ParamType *dft_params = nullptr);
 		void setImage(const cv::Mat &img) override{ curr_img = img; }
 		int inputType() const  override{ return CV_32FC1; }

@@ -27,7 +27,6 @@ public:
 	typedef unique_ptr<frg::Fragments_Tracker> Tracker_;
 	typedef FRGParams ParamType;
 
-	FRG();
 	FRG(const ParamType *_frg_params = nullptr);
 	int inputType() const override{ return CV_8UC1; }
 	void initialize(const cv::Mat& cv_corners) override;

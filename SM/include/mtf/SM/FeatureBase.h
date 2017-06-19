@@ -2,6 +2,7 @@
 #define MTF_FEATURE_BASE_H
 
 #include "mtf/TrackerBase.h"
+#include "mtf/Macros/common.h"
 
 _MTF_BEGIN_NAMESPACE
 

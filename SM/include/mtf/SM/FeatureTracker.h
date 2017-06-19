@@ -1,9 +1,8 @@
 #ifndef MTF_FEATURE_TRACKER_H
 #define MTF_FEATURE_TRACKER_H
 
-//#define DISABLE_FLANN
-
 #include "FeatureBase.h"
+
 #include "opencv2/nonfree/nonfree.hpp"
 #ifndef DISABLE_FLANN
 #include <flann/flann.hpp>

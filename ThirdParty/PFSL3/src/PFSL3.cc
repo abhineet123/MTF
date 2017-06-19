@@ -8,6 +8,35 @@ extern "C" {
 #include <opencv/highgui.h>
 #include <opencv/cxcore.h>
 
+#define MMAX(x,y) ( (x) > (y) ? (x) : (y) )
+#define MMIN(x,y) ( (x) < (y) ? (x) : (y) )
+
+#define PFSL3_P_X 40
+#define PFSL3_P_Y 40
+#define PFSL3_ROT 0
+#define PFSL3_NCC_STD 0.1
+#define PFSL3_PCA_STD 10
+#define PFSL3_STATE_SIG 
+#define PFSL3_AR_P 0.5
+#define PFSL3_N 40
+#define PFSL3_N_C 10
+#define PFSL3_N_ITER 5
+#define PFSL3_SAMPLING 0
+#define PFSL3_CAPTURE 0
+#define PFSL3_MEAN_CHECK 0
+#define PFSL3_OUTLIER_FLAG 0
+#define PFSL3_LEN 100
+#define PFSL3_INIT_SIZE 15
+#define PFSL3_UPDATE_PERIOD 5
+#define PFSL3_FF 0.99
+#define PFSL3_BASIS_THR 0.95
+#define PFSL3_MAX_NUM_BASIS 30
+#define PFSL3_MAX_NUM_USED_BASIS 10
+#define PFSL3_SHOW_WEIGHTS 0
+#define PFSL3_SHOW_TEMPLATES 0
+#define PFSL3_DEBUG_MODE 0
+#define PFSL3_STATE_STD 3.5,3.5,0.04,0.015,0.015,0.015,0.0003,0.0003
+
 #define print_array(arr, arr_size, arr_name, format, fid)\
 	fprintf(fid, arr_name);\
 	fprintf(fid, ":\n");\

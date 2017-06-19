@@ -41,7 +41,7 @@ class RCT : public mtf::TrackerBase
 public:
 	typedef RCTParams Paramtype;
 	~RCT(void);
-	RCT(const Paramtype *rct_params);
+	RCT(const Paramtype *rct_params=nullptr);
 
 private:
 	Paramtype params;

@@ -36,7 +36,7 @@ public:
     int *idxs;
 	cv::Mat convertFloatImg(cv::Mat &img);
 
-	DSST(DSSTParams *params = NULL);
+	DSST(DSSTParams *params = nullptr);
 	void initialize(const cv::Mat& corners) override;
     void setRegion(const cv::Mat& corners) override;
 	void update() override;

@@ -18,7 +18,7 @@
 #include <mtf/mtf.h>
 #include "mtf/Utilities/miscUtils.h"
 
-#include "mtf/Tools/pipeline.h"
+#include "mtf/pipeline.h"
 
 typedef std::unique_ptr<mtf::TrackerBase> Tracker_;
 

@@ -205,9 +205,15 @@ namespace utils{
 		int grad_type = output_type == CV_32FC3 || output_type == CV_32FC1 ? CV_32FC1 : CV_8UC1;
 		frame_out.create(frame_raw.rows, frame_raw.cols, output_type);
 		if(rgb_output){
-			grad_x = cv::Mat(frame_raw.rows, frame_raw.cols, grad_type, (float*)(frame_out.data), 3);
-			grad_y = cv::Mat(frame_raw.rows, frame_raw.cols, grad_type, (float*)(frame_out.data + 1), 3);
-			grad = cv::Mat(frame_raw.rows, frame_raw.cols, grad_type, (float*)(frame_out.data + 2), 3);
+			if(output_type == CV_32FC3){
+				grad_x = cv::Mat(frame_raw.rows, frame_raw.cols, grad_type, (float*)(frame_out.data), 3);
+				grad_y = cv::Mat(frame_raw.rows, frame_raw.cols, grad_type, (float*)(frame_out.data + 1), 3);
+				grad = cv::Mat(frame_raw.rows, frame_raw.cols, grad_type, (float*)(frame_out.data + 2), 3);
+			} else{
+				grad_x = cv::Mat(frame_raw.rows, frame_raw.cols, grad_type, (frame_out.data), 3);
+				grad_y = cv::Mat(frame_raw.rows, frame_raw.cols, grad_type, (frame_out.data + 1), 3);
+				grad = cv::Mat(frame_raw.rows, frame_raw.cols, grad_type, (frame_out.data + 2), 3);
+			}
 		} else{
 			grad_x.create(frame_raw.rows, frame_raw.cols, grad_type);
 			grad_y.create(frame_raw.rows, frame_raw.cols, grad_type);
@@ -218,6 +224,7 @@ namespace utils{
 		PreProcBase::initialize(frame_raw, _frame_id, print_types);
 	}
 	void SobelFltering::processFrame(const cv::Mat &frame_raw){
+		frame_in = frame_raw;
 		if(rgb_input){
 			frame_raw.convertTo(frame_rgb, frame_rgb.type());
 			cv::cvtColor(frame_rgb, frame_gs, CV_BGR2GRAY);
@@ -227,12 +234,12 @@ namespace utils{
 		apply(frame_gs);
 	}
 	void SobelFltering::apply(cv::Mat &img_gs) const{
-		printf("img_gs.type: %s\n", utils::typeToString(img_gs.type()));
-		printf("grad_x.type: %s\n", utils::typeToString(grad_x.type()));
-		printf("grad_y.type: %s\n", utils::typeToString(grad_y.type()));
-		printf("abs_grad_x.type: %s\n", utils::typeToString(abs_grad_x.type()));
-		printf("abs_grad_y.type: %s\n", utils::typeToString(abs_grad_y.type()));
-		printf("grad.type: %s\n", utils::typeToString(grad.type()));
+		//printf("img_gs.type: %s\n", utils::typeToString(img_gs.type()));
+		//printf("grad_x.type: %s\n", utils::typeToString(grad_x.type()));
+		//printf("grad_y.type: %s\n", utils::typeToString(grad_y.type()));
+		//printf("abs_grad_x.type: %s\n", utils::typeToString(abs_grad_x.type()));
+		//printf("abs_grad_y.type: %s\n", utils::typeToString(abs_grad_y.type()));
+		//printf("grad.type: %s\n", utils::typeToString(grad.type()));
 		/// Gradient X
 		Sobel(img_gs, grad_x, -1, 1, 0, kernel_size, 1, 0, cv::BORDER_DEFAULT);
 		//convertScaleAbs(grad_x, abs_grad_x);
@@ -251,9 +258,15 @@ namespace utils{
 			img_list.push_back(grad_x);
 			img_list.push_back(grad_y);
 			img_list.push_back(grad);
+			imshow("grad_x", grad_x);
+			imshow("grad_y", grad_y);
+			imshow("grad", grad);
+			//img_list.push_back(frame_in);
+			//img_list.push_back(frame_in);
+			//img_list.push_back(frame_in);
 			cv::Mat stacked_img = utils::stackImages(img_list, 0);
 			if(stacked_img.type() == CV_32FC1){
-				disp_img.create(frame_out.rows, frame_out.cols, CV_8UC1);
+				disp_img.create(stacked_img.rows, stacked_img.cols, CV_8UC1);
 				stacked_img.convertTo(disp_img, disp_img.type());
 			} else{
 				disp_img = stacked_img;

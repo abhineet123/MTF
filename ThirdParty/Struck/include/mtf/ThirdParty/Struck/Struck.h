@@ -21,7 +21,6 @@ namespace struck{
 	class Struck : public mtf::TrackerBase{
 	public:
 		typedef StruckParams ParamType;
-		Struck();
 		Struck(const ParamType *struck_params = nullptr);
 		void setImage(const cv::Mat &img) override;
 		int inputType() const  override{ return CV_8UC1; }

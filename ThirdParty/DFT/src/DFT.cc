@@ -65,14 +65,6 @@ namespace dft{
 		opt_params.borderThicknessVertical = 0;
 		return opt_params;
 	}
-	DFT::DFT() : 
-		panelCorners(4), 
-		warpedPixels(4),
-		parameters(8, 0),
-		parametersInitialGuess(8, 0){
-		name = "dft";
-		opt_params = params.clone();
-	}
 
 	DFT::DFT(const ParamType *dft_params) :
 		params(dft_params),

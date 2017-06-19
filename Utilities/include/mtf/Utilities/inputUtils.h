@@ -2,6 +2,7 @@
 #define MTF_INPUT_UTILS_H
 
 #include "mtf/Utilities/excpUtils.h"
+#include "mtf/Macros/common.h"
 
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"

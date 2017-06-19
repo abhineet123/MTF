@@ -32,9 +32,6 @@ show_window(FRG_SHOW_WINDOW){
 	}
 }
 
-FRG::FRG() : mtf::TrackerBase(){
-	name = "frg";
-}
 FRG::FRG(const ParamType *_frg_params) : TrackerBase(),
 params(_frg_params){
 	name = "frg";

@@ -11,13 +11,6 @@ namespace struck{
 			config_path = params->config_path;
 		}
 	}
-	Struck::Struck() :
-		conf(params.config_path),
-		tracker(conf),
-		scaleW(1),
-		scaleH(1){
-		name = "struck";
-	}
 
 	Struck::Struck(const ParamType *struck_params) :
 		params(struck_params),
