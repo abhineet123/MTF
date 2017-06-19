@@ -109,11 +109,7 @@ namespace utils{
 			VpResUSB _usb_res = VpResUSB::Default,
 			VpFpsUSB _usb_fps = VpFpsUSB::Default,
 			VpResFW _fw_res = VpResFW::Default,
-			VpFpsFW _fw_fps = VpFpsFW::Default) :
-			InputBase(img_source, _dev_name, _dev_fmt, _dev_path, _n_buffers, _invert_seq),
-			frame_id(0), cap_obj(nullptr), usb_res(_usb_res), usb_fps(_usb_fps),
-			fw_res(_fw_res), fw_fps(_fw_fps), usb_n_buffers(_usb_n_buffers){}
-
+			VpFpsFW _fw_fps = VpFpsFW::Default);
 		~InputVP(){
 			vp_buffer.clear();
 			if(cap_obj){

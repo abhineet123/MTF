@@ -150,6 +150,14 @@ namespace utils{
 		}
 	}
 #ifndef DISABLE_VISP
+	InputVP::InputVP(char img_source, string _dev_name, string _dev_fmt,
+		string _dev_path, int _n_buffers, int _usb_n_buffers,
+		bool _invert_seq ,	VpResUSB _usb_res,	VpFpsUSB _usb_fps,
+		VpResFW _fw_res, VpFpsFW _fw_fps) :
+		InputBase(img_source, _dev_name, _dev_fmt, _dev_path, _n_buffers, _invert_seq),
+		frame_id(0), cap_obj(nullptr), usb_res(_usb_res), usb_fps(_usb_fps),
+		fw_res(_fw_res), fw_fps(_fw_fps), usb_n_buffers(_usb_n_buffers){}
+
 	bool InputVP::initialize(){
 		printf("Initializing ViSP pipeline...\n");
 		n_channels = 3;
