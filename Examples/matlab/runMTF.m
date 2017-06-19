@@ -84,7 +84,7 @@ for frame_id = init_frame_id + 1:n_frames
 		pause(0.001);
 	else
 		if mod(frame_id, 50)==0
-			fprintf('frame_id: %d\t curr_error: %f\t error: %f\n', frame_id, curr_error, avg_error)
+			fprintf('frame_id: %d\t curr_error: %f\t avg_error: %f\n', frame_id, curr_error, avg_error)
 		end
 	end
 
