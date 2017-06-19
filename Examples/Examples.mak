@@ -35,7 +35,11 @@ else
 endif
 MTF_MEX_INSTALL_DIR = $(MATLAB_DIR)/toolbox/local
 
-EXAMPLE_TARGETS = exe uav mos syn qr gt patch rec py mex test
+EXAMPLE_TARGETS = exe uav mos syn qr gt patch rec py test
+ifneq ($(wildcard ${MATLAB_DIR}/.),)
+	EXAMPLE_TARGETS += mex
+endif
+# if [ -d "${MATLAB_DIR}" ]; then EXAMPLE_TARGETS += mex; elsefi
 ifeq (${feat}, 1)
 	EXAMPLE_TARGETS += qr
 endif
