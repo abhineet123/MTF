@@ -15,8 +15,9 @@ seq_fmt = 'jpg';
 config_root_dir = '../../Config';
 db_root_dir = '../../../../../Datasets';
 init_frame_id = 1;
-show_fps = 0;
 use_rgb_input = 1;
+show_fps = 0;
+show_window = 0;
 
 actor = actors{actor_id+1};
 seq_name = sequences{actor_id + 1}{seq_id + 1};
@@ -67,10 +68,17 @@ for frame_id = init_frame_id + 1:n_frames
     end
     gt_corners(1, :) = gt_data(frame_id, [1, 3, 5, 7]);
     gt_corners(2, :) = gt_data(frame_id, [2, 4, 6, 8]);
-    imshow(curr_img);
-    hold on;
-    plot(gt_data(frame_id, [1, 3, 5, 7, 1]), gt_data(frame_id, [2, 4, 6, 8, 2]), 'Color','g', 'LineWidth',2);
-    plot([curr_corners(1, :),curr_corners(1, 1)], [curr_corners(2, :), curr_corners(2, 1)], 'Color','r', 'LineWidth',2);
-    hold off;
-    pause(0.001);
+	if show_window
+		imshow(curr_img);
+		hold on;
+		plot(gt_data(frame_id, [1, 3, 5, 7, 1]), gt_data(frame_id, [2, 4, 6, 8, 2]), 'Color','g', 'LineWidth',2);
+		plot([curr_corners(1, :),curr_corners(1, 1)], [curr_corners(2, :), curr_corners(2, 1)], 'Color','r', 'LineWidth',2);
+		hold off;
+		pause(0.001);
+	else
+		if mod(frame_id, 50)==0
+			fprintf('%d frames done', frame_id)
+		end
+	end
+
 end
