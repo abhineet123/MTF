@@ -51,7 +51,7 @@ static cv::Point fps_origin(10, 20);
 static double fps_font_size = 0.50;
 static cv::Scalar fps_color(0, 255, 0);
 static int frame_id;
-static int tracker_id = 0;
+static unsigned int tracker_id = 0;
 static char* config_root_dir = "C++/MTF/Config";
 static bool tracker_created = false, tracker_initialized = false;
 
@@ -124,7 +124,11 @@ static PyObject* create(PyObject* self, PyObject* args) {
 		return Py_BuildValue("i", 0);
 	}
 	tracker_created = true;
-	tracker_id = trackers.size() - 1;
+	if(trackers.size() == 0){
+		tracker_id = 0;
+	} else{
+		tracker_id = trackers.size() - 1;
+	}
 	return Py_BuildValue("i", 1);
 }
 
@@ -340,7 +344,11 @@ static PyObject* remove(PyObject* self, PyObject* args) {
 			err.type(), err.what());
 		return Py_BuildValue("i", 0);
 	}
-	tracker_id = trackers.size() - 1;
+	if(trackers.size() == 0){
+		tracker_id = 0;
+	} else{
+		tracker_id = trackers.size() - 1;
+	}	
 	return Py_BuildValue("i", 1);
 
 }

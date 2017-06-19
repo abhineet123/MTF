@@ -47,7 +47,7 @@ static int img_height, img_width;
 static vector<cv::Scalar> obj_cols;
 
 static int frame_id;
-static int tracker_id = 0;
+static unsigned int tracker_id = 0;
 static char* config_root_dir = nullptr;
 static bool using_input_pipeline = false;
 
@@ -281,7 +281,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			return;
 		}
 		tracker_created = true;
-		tracker_id = trackers.size() - 1;
+		if(trackers.size() == 0){
+			tracker_id = 0;
+		} else{
+			tracker_id = trackers.size() - 1;
+		}
 		*ret_val = 1;
 		return;
 	}
@@ -389,7 +393,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 				tracker_id, trackers.size()).c_str());
 		}
 		trackers.erase(trackers.begin() + tracker_id);
-		tracker_id = trackers.size() - 1;
+		if(trackers.size() == 0){
+			tracker_id = 0;
+		} else{
+			tracker_id = trackers.size() - 1;
+		}
 		*ret_val = 1;
 		return;
 	}
