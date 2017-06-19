@@ -12,8 +12,12 @@ actor_id = 0;
 seq_id = 0;
 img_source = 'j';
 seq_fmt = 'jpg';
-config_root_dir = '../../Config';
-db_root_dir = '../../../../../Datasets';
+if ~exist config_root_dir var
+	config_root_dir = '../../Config';
+end
+if ~exist db_root_dir var
+	db_root_dir = '../../../../../Datasets';
+end
 init_frame_id = 1;
 use_rgb_input = 1;
 show_fps = 0;
@@ -50,6 +54,7 @@ else
     fprintf('Tracker initialized successfully\n');
 end
 % pause
+avg_error = 0;
 for frame_id = init_frame_id + 1:n_frames
     img_path = sprintf('%s/frame%05d.%s', seq_path, frame_id, seq_fmt);
     curr_img = imread(img_path);    
@@ -68,6 +73,8 @@ for frame_id = init_frame_id + 1:n_frames
     end
     gt_corners(1, :) = gt_data(frame_id, [1, 3, 5, 7]);
     gt_corners(2, :) = gt_data(frame_id, [2, 4, 6, 8]);
+	curr_error = sum((gt_corners - curr_corners).^2);
+	avg_error = avg_error + (curr_error - avg_error)/(frame_id - init_frame_id + 1)
 	if show_window
 		imshow(curr_img);
 		hold on;
@@ -77,7 +84,7 @@ for frame_id = init_frame_id + 1:n_frames
 		pause(0.001);
 	else
 		if mod(frame_id, 50)==0
-			fprintf('%d frames done', frame_id)
+			fprintf('frame_id: %d\t curr_error: %f\t error: %f\n', frame_id, curr_error, avg_error)
 		end
 	end
 
