@@ -767,6 +767,8 @@ namespace utils{
 	VectorXd reshapePatch(const cv::Mat &cv_patch,
 		int start_x = 0, int start_y = 0,
 		int end_x = -1, int end_y = -1);
+	void anisotropicDiffusion(cv::Mat &output,	double lambda = 1.0 / 7.0, 
+		double k = 30, unsigned int n_iters = 15);
 }
 _MTF_END_NAMESPACE
 #endif

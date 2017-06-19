@@ -7,7 +7,7 @@ UTILITIES_HEADER_DIR = ${UTILITIES_INCLUDE_DIR}/mtf/Utilities
 
 MTF_INCLUDE_DIRS += ${UTILITIES_INCLUDE_DIR}
 
-UTILITIES = imgUtils warpUtils histUtils miscUtils spiUtils
+UTILITIES = imgUtils warpUtils histUtils miscUtils spiUtils inputUtils preprocUtils objUtils
 UTILITIES_HEADER_ONLY = excpUtils
 MTF_UTIL_OBJS = $(addprefix ${BUILD_DIR}/,$(addsuffix .o, ${UTILITIES}))
 MTF_UTIL_HEADERS = $(addprefix ${UTILITIES_HEADER_DIR}/, $(addsuffix .h, ${UTILITIES} ${UTILITIES_HEADER_ONLY}))
@@ -23,6 +23,10 @@ gip ?= -1
 hip ?= -1
 pbr ?= -1
 graph_utils ?= 1
+
+ifeq (${vp}, 1)
+	MTF_LIBS += -lvisp_io -lvisp_sensor
+endif
 
 ifeq (${htbb}, 1)
 HIST_FLAGS += -D ENABLE_HIST_TBB
@@ -95,3 +99,13 @@ ${BUILD_DIR}/graphUtils.o: ${UTILITIES_SRC_DIR}/graphUtils.cc ${UTILITIES_HEADER
 	
 ${BUILD_DIR}/spiUtils.o: ${UTILITIES_SRC_DIR}/spiUtils.cc ${UTILITIES_HEADER_DIR}/spiUtils.h ${MACROS_HEADER_DIR}/common.h
 	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< -o $@	
+	
+${BUILD_DIR}/inputUtils.o: ${UTILITIES_SRC_DIR}/inputUtils.cc ${UTILITIES_HEADER_DIR}/inputUtils.h  ${UTILITIES_HEADER_DIR}/excpUtils.h ${MACROS_HEADER_DIR}/common.h
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< -o $@
+	
+${BUILD_DIR}/preprocUtils.o: ${UTILITIES_SRC_DIR}/preprocUtils.cc ${UTILITIES_HEADER_DIR}/preprocUtils.h ${UTILITIES_HEADER_DIR}/imgUtils.h  ${UTILITIES_HEADER_DIR}/excpUtils.h ${MACROS_HEADER_DIR}/common.h
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS} ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< -o $@
+	
+${BUILD_DIR}/objUtils.o: ${UTILITIES_SRC_DIR}/objUtils.cc ${UTILITIES_HEADER_DIR}/objUtils.h ${UTILITIES_HEADER_DIR}/inputUtils.h ${UTILITIES_HEADER_DIR}/excpUtils.h ${MACROS_HEADER_DIR}/common.h
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${PROF_FLAGS} ${MTF_COMPILETIME_FLAGS}  ${MTF_RUNTIME_FLAGS} ${MTF_INCLUDE_FLAGS} $< -o $@
+	

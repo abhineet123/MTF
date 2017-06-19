@@ -510,6 +510,10 @@ namespace utils{
 			mat_copy.row(id).copyTo(mat.row(indices[id]));
 		}
 	}
+	cv::Mat concatenate(const cv::Mat img_list[], int n_images, int axis);
+	//! stack_order :: 0: row major 1 : column major
+	cv::Mat stackImages(const std::vector<cv::Mat> &img_list, int stack_order = 0);
+
 }
 _MTF_END_NAMESPACE
 #endif

@@ -2,6 +2,7 @@
 #include "mtf/Utilities/miscUtils.h"
 #include "mtf/Utilities/warpUtils.h"
 #include "opencv2/highgui/highgui.hpp"
+#include<opencv2/imgproc/imgproc.hpp>
 
 #ifdef USE_TBB
 #include "tbb/tbb.h" 
@@ -153,7 +154,7 @@ namespace utils{
 		double dx = x - static_cast<int>(x);
 		double dy = y - static_cast<int>(y);
 		return  biCubic(bicubic_coeff, dx, dy);
-	}	
+	}
 
 #ifdef USE_TBB
 #include "imgUtils_tbb.cc"
@@ -579,7 +580,7 @@ namespace utils{
 					warped_offset_pts(3, pix_id), h, w);
 				pix_val_inc_y = PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(img, warped_offset_pts(4, pix_id),
 					warped_offset_pts(5, pix_id), h, w);
-				pix_val_dec_y= PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(img, warped_offset_pts(6, pix_id),
+				pix_val_dec_y = PixVal<ScalarType, GRAD_INTERP_TYPE, PIX_BORDER_TYPE>::get(img, warped_offset_pts(6, pix_id),
 					warped_offset_pts(7, pix_id), h, w);
 				warped_img_grad(pix_id, 0) = (pix_val_inc_x - pix_val_dec_x)*grad_mult_factor;
 				warped_img_grad(pix_id, 1) = (pix_val_inc_y - pix_val_dec_y)*grad_mult_factor;
@@ -684,7 +685,8 @@ namespace utils{
 				warped_img_hess(0, pix_id) = (pix_val_inc_x + pix_val_dec_x - 2 * pix_val)*hess_mult_factor;
 				warped_img_hess(3, pix_id) = (pix_val_inc_y + pix_val_dec_y - 2 * pix_val)*hess_mult_factor;
 				warped_img_hess(1, pix_id) = warped_img_hess(2, pix_id) = ((pix_val_inc_xy + pix_val_dec_xy) -
-					(pix_val_inc_yx + pix_val_dec_yx)) * hess_mult_factor;			}
+					(pix_val_inc_yx + pix_val_dec_yx)) * hess_mult_factor;
+			}
 		}
 		// mapped version
 		template<typename ScalarType, InterpType mapping_type>
@@ -1641,7 +1643,7 @@ namespace utils{
 					pix_val[channel_id] = max(0.0, pix_val[channel_id]);
 				}
 				warped_img.at<cv::Vec3b>(row_id, col_id) =
-					cv::Vec3b(static_cast<uchar>(pix_val[0]), 
+					cv::Vec3b(static_cast<uchar>(pix_val[0]),
 					static_cast<uchar>(pix_val[1]),
 					static_cast<uchar>(pix_val[2]));
 			} else{
@@ -1693,11 +1695,11 @@ namespace utils{
 			throw InvalidArgument(
 				cv::format("Invalid channel count provided: %d", n_channels));
 		}
-		if(use_mask){ mask.at<uchar>(y, x) = 255; }		
+		if(use_mask){ mask.at<uchar>(y, x) = 255; }
 	}
 
-	void writePixelsToImage(cv::Mat &img, 
-		const PixValT &pix_vals, const mtf::PtsT &pts, 
+	void writePixelsToImage(cv::Mat &img,
+		const PixValT &pix_vals, const mtf::PtsT &pts,
 		unsigned int n_channels, cv::Mat &mask){
 		unsigned int n_pts = pts.cols();
 		assert(pix_vals.size() == n_pts*n_channels);
@@ -1734,13 +1736,13 @@ namespace utils{
 		const mtf::CornersT &corners, int n_channels, cv::Mat &mask){
 		int img_size = pix_vals.rows*pix_vals.cols*n_channels;
 		writePixelsToImage(img, PixValT(Map<VectorXc>(pix_vals.data, img_size).cast<double>()),
-			getPtsFromCorners(corners, pix_vals.cols, pix_vals.rows), n_channels, mask);		
+			getPtsFromCorners(corners, pix_vals.cols, pix_vals.rows), n_channels, mask);
 	}
 	void writePixelsToImage(cv::Mat &img, const cv::Mat &pix_vals,
 		const cv::Mat &corners, int n_channels, cv::Mat &mask){
 		int img_size = pix_vals.rows*pix_vals.cols*n_channels;
 		writePixelsToImage(img, PixValT(Map<VectorXc>(pix_vals.data, img_size).cast<double>()),
-			getPtsFromCorners(corners, pix_vals.cols, pix_vals.rows), n_channels, mask);		
+			getPtsFromCorners(corners, pix_vals.cols, pix_vals.rows), n_channels, mask);
 	}
 	//! adapted from http://answers.opencv.org/question/68589/adding-noise-to-image-opencv/
 	bool addGaussianNoise(const cv::Mat mSrc, cv::Mat &mDst,
@@ -1793,6 +1795,95 @@ namespace utils{
 		return eig_patch;
 	}
 
+	//! adapted from http://ishankgulati.github.io/posts/Anisotropic-(Perona-Malik)-Diffusion/
+
+	void anisotropicDiffusion(cv::Mat &output,	double lambda, double k, unsigned int n_iters) {
+
+		float ahN[3][3] = { { 0, 1, 0 }, { 0, -1, 0 }, { 0, 0, 0 } };
+		float ahS[3][3] = { { 0, 0, 0 }, { 0, -1, 0 }, { 0, 1, 0 } };
+		float ahE[3][3] = { { 0, 0, 0 }, { 0, -1, 1 }, { 0, 0, 0 } };
+		float ahW[3][3] = { { 0, 0, 0 }, { 1, -1, 0 }, { 0, 0, 0 } };
+		float ahNE[3][3] = { { 0, 0, 1 }, { 0, -1, 0 }, { 0, 0, 0 } };
+		float ahSE[3][3] = { { 0, 0, 0 }, { 0, -1, 0 }, { 0, 0, 1 } };
+		float ahSW[3][3] = { { 0, 0, 0 }, { 0, -1, 0 }, { 1, 0, 0 } };
+		float ahNW[3][3] = { { 1, 0, 0 }, { 0, -1, 0 }, { 0, 0, 0 } };
+
+		cv::Mat hN(3, 3, CV_32FC1, &ahN);
+		cv::Mat hS(3, 3, CV_32FC1, &ahS);
+		cv::Mat hE(3, 3, CV_32FC1, &ahE);
+		cv::Mat hW(3, 3, CV_32FC1, &ahW);
+		cv::Mat hNE(3, 3, CV_32FC1, &ahNE);
+		cv::Mat hSE(3, 3, CV_32FC1, &ahSE);
+		cv::Mat hSW(3, 3, CV_32FC1, &ahSW);
+		cv::Mat hNW(3, 3, CV_32FC1, &ahNW);
+
+		//mat initialisation
+		cv::Mat nablaN, nablaS, nablaW, nablaE, nablaNE, nablaSE, nablaSW, nablaNW;
+		cv::Mat cN, cS, cW, cE, cNE, cSE, cSW, cNW;
+
+		//center pixel distance
+		const double dx = 1, dy = 1, dd = sqrt(2);
+		const double idxSqr = 1.0 / (dx * dx), idySqr = 1.0 / (dy * dy), iddSqr = 1 / (dd * dd);
+
+		for(unsigned int i = 0; i < n_iters; ++i) {
+			//filters 
+			cv::filter2D(output, nablaN, -1, hN);
+			cv::filter2D(output, nablaS, -1, hS);
+			cv::filter2D(output, nablaW, -1, hW);
+			cv::filter2D(output, nablaE, -1, hE);
+			cv::filter2D(output, nablaNE, -1, hNE);
+			cv::filter2D(output, nablaSE, -1, hSE);
+			cv::filter2D(output, nablaSW, -1, hSW);
+			cv::filter2D(output, nablaNW, -1, hNW);
+
+			//exponential flux
+			cN = nablaN / k;
+			cN = cN.mul(cN);
+			cN = 1.0 / (1.0 + cN);
+			//exp(-cN, cN);
+
+			cS = nablaS / k;
+			cS = cS.mul(cS);
+			cS = 1.0 / (1.0 + cS);
+			//exp(-cS, cS);
+
+			cW = nablaW / k;
+			cW = cW.mul(cW);
+			cW = 1.0 / (1.0 + cW);
+			//exp(-cW, cW);
+
+			cE = nablaE / k;
+			cE = cE.mul(cE);
+			cE = 1.0 / (1.0 + cE);
+			//exp(-cE, cE);
+
+			cNE = nablaNE / k;
+			cNE = cNE.mul(cNE);
+			cNE = 1.0 / (1.0 + cNE);
+			//exp(-cNE, cNE);
+
+			cSE = nablaSE / k;
+			cSE = cSE.mul(cSE);
+			cSE = 1.0 / (1.0 + cSE);
+			//exp(-cSE, cSE);
+
+			cSW = nablaSW / k;
+			cSW = cSW.mul(cSW);
+			cSW = 1.0 / (1.0 + cSW);
+			//exp(-cSW, cSW);
+
+			cNW = nablaNW / k;
+			cNW = cNW.mul(cNW);
+			cNW = 1.0 / (1.0 + cNW);
+			//exp(-cNW, cNW);
+
+			output = output + lambda * (idySqr * cN.mul(nablaN) + idySqr * cS.mul(nablaS) +
+				idxSqr * cW.mul(nablaW) + idxSqr * cE.mul(nablaE) +
+				iddSqr * cNE.mul(nablaNE) + iddSqr * cSE.mul(nablaSE) +
+				iddSqr * cNW.mul(nablaNW) + iddSqr * cSW.mul(nablaSW));
+		}
+	}
+
 	/******************** Explicit Template Specializations ******************/
 
 	template
@@ -1831,14 +1922,14 @@ namespace utils{
 		const EigImgT &img, const VectorXd &intensity_map, const PtsT &warped_pts,
 		const HessPtsT &warped_offset_pts, double hess_eps, unsigned int n_pix,
 		unsigned int h, unsigned int w, double pix_mult_factor);
-	
+
 	template
-		void getImgHess<InterpType::Nearest>(PixHessT &img_hess, const EigImgT &img, 
+		void getImgHess<InterpType::Nearest>(PixHessT &img_hess, const EigImgT &img,
 		const VectorXd &intensity_map, const PtsT &pts, double hess_eps, unsigned int n_pix,
 		unsigned int h, unsigned int w, double pix_mult_factor);
 	template
-		void getImgHess<InterpType::Linear>(PixHessT &img_hess, const EigImgT &img, 
-		const VectorXd &intensity_map, const PtsT &pts, double hess_eps, unsigned int n_pix, 
+		void getImgHess<InterpType::Linear>(PixHessT &img_hess, const EigImgT &img,
+		const VectorXd &intensity_map, const PtsT &pts, double hess_eps, unsigned int n_pix,
 		unsigned int h, unsigned int w, double pix_mult_factor);
 
 	namespace sc{

@@ -2,9 +2,7 @@
 
 // tools for reading in images from various sources like image sequences, 
 // videos and cameras as well as for pre processing them
-#include "mtf/Tools/pipeline.h"
-// general OpenCV tools for selecting objects, reading ground truth, etc.
-#include "mtf/Tools/cvUtils.h"
+#include "mtf/pipeline.h"
 
 #include "mtf/Config/parameters.h"
 #include "mtf/Config/datasets.h"
@@ -29,7 +27,7 @@ using namespace std;
 using namespace mtf::params;
 namespace fs = boost::filesystem;
 
-typedef unique_ptr<InputBase> Input_;
+typedef unique_ptr<mtf::utils::InputBase> Input_;
 typedef unique_ptr<mtf::nt::SearchMethod> SM;
 
 int main(int argc, char * argv[]) {
@@ -60,7 +58,7 @@ int main(int argc, char * argv[]) {
 	printf("********************************\n");
 
 	/* initialize pipeline*/
-	Input_ input(getInput(pipeline));
+	Input_ input(mtf::getInput(pipeline));
 	if(!input->initialize()){
 		printf("Pipeline could not be initialized successfully\n");
 		return EXIT_FAILURE;
@@ -111,7 +109,7 @@ int main(int argc, char * argv[]) {
 	}
 
 	/* initialize frame pre processors */
-	GaussianSmoothing uav_pre_proc(uav_tracker->inputType()), satellite_pre_proc(uav_tracker->inputType());
+	mtf::utils::GaussianSmoothing uav_pre_proc(uav_tracker->inputType()), satellite_pre_proc(uav_tracker->inputType());
 	satellite_pre_proc.initialize(satellite_img);
 	uav_tracker->initialize(satellite_pre_proc.getFrame(), init_location);
 
@@ -133,7 +131,7 @@ int main(int argc, char * argv[]) {
 	double fps_font_size = 1.00;
 	cv::Scalar gt_color(255, 0, 0), uav_color(0, 255, 0);
 
-	CVUtils cv_utils;
+	mtf::utils::ObjUtils obj_utils;
 	cv::Mat satellite_img_copy, satellite_img_copy1, satellite_img_small;
 	satellite_img_small.create(1000, 900, satellite_img.type());
 	satellite_img.copyTo(satellite_img_copy1);
@@ -157,13 +155,13 @@ int main(int argc, char * argv[]) {
 
 		if(record_frames || show_cv_window){
 			/* draw tracker positions to satellite image */
-			cv_utils.cornersToPoint2D(corners, uav_tracker->getRegion());
-			line(satellite_img_copy, corners[0], corners[1], cv_utils.getObjCol(0), line_thickness);
-			line(satellite_img_copy, corners[1], corners[2], cv_utils.getObjCol(0), line_thickness);
-			line(satellite_img_copy, corners[2], corners[3], cv_utils.getObjCol(0), line_thickness);
-			line(satellite_img_copy, corners[3], corners[0], cv_utils.getObjCol(0), line_thickness);
+			obj_utils.cornersToPoint2D(corners, uav_tracker->getRegion());
+			line(satellite_img_copy, corners[0], corners[1], obj_utils.getObjCol(0), line_thickness);
+			line(satellite_img_copy, corners[1], corners[2], obj_utils.getObjCol(0), line_thickness);
+			line(satellite_img_copy, corners[2], corners[3], obj_utils.getObjCol(0), line_thickness);
+			line(satellite_img_copy, corners[3], corners[0], obj_utils.getObjCol(0), line_thickness);
 			putText(satellite_img_copy, uav_tracker->name, corners[0],
-				cv::FONT_HERSHEY_SIMPLEX, fps_font_size, cv_utils.getObjCol(0));
+				cv::FONT_HERSHEY_SIMPLEX, fps_font_size, obj_utils.getObjCol(0));
 
 			Matrix2Xd warped_pts(2, 1);
 			VectorXd curr_ssm_state(uav_tracker->getSSM()->getStateSize());
@@ -193,7 +191,7 @@ int main(int argc, char * argv[]) {
 			if(show_cv_window){
 				cv::resize(satellite_img_copy, satellite_img_small, cv::Size(satellite_img_small.cols, satellite_img_small.rows));
 				imshow(satellite_win_name, satellite_img_small);
-				imshow("UAV Image", input->getFrame());
+				cv::imshow("UAV Image", input->getFrame());
 				int pressed_key = cv::waitKey(1 - pause_after_frame);
 				if(pressed_key == 27){
 					break;
@@ -207,7 +205,7 @@ int main(int argc, char * argv[]) {
 			printf("frame_id: %5d avg_fps: %15.9f avg_fps_win: %15.9f avg_err: %15.9f\n",
 				input->getFrameID() + 1, avg_fps, avg_fps_win, avg_err);
 		}
-		if(input->n_frames > 0 && input->getFrameID() >= input->n_frames - 1){
+		if(input->getNFrames() > 0 && input->getFrameID() >= input->getNFrames() - 1){
 			printf("==========End of input stream reached==========\n");
 			break;
 		}

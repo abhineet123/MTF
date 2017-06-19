@@ -10,12 +10,6 @@
 
 #include "datasets.h"
 
-#define SRC_IMG 'j'
-#define SRC_VID 'm'
-#define SRC_USB_CAM 'u'
-#define SRC_FW_CAM 'f'
-#define SRC_DISK 'd'
-
 #define VID_FNAME "nl_bookI_s3"
 #define VID_FMT "mpg"
 
@@ -226,14 +220,24 @@ namespace mtf{
 		std::string pre_proc_type = "gauss";
 		//! perform histogram equalization during pre processing;
 		bool pre_proc_hist_eq = false;
+		//! Gaussian filtering
 		int gauss_kernel_size = 5;
 		double gauss_sigma_x = 3;
 		double gauss_sigma_y = 3;
+		//! median filtering
 		int med_kernel_size = 5;
+		//! normalized box filtering
 		int box_kernel_size = 5;
+		//! bilateral filtering
 		int bil_diameter = 5;
 		double bil_sigma_col = 15;
 		double bil_sigma_space = 15;
+		//! Sobel filtering
+		int sobel_kernel_size = 5;
+		//! Anisotropic diffusion
+		double aniso_lambda = 0.14285714285;
+		double aniso_k = 30;
+		unsigned int aniso_n_iters = 15;
 
 		//! Affine
 		int aff_normalized_init = 0;
@@ -1489,7 +1493,7 @@ namespace mtf{
 				med_kernel_size = atoi(arg_val);
 				return;
 			}
-			//! Blurring with normalized box filter
+			//! Normalized box filtering
 			if(!strcmp(arg_name, "box_kernel_size")){
 				box_kernel_size = atoi(arg_val);
 				return;
@@ -1505,6 +1509,24 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "bil_sigma_space")){
 				bil_sigma_space = atof(arg_val);
+				return;
+			}
+			//! Sobel filtering
+			if(!strcmp(arg_name, "sobel_kernel_size")){
+				sobel_kernel_size = atoi(arg_val);
+				return;
+			}
+			//! Anisotropic Diffusion
+			if(!strcmp(arg_name, "aniso_lambda")){
+				aniso_lambda = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "aniso_k")){
+				aniso_k = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "aniso_n_iters")){
+				aniso_n_iters = atoi(arg_val);
 				return;
 			}
 			//! Affine

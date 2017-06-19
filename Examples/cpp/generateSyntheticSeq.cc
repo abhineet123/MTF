@@ -4,12 +4,9 @@ random perturbations produced by different SSMs
 */
 
 #include "mtf/mtf.h"
-
 // tools for reading in images from various sources like image sequences, 
 // videos and cameras as well as for pre processing them
-#include "mtf/Tools/pipeline.h"
-// general OpenCV tools for selecting objects, reading ground truth, etc.
-#include "mtf/Tools/cvUtils.h"
+#include "mtf/pipeline.h"
 #include "mtf/Config/parameters.h"
 #include "mtf/Utilities/miscUtils.h"
 #include "mtf/Utilities/warpUtils.h"
@@ -57,15 +54,15 @@ int main(int argc, char * argv[]) {
 	printf("********************************\n");
 
 	/* initialize pipeline*/
-	Input_ input(getInput(pipeline));
+	Input_ input(mtf::getInput(pipeline));
 	if(!input->initialize()){
 		printf("Pipeline could not be initialized successfully\n");
 		return EXIT_FAILURE;
 	}
 	if(syn_frame_id > 0){
-		if(input->n_frames > 0 && syn_frame_id >= input->n_frames){
+		if(input->getNFrames() > 0 && syn_frame_id >= input->getNFrames()){
 			printf("syn_frame_id: %d is larger than the maximum frame ID in the sequence: %d\n",
-				syn_frame_id, input->n_frames - 1);
+				syn_frame_id, input->getNFrames() - 1);
 			return EXIT_FAILURE;
 		}
 		printf("Skipping to frame %d before initializing trackers...\n", syn_frame_id + 1);
@@ -76,10 +73,10 @@ int main(int argc, char * argv[]) {
 			}
 		}
 	}
-	CVUtils cv_utils;
+	ObjUtils obj_utils;
 	//! need to read only one object
 	n_trackers = 1;
-	if(!getObjectsToTrack(cv_utils, input.get())){
+	if(!mtf::getObjectsToTrack(obj_utils, input.get())){
 		printf("Object(s) to be tracked could not be read\n");
 		return EXIT_FAILURE;
 	}
@@ -100,9 +97,9 @@ int main(int argc, char * argv[]) {
 		init_corners.at<double>(1, 2) = size_y - 1;
 		init_corners.at<double>(1, 3) = size_y - 1;
 	} else{
-		init_corners = cv_utils.getObj().corners.clone();
-		size_x = 2*cv_utils.getObj().size_x;
-		size_y = 2*cv_utils.getObj().size_y;
+		init_corners = obj_utils.getObj().corners.clone();
+		size_x = 2*obj_utils.getObj().size_x;
+		size_y = 2*obj_utils.getObj().size_y;
 	}
 
 	//mtf::utils::printMatrix<double>(init_corners, "init_corners");
@@ -135,7 +132,7 @@ int main(int argc, char * argv[]) {
 	}
 	int out_img_type = syn_grayscale_img ? CV_8UC1 : CV_8UC3;
 	pre_proc_type = "none";
-	PreProc_ pre_proc(getPreProc(am->inputType(), pre_proc_type));
+	PreProc_ pre_proc(mtf::getPreProc(am->inputType(), pre_proc_type));
 	pre_proc->initialize(input->getFrame());
 	am->setCurrImg(pre_proc->getFrame());
 	am->initializePixVals(ssm->getPts());
@@ -192,15 +189,15 @@ int main(int argc, char * argv[]) {
 	if(syn_warp_entire_image){
 		printf("Warping entire image\n");
 		for(int corner_id = 0; corner_id < 4; ++corner_id){
-			nearest_pt_ids[corner_id] = mtf::utils::getNearestPt(cv_utils.getObj().corners.at<double>(0, corner_id),
-				cv_utils.getObj().corners.at<double>(1, corner_id), original_pts, ssm->getNPts());
+			nearest_pt_ids[corner_id] = mtf::utils::getNearestPt(obj_utils.getObj().corners.at<double>(0, corner_id),
+				obj_utils.getObj().corners.at<double>(1, corner_id), original_pts, ssm->getNPts());
 
 			original_bounding_box.at<double>(0, corner_id) = original_pts(0, nearest_pt_ids[corner_id]);
 			original_bounding_box.at<double>(1, corner_id) = original_pts(1, nearest_pt_ids[corner_id]);
 		}
 	} else{
 		printf("Warping only object region\n");
-		original_bounding_box = cv_utils.getObj().corners;
+		original_bounding_box = obj_utils.getObj().corners;
 	}
 	cv::Mat out_img;
 	if(syn_grayscale_img){
@@ -215,7 +212,7 @@ int main(int argc, char * argv[]) {
 	PreProc_ pre_proc_warped;
 	if(using_ilm && syn_warp_entire_image && syn_am_on_obj){
 		printf("Applying AM tansformations only to the object\n");
-		pre_proc_warped = getPreProc(am->inputType(), pre_proc_type);
+		pre_proc_warped = mtf::getPreProc(am->inputType(), pre_proc_type);
 		pre_proc_warped->initialize(warped_img);
 	}
 	if(syn_add_noise){

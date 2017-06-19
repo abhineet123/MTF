@@ -12,7 +12,7 @@
 
 #define mat_to_pt(vert, id) cv::Point2d(vert.at<double>(0, id), vert.at<double>(1, id))
 #define eig_to_pt(vert, id) cv::Point2d(vert(0, id), vert(1, id))
-	
+
 
 _MTF_BEGIN_NAMESPACE
 
@@ -513,5 +513,57 @@ namespace utils{
 		}
 		return rearrange_idx;
 	}
+	cv::Mat concatenate(const cv::Mat img_list[], int n_images, int axis){
+		cv::Mat out_img;
+		if(axis == 1){
+			cv::hconcat(img_list, n_images, out_img);
+		} else{
+			cv::vconcat(img_list, n_images, out_img);
+		}
+		return out_img;
+	}
+	cv::Mat stackImages(const std::vector<cv::Mat> &img_list, int stack_order){
+		int n_images = img_list.size();
+		cv::Size img_size = img_list[0].size();
+		int img_type = img_list[0].type();
+		int grid_size = int(ceil(sqrt(n_images)));
+		cv::Mat stacked_img;
+		bool list_ended = false;
+		int inner_axis = 1 - stack_order;
+		for(int row_id = 0; row_id < grid_size; ++row_id){
+			int start_id = grid_size * row_id;
+			cv::Mat curr_row;
+			for(int col_id = 0; col_id < grid_size; ++col_id){
+				int img_id = start_id + col_id;
+				cv::Mat curr_img;
+				if(img_id >= n_images){
+					curr_img.create(img_size, img_type);
+					list_ended = true;
+				} else{
+					curr_img = img_list[img_id];
+				}
+				if(img_id == n_images - 1){
+					list_ended = true;
+				}
+				if(curr_row.empty()){
+					curr_row = curr_img;
+				} else{
+					const cv::Mat curr_list[] = { curr_row, curr_img };
+					curr_row = concatenate(curr_list, 2, inner_axis);
+				}
+			}
+			if(stacked_img.empty()){
+				stacked_img = curr_row;
+			} else{
+				const cv::Mat curr_list[] = { stacked_img, curr_row };
+				stacked_img = concatenate(curr_list, 2, stack_order);
+			}
+			if(list_ended){
+				break;
+			}
+		}
+		return stacked_img;
+	}
 }
+
 _MTF_END_NAMESPACE

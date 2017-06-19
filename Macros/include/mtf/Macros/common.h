@@ -153,6 +153,12 @@
 	}
 #define HETEROGENEOUS_INPUT -1
 
+#define SRC_IMG 'j'
+#define SRC_VID 'm'
+#define SRC_USB_CAM 'u'
+#define SRC_FW_CAM 'f'
+#define SRC_DISK 'd'
+
 #define _MTF_BEGIN_NAMESPACE namespace mtf {
 #define _MTF_END_NAMESPACE }
 
