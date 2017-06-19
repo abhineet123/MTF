@@ -131,7 +131,7 @@ int main(int argc, char * argv[]) {
 		db_root_path.c_str(), actor.c_str(), seq_name.c_str(), 
 		resx, resy, extraction_id);
 	cout << "Saving to file: " << out_fname << endl;
-	ofstream out_file;
+	std::ofstream out_file;
 	out_file.open(out_fname, ios::out | ios::binary);
 	out_file.write((char*)(&patch_size),sizeof(int));// rows
 	out_file.write((char*)(&n_extracted_patches),sizeof(int));// cols
