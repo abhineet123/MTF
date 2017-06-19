@@ -227,16 +227,22 @@ namespace utils{
 		apply(frame_gs);
 	}
 	void SobelFltering::apply(cv::Mat &img_gs) const{
+		printf("img_gs.type: %s\n", utils::typeToString(img_gs.type()));
+		printf("grad_x.type: %s\n", utils::typeToString(grad_x.type()));
+		printf("grad_y.type: %s\n", utils::typeToString(grad_y.type()));
+		printf("abs_grad_x.type: %s\n", utils::typeToString(abs_grad_x.type()));
+		printf("abs_grad_y.type: %s\n", utils::typeToString(abs_grad_y.type()));
+		printf("grad.type: %s\n", utils::typeToString(grad.type()));
 		/// Gradient X
 		Sobel(img_gs, grad_x, -1, 1, 0, kernel_size, 1, 0, cv::BORDER_DEFAULT);
-		convertScaleAbs(grad_x, abs_grad_x);
+		//convertScaleAbs(grad_x, abs_grad_x);
 
 		/// Gradient Y
 		Sobel(img_gs, grad_y, -1, 0, 1, kernel_size, 1, 0, cv::BORDER_DEFAULT);
-		convertScaleAbs(grad_y, abs_grad_y);
+		//convertScaleAbs(grad_y, abs_grad_y);
 
 		/// Total Gradient (approximate)
-		addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
+		addWeighted(abs(grad_x), 0.5, abs(grad_y), 0.5, 0, grad);
 	}
 	void SobelFltering::showFrame(std::string window_name){
 		cv::Mat  disp_img;

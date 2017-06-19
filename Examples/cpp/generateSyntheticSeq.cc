@@ -73,7 +73,7 @@ int main(int argc, char * argv[]) {
 			}
 		}
 	}
-	ObjUtils obj_utils;
+	mtf::utils::ObjUtils obj_utils;
 	//! need to read only one object
 	n_trackers = 1;
 	if(!mtf::getObjectsToTrack(obj_utils, input.get())){

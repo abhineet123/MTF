@@ -1,12 +1,9 @@
 #include "mtf/mtf.h"
 #include "mtf/pipeline.h"
-
 #include "mtf/Test/Diagnostics.h"
-
 #include "mtf/Config/parameters.h"
-#include "mtf/Config//datasets.h"
-
-#include "mtf/Utilities//excpUtils.h"
+#include "mtf/Utilities/miscUtils.h"
+#include "mtf/Utilities/excpUtils.h"
 
 #include <time.h>
 #include <numeric>
