@@ -12,10 +12,10 @@ actor_id = 0;
 seq_id = 0;
 img_source = 'j';
 seq_fmt = 'jpg';
-if ~exist config_root_dir var
+if ~ exist('config_root_dir', 'var')
 	config_root_dir = '../../Config';
 end
-if ~exist db_root_dir var
+if ~ exist('db_root_dir', 'var')
 	db_root_dir = '../../../../../Datasets';
 end
 init_frame_id = 1;
