@@ -1,5 +1,5 @@
 close all;
-clear all;
+% clear all;
 % if isunix
 % %     addpath('/home/abhineet/E/UofA/Thesis/Code/TrackingFramework/Matlab/');
 % %     addpath('/home/abhineet/E/UofA/Thesis/Code/TrackingFramework/C++/MTF/Build/Release/');
