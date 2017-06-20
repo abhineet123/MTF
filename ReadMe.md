@@ -14,8 +14,8 @@ for more details on the system design and
 [**this one**](http://webdocs.cs.ualberta.ca/~asingh1/docs/Modular%20Decomposition%20and%20Analysis%20of%20Registration%20based%20Trackers%20(CRV%202016).pdf)
 for some preliminary results. There is also a [**dedicated website**](http://webdocs.cs.ualberta.ca/~vis/mtf/) where Doxygen documentation will soon be available along with detailed tutorials and examples. It also provides several datasets formatted to work with MTF.
 
-The library is implemented entirely in C++ though interfaces for Python and MATLAB are also provided to aid its use in research applications.
-A simple interface for [ROS](http://www.ros.org/) called [mtf_bridge](https://github.com/abhineet123/MTF_BRIDGE) (present in the `ROS` sub folder) is likewise provided for seamless integration with robotics applications.
+The library is implemented entirely in **C++** though interfaces for **Python** and **MATLAB** are also provided to aid its use in research applications.
+A simple interface for [**ROS**](http://www.ros.org/) called [mtf_bridge](https://github.com/abhineet123/MTF_BRIDGE) (present in the `ROS` sub folder) is likewise provided for seamless integration with robotics applications.
 
 **MTF supports both Unix and Windows platforms**. Though it has been tested comprehensively only under Linux, specifically Ubuntu 14.04, it should work on Macintosh systems too (see [Compile/Runtime Notes](#compileruntime-notes) section below for resolving possible issues). The Windows build system is in its early stages and needs some manual setting of variables but it is quite usable and we are working on making it more user friendly.
 
