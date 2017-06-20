@@ -5,48 +5,8 @@ import numpy as np
 import math
 import time
 import pyMTF
+from utilities import readGroundTruth, writeCorners, drawRegion
 from datasets import sequences, actors
-
-def readGroundTruth(filename):
-    if not os.path.isfile(filename):
-        print "Tracking data file not found:\n ", filename
-        sys.exit()
-
-    data_file = open(filename, 'r')
-    header = data_file.readline()
-    lines = data_file.readlines()
-    no_of_lines = len(lines)
-    data_array = np.zeros((no_of_lines, 8))
-    line_id = 0
-    for line in lines:
-        words = line.split()
-        del words[0]
-        if len(words) != 8:
-            msg = "Invalid formatting on line %d" % line_id + " in file %s" % filename + ":\n%s" % line
-            raise SyntaxError(msg)
-        coordinates = []
-        for word in words:
-            coordinates.append(float(word))
-        data_array[line_id, :] = coordinates
-        line_id += 1
-    data_file.close()
-    return data_array
-
-
-def writeCorners(file_id, corners):
-    # write the given corners to the file
-    corner_str = ''
-    for i in xrange(4):
-        corner_str = corner_str + '{:5.2f}\t{:5.2f}\t'.format(corners[0, i], corners[1, i])
-    file_id.write(corner_str + '\n')
-
-
-def drawRegion(img, corners, color, thickness=1):
-    # draw the bounding box specified by the given corners
-    for i in xrange(4):
-        p1 = (int(corners[0, i]), int(corners[1, i]))
-        p2 = (int(corners[0, (i + 1) % 4]), int(corners[1, (i + 1) % 4]))
-        cv2.line(img, p1, p2, color, thickness)
 
 if __name__ == '__main__':
 
@@ -84,8 +44,6 @@ if __name__ == '__main__':
     ground_truth_fname =  '{:s}/{:s}/{:s}.txt'.format(db_root_dir, actor, seq_name)
     result_fname = seq_name + '_res.txt'
 
-    result_file = open(result_fname, 'w')
-
     if not pyMTF.create(config_root_dir):
         print 'Tracker creation was unsuccessful'
         sys.exit()
@@ -120,8 +78,6 @@ if __name__ == '__main__':
                     ground_truth[0, 6:8].tolist()]
     init_corners = np.array(init_corners).T
     # write the initial corners to the result file
-    writeCorners(result_file, init_corners)
-
 
     # initialize tracker with the first frame and the initial corners
     if not use_rgb_input:
@@ -163,9 +119,6 @@ if __name__ == '__main__':
 
         end_time = time.clock()
 
-        # write the current tracker location to the result text file
-        writeCorners(result_file, tracker_corners)
-
         # compute the tracking fps
         current_fps = 1.0 / (end_time - start_time)
         tracking_fps.append(current_fps)
@@ -186,17 +139,9 @@ if __name__ == '__main__':
 
             if cv2.waitKey(1) == 27:
                 break
-                # print 'curr_error: ', curr_error
 
     mean_error = np.mean(tracking_errors)
     mean_fps = np.mean(tracking_fps)
 
     print 'mean_error: ', mean_error
     print 'mean_fps: ', mean_fps
-
-    result_file.close()
-
-    if write_stats_to_file:
-        fo = open("tracking_stats.txt", "a")
-        fo.write('{:s}\t{:d}\t{:12.6f}\t{:12.6f}\n'.format(sys.argv[0], seq_id, mean_error, mean_fps))
-        fo.close()
