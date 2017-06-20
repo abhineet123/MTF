@@ -71,6 +71,7 @@ Installation:
 			- the MATLAB finding module of cmake has a [limitation](https://cmake.org/Bug/view.php?id=15786) that it can only find a MATLAB installation of the same build type as the target build, i.e. a 32 bit target build (default) can only find a 32 bit installation of MATLAB and same for 64 bit
 			- the recommended approach is to install 32 bit version of MATLAB but if that is not possible, a 64 bit CMake target build can be specified using, for instance the instructions given [here](https://stackoverflow.com/questions/28350214/how-to-build-x86-and-or-x64-on-windows-from-command-line-with-cmake); 64 bit builds have not been tested so cannot be guaranteed to work;
 			- if multiple MATLAB versions are installed or if the installed version is not found, set variable `Matlab_ROOT_DIR` or `Matlab_ROOT_DIR_DEFAULT` in Examples.cmake to the MATLAB installation folder to help CMake find the correct version
+			- the module is installed to `<Matlab_ROOT_DIR>/toolbox/local` by default; this location may need to be [added to the MATLAB path](https://se.mathworks.com/help/matlab/ref/addpath.html) for it to be found;
 		
 	* Using GNU Make with MinGW
 	    - **Note**:  This method is not recommended due to the following issues:

@@ -123,7 +123,7 @@ namespace utils{
 	private:
 		cv::Mat frame_out, frame_in;
 		cv::Mat grad_x, grad_y, grad;
-		cv::Mat abs_grad_x, abs_grad_y;
+		cv::Mat abs_grad_x, abs_grad_y, abs_grad;
 		int kernel_size;
 	};
 	struct AnisotropicDiffusion : public PreProcBase{
