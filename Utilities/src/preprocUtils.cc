@@ -170,35 +170,37 @@ namespace utils{
 		kernel_size(_kernel_size, _kernel_size),
 		sigma_x(_sigma_x),
 		sigma_y(_sigma_y){
-		printf("Using Gaussian Smoothing with ");
-		printf("kernel_size: %d x %d and sigma: %f x %f\n",
-			kernel_size.width, kernel_size.height, sigma_x, sigma_y);
+		printf("Using Gaussian Smoothing with:\n");
+		printf("kernel_size: %d x %df\n",
+			kernel_size.width, kernel_size.height);
+		printf("sigma: %f x %f\n", sigma_x, sigma_y);
 	}
 	MedianFiltering::MedianFiltering( int _output_type, double _resize_factor,
 		bool _hist_eq, int _kernel_size) :
 		PreProcBase(_output_type, _resize_factor, _hist_eq), kernel_size(_kernel_size){
-		printf("Using Median Filtering with ");
+		printf("Using Median Filtering with:\n");
 		printf("kernel_size: %d\n", kernel_size);
 	}
 	NormalizedBoxFltering::NormalizedBoxFltering(int _output_type , double _resize_factor,
 		bool _hist_eq,	int _kernel_size) :
 		PreProcBase(_output_type, _resize_factor, _hist_eq), kernel_size(_kernel_size, _kernel_size){
-		printf("Using Normalized Box Fltering with ");
+		printf("Using Normalized Box Fltering with:\n");
 		printf("kernel_size: %d x %d\n", kernel_size.width, kernel_size.height);
 	}
 	BilateralFiltering::BilateralFiltering(	int _output_type, double _resize_factor,
 		bool _hist_eq, int _diameter, double _sigma_col, double _sigma_space) :
 		PreProcBase(_output_type, _resize_factor, _hist_eq), diameter(_diameter),
 		sigma_col(_sigma_col), sigma_space(_sigma_space){
-		printf("Using Bilateral Filtering with ");
-		printf("diameter: %d, sigma_col: %f and sigma_space: %f\n",
-			diameter, sigma_col, sigma_space);
+		printf("Using Bilateral Filtering with:\n");
+		printf("diameter: %d\n", diameter);
+		printf("sigma_col: %f\n", sigma_col);
+		printf("sigma_space: %f\n", sigma_space);
 	}
 	SobelFltering::SobelFltering(int _output_type, double _resize_factor,
 		bool _hist_eq, int _kernel_size, bool _normalize) :
 		PreProcBase(_output_type, _resize_factor, _hist_eq),
 		kernel_size(_kernel_size), normalize(_normalize){
-		printf("Using Sobel Fltering with ");
+		printf("Using Sobel Fltering with:\n");
 		printf("kernel_size: %d\n", kernel_size);
 		printf("normalize: %d\n", normalize);
 		if(output_type == CV_8UC3 || output_type == CV_8UC1){
@@ -255,7 +257,7 @@ namespace utils{
 
 		/// Total Gradient (approximate)
 		addWeighted(abs(grad_x), 0.5, abs(grad_y), 0.5, 0, grad);
-		if(rgb_input){
+		if(rgb_output){
 			std::vector<cv::Mat> channels;
 			channels.push_back(grad_x);
 			channels.push_back(grad_y);
