@@ -65,10 +65,12 @@ Installation:
 			- this folder should have a file called `VISPConfig.cmake` along with sub folders called `x86/vc<version>/lib`, `x86/vc<version>/bin` and `include` that contain the *.lib, *.dll and the header files respectively.
 			- add the path of the `bin` folder to the `Path` environment variable	
 		- if the Python interface is to be built, install [Python 2.7.x](https://www.python.org/downloads/windows/) and [Numpy](http://www.numpy.org/).
-		    - cmake should normally be able to find the needed Python/Numpy libraries and headers without any other setup
+		    - CMake should normally be able to find the needed Python/Numpy libraries and headers without any other setup
 			- if any problems are encountered, please open an issue to let us know about it
 		- MATLAB interface
-			- the MATLAB interface for MTF is unfortunately currently not available for Windows due to highly complex incompatibilities between [CMake and MATLAB](https://cmake.org/Wiki/CMake/MatlabMex) and also between MATLAB and Visual Studio for which we have not been able to find any convenient solutions.
+			- the MATLAB finding module of cmake has a [limitation](https://cmake.org/Bug/view.php?id=15786) that it can only find a MATLAB installation of the same build type as the target build, i.e. a 32 bit target build (default) can only find a 32 bit installation of MATLAB and same for 64 bit
+			- the recommended approach is to install 32 bit version of MATLAB but if that is not possible, a 64 bit CMake target build can be specified using, for instance the instructions given [here](https://stackoverflow.com/questions/28350214/how-to-build-x86-and-or-x64-on-windows-from-command-line-with-cmake); 64 bit builds have not been tested so cannot be guaranteed to work;
+			- if multiple MATLAB versions are installed or if the installed version is not found, set variable `Matlab_ROOT_DIR` or `Matlab_ROOT_DIR_DEFAULT` in Examples.cmake to the MATLAB installation folder to help CMake find the correct version
 		
 	* Using GNU Make with MinGW
 	    - **Note**:  This method is not recommended due to the following issues:

@@ -9,7 +9,7 @@ close all;
 % end
 datasets;
 actor_id = 0;
-seq_id = 0;
+seq_id = 16;
 img_source = 'j';
 seq_fmt = 'jpg';
 if ~exist('config_root_dir', 'var')
