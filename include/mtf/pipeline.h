@@ -75,7 +75,7 @@ inline utils::PreProcBase* createPreProc(int output_type, const std::string &_pr
 			aniso_lambda, aniso_k, aniso_n_iters);
 	} else if(_pre_proc_type_num == 6 || _pre_proc_type == "sobel"){
 		return new utils::SobelFltering(output_type, img_resize_factor, pre_proc_hist_eq,
-			sobel_kernel_size);
+			sobel_kernel_size, sobel_normalize);
 	} else{
 		throw utils::InvalidArgument(
 			cv::format("Invalid image pre processing type specified: %s\n",

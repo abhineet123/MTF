@@ -234,6 +234,7 @@ namespace mtf{
 		double bil_sigma_space = 15;
 		//! Sobel filtering
 		int sobel_kernel_size = 5;
+		bool sobel_normalize = false;
 		//! Anisotropic diffusion
 		double aniso_lambda = 0.14285714285;
 		double aniso_k = 30;
@@ -1514,6 +1515,10 @@ namespace mtf{
 			//! Sobel filtering
 			if(!strcmp(arg_name, "sobel_kernel_size")){
 				sobel_kernel_size = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "sobel_normalize")){
+				sobel_normalize = atoi(arg_val);
 				return;
 			}
 			//! Anisotropic Diffusion

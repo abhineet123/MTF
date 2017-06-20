@@ -110,7 +110,7 @@ namespace utils{
 	};
 	struct SobelFltering : public PreProcBase{
 		SobelFltering(int _output_type = CV_32FC1, double _resize_factor = 1,
-			bool _hist_eq = false, int _kernel_size = 3);
+			bool _hist_eq = false, int _kernel_size = 3, bool _normalize=false);
 		void initialize(const cv::Mat &frame_raw,
 			int _frame_id = -1, bool print_types = true) override;
 		void processFrame(const cv::Mat &frame_raw) override;
@@ -124,7 +124,8 @@ namespace utils{
 		cv::Mat frame_out, frame_in;
 		cv::Mat grad_x, grad_y, grad;
 		cv::Mat abs_grad_x, abs_grad_y, abs_grad;
-		int kernel_size;
+		const int kernel_size;
+		const bool normalize;
 	};
 	struct AnisotropicDiffusion : public PreProcBase{
 		AnisotropicDiffusion(
