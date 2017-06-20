@@ -6,7 +6,7 @@ MIL_HEADERS = $(addprefix  ${MIL_HEADER_DIR}/, MIL.h)
 MIL_LIB_NAME = $(addsuffix ${LIB_POST_FIX}, mil)
 MIL_LIB_SO =  $(addprefix lib, $(addsuffix .so, ${MIL_LIB_NAME}))
 
-mil ?= 0
+mil ?= 1
 ifeq ($(OS),Windows_NT)
 THIRD_PARTY_RUNTIME_FLAGS += -D DISABLE_MIL
 else
