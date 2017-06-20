@@ -21,7 +21,7 @@ end
 init_frame_id = 1;
 use_rgb_input = 1;
 show_fps = 0;
-show_window = 0;
+show_window = 1;
 
 actor = actors{actor_id+1};
 seq_name = sequences{actor_id + 1}{seq_id + 1};
