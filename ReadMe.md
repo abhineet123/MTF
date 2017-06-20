@@ -1,5 +1,5 @@
 Welcome to the home of **Modular Tracking Framework (MTF)** - a highly efficient and extensible library for
-[**registration**](https://en.wikipedia.org/wiki/Image_registration) based [**tracking**](https://www.youtube.com/watch?v=mk1j7CTkXoo)
+[**registration**](https://en.wikipedia.org/wiki/Image_registration) based [**tracking**](https://www.youtube.com/watch?v=WzXhCCCcbTQ), also called [direct visual tracking](https://www.youtube.com/watch?v=mk1j7CTkXoo),
 that utilizes a modular decomposition of trackers in this domain.
 Each tracker within this framework comprises the following 3 modules:
 
