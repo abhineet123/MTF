@@ -109,7 +109,6 @@ Installation:
 	    - set `MATLAB_DIR` variable in `Examples.mak` to the root of the MATLAB installation folder 
 		- usage of this module is demonstrated in `Examples/matlab/runMTF.m`
 	    -  installation location can be specified through `MTF_MEX_INSTALL_DIR` (defaults to _<MATLAB_DIR>/toolbox/local_)
-		- currently only supports Python 2.7 so will give compilation errors if Python 3 is also installed and set as default
     * `make uav`/`make install_uav` : compile/install an application called `trackUAVTrajectory` that tracks the trajectory of a UAV in a satellite image of the area over which it flew while capturing images from above
     * `make mos`/`make install_mos` : compile/install an application called `createMosaic` that constructs a live mosaic from a video of the region to be stitched
     * `make qr`/`make install_qr` : compile/install an application called `trackMarkers` that automatically detects one or more markers in the input stream and starts tracking them
