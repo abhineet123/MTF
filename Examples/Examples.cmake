@@ -169,6 +169,15 @@ if(Matlab_FOUND)
 	)
 	install(TARGETS mexMTF RUNTIME DESTINATION ${Matlab_ROOT_DIR}/toolbox/local COMPONENT mex)
 	add_custom_target(mex DEPENDS mexMTF)
+	if(NOT WIN32)
+		add_custom_target(install_mex
+		  ${CMAKE_COMMAND}
+		  -D "CMAKE_INSTALL_COMPONENT=mex"
+		  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+		   DEPENDS mexMTF
+		  )
+		add_custom_target(mtfx DEPENDS mexMTF install_mex)
+	endif()
 else()
 	message(STATUS "Matlab not found so mexMTF is disabled")
 	if(NOT WIN32)

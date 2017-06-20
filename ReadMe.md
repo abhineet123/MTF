@@ -102,20 +102,21 @@ Installation:
 	    - library should be installed before running this, otherwise linking will not succeed
 	* `make install_exe`: creates _runMTF_ if needed and copies it to _/usr/local/bin_; this needs administrative privilege too - change `MTF_EXEC_INSTALL_DIR` in Examples/Examples.mak (or during compilation as above) if this is not available
     * **`make mtfi` : all of the above - recommended command that compiles and installs the library and the executable**
-    * `make py`/`make install_py` : compile/install the Python interface to MTF - this creates a Python module called _pyMTF_ that serves as a front end for running these trackers from Python.
+    * **`make py`/`make install_py`** : compile/install the Python interface to MTF - this creates a Python module called _pyMTF_ that serves as a front end for running these trackers from Python.
 	    - usage of this module is demonstrated in `Examples/python/runMTF.py`
 	    -  installation location can be specified through `MTF_PY_INSTALL_DIR` (defaults to _/usr/local/lib/python2.7/dist-packages/_)
 		- currently only supports Python 2.7 so will give compilation errors if Python 3 is also installed and set as default
-    * `make mex`/`make install_mex` : compile/install the MATLAB interface to MTF - this creates a MATLAB module called _mexMTF_ that serves as a front end for running these trackers from MATLAB.
+    * **`make mex`/`make install_mex`** : compile/install the MATLAB interface to MTF - this creates a MATLAB module called _mexMTF_ that serves as a front end for running these trackers from MATLAB.
 	    - set `MATLAB_DIR` variable in `Examples.mak` to the root of the MATLAB installation folder 
 		- usage of this module is demonstrated in `Examples/matlab/runMTF.m`
-	    -  installation location can be specified through `MTF_MEX_INSTALL_DIR` (defaults to _<MATLAB_DIR>/toolbox/local_)
+	    -  installation location can be specified through `MTF_MEX_INSTALL_DIR` (defaults to _<MATLAB_DIR>/toolbox/local_) in `Examples.mak`
+		- if CMake is being used under Unix, the matching build target and MATLAB installation type restriction mentioned in the Windows installation section applies here too
     * `make uav`/`make install_uav` : compile/install an application called `trackUAVTrajectory` that tracks the trajectory of a UAV in a satellite image of the area over which it flew while capturing images from above
     * `make mos`/`make install_mos` : compile/install an application called `createMosaic` that constructs a live mosaic from a video of the region to be stitched
     * `make qr`/`make install_qr` : compile/install an application called `trackMarkers` that automatically detects one or more markers in the input stream and starts tracking them
 	    - this uses the Feature tracker so will only compile if that is enabled (see below)
 	    - this reads marker images from `Data/Markers` folder by default; this can be changed by adjusting `qr_root_dir` in `Config/examples.cfg` where the names of marker files and the number of markers can also be specified along with some other parameters;
-    * `make all`/`make install_all` : compile/install all example applications that come with MTF along with the Python interface
+    * **`make all`/`make install_all`** : compile/install all example applications that come with MTF along with the Python interface
 	* `make app app=<APPLICATION_NAME>`: build a custom application that uses MTF with its source code located in `<APPLICATION_NAME>.cc`; the compiled executable goes in the build directory;
 	    - location of the source file (<APPLICATION_NAME>.cc) can be specified through `MTF_APP_SRC_DIR` (defaults to _Examples/cpp_)
 	    - `make mtfa` will install it too - installation location can be specified through `MTF_APP_INSTALL_DIR` (defaults to the current folder)
