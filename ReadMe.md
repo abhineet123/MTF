@@ -16,6 +16,8 @@ for some preliminary results. There is also a [**dedicated website**](http://web
 
 The library is implemented entirely in **C++** though interfaces for **Python** and **MATLAB** are also provided to aid its use in research applications.
 A simple interface for [**ROS**](http://www.ros.org/) is likewise provided for seamless integration with robotics projects.
+In addition to the registration tracking modules, MTF comes bundled with several state of the art learning and detection based trackers whose C++ implementations are publicly available - [DSST](http://www.cvl.isy.liu.se/en/research/objrec/visualtracking/scalvistrack/index.html), [KCF](http://home.isr.uc.pt/~henriques/circulant/), [CMT](http://www.gnebehay.com/cmt/), [TLD](http://www.gnebehay.com/tld/), [RCT](http://www4.comp.polyu.edu.hk/~cslzhang/CT/CT.htm), [MIL](http://vision.ucsd.edu/~bbabenko/project_miltrack.html), [Struck](http://www.samhare.net/research/struck), [FragTrack](http://www.cs.technion.ac.il/~amita/fragtrack/fragtrack.htm), [GOTURN](https://github.com/davheld/GOTURN) and [DFT](http://cvlab.epfl.ch/page-107683-en.html).
+It can thus be used as a general purpose tracking test bed too. 
 
 MTF supports both **Unix** and **Windows** platforms. Though the Unix build system has been tested comprehensively only under Linux, specifically Ubuntu 14.04, it should work on Macintosh systems too (see [Compile/Runtime Notes](#compileruntime-notes) section below for resolving possible issues).
 The Windows build system has been tested on Windows 8.1 with Visual Studio 2015 though it should work fine with any recent versions of the OS and IDE.
