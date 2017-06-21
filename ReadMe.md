@@ -112,7 +112,9 @@ Installation:
 	    - set `MATLAB_DIR` variable in `Examples.mak` to the root of the MATLAB installation folder 
 		- usage of this module is demonstrated in `Examples/matlab/runMTF.m`
 	    -  installation location can be specified through `MTF_MEX_INSTALL_DIR` (defaults to _<MATLAB_DIR>/toolbox/local_) in `Examples.mak`
-		- if CMake is being used under Unix, the matching build target and MATLAB installation type restriction mentioned in the Windows installation section applies here too
+		- if CMake is being used under Unix, the restriction of matching build target and MATLAB installation type mentioned in the Windows installation section applies here too; however, it is possible to compile `mexMTF` in Unix even if MATLAB is not detected by CMake by running the command written to a file called `mtf_mex_cmd.txt` in the build folder;
+			- the command can be run at the MATLAB prompt or even at the terminal if the location of the `mex` executable is present in the `PATH` environment variable;
+			- a few changes need to be made to it first as detailed in the CMake message;
     * `make uav`/`make install_uav` : compile/install an application called `trackUAVTrajectory` that tracks the trajectory of a UAV in a satellite image of the area over which it flew while capturing images from above
     * `make mos`/`make install_mos` : compile/install an application called `createMosaic` that constructs a live mosaic from a video of the region to be stitched
     * `make qr`/`make install_qr` : compile/install an application called `trackMarkers` that automatically detects one or more markers in the input stream and starts tracking them
