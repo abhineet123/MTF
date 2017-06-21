@@ -93,7 +93,7 @@ MTF_COMPILETIME_FLAGS += ${OPENCV_FLAGS}
 MTF_RUNTIME_FLAGS += ${OPENCV_FLAGS}
 
 ifneq (${ver}, 0)
-	LIB_POST_FIX += $(addprefix _v, ${ver})
+	LIB_POST_FIX = $(addprefix _v, ${ver})
 endif
 ifeq (${caffe_cpu}, 1)
 	CAFFE_FLAGS += -D CPU_ONLY

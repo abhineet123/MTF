@@ -3,7 +3,6 @@
 
 #include "SearchMethod.h"
 #include "mtf/SM/ESMParams.h"
-#include "mtf/Utilities/spiUtils.h"
 
 _MTF_BEGIN_NAMESPACE
 namespace nt{	

@@ -209,6 +209,9 @@ typedef std::unique_ptr<AMParams> AMParams_;
 typedef std::unique_ptr<SSMParams> SSMParams_;
 typedef std::unique_ptr<SSMEstimatorParams> SSMEstParams_;
 
+typedef utils::spi::ParamsType SPIParamsType;
+typedef utils::spi::Types SPIType;
+
 typedef std::unique_ptr<ESMParams> ESMParams_;
 typedef std::unique_ptr<FCLKParams> FCLKParams_;
 typedef std::unique_ptr<ICLKParams> ICLKParams_;
@@ -231,6 +234,7 @@ typedef std::unique_ptr<RegNetParams> RegNetParams_;
 AMParams_ getAMParams(const char *am_type, const char *ilm_type);
 SSMParams_ getSSMParams(const char *ssm_type);
 SSMEstParams_ getSSMEstParams();
+SPIParamsType getSPIParams();
 ESMParams_ getESMParams();
 FCLKParams_ getFCLKParams();
 ICLKParams_ getICLKParams();
@@ -1254,13 +1258,40 @@ inline SSMEstParams_ getSSMEstParams(){
 		est_max_subset_attempts, est_use_boost_rng, est_confidence, est_lm_max_iters));
 }
 
+
+inline SPIParamsType getSPIParams(){
+	SPIParamsType spi_params;
+	switch(static_cast<SPIType>(spi_type)){
+	case SPIType::None:
+		break;
+	case SPIType::PixDiff:
+		spi_params.push_back(spi_pix_diff_thresh);
+		break;
+	case SPIType::Gradient:
+		spi_params.push_back(spi_grad_thresh);
+		break;
+	case SPIType::GFTT:
+		spi_params.push_back(spi_gftt_max_corners);
+		spi_params.push_back(spi_gftt_quality_level);
+		spi_params.push_back(spi_gftt_min_distance);
+		spi_params.push_back(spi_gftt_block_size);
+		spi_params.push_back(spi_gftt_use_harris_detector);
+		spi_params.push_back(spi_gftt_k);
+		spi_params.push_back(spi_gftt_neigh_offset);
+		break;
+	default:
+		throw utils::InvalidArgument("Invalid SPI type provided");
+
+	}
+	return spi_params;
+}
 inline ESMParams_ getESMParams(){
 	return 	ESMParams_(new ESMParams(max_iters, epsilon,
 		static_cast<ESMParams::JacType>(esm_jac_type),
 		static_cast<ESMParams::HessType>(esm_hess_type),
 		sec_ord_hess, esm_chained_warp, leven_marq, lm_delta_init,
-		lm_delta_update, enable_learning, esm_spi_enable, esm_spi_thresh, 
-		debug_mode));
+		lm_delta_update, enable_learning,
+		static_cast<SPIType>(spi_type), getSPIParams(), debug_mode));
 }
 inline FCLKParams_ getFCLKParams(){
 	return 	FCLKParams_(new FCLKParams(max_iters, epsilon,

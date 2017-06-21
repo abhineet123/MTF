@@ -2,7 +2,8 @@
 #define MTF_ESM_PARAMS_H
 
 #include "mtf/Macros/common.h"
-#include <boost/any.hpp>
+#include "mtf/Utilities/spiUtils.h"
+
 #include <vector>
 
 _MTF_BEGIN_NAMESPACE
@@ -14,8 +15,8 @@ struct ESMParams{
 		InitialSelf, CurrentSelf, SumOfSelf,
 		Original, SumOfStd, Std
 	};
-	enum class SPIType{ None, PixDiff, Gradient, GFTT };
-	typedef std::vector<boost::any> SPIParamsType;
+	typedef utils::spi::Types SPIType;
+	typedef utils::spi::ParamsType SPIParamsType;
 
 	int max_iters; //! maximum iterations of the ESM algorithm to run for each frame
 	double epsilon; //! maximum L1 norm of the state update vector at which to stop the iterations

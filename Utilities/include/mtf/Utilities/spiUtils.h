@@ -9,6 +9,7 @@
 _MTF_BEGIN_NAMESPACE
 namespace utils{
 	namespace spi{
+		enum class Types{ None, PixDiff, Gradient, GFTT };
 		typedef std::vector<boost::any> ParamsType;
 		struct Base{
 			Base(VectorXb &_mask) :mask(_mask){}
@@ -20,10 +21,34 @@ namespace utils{
 			void initialize(const PixValT &init_pix_vals);
 			void update(const PixValT &init_pix_vals, const PixValT &curr_pix_vals);
 		private:
-			VectorXb &mask;
 			double pix_diff_thresh;
 			VectorXd rel_pix_diff;
 			double max_pix_diff;
+		};
+		struct Gradient : Base{
+			Gradient(VectorXb &mask, const ParamsType &params);
+			void initialize(int n_pix);
+			void update(const PixGradT &curr_pix_grad);
+		private:
+			double grad_thresh;
+			VectorXd pix_grad_norm;
+		};
+		//! Good Features To Track
+		struct GFTT : Base{
+			GFTT(VectorXb &mask, const ParamsType &params);
+			void initialize(unsigned int _resx, unsigned int _resy);
+			void update(const PixValT &curr_pix_vals);
+		private:
+			int max_corners;
+			double quality_level;
+			double min_distance;
+			int block_size;
+			bool use_harris_detector;
+			double k;
+			int neigh_offset;
+			unsigned int resx, resy;
+			cv::Mat curr_patch_32f, good_locations;
+			void printParams();
 		};
 	}
 	double getMean(const bool *spi_mask, const VectorXd &vec,

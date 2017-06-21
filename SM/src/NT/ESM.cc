@@ -55,8 +55,10 @@ namespace nt{
 				spi.reset(new utils::spi::PixDiff(pix_mask, params.spi_params));
 				break;
 			case SPIType::Gradient:
+				spi.reset(new utils::spi::Gradient(pix_mask, params.spi_params));
 				break;
 			case SPIType::GFTT:
+				spi.reset(new utils::spi::GFTT(pix_mask, params.spi_params));
 				break;
 			default:
 				throw utils::InvalidArgument("ESM::updateSPIMask( :: Invalid SPI type provided");
@@ -422,11 +424,13 @@ namespace nt{
 			static_cast<utils::spi::PixDiff*>(spi.get())->initialize(am->getInitPixVals());
 			break;
 		case SPIType::Gradient:
+			static_cast<utils::spi::Gradient*>(spi.get())->initialize(am->getPatchSize());
 			break;
 		case SPIType::GFTT:
+			static_cast<utils::spi::GFTT*>(spi.get())->initialize(am->getResX(), am->getResY());
 			break;
 		default:
-			throw utils::InvalidArgument("ESM::updateSPIMask( :: Invalid SPI type provided");
+			throw utils::InvalidArgument("ESM::initializeSPIMask :: Invalid SPI type provided");
 		}
 	}
 
@@ -439,11 +443,13 @@ namespace nt{
 			static_cast<utils::spi::PixDiff*>(spi.get())->update(am->getInitPixVals(), am->getCurrPixVals());
 			break;
 		case SPIType::Gradient:
+			static_cast<utils::spi::Gradient*>(spi.get())->update(am->getCurrPixGrad());
 			break;
 		case SPIType::GFTT:
+			static_cast<utils::spi::GFTT*>(spi.get())->update(am->getCurrPixVals());
 			break;
 		default:
-			throw utils::InvalidArgument("ESM::updateSPIMask( :: Invalid SPI type provided");
+			throw utils::InvalidArgument("ESM::updateSPIMask :: Invalid SPI type provided");
 		}
 		if(params.debug_mode){
 			int active_pixels = pix_mask.count();

@@ -767,6 +767,18 @@ namespace mtf{
 		char *dfm_params_f_name = "../../../VGG_Models/VGG_CNN_F.caffemodel";
 		char *dfm_mean_f_name = "../../../VGG_Models/VGG_mean.binaryproto";
 
+		//! SPI
+		int spi_type = 0;
+		double spi_pix_diff_thresh=10;
+		double spi_grad_thresh=0.005;
+		int spi_gftt_max_corners;
+		double spi_gftt_quality_level = 0.01;
+		double spi_gftt_min_distance;
+		int spi_gftt_block_size=3;
+		bool spi_gftt_use_harris_detector=false;
+		double spi_gftt_k=0.04;
+		int spi_gftt_neigh_offset = 0;
+
 		//! Synthetic sequence generator
 		//std::vector<cv::Mat> conv_corners;
 		std::string  syn_ssm = "c8";
@@ -3165,6 +3177,43 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "dfm_mean_f_name")){
 				processStringParam(dfm_mean_f_name, arg_val);
+				return;
+			}
+			//! SPI
+			if(!strcmp(arg_name, "spi_type")){
+				spi_type = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "spi_pix_diff_thresh")){
+				spi_pix_diff_thresh = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "spi_grad_thresh")){
+				spi_grad_thresh = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "spi_gftt_max_corners")){
+				spi_gftt_max_corners = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "spi_gftt_quality_level")){
+				spi_gftt_quality_level = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "spi_gftt_min_distance")){
+				spi_gftt_min_distance = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "spi_gftt_block_size")){
+				spi_gftt_block_size = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "spi_gftt_use_harris_detector")){
+				spi_gftt_use_harris_detector = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "spi_gftt_k")){
+				spi_gftt_k = atof(arg_val);
 				return;
 			}
 			//! Patch extractor
