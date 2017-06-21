@@ -131,6 +131,8 @@ Input/Output related parameters:
 			2/med:	Median filtering
 			3/box:	Box Average filtering
 			4/bil:	Bilinear filtering	
+			5/aniso:	Anisotropic Diffusion (also called Perona-Malik Diffusion: https://en.wikipedia.org/wiki/Anisotropic_diffusion)	
+			6/sobel:	Sobel filtering	
 			
 	 Parameter:	'pre_proc_hist_eq'
 		Description:
