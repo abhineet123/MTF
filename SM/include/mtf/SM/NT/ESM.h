@@ -3,6 +3,7 @@
 
 #include "SearchMethod.h"
 #include "mtf/SM/ESMParams.h"
+#include "mtf/Utilities/spiUtils.h"
 
 _MTF_BEGIN_NAMESPACE
 namespace nt{	
@@ -11,6 +12,7 @@ namespace nt{
 		typedef ESMParams ParamType;
 		typedef ParamType::JacType JacType;
 		typedef ParamType::HessType HessType;
+		typedef ParamType::SPIType SPIType;
 
 		using SearchMethod::initialize;
 		using SearchMethod::update;	
@@ -31,9 +33,7 @@ namespace nt{
 		int frame_id;
 		VectorXc pix_mask2;
 		VectorXb pix_mask;
-		VectorXd rel_pix_diff;
 		cv::Mat pix_mask_img;
-		double max_pix_diff;
 		char* spi_win_name;
 
 		Matrix24d prev_corners;
@@ -51,6 +51,9 @@ namespace nt{
 		RowVectorXd jacobian;
 		//! S x S Hessian of the AM error norm w.r.t. SSM state vector
 		MatrixXd hessian, init_self_hessian;
+
+		bool spi_enabled;
+		std::unique_ptr<utils::spi::Base> spi;
 
 		char *time_fname;
 		char *log_fname;

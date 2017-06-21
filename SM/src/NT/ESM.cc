@@ -6,7 +6,7 @@
 
 _MTF_BEGIN_NAMESPACE
 
-namespace nt{	
+namespace nt{
 
 	ESM::ESM(AM _am, SSM _ssm, const ParamType *esm_params) :
 		SearchMethod(_am, _ssm), params(esm_params){
@@ -24,8 +24,7 @@ namespace nt{
 			printf("lm_delta_update: %f\n", params.lm_delta_update);
 		}
 		printf("enable_learning: %d\n", params.enable_learning);
-		printf("enable_spi: %d\n", params.enable_spi);
-		printf("spi_thresh: %f\n", params.spi_thresh);
+		printf("spi_type: %s\n", ParamType::toString(params.spi_type));
 		printf("debug_mode: %d\n", params.debug_mode);
 
 		printf("appearance model: %s\n", am->name.c_str());
@@ -37,20 +36,31 @@ namespace nt{
 		time_fname = "log/mtf_esm_times.txt";
 
 		frame_id = 0;
-		max_pix_diff = 0;
 
 #ifndef DISABLE_SPI
-		if(params.enable_spi){
+		spi_enabled = params.spi_type != SPIType::None;
+		if(spi_enabled){
 			if(!ssm->supportsSPI())
 				throw utils::FunctonNotImplemented("ESM::SSM does not support SPI");
 			if(!am->supportsSPI())
 				throw utils::FunctonNotImplemented("ESM::AM does not support SPI");
-
 			printf("Using Selective Pixel Integration\n");
 			pix_mask.resize(am->getPatchSize());
 			ssm->setSPIMask(pix_mask.data());
 			am->setSPIMask(pix_mask.data());
-			rel_pix_diff.resize(am->getPatchSize());
+			switch(params.spi_type){
+			case SPIType::None:
+				break;
+			case SPIType::PixDiff:
+				spi.reset(new utils::spi::PixDiff(pix_mask, params.spi_params));
+				break;
+			case SPIType::Gradient:
+				break;
+			case SPIType::GFTT:
+				break;
+			default:
+				throw utils::InvalidArgument("ESM::updateSPIMask( :: Invalid SPI type provided");
+			}
 			pix_mask2.resize(am->getPatchSize());
 			pix_mask_img = cv::Mat(am->getResX(), am->getResY(), CV_8UC1, pix_mask2.data());
 			spi_win_name = "pix_mask_img";
@@ -107,7 +117,7 @@ namespace nt{
 		ssm->initialize(corners, am->getNChannels());
 		am->initializePixVals(ssm->getPts());
 
-		if(params.enable_spi){ initializeSPIMask(); }
+		if(spi_enabled){ initializeSPIMask(); }
 
 		initializePixJacobian();
 		if(params.sec_ord_hess){
@@ -130,7 +140,7 @@ namespace nt{
 		end_timer();
 		write_interval(time_fname, "w");
 	}
-	
+
 	void ESM::setRegion(const cv::Mat& corners){
 		ssm->setCorners(corners);
 		// since the above command completely resets the SSM state including its initial points,
@@ -167,7 +177,7 @@ namespace nt{
 			am->updatePixVals(ssm->getPts());
 			record_event("am->updatePixVals");
 
-			if(params.enable_spi){ updateSPIMask(); }
+			if(spi_enabled){ updateSPIMask(); }
 
 			//! compute the prerequisites for the gradient functions
 			am->updateSimilarity(false);
@@ -250,7 +260,7 @@ namespace nt{
 				break;
 			}
 
-			if(params.enable_spi){ showSPIMask(); }
+			if(spi_enabled){ showSPIMask(); }
 
 			am->clearFirstIter();
 		}
@@ -259,7 +269,7 @@ namespace nt{
 		}
 		ssm->getCorners(cv_corners_mat);
 	}
-	
+
 	void ESM::cmptJacobian(){
 		switch(params.jac_type){
 		case JacType::Original:
@@ -336,7 +346,7 @@ namespace nt{
 			break;
 		}
 	}
-	
+
 	void ESM::initializePixJacobian(){
 		if(params.chained_warp){
 			am->initializePixGrad(ssm->getPts());
@@ -347,7 +357,7 @@ namespace nt{
 			ssm->cmptInitPixJacobian(init_pix_jacobian, am->getInitPixGrad());
 		}
 	}
-	
+
 	void ESM::updatePixJacobian(){
 		//! compute the Jacobian of pixel values w.r.t. SSM parameters
 		if(params.chained_warp){
@@ -366,7 +376,7 @@ namespace nt{
 			record_event("ssm->cmptInitPixJacobian");
 		}
 	}
-	
+
 	void ESM::initializePixHessian(){
 		if(params.chained_warp){
 			am->initializePixHess(ssm->getPts());
@@ -378,7 +388,7 @@ namespace nt{
 			ssm->cmptInitPixHessian(init_pix_hessian, am->getInitPixHess(), am->getInitPixGrad());
 		}
 	}
-	
+
 	void ESM::updatePixHessian(){
 		if(params.chained_warp){
 			am->updatePixHess(ssm->getPts());
@@ -405,36 +415,52 @@ namespace nt{
 	// support for Selective Pixel Integration	
 	void ESM::initializeSPIMask(){
 		cv::namedWindow(spi_win_name);
-		max_pix_diff = am->getInitPixVals().maxCoeff() - am->getInitPixVals().minCoeff();
-		utils::printScalar(max_pix_diff, "max_pix_diff");
+		switch(params.spi_type){
+		case SPIType::None:
+			break;
+		case SPIType::PixDiff:
+			static_cast<utils::spi::PixDiff*>(spi.get())->initialize(am->getInitPixVals());
+			break;
+		case SPIType::Gradient:
+			break;
+		case SPIType::GFTT:
+			break;
+		default:
+			throw utils::InvalidArgument("ESM::updateSPIMask( :: Invalid SPI type provided");
+		}
 	}
-	
+
 	void ESM::updateSPIMask(){
 #ifndef DISABLE_SPI
-		rel_pix_diff = (am->getInitPixVals() - am->getCurrPixVals()) / max_pix_diff;
-		record_event("rel_pix_diff");
-
-		pix_mask = rel_pix_diff.cwiseAbs().array() < params.spi_thresh;
-		record_event("pix_mask");
-
+		switch(params.spi_type){
+		case SPIType::None:
+			break;
+		case SPIType::PixDiff:
+			static_cast<utils::spi::PixDiff*>(spi.get())->update(am->getInitPixVals(), am->getCurrPixVals());
+			break;
+		case SPIType::Gradient:
+			break;
+		case SPIType::GFTT:
+			break;
+		default:
+			throw utils::InvalidArgument("ESM::updateSPIMask( :: Invalid SPI type provided");
+		}
 		if(params.debug_mode){
 			int active_pixels = pix_mask.count();
 			utils::printScalar(active_pixels, "active_pixels", "%d");
 		}
 #endif	
 	}
-	
+
 	void ESM::showSPIMask(){
 #ifndef DISABLE_SPI
-		if(params.enable_spi){
-			for(unsigned int pix_id = 0; pix_id < am->getPatchSize(); pix_id++){
-				int x = pix_mask(pix_id);
-				pix_mask2(pix_id) = x * 255;
-			}
-			cv::Mat pix_mask_img_resized;
-			cv::resize(pix_mask_img, pix_mask_img_resized, cv::Size(300, 300));
-			imshow(spi_win_name, pix_mask_img_resized);
+		for(unsigned int pix_id = 0; pix_id < am->getPatchSize(); ++pix_id){
+			int x = pix_mask(pix_id);
+			pix_mask2(pix_id) = x * 255;
 		}
+		cv::Mat pix_mask_img_resized;
+		cv::resize(pix_mask_img, pix_mask_img_resized, cv::Size(300, 300));
+		imshow(spi_win_name, pix_mask_img_resized);
 #endif
 	}
 }

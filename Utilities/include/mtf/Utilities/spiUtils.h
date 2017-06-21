@@ -3,8 +3,29 @@
 
 #include "mtf/Macros/common.h"
 
+#include <boost/any.hpp>
+#include <vector>
+
 _MTF_BEGIN_NAMESPACE
 namespace utils{
+	namespace spi{
+		typedef std::vector<boost::any> ParamsType;
+		struct Base{
+			Base(VectorXb &_mask) :mask(_mask){}
+		protected:
+			VectorXb &mask;
+		};
+		struct PixDiff : Base{
+			PixDiff(VectorXb &mask, const ParamsType &params);
+			void initialize(const PixValT &init_pix_vals);
+			void update(const PixValT &init_pix_vals, const PixValT &curr_pix_vals);
+		private:
+			VectorXb &mask;
+			double pix_diff_thresh;
+			VectorXd rel_pix_diff;
+			double max_pix_diff;
+		};
+	}
 	double getMean(const bool *spi_mask, const VectorXd &vec,
 		int vec_size);
 	//! columnwise mean

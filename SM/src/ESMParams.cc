@@ -11,8 +11,7 @@
 #define ESM_LM_DELTA_INIT 0.01
 #define ESM_LM_DELTA_UPDATE 10
 #define ESM_ENABLE_LEARNING false
-#define ESM_ENABLE_SPI false
-#define ESM_SPI_THRESH 10
+#define ESM_SPI_TYPE 0
 #define ESM_DEBUG_MODE false
 
 _MTF_BEGIN_NAMESPACE
@@ -21,7 +20,7 @@ ESMParams::ESMParams(int _max_iters, double _epsilon,
 JacType _jac_type, HessType _hess_type, bool _sec_ord_hess,
 bool _chained_warp, bool _leven_marq, double _lm_delta_init,
 double _lm_delta_update, bool _enable_learning, 
-bool _enable_spi, double _spi_thresh, bool _debug_mode) :
+SPIType _spi_type, const SPIParamsType &_spi_params, bool _debug_mode) :
 max_iters(_max_iters),
 epsilon(_epsilon),
 jac_type(_jac_type),
@@ -32,8 +31,8 @@ leven_marq(_leven_marq),
 lm_delta_init(_lm_delta_init),
 lm_delta_update(_lm_delta_update),
 enable_learning(_enable_learning),
-enable_spi(_enable_spi),
-spi_thresh(_spi_thresh),
+spi_type(_spi_type),
+spi_params(_spi_params),
 debug_mode(_debug_mode){}
 
 // default and copy constructor
@@ -47,8 +46,7 @@ leven_marq(ESM_LEVEN_MARQ),
 lm_delta_init(ESM_LM_DELTA_INIT),
 lm_delta_update(ESM_LM_DELTA_UPDATE),
 enable_learning(ESM_ENABLE_LEARNING),
-enable_spi(ESM_ENABLE_SPI),
-spi_thresh(ESM_SPI_THRESH),
+spi_type(static_cast<SPIType>(ESM_SPI_TYPE)),
 debug_mode(ESM_DEBUG_MODE){
 	if(params){
 		max_iters = params->max_iters;
@@ -61,8 +59,8 @@ debug_mode(ESM_DEBUG_MODE){
 		lm_delta_init = params->lm_delta_init;
 		lm_delta_update = params->lm_delta_update;
 		enable_learning = params->enable_learning;
-		enable_spi = params->enable_spi;
-		spi_thresh = params->spi_thresh;
+		spi_type = params->spi_type;
+		spi_params = params->spi_params;
 		debug_mode = params->debug_mode;
 	}
 }
@@ -96,6 +94,22 @@ const char* ESMParams::toString(HessType _hess_type){
 	default:
 		throw utils::InvalidArgument(
 			cv::format("ESMParams :: Invalid hessian type provided: %d", _hess_type));
+	}
+}
+
+const char* ESMParams::toString(SPIType _spi_type){
+	switch(_spi_type){
+	case SPIType::None:
+		return "None";
+	case SPIType::PixDiff:
+		return "PixDiff";
+	case SPIType::Gradient:
+		return "Gradient";
+	case SPIType::GFTT:
+		return "GFTT";
+	default:
+		throw utils::InvalidArgument(
+			cv::format("ESMParams :: Invalid SPI type provided: %d", _spi_type));
 	}
 }
 
