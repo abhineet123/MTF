@@ -1,4 +1,6 @@
 #include "mtf/Utilities/spiUtils.h"
+#include "mtf/Utilities/imgUtils.h"
+#include "mtf/Utilities/miscUtils.h"
 #include "mtf/Utilities/excpUtils.h"
 #include "opencv2/imgproc/imgproc.hpp"
 
@@ -33,8 +35,10 @@ namespace utils{
 
 				parse_spi_param(pix_diff_thresh, double, params[0], PixDiff);
 			}
+			printf("\n");
 			printf("Using Pixel Difference SPI model with:\n");
 			printf("pix_diff_thresh: %f\n", pix_diff_thresh);
+			printf("\n");
 		}
 		void PixDiff::initialize(const PixValT &init_pix_vals){
 			max_pix_diff = init_pix_vals.maxCoeff() - init_pix_vals.minCoeff();
@@ -52,14 +56,17 @@ namespace utils{
 				}
 				parse_spi_param(grad_thresh, double, params[0], Gradient);
 			}
+			printf("\n");
 			printf("Using Gradient Magnitude SPI model with:\n");
 			printf("grad_thresh: %f\n", grad_thresh);
+			printf("\n");
 		}
 		void Gradient::initialize(int n_pix){
 			pix_grad_norm.resize(n_pix);
 		}
 		void Gradient::update(const PixGradT &curr_pix_grad){
-			pix_grad_norm = curr_pix_grad.colwise().norm();
+			pix_grad_norm = curr_pix_grad.rowwise().norm();
+			printMatrixToFile(pix_grad_norm, "pix_grad_norm", "log/pix_grad_norm.txt");
 			mask = pix_grad_norm.array() > grad_thresh;
 		}
 		GFTT::GFTT(VectorXb &_mask, const ParamsType &params) :
@@ -83,6 +90,7 @@ namespace utils{
 			printParams();
 		}
 		void GFTT::printParams(){
+			printf("\n");
 			printf("Using Good Features To Track SPI model with:\n");
 			printf("max_corners: %d\n", max_corners);
 			printf("quality_level: %f\n", quality_level);
@@ -91,6 +99,7 @@ namespace utils{
 			printf("use_harris_detector: %d\n", use_harris_detector);
 			printf("k: %f\n", k);
 			printf("neigh_offset: %d\n", neigh_offset);
+			printf("\n");
 		}
 		void GFTT::initialize(unsigned int _resx, unsigned int _resy){
 			resx = _resx;
@@ -101,15 +110,22 @@ namespace utils{
 			assert(curr_pix_vals.size() == resx*resy);
 			const cv::Mat curr_patch(resy, resx, CV_64FC1, const_cast<double*>(curr_pix_vals.data()));
 			curr_patch.convertTo(curr_patch_32f, curr_patch_32f.type());
+			//std::vector< std::vector<int> > good_locations_vec;
 			cv::goodFeaturesToTrack(curr_patch_32f, good_locations, max_corners, quality_level, min_distance,
 				cv::noArray(), block_size, use_harris_detector, k);
 			//std::cout << "\n" << good_locations << "\n";
+			//printf("good_locations type: %d :: %s\n", good_locations.type(), getType(good_locations));
 			mask.setZero();
 			int n_good_features = good_locations.rows;
+			//int n_good_features = good_locations_vec.size();
 			printf("n_good_features: %d\n", n_good_features);
-			for(int feat_id = 0; feat_id < n_good_features; ++feat_id){				
-				int feat_x = good_locations.at<int>(feat_id, 0);
-				int feat_y = good_locations.at<int>(feat_id, 1);
+			for(int feat_id = 0; feat_id < n_good_features; ++feat_id){
+				cv::Vec2f pix_loc = good_locations.at<cv::Vec2f>(feat_id);
+				int feat_x = static_cast<int>(pix_loc[0]);
+				int feat_y = static_cast<int>(pix_loc[1]);
+				//printf("x: %d\t y=%d\n", feat_x, feat_y);
+				//int feat_x = good_locations_vec[feat_id][0];
+				//int feat_y = good_locations_vec[feat_id][1];
 				for(int x = feat_x - neigh_offset; x <= feat_x + neigh_offset; ++x){
 					if(x < 0 || x >= resx){	continue; }
 					for(int y = feat_y - neigh_offset; y <= feat_y + neigh_offset; ++y){
