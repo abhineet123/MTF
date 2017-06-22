@@ -3216,6 +3216,10 @@ namespace mtf{
 				spi_gftt_k = atof(arg_val);
 				return;
 			}
+			if(!strcmp(arg_name, "spi_gftt_neigh_offset")){
+				spi_gftt_neigh_offset = atoi(arg_val);
+				return;
+			}
 			//! Patch extractor
 			if(!strcmp(arg_name, "extracted_frame_ids")){
 				extracted_frame_ids = atoi_arr(arg_val);

@@ -1281,7 +1281,6 @@ inline SPIParamsType getSPIParams(){
 		break;
 	default:
 		throw utils::InvalidArgument("Invalid SPI type provided");
-
 	}
 	return spi_params;
 }

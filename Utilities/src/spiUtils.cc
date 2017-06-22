@@ -26,11 +26,15 @@ namespace utils{
 	namespace spi{
 		PixDiff::PixDiff(VectorXb &_mask, const ParamsType &params) :
 			Base(_mask), pix_diff_thresh(SPI_PIX_DIFF_THRESH){
-			if(params.empty()){ return; }
-			if(params.size() != 1){
-				throw InvalidArgument("spi::PixDiff needs exactly one input argument");
+			if(!params.empty()){
+				if(params.size() != 1){
+					throw InvalidArgument("spi::PixDiff needs exactly one input argument");
+				}
+
+				parse_spi_param(pix_diff_thresh, double, params[0], PixDiff);
 			}
-			parse_spi_param(pix_diff_thresh, double, params[0], PixDiff);
+			printf("Using Pixel Difference SPI model with:\n");
+			printf("pix_diff_thresh: %f\n", pix_diff_thresh);
 		}
 		void PixDiff::initialize(const PixValT &init_pix_vals){
 			max_pix_diff = init_pix_vals.maxCoeff() - init_pix_vals.minCoeff();
@@ -42,11 +46,14 @@ namespace utils{
 		}
 		Gradient::Gradient(VectorXb &_mask, const ParamsType &params) :
 			Base(_mask), grad_thresh(SPI_GRAD_THRESH){
-			if(params.empty()){ return; }
-			if(params.size() != 1){
-				throw InvalidArgument("spi::Gradient needs exactly one input argument");
+			if(!params.empty()){
+				if(params.size() != 1){
+					throw InvalidArgument("spi::Gradient needs exactly one input argument");
+				}
+				parse_spi_param(grad_thresh, double, params[0], Gradient);
 			}
-			parse_spi_param(grad_thresh, double, params[0], Gradient);
+			printf("Using Gradient Magnitude SPI model with:\n");
+			printf("grad_thresh: %f\n", grad_thresh);
 		}
 		void Gradient::initialize(int n_pix){
 			pix_grad_norm.resize(n_pix);
@@ -99,6 +106,7 @@ namespace utils{
 			//std::cout << "\n" << good_locations << "\n";
 			mask.setZero();
 			int n_good_features = good_locations.rows;
+			printf("n_good_features: %d\n", n_good_features);
 			for(int feat_id = 0; feat_id < n_good_features; ++feat_id){				
 				int feat_x = good_locations.at<int>(feat_id, 0);
 				int feat_y = good_locations.at<int>(feat_id, 1);
