@@ -124,11 +124,11 @@ namespace utils{
 				//int feat_x = static_cast<int>(pix_loc[0]);
 				//int feat_y = static_cast<int>(pix_loc[1]);
 				//printf("x: %d\t y=%d\n", feat_x, feat_y);
-				int feat_x = static_cast<int>(good_locations_vec[feat_id].x);
-				int feat_y = static_cast<int>(good_locations_vec[feat_id].y);
-				for(int x = feat_x - neigh_offset; x <= feat_x + neigh_offset; ++x){
+				unsigned int feat_x = static_cast<unsigned int>(good_locations_vec[feat_id].x);
+				unsigned int feat_y = static_cast<unsigned int>(good_locations_vec[feat_id].y);
+				for(unsigned int x = feat_x - neigh_offset; x <= feat_x + neigh_offset; ++x){
 					if(x < 0 || x >= resx){	continue; }
-					for(int y = feat_y - neigh_offset; y <= feat_y + neigh_offset; ++y){
+					for(unsigned int y = feat_y - neigh_offset; y <= feat_y + neigh_offset; ++y){
 						if(y < 0 || y >= resy){	continue; }
 						int id = y*resx + x;
 						mask[id] = true;
