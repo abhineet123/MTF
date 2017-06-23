@@ -64,7 +64,7 @@ namespace nt{
 				throw utils::InvalidArgument("ESM::updateSPIMask( :: Invalid SPI type provided");
 			}
 			pix_mask2.resize(am->getPatchSize());
-			pix_mask_img = cv::Mat(am->getResX(), am->getResY(), CV_8UC1, pix_mask2.data());
+			pix_mask_img = cv::Mat(am->getResY(), am->getResX(), CV_8UC1, pix_mask2.data());
 			spi_win_name = "pix_mask_img";
 		}
 #endif
@@ -460,12 +460,12 @@ namespace nt{
 
 	void ESM::showSPIMask(){
 #ifndef DISABLE_SPI
-		for(unsigned int pix_id = 0; pix_id < am->getPatchSize(); ++pix_id){
-			int x = pix_mask(pix_id);
-			pix_mask2(pix_id) = x * 255;
-		}
-		cv::Mat pix_mask_img_resized;
-		cv::resize(pix_mask_img, pix_mask_img_resized, cv::Size(300, 300));
+		pix_mask2.noalias() = pix_mask.cast<unsigned char>() * 255;
+		//pix_mask_img = cv::Mat(am->getResY(), am->getResX(), am->getNChannels() == 3 ? CV_64FC3 : CV_64FC1,
+		//	const_cast<double*>(am->getCurrPixVals().data())).mul(
+		//	cv::Mat(am->getResY(), am->getResX(), CV_8UC1, pix_mask.data()));
+		cv::Mat pix_mask_img_resized(pix_mask_img.rows * 3, pix_mask_img.cols * 3, CV_8UC1);
+		cv::resize(pix_mask_img, pix_mask_img_resized, pix_mask_img_resized.size());
 		imshow(spi_win_name, pix_mask_img_resized);
 #endif
 	}
