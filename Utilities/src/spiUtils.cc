@@ -43,6 +43,8 @@ namespace utils{
 		void PixDiff::initialize(const PixValT &init_pix_vals){
 			max_pix_diff = init_pix_vals.maxCoeff() - init_pix_vals.minCoeff();
 			rel_pix_diff.resize(init_pix_vals.size());
+			int n_pix = init_pix_vals.size();
+			mask.fill(true);			
 		}
 		void PixDiff::update(const PixValT &init_pix_vals, const PixValT &curr_pix_vals){
 			rel_pix_diff = (init_pix_vals - curr_pix_vals) / max_pix_diff;
@@ -61,12 +63,12 @@ namespace utils{
 			printf("grad_thresh: %f\n", grad_thresh);
 			printf("\n");
 		}
-		void Gradient::initialize(int n_pix){
-			pix_grad_norm.resize(n_pix);
+		void Gradient::initialize(const PixGradT &init_pix_grad){
+			update(init_pix_grad);
 		}
-		void Gradient::update(const PixGradT &curr_pix_grad){
+		void Gradient::update(const PixGradT &curr_pix_grad){			
 			pix_grad_norm = curr_pix_grad.rowwise().norm();
-			printMatrixToFile(pix_grad_norm, "pix_grad_norm", "log/pix_grad_norm.txt");
+			// printMatrixToFile(pix_grad_norm, "pix_grad_norm", "log/pix_grad_norm.txt");
 			mask = pix_grad_norm.array() > grad_thresh;
 		}
 		GFTT::GFTT(VectorXb &_mask, const ParamsType &params) :
@@ -101,10 +103,11 @@ namespace utils{
 			printf("neigh_offset: %d\n", neigh_offset);
 			printf("\n");
 		}
-		void GFTT::initialize(unsigned int _resx, unsigned int _resy){
+		void GFTT::initialize(const PixValT &init_pix_vals, unsigned int _resx, unsigned int _resy){
 			resx = _resx;
 			resy = _resy;
 			curr_patch_32f.create(resy, resx, CV_32FC1);
+			update(init_pix_vals);
 		}
 		void GFTT::update(const PixValT &curr_pix_vals){
 			assert(curr_pix_vals.size() == resx*resy);
@@ -118,7 +121,7 @@ namespace utils{
 			mask.setZero();
 			//int n_good_features = good_locations.rows;
 			int n_good_features = good_locations_vec.size();
-			printf("n_good_features: %d\n", n_good_features);
+			//printf("n_good_features: %d\n", n_good_features);
 			for(int feat_id = 0; feat_id < n_good_features; ++feat_id){
 				cv::Vec2f pix_loc = good_locations.at<cv::Vec2f>(feat_id);
 				//int feat_x = static_cast<int>(pix_loc[0]);
@@ -197,11 +200,11 @@ namespace utils{
 		assert(dI0_dp.rows() == n_pix*n_channels && dI0_dp.rows() == df_dp.size());
 		df_dp.setZero();
 		int ch_pix_id = 0;
-		printMatrix(df_dIt, "df_dIt");
-		printMatrix(dIt_dp, "dIt_dp");
-		printMatrix(df_dI0, "df_dI0");
-		printMatrix(dI0_dp, "dI0_dp");
-		printMatrix(Map<const VectorXb>(spi_mask, n_pix), "spi_mask", "%d");
+		//printMatrix(df_dIt, "df_dIt");
+		//printMatrix(dIt_dp, "dIt_dp");
+		//printMatrix(df_dI0, "df_dI0");
+		//printMatrix(dI0_dp, "dI0_dp");
+		//printMatrix(Map<const VectorXb>(spi_mask, n_pix), "spi_mask", "%d");
 		for(int pix_id = 0; pix_id < n_pix; ++pix_id){
 			if(!spi_mask[pix_id]){ ch_pix_id += n_channels;  continue; }
 			for(int channel_id = 0; channel_id < n_channels; ++channel_id){
@@ -210,7 +213,7 @@ namespace utils{
 				++ch_pix_id;
 			}
 		}
-		printMatrix(df_dp, "df_dp");
+		//printMatrix(df_dp, "df_dp");
 	}
 	void expandMask(bool *out_mask, const bool *in_mask, int res_ratio_x,
 		int res_ratio_y, int in_resx, int in_resy, int out_resx, int out_resy){

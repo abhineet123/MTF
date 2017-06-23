@@ -27,7 +27,7 @@ namespace utils{
 		};
 		struct Gradient : Base{
 			Gradient(VectorXb &mask, const ParamsType &params);
-			void initialize(int n_pix);
+			void initialize(const PixGradT &init_pix_grad);
 			void update(const PixGradT &curr_pix_grad);
 		private:
 			double grad_thresh;
@@ -36,7 +36,8 @@ namespace utils{
 		//! Good Features To Track
 		struct GFTT : Base{
 			GFTT(VectorXb &mask, const ParamsType &params);
-			void initialize(unsigned int _resx, unsigned int _resy);
+			void initialize(const PixValT &init_pix_vals, 
+				unsigned int _resx, unsigned int _resy);
 			void update(const PixValT &curr_pix_vals);
 		private:
 			int max_corners;

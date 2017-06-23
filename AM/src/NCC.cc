@@ -160,8 +160,8 @@ void NCC::updateInitGrad(){
 			++valid_patch_size;
 		}
 		df_dI0_ncntr_mean /= valid_patch_size;
-		utils::printScalar(valid_patch_size, "valid_patch_size");
-		utils::printScalar(df_dI0_ncntr_mean, "df_dI0_ncntr_mean");
+		//utils::printScalar(valid_patch_size, "valid_patch_size");
+		//utils::printScalar(df_dI0_ncntr_mean, "df_dI0_ncntr_mean");
 	} else{
 #endif
 		df_dI0_ncntr_mean = 0;
@@ -176,8 +176,8 @@ void NCC::updateInitGrad(){
 	}
 #endif
 	df_dI0 = df_dI0_ncntr.array() - df_dI0_ncntr_mean;
-	utils::printMatrix(df_dI0_ncntr, "df_dI0_ncntr");
-	utils::printMatrix(df_dI0, "df_dI0");
+	//utils::printMatrix(df_dI0_ncntr, "df_dI0_ncntr");
+	//utils::printMatrix(df_dI0, "df_dI0");
 }
 
 void NCC::updateCurrGrad(){
@@ -193,13 +193,13 @@ void NCC::updateCurrGrad(){
 			++valid_patch_size;
 		}
 		df_dIt_ncntr_mean /= valid_patch_size;
-		utils::printScalar(b, "b");
-		utils::printScalar(f, "f");
-		utils::printScalar(valid_patch_size, "valid_patch_size");
-		utils::printScalar(df_dI0_ncntr_mean, "df_dI0_ncntr_mean");
-		utils::printMatrix(It_cntr_b, "It_cntr_b");
-		utils::printMatrix(I0_cntr_c, "I0_cntr_c");
-		utils::printMatrix(Map<const VectorXb>(spi_mask, n_pix), "spi_mask", "%d");
+		//utils::printScalar(b, "b");
+		//utils::printScalar(f, "f");
+		//utils::printScalar(valid_patch_size, "valid_patch_size");
+		//utils::printScalar(df_dI0_ncntr_mean, "df_dI0_ncntr_mean");
+		//utils::printMatrix(It_cntr_b, "It_cntr_b");
+		//utils::printMatrix(I0_cntr_c, "I0_cntr_c");
+		//utils::printMatrix(Map<const VectorXb>(spi_mask, n_pix), "spi_mask", "%d");
 	} else{
 #endif
 		df_dIt_ncntr_mean = 0;
@@ -214,8 +214,8 @@ void NCC::updateCurrGrad(){
 	}
 #endif
 	df_dIt = df_dIt_ncntr.array() - df_dIt_ncntr_mean;
-	utils::printMatrix(df_dIt_ncntr, "df_dIt_ncntr");
-	utils::printMatrix(df_dIt, "df_dIt");
+	//utils::printMatrix(df_dIt_ncntr, "df_dIt_ncntr");
+	//utils::printMatrix(df_dIt, "df_dIt");
 }
 
 void NCC::cmptInitJacobian(RowVectorXd &df_dp,

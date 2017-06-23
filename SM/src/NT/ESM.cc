@@ -46,8 +46,7 @@ namespace nt{
 				throw utils::FunctonNotImplemented("ESM::AM does not support SPI");
 			printf("Using Selective Pixel Integration\n");
 			pix_mask.resize(am->getPatchSize());
-			ssm->setSPIMask(pix_mask.data());
-			am->setSPIMask(pix_mask.data());
+			pix_mask.fill(true);
 			switch(params.spi_type){
 			case SPIType::None:
 				break;
@@ -114,14 +113,22 @@ namespace nt{
 
 		am->clearInitStatus();
 		ssm->clearInitStatus();
+#ifndef DISABLE_SPI
 
+#endif		
 		frame_id = 0;
 		ssm->initialize(corners, am->getNChannels());
 		am->initializePixVals(ssm->getPts());
 
-		if(spi_enabled){ initializeSPIMask(); }
-
 		initializePixJacobian();
+
+#ifndef DISABLE_SPI		
+		if(spi_enabled){
+			initializeSPIMask();
+			am->setSPIMask(pix_mask.data());
+			ssm->setSPIMask(pix_mask.data());
+		}
+#endif		
 		if(params.sec_ord_hess){
 			initializePixHessian();
 		}
@@ -172,15 +179,30 @@ namespace nt{
 		bool state_reset = false;
 
 		am->setFirstIter();
-		for(int iter_id = 0; iter_id < params.max_iters; iter_id++){
+		for(int iter_id = 0; iter_id < params.max_iters; ++iter_id){
 			init_timer();
 
+#ifndef DISABLE_SPI		
+			if(spi_enabled){
+				//! pixel values and gradients need to be extracted without SPI
+				am->clearSPIMask();
+				ssm->clearSPIMask();
+			}
+#endif	
 			//! extract pixel values from the current image at the latest known position of the object
 			am->updatePixVals(ssm->getPts());
 			record_event("am->updatePixVals");
 
-			if(spi_enabled){ updateSPIMask(); }
-
+#ifndef DISABLE_SPI	
+			//! don't want to compute the pixel Jacobian unnecessary if it is not needed for SPI 
+			//! in case LM test decides that the previous update needs to be undone
+			updatePixJacobian();
+			if(spi_enabled){
+				updateSPIMask();
+				am->setSPIMask(pix_mask.data());
+				ssm->setSPIMask(pix_mask.data());
+			}
+#endif	
 			//! compute the prerequisites for the gradient functions
 			am->updateSimilarity(false);
 			record_event("am->updateSimilarity");
@@ -211,8 +233,11 @@ namespace nt{
 				prev_similarity = curr_similarity;
 			}
 			state_reset = false;
-
+#ifdef DISABLE_SPI	
+			//! if pixel gradient is not needed for SPI, it is computed only if the LM test 
+			//! has not rejected the previous update to avoid any unnecessary computations
 			updatePixJacobian();
+#endif
 			if(params.jac_type == JacType::Original || params.hess_type == HessType::Original){
 				mean_pix_jacobian = (init_pix_jacobian + curr_pix_jacobian) / 2.0;
 				record_event("mean_pix_jacobian");
@@ -240,8 +265,8 @@ namespace nt{
 				//utils::printMatrix(hessian, "LM hessian");
 			}
 
-			utils::printMatrix(hessian, "hessian");
-			utils::printMatrix(jacobian, "jacobian");
+			//utils::printMatrix(hessian, "hessian");
+			//utils::printMatrix(jacobian, "jacobian");
 			state_update = -hessian.colPivHouseholderQr().solve(jacobian.transpose());
 			record_event("state_update");
 
@@ -415,7 +440,7 @@ namespace nt{
 		am->updateState(am_update);
 		record_event("am->updateState");
 	}
-
+#ifndef DISABLE_SPI		
 	// support for Selective Pixel Integration	
 	void ESM::initializeSPIMask(){
 		cv::namedWindow(spi_win_name);
@@ -426,10 +451,10 @@ namespace nt{
 			static_cast<utils::spi::PixDiff*>(spi.get())->initialize(am->getInitPixVals());
 			break;
 		case SPIType::Gradient:
-			static_cast<utils::spi::Gradient*>(spi.get())->initialize(am->getPatchSize());
+			static_cast<utils::spi::Gradient*>(spi.get())->initialize(am->getInitPixGrad());
 			break;
 		case SPIType::GFTT:
-			static_cast<utils::spi::GFTT*>(spi.get())->initialize(am->getResX(), am->getResY());
+			static_cast<utils::spi::GFTT*>(spi.get())->initialize(am->getInitPixVals(), am->getResX(), am->getResY());
 			break;
 		default:
 			throw utils::InvalidArgument("ESM::initializeSPIMask :: Invalid SPI type provided");
@@ -437,7 +462,6 @@ namespace nt{
 	}
 
 	void ESM::updateSPIMask(){
-#ifndef DISABLE_SPI
 		switch(params.spi_type){
 		case SPIType::None:
 			break;
@@ -457,11 +481,8 @@ namespace nt{
 			int active_pixels = pix_mask.count();
 			utils::printScalar(active_pixels, "active_pixels", "%d");
 		}
-#endif	
 	}
-
 	void ESM::showSPIMask(){
-#ifndef DISABLE_SPI
 		pix_mask2.noalias() = pix_mask.cast<unsigned char>() * 255;
 		//pix_mask_img = cv::Mat(am->getResY(), am->getResX(), am->getNChannels() == 3 ? CV_64FC3 : CV_64FC1,
 		//	const_cast<double*>(am->getCurrPixVals().data())).mul(
@@ -469,7 +490,8 @@ namespace nt{
 		cv::Mat pix_mask_img_resized(pix_mask_img.rows * 3, pix_mask_img.cols * 3, CV_8UC1);
 		cv::resize(pix_mask_img, pix_mask_img_resized, pix_mask_img_resized.size());
 		imshow(spi_win_name, pix_mask_img_resized);
-#endif
 	}
+#endif	
+
 }
 _MTF_END_NAMESPACE

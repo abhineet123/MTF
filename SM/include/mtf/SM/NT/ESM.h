@@ -60,17 +60,19 @@ namespace nt{
 		void cmptJacobian();
 		void cmptHessian();
 
-		//! support for Selective Pixel Integration
-		void initializeSPIMask();
-		void updateSPIMask();
-		void showSPIMask();
-
 		//! functions re implemented by AESM to get the additive variant
 		virtual void initializePixJacobian();
 		virtual void updatePixJacobian();
 		virtual void initializePixHessian();
 		virtual void updatePixHessian();
 		virtual void updateState();
+
+#ifndef DISABLE_SPI		
+		//! support for Selective Pixel Integration
+		void initializeSPIMask();
+		void updateSPIMask();
+		void showSPIMask();
+#endif	
 	};
 }
 _MTF_END_NAMESPACE
