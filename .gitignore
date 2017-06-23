@@ -1,6 +1,7 @@
 *.back
 *.pyc
 *~
+*.exe
 *.bat
 *.sh
 *.sdf
