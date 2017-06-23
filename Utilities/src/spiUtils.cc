@@ -197,7 +197,12 @@ namespace utils{
 		assert(dI0_dp.rows() == n_pix*n_channels && dI0_dp.rows() == df_dp.size());
 		df_dp.setZero();
 		int ch_pix_id = 0;
-		for(int pix_id = 0; pix_id < n_pix; pix_id++){
+		printMatrix(df_dIt, "df_dIt");
+		printMatrix(dIt_dp, "dIt_dp");
+		printMatrix(df_dI0, "df_dI0");
+		printMatrix(dI0_dp, "dI0_dp");
+		printMatrix(Map<const VectorXb>(spi_mask, n_pix), "spi_mask", "%d");
+		for(int pix_id = 0; pix_id < n_pix; ++pix_id){
 			if(!spi_mask[pix_id]){ ch_pix_id += n_channels;  continue; }
 			for(int channel_id = 0; channel_id < n_channels; ++channel_id){
 				df_dp += df_dIt[ch_pix_id] * dIt_dp.row(ch_pix_id) -
@@ -205,6 +210,7 @@ namespace utils{
 				++ch_pix_id;
 			}
 		}
+		printMatrix(df_dp, "df_dp");
 	}
 	void expandMask(bool *out_mask, const bool *in_mask, int res_ratio_x,
 		int res_ratio_y, int in_resx, int in_resy, int out_resx, int out_resy){

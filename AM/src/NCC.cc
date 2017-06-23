@@ -61,7 +61,7 @@ void NCC::initializeSimilarity(){
 	if(spi_mask){
 		I0_mean = utils::getMean(spi_mask, I0, patch_size);
 		c = 0;
-		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
+		for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 			if(!spi_mask[patch_id]){ continue; }
 			I0_cntr[patch_id] = I0[patch_id] - I0_mean;
 			c += I0_cntr[patch_id] * I0_cntr[patch_id];
@@ -118,7 +118,7 @@ void NCC::updateSimilarity(bool prereq_only){
 	if(spi_mask){
 		It_mean = utils::getMean(spi_mask, It, patch_size);
 		a = b = 0;
-		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
+		for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 			if(!spi_mask[patch_id]){ continue; }
 			It_cntr[patch_id] = It[patch_id] - It_mean;
 			a += I0_cntr[patch_id] * It_cntr[patch_id];
@@ -128,18 +128,17 @@ void NCC::updateSimilarity(bool prereq_only){
 	} else{
 #endif
 		It_mean = It.mean();
-		a = b = 0;
-		for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
-			It_cntr[patch_id] = It[patch_id] - It_mean;
-			a += I0_cntr[patch_id] * It_cntr[patch_id];
-			b += It_cntr[patch_id] * It_cntr[patch_id];
-		}
-		b = std::sqrt(b);
+		It_cntr = (It.array() - It_mean);
+		a = (I0_cntr.array() * It_cntr.array()).sum();
+		b = It_cntr.norm(); 
 
-		//It_cntr = (It.array() - It_mean);
-		//a = (I0_cntr.array() * It_cntr.array()).sum();
-		//b = It_cntr.norm();
-
+		//a = b = 0;
+		//for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
+		//	It_cntr[patch_id] = It[patch_id] - It_mean;
+		//	a += I0_cntr[patch_id] * It_cntr[patch_id];
+		//	b += It_cntr[patch_id] * It_cntr[patch_id];
+		//}
+		//b = std::sqrt(b);
 #ifndef DISABLE_SPI
 	}
 #endif
@@ -152,8 +151,8 @@ void NCC::updateInitGrad(){
 #ifndef DISABLE_SPI
 	if(spi_mask){
 		df_dI0_ncntr_mean = 0;
-		int valid_patch_size = 0;
-		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
+		unsigned int valid_patch_size = 0;
+		for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 			if(!spi_mask[patch_id]){ continue; }
 			It_cntr_b(patch_id) = It_cntr(patch_id) / b;
 			df_dI0_ncntr(patch_id) = (It_cntr_b(patch_id) - f*I0_cntr_c(patch_id)) / c;
@@ -161,10 +160,12 @@ void NCC::updateInitGrad(){
 			++valid_patch_size;
 		}
 		df_dI0_ncntr_mean /= valid_patch_size;
+		utils::printScalar(valid_patch_size, "valid_patch_size");
+		utils::printScalar(df_dI0_ncntr_mean, "df_dI0_ncntr_mean");
 	} else{
 #endif
 		df_dI0_ncntr_mean = 0;
-		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
+		for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 			It_cntr_b(patch_id) = It_cntr(patch_id) / b;
 			df_dI0_ncntr(patch_id) = (It_cntr_b(patch_id) - f*I0_cntr_c(patch_id)) / c;
 			df_dI0_ncntr_mean += df_dI0_ncntr(patch_id);
@@ -175,14 +176,16 @@ void NCC::updateInitGrad(){
 	}
 #endif
 	df_dI0 = df_dI0_ncntr.array() - df_dI0_ncntr_mean;
+	utils::printMatrix(df_dI0_ncntr, "df_dI0_ncntr");
+	utils::printMatrix(df_dI0, "df_dI0");
 }
 
 void NCC::updateCurrGrad(){
 #ifndef DISABLE_SPI
 	if(spi_mask){
 		df_dIt_ncntr_mean = 0;
-		int valid_patch_size = 0;
-		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
+		unsigned int valid_patch_size = 0;
+		for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 			if(!spi_mask[patch_id]){ continue; }
 			It_cntr_b(patch_id) = It_cntr(patch_id) / b;
 			df_dIt_ncntr(patch_id) = (I0_cntr_c(patch_id) - f*It_cntr_b(patch_id)) / b;
@@ -190,10 +193,17 @@ void NCC::updateCurrGrad(){
 			++valid_patch_size;
 		}
 		df_dIt_ncntr_mean /= valid_patch_size;
+		utils::printScalar(b, "b");
+		utils::printScalar(f, "f");
+		utils::printScalar(valid_patch_size, "valid_patch_size");
+		utils::printScalar(df_dI0_ncntr_mean, "df_dI0_ncntr_mean");
+		utils::printMatrix(It_cntr_b, "It_cntr_b");
+		utils::printMatrix(I0_cntr_c, "I0_cntr_c");
+		utils::printMatrix(Map<const VectorXb>(spi_mask, n_pix), "spi_mask", "%d");
 	} else{
 #endif
 		df_dIt_ncntr_mean = 0;
-		for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
+		for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 			It_cntr_b(patch_id) = It_cntr(patch_id) / b;
 			df_dIt_ncntr(patch_id) = (I0_cntr_c(patch_id) - f*It_cntr_b(patch_id)) / b;
 			df_dIt_ncntr_mean += df_dIt_ncntr(patch_id);
@@ -204,7 +214,8 @@ void NCC::updateCurrGrad(){
 	}
 #endif
 	df_dIt = df_dIt_ncntr.array() - df_dIt_ncntr_mean;
-
+	utils::printMatrix(df_dIt_ncntr, "df_dIt_ncntr");
+	utils::printMatrix(df_dIt, "df_dIt");
 }
 
 void NCC::cmptInitJacobian(RowVectorXd &df_dp,
@@ -317,7 +328,7 @@ void NCC::cmptSelfHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp){
 		MatrixXd dIt_dp_cntr = (dIt_dp.rowwise() - dIt_dp_mean).array() / b;
 		if(params.fast_hess){
 			d2f_dp2.setZero();
-			for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
+			for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 				if(!spi_mask[patch_id]){ continue; }
 				d2f_dp2 += -dIt_dp_cntr.row(patch_id).transpose()*dIt_dp_cntr.row(patch_id)
 					+
@@ -327,7 +338,7 @@ void NCC::cmptSelfHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp){
 			}
 		} else{
 			d2f_dp2.setZero();
-			for(unsigned int patch_id = 0; patch_id < patch_size; patch_id++){
+			for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
 				if(!spi_mask[patch_id]){ continue; }
 				d2f_dp2 += -dIt_dp_cntr.row(patch_id).transpose()*dIt_dp_cntr.row(patch_id)
 					+

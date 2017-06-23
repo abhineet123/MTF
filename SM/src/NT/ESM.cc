@@ -240,6 +240,8 @@ namespace nt{
 				//utils::printMatrix(hessian, "LM hessian");
 			}
 
+			utils::printMatrix(hessian, "hessian");
+			utils::printMatrix(jacobian, "jacobian");
 			state_update = -hessian.colPivHouseholderQr().solve(jacobian.transpose());
 			record_event("state_update");
 
