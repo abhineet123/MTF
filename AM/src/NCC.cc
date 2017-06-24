@@ -60,13 +60,16 @@ void NCC::initializeSimilarity(){
 #ifndef DISABLE_SPI
 	if(spi_mask){
 		I0_mean = utils::getMean(spi_mask, I0, patch_size);
-		c = 0;
-		for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
-			if(!spi_mask[patch_id]){ continue; }
-			I0_cntr[patch_id] = I0[patch_id] - I0_mean;
-			c += I0_cntr[patch_id] * I0_cntr[patch_id];
-		}
-		c = std::sqrt(c);
+		I0_cntr = (I0.array() - I0_mean);
+		c = Map<const VectorXb>(spi_mask, n_pix).select(I0_cntr, 0).norm();
+		//c = 0;
+		//for(unsigned int patch_id = 0; patch_id < patch_size; ++patch_id){
+		//	if(!spi_mask[patch_id]){ continue; }
+		//	c += I0_cntr[patch_id] * I0_cntr[patch_id];
+		//}
+		//c = std::sqrt(c);
+		//utils::printMatrix(I0_cntr, "I0_cntr");
+		//utils::printMatrix(Map<const VectorXb>(spi_mask, n_pix), "initializeSimilarity :: spi_mask", "%d");
 	} else{
 #endif
 		I0_mean = I0.mean();
@@ -125,6 +128,7 @@ void NCC::updateSimilarity(bool prereq_only){
 			b += It_cntr[patch_id] * It_cntr[patch_id];
 		}
 		b = std::sqrt(b);
+		//utils::printMatrix(Map<const VectorXb>(spi_mask, n_pix), "updateSimilarity :: spi_mask", "%d");
 	} else{
 #endif
 		It_mean = It.mean();
@@ -160,8 +164,8 @@ void NCC::updateInitGrad(){
 			++valid_patch_size;
 		}
 		df_dI0_ncntr_mean /= valid_patch_size;
-		//utils::printScalar(valid_patch_size, "valid_patch_size");
-		//utils::printScalar(df_dI0_ncntr_mean, "df_dI0_ncntr_mean");
+		utils::printScalar(valid_patch_size, "valid_patch_size", "%d");
+		utils::printScalar(df_dI0_ncntr_mean, "df_dI0_ncntr_mean");
 	} else{
 #endif
 		df_dI0_ncntr_mean = 0;
@@ -193,13 +197,15 @@ void NCC::updateCurrGrad(){
 			++valid_patch_size;
 		}
 		df_dIt_ncntr_mean /= valid_patch_size;
-		//utils::printScalar(b, "b");
-		//utils::printScalar(f, "f");
-		//utils::printScalar(valid_patch_size, "valid_patch_size");
-		//utils::printScalar(df_dI0_ncntr_mean, "df_dI0_ncntr_mean");
+		utils::printScalar(a, "a");
+		utils::printScalar(b, "b");
+		utils::printScalar(c, "c");
+		utils::printScalar(f, "f");
+		utils::printScalar(df_dI0_ncntr_mean, "df_dI0_ncntr_mean");
 		//utils::printMatrix(It_cntr_b, "It_cntr_b");
 		//utils::printMatrix(I0_cntr_c, "I0_cntr_c");
 		//utils::printMatrix(Map<const VectorXb>(spi_mask, n_pix), "spi_mask", "%d");
+		utils::printScalar(valid_patch_size, "valid_patch_size", "%d");
 	} else{
 #endif
 		df_dIt_ncntr_mean = 0;

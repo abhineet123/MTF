@@ -31,7 +31,10 @@ namespace utils{
 			void update(const PixGradT &curr_pix_grad);
 		private:
 			double grad_thresh;
+			bool use_union;
+			unsigned int n_pix;
 			VectorXd pix_grad_norm;
+			VectorXb init_mask;
 		};
 		//! Good Features To Track
 		struct GFTT : Base{
@@ -46,10 +49,12 @@ namespace utils{
 			int block_size;
 			bool use_harris_detector;
 			double k;
+			bool use_union;
 			int neigh_offset;
-			unsigned int resx, resy;
+			unsigned int resx, resy, n_pix;
 			cv::Mat curr_patch_32f, good_locations;
-			void printParams();
+			VectorXb init_mask;
+			void getMask(const PixValT &curr_pix_vals, VectorXb &init_spi_mask);
 		};
 	}
 	double getMean(const bool *spi_mask, const VectorXd &vec,

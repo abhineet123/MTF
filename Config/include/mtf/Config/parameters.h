@@ -769,14 +769,16 @@ namespace mtf{
 
 		//! SPI
 		int spi_type = 0;
-		double spi_pix_diff_thresh=10;
-		double spi_grad_thresh=0.005;
-		int spi_gftt_max_corners;
+		double spi_pix_diff_thresh = 10;
+		double spi_grad_thresh = 0.005;
+		bool spi_grad_use_union = false;
+		int spi_gftt_max_corners = 1000;
 		double spi_gftt_quality_level = 0.01;
-		double spi_gftt_min_distance;
-		int spi_gftt_block_size=3;
-		bool spi_gftt_use_harris_detector=false;
-		double spi_gftt_k=0.04;
+		double spi_gftt_min_distance = 0;
+		int spi_gftt_block_size = 3;
+		bool spi_gftt_use_harris_detector = false;
+		double spi_gftt_k = 0.04;
+		bool spi_gftt_use_union = false;
 		int spi_gftt_neigh_offset = 0;
 
 		//! Synthetic sequence generator
@@ -3192,6 +3194,10 @@ namespace mtf{
 				spi_grad_thresh = atof(arg_val);
 				return;
 			}
+			if(!strcmp(arg_name, "spi_grad_use_union")){
+				spi_grad_use_union = atoi(arg_val);
+				return;
+			}
 			if(!strcmp(arg_name, "spi_gftt_max_corners")){
 				spi_gftt_max_corners = atoi(arg_val);
 				return;
@@ -3210,6 +3216,10 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "spi_gftt_use_harris_detector")){
 				spi_gftt_use_harris_detector = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "spi_gftt_use_union")){
+				spi_gftt_use_union = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "spi_gftt_k")){

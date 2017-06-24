@@ -8,12 +8,14 @@
 
 #define SPI_PIX_DIFF_THRESH 10
 #define SPI_GRAD_THRESH 0.005
+#define SPI_GRAD_USE_UNION false
 #define SPI_GFTT_MAX_CORNERS
 #define SPI_GFTT_QUALITY_LEVEL
 #define SPI_GFTT_MIN_DISTANCE
 #define SPI_GFTT_BLOCK_SIZE 3
 #define SPI_GFTT_USE_HARRIS_DETECTOR false
 #define SPI_GFTT_K 0.04
+#define SPI_GFTT_USE_UNION false
 #define SPI_GFTT_NEIGH_OFFSET 0
 
 #define parse_spi_param(name, data_type, param, spi_type)\
@@ -43,43 +45,53 @@ namespace utils{
 		void PixDiff::initialize(const PixValT &init_pix_vals){
 			max_pix_diff = init_pix_vals.maxCoeff() - init_pix_vals.minCoeff();
 			rel_pix_diff.resize(init_pix_vals.size());
-			int n_pix = init_pix_vals.size();
 			mask.fill(true);			
 		}
 		void PixDiff::update(const PixValT &init_pix_vals, const PixValT &curr_pix_vals){
-			rel_pix_diff = (init_pix_vals - curr_pix_vals) / max_pix_diff;
-			mask = rel_pix_diff.cwiseAbs().array() < pix_diff_thresh;
+			//rel_pix_diff = (init_pix_vals - curr_pix_vals) / max_pix_diff;
+			mask = (init_pix_vals - curr_pix_vals).cwiseAbs().array() < pix_diff_thresh*max_pix_diff;
 		}
 		Gradient::Gradient(VectorXb &_mask, const ParamsType &params) :
-			Base(_mask), grad_thresh(SPI_GRAD_THRESH){
+			Base(_mask), grad_thresh(SPI_GRAD_THRESH),
+			use_union(SPI_GRAD_USE_UNION){
 			if(!params.empty()){
-				if(params.size() != 1){
-					throw InvalidArgument("spi::Gradient needs exactly one input argument");
+				if(params.size() != 2){
+					throw InvalidArgument("spi::Gradient needs exactly 2 input arguments");
 				}
 				parse_spi_param(grad_thresh, double, params[0], Gradient);
+				parse_spi_param(use_union, bool, params[1], Gradient);
 			}
 			printf("\n");
 			printf("Using Gradient Magnitude SPI model with:\n");
 			printf("grad_thresh: %f\n", grad_thresh);
+			printf("use_union: %d\n", use_union);
 			printf("\n");
 		}
 		void Gradient::initialize(const PixGradT &init_pix_grad){
-			update(init_pix_grad);
+			n_pix = init_pix_grad.rows();
+			init_mask = init_pix_grad.rowwise().norm().array() > grad_thresh;
+			mask.fill(true);
 		}
 		void Gradient::update(const PixGradT &curr_pix_grad){			
+			assert(curr_pix_grad.rows() == n_pix);
 			pix_grad_norm = curr_pix_grad.rowwise().norm();
 			// printMatrixToFile(pix_grad_norm, "pix_grad_norm", "log/pix_grad_norm.txt");
 			mask = pix_grad_norm.array() > grad_thresh;
+			if(use_union){
+				for(int pix_id = 0; pix_id < n_pix; ++pix_id){
+					mask[pix_id] = mask[pix_id] && init_mask[pix_id];
+				}
+			}
 		}
 		GFTT::GFTT(VectorXb &_mask, const ParamsType &params) :
 			Base(_mask), max_corners(SPI_GFTT_MAX_CORNERS),
 			quality_level(SPI_GFTT_QUALITY_LEVEL), min_distance(SPI_GFTT_MIN_DISTANCE),
 			block_size(SPI_GFTT_BLOCK_SIZE),
 			use_harris_detector(SPI_GFTT_USE_HARRIS_DETECTOR), k(SPI_GFTT_K),
-			neigh_offset(SPI_GFTT_NEIGH_OFFSET){
+			use_union(SPI_GFTT_USE_UNION), neigh_offset(SPI_GFTT_NEIGH_OFFSET){
 			if(!params.empty()){
-				if(params.size() != 7){
-					throw InvalidArgument("spi::GFTT needs exactly 7 input arguments");
+				if(params.size() != 8){
+					throw InvalidArgument("spi::GFTT needs exactly 8 input arguments");
 				}
 				parse_spi_param(max_corners, int, params[0], GFTT);
 				parse_spi_param(quality_level, double, params[1], GFTT);
@@ -88,10 +100,8 @@ namespace utils{
 				parse_spi_param(use_harris_detector, bool, params[4], GFTT);
 				parse_spi_param(k, double, params[5], GFTT);
 				parse_spi_param(neigh_offset, int, params[6], GFTT);
+				parse_spi_param(use_union, bool, params[7], GFTT);
 			}
-			printParams();
-		}
-		void GFTT::printParams(){
 			printf("\n");
 			printf("Using Good Features To Track SPI model with:\n");
 			printf("max_corners: %d\n", max_corners);
@@ -100,16 +110,29 @@ namespace utils{
 			printf("block_size: %d\n", block_size);
 			printf("use_harris_detector: %d\n", use_harris_detector);
 			printf("k: %f\n", k);
+			printf("use_union: %d\n", use_union);
 			printf("neigh_offset: %d\n", neigh_offset);
 			printf("\n");
 		}
 		void GFTT::initialize(const PixValT &init_pix_vals, unsigned int _resx, unsigned int _resy){
 			resx = _resx;
 			resy = _resy;
+			n_pix = resx*resy;
 			curr_patch_32f.create(resy, resx, CV_32FC1);
-			update(init_pix_vals);
+			init_mask.resize(n_pix);
+			getMask(init_pix_vals, init_mask);
+			mask.fill(true);
 		}
 		void GFTT::update(const PixValT &curr_pix_vals){
+			assert(curr_pix_vals.size() == n_pix);
+			getMask(curr_pix_vals, mask);
+			if(use_union){
+				for(int pix_id = 0; pix_id < n_pix; ++pix_id){
+					mask[pix_id] = mask[pix_id] && init_mask[pix_id];
+				}
+			}
+		}
+		void GFTT::getMask(const PixValT &curr_pix_vals, VectorXb &_mask){
 			assert(curr_pix_vals.size() == resx*resy);
 			cv::Mat(resy, resx, CV_64FC1, const_cast<double*>(curr_pix_vals.data())).convertTo(
 				curr_patch_32f, curr_patch_32f.type());
@@ -118,12 +141,12 @@ namespace utils{
 				cv::noArray(), block_size, use_harris_detector, k);
 			//std::cout << "\n" << good_locations << "\n";
 			//printf("good_locations type: %d :: %s\n", good_locations.type(), getType(good_locations));
-			mask.setZero();
+			_mask.setZero();
 			//int n_good_features = good_locations.rows;
 			int n_good_features = good_locations_vec.size();
-			//printf("n_good_features: %d\n", n_good_features);
+			printf("n_good_features: %d\n", n_good_features);
 			for(int feat_id = 0; feat_id < n_good_features; ++feat_id){
-				cv::Vec2f pix_loc = good_locations.at<cv::Vec2f>(feat_id);
+				//cv::Vec2f pix_loc = good_locations.at<cv::Vec2f>(feat_id);
 				//int feat_x = static_cast<int>(pix_loc[0]);
 				//int feat_y = static_cast<int>(pix_loc[1]);
 				//printf("x: %d\t y=%d\n", feat_x, feat_y);
@@ -134,7 +157,7 @@ namespace utils{
 					for(unsigned int y = feat_y - neigh_offset; y <= feat_y + neigh_offset; ++y){
 						if(y < 0 || y >= resy){	continue; }
 						int id = y*resx + x;
-						mask[id] = true;
+						_mask[id] = true;
 					}
 				}
 			}

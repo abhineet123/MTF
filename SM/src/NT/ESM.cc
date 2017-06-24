@@ -44,7 +44,6 @@ namespace nt{
 				throw utils::FunctonNotImplemented("ESM::SSM does not support SPI");
 			if(!am->supportsSPI())
 				throw utils::FunctonNotImplemented("ESM::AM does not support SPI");
-			printf("Using Selective Pixel Integration\n");
 			pix_mask.resize(am->getPatchSize());
 			pix_mask.fill(true);
 			switch(params.spi_type){
@@ -113,9 +112,7 @@ namespace nt{
 
 		am->clearInitStatus();
 		ssm->clearInitStatus();
-#ifndef DISABLE_SPI
 
-#endif		
 		frame_id = 0;
 		ssm->initialize(corners, am->getNChannels());
 		am->initializePixVals(ssm->getPts());

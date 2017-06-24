@@ -1269,6 +1269,7 @@ inline SPIParamsType getSPIParams(){
 		break;
 	case SPIType::Gradient:
 		spi_params.push_back(spi_grad_thresh);
+		spi_params.push_back(spi_grad_use_union);
 		break;
 	case SPIType::GFTT:
 		spi_params.push_back(spi_gftt_max_corners);
@@ -1277,6 +1278,7 @@ inline SPIParamsType getSPIParams(){
 		spi_params.push_back(spi_gftt_block_size);
 		spi_params.push_back(spi_gftt_use_harris_detector);
 		spi_params.push_back(spi_gftt_k);
+		spi_params.push_back(spi_gftt_use_union);
 		spi_params.push_back(spi_gftt_neigh_offset);
 		break;
 	default:
