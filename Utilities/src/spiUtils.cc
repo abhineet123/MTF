@@ -78,8 +78,8 @@ namespace utils{
 			// printMatrixToFile(pix_grad_norm, "pix_grad_norm", "log/pix_grad_norm.txt");
 			mask = pix_grad_norm.array() > grad_thresh;
 			if(use_union){
-				for(int pix_id = 0; pix_id < n_pix; ++pix_id){
-					mask[pix_id] = mask[pix_id] && init_mask[pix_id];
+				for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
+					mask[pix_id] = mask[pix_id] || init_mask[pix_id];
 				}
 			}
 		}
@@ -127,8 +127,8 @@ namespace utils{
 			assert(curr_pix_vals.size() == n_pix);
 			getMask(curr_pix_vals, mask);
 			if(use_union){
-				for(int pix_id = 0; pix_id < n_pix; ++pix_id){
-					mask[pix_id] = mask[pix_id] && init_mask[pix_id];
+				for(unsigned int pix_id = 0; pix_id < n_pix; ++pix_id){
+					mask[pix_id] = mask[pix_id] || init_mask[pix_id];
 				}
 			}
 		}
