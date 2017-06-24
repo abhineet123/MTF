@@ -285,9 +285,9 @@ namespace nt{
 				}
 				break;
 			}
-
+#ifndef DISABLE_SPI		
 			if(spi_enabled){ showSPIMask(); }
-
+#endif
 			am->clearFirstIter();
 		}
 		if(params.enable_learning){
