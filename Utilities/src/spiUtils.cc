@@ -99,8 +99,8 @@ namespace utils{
 				parse_spi_param(block_size, int, params[3], GFTT);
 				parse_spi_param(use_harris_detector, bool, params[4], GFTT);
 				parse_spi_param(k, double, params[5], GFTT);
-				parse_spi_param(neigh_offset, int, params[6], GFTT);
-				parse_spi_param(use_union, bool, params[7], GFTT);
+				parse_spi_param(use_union, bool, params[6], GFTT);
+				parse_spi_param(neigh_offset, int, params[7], GFTT);
 			}
 			printf("\n");
 			printf("Using Good Features To Track SPI model with:\n");
