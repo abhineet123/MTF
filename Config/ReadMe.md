@@ -159,6 +159,18 @@ Input/Output related parameters:
 			0: Disable (default)
 			1: Enable
 			
+	 Parameter:	'img_resize_factor'
+		Description:
+			factor by which the input images are resized before being used for tracking; this is the size ratio of the tracked image to the input image so that a value smaller than 1 means that the tracked image will be smaller than the input one.
+
+	 Parameter:	'input_buffer_size'
+		Description:
+			no, of frames read and stored in the buffer in advance.
+			
+	 Parameter:	'debug_mode'
+		Description:
+			enable debug messages in some of the modules - this is a rather obsolete parameter that will soon be removed; several modules have their own debug mode parameters in modules.cfg
+			
 	 Parameter:	'init_frame_id'
 		Description:
 			id of the frame at which the tracker is to be initialized in case tracking is desired to be started in the middle of the sequence rather than the beginning;
