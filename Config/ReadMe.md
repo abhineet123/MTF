@@ -171,6 +171,45 @@ Input/Output related parameters:
 		Description:
 			enable debug messages in some of the modules - this is a rather obsolete parameter that will soon be removed; several modules have their own debug mode parameters in modules.cfg
 			
+	 Parameter:	'pix_mapper'
+		Description:
+			pixel mapper to use with one of the AMs that support it including SSIM and SPSS - this is one of the SSD-like or L2 AMs that define the similarity between two patches as the L2 norm of mapped versions of the two patches; by selecting one of them here, the same mapping can be combined with a non-L2 norm based AM; this is rather obsolete and has not been tested for a while so might possibly be buggy;
+			
+		Possible Values:
+			scv, rscv, zncc
+		
+	 Parameter:	'max_iters'
+		Description:
+			maximum no. of iterations for which the iterative LK type SMs are allowed to run on each frame;
+			
+	 Parameter:	'epsilon'
+		Description:
+			minimum Euclidean distance between the object locations in consecutive iterations to be used as the termination criterion for iterative LK type SMs - the iterations are terminated if the distance becomes smaller than this;
+	
+	 Parameter:	'grad_eps'
+		Description:
+			offset used for computing the numerical estimate of the first order image gradient (or the Jacobian); this is the distance(in x or y direction) between the pixel locations that are used in the method of central differences; a value of <1 will probably not work with nearest neighbour interpolation method as rounding off errors will cause the gradient to vanish;
+	 
+	 Parameter:	'enable_nt'
+		Description:
+			use the non templated (NT) implementation of the SM; this is enabled automatically if the templated versions are disabled during compilation;
+	 
+	 Parameter:	'frame_gap'
+		Description:
+			gap between consecutive frames that are used for tracking; this can be used to skip frames from the input pipeline, for example, to simulate fast motion;
+			
+	 Parameter:	'invalid_state_check'
+		Description:
+			enable checking if the location provided by the tracker is valid where a valid location is defined as one that does not contain any NaN or Inf values and, if the ground truth is available, whose error w.r.t. the ground truth location is smaller than the value specified in 'invalid_state_err_thresh'; the program exits if tracking state is found to be invalid;
+			
+	 Parameter:	'invalid_state_err_thresh'
+		Description:
+			maximum error of the tracked location w.r.t. the ground truth for the tracking state to be considered valid; the method used for computing the error is specified in 'tracking_err_type';
+	
+	 Parameter:	'hess_eps'
+		Description:
+			offset used for computing the numerical estimate of the second order image gradient (or the Hessian); this is the distance(in x or y direction) between the pixel locations that are used in the method of central differences; values that are <1 have not been found to provide stable results irrespective of the interpolation method;
+			
 	 Parameter:	'init_frame_id'
 		Description:
 			id of the frame at which the tracker is to be initialized in case tracking is desired to be started in the middle of the sequence rather than the beginning;
@@ -181,9 +220,15 @@ Input/Output related parameters:
 		Description:
 			id of the frame after which the tracking actually starts; can be used to start tracking in the middle of the sequence but still initialize in the first frame;
 			only matters if it is greater than init_frame_id;
-			only works with trackers that have setRegion function implemented (none of the third party trackers currently)
+			only works with trackers that have setRegion function implemented (none of the third party trackers currently do); also the ground truth must be available at least up to the starting frame;
 		Possible Values:
 			should be between 0 and no_of_frames-1	
+			
+	 Parameter:	'end_frame_id'
+		Description:
+			id of the frame at which tracking is terminated
+		Possible Values:
+			should be greater than init_frame_id and start_frame_id and less than no_of_frames;	
 			
 	 Parameter:	'read_obj_from_file'
 		Description:
