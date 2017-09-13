@@ -1,3 +1,5 @@
+option(WITH_MEX "Enable compilation of the Matlab interface. This will be automatically disabled if Matlab is not found. However, unresolved issues in Matlab cmake module can cause compilation errors even if a valid Matlab installation is found. This option can be turned off to avoid such issues." ON)
+
 if (WIN32)
 	set(MTF_EXEC_INSTALL_DIR_DEFAULT C:/MTF/bin)
 	set(MTF_PY_INSTALL_DIR_DEFAULT C:/Python27/Lib/site-packages)
@@ -159,44 +161,48 @@ else()
 	message(STATUS "Python and/or Numpy not found so pyMTF is disabled")
 endif()
 
-find_package(Matlab COMPONENTS MEX_COMPILER MX_LIBRARY)
-if(Matlab_FOUND)
-	message(STATUS "Matlab_MEX_LIBRARY: ${Matlab_MEX_LIBRARY}")
-	message(STATUS "Matlab_LIBRARIES: ${Matlab_LIBRARIES}")
-	matlab_add_mex(
-		NAME mexMTF
-		SRC Examples/cpp/mexMTF.cc
-		LINK_TO mtf ${MTF_LIBS} ${Matlab_LIBRARIES}
-	)
-	install(TARGETS mexMTF 
-	RUNTIME DESTINATION ${Matlab_ROOT_DIR}/toolbox/local 
-	LIBRARY DESTINATION ${Matlab_ROOT_DIR}/toolbox/local
-	COMPONENT mex)
-	add_custom_target(mex DEPENDS mexMTF)
-	if(NOT WIN32)
-		add_custom_target(install_mex
-		  ${CMAKE_COMMAND}
-		  -D "CMAKE_INSTALL_COMPONENT=mex"
-		  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-		   DEPENDS mexMTF
-		  )
-		add_custom_target(mtfx DEPENDS mexMTF install_mex)
+if(WITH_MEX)
+	find_package(Matlab COMPONENTS MEX_COMPILER MX_LIBRARY)
+	if(Matlab_FOUND)
+		message(STATUS "Matlab_MEX_LIBRARY: ${Matlab_MEX_LIBRARY}")
+		message(STATUS "Matlab_LIBRARIES: ${Matlab_LIBRARIES}")
+		matlab_add_mex(
+			NAME mexMTF
+			SRC Examples/cpp/mexMTF.cc
+			LINK_TO mtf ${MTF_LIBS} ${Matlab_LIBRARIES}
+		)
+		install(TARGETS mexMTF 
+		RUNTIME DESTINATION ${Matlab_ROOT_DIR}/toolbox/local 
+		LIBRARY DESTINATION ${Matlab_ROOT_DIR}/toolbox/local
+		COMPONENT mex)
+		add_custom_target(mex DEPENDS mexMTF)
+		if(NOT WIN32)
+			add_custom_target(install_mex
+			  ${CMAKE_COMMAND}
+			  -D "CMAKE_INSTALL_COMPONENT=mex"
+			  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+			   DEPENDS mexMTF
+			  )
+			add_custom_target(mtfx DEPENDS mexMTF install_mex)
+		endif()
+	else()
+		message(STATUS "Matlab not found so mexMTF is disabled")
+		if(NOT WIN32)
+			message("\n\tIf Matlab is installed but not detected, mexMTF can be compiled by running the command in 'mtf_mex_cmd.txt' at the MATLAB prompt after:\n\t * removing all semi colons\n\t * replacing all occurences of the type '-l<full path to library>' with '<full path to library>'\n\t * replacing all occurences of the type '-l-L<path to library folder>' with '-L<path to library folder>'\n")
+			addPrefixAndSuffix("${MTF_LIBS}" "-l"  " " MEX_MTF_LIBS)
+			addPrefixAndSuffix("${MTF_DEFINITIONS}" "${DEFINITION_SWITCH}" " " MEX_MTF_DEFINITIONS)
+			addPrefixAndSuffix("${MTF_INCLUDE_DIRS}" "${INCLUDE_SWITCH}\"" "\" " MEX_MTF_INCLUDE_DIRS)
+			addPrefixAndSuffix("${MTF_EXT_INCLUDE_DIRS}" "${INCLUDE_SWITCH}\"" "\" " MEX_MTF_EXT_INCLUDE_DIRS)
+			addSuffix("${MTF_RUNTIME_FLAGS}" " " MEX_MTF_RUNTIME_FLAGS)
+			addSuffix("${MTF_COMPILETIME_FLAGS}" " " MEX_MTF_COMPILETIME_FLAGS)
+			set(MEX_CFLAGS "-fPIC ${MEX_MTF_INCLUDE_DIRS} ${MEX_MTF_EXT_INCLUDE_DIRS} ${MEX_MTF_RUNTIME_FLAGS} ${MEX_MTF_COMPILETIME_FLAGS} ${MEX_MTF_DEFINITIONS}")
+			set(MEX_COMMAND "mex -v CFLAGS='${MEX_CFLAGS}' CXXFLAGS='${MEX_CFLAGS}' -lmtf ${MEX_MTF_LIBS} Examples/cpp/mexMTF.cc")
+			file(WRITE ${CMAKE_BINARY_DIR}/mtf_mex_cmd.txt "${MEX_COMMAND}")
+		endif()		
 	endif()
-else()
-	message(STATUS "Matlab not found so mexMTF is disabled")
-	if(NOT WIN32)
-		message("\n\tIf Matlab is installed but not detected, mexMTF can be compiled by running the command in 'mtf_mex_cmd.txt' at the MATLAB prompt after:\n\t * removing all semi colons\n\t * replacing all occurences of the type '-l<full path to library>' with '<full path to library>'\n\t * replacing all occurences of the type '-l-L<path to library folder>' with '-L<path to library folder>'\n")
-		addPrefixAndSuffix("${MTF_LIBS}" "-l"  " " MEX_MTF_LIBS)
-		addPrefixAndSuffix("${MTF_DEFINITIONS}" "${DEFINITION_SWITCH}" " " MEX_MTF_DEFINITIONS)
-		addPrefixAndSuffix("${MTF_INCLUDE_DIRS}" "${INCLUDE_SWITCH}\"" "\" " MEX_MTF_INCLUDE_DIRS)
-		addPrefixAndSuffix("${MTF_EXT_INCLUDE_DIRS}" "${INCLUDE_SWITCH}\"" "\" " MEX_MTF_EXT_INCLUDE_DIRS)
-		addSuffix("${MTF_RUNTIME_FLAGS}" " " MEX_MTF_RUNTIME_FLAGS)
-		addSuffix("${MTF_COMPILETIME_FLAGS}" " " MEX_MTF_COMPILETIME_FLAGS)
-		set(MEX_CFLAGS "-fPIC ${MEX_MTF_INCLUDE_DIRS} ${MEX_MTF_EXT_INCLUDE_DIRS} ${MEX_MTF_RUNTIME_FLAGS} ${MEX_MTF_COMPILETIME_FLAGS} ${MEX_MTF_DEFINITIONS}")
-		set(MEX_COMMAND "mex -v CFLAGS='${MEX_CFLAGS}' CXXFLAGS='${MEX_CFLAGS}' -lmtf ${MEX_MTF_LIBS} Examples/cpp/mexMTF.cc")
-		file(WRITE ${CMAKE_BINARY_DIR}/mtf_mex_cmd.txt "${MEX_COMMAND}")
-	endif()		
-endif()
+else(WITH_MEX)
+	message(STATUS "Matlab interface (mexMTF) is disabled")
+endif(WITH_MEX)
 
 add_executable(testMTF Examples/cpp/testMTF.cc)
 target_compile_definitions(testMTF PUBLIC ${MTF_DEFINITIONS})

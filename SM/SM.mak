@@ -13,10 +13,10 @@ grid ?= 1
 feat ?= 0
 # enable templated FLANN based implementation of NN SM
 ifeq ($(OS),Windows_NT)
-# FLANN has compatibility issue in Windows 
-nn ?= 0
+	# FLANN has compatibility issue with GNU Make in Windows 
+	nn ?= 0
 else
-nn ?= 1
+	nn ?= 1
 endif
 hdf5 ?= 0
 
@@ -58,30 +58,6 @@ ifeq (${only_nt}, 0)
 	ifeq (${grid}, 1)
 		COMPOSITE +=  GridTrackerFlow
 	endif
-	ifeq (${nn}, 1)
-		SEARCH_METHODS += NN FGNN GNN
-		SEARCH_PARAMS += FLANN
-		MTF_LIBS += -lflann
-		ifeq ($(OS),Windows_NT)
-			MTF_RUNTIME_FLAGS += -I ${WIN_FLANN_LOCATION}
-			MTF_COMPILETIME_FLAGS += -I ${WIN_FLANN_LOCATION}
-		endif
-	else
-		SEARCH_PARAMS += FLANNCV
-		SEARCH_METHODS_NT += GNN
-		MTF_RUNTIME_FLAGS += -D DISABLE_FLANN -D DISABLE_HDF5
-		MTF_COMPILETIME_FLAGS += -D DISABLE_FLANN -D DISABLE_HDF5
-	endif
-	ifeq (${hdf5}, 1)
-		MTF_LIBS += -lhdf5
-		ifeq ($(OS),Windows_NT)
-			MTF_RUNTIME_FLAGS += -I ${WIN_HDF5_LOCATION}
-			MTF_COMPILETIME_FLAGS += -I ${WIN_HDF5_LOCATION}
-		endif
-	else
-		MTF_RUNTIME_FLAGS += -D DISABLE_HDF5
-		MTF_COMPILETIME_FLAGS += -D DISABLE_HDF5
-	endif
 else
 	ifeq (${grid}, 1)
 		COMPOSITE +=  GridTracker GridTrackerCV	
@@ -90,11 +66,35 @@ else
 		MTF_RUNTIME_FLAGS += -D DISABLE_GRID
 		MTF_COMPILETIME_FLAGS += -D DISABLE_GRID
 	endif
-	SEARCH_METHODS_NT += GNN
-	SEARCH_PARAMS += FLANNCV
-	MTF_RUNTIME_FLAGS += -D ENABLE_ONLY_NT -D DISABLE_FLANN -D DISABLE_HDF5
-	MTF_COMPILETIME_FLAGS += -D ENABLE_ONLY_NT -D DISABLE_FLANN -D DISABLE_HDF5
+	MTF_RUNTIME_FLAGS += -D ENABLE_ONLY_NT
+	MTF_COMPILETIME_FLAGS += -D ENABLE_ONLY_NT
 endif
+
+ifeq (${nn}, 1)
+	SEARCH_METHODS += NN FGNN GNN
+	SEARCH_PARAMS += FLANN
+	MTF_LIBS += -lflann
+	ifeq ($(OS),Windows_NT)
+		MTF_RUNTIME_FLAGS += -I ${WIN_FLANN_LOCATION}
+		MTF_COMPILETIME_FLAGS += -I ${WIN_FLANN_LOCATION}
+	endif
+else
+	SEARCH_PARAMS += FLANNCV
+	SEARCH_METHODS_NT += GNN
+	MTF_RUNTIME_FLAGS += -D DISABLE_FLANN -D DISABLE_HDF5
+	MTF_COMPILETIME_FLAGS += -D DISABLE_FLANN -D DISABLE_HDF5
+endif
+ifeq (${hdf5}, 1)
+	MTF_LIBS += -lhdf5
+	ifeq ($(OS),Windows_NT)
+		MTF_RUNTIME_FLAGS += -I ${WIN_HDF5_LOCATION}
+		MTF_COMPILETIME_FLAGS += -I ${WIN_HDF5_LOCATION}
+	endif
+else
+	MTF_RUNTIME_FLAGS += -D DISABLE_HDF5
+	MTF_COMPILETIME_FLAGS += -D DISABLE_HDF5
+endif
+
 
 ifeq (${feat}, 1)
 	COMPOSITE += FeatureTracker

@@ -21,14 +21,14 @@
 #include "mtf/SM/FALK.h"
 #include "mtf/SM/IALK.h"
 #include "mtf/SM/PF.h"
-#ifndef DISABLE_FLANN
-#include "mtf/SM/NN.h"
-#endif
 //! composite search methods
 #include "mtf/SM/RKLT.h"
 #include "mtf/SM/CascadeSM.h"
 #include "mtf/SM/ParallelSM.h"
 #include "mtf/SM/PyramidalSM.h"
+#endif
+#ifndef DISABLE_FLANN
+#include "mtf/SM/NN.h"
 #endif
 #ifndef DISABLE_GRID
 #include "mtf/SM/GridTracker.h"
