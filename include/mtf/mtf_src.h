@@ -3,7 +3,7 @@
 
 //! includes all sources for a no-library header only version of MTF
 
-#ifndef ENABLE_ONLY_NT
+#ifndef DISABLE_TEMPLATED_SM
 //! search methods
 #include "../SM/src/ESM.cc"
 #include "../SM/src/ICLK.cc"
@@ -25,7 +25,7 @@
 #ifndef DISABLE_GRID
 #include "../SM/src/GridTracker.cc"
 #include "../SM/src/GridTrackerCV.cc"
-#ifndef ENABLE_ONLY_NT
+#ifndef DISABLE_TEMPLATED_SM
 #include "../SM/src/GridTrackerFlow.cc"
 #endif
 #ifndef DISABLE_FEAT
@@ -136,7 +136,7 @@
 #endif
 
 //! parameters
-#ifndef ENABLE_ONLY_NT
+#ifndef DISABLE_TEMPLATED_SM
 //! search methods
 #include "../SM/src/ESMParams.cc"
 #include "../SM/src/ICLKParams.cc"

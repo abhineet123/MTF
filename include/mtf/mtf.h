@@ -12,8 +12,8 @@
 //! parameters for the different modules
 #include "mtf/Config/parameters.h"
 
-#ifndef ENABLE_ONLY_NT
 //! search methods
+#ifndef DISABLE_TEMPLATED_SM
 //! templated implementations
 #include "mtf/SM/ESM.h"
 #include "mtf/SM/ICLK.h"
@@ -33,7 +33,7 @@
 #ifndef DISABLE_GRID
 #include "mtf/SM/GridTracker.h"
 #include "mtf/SM/GridTrackerCV.h"
-#ifndef ENABLE_ONLY_NT
+#ifndef DISABLE_TEMPLATED_SM
 #include "mtf/SM/GridTrackerFlow.h"
 #endif
 #endif
@@ -44,7 +44,7 @@
 #include "mtf/SM/ParallelTracker.h"
 #include "mtf/SM/PyramidalTracker.h"
 #include "mtf/SM/LineTracker.h"
-//! Non templated implementations of search methods
+//! Non templated implementations
 #include "mtf/SM/NT/FCLK.h"
 #include "mtf/SM/NT/ICLK.h"
 #include "mtf/SM/NT/FALK.h"
@@ -302,7 +302,7 @@ template< class AMType, class SSMType >
 TrackerBase *getTracker(const char *sm_type,
 	const typename AMType::ParamType *am_params,
 	const typename SSMType::ParamType *ssm_params){
-#ifndef ENABLE_ONLY_NT
+#ifndef DISABLE_TEMPLATED_SM
 	typedef SearchMethod<AMType, SSMType> SMType;
 	if(!strcmp(sm_type, "esm")){
 		return new ESM<AMType, SSMType>(getESMParams().get(), am_params, ssm_params);
@@ -734,7 +734,7 @@ TrackerBase *getTracker(const char *sm_type,
 			_ssm_params.resy = grid_params.getResY();
 			return new GridTrackerCV<SSMType>(&grid_params, getSSMEstParams().get(), &_ssm_params);
 		}
-#ifndef ENABLE_ONLY_NT
+#ifndef DISABLE_TEMPLATED_SM
 		else if(!strcmp(grid_sm, "flow")){
 			GridTrackerFlowParams grid_params(
 				grid_res, grid_res, grid_patch_size, grid_patch_size,
@@ -827,7 +827,7 @@ TrackerBase *getTracker(const char *sm_type, const char *ssm_type,
 //! main function for creating trackers
 inline TrackerBase *getTracker(const char *sm_type, const char *am_type,
 	const char *ssm_type, const char *ilm_type){
-#ifdef ENABLE_ONLY_NT
+#ifdef DISABLE_TEMPLATED_SM
 	enable_nt = 1;
 #endif
 	// check for 3rd party trackers

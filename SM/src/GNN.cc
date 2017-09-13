@@ -503,7 +503,7 @@ _MTF_END_NAMESPACE
 //! for NT version of NN
 #include "mtf/AM/AppearanceModel.h"
 template class mtf::gnn::GNN<mtf::AMDist>;
-#ifndef ENABLE_ONLY_NT
+#ifndef DISABLE_TEMPLATED_SM
 //! for standard version of NN
 #include "mtf/Macros/register.h"
 _REGISTER_TRACKERS_DIST(gnn::GNN);
