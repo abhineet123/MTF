@@ -23,7 +23,7 @@ namespace nt{
 
 		class GNN{
 		public:
-			typedef AppearanceModel AM;
+			typedef AMDist AM;
 			typedef GNNParams ParamType;
 
 			GNN(const AM *_dist_func, int _n_samples, int _n_dims,
