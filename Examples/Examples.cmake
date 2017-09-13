@@ -168,7 +168,10 @@ if(Matlab_FOUND)
 		SRC Examples/cpp/mexMTF.cc
 		LINK_TO mtf ${MTF_LIBS} ${Matlab_LIBRARIES}
 	)
-	install(TARGETS mexMTF RUNTIME DESTINATION ${Matlab_ROOT_DIR}/toolbox/local COMPONENT mex)
+	install(TARGETS mexMTF 
+	RUNTIME DESTINATION ${Matlab_ROOT_DIR}/toolbox/local 
+	LIBRARY DESTINATION ${Matlab_ROOT_DIR}/toolbox/local
+	COMPONENT mex)
 	add_custom_target(mex DEPENDS mexMTF)
 	if(NOT WIN32)
 		add_custom_target(install_mex
