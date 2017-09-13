@@ -56,22 +56,23 @@ if(NOT WIN32)
 	  )
 	add_custom_target(mtfu DEPENDS trackUAVTrajectory install_uav)
 endif()
-
-add_executable(trackMarkers Examples/cpp/trackMarkers.cc)
-target_compile_definitions(trackMarkers PUBLIC ${MTF_DEFINITIONS})
-target_compile_options(trackMarkers PUBLIC ${MTF_RUNTIME_FLAGS} ${MTF_COMPILETIME_FLAGS})
-target_include_directories(trackMarkers PUBLIC  ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS})
-target_link_libraries(trackMarkers mtf ${MTF_LIBS})
-install(TARGETS trackMarkers RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT qr)
-add_custom_target(qr DEPENDS trackMarkers)
-if(NOT WIN32)
-	add_custom_target(install_qr
-	  ${CMAKE_COMMAND}
-	  -D "CMAKE_INSTALL_COMPONENT=qr"
-	  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-	   DEPENDS trackMarkers
-	  )
-	add_custom_target(mtfq DEPENDS trackMarkers install_qr)
+if(FEAT_ENABLED)	
+	add_executable(trackMarkers Examples/cpp/trackMarkers.cc)
+	target_compile_definitions(trackMarkers PUBLIC ${MTF_DEFINITIONS})
+	target_compile_options(trackMarkers PUBLIC ${MTF_RUNTIME_FLAGS} ${MTF_COMPILETIME_FLAGS})
+	target_include_directories(trackMarkers PUBLIC  ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS})
+	target_link_libraries(trackMarkers mtf ${MTF_LIBS})
+	install(TARGETS trackMarkers RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT qr)
+	add_custom_target(qr DEPENDS trackMarkers)
+	if(NOT WIN32)
+		add_custom_target(install_qr
+		  ${CMAKE_COMMAND}
+		  -D "CMAKE_INSTALL_COMPONENT=qr"
+		  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+		   DEPENDS trackMarkers
+		  )
+		add_custom_target(mtfq DEPENDS trackMarkers install_qr)
+	endif()
 endif()
 
 add_executable(extractPatch Examples/cpp/extractPatch.cc)
