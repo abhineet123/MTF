@@ -28,9 +28,9 @@
 #ifndef ENABLE_ONLY_NT
 #include "../SM/src/GridTrackerFlow.cc"
 #endif
-#ifndef DISABLE_GRID_FEAT
+#ifndef DISABLE_FEAT
 #ifndef DISABLE_FLANN
-#include "../SM/src/GridTrackerFeat.cc"
+#include "../SM/src/FeatureTracker.cc"
 #endif
 #endif
 #endif
