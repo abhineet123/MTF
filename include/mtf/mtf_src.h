@@ -11,16 +11,16 @@
 #include "../SM/src/FALK.cc"
 #include "../SM/src/IALK.cc"
 #include "../SM/src/PF.cc"
-#ifndef DISABLE_FLANN
-#include "../SM/src/NN.cc"
-#include "../SM/src/FGNN.cc"
-#endif
 #include "../SM/src/GNN.cc"
 //! composite search methods
 #include "../SM/src/RKLT.cc"
 #include "../SM/src/CascadeSM.cc"
 #include "../SM/src/ParallelSM.cc"
 #include "../SM/src/PyramidalSM.cc"
+#endif
+#ifndef DISABLE_FLANN
+#include "../SM/src/NN.cc"
+#include "../SM/src/FGNN.cc"
 #endif
 #ifndef DISABLE_GRID
 #include "../SM/src/GridTracker.cc"

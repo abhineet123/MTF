@@ -35,7 +35,7 @@ Installation:
 		- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) module should be [installed too](http://stackoverflow.com/a/31097788) if the feature tracker is enabled during compilation
     * [Boost](http://www.boost.org/) should be installed
     * [FLANN](http://www.cs.ubc.ca/research/flann/) should be installed for the NN search method
-	    - It is recommended to compile this from source as the version in the Ubuntu repo might give linker errors ([Issue #3](https://github.com/abhineet123/MTF/issues/3)).
+	    - Compilation from source is recommended as the version in the Ubuntu repo might give linker errors ([Issue #3](https://github.com/abhineet123/MTF/issues/3)).
 	    - NN can be disabled at compile time using `nn=0` switch if FLANN is not available (see [compile time switches](#compile-time-switches)).
     * [Intel TBB](https://www.threadingbuildingblocks.org/) / [OpenMP](http://openmp.org/wp/) should be installed if parallelization is to be enabled.
     * [ViSP](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see [compile time switches](#compile-time-switches)).
