@@ -2,7 +2,7 @@
 #define MTF_NN_NT_H
 
 #include "SearchMethod.h"
-#include "mtf/SM/GNN.h"
+#include "mtf/SM/NT/GNN.h"
 #include "mtf/SM/NNParams.h"
 
 _MTF_BEGIN_NAMESPACE
@@ -12,7 +12,7 @@ namespace nt{
 
 		typedef NNParams ParamType;
 		typedef AMDist DistType;
-		typedef gnn::GNN<AMDist> GNN;
+		typedef nt::gnn::GNN GNN;
 		typedef unique_ptr<GNN> GNN_;
 
 		NN(AM _am, SSM _ssm, const ParamType *nn_params = nullptr);

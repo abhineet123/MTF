@@ -22,7 +22,6 @@
 #include "mtf/SM/IALK.h"
 #include "mtf/SM/PF.h"
 //! composite search methods
-#include "mtf/SM/RKLT.h"
 #include "mtf/SM/CascadeSM.h"
 #include "mtf/SM/ParallelSM.h"
 #include "mtf/SM/PyramidalSM.h"
@@ -34,6 +33,7 @@
 #include "mtf/SM/GridTracker.h"
 #include "mtf/SM/GridTrackerCV.h"
 #ifndef DISABLE_TEMPLATED_SM
+#include "mtf/SM/RKLT.h"
 #include "mtf/SM/GridTrackerFlow.h"
 #endif
 #endif
@@ -261,7 +261,7 @@ bool getPFk(vector<SearchMethod<AMType, SSMType>*> &trackers,
 	const typename SSMType::ParamType *ssm_params = nullptr){
 	int n_pfk_ssm_sigma_ids = pfk_ssm_sigma_ids.size();
 	if(n_pfk_ssm_sigma_ids < pfk_n_layers){
-		printf("Insufficient sigma IDs specified for %d layer PF: %d\n", 
+		printf("Insufficient sigma IDs specified for %d layer PF: %d\n",
 			pfk_n_layers, n_pfk_ssm_sigma_ids);
 		return false;
 	}
@@ -283,7 +283,7 @@ bool getNNk(vector<SearchMethod<AMType, SSMType>*> &trackers,
 	const typename SSMType::ParamType *ssm_params = nullptr){
 	int n_nnk_ssm_sigma_ids = nnk_ssm_sigma_ids.size();
 	if(n_nnk_ssm_sigma_ids < nnk_n_layers){
-		printf("Insufficient sigma IDs specified for %d layer NN: %d\n", 
+		printf("Insufficient sigma IDs specified for %d layer NN: %d\n",
 			nnk_n_layers, n_nnk_ssm_sigma_ids);
 		return false;
 	}
@@ -392,38 +392,8 @@ TrackerBase *getTracker(const char *sm_type,
 		return new CascadeSM<AMType, SSMType>(trackers, &casc_params);
 	}
 #ifndef DISABLE_FLANN
-	//! NN tracker
-	else if(!strcmp(sm_type, "nn")){// Nearest Neighbor Search
-		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
-	} else if(!strcmp(sm_type, "nnkdt") || !strcmp(sm_type, "kdt")){// NN with KD Tree Index
-		nn_index_type = 1;
-		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
-	} else if(!strcmp(sm_type, "nnkmn") || !strcmp(sm_type, "kmn")){// NN with KMeans Clustering Index
-		nn_index_type = 2;
-		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
-	} else if(!strcmp(sm_type, "gnn")){// Graph based NN
-		nn_fgnn_index_type = nn_index_type = 0;		
-		return getTracker<AMType, SSMType>("nn", am_params, ssm_params);
-	} else if(!strcmp(sm_type, "fgnn")){// Graph based NN with FLANN based index
-		nn_index_type = 0;
-		nn_fgnn_index_type = nn_fgnn_index_type == 0 ? 2 : nn_fgnn_index_type;
-		return getTracker<AMType, SSMType>("nn", am_params, ssm_params);
-	} else if(!strcmp(sm_type, "nn1k")){// NN with 1000 samples
-		nn_n_samples = 1000;
-		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
-	} else if(!strcmp(sm_type, "nn2k")){// NN with 2000 samples
-		nn_n_samples = 2000;
-		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
-	} else if(!strcmp(sm_type, "nn5k")){// NN with 5000 samples
-		nn_n_samples = 5000;
-		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
-	} else if(!strcmp(sm_type, "nn10k")){// NN with 10000 samples
-		nn_n_samples = 10000;
-		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
-	} else if(!strcmp(sm_type, "nn100k")){// NN with 100000 samples
-		nn_n_samples = 100000;
-		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
-	} else if(!strcmp(sm_type, "nnic")){// NN + ICLK 	
+	//! NN based composite SMs
+	else if(!strcmp(sm_type, "nnic")){// NN + ICLK 	
 		vector<SMType*> trackers;
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("nn", am_params, ssm_params)));
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("ic", am_params, ssm_params)));
@@ -480,6 +450,47 @@ TrackerBase *getTracker(const char *sm_type,
 		return new CascadeSM<AMType, SSMType>(trackers, &casc_params);
 	}
 #endif
+#ifndef DISABLE_GRID
+	//! Grid based composite SMs
+	else if(!strcmp(sm_type, "gric")){// Grid + ICLK
+		vector<TrackerBase*> trackers;
+		trackers.push_back(getTracker<AMType, SSMType>("grid", am_params, ssm_params));
+		trackers.push_back(getTracker<AMType, SSMType>("iclk", am_params, ssm_params));
+		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
+			casc_reinit_err_thresh, casc_reinit_frame_gap);
+		return new CascadeTracker(trackers, &casc_params);
+	} else if(!strcmp(sm_type, "grfc")){// Grid + FCLK
+		vector<TrackerBase*> trackers;
+		trackers.push_back(getTracker<AMType, SSMType>("grid", am_params, ssm_params));
+		trackers.push_back(getTracker<AMType, SSMType>("fclk", am_params, ssm_params));
+		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
+			casc_reinit_err_thresh, casc_reinit_frame_gap);
+		return new CascadeTracker(trackers, &casc_params);
+	} else if(!strcmp(sm_type, "gres")){// Grid + ESM
+		vector<TrackerBase*> trackers;
+		trackers.push_back(getTracker<AMType, SSMType>("grid", am_params, ssm_params));
+		trackers.push_back(getTracker<AMType, SSMType>("esm", am_params, ssm_params));
+		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
+			casc_reinit_err_thresh, casc_reinit_frame_gap);
+		return new CascadeTracker(trackers, &casc_params);
+	} else if(!strcmp(sm_type, "rklt") || !strcmp(sm_type, "rkl")){// Grid + Template tracker with SPI
+		GridBase *grid_tracker = dynamic_cast<GridBase*>(getTracker<AMType, SSMType>("grid", am_params, ssm_params));
+		//if(rkl_enable_spi){
+		//	printf("Setting sampling resolution of the template tracker equal to the grid size: %d x %d so that SPI can be enabled.",
+		//		grid_tracker->getResX(), grid_tracker->getResY());
+		//	am_params->resx = grid_tracker->getResX();
+		//	am_params->resy = grid_tracker->getResY();
+		//}
+		SMType *templ_tracker = dynamic_cast<SMType*>(getTracker<AMType, SSMType>(rkl_sm, am_params, ssm_params));
+		if(!templ_tracker){
+			// invalid or third party tracker has been specified in 'rkl_sm'
+			throw utils::InvalidArgument("Search method provided is not compatible with RKLT");
+		}
+		RKLTParams rkl_params(rkl_enable_spi, rkl_enable_feedback,
+			rkl_failure_detection, rkl_failure_thresh, debug_mode);
+		return new RKLT<AMType, SSMType>(&rkl_params, grid_tracker, templ_tracker);
+	}
+#endif
 	//! cascade of search methods
 	else if(!strcmp(sm_type, "casm")){
 		//! make copies of the original AM and SSM types in case they have 
@@ -491,7 +502,7 @@ TrackerBase *getTracker(const char *sm_type,
 		trackers.resize(casc_n_trackers);
 		for(int i = 0; i < casc_n_trackers; i++){
 			fid = readTrackerParams(fid, 1);
-			if(!(trackers[i] = dynamic_cast<SMType*>(getTracker(mtf_sm, _mtf_am.c_str(), 
+			if(!(trackers[i] = dynamic_cast<SMType*>(getTracker(mtf_sm, _mtf_am.c_str(),
 				_mtf_ssm.c_str(), mtf_ilm)))){
 				printf("Invalid search method provided for cascade SM tracker: %s\n", mtf_sm);
 				return nullptr;
@@ -549,46 +560,6 @@ TrackerBase *getTracker(const char *sm_type,
 			casc_reinit_err_thresh, casc_reinit_frame_gap);
 		return new CascadeTracker(trackers, &casc_params);
 	}
-#ifndef DISABLE_GRID
-	else if(!strcmp(sm_type, "gric")){// Grid + ICLK
-		vector<TrackerBase*> trackers;
-		trackers.push_back(getTracker<AMType, SSMType>("grid", am_params, ssm_params));
-		trackers.push_back(getTracker<AMType, SSMType>("iclk", am_params, ssm_params));
-		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
-			casc_reinit_err_thresh, casc_reinit_frame_gap);
-		return new CascadeTracker(trackers, &casc_params);
-	} else if(!strcmp(sm_type, "grfc")){// Grid + FCLK
-		vector<TrackerBase*> trackers;
-		trackers.push_back(getTracker<AMType, SSMType>("grid", am_params, ssm_params));
-		trackers.push_back(getTracker<AMType, SSMType>("fclk", am_params, ssm_params));
-		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
-			casc_reinit_err_thresh, casc_reinit_frame_gap);
-		return new CascadeTracker(trackers, &casc_params);
-	} else if(!strcmp(sm_type, "gres")){// Grid + ESM
-		vector<TrackerBase*> trackers;
-		trackers.push_back(getTracker<AMType, SSMType>("grid", am_params, ssm_params));
-		trackers.push_back(getTracker<AMType, SSMType>("esm", am_params, ssm_params));
-		CascadeParams casc_params(casc_enable_feedback, casc_auto_reinit,
-			casc_reinit_err_thresh, casc_reinit_frame_gap);
-		return new CascadeTracker(trackers, &casc_params);
-	} else if(!strcmp(sm_type, "rklt") || !strcmp(sm_type, "rkl")){// Grid + Template tracker with SPI
-		GridBase *grid_tracker = dynamic_cast<GridBase*>(getTracker<AMType, SSMType>("grid", am_params, ssm_params));
-		//if(rkl_enable_spi){
-		//	printf("Setting sampling resolution of the template tracker equal to the grid size: %d x %d so that SPI can be enabled.",
-		//		grid_tracker->getResX(), grid_tracker->getResY());
-		//	am_params->resx = grid_tracker->getResX();
-		//	am_params->resy = grid_tracker->getResY();
-		//}
-		SMType *templ_tracker = dynamic_cast<SMType*>(getTracker<AMType, SSMType>(rkl_sm, am_params, ssm_params));
-		if(!templ_tracker){
-			// invalid or third party tracker has been specified in 'rkl_sm'
-			throw utils::InvalidArgument("Search method provided is not compatible with RKLT");
-		}
-		RKLTParams rkl_params(rkl_enable_spi, rkl_enable_feedback,
-			rkl_failure_detection, rkl_failure_thresh, debug_mode);
-		return new RKLT<AMType, SSMType>(&rkl_params, grid_tracker, templ_tracker);
-	}
-#endif
 	else if(!strcmp(sm_type, "prls") || !strcmp(sm_type, "prsm")) {// SM specific parallel tracker
 		vector<SMType*> trackers;
 		trackers.resize(prl_n_trackers);
@@ -624,6 +595,125 @@ TrackerBase *getTracker(const char *sm_type,
 		return new ParallelSM<AMType, SSMType>(trackers, &prl_params, ssm_params);
 	}
 #endif
+#ifndef DISABLE_FLANN
+	//! FLANN based NN tracker
+	else if(!strcmp(sm_type, "nn")){// Nearest Neighbor Search
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nnkdt") || !strcmp(sm_type, "kdt")){// NN with KD Tree Index
+		nn_index_type = 1;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nnkmn") || !strcmp(sm_type, "kmn")){// NN with KMeans Clustering Index
+		nn_index_type = 2;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "gnn")){// Graph based NN
+		nn_fgnn_index_type = nn_index_type = 0;
+		return getTracker<AMType, SSMType>("nn", am_params, ssm_params);
+	} else if(!strcmp(sm_type, "fgnn")){// Graph based NN with FLANN based index
+		nn_index_type = 0;
+		nn_fgnn_index_type = nn_fgnn_index_type == 0 ? 2 : nn_fgnn_index_type;
+		return getTracker<AMType, SSMType>("nn", am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nn1k")){// NN with 1000 samples
+		nn_n_samples = 1000;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nn2k")){// NN with 2000 samples
+		nn_n_samples = 2000;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nn5k")){// NN with 5000 samples
+		nn_n_samples = 5000;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nn10k")){// NN with 10000 samples
+		nn_n_samples = 10000;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "nn100k")){// NN with 100000 samples
+		nn_n_samples = 100000;
+		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
+	}
+#endif
+#ifndef DISABLE_FEAT
+	else if(!strcmp(sm_type, "feat")){
+		bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
+		FeatureTrackerParams grid_params(
+			grid_res, grid_res, grid_patch_size, grid_patch_size, grid_reset_at_each_frame,
+			static_cast<FeatureTrackerParams::DetectorType>(feat_detector_type),
+			static_cast<FeatureTrackerParams::DescriptorType>(feat_descriptor_type),
+			feat_rebuild_index, max_iters, epsilon, enable_pyr, feat_use_cv_flann,
+			feat_max_dist_ratio, feat_min_matches, uchar_input, feat_show_keypoints,
+			feat_show_matches, feat_debug_mode);
+		SIFTParams sift_params(sift_n_features, sift_n_octave_layers,
+			sift_contrast_thresh, sift_edge_thresh, sift_sigma);
+		typename SSMType::ParamType _ssm_params(ssm_params);
+		_ssm_params.resx = grid_params.getResX();
+		_ssm_params.resy = grid_params.getResY();
+		return new FeatureTracker<SSMType>(&grid_params, &sift_params,
+			getFLANNParams().get(), getSSMEstParams().get(), &_ssm_params);
+	}
+#endif
+#ifndef DISABLE_GRID
+	//! Grid Tracker
+	else if(!strcmp(sm_type, "grid")){
+		if(!strcmp(grid_sm, "cv")){
+			int input_type = grid_rgb_input ? uchar_input ? CV_8UC3 : CV_32FC3 :
+				uchar_input ? CV_8UC1 : CV_32FC1;
+			GridTrackerCVParams grid_params(
+				grid_res, grid_res, grid_patch_size, grid_patch_size,
+				grid_reset_at_each_frame, grid_patch_centroid_inside,
+				grid_fb_err_thresh, grid_pyramid_levels, grid_use_min_eig_vals,
+				grid_min_eig_thresh, max_iters, epsilon, input_type,
+				grid_show_trackers, debug_mode);
+			typename SSMType::ParamType _ssm_params(ssm_params);
+			_ssm_params.resx = grid_params.getResX();
+			_ssm_params.resy = grid_params.getResY();
+			return new GridTrackerCV<SSMType>(&grid_params, getSSMEstParams().get(), &_ssm_params);
+		}
+#ifndef DISABLE_TEMPLATED_SM
+		else if(!strcmp(grid_sm, "flow")){
+			GridTrackerFlowParams grid_params(
+				grid_res, grid_res, grid_patch_size, grid_patch_size,
+				grid_pyramid_levels, grid_use_const_grad, grid_min_eig_thresh,
+				max_iters, epsilon, grid_show_trackers, debug_mode);
+			resx = grid_params.getResX();
+			resy = grid_params.getResY();
+			typename SSMType::ParamType _ssm_params(ssm_params);
+			_ssm_params.resx = grid_params.getResX();
+			_ssm_params.resy = grid_params.getResY();
+			return new GridTrackerFlow<AMType, SSMType>(&grid_params, getSSMEstParams().get(), am_params, &_ssm_params);
+		}
+#endif
+		else{
+			vector<TrackerBase*> trackers;
+			int grid_n_trackers = grid_res*grid_res;
+			int resx_back = resx, resy_back = resy;
+			if(grid_patch_res > 0){
+				resx = resy = grid_patch_res;
+			} else{
+				resx = resy = grid_patch_size;
+			}
+			for(int tracker_id = 0; tracker_id < grid_n_trackers; tracker_id++){
+				trackers.push_back(getTracker(grid_sm, grid_am, grid_ssm, grid_ilm));
+				if(!trackers.back()){ return nullptr; }
+			}
+			resx = resx_back;
+			resy = resy_back;
+			bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
+			GridTrackerParams grid_params(
+				grid_res, grid_res, grid_patch_size, grid_patch_size,
+				grid_reset_at_each_frame, grid_dyn_patch_size, grid_patch_centroid_inside,
+				grid_fb_err_thresh, grid_fb_reinit, grid_use_tbb, max_iters, epsilon, enable_pyr,
+				grid_show_trackers, grid_show_tracker_edges, debug_mode);
+			typename SSMType::ParamType _ssm_params(ssm_params);
+			_ssm_params.resx = grid_params.getResX();
+			_ssm_params.resy = grid_params.getResY();
+			return new GridTracker<SSMType>(trackers, &grid_params, getSSMEstParams().get(), &_ssm_params);
+		}
+	} else if(!strcmp(sm_type, "lms")){
+		est_method = 1;
+		return getTracker<AMType, SSMType>("grid", am_params, ssm_params);
+	} else if(!strcmp(sm_type, "ransac") || !strcmp(sm_type, "rnsc")){
+		est_method = 0;
+		return getTracker<AMType, SSMType>("grid", am_params, ssm_params);
+	}
+#endif
+	//! non templated composite SMs/trackers
 	if(!strcmp(sm_type, "casc")){// general purpose cascaded tracker 
 		FILE *fid = nullptr;
 		vector<TrackerBase*> trackers;
@@ -698,90 +788,6 @@ TrackerBase *getTracker(const char *sm_type,
 			line_reset_pos, line_reset_template, line_debug_mode);
 		return new LineTracker(trackers, &line_params);
 	}
-#ifndef DISABLE_FEAT
-	else if(!strcmp(sm_type, "feat")){
-		bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
-		FeatureTrackerParams grid_params(
-			grid_res, grid_res, grid_patch_size, grid_patch_size, grid_reset_at_each_frame,
-			static_cast<FeatureTrackerParams::DetectorType>(feat_detector_type),
-			static_cast<FeatureTrackerParams::DescriptorType>(feat_descriptor_type),
-			feat_rebuild_index, max_iters, epsilon, enable_pyr, feat_use_cv_flann,
-			feat_max_dist_ratio, feat_min_matches, uchar_input, feat_show_keypoints, 
-			feat_show_matches, feat_debug_mode);
-		SIFTParams sift_params(sift_n_features, sift_n_octave_layers,
-			sift_contrast_thresh, sift_edge_thresh, sift_sigma);
-		typename SSMType::ParamType _ssm_params(ssm_params);
-		_ssm_params.resx = grid_params.getResX();
-		_ssm_params.resy = grid_params.getResY();
-		return new FeatureTracker<SSMType>(&grid_params, &sift_params,
-			getFLANNParams().get(),	getSSMEstParams().get(), &_ssm_params);
-	}
-#endif
-#ifndef DISABLE_GRID
-	//! Grid Tracker
-	else if(!strcmp(sm_type, "grid")){
-		if(!strcmp(grid_sm, "cv")){
-			int input_type = grid_rgb_input ? uchar_input ? CV_8UC3 : CV_32FC3 :
-				uchar_input ? CV_8UC1 : CV_32FC1;
-			GridTrackerCVParams grid_params(
-				grid_res, grid_res, grid_patch_size, grid_patch_size,
-				grid_reset_at_each_frame, grid_patch_centroid_inside,
-				grid_fb_err_thresh, grid_pyramid_levels, grid_use_min_eig_vals,
-				grid_min_eig_thresh, max_iters, epsilon, input_type,
-				grid_show_trackers, debug_mode);
-			typename SSMType::ParamType _ssm_params(ssm_params);
-			_ssm_params.resx = grid_params.getResX();
-			_ssm_params.resy = grid_params.getResY();
-			return new GridTrackerCV<SSMType>(&grid_params, getSSMEstParams().get(), &_ssm_params);
-		}
-#ifndef DISABLE_TEMPLATED_SM
-		else if(!strcmp(grid_sm, "flow")){
-			GridTrackerFlowParams grid_params(
-				grid_res, grid_res, grid_patch_size, grid_patch_size,
-				grid_pyramid_levels, grid_use_const_grad, grid_min_eig_thresh,
-				max_iters, epsilon, grid_show_trackers, debug_mode);
-			resx = grid_params.getResX();
-			resy = grid_params.getResY();
-			typename SSMType::ParamType _ssm_params(ssm_params);
-			_ssm_params.resx = grid_params.getResX();
-			_ssm_params.resy = grid_params.getResY();
-			return new GridTrackerFlow<AMType, SSMType>(&grid_params, getSSMEstParams().get(), am_params, &_ssm_params);
-		}
-#endif
-		else{
-			vector<TrackerBase*> trackers;
-			int grid_n_trackers = grid_res*grid_res;
-			int resx_back = resx, resy_back = resy;
-			if(grid_patch_res > 0){
-				resx = resy = grid_patch_res;
-			} else{
-				resx = resy = grid_patch_size;
-			}
-			for(int tracker_id = 0; tracker_id < grid_n_trackers; tracker_id++){
-				trackers.push_back(getTracker(grid_sm, grid_am, grid_ssm, grid_ilm));
-				if(!trackers.back()){ return nullptr; }
-			}
-			resx = resx_back;
-			resy = resy_back;
-			bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
-			GridTrackerParams grid_params(
-				grid_res, grid_res, grid_patch_size, grid_patch_size,
-				grid_reset_at_each_frame, grid_dyn_patch_size, grid_patch_centroid_inside,
-				grid_fb_err_thresh, grid_fb_reinit, grid_use_tbb, max_iters, epsilon, enable_pyr,
-				grid_show_trackers,	grid_show_tracker_edges, debug_mode);
-			typename SSMType::ParamType _ssm_params(ssm_params);
-			_ssm_params.resx = grid_params.getResX();
-			_ssm_params.resy = grid_params.getResY();
-			return new GridTracker<SSMType>(trackers, &grid_params, getSSMEstParams().get(), &_ssm_params);
-		}
-	} else if(!strcmp(sm_type, "lms")){
-		est_method = 1;
-		return getTracker<AMType, SSMType>("grid", am_params, ssm_params);
-	} else if(!strcmp(sm_type, "ransac") || !strcmp(sm_type, "rnsc")){
-		est_method = 0;
-		return getTracker<AMType, SSMType>("grid", am_params, ssm_params);
-	}
-#endif
 	printf("Invalid search method provided: %s\n", sm_type);
 	return nullptr;
 }
@@ -922,7 +928,7 @@ inline TrackerBase *getTracker(const char *sm_type, const char *am_type,
 inline SSMParams_ getSSMParams(const char *ssm_type){
 	SSMParams_ ssm_params(new SSMParams(resx, resy));
 	if(!strcmp(ssm_type, "lhom") || !strcmp(ssm_type, "l8")){
-		return SSMParams_(new LieHomographyParams(ssm_params.get(), lhom_normalized_init, 
+		return SSMParams_(new LieHomographyParams(ssm_params.get(), lhom_normalized_init,
 			lhom_grad_eps, debug_mode));
 	} else if(!strcmp(ssm_type, "cbh") || !strcmp(ssm_type, "c8")){
 		return SSMParams_(new CBHParams(ssm_params.get(), cbh_normalized_init,
@@ -1129,7 +1135,7 @@ inline AppearanceModel *getAM(const char *am_type, const char *ilm_type){
 	}
 	//! composite AMs
 	else if(!strcmp(am_type, "sum")){
-		return new SumOfAMs(getAM(sum_am1.c_str(), mtf_ilm), 
+		return new SumOfAMs(getAM(sum_am1.c_str(), mtf_ilm),
 			getAM(sum_am2.c_str(), mtf_ilm), params.get());
 	}
 	//! multi channel variants
@@ -1339,7 +1345,7 @@ inline PFParams_ getPFParams(){
 		static_cast<PFParams::MeanType>(pf_mean_type),
 		pf_reset_to_mean, pf_ssm_sigma, pf_ssm_mean,
 		pf_update_distr_wts, pf_min_distr_wt,
-		pf_adaptive_resampling_thresh, pf_pix_sigma, 
+		pf_adaptive_resampling_thresh, pf_pix_sigma,
 		pf_measurement_sigma, pf_show_particles,
 		enable_learning, pf_jacobian_as_sigma, pf_debug_mode));
 }

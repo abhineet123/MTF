@@ -1,7 +1,7 @@
 #ifndef MTF_NN_PARAMS_H
 #define MTF_NN_PARAMS_H
 
-#include "mtf/SM/GNN.h"
+#include "mtf/SM/GNNParams.h"
 #include "mtf/Macros/common.h"
 
 _MTF_BEGIN_NAMESPACE

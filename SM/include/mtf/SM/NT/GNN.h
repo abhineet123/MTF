@@ -2,94 +2,84 @@
 #define MTF_GNN_NT_H
 
 #include "mtf/AM/AppearanceModel.h"
-
-#define GNN_DEGREE 250
-#define GNN_MAX_STEPS 10
-#define GNN_CMPT_DIST_THRESH 10000
-#define GNN_VERBOSE 0
+#include "mtf/SM/GNNParams.h"
 
 _MTF_BEGIN_NAMESPACE
 namespace nt{
 	namespace gnn{
-		struct GNNParams{
-			int degree;
-			int max_steps;
-			int cmpt_dist_thresh;
-			bool verbose;
-			GNNParams(int _dgree, int _max_steps,
-				int _cmpt_dist_thresh, bool _verbose);
-			GNNParams(const GNNParams *params = nullptr);
-		};
 
+		struct Node{
+			VectorXi nns_inds;
+			int size;
+			int capacity;
+		};
+		struct IndxDist{
+			double dist;
+			int idx;
+		};
+		inline int cmpQsort(const void *a, const void *b){
+			IndxDist *a1 = (IndxDist *)a;
+			IndxDist *b1 = (IndxDist *)b;
+			// Ascending
+			if(a1->dist > b1->dist) return 1;
+			if(a1->dist == b1->dist) return 0;
+			return -1;
+		}
 		class GNN{
 		public:
-			typedef AMDist AM;
-			typedef GNNParams ParamType;
+			typedef mtf::gnn::GNNParams ParamType;
+			typedef std::shared_ptr<const AMDist> DistTypePtr;
 
-			GNN(const AM *_dist_func, int _n_samples, int _n_dims,
+			GNN(DistTypePtr _dist_func, int _n_samples, int _n_dims,
 				bool _is_symmetrical = true, const ParamType *gnn_params = nullptr);
 			~GNN(){}
+			void computeDistances(const double *dataset);
 			void buildGraph(const double *dataset);
 			void searchGraph(const double *query, const double *dataset,
 				int *nn_ids, double *nn_dists, int K = 1);
 			void saveGraph(const char* file_name);
 			void loadGraph(const char* file_name);
 
-			void  build_graph(const double *X, int k);
-			int search_graph(const double *Xq, const double *X,
+			void  buildGraph(const double *X, int k);
+			int searchGraph(const double *Xq, const double *X,
 				int NNs, int K);
 
 		protected:
 
-			struct node{
-				int *nns_inds;
-				int size;
-				int capacity;
-			};
-
-			struct indx_dist{
-				double dist;
-				int idx;
-			};
-
-			inline int cmp_qsort(const void *a, const void *b){
-				indx_dist *a1 = (indx_dist *)a;
-				indx_dist *b1 = (indx_dist *)b;
-
-				// Ascending
-				if(a1->dist > b1->dist) return 1;
-				if(a1->dist == b1->dist) return 0;
-				return -1;
-			}
-
-			const AM *dist_func;
-			int n_samples, n_dims;
-			bool is_symmetrical;
-
+			DistTypePtr dist_func;
+			const int n_samples, n_dims;
+			const bool is_symmetrical;
 			ParamType params;
-			node *Nodes;
+			std::vector<Node> nodes;
 			MatrixXd dataset_distances;
 
 			int start_node_idx;
 			bool dist_computed;
 
-			void computeDistances(const double *dataset);
-
-			int my_rand(int lb, int ub);
-			void swap_int(int *i, int *j);
-			void swap_double(double *i, double *j);
-
-			void knn_search2(const double *Q, indx_dist *dists, const double *X,
+			int getRandNum(int lb, int ub){
+				//  time_t sec;
+				//  time(&sec);
+				//  srand((unsigned int) sec);
+				return (rand() % (ub - lb + 1) + lb);
+			}
+			template<typename ScalarT>
+			void swap(ScalarT *i, ScalarT *j){
+				ScalarT temp;
+				temp = *i;
+				*i = *j;
+				*j = temp;
+			}
+			void knnSearch2(const double *Q, IndxDist *dists, const double *X,
 				int rows, int cols, int k);
-			void knn_search11(const double *Q, indx_dist *dists, const double *X, int rows,
+			void knnSearch11(const double *Q, IndxDist *dists, const double *X, int rows,
 				int cols, int k, int *X_inds);
 
 			int min(int a, int b){ return a < b ? a : b; }
 
-			void pick_knns(indx_dist *vis_nodes, int visited, indx_dist **gnn_dists,
+			void pickKNNs(IndxDist *vis_nodes, int visited, IndxDist **gnn_dists,
 				int K, int *gnns_cap);
 
-			void add_node(node *node_i, int nn);
+			void addNode(Node *node_i, int nn);
 		};
 	}
 }
