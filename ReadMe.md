@@ -35,7 +35,8 @@ Installation:
 		- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) module should be [installed too](http://stackoverflow.com/a/31097788) if the feature tracker is enabled during compilation
     * [Boost](http://www.boost.org/) should be installed
     * [FLANN](http://www.cs.ubc.ca/research/flann/) should be installed for the NN search method
-	    - NN can be disabled at compile time using `nn=0` switch if this is not available (see [compile time switches](#compile-time-switches))
+	    - It is recommended to compile this from source as the version in the Ubuntu repo might give linker errors ([Issue #3](https://github.com/abhineet123/MTF/issues/3)).
+	    - NN can be disabled at compile time using `nn=0` switch if FLANN is not available (see [compile time switches](#compile-time-switches)).
     * [Intel TBB](https://www.threadingbuildingblocks.org/) / [OpenMP](http://openmp.org/wp/) should be installed if parallelization is to be enabled.
     * [ViSP](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see [compile time switches](#compile-time-switches)).
 	    - Note that [version 3.0.0](http://gforge.inria.fr/frs/download.php/latestfile/475/visp-3.0.0.zip)+ is required. The Ubuntu apt package is 2.8 and is therefore incompatible.
@@ -133,7 +134,6 @@ Installation:
 		    - the NT implementation of NN only works with GNN since FLANN library needs its object to be templated on the AM; 
 	    - `nn=0` will disable the templated implementation of NN search method (enabled by default).
 		    - should be specified if FLANN is not available
-		    - only matters if the previous option is not specified
 		    - FLANN has some compatibility issues under Windows so this is disabled by default;
 	    - `feat=1` will enable the Feature tracker (disabled by default).
 		    -  this uses functionality in the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) module of OpenCV so this should be [installed too](http://stackoverflow.com/a/31097788).
