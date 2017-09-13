@@ -19,6 +19,10 @@ else
 	nn ?= 1
 endif
 hdf5 ?= 0
+# enable Regression Network (RegNet) based SM
+regnet ?= 0
+# use CPU only version of Caffe with RegNet; only matters if RegNet is enabled
+regnet_cpu ?= 0
 
 # enable parallelization of Particle Filter SM using OpenMP
 pfomp ?= 0
@@ -134,8 +138,7 @@ prlomp ?= 0
 gridtbb ?= 0
 gridomp ?= 0
 efd ?= 0
-regnet ?= 0
-regnet_cpu ?= 0
+
 
 ifeq (${regnet}, 1)
 SEARCH_METHODS_NT += RegNet

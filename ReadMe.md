@@ -35,7 +35,7 @@ Installation:
 		- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) module should be [installed too](http://stackoverflow.com/a/31097788) if the feature tracker is enabled during compilation
     * [Boost](http://www.boost.org/) should be installed
     * [FLANN](http://www.cs.ubc.ca/research/flann/) should be installed for the NN search method
-	    - Compilation from source is recommended as the version in the Ubuntu repo might give linker errors ([Issue #3](https://github.com/abhineet123/MTF/issues/3)).
+	    - Compilation from source of version **1.8.4**  available on the [website](http://www.cs.ubc.ca/research/flann/#download) is recommended as the version in the Ubuntu (and git) repo might give linker errors ([Issue #3](https://github.com/abhineet123/MTF/issues/3)).
 	    - NN can be disabled at compile time using `nn=0` switch if FLANN is not available (see [compile time switches](#compile-time-switches)).
     * [Intel TBB](https://www.threadingbuildingblocks.org/) / [OpenMP](http://openmp.org/wp/) should be installed if parallelization is to be enabled.
     * [ViSP](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see [compile time switches](#compile-time-switches)).
@@ -128,28 +128,32 @@ Installation:
 	* `make app app=<APPLICATION_NAME>`: build a custom application that uses MTF with its source code located in `<APPLICATION_NAME>.cc`; the compiled executable goes in the build directory;
 	    - location of the source file (<APPLICATION_NAME>.cc) can be specified through `MTF_APP_SRC_DIR` (defaults to _Examples/cpp_)
 	    - `make mtfa` will install it too - installation location can be specified through `MTF_APP_INSTALL_DIR` (defaults to the current folder)
-    * <a name="compile-time-switches"/>**Compile time switches**</a> for all of the above commands (only applicable to the **make** build system - for cmake there are corresponding options for some of the switches that can be configured before building its makefile):
-	    - `only_nt=1`/`nt=1` will enable only the **Non Templated (NT)** implementations of SMs and disable their templated versions that are extremely time consuming to compile though being faster at runtime (disabled by default)
+    * <a name="compile-time-switches"/>**Compile time switches**</a> for all of the above commands (the equivalent cmake options, where such exist, are given within parenthesis):
+	    - `only_nt=1`/`nt=1`(`WITH_TEMPLATED=OFF`) will enable only the **Non Templated (NT)** implementations of SMs and disable their templated versions that are extremely time consuming to compile though being faster at runtime (disabled by default)
 		    - can be very useful for rapid debugging of AMs and SSMs where headers need to be modified;
 		    - the NT implementation of NN only works with GNN since FLANN library needs its object to be templated on the AM; 
-	    - `nn=0` will disable the templated implementation of NN search method (enabled by default).
+	    - `nn=0`(`WITH_FLANN=OFF`) will disable the templated implementation of NN search method (enabled by default).
 		    - should be specified if FLANN is not available
 		    - FLANN has some compatibility issues under Windows so this is disabled by default;
-	    - `feat=1` will enable the Feature tracker (disabled by default).
+	    - `spi=1`(`WITH_SPI=ON`) will enable support for selective pixel integration in modules that support it (disabled by default)
+		    -  currently only SSD and NCC AMs support this along with all the SSMs
+		    -  this might decrease the performance slightly when not using SPI because some optimizations of Eigen cannot be used with SPI
+	    - `grid=0`(`WITH_GRID_TRACKERS=OFF`) will disable the Grid trackers and RKLT (enabled by default).
+	    - `feat=1`(`WITH_FEAT=OFF`) will enable (disable) the Feature tracker (disabled (enabled) by default).
 		    -  this uses functionality in the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) module of OpenCV so this should be [installed too](http://stackoverflow.com/a/31097788).
-	    - `lt=0` will disable the third party open source learning based trackers - [DSST](http://www.cvl.isy.liu.se/en/research/objrec/visualtracking/scalvistrack/index.html), [KCF](http://home.isr.uc.pt/~henriques/circulant/), [CMT](http://www.gnebehay.com/cmt/), [TLD](http://www.gnebehay.com/tld/), [RCT](http://www4.comp.polyu.edu.hk/~cslzhang/CT/CT.htm), [MIL](http://vision.ucsd.edu/~bbabenko/project_miltrack.html), [Struck](http://www.samhare.net/research/struck), [FragTrack](http://www.cs.technion.ac.il/~amita/fragtrack/fragtrack.htm), [GOTURN](https://github.com/davheld/GOTURN) and [DFT](http://cvlab.epfl.ch/page-107683-en.html) - that are also bundled with this library (in _ThirdParty_ subfolder) (enabled by default except MIL, DFT and GOTURN).
-		    - several third party trackers that have a CMake build system do not compile under Windows yet and are ths not available;
-	    - `gtrn=1` will enable [GOTURN](https://github.com/davheld/GOTURN) deep learning based tracker (disabled by default)
+	    - `lt=0`(`WITH_THIRD_PARTY=OFF`) will disable the third party open source learning based trackers - [DSST](http://www.cvl.isy.liu.se/en/research/objrec/visualtracking/scalvistrack/index.html), [KCF](http://home.isr.uc.pt/~henriques/circulant/), [CMT](http://www.gnebehay.com/cmt/), [TLD](http://www.gnebehay.com/tld/), [RCT](http://www4.comp.polyu.edu.hk/~cslzhang/CT/CT.htm), [MIL](http://vision.ucsd.edu/~bbabenko/project_miltrack.html), [Struck](http://www.samhare.net/research/struck), [FragTrack](http://www.cs.technion.ac.il/~amita/fragtrack/fragtrack.htm), [GOTURN](https://github.com/davheld/GOTURN) and [DFT](http://cvlab.epfl.ch/page-107683-en.html) - that are also bundled with this library (in _ThirdParty_ subfolder) (enabled by default except MIL, DFT and GOTURN).
+		    - several third party trackers that have a CMake build system do not compile under Windows yet and are thus not available;
+	    - `gtrn=1`(`WITH_GOTURN=ON`) will enable [GOTURN](https://github.com/davheld/GOTURN) deep learning based tracker (disabled by default)
 			- requires [Caffe]((http://caffe.berkeleyvision.org/)) to be installed and configured
 			    * if not installed in `~/caffe/build/install`, specify `CAFFE_INSTALL_DIR` either at compile time or by editing `ThirdParty/GOTURN/GOTURN.mak`
 			- optional data for use with it is available [here](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_data.zip) - this should be extracted inside the MTF root folder before running GOTURN
-	    - `dft=1` will enable the [Descriptor Fields Tracker](http://cvlab.epfl.ch/page-107683-en.html) (disabled by default)
+	    - `dft=1`(`WITH_DFT=ON`) will enable the [Descriptor Fields Tracker](http://cvlab.epfl.ch/page-107683-en.html) (disabled by default)
             * this is known to have issues with OpenCV 3.x so should not be enabled if that is being used
-	    - `mil=1` will enable the [Multiple Instance Learning tracker](http://vision.ucsd.edu/~bbabenko/project_miltrack.html) (disabled by default)
+	    - `mil=1`(`WITH_MIL=ON`) will enable the [Multiple Instance Learning tracker](http://vision.ucsd.edu/~bbabenko/project_miltrack.html) (disabled by default)
             * this too is known to have issues with OpenCV 3.x so should not be enabled if that is being used
-		- `vp=1` will enable ViSP template trackers and input pipeline (disabled by default).
+		- `vp=1`(`WITH_VISP=ON`) will enable ViSP template trackers and input pipeline (disabled by default).
             * if a runtime linking error is encountered, add ViSP library install path to `LD_LIBRARY_PATH` variable by running, for instance, `echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/x86_64-linux-gnu/" >> ~/.bashrc`
-	    - `xv=1` will enable [Xvision](http://www.cs.jhu.edu/CIPS/xvision/) trackers and input pipeline (disabled by default and not recommended).
+	    - `xv=1`(`WITH_XVISION=ON`) will enable [Xvision](http://www.cs.jhu.edu/CIPS/xvision/) trackers and input pipeline (disabled by default and not recommended).
 	    - `o=0` will compile the library in debug mode (_libmtf_debug.so_) and disable optimization - the corresponding executables will be suffixed with 'd' ( for example _runMTFd_)
 		- `ver=<version_postfix>` will postfix all compiled library and executable files with the provided postfix so that multiple versions may coexist on the same system without conflict; e.g. `ver=2` will create libmtf_v2.so and runMTF_v2 and same for all libraries created during MTF compilation (including those for third party trackers);
 		- `header_only=1` can be used with `make exe` or `make mtfe` to build a stand alone version of _runMTF_ called _runMTFh_ that does not need to link with _libmtf.so_
