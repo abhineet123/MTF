@@ -492,7 +492,7 @@ TrackerBase *getTracker(const char *sm_type,
 	}
 #endif
 	//! cascade of search methods
-	else if(!strcmp(sm_type, "casm")){
+	if(!strcmp(sm_type, "casm")){
 		//! make copies of the original AM and SSM types in case they have 
 		//! accidently been changed in the multi trcker param file since
 		//! all trackers in CascadeSM must have the same AM and SSM
@@ -597,7 +597,7 @@ TrackerBase *getTracker(const char *sm_type,
 #endif
 #ifndef DISABLE_FLANN
 	//! FLANN based NN tracker
-	else if(!strcmp(sm_type, "nn")){// Nearest Neighbor Search
+	if(!strcmp(sm_type, "nn")){// Nearest Neighbor Search
 		return new NN<AMType, SSMType>(getNNParams().get(), getFLANNParams().get(), am_params, ssm_params);
 	} else if(!strcmp(sm_type, "nnkdt") || !strcmp(sm_type, "kdt")){// NN with KD Tree Index
 		nn_index_type = 1;
@@ -630,7 +630,7 @@ TrackerBase *getTracker(const char *sm_type,
 	}
 #endif
 #ifndef DISABLE_FEAT
-	else if(!strcmp(sm_type, "feat")){
+	if(!strcmp(sm_type, "feat")){
 		bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
 		FeatureTrackerParams grid_params(
 			grid_res, grid_res, grid_patch_size, grid_patch_size, grid_reset_at_each_frame,
@@ -650,7 +650,7 @@ TrackerBase *getTracker(const char *sm_type,
 #endif
 #ifndef DISABLE_GRID
 	//! Grid Tracker
-	else if(!strcmp(sm_type, "grid")){
+	if(!strcmp(sm_type, "grid")){
 		if(!strcmp(grid_sm, "cv")){
 			int input_type = grid_rgb_input ? uchar_input ? CV_8UC3 : CV_32FC3 :
 				uchar_input ? CV_8UC1 : CV_32FC1;

@@ -39,8 +39,8 @@ BASE_HEADERS += ${SM_HEADER_DIR}/SearchMethod.h
 
 SEARCH_METHODS = 
 COMPOSITE = CascadeTracker ParallelTracker PyramidalTracker LineTracker
-SEARCH_METHODS_NT = FCLK ICLK FALK IALK ESM PF NN GNN FCSD AESM RKLT GridTrackerFlow
-SEARCH_PARAMS = FCLK ICLK FALK IALK ESM PF NN GNN Cascade Parallel Pyramidal RKLT GridTrackerFlow
+SEARCH_METHODS_NT = FCLK ICLK FALK IALK ESM PF NN GNN FCSD AESM
+SEARCH_PARAMS = FCLK ICLK FALK IALK ESM PF NN GNN Cascade Parallel Pyramidal
 
 SEARCH_OBJS = $(addprefix ${BUILD_DIR}/,$(addsuffix .o, ${SEARCH_METHODS}))
 SEARCH_NT_OBJS = $(addprefix ${BUILD_DIR}/,$(addsuffix _NT.o, ${SEARCH_METHODS_NT}))
@@ -72,6 +72,8 @@ ifeq (${grid}, 1)
 	ifeq (${only_nt}, 0)
 		COMPOSITE +=  GridTrackerFlow
 	endif
+	SEARCH_METHODS_NT += GridTrackerFlow RKLT
+	SEARCH_PARAMS += GridTrackerFlow RKLT
 else
 	MTF_RUNTIME_FLAGS += -D DISABLE_GRID
 	MTF_COMPILETIME_FLAGS += -D DISABLE_GRID
