@@ -169,26 +169,8 @@ Input/Output related parameters:
 			
 	 Parameter:	'debug_mode'
 		Description:
-			enable debug messages in some of the modules - this is a rather obsolete parameter that will soon be removed; several modules have their own debug mode parameters in modules.cfg
-			
-	 Parameter:	'pix_mapper'
-		Description:
-			pixel mapper to use with one of the AMs that support it including SSIM and SPSS - this is one of the SSD-like or L2 AMs that define the similarity between two patches as the L2 norm of mapped versions of the two patches; by selecting one of them here, the same mapping can be combined with a non-L2 norm based AM; this is rather obsolete and has not been tested for a while so might possibly be buggy;
-			
-		Possible Values:
-			scv, rscv, zncc
-		
-	 Parameter:	'max_iters'
-		Description:
-			maximum no. of iterations for which the iterative LK type SMs are allowed to run on each frame;
-			
-	 Parameter:	'epsilon'
-		Description:
-			minimum Euclidean distance between the object locations in consecutive iterations to be used as the termination criterion for iterative LK type SMs - the iterations are terminated if the distance becomes smaller than this;
-	
-	 Parameter:	'grad_eps'
-		Description:
-			offset used for computing the numerical estimate of the first order image gradient (or the Jacobian); this is the distance(in x or y direction) between the pixel locations that are used in the method of central differences; a value of <1 will probably not work with nearest neighbour interpolation method as rounding off errors will cause the gradient to vanish;
+			enable debug messages in some of the modules - this is a rather obsolete parameter that will soon be removed; several modules have their own debug mode parameters in modules.cfg		
+
 	 
 	 Parameter:	'enable_nt'
 		Description:
@@ -205,10 +187,6 @@ Input/Output related parameters:
 	 Parameter:	'invalid_state_err_thresh'
 		Description:
 			maximum error of the tracked location w.r.t. the ground truth for the tracking state to be considered valid; the method used for computing the error is specified in 'tracking_err_type';
-	
-	 Parameter:	'hess_eps'
-		Description:
-			offset used for computing the numerical estimate of the second order image gradient (or the Hessian); this is the distance(in x or y direction) between the pixel locations that are used in the method of central differences; values that are <1 have not been found to provide stable results irrespective of the interpolation method;
 			
 	 Parameter:	'init_frame_id'
 		Description:
@@ -329,6 +307,9 @@ Input/Output related parameters:
 		Description:
 			reinitialize tracker when it fails, i.e. when its MCD/Jaccard/CL error goes above err_thresh; 
 			only works when a dataset sequence is used and its ground truth is available;	
+		Possible Values:
+			0: Disable
+			1: Enable
 			
 	 Parameter:	'reinit_err_thresh'
 		Description:
@@ -345,11 +326,29 @@ Input/Output related parameters:
 			use reinitialization ground truth instead of the normal one;
 			this only differs from normal ground truth is optimized low DOF ground truth is being used, i.e. if use_opt_gt is enabled too;
 			this can be generated from the normal ground truth using generateReinitGTByOptimization.py script in PTF;
+		Possible Values:
+			0: Disable
+			1: Enable
 			
 	 Parameter:	'reinit_gt_from_bin'
 		Description:
 			read reinitialization ground truth from binary file instead of ASCII text files;
 			this can be generated from the normal ground truth using generateReinitGTByOptimization.py script in PTF;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'n_trackers'
+		Description:
+			number of trackers to run; if this is more than 1, the configuration of all trackers are read from multi.cfg;
+			
+	 Parameter:	'track_single_obj'
+		Description:
+			track the same object using all the trackers (if n_trackers > 1); if this is disabled a different object will have to be selected for each tracker;
+		Possible Values:
+			0: Disable
+			1: Enable			
+
 			
 MTF Tracker specific parameters:
 ================================
@@ -524,6 +523,43 @@ MTF Tracker specific parameters:
 			rate at which the template is updated;
 			varies between 0 and 1 - 0 means that there is no learning; 1 means that the template is updated to the latest patch in each frame;
 			
+	 Parameter:	'likelihood_alpha'
+		Description:
+			multiplicative factor for computing the exponential factor in the likelihood value for an AM; the actual formulation for computing the likelihood will depend on the specific AM and not all AMs may use this parameter;
+			
+	 Parameter:	'likelihood_beta'
+		Description:
+			additive factor for computing the exponential factor in the likelihood value for an AM; the actual formulation for computing the likelihood will depend on the specific AM and not all AMs may use this parameter;
+			
+	 Parameter:	'dist_from_likelihood'
+		Description:
+			compute the distance measure (e.g. as used by the NN search method) using the likelihood value; this can help to decrease the range of distance values so that the corresponding plot has a sharp peak;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'pix_mapper'
+		Description:
+			pixel mapper to use with one of the AMs that support it including SSIM and SPSS - this is one of the SSD-like or L2 AMs that define the similarity between two patches as the L2 norm of mapped versions of the two patches; by selecting one of them here, the same mapping can be combined with a non-L2 norm based AM; this is rather obsolete and has not been tested for a while so might possibly be buggy;
+			
+		Possible Values:
+			scv, rscv, zncc
+		
+	 Parameter:	'max_iters'
+		Description:
+			maximum no. of iterations for which the iterative LK type SMs are allowed to run on each frame;
+			
+	 Parameter:	'epsilon'
+		Description:
+			minimum Euclidean distance between the object locations in consecutive iterations to be used as the termination criterion for iterative LK type SMs - the iterations are terminated if the distance becomes smaller than this;
+	
+	 Parameter:	'grad_eps'
+		Description:
+			offset used for computing the numerical estimate of the first order image gradient (or the Jacobian); this is the distance(in x or y direction) between the pixel locations that are used in the method of central differences; a value of <1 will probably not work with nearest neighbour interpolation method as rounding off errors will cause the gradient to vanish;
+			
+	 Parameter:	'hess_eps'
+		Description:
+			offset used for computing the numerical estimate of the second order image gradient (or the Hessian); this is the distance(in x or y direction) between the pixel locations that are used in the method of central differences; values that are <1 have not been found to provide stable results irrespective of the interpolation method;
 			
 Efficient Second order Minimization:
 ====================================
