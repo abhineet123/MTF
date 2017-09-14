@@ -129,9 +129,10 @@ namespace mtf{
 		int line_width = 4;
 
 		/* for xvision grid tracker */
+		int xv_patch_size = 32;
+		int xv_tracker_type = 't';
 		int xvg_grid_size_x = 4;
 		int xvg_grid_size_y = -1;
-		int xv_tracker_type = 't';
 		int xvg_reset_pos = 0;
 		int xvg_reset_wts = 0;
 		double xvg_sel_reset_thresh = 1.0;
@@ -1171,6 +1172,10 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "xvg_reset_pos")){
 				xvg_reset_pos = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xv_patch_size")){
+				xv_patch_size = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "reset_template")){

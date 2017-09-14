@@ -349,6 +349,23 @@ Input/Output related parameters:
 			0: Disable
 			1: Enable			
 
+	 Parameter:	'patch_size'
+		Description:
+			if non-zero, the this is taken to be the size of the object to be tracked so that the user can simply click at the center to select a square bounding box of this size around the clicked point; if this is zero, the user must provide all 4 corners of the bounding box; only matters if a user-selected object is to be tracked, i.e. when using live/camera input or when the ground truth is not available or if read_obj_from_file and read_obj_from_gt are disabled;
+		
+	 Parameter:	'print_corners'
+		Description:
+			show the x,y coordinates of the corners of the bounding region (usually a box with 4 corners) representing the tracker location on the terminal		
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'print_fps'
+		Description:
+			show the current tracking speed in frames per second (FPS)	on the terminal	
+		Possible Values:
+			0: Disable
+			1: Enable
 			
 MTF Tracker specific parameters:
 ================================
@@ -516,7 +533,7 @@ MTF Tracker specific parameters:
 			
 	 Parameter:	'enable_learning'
 		Description:
-			enable online learning in AMs that support it - only SSD and NCC currently do;
+			enable online learning in AMs that support it - only SSD and NCC currently do; online learning means that the template changes over time based on the observed appearances of the tracked object; this is automatically enabled in AMs, like PCA, that involve learning as an essential part;
 			
 	 Parameter:	'learning_rate'
 		Description:
