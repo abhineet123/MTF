@@ -310,7 +310,7 @@ static PyObject* setRegion(PyObject* self, PyObject* args) {
 		return Py_BuildValue("i", 0);
 	}
 	if(tracker_id >= trackers.size()){
-		printf("\n----pyMTF::remove: tracker_id %d is invalid as only %d trackers exist----\n\n",
+		printf("\n----pyMTF::remove: tracker_id %d is invalid as only %lu trackers exist----\n\n",
 			tracker_id, trackers.size());
 		return Py_BuildValue("i", 0);
 	}
@@ -332,7 +332,7 @@ static PyObject* remove(PyObject* self, PyObject* args) {
 		return Py_BuildValue("i", 0);
 	}
 	if(tracker_id >= trackers.size()){
-		printf("\n----pyMTF::remove: tracker_id %d is invalid as only %d trackers exist----\n\n",
+		printf("\n----pyMTF::remove: tracker_id %d is invalid as only %lu trackers exist----\n\n",
 			tracker_id, trackers.size());
 		return Py_BuildValue("i", 0);
 	}
