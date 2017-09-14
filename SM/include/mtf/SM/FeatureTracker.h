@@ -104,7 +104,11 @@ public:
 	typedef FLANNCVParams FLANNParams;
 #endif
 	//typedef std::unique_ptr<cv::Feature2D> Feature2DPtr;
+#if CV_MAJOR_VERSION < 3
 	typedef std::unique_ptr<cv::SIFT> SIFTPtr;
+#else
+	typedef std::unique_ptr<cv::xfeatures2d::SIFT> SIFTPtr;
+#endif
 
 	FeatureTracker(
 		const ParamType *grid_params = nullptr,
