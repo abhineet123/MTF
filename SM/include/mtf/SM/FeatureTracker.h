@@ -8,7 +8,11 @@
 #include <flann/flann.hpp>
 #include "FLANNParams.h"
 #else
-#include "opencv2/features2d/features2d.hpp"
+#if CV_MAJOR_VERSION < 3
+#include "opencv2/nonfree/nonfree.hpp"
+#else
+#include "opencv2/xfeatures2d/nonfree.hpp"
+#endif
 #include "FLANNCVParams.h"
 #endif
 

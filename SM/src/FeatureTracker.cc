@@ -3,7 +3,11 @@
 #include "mtf/Utilities/imgUtils.h"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#if CV_MAJOR_VERSION < 3
 #include "opencv2/nonfree/nonfree.hpp"
+#else
+#include "opencv2/xfeatures2d/nonfree.hpp"
+#endif
 #include <stdexcept>
 
 #define SIFT_N_FEATURES 0
