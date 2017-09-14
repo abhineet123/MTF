@@ -1871,7 +1871,7 @@ namespace cv
           int myTarget = static_cast<int>(sign(combinedDecision));
 
           m_pseudoTarget[curBaseClassifier] = myTarget;
-          float myImportance = ::abs(combinedDecision);
+          float myImportance = ::fabs(combinedDecision);
           m_pseudoLambda[curBaseClassifier] = myImportance;
 
           baseClassifier[curBaseClassifier]->trainClassifier(image, ROI, myTarget, myImportance, m_errorMask);

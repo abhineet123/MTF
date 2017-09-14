@@ -41,7 +41,7 @@
  */
 float getBbWidth(float *bb)
 {
-    return abs(bb[2] - bb[0] + 1);
+    return fabs(bb[2] - bb[0] + 1);
 }
 /**
  * Returns hight of Boundingbox.
@@ -49,7 +49,7 @@ float getBbWidth(float *bb)
  */
 float getBbHeight(float *bb)
 {
-    return abs(bb[3] - bb[1] + 1);
+    return fabs(bb[3] - bb[1] + 1);
 }
 /**
  * Calculates the new (moved and resized) Bounding box.
