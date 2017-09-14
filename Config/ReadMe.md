@@ -561,6 +561,21 @@ MTF Tracker specific parameters:
 		Description:
 			offset used for computing the numerical estimate of the second order image gradient (or the Hessian); this is the distance(in x or y direction) between the pixel locations that are used in the method of central differences; values that are <1 have not been found to provide stable results irrespective of the interpolation method;
 			
+	 Parameter:	'sec_ord_hess'
+		Description:
+			use second order Hessian in Lucas Kanade type SMs that use some variant of the Newton's method; if disabled, the first order approximation is used where the terms involving second order image and SSM gradients are dropped leading to much faster performance; in most cases, the first order Hessian also performs better;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'leven_marq'
+		Description:
+			use Levenberg-Marquardt formulation for computing the Hessian in Lucas Kanade type SMs that use some variant of the Newton's method; if disabled, the simpler Gauss-Newton formulation is used instead;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+			
 Efficient Second order Minimization:
 ====================================
 	 Parameter:	'esm_jac_type'
