@@ -374,7 +374,7 @@ int main(int argc, char * argv[]) {
 		}
 		if(record_frames_fname.empty()){
 			record_frames_fname = write_tracking_data ? tracking_data_fname :
-				cv::format("%s_%s_%s_%d", mtf_sm, mtf_am, mtf_ssm, 1 - hom_normalized_init);
+				cv_format("%s_%s_%s_%d", mtf_sm, mtf_am, mtf_ssm, 1 - hom_normalized_init);
 		}
 		std::string record_frames_path = cv::format("%s/%s.avi", record_frames_dir.c_str(), tracking_data_fname.c_str());
 		printf("Recording tracking video to: %s\n", record_frames_path.c_str());
