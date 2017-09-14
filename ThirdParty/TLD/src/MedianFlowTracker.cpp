@@ -64,7 +64,8 @@ void MedianFlowTracker::track(const Mat &prevMat, const Mat &currMat, Rect *prev
             return;
         }
 
-        float bb_tracker[] = {prevBB->x, prevBB->y, prevBB->width + prevBB->x - 1, prevBB->height + prevBB->y - 1};
+		float bb_tracker[] = { static_cast<float>(prevBB->x), static_cast<float>(prevBB->y), 
+			static_cast<float>(prevBB->width + prevBB->x - 1), static_cast<float>(prevBB->height + prevBB->y - 1) };
         float scale;
 
         IplImage prevImg = prevMat;
