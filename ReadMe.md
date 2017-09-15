@@ -22,7 +22,7 @@ It can thus be used as a general purpose tracking test bed too.
 MTF supports both **Unix** and **Windows** platforms. Though the Unix build system has been tested comprehensively only under Linux, specifically Ubuntu 14.04, it should work on Macintosh systems too (see [Compile/Runtime Notes](#compileruntime-notes) section below for resolving possible issues).
 The Windows build system has been tested on Windows 8.1 with Visual Studio 2015 though it should work fine with any recent versions of the OS and IDE.
 
-MTF is provided under [BSD license](https://opensource.org/licenses/BSD-3-Clause) and so is free for research and commercial applications. We do request, however, that [this paper](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_iros17.pdf) [[bibtex](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_iros_bibtex.txt)] [[arxiv version](https://arxiv.org/abs/1602.09130)] be cited by any publications resulting from projects that use MTF so more people can get to know about and benefit from it:
+MTF is provided under [BSD license](https://opensource.org/licenses/BSD-3-Clause) and so is free for research and commercial applications. We do request, however, that [this paper](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_iros17.pdf) [[bibtex](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_iros_bibtex.txt)] [[arxiv version](https://arxiv.org/abs/1602.09130)] be cited by any publications resulting from projects that use MTF so more people can get to know about and benefit from it.
  
 
 Finally, if any issues are encountered while installing or running the library, please create an entry in the [issues](https://github.com/abhineet123/MTF/issues) section and we will do our best to resolve it as soon as possible.
