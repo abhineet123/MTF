@@ -109,18 +109,18 @@ Installation:
 		`make install MTF_LIB_INSTALL_DIR=<library_installation_dir> MTF_HEADER_INSTALL_DIR=<header_installation_dir>`  
 		`cmake .. -DMTF_LIB_INSTALL_DIR=<library_installation_dir> -DMTF_HEADER_INSTALL_DIR=<header_installation_dir>`
 		    - these folders should be present in LD_LIBRARY_PATH and C_INCLUDE_PATH/CPLUS_INCLUDE_PATH environment variables respectively so any application using MTF can find the library and headers.
-    * `make exe` : compiles the example file _Examples/cpp/runMTF.cc_ to create an executable called _runMTF_ that uses this library to track objects. This too is placed in the build directory.
+    * `make exe`/`make install_exe` : compile/install the main example file _Examples/cpp/runMTF.cc_ to create an executable called `runMTF` that uses this library to track objects. 
 	    - library should be installed before running this, otherwise linking will not succeed
-	* `make install_exe`: creates _runMTF_ if needed and copies it to _/usr/local/bin_; this needs administrative privilege too - change `MTF_EXEC_INSTALL_DIR` in Examples/Examples.mak (or during compilation as above) if this is not available
+		- installation folder is _/usr/local/bin_ by default; this needs administrative privilege too - change `MTF_EXEC_INSTALL_DIR` in Examples/Examples.mak/cmake (or during compilation as above) if this is not available
     * **`make mtfi` : all of the above - recommended command that compiles and installs the library and the executable**
     * **`make py`/`make install_py`** : compile/install the Python interface to MTF - this creates a Python module called _pyMTF_ that serves as a front end for running these trackers from Python.
-	    - usage of this module is demonstrated in `Examples/python/runMTF.py`
-	    -  installation location can be specified through `MTF_PY_INSTALL_DIR` (defaults to _/usr/local/lib/python2.7/dist-packages/_)
+	    - usage of this module is demonstrated in _Examples/python/runMTF.py_
+	    -  installation location can be specified through `MTF_PY_INSTALL_DIR` in _Examples.mak/cmake_ (defaults to _/usr/local/lib/python2.7/dist-packages/_)
 		- currently only supports Python 2.7 so will give compilation errors if Python 3 is also installed and set as default
     * **`make mex`/`make install_mex`** : compile/install the MATLAB interface to MTF - this creates a MATLAB module called _mexMTF_ that serves as a front end for running these trackers from MATLAB.
-	    - set `MATLAB_DIR` variable in `Examples.mak` to the root of the MATLAB installation folder 
-		- usage of this module is demonstrated in `Examples/matlab/runMTF.m`
-	    -  installation location can be specified through `MTF_MEX_INSTALL_DIR` (defaults to _<MATLAB_DIR>/toolbox/local_) in `Examples.mak`
+	    - set `MATLAB_DIR` variable in _Examples.mak_ to the root of the MATLAB installation folder 
+		- usage of this module is demonstrated in _Examples/matlab/runMTF.m_
+	    -  installation location can be specified through `MTF_MEX_INSTALL_DIR` in _Examples.mak/cmake_ (defaults to _<MATLAB_DIR>/toolbox/local_) 
 		- if CMake is being used under Unix, the restriction of matching build target and MATLAB installation type mentioned in the Windows installation section applies here too; however, it is possible to compile `mexMTF` in Unix even if MATLAB is not detected by CMake by running the command written to a file called `mtf_mex_cmd.txt` in the build folder;
 			- the command can be run at the MATLAB prompt or even at the terminal if the location of the `mex` executable is present in the `PATH` environment variable;
 			- a few changes need to be made to it first as detailed in the CMake message;
@@ -173,19 +173,17 @@ Installation:
 Compile/Runtime Notes:
 ----------------------
 * if an error like `cannot find -l<name of library>` (for instance `cannot find -lhdf5` or `cannot find -lmtf`) occurs at compile time, location of the corresponding library should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables in the **.bashrc** file. 
-    * For instance HDF5 installs in `/usr/local/hdf5/lib` by default so  
+    * For instance HDF5 installs in _/usr/local/hdf5/lib_ by default so  following commands can be run to add its path there:  
 	`echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc`  
 	`echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc`  
-	can be run to add its path there. Similarly, MTF installs to `/usr/local/lib` by default so run:  
+	Similarly, MTF installs to _/usr/local/lib_ by default so following can be run for it:   
 	`echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc`  
 	`echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc`  
-	for it.
 	* The bashrc file should be reloaded by either restarting the terminal or running `. ~/.bashrc` and compilation should be tried again.
-* similar compile time errors pertaining to missing header files may be encountered in which case the location of the `include` folder of the corresponding library should be added to **C_INCLUDE_PATH** and **CPLUS_INCLUDE_PATH** variables. For instance, run:  
+* similar compile time errors pertaining to missing header files may be encountered in which case the location of the `include` folder of the corresponding library should be added to **C_INCLUDE_PATH** and **CPLUS_INCLUDE_PATH** variables. For instance, following commands can be run for HDF5:  
 	`echo "export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc`  
 	`echo "export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc`  
-	for HDF5. 
-* if a runtime error like `cannot find libmtf` or something similar is encountered while running `runMTF`, `/usr/local/lib` should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables as above (assuming the default MTF installation directory has not been changed - otherwise the new path should be used instead).
+* if a runtime error like `cannot find libmtf` or something similar is encountered while running `runMTF`, _/usr/local/lib_ should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables as above (assuming the default MTF installation directory has not been changed - otherwise the new path should be used instead).
 * if MTF had earlier been compiled with `only_nt=0` (or `nn=1`) and is recompiled with `only_nt=1` (or `nn=0`) such that the **executable does not get recompiled**, a runtime error of the type: `symbol lookup error: runMTF: undefined symbol:` may occur on running the executable; to resolve this, remove `runMTF` (or whatever executable is causing the error) from the build folder (Build/Release or Build/Debug) by running, for instance `rm Build/Release/runMTF` and recompile; this happens because using `only_nt=1` or `nn=0` turns off part of the code in the library but the executable will continue to expect these to be present till it is recompiled;
 * if a compile time error similar to this occurs: `/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h:233:98: error: no matching function for call to ‘Eigen::internal::blas_traits`, please update Eigen to the latest version;
 
