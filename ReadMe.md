@@ -10,9 +10,9 @@ Each tracker within this framework comprises the following 3 modules:
 
 Please refer
 [**this paper**](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_cviu.pdf)
-for more details on the system design and
-[**this one**](http://webdocs.cs.ualberta.ca/~asingh1/docs/Modular%20Decomposition%20and%20Analysis%20of%20Registration%20based%20Trackers%20(CRV%202016).pdf)
-for some preliminary results. There is also a [**dedicated website**](http://webdocs.cs.ualberta.ca/~vis/mtf/) where Doxygen documentation will soon be available along with detailed tutorials and examples. It also provides several datasets formatted to work with MTF.
+for details on the system design,
+[**this**](http://webdocs.cs.ualberta.ca/~vis/mtf/modular_crv16.pdf), [**this**](http://webdocs.cs.ualberta.ca/~vis/mtf/ssim_wacv17.pdf) and  [**this**](http://webdocs.cs.ualberta.ca/~vis/mtf/rsst_crv17.pdf)
+for some performance results and [**this thesis**](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_thesis.pdf) for a complete description. There is also a [**dedicated website**](http://webdocs.cs.ualberta.ca/~vis/mtf/) where Doxygen documentation will soon be available along with detailed tutorials and examples. It also provides several datasets formatted to work with MTF.
 
 The library is implemented entirely in **C++** though interfaces for **Python** and **MATLAB** are also provided to aid its use in research applications.
 A simple interface for [**ROS**](http://www.ros.org/) is likewise provided for seamless integration with robotics projects.
