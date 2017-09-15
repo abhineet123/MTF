@@ -9,7 +9,7 @@ Each tracker within this framework comprises the following 3 modules:
 3. **State Space Model (SSM)**: [Spline](http://www.hpl.hp.com/techreports/Compaq-DEC/CRL-94-1.html) (50+ DOF), [TPS](http://dl.acm.org/citation.cfm?id=66134) (50+ DOF), [Homography](https://en.wikipedia.org/wiki/Homography) (8 DOF), [Affine](https://en.wikipedia.org/wiki/Affine_transformation) (6 DOF), ASRT (Anisotropic Scaling, Rotation and Translation - 5 DOF ), [Similitude](https://en.wikipedia.org/wiki/Similarity_%28geometry%29) (4 DOF), AST (Anisotropic Scaling and Translation - 4 DOF), [Isometry](http://mathworld.wolfram.com/Isometry.html) (3 DOF), IST (Isotropic Scaling and Translation - 3 DOF ) or [Translation](https://en.wikipedia.org/wiki/Translation_%28geometry%29) (2 DOF)
 
 Please refer
-[**this paper**](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_icra17.pdf)
+[**this paper**](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_cviu.pdf)
 for more details on the system design and
 [**this one**](http://webdocs.cs.ualberta.ca/~asingh1/docs/Modular%20Decomposition%20and%20Analysis%20of%20Registration%20based%20Trackers%20(CRV%202016).pdf)
 for some preliminary results. There is also a [**dedicated website**](http://webdocs.cs.ualberta.ca/~vis/mtf/) where Doxygen documentation will soon be available along with detailed tutorials and examples. It also provides several datasets formatted to work with MTF.
