@@ -1851,13 +1851,13 @@ inline TrackerBase *getTracker(const char *tracker_type){
 			return new XVColor(&xv_params);
 		} else if(!strcmp(tracker_type, "xvg")){
 			return new XVSSDGrid(&xv_params,
-				xv_tracker_type, xvg_grid_size_x, xvg_grid_size_y, patch_size,
+				xv_tracker_type, xvg_grid_size_x, xvg_grid_size_y, xv_patch_size,
 				xvg_reset_pos, reset_template, xvg_sel_reset_thresh, xvg_reset_wts,
 				xvg_adjust_lines, xvg_update_wts, debug_mode);
 		} else if(!strcmp(tracker_type, "xvgl")){
 			return new XVSSDGridLine(&xv_params,
 				xv_tracker_type, xvg_grid_size_x, xvg_grid_size_y,
-				patch_size, xvg_use_constant_slope, xvg_use_ls, xvg_inter_alpha_thresh,
+				xv_patch_size, xvg_use_constant_slope, xvg_use_ls, xvg_inter_alpha_thresh,
 				xvg_intra_alpha_thresh, xvg_reset_pos, reset_template, debug_mode);
 		} else{
 			stringstream err_msg;
