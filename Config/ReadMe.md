@@ -367,6 +367,21 @@ Input/Output related parameters:
 			0: Disable
 			1: Enable
 			
+	 Parameter:	'record_frames'
+		Description:
+			record the frames containing the output of the executable into a video file- this is currently used only in runMTF and showGroundTruth
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'record_frames_fname'
+		Description:
+			name of the video file into which the output frames are recorded; if this is not specified, a name is constructed from some relevant parameters
+			
+	 Parameter:	'record_frames_dir'
+		Description:
+			path of the directory where the recorded video file is saved; if this is not specified, a folder called "log" in the current working folder is used; this folder is created automatically if it does not exist
+			
 MTF Tracker specific parameters:
 ================================
 	 Parameter:	'mtf_sm'

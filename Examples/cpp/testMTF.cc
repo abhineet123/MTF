@@ -48,7 +48,6 @@ int main(int argc, char * argv[]) {
 	cout << "img_source: " << img_source << "\n";
 	cout << "show_cv_window: " << show_cv_window << "\n";
 	cout << "read_obj_from_file: " << read_obj_from_file << "\n";
-	cout << "record_frames: " << record_frames << "\n";
 	cout << "patch_size: " << patch_size << "\n";
 	cout << "read_obj_fname: " << read_obj_fname << "\n";
 	cout << "read_obj_from_gt: " << read_obj_from_gt << "\n";
