@@ -163,7 +163,8 @@ static PyObject* get(PyObject* self, PyObject* args) {
 	if(cv::waitKey(0) == 27){
 		Py_Exit(0);
 	}
-
+	mtf::utils::printMatrixToFile<float>(ptsI, nullptr, "ptsI.txt", "%.4f");
+	mtf::utils::printMatrixToFile<float>(ptsJ, nullptr, "ptsJ.txt", "%.4f");
 
 	points[0] = (CvPoint2D32f*)cvAlloc(nPts*sizeof(CvPoint2D32f)); // template
 	points[1] = (CvPoint2D32f*)cvAlloc(nPts*sizeof(CvPoint2D32f)); // target
