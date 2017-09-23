@@ -25,13 +25,13 @@ static int Level;
 
 static PyObject* get(PyObject* self, PyObject* args);
 
-static PyMethodDef lk_cvMethods[] = {
+static PyMethodDef pyLKMethods[] = {
 	{ "get", get, METH_VARARGS },
 	{ NULL, NULL }     /* Sentinel - marks the end of this structure */
 };
 
-PyMODINIT_FUNC initlk_cv() {
-	(void)Py_InitModule("lk_cv", lk_cvMethods);
+PyMODINIT_FUNC initpyLK() {
+	(void)Py_InitModule("pyLK", pyLKMethods);
 	import_array();  // Must be present for NumPy.  Called first after above line.
 }
 
@@ -74,7 +74,7 @@ void drawPts(cv::Mat &img, const cv::Mat &grid_pts, cv::Scalar col, int thicknes
 	int n_pts = grid_pts.rows;
 	//draw vertical lines
 	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
-		cv::Point p1(int(grid_pts.at<float>(0, pt_id)), int(grid_pts.at<float>(1, pt_id)));
+		cv::Point p1(int(grid_pts.at<float>(pt_id, 0)), int(grid_pts.at<float>(pt_id, 1)));
 		cv::circle(img, p1, thickness, col);
 	}
 }
@@ -82,7 +82,7 @@ void drawPts(cv::Mat &img, const cv::Mat &grid_pts, cv::Scalar col, int thicknes
 
 static PyObject* get(PyObject* self, PyObject* args) {
 
-	PySys_WriteStdout("\nStarting lk_cv\n");
+	PySys_WriteStdout("\nStarting pyLK\n");
 
 	/*parse first input array*/
 	if(!PyArg_ParseTuple(args, "O!O!O!O!|i",
@@ -171,8 +171,8 @@ static PyObject* get(PyObject* self, PyObject* args) {
 
 	for(int i = 0; i < nPts; i++) {
 		points[0][i].x = ptsI.at<float>(i, 0); points[0][i].y = ptsI.at<float>(i, 1);
-		points[1][i].x = ptsJ.at<float>(i, 0); points[0][i].y = ptsJ.at<float>(i, 1);
-		points[2][i].x = ptsI.at<float>(i, 0); points[0][i].y = ptsI.at<float>(i, 1);
+		points[1][i].x = ptsJ.at<float>(i, 0); points[1][i].y = ptsJ.at<float>(i, 1);
+		points[2][i].x = ptsI.at<float>(i, 0); points[2][i].y = ptsI.at<float>(i, 1);
 	}
 	float *fb = (float*)cvAlloc(nPts*sizeof(float));
 	char  *status = (char*)cvAlloc(nPts);
@@ -192,6 +192,7 @@ static PyObject* get(PyObject* self, PyObject* args) {
 
 	//float *ssd = (float*)cvAlloc(nPts*sizeof(float));
 	//normCrossCorrelation(IMG[I],IMG[J],points[0],points[1],nPts, status, ssd, Winsize,CV_TM_SQDIFF);
+	
 	euclideanDistance(points[0], points[2], fb, nPts);
 	PySys_WriteStdout("Completed Euclidean distance computation\n");
 
