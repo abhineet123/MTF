@@ -211,8 +211,9 @@ namespace utils{
 	template<typename ScalarT>
 	inline void printMatrix(const cv::Mat &cv_mat, const char* mat_name,
 		const char* fmt = "%15.9f", const char *coeff_sep = "\t",
-		const char *row_sep = "\n"){
-		printf("%s:\n", mat_name);
+		const char *row_sep = "\n", const char *name_sep = "\n"){
+		if(mat_name)
+			printf("%s:%s", mat_name, name_sep);
 		for(int i = 0; i < cv_mat.rows; i++){
 			for(int j = 0; j < cv_mat.cols; j++){
 				printf(fmt, cv_mat.at<ScalarT>(i, j));
@@ -228,7 +229,7 @@ namespace utils{
 		const char* fname, const char* fmt = "%15.9f", const char* mode = "a",
 		const char *coeff_sep = "\t", const char *row_sep = "\n",
 		const char **row_labels = nullptr, const char **mat_header = nullptr,
-		const char* header_fmt = "%15s"){
+		const char* header_fmt = "%15s", const char *name_sep = "\n"){
 		//typedef typename ImageT::RealScalar ScalarT;
 		//printf("Opening file: %s to write %s\n", fname, mat_name);
 		FILE *fid = fopen(fname, mode);
@@ -236,7 +237,8 @@ namespace utils{
 			printf("File %s could not be opened successfully\n", fname);
 			return;
 		}
-		fprintf(fid, "%s:\n", mat_name);
+		if(mat_name)
+			fprintf(fid, "%s:%s", mat_name, name_sep);
 		if(mat_header){
 			for(int j = 0; j < cv_mat.cols; j++){
 				fprintf(fid, header_fmt, mat_header[j]);
