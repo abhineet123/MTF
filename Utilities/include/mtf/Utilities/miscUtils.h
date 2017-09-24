@@ -57,7 +57,7 @@ namespace utils{
 				corners.at<double>(0, corner_id) = eig_corners(0, corner_id) + offset_x;
 				corners.at<double>(1, corner_id) = eig_corners(1, corner_id) + offset_y;
 			}
-		};
+		}
 		template<typename RectScalarT>
 		cv::Rect_<RectScalarT>  rect(){
 			return getBestFitRectangle<RectScalarT>(corners);
