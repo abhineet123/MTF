@@ -429,6 +429,9 @@ namespace utils{
 		cv::Scalar col = cv::Scalar(0, 255, 0), int thickness = 1);
 	template<typename ImgValT, typename PatchValT>
 	void drawPatch(cv::Mat &img, const cv::Mat &patch, int n_channels = 1, int start_x = 0, int start_y = 0);
+	template<typename ScalarT>
+	void drawPts(cv::Mat &img, const cv::Mat &pts, cv::Scalar col, int radius = 2,
+		int thickness = -1);
 	void writeCorners(FILE *out_fid, const cv::Mat &corners, int frame_id, bool write_header = false);
 
 	//! functions to handle tracking error computation

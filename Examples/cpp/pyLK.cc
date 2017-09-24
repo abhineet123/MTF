@@ -3,7 +3,7 @@
 #endif
 
 #include "opencv/cv.h"
-#include "opencv/highgui.h"
+#include "opencv2/highgui/highgui.hpp"
 #include "math.h"
 #include <limits>
 #ifdef _CHAR16T
@@ -69,16 +69,6 @@ static void normCrossCorrelation(IplImage *imgI, IplImage *imgJ, CvPoint2D32f *p
 	cvReleaseImage(&res);
 
 }
-
-void drawPts(cv::Mat &img, const cv::Mat &grid_pts, cv::Scalar col, int thickness) {
-	int n_pts = grid_pts.rows;
-	//draw vertical lines
-	for(int pt_id = 0; pt_id < n_pts; ++pt_id) {
-		cv::Point p1(int(grid_pts.at<float>(pt_id, 0)), int(grid_pts.at<float>(pt_id, 1)));
-		cv::circle(img, p1, thickness, col);
-	}
-}
-
 
 static PyObject* get(PyObject* self, PyObject* args) {
 
@@ -153,19 +143,6 @@ static PyObject* get(PyObject* self, PyObject* args) {
 	cv::Mat ptsI = cv::Mat(nPts, 2, CV_32FC1, pts_py_1->data);
 	cv::Mat ptsJ = cv::Mat(nPts, 2, CV_32FC1, pts_py_2->data);
 
-	drawPts(img_1, ptsI, cv::Scalar(0, 0, 0), 2);
-	drawPts(img_2, ptsJ, cv::Scalar(0, 0, 0), 2);
-	std::vector<cv::Mat> img_list;
-	img_list.push_back(img_1);
-	img_list.push_back(img_2);
-	cv::Mat stacked_img = mtf::utils::stackImages(img_list);
-	cv::imshow("Input Images", stacked_img);
-	if(cv::waitKey(0) == 27){
-		Py_Exit(0);
-	}
-	mtf::utils::printMatrixToFile<float>(ptsI, nullptr, "ptsI.txt", "%.4f");
-	mtf::utils::printMatrixToFile<float>(ptsJ, nullptr, "ptsJ.txt", "%.4f");
-
 	points[0] = (CvPoint2D32f*)cvAlloc(nPts*sizeof(CvPoint2D32f)); // template
 	points[1] = (CvPoint2D32f*)cvAlloc(nPts*sizeof(CvPoint2D32f)); // target
 	points[2] = (CvPoint2D32f*)cvAlloc(nPts*sizeof(CvPoint2D32f)); // forward-backward
@@ -217,6 +194,20 @@ static PyObject* get(PyObject* self, PyObject* args) {
 		}
 	}
 	PySys_WriteStdout("Completed writing to output matrix\n");
+
+	mtf::utils::drawPts<float>(img_1, ptsI, cv::Scalar(0, 0, 0), 2);
+	mtf::utils::drawPts<float>(img_2, ptsJ, cv::Scalar(0, 0, 0), 2);
+	std::vector<cv::Mat> img_list;
+	img_list.push_back(img_1);
+	img_list.push_back(img_2);
+	cv::Mat stacked_img = mtf::utils::stackImages(img_list);
+	cv::imshow("Input Images", stacked_img);
+	if(cv::waitKey(0) == 27) {
+		Py_Exit(0);
+	}
+	mtf::utils::printMatrixToFile<float>(ptsI, nullptr, "ptsI.txt", "%.4f");
+	mtf::utils::printMatrixToFile<float>(ptsJ, nullptr, "ptsJ.txt", "%.4f");
+
 
 	// clean up
 	for(int i = 0; i < MAX_IMG; i++) {

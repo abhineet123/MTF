@@ -237,6 +237,14 @@ namespace utils{
 	}
 	template void drawPatch<uchar, uchar>(cv::Mat &img, const cv::Mat &patch, int n_channels,
 		int start_x, int start_y);
+	template<typename ScalarT>
+	void drawPts(cv::Mat &img, const cv::Mat &pts, cv::Scalar col, int radius, int thickness) {
+		for(int pt_id = 0; pt_id < pts.rows; ++pt_id) {
+			cv::Point pt(int(pts.at<ScalarT>(pt_id, 0)), int(pts.at<ScalarT>(pt_id, 1)));
+			cv::circle(img, pt, radius, col, thickness);
+		}
+	}
+	template void drawPts<float>(cv::Mat &img, const cv::Mat &pts, cv::Scalar col, int radius, int thickness);
 
 	void writeCorners(FILE *out_fid, const cv::Mat &corners,
 		int frame_id, bool write_header){

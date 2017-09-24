@@ -186,6 +186,10 @@ Compile/Runtime Notes:
 * if a runtime error like `cannot find libmtf` or something similar is encountered while running `runMTF`, _/usr/local/lib_ should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables as above (assuming the default MTF installation directory has not been changed - otherwise the new path should be used instead).
 * if MTF had earlier been compiled with `only_nt=0` (or `nn=1`) and is recompiled with `only_nt=1` (or `nn=0`) such that the **executable does not get recompiled**, a runtime error of the type: `symbol lookup error: runMTF: undefined symbol:` may occur on running the executable; to resolve this, remove `runMTF` (or whatever executable is causing the error) from the build folder (Build/Release or Build/Debug) by running, for instance `rm Build/Release/runMTF` and recompile; this happens because using `only_nt=1` or `nn=0` turns off part of the code in the library but the executable will continue to expect these to be present till it is recompiled;
 * if a compile time error similar to this occurs: `/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h:233:98: error: no matching function for call to ‘Eigen::internal::blas_traits`, please update Eigen to the latest version;
+* if compilation is taking too long and optional components are not needed, following cmake/make commands can be used to build a minimal version of MTF with full core functionality:
+	`cmake .. -DWITH_THIRD_PARTY=OFF -DWITH_TEMPLATED=OFF`
+	`make mtfall lt=0 nt=1`
+	
 
 * **Using MTF on Macintosh Systems**
 	* if make build system is used, some thirdparty modules might not compile successfully if cmake uses clang instead of gcc as the default compiler; in such cases compiling with `lt=0` to disable all thirdparty modules is the best option.
