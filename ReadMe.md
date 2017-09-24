@@ -95,7 +95,7 @@ Installation:
 		- Add the `bin` folders of the MinGW and GnuWin32 installations (e.g. `C:\MinGW\bin`, `C:\Program Files (x86)\GnuWin32\bin`) along with folders containing the `*.dll` files of OpenCV and Boost installations (e.g. `C:\OpenCV\build\x86\mingw\bin`) to the [`PATH` environment variable](https://www.java.com/en/download/help/path.xml) and reboot the system for the changes to take effect.
 		
 * **Download** the source code as zip file or clone using:  
-    `git clone https://github.com/abhineet123/MTF.git`.
+    `git clone https://github.com/abhineet123/MTF.git`
 * MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the former is recommended for developers/contributors as it offers finer level of control while the latter is for users of the library who only want to install it once. For cmake:
     * use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile for Unix or Visual Studio solution for Windows
 	* in the former case, use one of the make commands specified below
