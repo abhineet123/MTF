@@ -186,11 +186,6 @@ Compile/Runtime Notes:
 * if a runtime error like `cannot find libmtf` or something similar is encountered while running `runMTF`, _/usr/local/lib_ should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables as above (assuming the default MTF installation directory has not been changed - otherwise the new path should be used instead).
 * if MTF had earlier been compiled with `only_nt=0` (or `nn=1`) and is recompiled with `only_nt=1` (or `nn=0`) such that the **executable does not get recompiled**, a runtime error of the type: `symbol lookup error: runMTF: undefined symbol:` may occur on running the executable; to resolve this, remove `runMTF` (or whatever executable is causing the error) from the build folder (Build/Release or Build/Debug) by running, for instance `rm Build/Release/runMTF` and recompile; this happens because using `only_nt=1` or `nn=0` turns off part of the code in the library but the executable will continue to expect these to be present till it is recompiled;
 * if a compile time error similar to this occurs: `/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h:233:98: error: no matching function for call to ‘Eigen::internal::blas_traits`, please update Eigen to the latest version;
-* if compilation is taking too long and optional components are not needed, following cmake/make commands can be used to build a minimal version of MTF with full core functionality:
-	`cmake .. -DWITH_THIRD_PARTY=OFF -DWITH_TEMPLATED=OFF`
-	`make mtfall lt=0 nt=1`
-	
-
 * **Using MTF on Macintosh Systems**
 	* if make build system is used, some thirdparty modules might not compile successfully if cmake uses clang instead of gcc as the default compiler; in such cases compiling with `lt=0` to disable all thirdparty modules is the best option.
     * if cmake build system is used, then following commands must be run so that cmake uses gcc during compilation:  
@@ -202,6 +197,9 @@ Compile/Runtime Notes:
     * MTF has been tested and found to work with OpenCV 3.1 installed using [this method (option 2)](http://milq.github.io/install-opencv-ubuntu-debian/) on Ubuntu 14.04 but general compatibility with other system configurations is not guaranteed since comprehensive testing has only been doe with 2.4.x.
     * third party trackers in particular are likely to have issues with OpenCV 3.x as many use legacy versions so these should be disabled using `lt=0` if compilation or linking errors pertaining to these are found.
     * if a linking error of type `/usr/bin/ld: cannot find -lippicv` occurs, remove `-ippicv` from opencv pkg-config configuration file which is usually located at `/usr/local/lib/pkgconfig/opencv.pc` or follow the procedures suggested [here](http://answers.opencv.org/question/84265/compiling-error-with-lippicv/)
+* if compilation is taking too long and optional components are not needed, following cmake/make commands can be used to build a minimal version of MTF with full core functionality:  
+	`cmake .. -DWITH_THIRD_PARTY=OFF -DWITH_TEMPLATED=OFF`  
+	`make mtfall lt=0 nt=1`  
 	
 <!--- 
 [](* if MTF had earlier been compiled with `only_nt=0` (or `nn=1`) and is recompiled with `only_nt=1` (or `nn=0`) **or vice versa**, some linking error with missing symbols related to `mtf::NNParams` or `mtf::FLANNParams` may occur when compiling the executable; to fix this, remove `NNParams.o` from the build folder (Build/Release or Build/Debug) by running, for instance `rm Build/Release/NNParams.o` so this recompiles too; some of the code in `NNParams` is conditional on whether standard version of NN (that uses FLANN) is enabled or not so having a wrong version compiled causes this error and, unfortunately, there is no way to automatically recompile this file when FLANN based NN is enabled or disabled through compile time switches;)
