@@ -175,7 +175,7 @@ static PyObject* get(PyObject* self, PyObject* args) {
 	PySys_WriteStdout("Completed Euclidean distance computation\n");
 
 	// Output
-	int dims[] = { 4, nPts };
+	int dims[] = { nPts, 4 };
 	PyArrayObject *output_py = (PyArrayObject *)PyArray_FromDims(2, dims, NPY_FLOAT);
 	cv::Mat output = cv::Mat(nPts, 4, CV_32FC1, output_py->data);
 	float nan = std::numeric_limits<float>::quiet_NaN();
@@ -195,16 +195,19 @@ static PyObject* get(PyObject* self, PyObject* args) {
 	}
 	PySys_WriteStdout("Completed writing to output matrix\n");
 
-	mtf::utils::drawPts<float>(img_1, ptsI, cv::Scalar(0, 0, 0), 2);
-	mtf::utils::drawPts<float>(img_2, ptsJ, cv::Scalar(0, 0, 0), 2);
 	std::vector<cv::Mat> img_list;
-	img_list.push_back(img_1);
-	img_list.push_back(img_2);
+	img_list.push_back(img_1.clone());
+	img_list.push_back(img_2.clone());
+	mtf::utils::drawPts<float>(img_list[0], ptsI, cv::Scalar(0, 0, 0), 2);
+	mtf::utils::drawPts<float>(img_list[1], ptsJ, cv::Scalar(0, 0, 0), 2);
 	cv::Mat stacked_img = mtf::utils::stackImages(img_list);
 	cv::imshow("Input Images", stacked_img);
 	if(cv::waitKey(100) == 27) {
 		Py_Exit(0);
 	}
+	mtf::utils::printMatrixToFile<float>(img_1, nullptr, "img_1.txt", "%d");
+	mtf::utils::printMatrixToFile<float>(img_2, nullptr, "img_2.txt", "%d");
+
 	mtf::utils::printMatrixToFile<float>(ptsI, nullptr, "ptsI.txt", "%.4f");
 	mtf::utils::printMatrixToFile<float>(ptsJ, nullptr, "ptsJ.txt", "%.4f");
 
