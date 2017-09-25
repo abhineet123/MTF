@@ -177,20 +177,20 @@ static PyObject* get(PyObject* self, PyObject* args) {
 	// Output
 	int dims[] = { 4, nPts };
 	PyArrayObject *output_py = (PyArrayObject *)PyArray_FromDims(2, dims, NPY_FLOAT);
-	cv::Mat output = cv::Mat(4, nPts, CV_32FC1, output_py->data);
+	cv::Mat output = cv::Mat(nPts, 4, CV_32FC1, output_py->data);
 	float nan = std::numeric_limits<float>::quiet_NaN();
-	float inf = std::numeric_limits<float>::infinity();
+	//float inf = std::numeric_limits<float>::infinity();
 	for(int i = 0; i < nPts; i++) {
 		if(status[i] == 1) {
-			output.at<float>(0, i) = points[1][i].x;
-			output.at<float>(1, i) = points[1][i].y;
-			output.at<float>(2, i) = fb[i];
-			output.at<float>(3, i) = ncc[i];
+			output.at<float>(i, 0) = points[1][i].x;
+			output.at<float>(i, 1) = points[1][i].y;
+			output.at<float>(i, 2) = fb[i];
+			output.at<float>(i, 3) = ncc[i];
 		} else {
-			output.at<float>(0, i) = nan;
-			output.at<float>(1, i) = nan;
-			output.at<float>(2, i) = nan;
-			output.at<float>(3, i) = nan;
+			output.at<float>(i, 0) = nan;
+			output.at<float>(i, 1) = nan;
+			output.at<float>(i, 2) = nan;
+			output.at<float>(i, 3) = nan;
 		}
 	}
 	PySys_WriteStdout("Completed writing to output matrix\n");
@@ -202,7 +202,7 @@ static PyObject* get(PyObject* self, PyObject* args) {
 	img_list.push_back(img_2);
 	cv::Mat stacked_img = mtf::utils::stackImages(img_list);
 	cv::imshow("Input Images", stacked_img);
-	if(cv::waitKey(0) == 27) {
+	if(cv::waitKey(100) == 27) {
 		Py_Exit(0);
 	}
 	mtf::utils::printMatrixToFile<float>(ptsI, nullptr, "ptsI.txt", "%.4f");
