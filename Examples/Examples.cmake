@@ -137,6 +137,23 @@ if(NOT WIN32)
 	add_custom_target(mtfm DEPENDS createMosaic install_mos)
 endif()
 
+add_executable(registerSeq Examples/cpp/registerSeq.cc)
+target_compile_definitions(registerSeq PUBLIC ${MTF_DEFINITIONS})
+target_compile_options(registerSeq PUBLIC ${MTF_RUNTIME_FLAGS} ${MTF_COMPILETIME_FLAGS})
+target_include_directories(registerSeq PUBLIC  ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS})
+target_link_libraries(registerSeq mtf ${MTF_LIBS})
+install(TARGETS registerSeq RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT reg)
+add_custom_target(reg DEPENDS registerSeq)
+if(NOT WIN32)
+	add_custom_target(install_reg
+	  ${CMAKE_COMMAND}
+	  -D "CMAKE_INSTALL_COMPONENT=reg"
+	  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+	   DEPENDS registerSeq
+	  )
+	add_custom_target(mtfm DEPENDS registerSeq install_reg)
+endif()
+
 if(WITH_PY)
 	find_package(PythonLibs 2.7)
 	find_package(NumPy)

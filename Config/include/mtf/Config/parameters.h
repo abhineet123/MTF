@@ -782,7 +782,7 @@ namespace mtf{
 		bool spi_gftt_use_union = false;
 		int spi_gftt_neigh_offset = 0;
 
-		//! Synthetic sequence generator
+		//! Registered sequence generator
 		std::string  reg_ssm = "8";
 		std::string  reg_ilm = "0";
 		int reg_track_border = 0;
@@ -3267,6 +3267,36 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "pca_show_basis")){
 				pca_show_basis = atoi(arg_val);
+				return;
+			}
+
+			//! registered sequence generator
+			if(!strcmp(arg_name, "reg_ssm")){
+				reg_ssm = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "reg_ilm")){
+				reg_ilm = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "reg_track_border")){
+				reg_track_border = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "reg_grayscale_img")){
+				reg_grayscale_img = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "reg_show_output")){
+				reg_show_output = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "reg_save_as_video")){
+				reg_save_as_video = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "reg_video_fps")){
+				reg_video_fps = atoi(arg_val);
 				return;
 			}
 
