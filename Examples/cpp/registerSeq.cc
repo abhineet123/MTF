@@ -28,6 +28,8 @@ using namespace std;
 using namespace mtf::params;
 namespace fs = boost::filesystem;
 
+typedef unique_ptr<mtf::TrackerBase> Tracker_;
+
 int main(int argc, char * argv[]) {
 
 	printf("Starting MTF sequence registration tool...\n");
@@ -49,7 +51,6 @@ int main(int argc, char * argv[]) {
 	printf("img_source: %c\n", img_source);
 	printf("reg_show_output: %d\n", reg_show_output);
 	printf("reg_ssm: %s\n", reg_ssm.c_str());
-	printf("reg_ilm: %s\n", reg_ilm.c_str());
 	printf("********************************\n");
 
 	/* initialize pipeline*/
@@ -128,10 +129,6 @@ int main(int argc, char * argv[]) {
 		return EXIT_FAILURE;
 	}
 
-	//mtf::utils::printMatrix<double>(init_corners, "init_corners");
-
-	double font_size = 1.00;
-	
 	mtf::SSM ssm(mtf::getSSM(reg_ssm.c_str()));
 	if(!ssm){
 		printf("State space model could not be initialized");
@@ -140,13 +137,18 @@ int main(int argc, char * argv[]) {
 	ssm->initialize(init_corners);
 
 	cv::Mat out_img;
+	int out_img_type, n_channels;
 	if(reg_grayscale_img){
 		printf("Generating grayscale images\n");
+		out_img_type = CV_8UC1;
+		n_channels = 1;
 		//! first frame in the synthetic sequence is the grayscale version of the original image 
 		out_img.create(input->getHeight(), input->getWidth(), CV_8UC1);
 		cv::cvtColor(input->getFrame(), out_img, CV_BGR2GRAY);
 	} else{
 		printf("Generating RGB images\n");
+		out_img_type = CV_8UC3;
+		n_channels = 3;
 		//! original image is the first frame in the synthetic sequence
 		out_img = input->getFrame().clone();
 	}
@@ -169,12 +171,12 @@ int main(int argc, char * argv[]) {
 		cv::imwrite(cv::format("%s/frame%05d.jpg", out_dir.c_str(), 1), out_img);
 	}
 	const char* warped_img_win_name = "warped_img";
+	cv::Mat write_mask;
 	
 	printf("Sequence generation started...\n");
 	while(input->update()){
-		pre_procs[tracker_id]->update(input->getFrame(), input->getFrameID());
+		pre_proc->update(input->getFrame(), input->getFrameID());
 		try{
-			mtf_clock_get(start_time);
 			/**
 			update tracker;
 			this call is equivalent to : trackers[tracker_id]->update(pre_proc->getFrame());
@@ -183,9 +185,6 @@ int main(int argc, char * argv[]) {
 			image is read into the same locatioon
 			*/
 			tracker->update();
-			mtf_clock_get(end_time);
-			mtf_clock_measure(start_time, end_time, tracking_time);
-			mtf_clock_measure(start_time_with_input, end_time, tracking_time_with_input);
 		} catch(const mtf::utils::InvalidTrackerState &err){
 			//! exception thrown by MTF modsules when the tracker ends up in an invalid state 
 			//! due to NaNs or Infs in the result of some numerical computation
@@ -210,35 +209,21 @@ int main(int argc, char * argv[]) {
 		mtf::utils::writePixelsToImage(warped_img, mtf::utils::reshapePatch(input->getFrame()),
 		ssm->getPts(), n_channels, write_mask);
 		if(reg_show_output){
-			cv::Mat original_img = input->getFrame().clone();
-			mtf::utils::drawRegion(original_img, original_bounding_box,
-				cv::Scalar(0, 255, 0), line_thickness, nullptr, font_size,
-				show_corner_ids, 1 - show_corner_ids);
-			mtf::utils::drawRegion(original_img, warped_bounding_box,
-				cv::Scalar(0, 0, 255), line_thickness, nullptr, font_size,
-				show_corner_ids, 1 - show_corner_ids);
-			cv::Mat warped_img_annotated = warped_img.clone();
-			mtf::utils::drawRegion(warped_img_annotated, warped_bounding_box,
-				cv::Scalar(0, 0, 255), line_thickness, nullptr, font_size,
-				show_corner_ids, 1 - show_corner_ids);
-			cv::imshow("original_img", original_img);
-			cv::imshow(warped_img_win_name, warped_img_annotated);
+			cv::imshow(warped_img_win_name, warped_img);
 			if(cv::waitKey(500) == 27){ break; }
 		}
 		if(reg_save_as_video){
 			output.write(warped_img);
 		} else{
-			cv::imwrite(cv::format("%s/frame%05d.jpg", out_dir.c_str(), frame_id + 1),
-				warped_img, compression_params);
+			cv::imwrite(cv::format("%s/frame%05d.jpg", out_dir.c_str(), input->getFrameID() + 1), warped_img);
 		}
-		if(frame_id % 50 == 0){
-			printf("Done %d frames\t", frame_id);
+		if(input->getFrameID() + 1 % 50 == 0){
+			printf("Done %d frames\t", input->getFrameID());
 		}
 	}
 	if(reg_save_as_video){
 		output.release();
 	}
-	fclose(reg_gt_fid);
 	return EXIT_SUCCESS;
 }
 

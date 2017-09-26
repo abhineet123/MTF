@@ -783,7 +783,15 @@ namespace mtf{
 		int spi_gftt_neigh_offset = 0;
 
 		//! Synthetic sequence generator
-		//std::vector<cv::Mat> conv_corners;
+		std::string  reg_ssm = "8";
+		std::string  reg_ilm = "0";
+		int reg_track_border = 0;
+		bool reg_grayscale_img = false;
+		bool reg_show_output = true;
+		bool reg_save_as_video = false;
+		int reg_video_fps = 24;
+
+		//! Synthetic sequence generator
 		std::string  syn_ssm = "c8";
 		std::string  syn_ilm = "0";
 		int syn_frame_id = 0;
