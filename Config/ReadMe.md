@@ -303,6 +303,14 @@ Input/Output related parameters:
 			only works when a dataset sequence is used and its ground truth is available;
 			only matters if reinit_at_each_frame is 0;
 			
+	 Parameter:	'reset_to_init'
+		Description:
+			reset tracker to the ground truth at each frame; 
+			if it is > 1, resetting is done after the specified number of frames rather than at each frame;
+			unlike the previous option, here the template remains unchanged;
+			only works when a dataset sequence is used and its ground truth is available;
+			only matters if reinit_at_each_frame is 0;
+			
 	 Parameter:	'reinit_on_failure'
 		Description:
 			reinitialize tracker when it fails, i.e. when its MCD/Jaccard/CL error goes above err_thresh; 
