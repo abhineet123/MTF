@@ -29,12 +29,12 @@
 #define M_PI 3.14159265358979L
 #endif
 // rowwise access
-#define coord(x, y, width, height) (y+x*height)
-#define nextrow(tmp, width, height) ((tmp)+1)
-#define nextcol(tmp, width, height) ((tmp)+height)
-#define nextr_c(tmp, width, height) ((tmp)+height+1)
+#define coord(x, y, width, height) (x+y*width)
+#define nextrow(tmp, width, height) ((tmp)+width)
+#define nextcol(tmp, width, height) ((tmp)+1)
+#define nextr_c(tmp, width, height) ((tmp)+width+1)
 
-#define M(r, c) H[c*3+r]
+#define M(r, c) H[r*3+c]
 
 static PyArrayObject *img_py, *H_py, *bb_py;
 
