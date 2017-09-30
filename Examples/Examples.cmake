@@ -11,7 +11,7 @@ else()
 	set(Matlab_ROOT_DIR_DEFAULT /usr/local/MATLAB/MATLAB_Production_Server/R2013a/)
 endif()
 set(MTF_EXEC_INSTALL_DIR ${MTF_EXEC_INSTALL_DIR_DEFAULT} CACHE PATH "Directory to install the executable")
-set(MTF_PY_INSTALL_DIR ${MTF_PY_INSTALL_DIR_DEFAULT} CACHE PATH "Directory to install the Python interface module (normally the CModules sub directory of PTF)") 
+set(MTF_PY_INSTALL_DIR ${MTF_PY_INSTALL_DIR_DEFAULT} CACHE PATH "Directory to install the Python interface module") 
 set(Matlab_ROOT_DIR ${Matlab_ROOT_DIR_DEFAULT} CACHE PATH "MATLAB root directory") 
 
 # set(WARNING_FLAGS -Wfatal-errors -Wno-write-strings -Wno-unused-result)
