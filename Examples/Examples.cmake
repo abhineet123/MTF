@@ -25,8 +25,8 @@ set(Matlab_ROOT_DIR ${Matlab_ROOT_DIR_DEFAULT} CACHE PATH "MATLAB root directory
 # find_package(Boost REQUIRED COMPONENTS filesystem system)
 # message(STATUS "Boost_LIBRARIES:")
 # message(STATUS "Examples: MTF_RUNTIME_FLAGS: ${MTF_RUNTIME_FLAGS} ${MTF_COMPILETIME_FLAGS}")
-set(EX_TARGET_NAMES runMTF createMosaic generateSyntheticSeq trackUAVTrajectory extractPatch testMTF) 
-set(EX_INSTALL_TARGET_NAMES install_exe install_mos install_syn install_uav install_patch install_test install_test_lib) 
+set(EX_TARGET_NAMES runMTF createMosaic generateSyntheticSeq trackUAVTrajectory extractPatch diagnoseMTF) 
+set(EX_INSTALL_TARGET_NAMES install_exe install_mos install_syn install_uav install_patch install_diag install_diag_lib) 
 set(EX_COMBINED_TARGET_NAMES mtfe mtfm mtfs mtfu mtfpa mtft) 
 
 add_executable(runMTF Examples/cpp/runMTF.cc)
@@ -241,21 +241,21 @@ else(WITH_MEX)
 	message(STATUS "Matlab interface (mexMTF) is disabled")
 endif(WITH_MEX)
 
-add_executable(testMTF Examples/cpp/testMTF.cc)
-target_compile_definitions(testMTF PUBLIC ${MTF_DEFINITIONS})
-target_compile_options(testMTF PUBLIC ${MTF_RUNTIME_FLAGS} ${MTF_COMPILETIME_FLAGS})
-target_include_directories(testMTF PUBLIC ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS})
-target_link_libraries(testMTF mtf_test mtf ${MTF_LIBS})
-install(TARGETS testMTF RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT test)
-add_custom_target(test DEPENDS testMTF)
+add_executable(diagnoseMTF Examples/cpp/diagnoseMTF.cc)
+target_compile_definitions(diagnoseMTF PUBLIC ${MTF_DEFINITIONS})
+target_compile_options(diagnoseMTF PUBLIC ${MTF_RUNTIME_FLAGS} ${MTF_COMPILETIME_FLAGS})
+target_include_directories(diagnoseMTF PUBLIC ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_DIRS})
+target_link_libraries(diagnoseMTF mtf_diag mtf ${MTF_LIBS})
+install(TARGETS diagnoseMTF RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT diag)
+add_custom_target(diag DEPENDS diagnoseMTF)
 if(NOT WIN32)
-	add_custom_target(install_test
+	add_custom_target(install_diag
 	  ${CMAKE_COMMAND}
-	  -D "CMAKE_INSTALL_COMPONENT=test"
+	  -D "CMAKE_INSTALL_COMPONENT=diag"
 	  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-	   DEPENDS testMTF
+	   DEPENDS diagnoseMTF
 	  )
-	add_custom_target(mtft DEPENDS testMTF mtf_test install_test install_test_lib)
+	add_custom_target(mtft DEPENDS diagnoseMTF mtf_diag install_diag install_diag_lib)
 endif() 
 add_custom_target(all DEPENDS ${EX_TARGET_NAMES})
 if(NOT WIN32)

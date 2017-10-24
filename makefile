@@ -156,7 +156,7 @@ MTF_NT_LIB_SO =  $(addprefix lib, $(addsuffix ${MTF_LIB_EXT}, ${MTF_NT_LIB_NAME}
 MTF_NT_LIB_LINK +=  $(addprefix -l, ${MTF_NT_LIB_NAME})
 
 # different sub parts or modules within MTF
-MTF_SUB_DIRS = Macros Config Utilities AM SSM SM ThirdParty Test Examples
+MTF_SUB_DIRS = Macros Config Utilities AM SSM SM ThirdParty Diagnostics Examples
 include $(foreach SUB_DIR,${MTF_SUB_DIRS},${SUB_DIR}${PATHSEP}${SUB_DIR}.mak)
 
 # MTF_MISC_INCLUDES = SM${PATHSEP}GNN${PATHSEP}build_graph.h SM${PATHSEP}GNN${PATHSEP}utility.h
