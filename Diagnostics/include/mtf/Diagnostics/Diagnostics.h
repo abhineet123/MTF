@@ -5,13 +5,6 @@
 #include "mtf/SSM/StateSpaceModel.h"
 #include <memory>
 
-#define DIAG_UPDATE_TYPE 0
-#define DIAG_SHOW_DATA 0
-#define DIAG_SHOW_PATCHES 0
-#define DIAG_SHOW_CORNERS 0
-#define DIAG_ENABLE_VALIDATION 0
-#define DIAG_VALIDATION_PREC 1e-20
-
 _MTF_BEGIN_NAMESPACE
 
 struct DiagnosticsParams{
