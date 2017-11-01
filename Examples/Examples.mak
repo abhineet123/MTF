@@ -189,7 +189,7 @@ ifeq (${vp}, 1)
 endif
 
 
-.PHONY: exe uav mos syn py diag gt patch qr app mtfi mtfp mtfc mtfu mtft mtfs mtfm
+.PHONY: exe uav mos syn py diag gt patch qr app mtfi mtfp mtfc mtfu mtfd mtfs mtfm
 .PHONY: install_exe install_uav install_mos install_patch install_qr install_rec install_syn install_py install_diag install_app install_all
 .PHONY: run
 
@@ -231,7 +231,7 @@ mtfs: install install_syn
 mtfm: install install_mos
 mtfq: install install_qr
 mtfr: install_rec
-mtft: install install_diag_lib install_diag
+mtfd: install install_diag_lib install_diag
 mtfall: install install_diag_lib install_all
 mtfa: install install_app
 mtfc: all

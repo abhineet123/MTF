@@ -151,7 +151,7 @@ if(NOT WIN32)
 	  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
 	   DEPENDS registerSeq
 	  )
-	add_custom_target(mtfm DEPENDS registerSeq install_reg)
+	add_custom_target(mtfr DEPENDS registerSeq install_reg)
 endif()
 
 if(WITH_PY)
