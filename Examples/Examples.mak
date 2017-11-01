@@ -131,7 +131,7 @@ ifeq (${o}, 1)
 	_MTF_APP_EXE_NAME = ${app}
 else ifeq (${o}, 2)
 	# LIBS_PARALLEL += -ltbb
-	MTF_RUNTIME_FLAGS += -Ofast -D NDEBUG -D EIGEN_NO_DEBUG
+	MTF_RUNTIME_FLAGS += -O3 -ffast-math -D NDEBUG -D EIGEN_NO_DEBUG
 	ifeq (${header_only}, 1)
 		_MTF_EXE_NAME = runMTFh_fast
 	else
