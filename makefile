@@ -110,7 +110,7 @@ ifeq (${o}, 1)
 		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}Release
 	endif	
 else ifeq (${o}, 2)
-	OPT_FLAGS = -Ofast -D NDEBUG -D EIGEN_NO_DEBUG
+	OPT_FLAGS = -O3 -ffast-math -D NDEBUG -D EIGEN_NO_DEBUG
 	_MTF_LIB_NAME = mtf_fast
 	MTF_NT_LIB_NAME = mtf_nt_fast
 	# Build Version
