@@ -305,11 +305,13 @@ Input/Output related parameters:
 			
 	 Parameter:	'reset_to_init'
 		Description:
-			reset tracker to the ground truth at each frame; 
+			reset tracker to the ground truth location at each frame; 
 			if it is > 1, resetting is done after the specified number of frames rather than at each frame;
 			unlike the previous option, here the template remains unchanged;
 			only works when a dataset sequence is used and its ground truth is available;
 			only matters if reinit_at_each_frame is 0;
+		Applies to:
+			runMTF
 			
 	 Parameter:	'reinit_on_failure'
 		Description:
@@ -318,17 +320,34 @@ Input/Output related parameters:
 		Possible Values:
 			0: Disable
 			1: Enable
+		Applies to:
+			runMTF
 			
 	 Parameter:	'reinit_err_thresh'
 		Description:
 			tracking error threshold at which the tracker is reinitialized;
 			only matters if 'reinit_on_failure' is enabled;
+		Applies to:
+			runMTF
 			
 	 Parameter:	'reinit_frame_skip'
 		Description:
 			no. of frames to skip before reinitializing tracker when it fails;
 			only matters if 'reinit_on_failure' is enabled;
-
+		Applies to:
+			runMTF
+			
+	 Parameter:	'reinit_with_new_obj'
+		Description:
+			delete the old tracker object and create a new one when reinitializing the tracker;
+			"tracker object" here refers to the instance of class TrackerBase (or one of its derived classes) that was used for performing the tracking;
+			some third party trackers have been known to crash randomly when an existing instance is reinitialized so this solution can be used with them;
+		Possible Values:
+			0: Disable
+			1: Enable
+		Applies to:
+			runMTF
+			
 	 Parameter:	'use_reinit_gt'
 		Description:
 			use reinitialization ground truth instead of the normal one;
@@ -345,6 +364,15 @@ Input/Output related parameters:
 		Possible Values:
 			0: Disable
 			1: Enable
+		Applies to:
+			runMTF
+			
+	 Parameter:	'reset_template'
+		Description:
+			update the template with the patch under the current location of the tracker; this effectively reinitializes the tracker with its own current location; in some cases, this option can help to continue tracking an object even when its appearance undergoes significant changes; more often, however, it is likely to lead to gradual tracker drift as small inaccuracies in the tracked location get compounded when this location is used to reinitialize the tracker;
+			if a value > 1 is specified, the template resetting only happens once every given number of frames rather than at every frame;
+		Applies to:
+			runMTF, mexMTF, pyMTF
 			
 	 Parameter:	'n_trackers'
 		Description:
@@ -553,6 +581,26 @@ MTF Tracker specific parameters:
 		Description:
 			set the horizontal and vertical sampling resolutions equal to the actual size of the object selected for tracking;
 			overrides the last two parameters;
+
+	 Parameter:	'line_thickness'
+		Description:
+			thickness of the line used for drawing the bounding box that represents the current location of the tracker and/or the ground truth
+		Applies to:
+			all examples
+			
+	 Parameter:	'show_corner_ids'
+		Description:
+			show the numerical ID of each bounding box corner along with drawing the box itself; these IDs are 0-based and increase anti clockwise starting from the top left corner;
+			note that this convention is defined with respect to the initial orientation of the object; if the object rotates in the course of being tracked, the corner with ID 0 might no longer remain in the top left of its new orientation;
+		Applies to:
+			all examples
+	 
+	 Parameter:	'sel_quad_obj'
+		Description:
+			select an arbitrary quadrilateral as the bounding box that defines the object to be tracked; this involves selecting the 4 corners by clicking at each; if disables, a rectangular object is selected instead by clicking on its two opposite corners;
+			only matters if a live/camera video stream is used or object selection from ground truth is disabled
+		Applies to:
+			all examples
 			
 	 Parameter:	'enable_learning'
 		Description:
