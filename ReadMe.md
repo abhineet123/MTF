@@ -236,10 +236,14 @@ A simple ROS package called `mtf_bridge` that demonstrates the integration of MT
 Building a new application that uses MTF:
 -----------------------------------------
 
-1. Using Cmake: The build process generates a `mtfConfig.cmake` file in the build folder with the main defines. This file should be  copied into the project tree and included in the CMakeLists.txt file. Then, the defined variables can be used to obtain the header files, linked libraries and compile time definitions. An example CMakeLists.txt file for a standalone project that uses the generated config file is included in `cmake/CMakeLists.txt.example`.
+cmake
+-----
+The build process generates a `mtfConfig.cmake` file in the build folder with the main defines. This file should be  copied into the project tree and included in the CMakeLists.txt file. Then, the defined variables can be used to obtain the header files, linked libraries and compile time definitions. An example CMakeLists.txt file for a standalone project that uses the generated config file is included in `cmake/CMakeLists.txt.example`.
 More details in issue #11.
 
-2. Using make: Use the `make app app=<APPLICATION_NAME>` command as detailed in the make switches section.
+make
+----
+Use the `make app app=<APPLICATION_NAME>` command as detailed in the make switches section.
 
 
 **For Developers**
@@ -247,14 +251,6 @@ More details in issue #11.
 
 Adding a new Appearance Model (AM) or State Space Model (SSM):
 -------------------------------------------------------------
-
-make
-----
-1. Modify the .mak file in the respective sub directory to:
-    - add the name of the AM/SSM to the variable `APPEARANCE_MODELS` or `STATE_SPACE_MODELS` respectively
-	- add rule to compile the .o of the new AM/SSM that is dependent on its source and header files - simplest method would be to copy an existing command and change the names of the model.
-2. Modify makefile to add any extra dependencies that the new files need to include under variable `FLAGS64`
-and extra libraries to link against under `LIB_MTF_LIBS`
 
 cmake
 -----
@@ -264,6 +260,14 @@ cmake
 
 2. Modify "mtf.h" to add a new AM/SSM option in the overloaded function `getTrackerObj` (starting lines 498 and 533 respectively) that can be used with your config file to pick the AM/SSM, and create an object with this selected model.
 3. Modify "Macros/register.h" to add the new AM/SSM class name under `_REGISTER_TRACKERS_AM/_REGISTER_HTRACKERS_AM` or `_REGISTER_TRACKERS/_REGISTER_TRACKERS_SSM/_REGISTER_HTRACKERS/_REGISTER_HTRACKERS_SSM` respectively
+
+make
+----
+1. Modify the .mak file in the respective sub directory to:
+    - add the name of the AM/SSM to the variable `APPEARANCE_MODELS` or `STATE_SPACE_MODELS` respectively
+	- add rule to compile the .o of the new AM/SSM that is dependent on its source and header files - simplest method would be to copy an existing command and change the names of the model.
+2. Modify makefile to add any extra dependencies that the new files need to include under variable `FLAGS64`
+and extra libraries to link against under `LIB_MTF_LIBS`
 
 All steps are identical for adding a new Search Method (SM) too except the last one which is not needed. Instead this header needs to be included and the appropriate macro needs to be called from its source file to register the SM with all existing AMs and SSMs. Refer to the last 2 lines of the .cc file of any existing SM to see how to do this.
 
