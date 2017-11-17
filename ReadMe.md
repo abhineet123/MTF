@@ -236,6 +236,10 @@ A simple ROS package called `mtf_bridge` that demonstrates the integration of MT
 Building a new application that uses MTF:
 -----------------------------------------
 
+1. Using Cmake: The build process generates a `mtfConfig.cmake` file in the build folder with the main defines. This file should be  copied into the project tree and included in the CMakeLists.txt file. Then, the defined variables can be used to obtain the header files, linked libraries and compile time definitions. An example CMakeLists.txt file for a standalone project that uses the generated config file is included in `cmake/CMakeLists.txt.example`.
+More details in #11.
+
+2. Using make: Use the `make app app=<APPLICATION_NAME>` command as detailed in the make switches section.
 
 
 **For Developers**
@@ -243,10 +247,6 @@ Building a new application that uses MTF:
 
 Adding a new Appearance Model (AM) or State Space Model (SSM):
 -------------------------------------------------------------
-1. Using Cmake: The build process generates a `mtfConfig.cmake` file in the build folder with the main defines. This file should be  copied into the project tree and included in the CMakeLists.txt file. Then, the defined variables can be used to obtain the header files, linked libraries and compile time definitions. An example CMakeLists.txt file for a standalone project that uses the generated config file is included in `cmake/CMakeLists.txt.example`.
-More details in #11.
-
-2. Using make: Use the `make app app=<APPLICATION_NAME>` command as detailed in the make switches section.
 
 make
 ----
