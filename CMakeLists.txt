@@ -238,3 +238,9 @@ endif()
 # COMMAND echo "export LIBRARY_PATH=$LIBRARY_PATH:${MTF_LIB_INSTALL_DIR}">>~/.bashrc
 # COMMAND echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MTF_LIB_INSTALL_DIR}">>~/.bashrc
 # )
+
+if(WIN32)
+	configure_file(cmake/mtfConfig.cmake.in "${PROJECT_BINARY_DIR}/mtfConfig.cmake" NEWLINE_STYLE WIN32)
+else()
+	configure_file(cmake/mtfConfig.cmake.in "${PROJECT_BINARY_DIR}/mtfConfig.cmake" NEWLINE_STYLE UNIX)
+endif()

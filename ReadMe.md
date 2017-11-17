@@ -233,12 +233,20 @@ Building the ROS package:
 
 A simple ROS package called `mtf_bridge` that demonstrates the integration of MTF with ROS applications is included in the `ROS` sub directory. To build it, first [create a catkin workspace](http://wiki.ros.org/catkin/Tutorials/create_a_workspace) by running `catkin_init_workspace` from `ROS/src` and then build this package by running `catkin_make` from `ROS`. Also refer [this page](http://wiki.ros.org/ROS/Tutorials/BuildingPackages) for more details on building and running ROS packages.
 
+Building a new application that uses MTF:
+-----------------------------------------
+
+
 
 **For Developers**
 ==================
 
 Adding a new Appearance Model (AM) or State Space Model (SSM):
 -------------------------------------------------------------
+1. Using Cmake: The build process generates a `mtfConfig.cmake` file in the build folder with the main defines. This file should be  copied into the project tree and included in the CMakeLists.txt file. Then, the defined variables can be used to obtain the header files, linked libraries and compile time definitions. An example CMakeLists.txt file for a standalone project that uses the generated config file is included in `cmake/CMakeLists.txt.example`.
+More details in #11.
+
+2. Using make: Use the `make app app=<APPLICATION_NAME>` command as detailed in the make switches section.
 
 make
 ----
