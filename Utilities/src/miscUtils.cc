@@ -245,6 +245,7 @@ namespace utils{
 		}
 	}
 	template void drawPts<float>(cv::Mat &img, const cv::Mat &pts, cv::Scalar col, int radius, int thickness);
+	template void drawPts<double>(cv::Mat &img, const cv::Mat &pts, cv::Scalar col, int radius, int thickness);
 
 	void writeCorners(FILE *out_fid, const cv::Mat &corners,
 		int frame_id, bool write_header){
