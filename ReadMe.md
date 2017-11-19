@@ -239,7 +239,7 @@ Building a new application that uses MTF:
 cmake
 -----
 The build process generates a `mtfConfig.cmake` file in the build folder with the main defines. This file should be  copied into the project tree and included in the CMakeLists.txt file. Then, the defined variables can be used to obtain the header files, linked libraries and compile time definitions. An example CMakeLists.txt file for a standalone project that uses the generated config file is included in `cmake/CMakeLists.txt.example`.
-More details in issue #11.
+More details can be found in the comments section of issue #11.
 
 If this method does not work, a manually created `FindMTF.cmake` file is also included in the `cmake` folder. It has not been widely tested but should work with most standard configurations.
 
