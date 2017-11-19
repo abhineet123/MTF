@@ -245,7 +245,7 @@ If this method does not work, a manually created `FindMTF.cmake` file is also in
 
 make
 ----
-Use the `make app app=<APPLICATION_NAME>` command as detailed in the make switches section.
+Use the `make app app=<APPLICATION_NAME>` command as detailed in the make commands section.
 
 
 **For Developers**
