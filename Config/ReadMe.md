@@ -248,17 +248,37 @@ Input/Output related parameters:
 	 Parameter:	'show_cv_window'
 		Description:
 			show the result of tracking from frame to frame in an OpenCV window;
+			if a single object is being tracked, this is shown as a red bounding box; subsequent objects are shown in other colours defined in Utilities/src/objUtils.cc;
 			disabling it can speed up the overall tracking speed by eliminating the delay caused by drawing the object locations on the current frame;
-			useful for benchmarking
+			useful for benchmarking and batch mode testing;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'show_ground_truth'
+		Description:
+			show the current location of the object in the ground truth in an OpenCV window;
+			this is always shown as a green color bounding box;
+			only matters if show_cv_window is enabled and the conditions required for ground truth to be available as specified for show_tracking_error are satisfied;
 		Possible Values:
 			0: Disable
 			1: Enable
 			
 	 Parameter:	'show_tracking_error'
 		Description:
-			show the the tracking error in terms of the mean corner distance between the tracking result and the ground truth in the OpenCV window; 
+			show the the tracking error between the tracking result and the ground truth in the OpenCV window; 
+			the metric used for computing this error is specified in tracking_err_type;
 			only matters if read_objs_from_gt is enabled and a file input source (video or image) is used; 
-			a valid text file containing the show_tracking_error for all the frames in the source should also be present;
+			a valid text file containing the ground truth for all the frames in the source should also be present;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'show_jaccard_error'
+		Description:
+			compute and show the the Jaccard error between the tracking result and the ground truth in the OpenCV window; 
+			only matters if show_tracking_error is enabled and the conditions specified for it to work are satisfied; 
+			this can be useful if both MCD/CLE and Jaccard error need to be shown together for comparative analysis;
 		Possible Values:
 			0: Disable
 			1: Enable
