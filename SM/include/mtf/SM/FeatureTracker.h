@@ -2,18 +2,16 @@
 #define MTF_FEATURE_TRACKER_H
 
 #include "FeatureBase.h"
-
-#include "opencv2/nonfree/nonfree.hpp"
 #ifndef DISABLE_FLANN
 #include <flann/flann.hpp>
 #include "FLANNParams.h"
 #else
+#include "FLANNCVParams.h"
+#endif
 #if CV_MAJOR_VERSION < 3
 #include "opencv2/nonfree/nonfree.hpp"
 #else
 #include "opencv2/xfeatures2d/nonfree.hpp"
-#endif
-#include "FLANNCVParams.h"
 #endif
 
 #include <memory>
