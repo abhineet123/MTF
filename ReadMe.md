@@ -105,11 +105,11 @@ Installation:
 
 * On Unix or when using MinGW on Windows, run one of the following make commands to compile and install the library and the example applications:
     * `make` or `make mtf` : compiles the shared library (_libmtf.so_) to the build directory (_Build/Release_)
-    * `make install` : compiles the shared library if needed and copies it to _/usr/local/lib_; also copies the headers to _/usr/local/include/mtf_; (use `make install_lib` or `make install_header` for only one of the two); if third party trackers are enabled, their respective library files will be installed too;
-	    - this needs administrative (sudo) privilege; if not available, the variables `MTF_LIB_INSTALL_DIR` and `MTF_HEADER_INSTALL_DIR` in the makefile can be modified to install elsewhere. This can be done either by editing the file itself or providing these with the make/cmake command as:  
-		`make install MTF_LIB_INSTALL_DIR=<library_installation_dir> MTF_HEADER_INSTALL_DIR=<header_installation_dir>`  
-		`cmake .. -DMTF_LIB_INSTALL_DIR=<library_installation_dir> -DMTF_HEADER_INSTALL_DIR=<header_installation_dir>`
-		    - these folders should be present in LD_LIBRARY_PATH and C_INCLUDE_PATH/CPLUS_INCLUDE_PATH environment variables respectively so any application using MTF can find the library and headers.
+    * `make install` : compiles the shared library if needed and copies it to _/usr/local/lib_; also copies the headers to _/usr/local/include_; (use `make install_lib` or `make install_header` for only one of the two); if third party trackers are enabled, their respective library files will be installed too;
+	    - this needs administrative (sudo) privilege; if not available, the variable `MTF_INSTALL_DIR` in the makefile can be modified to install elsewhere. This can be done either by editing the file itself or providing it with the make/cmake command as:  
+		`make install MTF_INSTALL_DIR=<installation_dir>`  
+		`cmake .. -D MTF_INSTALL_DIR=<installation_dir>`
+		    - the `lib` and `include` sub folders within this folder should be present in LD_LIBRARY_PATH and C_INCLUDE_PATH/CPLUS_INCLUDE_PATH environment variables respectively so any application using MTF can find the library and headers.
     * `make exe`/`make install_exe` : compile/install the main example file _Examples/cpp/runMTF.cc_ to create an executable called `runMTF` that uses this library to track objects. 
 	    - library should be installed before running this, otherwise linking will not succeed
 		- installation folder is _/usr/local/bin_ by default; this needs administrative privilege too - change `MTF_EXEC_INSTALL_DIR` in Examples/Examples.mak/cmake (or during compilation as above) if this is not available

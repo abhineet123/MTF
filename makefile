@@ -1,6 +1,5 @@
 ifeq ($(OS),Windows_NT)
-	MTF_LIB_INSTALL_DIR ?= C:/MTF/bin
-	MTF_HEADER_INSTALL_DIR ?= C:/MTF/include
+	MTF_INSTALL_DIR ?= C:/MTF
 	EIGEN_INCLUDE_DIRS ?= C:/Eigen/include
 	OPENCV_INCLUDE_DIRS ?= C:/OpenCV/build/include
 	OPENCV_LIB_DIRS ?= C:/OpenCV/build/x86/mingw/lib
@@ -12,8 +11,7 @@ ifeq ($(OS),Windows_NT)
 	MTF_EXE_EXT = .exe
 	BUILD_ROOT_DIR = Build\\Windows
 else
-	MTF_LIB_INSTALL_DIR ?= /usr/local/lib
-	MTF_HEADER_INSTALL_DIR ?= /usr/local/include
+	MTF_INSTALL_DIR ?= /usr/local
 	EIGEN_INCLUDE_DIRS ?= /usr/local/include/eigen3 /usr/include/eigen3
 	MTF_LIB_EXT = .so
 	MTF_EXE_EXT =
@@ -47,6 +45,8 @@ CAFFE_FLAGS += -L/usr/lib/x86_64-linux-gnu/ -lcaffe -lglog -lprotobuf
 MTF_LIB_INSTALL_CMD_PREFIX = 
 MTF_HEADER_INSTALL_CMD_PREFIX =
 _BOOST_LIBS =  -lboost_random -lboost_filesystem -lboost_system
+MTF_LIB_INSTALL_DIR = ${MTF_INSTALL_DIR}/lib
+MTF_HEADER_INSTALL_DIR = ${MTF_INSTALL_DIR}/include
 
 ifeq ($(OS),Windows_NT)
 	_OPENCV_LIBS = -lopencv_calib3d -lopencv_contrib -lopencv_core -lopencv_features2d -lopencv_flann -lopencv_gpu -lopencv_highgui -lopencv_imgproc -lopencv_legacy -lopencv_ml -lopencv_nonfree -lopencv_objdetect -lopencv_ocl -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_video -lopencv_videostab
@@ -61,6 +61,7 @@ ifeq ($(OS),Windows_NT)
 	# RM_CMD = del /F /Q
 	# CP_CMD = copy /Y
 	PATHSEP2 = \\
+
 else
 	OPENCV_FLAGS = `pkg-config --cflags opencv`
 	OPENCV_LIBS = `pkg-config --libs opencv`
