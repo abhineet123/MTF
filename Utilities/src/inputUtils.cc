@@ -320,10 +320,10 @@ namespace utils{
 				} catch(...) { 
 					// If settings are not available just catch execption to continue with default settings
 				}
+				cap_obj.reset(dc1394_cap);
 			} catch(vpException &e) {
 				std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
-			}
-			cap_obj.reset(dc1394_cap);
+			}			
 		}
 #endif
 #endif
