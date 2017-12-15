@@ -161,6 +161,15 @@ namespace utils{
 
 	bool InputVP::initialize(){
 		printf("Initializing ViSP pipeline...\n");
+#if defined( VISP_HAVE_FLYCAPTURE )
+		printf("vpFlyCaptureGrabber is available...\n");
+#endif
+#if defined( VISP_HAVE_V4L2 )
+		printf("vpV4l2Grabber is available...\n");
+#endif
+#if defined( VISP_HAVE_DC1394 )
+		printf("vp1394TwoGrabber is available...\n");
+#endif
 		n_channels = 3;
 		if(img_source == SRC_VID || img_source == SRC_IMG) {
 			vpVideoReader *vid_cap = new vpVideoReader;
