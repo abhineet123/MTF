@@ -265,55 +265,63 @@ namespace utils{
 #else
 #if defined( VISP_HAVE_DC1394 )
 		else if(img_source == SRC_FW_CAM) {
-			vp1394TwoGrabber *dc1394_cap = new vp1394TwoGrabber;
+			try {
+				vp1394TwoGrabber *dc1394_cap = new vp1394TwoGrabber;
 #ifndef _WIN32
-			printf("Opening FireWire camera with GUID %lu\n", dc1394_cap->getGuid());
+				printf("Opening FireWire camera with GUID %lu\n", dc1394_cap->getGuid());
 #else
-			printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
+				printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
 #endif
-			switch(fw_res){
-			case VpResFW::Default:
-				break;
-			case VpResFW::res640x480:
-				dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_RGB8);
-				break;
-			case VpResFW::res800x600:
-				dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_800x600_RGB8);
-				break;
-			case VpResFW::res1024x768:
-				dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1024x768_RGB8);
-				break;
-			case VpResFW::res1280x960:
-				dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1280x960_RGB8);
-				break;
-			case VpResFW::res1600x1200:
-				dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1600x1200_RGB8);
-				break;
-			default:
-				printf("Invalid resolution provided for ViSP firewire pipeline\n");
-				return false;
-			}
-			switch(fw_fps){
-			case VpFpsFW::Default:
-				break;
-			case VpFpsFW::fps15:
-				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
-				break;
-			case VpFpsFW::fps30:
-				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
-				break;
-			case VpFpsFW::fps60:
-				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-				break;
-			case VpFpsFW::fps120:
-				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_120);
-				break;
-			case VpFpsFW::fps240:
-				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_240);
-				break;
-			default:
-				printf("Invalid frame rate provided for ViSP firewire pipeline\n");
-				return false;
+				try{
+					switch(fw_res){
+					case VpResFW::Default:
+						break;
+					case VpResFW::res640x480:
+						dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_RGB8);
+						break;
+					case VpResFW::res800x600:
+						dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_800x600_RGB8);
+						break;
+					case VpResFW::res1024x768:
+						dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1024x768_RGB8);
+						break;
+					case VpResFW::res1280x960:
+						dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1280x960_RGB8);
+						break;
+					case VpResFW::res1600x1200:
+						dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1600x1200_RGB8);
+						break;
+					default:
+						printf("Invalid resolution provided for ViSP firewire pipeline\n");
+						return false;
+					}
+					switch(fw_fps){
+					case VpFpsFW::Default:
+						break;
+					case VpFpsFW::fps15:
+						dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+						break;
+					case VpFpsFW::fps30:
+						dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
+						break;
+					case VpFpsFW::fps60:
+						dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
+						break;
+					case VpFpsFW::fps120:
+						dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_120);
+						break;
+					case VpFpsFW::fps240:
+						dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_240);
+						break;
+					default:
+						printf("Invalid frame rate provided for ViSP firewire pipeline\n");
+						return false;
+					}
+				} catch(...) { 
+					// If settings are not available just catch execption to continue with default settings
+				}
+			} catch(vpException &e) {
+				std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
 			}
 			cap_obj.reset(dc1394_cap);
 		}
