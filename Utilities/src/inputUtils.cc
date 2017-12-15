@@ -12,6 +12,7 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
+#include <visp3/sensor/vpFlyCaptureGrabber.h>
 #endif
 
 #include <stdio.h>
@@ -230,6 +231,29 @@ namespace utils{
 			cap_obj.reset(v4l2_cap);
 		}
 #endif
+#if defined( VISP_HAVE_FLYCAPTURE )
+		else if(img_source == SRC_FW_CAM) {
+			try {
+				vpFlyCaptureGrabber *dc1394_cap = new vpFlyCaptureGrabber;
+#ifndef _WIN32
+				printf("Opening FireWire camera with GUID %lu\n", dc1394_cap->getGuid());
+#else
+				printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
+#endif
+				try {
+					dc1394_cap->setShutter(true); // Turn auto shutter on
+					dc1394_cap->setGain(true);    // Turn auto gain on
+					dc1394_cap->setVideoModeAndFrameRate(FlyCapture2::VIDEOMODE_1280x960Y8, 
+						FlyCapture2::FRAMERATE_60);
+				} catch(...) { 
+					// If settings are not available just catch execption to continue with default settings
+				}
+			}  catch(vpException &e) {
+				std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
+			}
+			cap_obj.reset(dc1394_cap);
+		}
+#else
 #if defined( VISP_HAVE_DC1394 )
 		else if(img_source == SRC_FW_CAM) {
 			vp1394TwoGrabber *dc1394_cap = new vp1394TwoGrabber;
@@ -284,6 +308,7 @@ namespace utils{
 			}
 			cap_obj.reset(dc1394_cap);
 		}
+#endif
 #endif
 		else {
 			printf("Invalid source provided for ViSP Pipeline: %c\n", img_source);
