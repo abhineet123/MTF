@@ -199,8 +199,8 @@ Compile/Runtime Notes:
     * third party trackers in particular are likely to have issues with OpenCV 3.x as many use legacy versions so these should be disabled using `lt=0` if compilation or linking errors pertaining to these are found.
     * if a linking error of type `/usr/bin/ld: cannot find -lippicv` occurs, remove `-ippicv` from opencv pkg-config configuration file which is usually located at `/usr/local/lib/pkgconfig/opencv.pc` or follow the procedures suggested [here](http://answers.opencv.org/question/84265/compiling-error-with-lippicv/)
 * if compilation is taking too long and optional components are not needed, following cmake/make commands can be used to build a minimal version of MTF with full core functionality:  
-	`cmake .. -DWITH_THIRD_PARTY=OFF -DWITH_TEMPLATED=OFF`  
-	`make mtfall lt=0 nt=1`  
+	`cmake .. -DWITH_THIRD_PARTY=OFF -DWITH_TEMPLATED=OFF` (if FLANN based NN is not needed (graph based NN will still be available), `-DWITH_FLANN=OFF` can be specified too)  
+	`make mtfall lt=0 nt=1` (`nn=0` to disable FLANN based NN) 
 	
 <!--- 
 [](* if MTF had earlier been compiled with `only_nt=0` (or `nn=1`) and is recompiled with `only_nt=1` (or `nn=0`) **or vice versa**, some linking error with missing symbols related to `mtf::NNParams` or `mtf::FLANNParams` may occur when compiling the executable; to fix this, remove `NNParams.o` from the build folder (Build/Release or Build/Debug) by running, for instance `rm Build/Release/NNParams.o` so this recompiles too; some of the code in `NNParams` is conditional on whether standard version of NN (that uses FLANN) is enabled or not so having a wrong version compiled causes this error and, unfortunately, there is no way to automatically recompile this file when FLANN based NN is enabled or disabled through compile time switches;)
