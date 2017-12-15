@@ -45,8 +45,8 @@ CAFFE_FLAGS += -L/usr/lib/x86_64-linux-gnu/ -lcaffe -lglog -lprotobuf
 MTF_LIB_INSTALL_CMD_PREFIX = 
 MTF_HEADER_INSTALL_CMD_PREFIX =
 _BOOST_LIBS =  -lboost_random -lboost_filesystem -lboost_system
-MTF_LIB_INSTALL_DIR = ${MTF_INSTALL_DIR}/lib
-MTF_HEADER_INSTALL_DIR = ${MTF_INSTALL_DIR}/include
+MTF_LIB_INSTALL_DIR ?= $(MTF_INSTALL_DIR)/lib
+MTF_HEADER_INSTALL_DIR ?= $(MTF_INSTALL_DIR)/include
 
 ifeq ($(OS),Windows_NT)
 	_OPENCV_LIBS = -lopencv_calib3d -lopencv_contrib -lopencv_core -lopencv_features2d -lopencv_flann -lopencv_gpu -lopencv_highgui -lopencv_imgproc -lopencv_legacy -lopencv_ml -lopencv_nonfree -lopencv_objdetect -lopencv_ocl -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_video -lopencv_videostab

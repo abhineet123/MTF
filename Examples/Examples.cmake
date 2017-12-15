@@ -2,15 +2,12 @@ option(WITH_PY "Enable compilation of the Python interface. This will be automat
 option(WITH_MEX "Enable compilation of the Matlab interface. This will be automatically disabled if Matlab is not found. However, unresolved issues in Matlab cmake module can cause build errors even if a valid Matlab installation is found. This option can be turned off to avoid such issues." ON)
 
 if (WIN32)
-	set(MTF_EXEC_INSTALL_DIR_DEFAULT C:/MTF/bin)
 	set(MTF_PY_INSTALL_DIR_DEFAULT C:/Python27/Lib/site-packages)
 	set(Matlab_ROOT_DIR_DEFAULT I:/MATLAB/R2014a/)
 else()
-	set(MTF_EXEC_INSTALL_DIR_DEFAULT /usr/local/bin)
 	set(MTF_PY_INSTALL_DIR_DEFAULT /usr/local/lib/python2.7/dist-packages)
 	set(Matlab_ROOT_DIR_DEFAULT /usr/local/MATLAB/MATLAB_Production_Server/R2013a/)
 endif()
-set(MTF_EXEC_INSTALL_DIR ${MTF_EXEC_INSTALL_DIR_DEFAULT} CACHE PATH "Directory to install the executable")
 set(MTF_PY_INSTALL_DIR ${MTF_PY_INSTALL_DIR_DEFAULT} CACHE PATH "Directory to install the Python interface module") 
 set(Matlab_ROOT_DIR ${Matlab_ROOT_DIR_DEFAULT} CACHE PATH "MATLAB root directory") 
 
@@ -25,6 +22,7 @@ set(Matlab_ROOT_DIR ${Matlab_ROOT_DIR_DEFAULT} CACHE PATH "MATLAB root directory
 # find_package(Boost REQUIRED COMPONENTS filesystem system)
 # message(STATUS "Boost_LIBRARIES:")
 # message(STATUS "Examples: MTF_RUNTIME_FLAGS: ${MTF_RUNTIME_FLAGS} ${MTF_COMPILETIME_FLAGS}")
+set(MTF_EXEC_INSTALL_DIR ${MTF_INSTALL_DIR}/bin)
 set(EX_TARGET_NAMES runMTF createMosaic generateSyntheticSeq trackUAVTrajectory extractPatch diagnoseMTF) 
 set(EX_INSTALL_TARGET_NAMES install_exe install_mos install_syn install_uav install_patch install_diag install_diag_lib) 
 set(EX_COMBINED_TARGET_NAMES mtfe mtfm mtfs mtfu mtfpa mtft) 

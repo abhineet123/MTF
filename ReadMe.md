@@ -112,7 +112,7 @@ Installation:
 		    - the `lib` and `include` sub folders within this folder should be present in LD_LIBRARY_PATH and C_INCLUDE_PATH/CPLUS_INCLUDE_PATH environment variables respectively so any application using MTF can find the library and headers.
     * `make exe`/`make install_exe` : compile/install the main example file _Examples/cpp/runMTF.cc_ to create an executable called `runMTF` that uses this library to track objects. 
 	    - library should be installed before running this, otherwise linking will not succeed
-		- installation folder is _/usr/local/bin_ by default; this needs administrative privilege too - change `MTF_EXEC_INSTALL_DIR` in Examples/Examples.mak/cmake (or during compilation as above) if this is not available
+		- installation folder is _/usr/local/bin_ by default; this needs administrative privilege too - change `MTF_INSTALL_DIR` as above if this is not available
     * **`make mtfi` : all of the above - recommended command that compiles and installs the library and the executable**
     * **`make py`/`make install_py`** : compile/install the Python interface to MTF - this creates a Python module called _pyMTF_ that serves as a front end for running these trackers from Python.
 	    - usage of this module is demonstrated in _Examples/python/runMTF.py_

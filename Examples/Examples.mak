@@ -1,6 +1,7 @@
+MTF_EXEC_INSTALL_DIR ?= $(MTF_INSTALL_DIR)/bin
+MTF_DIAG_INSTALL_DIR ?= $(MTF_INSTALL_DIR)/bin
+
 ifeq ($(OS),Windows_NT)
-	MTF_EXEC_INSTALL_DIR ?= C:/MTF/bin
-	MTF_DIAG_INSTALL_DIR ?= C:/MTF/bin
 	MTF_PY_INSTALL_DIR ?= C:/Python27/Lib/site-packages
 	PYTHON_INCLUDE_DIR ?= C:/Python27/include 
 	PYTHON_LIBS_DIR ?= C:/Python27/libs 
@@ -10,8 +11,6 @@ ifeq ($(OS),Windows_NT)
 	MATLAB_DIR ?= E:/Program\ Files/MATLAB/R2013a
 	MEX_EXT = mexw64
 else
-	MTF_EXEC_INSTALL_DIR ?= /usr/local/bin
-	MTF_DIAG_INSTALL_DIR ?= /usr/local/bin
 	MTF_PY_INSTALL_DIR ?= /usr/local/lib/python2.7/dist-packages/
 	PYTHON_INCLUDE_DIR ?= /usr/include/python2.7
 	PYTHON_LIBS_DIR ?= 
@@ -35,6 +34,7 @@ else
 	MATLAB_DIR ?= /usr/local/MATLAB/MATLAB_Production_Server/R2013a/
 	MEX_EXT = mexa64
 endif
+
 MTF_MEX_INSTALL_DIR ?= $(MATLAB_DIR)/toolbox/local
 
 EXAMPLE_TARGETS = exe uav mos syn gt patch rec py diag
