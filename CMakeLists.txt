@@ -64,6 +64,8 @@ if (WIN32)
 else()
 	set(MTF_INSTALL_DIR_DEFAULT /usr/local)
 endif()
+option(WITH_TIMING "Show timing information during compilation" OFF)
+
 set(MTF_INSTALL_DIR ${MTF_INSTALL_DIR_DEFAULT} CACHE PATH "Directory to install the library and header files")
 set(MTF_LIBS ${OpenCV_LIBS} ${Boost_LIBRARIES})
 set(MTF_INCLUDE_DIRS include)
@@ -71,6 +73,7 @@ set(MTF_EXT_INCLUDE_DIRS ${OpenCV_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIR} ${Boost_IN
 set(MTF_SRC "")
 set(MTF_SPECIFIC_SRC "")
 set(MTF_SPECIFIC_PROPERTIES "")
+
 if (WIN32)
 	set(MTF_COMPILETIME_FLAGS /bigobj /arch:SSE2)
 	option(WITH_FAST_FP "Enable fast floating point operations optimization in Visual C++" ON)
@@ -86,6 +89,11 @@ else()
 	set(WARNING_FLAGS -Wfatal-errors -Wno-write-strings -Wno-unused-result -Wformat=0)
 	set(MTF_COMPILETIME_FLAGS -std=c++11)
 endif()
+
+if(WITH_TIMING)
+	set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CMAKE_COMMAND} -E time")
+endif(WITH_TIMING)
+
 set(MTF_DEFINITIONS NDEBUG EIGEN_NO_DEBUG)
 # set(MTF_COMPILETIME_FLAGS ${MTF_COMPILETIME_FLAGS} ${HEADER_DEF_SWITCH}NDEBUG ${HEADER_DEF_SWITCH}EIGEN_NO_DEBUG)
 set(MTF_RUNTIME_FLAGS ${WARNING_FLAGS} ${MTF_COMPILETIME_FLAGS})

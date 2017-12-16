@@ -1,6 +1,6 @@
 option(WITH_THIRD_PARTY "Enable Third Party Trackers" ON)
-set(THIRD_PARTY_RUNTIME_FLAGS "")
 
+set(THIRD_PARTY_RUNTIME_FLAGS "")
 if(WITH_THIRD_PARTY)
 	# set(THIRD_PARTY_TRACKERS "")
 	# set(THIRD_PARTY_LIBS "")
