@@ -94,6 +94,8 @@ if __name__ == '__main__':
     # lists for accumulating the tracking error and fps for all the frames
     tracking_errors = []
     tracking_fps = []
+	
+	tracker_corners = np.zeros((2, 4), dtype=np.float64)
 
     for frame_id in xrange(1, no_of_frames):
         ret, src_img = cap.read()
@@ -111,7 +113,7 @@ if __name__ == '__main__':
         start_time = time.clock()
 
         # update the tracker with the current frame
-        tracker_corners = pyMTF.update(src_img.astype(np.uint8))
+        pyMTF.update(src_img.astype(np.uint8), tracker_corners)
 
         if not isinstance(tracker_corners, np.ndarray):
             print 'Tracker update was unsuccessful'
