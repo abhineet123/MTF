@@ -31,29 +31,10 @@ static PyObject* update(PyObject* self, PyObject* args);
 static PyObject* setRegion(PyObject* self, PyObject* args);
 static PyObject* remove(PyObject* self, PyObject* args);
 
-static PyArrayObject *img_py;
-static PyArrayObject *in_corners_py;
-static PyArrayObject *out_corners_py;
-static double* out_corners_data;
-
 typedef unique_ptr<mtf::TrackerBase> Tracker_;
 static std::vector<Tracker_> trackers;
 static std::vector<PreProc_> pre_procs;
-static Input_ input;
-
-static double min_x, min_y, max_x, max_y;
-static double size_x, size_y;
-static cv::Mat init_img_cv, init_corners_cv, curr_img_cv;
-
-static int img_height, img_width, n_channels, img_type;
-
-static cv::Point fps_origin(10, 20);
-static double fps_font_size = 0.50;
-static cv::Scalar fps_color(0, 255, 0);
-static int frame_id;
-static unsigned int tracker_id = 0;
-static char* config_root_dir = "C++/MTF/Config";
-static bool tracker_created = false, tracker_initialized = false;
+static std::vector<bool> tracker_created, tracker_initialized;
 
 static PyMethodDef pyMTFMethods[] = {
 	{ "create", create, METH_VARARGS },
@@ -72,6 +53,9 @@ PyMODINIT_FUNC initpyMTF()  {
 }
 
 static PyObject* create(PyObject* self, PyObject* args) {
+	
+	char* config_root_dir = "C++/MTF/Config";
+	tracker_created.push_back(false);	
 	if(!PyArg_ParseTuple(args, "z", &config_root_dir)) {
 		PySys_WriteStdout("\n----pyMTF::create: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
@@ -90,15 +74,7 @@ static PyObject* create(PyObject* self, PyObject* args) {
 
 	PySys_WriteStdout("*******************************\n");
 	PySys_WriteStdout("Using parameters:\n");
-	PySys_WriteStdout("actor_id: %d\n", actor_id);
-	PySys_WriteStdout("source_id: %d\n", seq_id);
-	PySys_WriteStdout("source_name: %s\n", seq_name.c_str());
-	PySys_WriteStdout("actor: %s\n", actor.c_str());
-	PySys_WriteStdout("pipeline: %c\n", pipeline);
-	PySys_WriteStdout("img_source: %c\n", img_source);
 	PySys_WriteStdout("show_cv_window: %d\n", show_cv_window);
-	PySys_WriteStdout("read_obj_from_gt: %d\n", read_obj_from_gt);
-	PySys_WriteStdout("write_tracking_data: %d\n", write_tracking_data);
 	PySys_WriteStdout("mtf_sm: %s\n", mtf_sm);
 	PySys_WriteStdout("mtf_am: %s\n", mtf_am);
 	PySys_WriteStdout("mtf_ssm: %s\n", mtf_ssm);
@@ -123,24 +99,22 @@ static PyObject* create(PyObject* self, PyObject* args) {
 			err.type(), err.what());
 		return Py_BuildValue("i", 0);
 	}
-	tracker_created = true;
-	if(trackers.size() == 0){
-		tracker_id = 0;
-	} else{
-		tracker_id = trackers.size() - 1;
-	}
+	tracker_created[tracker_created.size()-1] = true;
 	return Py_BuildValue("i", 1);
 }
 
 /* ==== initialize tracker ==== */
-static PyObject* initialize(PyObject* self, PyObject* args) {
-	if(!tracker_created){
-		PySys_WriteStdout("\n----pyMTF::initialize: Tracker must be created before it can be initialized ----\n\n");
-		return Py_BuildValue("i", 0);
-	}
+static PyObject* initialize(PyObject* self, PyObject* args) {	
+	PyArrayObject *img_py, *in_corners_py;
+	unsigned int tracker_id = trackers.size() == 0 ? 0 : trackers.size() - 1;
+	tracker_initialized.push_back(false);	
 	/*parse first input array*/
 	if(!PyArg_ParseTuple(args, "O!O!|i", &PyArray_Type, &img_py, &PyArray_Type, &in_corners_py, &tracker_id)) {
 		PySys_WriteStdout("\n----pyMTF::initialize: Input arguments could not be parsed----\n\n");
+		return Py_BuildValue("i", 0);
+	}
+	if(!tracker_created[tracker_id]){
+		PySys_WriteStdout("\n----pyMTF::initialize: Tracker must be created before it can be initialized ----\n\n");
 		return Py_BuildValue("i", 0);
 	}
 	if(img_py == NULL) {
@@ -158,13 +132,10 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 		return Py_BuildValue("i", 0);
 	}
 
-	img_height = img_py->dimensions[0];
-	img_width = img_py->dimensions[1];
-	if(img_py->nd == 3){
-		n_channels = img_py->dimensions[2];
-	} else{
-		n_channels = 1;
-	}
+	int img_height = img_py->dimensions[0];
+	int img_width = img_py->dimensions[1];
+	int n_channels = img_py->nd == 3 ? img_py->dimensions[2] : 1;
+	
 	if(n_channels!= 1 && n_channels != 3){
 		PySys_WriteStdout("pyMTF:: Only grayscale and RGB images are supported\n");
 		return Py_BuildValue("i", 0);
@@ -172,15 +143,12 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 
 	PySys_WriteStdout("img_height: %d\n", img_height);
 	PySys_WriteStdout("img_width: %d\n", img_width);
-	PySys_WriteStdout("n_channels: %d\n", n_channels);
+	PySys_WriteStdout("n_channels: %d\n", n_channels);	
 
-	img_type = n_channels == 3 ? CV_8UC3 : CV_8UC1;
-
-	init_img_cv = cv::Mat(img_height, img_width, img_type, img_py->data);
-
+	int img_type = n_channels == 3 ? CV_8UC3 : CV_8UC1;
+	cv::Mat init_img_cv(img_height, img_width, img_type, img_py->data);
 	cv::Mat temp(2, 4, CV_64FC1, in_corners_py->data);
-	init_corners_cv.create(2, 4, CV_64FC1);
-
+	cv::Mat init_corners_cv(2, 4, CV_64FC1);
 	init_corners_cv.at<double>(0, 0) = temp.at<double>(0, 0);
 	init_corners_cv.at<double>(1, 0) = temp.at<double>(0, 1);
 	init_corners_cv.at<double>(0, 1) = temp.at<double>(0, 2);
@@ -190,17 +158,17 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 	init_corners_cv.at<double>(0, 3) = temp.at<double>(1, 2);
 	init_corners_cv.at<double>(1, 3) = temp.at<double>(1, 3);
 
-	PySys_WriteStdout("init_corners_cv:\n");
-	for(unsigned int corner_id = 0; corner_id < 4; ++corner_id) {
-		PySys_WriteStdout("%d: (%f, %f)\n", corner_id, init_corners_cv.at<double>(0, corner_id), init_corners_cv.at<double>(1, corner_id));
-	}
+	// PySys_WriteStdout("init_corners_cv:\n");
+	// for(unsigned int corner_id = 0; corner_id < 4; ++corner_id) {
+		// PySys_WriteStdout("%d: (%f, %f)\n", corner_id, init_corners_cv.at<double>(0, corner_id), init_corners_cv.at<double>(1, corner_id));
+	// }
 
-	min_x = init_corners_cv.at<double>(0, 0);
-	min_y = init_corners_cv.at<double>(1, 0);
-	max_x = init_corners_cv.at<double>(0, 2);
-	max_y = init_corners_cv.at<double>(1, 2);
-	size_x = max_x - min_x;
-	size_y = max_y - min_y;
+	double min_x = init_corners_cv.at<double>(0, 0);
+	double min_y = init_corners_cv.at<double>(1, 0);
+	double max_x = init_corners_cv.at<double>(0, 2);
+	double max_y = init_corners_cv.at<double>(1, 2);
+	double size_x = max_x - min_x;
+	double size_y = max_y - min_y;
 
 	/*********************************** initialize tracker ***********************************/
 	try{
@@ -224,33 +192,36 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 	if(show_cv_window) {
 		cv::namedWindow("PyMTF", cv::WINDOW_AUTOSIZE);
 	}
-	int dims[] = { 2, 4 };
-	out_corners_py = (PyArrayObject *)PyArray_FromDims(2, dims, NPY_DOUBLE);
-	out_corners_data = (double*)out_corners_py->data;
-
-	frame_id = 0;
-	tracker_initialized = true;
+	tracker_initialized[tracker_initialized.size()-1] = true;
 	return Py_BuildValue("i", 1);
 }
 
 static PyObject* update(PyObject* self, PyObject* args) {
-	if(!tracker_initialized){
-		PySys_WriteStdout("\n----pyMTF::initialize: Tracker must be initialized before it can be updated ----\n\n");
+	PyArrayObject *img_py, *out_corners_py;
+	unsigned int tracker_id = trackers.size() == 0 ? 0 : trackers.size() - 1;
+	/*parse first input array*/
+	if(!PyArg_ParseTuple(args, "O!O!|i", &PyArray_Type, &img_py, &PyArray_Type, &out_corners_py, &tracker_id)) {
+		PySys_WriteStdout("\n----pyMTF::update: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
-	/*parse first input array*/
-	if(!PyArg_ParseTuple(args, "O!|i", &PyArray_Type, &img_py, &tracker_id)) {
-		PySys_WriteStdout("\n----pyMTF::update: Input arguments could not be parsed----\n\n");
+	
+	if(!tracker_initialized[tracker_id]){
+		PySys_WriteStdout("\n----pyMTF::initialize: Tracker must be initialized before it can be updated ----\n\n");
 		return Py_BuildValue("i", 0);
 	}
 	if(img_py == NULL) {
 		PySys_WriteStdout("\n----pyMTF::img_py is NULL----\n\n");
 		return Py_BuildValue("i", 0);
 	}
-	curr_img_cv = cv::Mat(img_height, img_width, img_type, img_py->data);
+	
+	int img_height = img_py->dimensions[0];
+	int img_width = img_py->dimensions[1];
+	int n_channels = img_py->nd == 3 ? img_py->dimensions[2] : 1;
+	int img_type = n_channels == 3 ? CV_8UC3 : CV_8UC1;
+	
+	cv::Mat curr_img_cv(img_height, img_width, img_type, img_py->data);
 	double fps = 0, fps_win = 0;
 	double tracking_time, tracking_time_with_input;
-	++frame_id;
 	mtf_clock_get(start_time_with_input);
 	//update tracker
 	try{
@@ -274,6 +245,9 @@ static PyObject* update(PyObject* self, PyObject* args) {
 	}
 	if(show_cv_window) {
 		/* draw tracker positions to OpenCV window */
+		cv::Point fps_origin(10, 20);
+		double fps_font_size = 0.50;
+		cv::Scalar fps_color(0, 255, 0);
 		cv::Point2d corners[4];
 		mtf::utils::Corners(trackers[tracker_id]->getRegion()).points(corners);
 		line(curr_img_cv, corners[0], corners[1], CV_RGB(255, 0, 0), line_thickness);
@@ -282,19 +256,22 @@ static PyObject* update(PyObject* self, PyObject* args) {
 		line(curr_img_cv, corners[3], corners[0], CV_RGB(255, 0, 0), line_thickness);
 		putText(curr_img_cv, trackers[tracker_id]->name, corners[0],
 			cv::FONT_HERSHEY_SIMPLEX, fps_font_size, CV_RGB(255, 0, 0));
-		std::string fps_text = cv::format("frame: %d c: %12.6f cw: %12.6f", frame_id, fps, fps_win);
+		std::string fps_text = cv::format("c: %12.6f cw: %12.6f", fps, fps_win);
 		putText(curr_img_cv, fps_text, fps_origin, cv::FONT_HERSHEY_SIMPLEX, fps_font_size, fps_color);
 		imshow("PyMTF", curr_img_cv);
 		cv::waitKey(1);
 	}
 	cv::Mat out_corners = trackers[tracker_id]->getRegion();
+	double* out_corners_data = (double*)out_corners_py->data;
 	for(unsigned int corner_id = 0; corner_id < 4; corner_id++) {
 		out_corners_data[corner_id] = out_corners.at<double>(0, corner_id);
 		out_corners_data[corner_id + 4] = out_corners.at<double>(1, corner_id);
 	}
-	return Py_BuildValue("O", out_corners_py);
+	return Py_BuildValue("i", 1);
 }
 static PyObject* setRegion(PyObject* self, PyObject* args) {
+	PyArrayObject *in_corners_py;
+	unsigned int tracker_id = trackers.size() == 0 ? 0 : trackers.size() - 1;
 	/*parse first input array*/
 	if(!PyArg_ParseTuple(args, "O!|i", &PyArray_Type, &in_corners_py, &tracker_id)) {
 		PySys_WriteStdout("\n----pyMTF::setRegion: Input arguments could not be parsed----\n\n");
@@ -326,6 +303,8 @@ static PyObject* setRegion(PyObject* self, PyObject* args) {
 
 }
 static PyObject* remove(PyObject* self, PyObject* args) {
+	unsigned int tracker_id = trackers.size() == 0 ? 0 : trackers.size() - 1;
+	
 	/*parse first input array*/
 	if(!PyArg_ParseTuple(args, "|i", &PyArray_Type, &tracker_id)) {
 		PySys_WriteStdout("\n----pyMTF::remove: Input arguments could not be parsed----\n\n");
@@ -336,7 +315,6 @@ static PyObject* remove(PyObject* self, PyObject* args) {
 			tracker_id, trackers.size());
 		return Py_BuildValue("i", 0);
 	}
-	cv::Mat corners(2, 4, CV_64FC1, in_corners_py->data);
 	try{
 		trackers.erase(trackers.begin() + tracker_id);
 	} catch(const mtf::utils::Exception &err){
@@ -344,11 +322,5 @@ static PyObject* remove(PyObject* self, PyObject* args) {
 			err.type(), err.what());
 		return Py_BuildValue("i", 0);
 	}
-	if(trackers.size() == 0){
-		tracker_id = 0;
-	} else{
-		tracker_id = trackers.size() - 1;
-	}	
 	return Py_BuildValue("i", 1);
-
 }
