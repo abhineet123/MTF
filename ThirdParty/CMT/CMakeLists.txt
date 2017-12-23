@@ -23,22 +23,18 @@ set(CMT_SRC src/common.cpp src/Consensus.cpp src/Fusion.cpp src/Matcher.cpp src/
 if(WIN32)
 	# set(CMT_SRC ${CMT_SRC} src/getopt/getopt.cpp)
 	add_library (${CMT_LIB_NAME} STATIC ${CMT_SRC})	
-	set(CMT_INSTALL_DIR_DEFAULT C:/MTF/lib)
 	target_compile_definitions(${CMT_LIB_NAME} PUBLIC _CRT_SECURE_NO_WARNINGS  _SCL_SECURE_NO_WARNINGS)
 else()
 	add_library (${CMT_LIB_NAME} SHARED ${CMT_SRC})
-	set(CMT_INSTALL_DIR_DEFAULT /usr/local/lib)
 	add_definitions ("-Wall")
 endif()
 
 target_link_libraries(${CMT_LIB_NAME} ${OpenCV_LIBS})
 target_include_directories(${CMT_LIB_NAME} PUBLIC include ${OpenCV_INCLUDE_DIRS})
-
-set(CMT_INSTALL_DIR ${CMT_INSTALL_DIR_DEFAULT} CACHE PATH "Directory to install CMT tracker library")
 if(WIN32)
-	install(TARGETS ${CMT_LIB_NAME} ARCHIVE DESTINATION ${CMT_INSTALL_DIR})
+	install(TARGETS ${CMT_LIB_NAME} ARCHIVE DESTINATION ${MTF_INSTALL_DIR})
 else()
-	install(TARGETS ${CMT_LIB_NAME} LIBRARY DESTINATION ${CMT_INSTALL_DIR})
+	install(TARGETS ${CMT_LIB_NAME} LIBRARY DESTINATION ${MTF_INSTALL_DIR})
 endif() 
 
 

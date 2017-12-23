@@ -25,27 +25,38 @@
 project(DFT)
 
 cmake_minimum_required(VERSION 2.6)
-set(DFT_LIB_INSTALL_DIR /usr/local/lib CACHE PATH "Directory to install DFT tracker library")
 
-set(CFLAGS  -Wfatal-errors -std=c++11 -O3 -DNDEBUG -DEIGEN_NO_DEBUG -ffast-math -fopenmp -fPIC)
-set(LDFLAGS -fopenmp)
+set(DFT_LIB_NAME dft CACHE STRING "DFT_LIB_NAME")
+
+set(DFT_CFLAGS  -Wfatal-errors -std=c++11 -O3 -DNDEBUG -DEIGEN_NO_DEBUG -ffast-math -fopenmp -fPIC)
+set(DFT_LDFLAGS -fopenmp)
 
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(OpenMP REQUIRED)
 
-add_library(dft SHARED
+set(DFT_SRC
 src/Homography.cpp
 src/IterativeOptimization.cpp
-src/Utilities.cpp
-)	
-target_compile_options(dft PUBLIC  ${CFLAGS}  ${LDFLAGS})
-target_include_directories(dft PUBLIC include ${OpenCV_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIR})
-target_link_libraries(dft ${OpenCV_LIBS} -L${OpenCV_LIB_DIR})
-install(TARGETS dft LIBRARY DESTINATION ${DFT_LIB_INSTALL_DIR})
+src/Utilities.cpp)
+
+if(WIN32)
+	add_library (${DFT_LIB_NAME} STATIC ${DFT_SRC})	
+else()
+	add_library (${DFT_LIB_NAME} SHARED ${DFT_SRC})
+endif()
+
+target_compile_options(${DFT_LIB_NAME} PUBLIC  ${DFT_CFLAGS}  ${LDFLAGS})
+target_include_directories(${DFT_LIB_NAME} PUBLIC include ${OpenCV_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIR})
+target_link_libraries(${DFT_LIB_NAME} ${OpenCV_LIBS} -L${OpenCV_LIB_DIR})
+if(WIN32)
+	install(TARGETS ${DFT_LIB_NAME} ARCHIVE DESTINATION ${MTF_INSTALL_DIR})
+else()
+	install(TARGETS ${DFT_LIB_NAME} LIBRARY DESTINATION ${MTF_INSTALL_DIR})
+endif() 
 
 add_executable(homographyDemo src/ISMAR_Demo/main.cpp)
-target_compile_options(homographyDemo PUBLIC  ${CFLAGS}  ${LDFLAGS})
-target_link_libraries(homographyDemo dft ${OpenCV_LIBS} -L${OpenCV_LIB_DIR})
+target_compile_options(homographyDemo PUBLIC  ${DFT_CFLAGS}  ${DFT_LDFLAGS})
+target_link_libraries(homographyDemo ${DFT_LIB_NAME} ${OpenCV_LIBS} -L${OpenCV_LIB_DIR})
 target_include_directories(homographyDemo PUBLIC include ${OpenCV_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIR})
 
