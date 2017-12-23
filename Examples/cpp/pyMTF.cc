@@ -95,7 +95,7 @@ static PyObject* create(PyObject* self, PyObject* args) {
 		return Py_BuildValue("i", 0);
 	}
 	try{
-		pre_proc = mtf::getPreProc(pre_procs, trackers.back()->inputType(), pre_proc_type);
+		pre_proc = mtf::getPreProc(pre_procs, tracker->inputType(), pre_proc_type);
 	} catch(const mtf::utils::Exception &err){
 		PySys_WriteStdout("Exception of type %s encountered while creating the pre processor: %s\n",
 			err.type(), err.what());
