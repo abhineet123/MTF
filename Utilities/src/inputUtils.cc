@@ -244,11 +244,6 @@ namespace utils{
 		else if(img_source == SRC_FW_CAM) {
 			try {
 				vpFlyCaptureGrabber *dc1394_cap = new vpFlyCaptureGrabber;
-#ifndef _WIN32
-				printf("Opening FireWire camera with GUID %lu\n", dc1394_cap->getGuid());
-#else
-				printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
-#endif
 				try {
 					dc1394_cap->setShutter(true); // Turn auto shutter on
 					dc1394_cap->setGain(true);    // Turn auto gain on
