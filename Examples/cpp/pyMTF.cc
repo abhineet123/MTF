@@ -53,9 +53,9 @@ PyMODINIT_FUNC initpyMTF()  {
 }
 
 static PyObject* create(PyObject* self, PyObject* args) {
-	
-	char* config_root_dir = "C++/MTF/Config";
-	tracker_created.push_back(false);	
+
+	char* config_root_dir;
+	tracker_created.push_back(false);
 	if(!PyArg_ParseTuple(args, "z", &config_root_dir)) {
 		PySys_WriteStdout("\n----pyMTF::create: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
@@ -74,16 +74,18 @@ static PyObject* create(PyObject* self, PyObject* args) {
 
 	PySys_WriteStdout("*******************************\n");
 	PySys_WriteStdout("Using parameters:\n");
-	PySys_WriteStdout("show_cv_window: %d\n", show_cv_window);
 	PySys_WriteStdout("mtf_sm: %s\n", mtf_sm);
 	PySys_WriteStdout("mtf_am: %s\n", mtf_am);
 	PySys_WriteStdout("mtf_ssm: %s\n", mtf_ssm);
+	PySys_WriteStdout("show_cv_window: %d\n", show_cv_window);
 	PySys_WriteStdout("*******************************\n");
 
 	/*********************************** initialize tracker ***********************************/
+	mtf::TrackerBase *tracker;
+	PreProc_ pre_proc;
 	try{
-		trackers.push_back(Tracker_(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm)));
-		if(!trackers.back()){
+		tracker = mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm);			
+		if(!tracker){
 			PySys_WriteStdout("Tracker could not be created successfully\n");
 			return Py_BuildValue("i", 0);
 		}
@@ -93,21 +95,23 @@ static PyObject* create(PyObject* self, PyObject* args) {
 		return Py_BuildValue("i", 0);
 	}
 	try{
-		pre_procs.push_back(mtf::getPreProc(pre_procs, trackers.back()->inputType(), pre_proc_type));
+		pre_proc = mtf::getPreProc(pre_procs, trackers.back()->inputType(), pre_proc_type);
 	} catch(const mtf::utils::Exception &err){
 		PySys_WriteStdout("Exception of type %s encountered while creating the pre processor: %s\n",
 			err.type(), err.what());
 		return Py_BuildValue("i", 0);
 	}
-	tracker_created[tracker_created.size()-1] = true;
+	trackers.push_back(Tracker_(tracker));
+	pre_procs.push_back(pre_proc);
+	tracker_created[tracker_created.size() - 1] = true;
 	return Py_BuildValue("i", 1);
 }
 
 /* ==== initialize tracker ==== */
-static PyObject* initialize(PyObject* self, PyObject* args) {	
+static PyObject* initialize(PyObject* self, PyObject* args) {
 	PyArrayObject *img_py, *in_corners_py;
 	unsigned int tracker_id = trackers.size() == 0 ? 0 : trackers.size() - 1;
-	tracker_initialized.push_back(false);	
+	tracker_initialized.push_back(false);
 	/*parse first input array*/
 	if(!PyArg_ParseTuple(args, "O!O!|i", &PyArray_Type, &img_py, &PyArray_Type, &in_corners_py, &tracker_id)) {
 		PySys_WriteStdout("\n----pyMTF::initialize: Input arguments could not be parsed----\n\n");
@@ -135,15 +139,15 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 	int img_height = img_py->dimensions[0];
 	int img_width = img_py->dimensions[1];
 	int n_channels = img_py->nd == 3 ? img_py->dimensions[2] : 1;
-	
-	if(n_channels!= 1 && n_channels != 3){
+
+	if(n_channels != 1 && n_channels != 3){
 		PySys_WriteStdout("pyMTF:: Only grayscale and RGB images are supported\n");
 		return Py_BuildValue("i", 0);
 	}
 
 	PySys_WriteStdout("img_height: %d\n", img_height);
 	PySys_WriteStdout("img_width: %d\n", img_width);
-	PySys_WriteStdout("n_channels: %d\n", n_channels);	
+	PySys_WriteStdout("n_channels: %d\n", n_channels);
 
 	int img_type = n_channels == 3 ? CV_8UC3 : CV_8UC1;
 	cv::Mat init_img_cv(img_height, img_width, img_type, img_py->data);
@@ -160,7 +164,7 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 
 	// PySys_WriteStdout("init_corners_cv:\n");
 	// for(unsigned int corner_id = 0; corner_id < 4; ++corner_id) {
-		// PySys_WriteStdout("%d: (%f, %f)\n", corner_id, init_corners_cv.at<double>(0, corner_id), init_corners_cv.at<double>(1, corner_id));
+	// PySys_WriteStdout("%d: (%f, %f)\n", corner_id, init_corners_cv.at<double>(0, corner_id), init_corners_cv.at<double>(1, corner_id));
 	// }
 
 	double min_x = init_corners_cv.at<double>(0, 0);
@@ -192,7 +196,7 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 	if(show_cv_window) {
 		cv::namedWindow("PyMTF", cv::WINDOW_AUTOSIZE);
 	}
-	tracker_initialized[tracker_initialized.size()-1] = true;
+	tracker_initialized[tracker_initialized.size() - 1] = true;
 	return Py_BuildValue("i", 1);
 }
 
@@ -204,7 +208,7 @@ static PyObject* update(PyObject* self, PyObject* args) {
 		PySys_WriteStdout("\n----pyMTF::update: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
-	
+
 	if(!tracker_initialized[tracker_id]){
 		PySys_WriteStdout("\n----pyMTF::initialize: Tracker must be initialized before it can be updated ----\n\n");
 		return Py_BuildValue("i", 0);
@@ -213,12 +217,12 @@ static PyObject* update(PyObject* self, PyObject* args) {
 		PySys_WriteStdout("\n----pyMTF::img_py is NULL----\n\n");
 		return Py_BuildValue("i", 0);
 	}
-	
+
 	int img_height = img_py->dimensions[0];
 	int img_width = img_py->dimensions[1];
 	int n_channels = img_py->nd == 3 ? img_py->dimensions[2] : 1;
 	int img_type = n_channels == 3 ? CV_8UC3 : CV_8UC1;
-	
+
 	cv::Mat curr_img_cv(img_height, img_width, img_type, img_py->data);
 	double fps = 0, fps_win = 0;
 	double tracking_time, tracking_time_with_input;
@@ -304,7 +308,7 @@ static PyObject* setRegion(PyObject* self, PyObject* args) {
 }
 static PyObject* remove(PyObject* self, PyObject* args) {
 	unsigned int tracker_id = trackers.size() == 0 ? 0 : trackers.size() - 1;
-	
+
 	/*parse first input array*/
 	if(!PyArg_ParseTuple(args, "|i", &PyArray_Type, &tracker_id)) {
 		PySys_WriteStdout("\n----pyMTF::remove: Input arguments could not be parsed----\n\n");
