@@ -30,7 +30,7 @@ namespace utils{
 			dev_fmt = _params->dev_fmt;
 			dev_path = _params->dev_path;
 			n_buffers = _params->n_buffers;
-			invert_seq = _params->invert_seq)
+			invert_seq = _params->invert_seq;
 		}
 		setDeafults();
 	}
