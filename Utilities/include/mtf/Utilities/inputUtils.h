@@ -30,12 +30,26 @@ namespace utils{
 
 	enum FrameType{ MUTABLE };
 
+	class InputParams{
+	public:
+		InputParams(const InputParams *_params = nullptr);
+		InputParams(char _img_source, string _dev_name, string _dev_fmt,
+			string _dev_path, int _n_buffers = 1, bool _invert_seq = false);
+
+		char img_source;
+		string dev_name;
+		string dev_fmt;
+		string dev_path;
+		int n_buffers;
+		bool invert_seq;
+
+	protected:
+		void setDeafults();
+	};
+
 	class InputBase {
 	public:
-		InputBase() : n_frames(0), img_width(0), img_height(0), n_buffers(0),
-			n_channels(0), buffer_id(0), img_source('j'), invert_seq(false){}
-		InputBase(char _img_source, string _dev_name, string _dev_fmt,
-			string _dev_path, int _n_buffers = 1, bool _invert_seq = false);
+		InputBase(const InputParams *_params=nullptr);
 		virtual ~InputBase(){}
 		virtual bool initialize() = 0;
 		virtual bool update() = 0;
@@ -55,23 +69,22 @@ namespace utils{
 		virtual bool constBuffer(){ return const_buffer; }
 
 	protected:
-		int n_frames, img_width, img_height, n_buffers, n_channels, buffer_id;
-		char img_source;
-		string file_path, dev_name, dev_fmt, dev_path;
-		bool const_buffer, invert_seq;
+		int n_frames, img_width, img_height, n_channels, n_buffers, buffer_id;
+		string file_path;
+		bool const_buffer;
+	};
+	
+	class InputCVParams : public InputParams {
+	public:
+		InputCVParams(const InputParams *_params = nullptr,
+			int _img_type = CV_8UC3);
+		int img_type;
 	};
 
 	class InputCV : public InputBase {
 	public:
-		InputCV(char img_source = 'u', string _dev_name = "", string _dev_fmt = "",
-			string _dev_path = "", int _n_buffers = 1, bool _invert_seq = false,
-			int _img_type = CV_8UC3) :
-			InputBase(img_source, _dev_name, _dev_fmt, _dev_path, _n_buffers, _invert_seq),
-			img_type(_img_type), frame_id(0){}
-		~InputCV(){
-			cv_buffer.clear();
-			cap_obj.release();
-		}
+		InputCV(const InputCVParams *_params = nullptr);
+		~InputCV();
 		bool initialize() override;
 		bool update() override;
 
@@ -85,31 +98,56 @@ namespace utils{
 		int getFrameID() const override{ return frame_id; }
 
 	private:
+		InputCVParams params;
 		cv::VideoCapture cap_obj;
 		vector<cv::Mat> cv_buffer;
-		int img_type;
 		int frame_id;
 	};
 
 #ifndef DISABLE_VISP
-	enum class VpResUSB{
-		Default, res640x480, res800x600, res1024x768, res1280x720, res1920x1080
-	};
-	enum class VpResFW{
-		Default, res640x480, res800x600, res1024x768, res1280x960, res1600x1200
-	};
-	enum class VpFpsUSB{ Default, fps25, fps50 };
-	enum class VpFpsFW{ Default, fps15, fps30, fps60, fps120, fps240 };
-	//! ViSP input pipeline
-	class InputVP : public InputBase {
+	class InputVPParams : public InputParams {
 	public:
-		InputVP(char img_source, string _dev_name, string _dev_fmt,
-			string _dev_path, int _n_buffers = 1, int _usb_n_buffers = 3,
-			bool _invert_seq = false,
+		enum class VpResUSB{
+			Default, res640x480, res800x600, res1024x768, 
+			res1280x720, res1920x1080
+		};
+		enum class VpResFW{
+			Default, res640x480, res800x600, res1024x768,
+			res1280x960, res1600x1200
+		};
+		enum class VpDepthPGFW{
+			Default, RGB, YUV422, Y8, Y16
+		};
+		enum class VpFpsUSB{ Default, fps25, fps50 };
+		enum class VpFpsFW{
+			Default, fps15, fps30, fps60, fps120, fps240,
+			fps7_5, fps3_75, fps1_875
+		};
+		InputVPParams(const InputParams *_params,
+			int _usb_n_buffers = 3,
 			VpResUSB _usb_res = VpResUSB::Default,
 			VpFpsUSB _usb_fps = VpFpsUSB::Default,
 			VpResFW _fw_res = VpResFW::Default,
-			VpFpsFW _fw_fps = VpFpsFW::Default);
+			VpFpsFW _fw_fps = VpFpsFW::Default,
+			VpDepthPGFW _pg_fw_depth = VpDepthPGFW::Default);
+
+		int usb_n_buffers;
+		VpResUSB usb_res;
+		VpFpsUSB usb_fps;
+		VpResFW fw_res;
+		VpFpsFW fw_fps;
+		VpDepthPGFW pg_fw_depth;
+	};
+	//! ViSP input pipeline
+	class InputVP : public InputBase {
+	public:
+		typedef InputVPParams::VpResUSB VpResUSB;
+		typedef InputVPParams::VpResFW VpResFW;
+		typedef InputVPParams::VpDepthPGFW VpDepthPGFW;
+		typedef InputVPParams::VpFpsUSB VpFpsUSB;
+		typedef InputVPParams::VpFpsFW VpFpsFW;
+
+		InputVP(const InputVPParams *_params = nullptr);
 		~InputVP(){
 			vp_buffer.clear();
 			if(cap_obj){
@@ -130,16 +168,12 @@ namespace utils{
 		bool constBuffer() override{ return true; }
 
 	private:
+		InputVPParams params;
 		typedef vpImage<vpRGBa> VPImgType;
 		vector<VPImgType> vp_buffer;
 		cv::Mat cv_frame;
 		int frame_id;
 		std::unique_ptr<vpFrameGrabber> cap_obj;
-		VpResUSB usb_res;
-		VpFpsUSB usb_fps;
-		VpResFW fw_res;
-		VpFpsFW fw_fps;
-		int usb_n_buffers;
 
 		void convert(const VPImgType &vp_img, cv::Mat &cv_img);
 	};
@@ -250,10 +284,8 @@ namespace utils{
 		typedef XVImageRGB<PIX_TYPE> IMAGE_TYPE;
 		typedef XVImageScalar<PIX_TYPE_GS> IMAGE_TYPE_GS;
 
-		InputXV(char img_source, string _dev_name, string _dev_fmt,
-			string _dev_path, int _n_buffers = 1, bool _invert_seq = false) :
-			InputBase(img_source, _dev_name, _dev_fmt, _dev_path, _n_buffers, _invert_seq),
-			src(nullptr){}
+		InputXV(const InputParams *_params=nullptr) : InputBase(_params),
+			params(_params), src(nullptr){}
 
 		~InputXV(){
 			cv_buffer.clear();
@@ -271,6 +303,7 @@ namespace utils{
 		int getFrameID() const override{ return frame_id; }
 
 	private:
+		InputParams params;
 		std::unique_ptr<InputXVSource> src;
 		vector<IMAGE_TYPE> xv_buffer;
 		vector<cv::Mat> cv_buffer;

@@ -1,13 +1,15 @@
 #include "mtf/Utilities/inputUtils.h"
 
 #ifndef DISABLE_VISP
-// #if defined _WIN32
-////#define VISP_HAVE_FFMPEG
-//#define VISP_HAVE_V4L2
-//#define VISP_HAVE_DC1394
-//#define VISP_HAVE_OPENCV
-//#define VISP_HAVE_OPENCV_VERSION 0x020100
-//#endif
+#if defined _WIN32
+// for visual studio intellisense
+#define VISP_HAVE_FFMPEG
+#define VISP_HAVE_V4L2
+#define VISP_HAVE_DC1394
+#define VISP_HAVE_FLYCAPTURE
+#define VISP_HAVE_OPENCV
+#define VISP_HAVE_OPENCV_VERSION 0x020100
+#endif
 #include <visp3/io/vpDiskGrabber.h>
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
@@ -20,41 +22,64 @@
 
 _MTF_BEGIN_NAMESPACE
 namespace utils{
-	InputBase::InputBase(char _img_source, string _dev_name, string _dev_fmt,
-		string _dev_path, int _n_buffers, bool _invert_seq) : n_frames(0),
-		n_buffers(_n_buffers), img_source(_img_source), dev_name(_dev_name),
-		dev_fmt(_dev_fmt), dev_path(_dev_path), invert_seq(_invert_seq){
+	InputParams::InputParams(const InputParams *_params = nullptr) :
+		img_source('j'), n_buffers(0), invert_seq(false){
+		if(_params){
+			img_source = _params->img_source;
+			dev_name = _params->dev_name;
+			dev_fmt = _params->dev_fmt;
+			dev_path = _params->dev_path;
+			n_buffers = _params->n_buffers;
+			invert_seq = _params->invert_seq)
+		}
+		setDeafults();
+	}
 
-		//printf("InputBase :: img_source: %c\n", img_source);
-
+	InputParams::InputParams(char _img_source, string _dev_name, string _dev_fmt,
+		string _dev_path, int _n_buffers, bool _invert_seq):
+		img_source(_img_source), dev_name(_dev_name), dev_fmt(_dev_fmt), 
+		dev_path(_dev_path), n_buffers(_n_buffers), invert_seq(_invert_seq){
+		setDeafults();
+	}
+	void InputParams::setDeafults(){
 		if(img_source == SRC_VID){
 			if(dev_fmt.empty()){ dev_fmt = "mpg"; }
 			if(dev_path.empty()){ dev_path = "."; }
-			file_path = dev_path + "/" + dev_name + "." + dev_fmt;
+		} else if(img_source == SRC_IMG || img_source == SRC_DISK){
+			if(dev_fmt.empty()){ dev_fmt = "jpg"; }
+			if(dev_path.empty()){ dev_path = "."; }
+		}
+	}
+
+	InputBase::InputBase(const InputParams *_params) : n_frames(0){
+		InputParams params(_params);
+		//printf("InputBase :: img_source: %c\n", img_source);
+
+		if(params.img_source == SRC_VID){
+			file_path = params.dev_path + "/" + params.dev_name + "." + params.dev_fmt;
 			if(!fs::exists(file_path)){
 				throw mtf::utils::InvalidArgument(
 					cv::format("InputBase :: Video file %s does not exist", file_path.c_str()));
 			}
 			n_frames = getNumberOfVideoFrames(file_path.c_str());
-		} else if(img_source == SRC_IMG || img_source == SRC_DISK){
-			if(dev_fmt.empty()){ dev_fmt = "jpg"; }
-			if(dev_path.empty()){ dev_path = "."; }
-			std::string img_folder_path = dev_path + "/" + dev_name;
+		} else if(params.img_source == SRC_IMG || params.img_source == SRC_DISK){
+			std::string img_folder_path = params.dev_path + "/" + params.dev_name;
 			if(!fs::exists(img_folder_path)){
 				throw mtf::utils::InvalidArgument(
 					cv::format("InputBase :: Image sequence folder %s does not exist", img_folder_path.c_str()));
 			}
-
-			file_path = img_folder_path + "/frame%05d." + dev_fmt;
-
+			file_path = img_folder_path + "/frame%05d." + params.dev_fmt;
 			n_frames = getNumberOfFrames(file_path.c_str());
 		}
-		if(invert_seq){
+		n_buffers = params.n_buffers;
+		if(params.invert_seq){
 			if(n_frames <= 0){
 				throw mtf::utils::InvalidArgument(
 					cv::format("InputBase :: Inverted sequence cannot be used without valid frame count"));
 			}
-			if(img_source == SRC_USB_CAM || img_source == SRC_FW_CAM){
+			if(params.img_source == SRC_USB_CAM || 
+				params.img_source == SRC_FW_CAM ||
+				params.img_source == SRC_PG_FW_CAM){
 				throw mtf::utils::InvalidArgument(
 					cv::format("InputBase :: Inverted sequence cannot be used with live input"));
 			}
@@ -67,30 +92,42 @@ namespace utils{
 		//printf("dev_path: %s\n", dev_path.c_str());
 		//printf("dev_fmt: %s\n", dev_fmt.c_str());
 	}
+	InputCVParams::InputCVParams(const InputParams *_params, int _img_type) :
+		InputParams(_params), img_type(_img_type){}
+
+	InputCV::InputCV(const InputCVParams *_params) : InputBase(_params),
+		params(_params), frame_id(0){}
+	InputCV::~InputCV(){
+		cv_buffer.clear();
+		cap_obj.release();
+	}
 	bool InputCV::initialize(){
 		printf("Initializing OpenCV pipeline...\n");
 
 		n_channels = 3;
-		if(img_source == SRC_VID || img_source == SRC_IMG) {
-			if(img_source == SRC_VID){
-				printf("Opening %s video file: %s\n", dev_fmt.c_str(), file_path.c_str());
+		if(params.img_source == SRC_VID || params.img_source == SRC_IMG) {
+			if(params.img_source == SRC_VID){
+				printf("Opening %s video file: %s\n", params.dev_fmt.c_str(), file_path.c_str());
 				//n_frames = cap_obj.get(CV_CAP_PROP_FRAME_COUNT);
 			} else{
-				printf("Opening %s image files at %s", dev_fmt.c_str(), file_path.c_str());
+				printf("Opening %s image files at %s", params.dev_fmt.c_str(), file_path.c_str());
 				if(n_frames > 0){
 					printf(" with %d frames\n", n_frames);
 				}
 				printf("\n");
 			}
 			cap_obj.open(file_path);
-		} else if(img_source == SRC_USB_CAM) {
-			if(dev_path.empty()){
+		} else if(
+			params.img_source == SRC_USB_CAM ||
+			params.img_source == SRC_FW_CAM || 
+			params.img_source == SRC_PG_FW_CAM) {
+			if(params.dev_path.empty()){
 				cap_obj.open(0);
 			} else{
-				cap_obj.open(atoi(dev_path.c_str()));
+				cap_obj.open(atoi(params.dev_path.c_str()));
 			}
 		} else {
-			printf("Invalid source provided for OpenCV Pipeline: %c\n", img_source);
+			printf("Invalid source provided for OpenCV Pipeline: %c\n", params.img_source);
 			return false;
 		}
 		if(!(cap_obj.isOpened())) {
@@ -114,11 +151,11 @@ namespace utils{
 			img_width, img_height);
 		cv_buffer.resize(n_buffers);
 		for(int i = 0; i < n_buffers; ++i){
-			cv_buffer[i].create(img_height, img_width, img_type);
+			cv_buffer[i].create(img_height, img_width, params.img_type);
 		}
 		buffer_id = 0;
 		frame_id = 0;
-		if(invert_seq){
+		if(params.invert_seq){
 			printf("Reading sequence into buffer....\n");
 			for(int i = 0; i < n_buffers; ++i){
 				if(!cap_obj.read(cv_buffer[n_buffers - i - 1])){ return false; };
@@ -130,13 +167,13 @@ namespace utils{
 	bool InputCV::update(){
 		buffer_id = (buffer_id + 1) % n_buffers;
 		++frame_id;
-		if(invert_seq){
+		if(params.invert_seq){
 			return true;
 		}
 		return cap_obj.read(cv_buffer[buffer_id]);
 	}
 	void InputCV::remapBuffer(unsigned char** new_addr){
-		if(invert_seq){
+		if(params.invert_seq){
 			for(int i = 0; i < n_buffers; ++i){
 				cv_buffer[i].copyTo(cv::Mat(cv_buffer[i].rows, cv_buffer[i].cols, cv_buffer[i].type(), new_addr[i]));
 				cv_buffer[i].data = new_addr[i];
@@ -151,53 +188,59 @@ namespace utils{
 		}
 	}
 #ifndef DISABLE_VISP
-	InputVP::InputVP(char img_source, string _dev_name, string _dev_fmt,
-		string _dev_path, int _n_buffers, int _usb_n_buffers,
-		bool _invert_seq ,	VpResUSB _usb_res,	VpFpsUSB _usb_fps,
-		VpResFW _fw_res, VpFpsFW _fw_fps) :
-		InputBase(img_source, _dev_name, _dev_fmt, _dev_path, _n_buffers, _invert_seq),
-		frame_id(0), cap_obj(nullptr), usb_res(_usb_res), usb_fps(_usb_fps),
-		fw_res(_fw_res), fw_fps(_fw_fps), usb_n_buffers(_usb_n_buffers){}
+	InputVPParams::InputVPParams(const InputParams *_params,
+		int _usb_n_buffers, VpResUSB _usb_res, VpFpsUSB _usb_fps,
+		VpResFW _fw_res, VpFpsFW _fw_fps, VpDepthPGFW _pg_fw_depth) :
+		InputParams(_params), usb_n_buffers(_usb_n_buffers),
+		usb_res(_usb_res), usb_fps(_usb_fps),
+		fw_res(_fw_res), fw_fps(_fw_fps),
+		pg_fw_depth(_pg_fw_depth){}
+
+	InputVP::InputVP(const InputVPParams *_params) :
+		InputBase(_params), params(_params),
+		frame_id(0), cap_obj(nullptr){}
 
 	bool InputVP::initialize(){
 		printf("Initializing ViSP pipeline...\n");
-#if defined( VISP_HAVE_FLYCAPTURE )
-		printf("vpFlyCaptureGrabber is available...\n");
+#ifndef VISP_HAVE_FLYCAPTURE
+		printf("vpFlyCaptureGrabber module is not available...\n");
 #endif
-#if defined( VISP_HAVE_V4L2 )
-		printf("vpV4l2Grabber is available...\n");
+#ifndef VISP_HAVE_V4L2
+		printf("vpV4l2Grabber module is not available\n");
 #endif
-#if defined( VISP_HAVE_DC1394 )
-		printf("vp1394TwoGrabber is available...\n");
+#ifndef VISP_HAVE_DC1394
+		printf("vp1394TwoGrabber module is not available\n");
 #endif
 		n_channels = 3;
-		if(img_source == SRC_VID || img_source == SRC_IMG) {
+		if(params.img_source == SRC_VID || params.img_source == SRC_IMG) {
 			vpVideoReader *vid_cap = new vpVideoReader;
 			vid_cap->setFileName(file_path.c_str());
 			//n_frames=vid_cap->getLastFrameIndex();
-			if(img_source == SRC_VID){
-				printf("Opening %s video file: %s with %d frames\n", dev_fmt.c_str(), file_path.c_str(), n_frames);
+			if(params.img_source == SRC_VID){
+				printf("Opening %s video file: %s with %d frames\n", 
+					params.dev_fmt.c_str(), file_path.c_str(), n_frames);
 			} else{
-				printf("Opening %s image files at %s with %d frames\n", dev_fmt.c_str(), file_path.c_str(), n_frames);
+				printf("Opening %s image files at %s with %d frames\n", 
+					params.dev_fmt.c_str(), file_path.c_str(), n_frames);
 			}
 			cap_obj.reset(vid_cap);
-		} else if(img_source == SRC_DISK) {
+		} else if(params.img_source == SRC_DISK) {
 			vpDiskGrabber *disk_cap = new vpDiskGrabber;
-			disk_cap->setDirectory((dev_path + "/" + dev_name).c_str());
+			disk_cap->setDirectory((params.dev_path + "/" + params.dev_name).c_str());
 			disk_cap->setBaseName("frame");
 			disk_cap->setStep(1);
 			disk_cap->setNumberOfZero(5);
 			disk_cap->setImageNumber(1);
-			disk_cap->setExtension(dev_fmt.c_str());
+			disk_cap->setExtension(params.dev_fmt.c_str());
 			cap_obj.reset(disk_cap);
 		}
 #if defined( VISP_HAVE_V4L2 )
-		else if(img_source == SRC_USB_CAM) {
-			printf("Opening USB camera %s\n", dev_path.c_str());
+		else if(params.img_source == SRC_USB_CAM) {
+			printf("Opening USB camera %s\n", params.dev_path.c_str());
 			vpV4l2Grabber *v4l2_cap = new vpV4l2Grabber;
-			v4l2_cap->setInput(atoi(dev_path.c_str()));
-			v4l2_cap->setNBuffers(usb_n_buffers);
-			switch(usb_res){
+			v4l2_cap->setInput(atoi(params.dev_path.c_str()));
+			v4l2_cap->setNBuffers(params.usb_n_buffers);
+			switch(params.usb_res){
 			case VpResUSB::Default:
 				break;
 			case VpResUSB::res640x480:
@@ -224,7 +267,7 @@ namespace utils{
 				printf("Invalid resolution provided for ViSP USB pipeline\n");
 				return false;
 			}
-			switch(usb_fps){
+			switch(params.usb_fps){
 			case VpFpsUSB::Default:
 				break;
 			case VpFpsUSB::fps25:
@@ -240,27 +283,169 @@ namespace utils{
 			cap_obj.reset(v4l2_cap);
 		}
 #endif
+
 #if defined( VISP_HAVE_FLYCAPTURE )
-		else if(img_source == SRC_FW_CAM) {
+		else if(params.img_source == SRC_PG_FW_CAM) {
 			try {
-				vpFlyCaptureGrabber *dc1394_cap = new vpFlyCaptureGrabber;
+				vpFlyCaptureGrabber *fly_cap = new vpFlyCaptureGrabber;
+#ifndef _WIN32
+				printf("Opening FireWire camera with GUID %lu\n", fly_cap->getCameraIndex());
+#else
+				printf("Opening FireWire camera with GUID %lu\n", fly_cap->getCameraIndex());
+#endif
 				try {
-					dc1394_cap->setShutter(true); // Turn auto shutter on
-					dc1394_cap->setGain(true);    // Turn auto gain on
-					dc1394_cap->setVideoModeAndFrameRate(FlyCapture2::VIDEOMODE_1280x960Y8, 
-						FlyCapture2::FRAMERATE_60);
+					fly_cap->setShutter(true); // Turn auto shutter on
+					fly_cap->setGain(true);    // Turn auto gain on
+
+					FlyCapture2::VideoMode pg_fw_mode = FlyCapture2::VIDEOMODE_640x480RGB;
+					switch(params.fw_res){
+					case VpResFW::Default:
+						break;
+					case VpResFW::res640x480:
+						switch(params.pg_fw_depth){
+						case VpDepthPGFW::RGB:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_640x480RGB;
+							break;
+						case VpDepthPGFW::YUV422:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_640x480YUV422;
+							break;
+						case VpDepthPGFW::Y16:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_640x480Y16;
+							break;
+						case VpDepthPGFW::Y8:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_640x480Y8;
+							break;
+						default:
+							printf("Invalid color depth provided for ViSP PointGrey firewire pipeline\n");
+							return false;
+						}
+						break;
+					case VpResFW::res800x600:
+						switch(params.pg_fw_depth){
+						case VpDepthPGFW::RGB:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_800x600RGB;
+							break;
+						case VpDepthPGFW::YUV422:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_800x600YUV422;
+							break;
+						case VpDepthPGFW::Y16:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_800x600Y16;
+							break;
+						case VpDepthPGFW::Y8:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_800x600Y8;
+							break;
+						default:
+							printf("Invalid color depth provided for ViSP PointGrey firewire pipeline\n");
+							return false;
+						}
+						break;
+					case VpResFW::res1024x768:
+						switch(params.pg_fw_depth){
+						case VpDepthPGFW::RGB:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_1024x768RGB;
+							break;
+						case VpDepthPGFW::YUV422:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_1024x768YUV422;
+							break;
+						case VpDepthPGFW::Y16:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_1024x768Y16;
+							break;
+						case VpDepthPGFW::Y8:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_1024x768Y8;
+							break;
+						default:
+							printf("Invalid color depth provided for ViSP PointGrey firewire pipeline\n");
+							return false;
+						}
+						break;
+					case VpResFW::res1280x960:
+						switch(params.pg_fw_depth){
+						case VpDepthPGFW::RGB:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_1280x960RGB;
+							break;
+						case VpDepthPGFW::YUV422:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_1280x960YUV422;
+							break;
+						case VpDepthPGFW::Y16:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_1280x960Y16;
+							break;
+						case VpDepthPGFW::Y8:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_1280x960Y8;
+							break;
+						default:
+							printf("Invalid color depth provided for ViSP PointGrey firewire pipeline\n");
+							return false;
+						}
+						break;
+					case VpResFW::res1600x1200:
+						switch(params.pg_fw_depth){
+						case VpDepthPGFW::RGB:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_1600x1200RGB;
+							break;
+						case VpDepthPGFW::YUV422:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_1600x1200YUV422;
+							break;
+						case VpDepthPGFW::Y16:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_1600x1200Y16;
+							break;
+						case VpDepthPGFW::Y8:
+							pg_fw_mode = FlyCapture2::VIDEOMODE_1600x1200Y8;
+							break;
+						default:
+							printf("Invalid color depth provided for ViSP PointGrey firewire pipeline\n");
+							return false;
+						}
+						break;
+					default:
+						printf("Invalid resolution provided for ViSP firewire pipeline\n");
+						return false;
+					}
+					FlyCapture2::FrameRate pg_fw_fps = FlyCapture2::FRAMERATE_30;
+					switch(params.fw_fps){
+					case VpFpsFW::Default:
+						break;
+					case VpFpsFW::fps15:
+						pg_fw_fps = FlyCapture2::FRAMERATE_15;
+						break;
+					case VpFpsFW::fps30:
+						pg_fw_fps = FlyCapture2::FRAMERATE_30;
+						break;
+					case VpFpsFW::fps60:
+						pg_fw_fps = FlyCapture2::FRAMERATE_60;
+						break;
+					case VpFpsFW::fps120:
+						pg_fw_fps = FlyCapture2::FRAMERATE_120;
+						break;
+					case VpFpsFW::fps240:
+						pg_fw_fps = FlyCapture2::FRAMERATE_240;
+						break;
+					case VpFpsFW::fps7_5:
+						pg_fw_fps = FlyCapture2::FRAMERATE_7_5;
+						break;
+					case VpFpsFW::fps3_75:
+						pg_fw_fps = FlyCapture2::FRAMERATE_3_75;
+						break;
+					case VpFpsFW::fps1_875:
+						pg_fw_fps = FlyCapture2::FRAMERATE_1_875;
+						break;
+					default:
+						printf("Invalid frame rate provided for ViSP firewire pipeline\n");
+						return false;
+					}
+					fly_cap->setVideoModeAndFrameRate(pg_fw_mode, pg_fw_fps);
 				} catch(...) { 
 					// If settings are not available just catch execption to continue with default settings
+					printf("FlyCapture settings could not be set so using the defaults\n");
 				}
-				cap_obj.reset(dc1394_cap);
+				cap_obj.reset(fly_cap);
 			}  catch(vpException &e) {
-				printf("Exception occured while initializing the Flycapyure module: %s\n", 
+				printf("Exception occured while initializing the FlyCapture module: %s\n", 
 					e.getStringMessage().c_str());
 			}			
 		}
-#else
+#endif
 #if defined( VISP_HAVE_DC1394 )
-		else if(img_source == SRC_FW_CAM) {
+		else if(params.img_source == SRC_FW_CAM) {
 			try {
 				vp1394TwoGrabber *dc1394_cap = new vp1394TwoGrabber;
 #ifndef _WIN32
@@ -269,7 +454,7 @@ namespace utils{
 				printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
 #endif
 				try{
-					switch(fw_res){
+					switch(params.fw_res){
 					case VpResFW::Default:
 						break;
 					case VpResFW::res640x480:
@@ -291,7 +476,7 @@ namespace utils{
 						printf("Invalid resolution provided for ViSP firewire pipeline\n");
 						return false;
 					}
-					switch(fw_fps){
+					switch(params.fw_fps){
 					case VpFpsFW::Default:
 						break;
 					case VpFpsFW::fps15:
@@ -322,9 +507,8 @@ namespace utils{
 			}			
 		}
 #endif
-#endif
 		else {
-			printf("Invalid source provided for ViSP Pipeline: %c\n", img_source);
+			printf("Invalid source provided for ViSP Pipeline: %c\n", params.img_source);
 			return false;
 		}
 		VPImgType temp_img;
@@ -344,7 +528,7 @@ namespace utils{
 		}
 		buffer_id = 0;
 		frame_id = 0;
-		if(invert_seq){
+		if(params.invert_seq){
 			printf("Reading sequence into buffer....\n");
 			for(int i = 1; i < n_buffers; ++i){
 				cap_obj->acquire(vp_buffer[n_buffers - i - 1]);
@@ -364,7 +548,7 @@ namespace utils{
 	bool InputVP::update(){
 		buffer_id = (buffer_id + 1) % n_buffers;
 		++frame_id;
-		if(!invert_seq){
+		if(!params.invert_seq){
 			cap_obj->acquire(vp_buffer[buffer_id]);
 		}
 #ifdef VISP_HAVE_OPENCV
@@ -405,7 +589,8 @@ namespace utils{
 			vid.reset(new V4L2(dev_path.c_str(), dev_fmt.c_str()));
 			break;
 		}
-		case SRC_FW_CAM: {
+		case SRC_FW_CAM:
+		case SRC_PG_FW_CAM: {
 			fprintf(stdout, "Opening FIREWIRE camera %s  with format %s\n", dev_path.c_str(), dev_fmt.c_str());
 			vid.reset(new DIG1394(dev_path.c_str(), dev_fmt.c_str(), DIG1394_NTH_CAMERA(0)));
 			break;
@@ -500,17 +685,21 @@ namespace utils{
 		}
 	}
 	bool InputXV::initialize(){
-		if(invert_seq && (img_source == SRC_FW_CAM || img_source == SRC_USB_CAM)){
+		if(params.invert_seq && (
+			params.img_source == SRC_FW_CAM ||
+			params.img_source == SRC_PG_FW_CAM ||
+			params.img_source == SRC_USB_CAM)){
 			printf("InputXV :: Inverted sequence cannot be used with live input");
 			return false;
 		}
 
 		n_channels = sizeof(PIX_TYPE);
 
-		if(img_source == SRC_VID){
-			src.reset(new InputXV32(img_source, file_path));
+		if(params.img_source == SRC_VID){
+			src.reset(new InputXV32(params.img_source, file_path));
 		} else{
-			src.reset(new InputXV24(img_source, dev_path, dev_fmt, file_path, n_buffers, n_frames));
+			src.reset(new InputXV24(params.img_source, params.dev_path, params.dev_fmt, 
+				file_path, n_buffers, n_frames));
 		}
 
 		img_height = src->img_height;
@@ -535,7 +724,7 @@ namespace utils{
 		src->initBuffer(data_addrs.data(), xv_buffer.data());
 		buffer_id = 0;
 		frame_id = 0;
-		if(invert_seq){
+		if(params.invert_seq){
 			printf("Reading sequence into buffer....\n");
 			for(int i = 0; i < n_buffers; ++i){
 				src->updateFrame(n_buffers - i - 1);
@@ -548,7 +737,7 @@ namespace utils{
 	bool InputXV::update(){
 		++frame_id;
 		buffer_id = (buffer_id + 1) % n_buffers;
-		if(!invert_seq){
+		if(!params.invert_seq){
 			src->updateFrame(buffer_id);
 		}
 		return true;

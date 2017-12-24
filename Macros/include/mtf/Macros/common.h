@@ -156,6 +156,7 @@
 #define SRC_IMG 'j'
 #define SRC_VID 'm'
 #define SRC_USB_CAM 'u'
+#define SRC_PG_FW_CAM 'p'
 #define SRC_FW_CAM 'f'
 #define SRC_DISK 'd'
 
