@@ -37,23 +37,26 @@ inline utils::InputBase* getInput(char _pipeline_type){
 		input_buffer_size, invert_seq);
 	switch(_pipeline_type){
 	case OPENCV_PIPELINE:
+	{
 		utils::InputCVParams _params(&_base_params);
 		return new utils::InputCV(&_params);
+	}
 #ifndef DISABLE_XVISION
 	case XVISION_PIPELINE:
 		return new utils::InputXV(&_base_params);
 #endif
 #ifndef DISABLE_VISP
 	case VISP_PIPELINE:
+	{
 		utils::InputVPParams _params(&_base_params, visp_usb_n_buffers,
-			static_cast<utils::InputVPParams::VpResUSB>(visp_usb_res), 
+			static_cast<utils::InputVPParams::VpResUSB>(visp_usb_res),
 			static_cast<utils::InputVPParams::VpFpsUSB>(visp_usb_fps),
-			static_cast<utils::InputVPParams::VpResFW>(visp_fw_res), 
+			static_cast<utils::InputVPParams::VpResFW>(visp_fw_res),
 			static_cast<utils::InputVPParams::VpFpsFW>(visp_fw_fps),
 			static_cast<utils::InputVPParams::VpDepthPGFW>(visp_pg_fw_depth)
 			);
-
 		return new utils::InputVP(&_params);
+	}
 #endif
 	default:
 		throw utils::InvalidArgument(
