@@ -189,12 +189,28 @@ namespace utils{
 	}
 #ifndef DISABLE_VISP
 	InputVPParams::InputVPParams(const InputParams *_params,
-		int _usb_n_buffers, VpResUSB _usb_res, VpFpsUSB _usb_fps,
-		VpResFW _fw_res, VpFpsFW _fw_fps, VpDepthPGFW _pg_fw_depth) :
-		InputParams(_params), usb_n_buffers(_usb_n_buffers),
-		usb_res(_usb_res), usb_fps(_usb_fps),
-		fw_res(_fw_res), fw_fps(_fw_fps),
-		pg_fw_depth(_pg_fw_depth){}
+		int _usb_n_buffers,
+		VpResUSB _usb_res,
+		VpFpsUSB _usb_fps,
+		VpResFW _fw_res,
+		VpFpsFW _fw_fps,
+		VpDepthPGFW _pg_fw_depth,
+		bool _pg_fw_print_info,
+		float _pg_fw_shutter_ms,
+		float _pg_fw_gain,
+		float _pg_fw_exposure,
+		float _pg_fw_brightness) :
+		InputParams(_params),
+		usb_n_buffers(_usb_n_buffers),
+		usb_res(_usb_res),
+		usb_fps(_usb_fps),
+		fw_res(_fw_res),
+		fw_fps(_fw_fps),
+		pg_fw_print_info(_pg_fw_print_info),
+		pg_fw_shutter_ms(_pg_fw_shutter_ms),
+		pg_fw_gain(_pg_fw_gain),
+		pg_fw_exposure(_pg_fw_exposure),
+		pg_fw_brightness(_pg_fw_brightness){}
 
 	InputVP::InputVP(const InputVPParams *_params) :
 		InputBase(_params), params(_params),
@@ -289,14 +305,11 @@ namespace utils{
 			try {
 				vpFlyCaptureGrabber *fly_cap = new vpFlyCaptureGrabber;
 #ifndef _WIN32
-				printf("Opening FireWire camera with GUID %lu\n", fly_cap->getCameraIndex());
+				printf("Opening PointGrey camera with index %lu\n", fly_cap->getCameraIndex());
 #else
-				printf("Opening FireWire camera with GUID %lu\n", fly_cap->getCameraIndex());
+				printf("Opening PointGrey camera with index %lu\n", fly_cap->getCameraIndex());
 #endif
 				try {
-					fly_cap->setShutter(true); // Turn auto shutter on
-					fly_cap->setGain(true);    // Turn auto gain on
-
 					FlyCapture2::VideoMode pg_fw_mode = FlyCapture2::VIDEOMODE_640x480RGB;
 					switch(params.fw_res){
 					case VpResFW::Default:
@@ -435,7 +448,70 @@ namespace utils{
 					fly_cap->setVideoModeAndFrameRate(pg_fw_mode, pg_fw_fps);
 				} catch(...) { 
 					// If settings are not available just catch execption to continue with default settings
-					printf("FlyCapture settings could not be set so using the defaults\n");
+					printf("Camera video mode / fps could not be set so using defaults\n");
+				}
+				if(params.pg_fw_gain != 0){					
+					try{
+						float gain;
+						if(params.pg_fw_gain > 0){
+							gain = fly_cap->setGain(false, params.pg_fw_gain); // Turn auto shutter on
+						} else{
+							gain = fly_cap->setGain(true); // Turn auto shutter on
+						}
+						printf("Camera gain set to %f\n", gain);
+					} catch(...) {
+						// If settings are not available just catch execption to continue with default settings
+						printf("Camera gain could not be set so using defaults\n");
+					}
+				}
+				if(params.pg_fw_shutter_ms != 0){					
+					try{
+						float shutter_speed;
+						if(params.pg_fw_shutter_ms > 0){
+							shutter_speed = fly_cap->setShutter(false, params.pg_fw_shutter_ms);
+						} else{
+							shutter_speed = fly_cap->setShutter(true);
+						}
+						printf("Camera shutter speed set to %f\n", shutter_speed);
+					} catch(...) {
+						// If settings are not available just catch execption to continue with default settings
+						printf("Camera shutter speed could not be set so using defaults\n");
+					}
+				}
+				if(params.pg_fw_exposure != 0){
+					try{
+						float exposure;
+						if(params.pg_fw_exposure > 0){
+							exposure = fly_cap->setExposure(true, false, params.pg_fw_exposure);
+						} else{
+							exposure = fly_cap->setExposure(true, true);
+						}
+						printf("Camera exposure set to %f\n", exposure);
+					} catch(...) {
+						// If settings are not available just catch execption to continue with default settings
+						printf("Camera exposure could not be set so using defaults\n");
+					}
+				}
+				if(params.pg_fw_brightness != 0){
+					try{
+						float brightness;
+						if(params.pg_fw_brightness > 0){
+							brightness = fly_cap->setBrightness(false, params.pg_fw_brightness);
+						} else{
+							brightness = fly_cap->setBrightness(true);
+						}
+						printf("Camera brightness set to %f\n", brightness);
+					} catch(...) {
+						// If settings are not available just catch execption to continue with default settings
+						printf("Camera brightness could not be set so using defaults\n");
+					}
+				}
+				if(params.pg_fw_print_info){
+					try{
+						fly_cap->getCameraInfo(std::cout);
+					} catch(...) {
+						printf("Camera info could not be obtained\n");
+					}
 				}
 				cap_obj.reset(fly_cap);
 			}  catch(vpException &e) {

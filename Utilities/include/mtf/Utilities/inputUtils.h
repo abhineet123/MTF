@@ -129,7 +129,12 @@ namespace utils{
 			VpFpsUSB _usb_fps = VpFpsUSB::Default,
 			VpResFW _fw_res = VpResFW::Default,
 			VpFpsFW _fw_fps = VpFpsFW::Default,
-			VpDepthPGFW _pg_fw_depth = VpDepthPGFW::Default);
+			VpDepthPGFW _pg_fw_depth = VpDepthPGFW::Default,
+			bool _pg_fw_print_info = false,
+			float _pg_fw_shutter_ms = 0,
+			float _pg_fw_gain = 0,
+			float _pg_fw_exposure = 0,
+			float _pg_fw_brightness = 0);
 
 		int usb_n_buffers;
 		VpResUSB usb_res;
@@ -137,6 +142,11 @@ namespace utils{
 		VpResFW fw_res;
 		VpFpsFW fw_fps;
 		VpDepthPGFW pg_fw_depth;
+		bool pg_fw_print_info;
+		float pg_fw_shutter_ms;
+		float pg_fw_gain;
+		float pg_fw_exposure;
+		float pg_fw_brightness;
 	};
 	//! ViSP input pipeline
 	class InputVP : public InputBase {
