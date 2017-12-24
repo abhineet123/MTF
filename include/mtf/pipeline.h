@@ -33,20 +33,27 @@ _MTF_BEGIN_NAMESPACE
 using namespace params;
 
 inline utils::InputBase* getInput(char _pipeline_type){
+	utils::InputParams _base_params(img_source, seq_name, seq_fmt, seq_path,
+		input_buffer_size, invert_seq);
 	switch(_pipeline_type){
 	case OPENCV_PIPELINE:
-		return new utils::InputCV(img_source, seq_name, seq_fmt, seq_path, input_buffer_size, invert_seq);
+		utils::InputCVParams _params(&_base_params);
+		return new utils::InputCV(&_params);
 #ifndef DISABLE_XVISION
 	case XVISION_PIPELINE:
-		return new utils::InputXV(img_source, seq_name, seq_fmt, seq_path, input_buffer_size, invert_seq);
+		return new utils::InputXV(&_base_params);
 #endif
 #ifndef DISABLE_VISP
 	case VISP_PIPELINE:
-		return new utils::InputVP(
-			img_source, seq_name, seq_fmt, seq_path, input_buffer_size, visp_usb_n_buffers, invert_seq,
-			static_cast<utils::VpResUSB>(visp_usb_res), static_cast<utils::VpFpsUSB>(visp_usb_fps),
-			static_cast<utils::VpResFW>(visp_fw_res), static_cast<utils::VpFpsFW>(visp_fw_fps)
+		utils::InputVPParams _params(&_base_params, visp_usb_n_buffers,
+			static_cast<utils::InputVPParams::VpResUSB>(visp_usb_res), 
+			static_cast<utils::InputVPParams::VpFpsUSB>(visp_usb_fps),
+			static_cast<utils::InputVPParams::VpResFW>(visp_fw_res), 
+			static_cast<utils::InputVPParams::VpFpsFW>(visp_fw_fps),
+			static_cast<utils::InputVPParams::VpDepthPGFW>(visp_pg_fw_depth)
 			);
+
+		return new utils::InputVP(&_params);
 #endif
 	default:
 		throw utils::InvalidArgument(

@@ -696,6 +696,7 @@ namespace mtf{
 		int visp_fw_fps = 0;
 		int visp_usb_res = 0;
 		int visp_usb_fps = 0;
+		int visp_pg_fw_depth = 0;
 		int visp_usb_n_buffers = 3;
 
 
