@@ -48,12 +48,18 @@ inline utils::InputBase* getInput(char _pipeline_type){
 #ifndef DISABLE_VISP
 	case VISP_PIPELINE:
 	{
-		utils::InputVPParams _params(&_base_params, visp_usb_n_buffers,
+		utils::InputVPParams _params(&_base_params,
+			visp_usb_n_buffers,
 			static_cast<utils::InputVPParams::VpResUSB>(visp_usb_res),
 			static_cast<utils::InputVPParams::VpFpsUSB>(visp_usb_fps),
 			static_cast<utils::InputVPParams::VpResFW>(visp_fw_res),
 			static_cast<utils::InputVPParams::VpFpsFW>(visp_fw_fps),
-			static_cast<utils::InputVPParams::VpDepthPGFW>(visp_pg_fw_depth)
+			static_cast<utils::InputVPParams::VpDepthPGFW>(visp_pg_fw_depth),
+			visp_pg_fw_print_info,
+			visp_pg_fw_shutter_ms,
+			visp_pg_fw_gain,
+			visp_pg_fw_exposure,
+			visp_pg_fw_brightness
 			);
 		return new utils::InputVP(&_params);
 	}

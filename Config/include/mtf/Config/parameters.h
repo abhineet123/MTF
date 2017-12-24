@@ -699,11 +699,11 @@ namespace mtf{
 		int visp_fw_res = 0;
 		int visp_fw_fps = 0;
 		int visp_pg_fw_depth = 0;
-		bool pg_fw_print_info;
-		float pg_fw_shutter_ms;
-		float pg_fw_gain;
-		float pg_fw_exposure;
-		float pg_fw_brightness;
+		bool visp_pg_fw_print_info;
+		float visp_pg_fw_shutter_ms;
+		float visp_pg_fw_gain;
+		float visp_pg_fw_exposure;
+		float visp_pg_fw_brightness;
 
 		//! PFSL3
 		int pfsl3_p_x = 40;
@@ -2970,6 +2970,19 @@ namespace mtf{
 				visp_thresh_grad = atof(arg_val);
 				return;
 			}
+			//! ViSP pipeline
+			if(!strcmp(arg_name, "visp_usb_res")){
+				visp_usb_res = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "visp_usb_fps")){
+				visp_usb_fps = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "visp_usb_n_buffers")){
+				visp_usb_n_buffers = atoi(arg_val);
+				return;
+			}
 			if(!strcmp(arg_name, "visp_fw_res")){
 				visp_fw_res = atoi(arg_val);
 				return;
@@ -2982,36 +2995,24 @@ namespace mtf{
 				visp_pg_fw_depth = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "pg_fw_print_info")){
-				pg_fw_print_info = atoi(arg_val);
+			if(!strcmp(arg_name, " visp_pg_fw_print_info")){
+				 visp_pg_fw_print_info = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "pg_fw_shutter_ms")){
-				pg_fw_shutter_ms = atof(arg_val);
+			if(!strcmp(arg_name, " visp_pg_fw_shutter_ms")){
+				 visp_pg_fw_shutter_ms = atof(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "pg_fw_gain")){
-				pg_fw_gain = atof(arg_val);
+			if(!strcmp(arg_name, " visp_pg_fw_gain")){
+				 visp_pg_fw_gain = atof(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "pg_fw_exposure")){
-				pg_fw_exposure = atof(arg_val);
+			if(!strcmp(arg_name, " visp_pg_fw_exposure")){
+				 visp_pg_fw_exposure = atof(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "pg_fw_brightness")){
-				pg_fw_brightness = atof(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "visp_usb_res")){
-				visp_usb_res = atoi(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "visp_usb_fps")){
-				visp_usb_fps = atoi(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "visp_usb_n_buffers")){
-				visp_usb_n_buffers = atoi(arg_val);
+			if(!strcmp(arg_name, " visp_pg_fw_brightness")){
+				 visp_pg_fw_brightness = atof(arg_val);
 				return;
 			}
 			//! PFSL3
