@@ -203,7 +203,7 @@ namespace utils{
 	bool InputVP::initialize(){
 		printf("Initializing ViSP pipeline...\n");
 #ifndef VISP_HAVE_FLYCAPTURE
-		printf("vpFlyCaptureGrabber module is not available...\n");
+		printf("vpFlyCaptureGrabber module is not available\n");
 #endif
 #ifndef VISP_HAVE_V4L2
 		printf("vpV4l2Grabber module is not available\n");
