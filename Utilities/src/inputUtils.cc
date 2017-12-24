@@ -22,7 +22,7 @@
 
 _MTF_BEGIN_NAMESPACE
 namespace utils{
-	InputParams::InputParams(const InputParams *_params = nullptr) :
+	InputParams::InputParams(const InputParams *_params) :
 		img_source('j'), n_buffers(0), invert_seq(false){
 		if(_params){
 			img_source = _params->img_source;
