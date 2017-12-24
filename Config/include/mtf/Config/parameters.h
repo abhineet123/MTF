@@ -691,13 +691,19 @@ namespace mtf{
 		double visp_thresh_grad = 60;
 		int visp_pyr_n_levels = 0;
 		int visp_pyr_level_to_stop = 1;
+
 		//! ViSP Pipeline
+		int visp_usb_n_buffers = 3;
+		int visp_usb_res = 0;
+		int visp_usb_fps = 0;
 		int visp_fw_res = 0;
 		int visp_fw_fps = 0;
 		int visp_pg_fw_depth = 0;
-		int visp_usb_res = 0;
-		int visp_usb_fps = 0;
-		int visp_usb_n_buffers = 3;
+		bool pg_fw_print_info;
+		float pg_fw_shutter_ms;
+		float pg_fw_gain;
+		float pg_fw_exposure;
+		float pg_fw_brightness;
 
 		//! PFSL3
 		int pfsl3_p_x = 40;
@@ -2974,6 +2980,26 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "visp_pg_fw_depth")){
 				visp_pg_fw_depth = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "pg_fw_print_info")){
+				pg_fw_print_info = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "pg_fw_shutter_ms")){
+				pg_fw_shutter_ms = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "pg_fw_gain")){
+				pg_fw_gain = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "pg_fw_exposure")){
+				pg_fw_exposure = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "pg_fw_brightness")){
+				pg_fw_brightness = atof(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "visp_usb_res")){
