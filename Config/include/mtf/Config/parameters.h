@@ -694,11 +694,10 @@ namespace mtf{
 		//! ViSP Pipeline
 		int visp_fw_res = 0;
 		int visp_fw_fps = 0;
+		int visp_pg_fw_depth = 0;
 		int visp_usb_res = 0;
 		int visp_usb_fps = 0;
-		int visp_pg_fw_depth = 0;
 		int visp_usb_n_buffers = 3;
-
 
 		//! PFSL3
 		int pfsl3_p_x = 40;
@@ -2971,6 +2970,10 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "visp_fw_fps")){
 				visp_fw_fps = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "visp_pg_fw_depth")){
+				visp_pg_fw_depth = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "visp_usb_res")){
