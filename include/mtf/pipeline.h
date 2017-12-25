@@ -88,7 +88,7 @@ inline utils::PreProcBase* createPreProc(int output_type, const std::string &_pr
 			bil_diameter, bil_sigma_col, bil_sigma_space);
 	} else if(_pre_proc_type_num == 5 || _pre_proc_type == "aniso"){
 		return new utils::AnisotropicDiffusion(output_type, img_resize_factor, pre_proc_hist_eq,
-			aniso_lambda, aniso_k, aniso_n_iters);
+			aniso_lambda, aniso_kappa, aniso_n_iters);
 	} else if(_pre_proc_type_num == 6 || _pre_proc_type == "sobel"){
 		return new utils::SobelFltering(output_type, img_resize_factor, pre_proc_hist_eq,
 			sobel_kernel_size, sobel_normalize);
