@@ -682,28 +682,28 @@ namespace mtf{
 		std::string strk_config_path = "Config/struck.cfg";
 
 		//! ViSP Template Tracker
-		char* visp_sm = "fclk";
-		char* visp_am = "ssd";
-		char* visp_ssm = "8";
-		int visp_max_iters = 30;
-		int visp_res = 50;
-		double visp_lambda = 0.001;
-		double visp_thresh_grad = 60;
-		int visp_pyr_n_levels = 0;
-		int visp_pyr_level_to_stop = 1;
+		char* vptt_sm = "fclk";
+		char* vptt_am = "ssd";
+		char* vptt_ssm = "8";
+		int vptt_max_iters = 30;
+		int vptt_res = 50;
+		double vptt_lambda = 0.001;
+		double vptt_thresh_grad = 60;
+		int vptt_pyr_n_levels = 0;
+		int vptt_pyr_level_to_stop = 1;
 
 		//! ViSP Pipeline
-		int visp_usb_n_buffers = 3;
-		int visp_usb_res = 0;
-		int visp_usb_fps = 0;
-		int visp_fw_res = 0;
-		int visp_fw_fps = 0;
-		int visp_pg_fw_depth = 0;
-		bool visp_pg_fw_print_info;
-		float visp_pg_fw_shutter_ms;
-		float visp_pg_fw_gain;
-		float visp_pg_fw_exposure;
-		float visp_pg_fw_brightness;
+		int vp_usb_n_buffers = 3;
+		int vp_usb_res = 0;
+		int vp_usb_fps = 0;
+		int vp_fw_res = 0;
+		int vp_fw_fps = 0;
+		int vp_pg_fw_depth = 0;
+		bool vp_pg_fw_print_info;
+		float vp_pg_fw_shutter_ms;
+		float vp_pg_fw_gain;
+		float vp_pg_fw_exposure;
+		float vp_pg_fw_brightness;
 
 		//! PFSL3
 		int pfsl3_p_x = 40;
@@ -2933,86 +2933,86 @@ namespace mtf{
 				strk_config_path = std::string(arg_val);
 				return;
 			}
-			//! ViSP
-			if(!strcmp(arg_name, "visp_sm")){
-				processStringParam(visp_sm, arg_val);
+			//! ViSP Template Tracker
+			if(!strcmp(arg_name, "vptt_sm")){
+				processStringParam(vptt_sm, arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_am")){
-				processStringParam(visp_am, arg_val);
+			if(!strcmp(arg_name, "vptt_am")){
+				processStringParam(vptt_am, arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_ssm")){
-				processStringParam(visp_ssm, arg_val);
+			if(!strcmp(arg_name, "vptt_ssm")){
+				processStringParam(vptt_ssm, arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_max_iters")){
-				visp_max_iters = atoi(arg_val);
+			if(!strcmp(arg_name, "vptt_max_iters")){
+				vptt_max_iters = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_res")){
-				visp_res = atoi(arg_val);
+			if(!strcmp(arg_name, "vptt_res")){
+				vptt_res = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_pyr_n_levels")){
-				visp_pyr_n_levels = atoi(arg_val);
+			if(!strcmp(arg_name, "vptt_pyr_n_levels")){
+				vptt_pyr_n_levels = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_pyr_level_to_stop")){
-				visp_pyr_level_to_stop = atoi(arg_val);
+			if(!strcmp(arg_name, "vptt_pyr_level_to_stop")){
+				vptt_pyr_level_to_stop = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_lambda")){
-				visp_lambda = atof(arg_val);
+			if(!strcmp(arg_name, "vptt_lambda")){
+				vptt_lambda = atof(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_thresh_grad")){
-				visp_thresh_grad = atof(arg_val);
+			if(!strcmp(arg_name, "vptt_thresh_grad")){
+				vptt_thresh_grad = atof(arg_val);
 				return;
 			}
 			//! ViSP pipeline
-			if(!strcmp(arg_name, "visp_usb_res")){
-				visp_usb_res = atoi(arg_val);
+			if(!strcmp(arg_name, "vp_usb_res")){
+				vp_usb_res = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_usb_fps")){
-				visp_usb_fps = atoi(arg_val);
+			if(!strcmp(arg_name, "vp_usb_fps")){
+				vp_usb_fps = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_usb_n_buffers")){
-				visp_usb_n_buffers = atoi(arg_val);
+			if(!strcmp(arg_name, "vp_usb_n_buffers")){
+				vp_usb_n_buffers = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_fw_res")){
-				visp_fw_res = atoi(arg_val);
+			if(!strcmp(arg_name, "vp_fw_res")){
+				vp_fw_res = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_fw_fps")){
-				visp_fw_fps = atoi(arg_val);
+			if(!strcmp(arg_name, "vp_fw_fps")){
+				vp_fw_fps = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "visp_pg_fw_depth")){
-				visp_pg_fw_depth = atoi(arg_val);
+			if(!strcmp(arg_name, "vp_pg_fw_depth")){
+				vp_pg_fw_depth = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, " visp_pg_fw_print_info")){
-				 visp_pg_fw_print_info = atoi(arg_val);
+			if(!strcmp(arg_name, " vp_pg_fw_print_info")){
+				 vp_pg_fw_print_info = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, " visp_pg_fw_shutter_ms")){
-				 visp_pg_fw_shutter_ms = atof(arg_val);
+			if(!strcmp(arg_name, " vp_pg_fw_shutter_ms")){
+				 vp_pg_fw_shutter_ms = atof(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, " visp_pg_fw_gain")){
-				 visp_pg_fw_gain = atof(arg_val);
+			if(!strcmp(arg_name, " vp_pg_fw_gain")){
+				 vp_pg_fw_gain = atof(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, " visp_pg_fw_exposure")){
-				 visp_pg_fw_exposure = atof(arg_val);
+			if(!strcmp(arg_name, " vp_pg_fw_exposure")){
+				 vp_pg_fw_exposure = atof(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, " visp_pg_fw_brightness")){
-				 visp_pg_fw_brightness = atof(arg_val);
+			if(!strcmp(arg_name, " vp_pg_fw_brightness")){
+				 vp_pg_fw_brightness = atof(arg_val);
 				return;
 			}
 			//! PFSL3
