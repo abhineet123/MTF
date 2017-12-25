@@ -1760,44 +1760,44 @@ inline TrackerBase *getTracker(const char *tracker_type){
 #ifndef DISABLE_VISP
 	else if(!strcmp(tracker_type, "visp")){
 		ViSPParams::SMType vp_sm_type = ViSPParams::SMType::FCLK;
-		if(!strcmp(visp_sm, "fclk")){
+		if(!strcmp(vptt_sm, "fclk")){
 			vp_sm_type = ViSPParams::SMType::FCLK;
-		} else if(!strcmp(visp_sm, "iclk")){
+		} else if(!strcmp(vptt_sm, "iclk")){
 			vp_sm_type = ViSPParams::SMType::ICLK;
-		} else if(!strcmp(visp_sm, "falk")){
+		} else if(!strcmp(vptt_sm, "falk")){
 			vp_sm_type = ViSPParams::SMType::FALK;
-		} else if(!strcmp(visp_sm, "esm")){
+		} else if(!strcmp(vptt_sm, "esm")){
 			vp_sm_type = ViSPParams::SMType::ESM;
 		}
 		ViSPParams::AMType vp_am_type = ViSPParams::AMType::SSD;
-		if(!strcmp(visp_am, "ssd")){
+		if(!strcmp(vptt_am, "ssd")){
 			vp_am_type = ViSPParams::AMType::SSD;
-		} else if(!strcmp(visp_am, "zncc")){
+		} else if(!strcmp(vptt_am, "zncc")){
 			vp_am_type = ViSPParams::AMType::ZNCC;
-		} else if(!strcmp(visp_am, "mi")){
+		} else if(!strcmp(vptt_am, "mi")){
 			vp_am_type = ViSPParams::AMType::MI;
 		}
 
 		ViSPParams::SSMType vp_ssm_type = ViSPParams::SSMType::Homography;
-		if(!strcmp(visp_ssm, "8")){
+		if(!strcmp(vptt_ssm, "8")){
 			vp_ssm_type = ViSPParams::SSMType::Homography;
-		} else if(!strcmp(visp_ssm, "l8") || !strcmp(visp_ssm, "sl3")){
+		} else if(!strcmp(vptt_ssm, "l8") || !strcmp(vptt_ssm, "sl3")){
 			vp_ssm_type = ViSPParams::SSMType::SL3;
-		} else if(!strcmp(visp_ssm, "6")){
+		} else if(!strcmp(vptt_ssm, "6")){
 			vp_ssm_type = ViSPParams::SSMType::Affine;
-		} else if(!strcmp(visp_ssm, "4")){
+		} else if(!strcmp(vptt_ssm, "4")){
 			vp_ssm_type = ViSPParams::SSMType::Similarity;
-		} else if(!strcmp(visp_ssm, "3")){
+		} else if(!strcmp(vptt_ssm, "3")){
 			vp_ssm_type = ViSPParams::SSMType::Isometry;
-		} else if(!strcmp(visp_ssm, "2")){
+		} else if(!strcmp(vptt_ssm, "2")){
 			vp_ssm_type = ViSPParams::SSMType::Translation;
 		}
 
 		ViSPParams visp_params(
 			vp_sm_type, vp_am_type, vp_ssm_type,
-			visp_max_iters, visp_res, visp_res, visp_lambda,
-			visp_thresh_grad, visp_pyr_n_levels,
-			visp_pyr_level_to_stop
+			vptt_max_iters, vptt_res, vptt_res, vptt_lambda,
+			vptt_thresh_grad, vptt_pyr_n_levels,
+			vptt_pyr_level_to_stop
 			);
 		return new ViSP(&visp_params);
 	}
@@ -1822,7 +1822,7 @@ inline TrackerBase *getTracker(const char *tracker_type){
 #ifndef DISABLE_XVISION
 	else if(strstr(tracker_type, "xv")){
 		using_xv_tracker = true;
-		XVParams &xv_params(show_xv_window, steps_per_frame, false, false);
+		XVParams &xv_params(show_xv_window, xv_steps_per_frame, false, false);
 		if(!strcmp(tracker_type, "xv1r")){
 			return new XVSSDRotate(&xv_params);
 		} else if(!strcmp(tracker_type, "xv1s")){
@@ -1836,15 +1836,15 @@ inline TrackerBase *getTracker(const char *tracker_type){
 		} else if(!strcmp(tracker_type, "xv6")){
 			return new XVSSDAffine(&xv_params);
 		} else if(!strcmp(tracker_type, "xv1p")){
-			return new XVSSDPyramidRotate(&xv_params, no_of_levels, scale);
+			return new XVSSDPyramidRotate(&xv_params, xv_no_of_levels, xv_scale);
 		} else if(!strcmp(tracker_type, "xv2p")){
-			return new XVSSDPyramidTrans(&xv_params, no_of_levels, scale);
+			return new XVSSDPyramidTrans(&xv_params, xv_no_of_levels, xv_scale);
 		} else if(!strcmp(tracker_type, "xv3p")){
-			return new XVSSDPyramidRT(&xv_params, no_of_levels, scale);
+			return new XVSSDPyramidRT(&xv_params, xv_no_of_levels, xv_scale);
 		} else if(!strcmp(tracker_type, "xv4p")){
-			return new XVSSDPyramidSE2(&xv_params, no_of_levels, scale);
+			return new XVSSDPyramidSE2(&xv_params, xv_no_of_levels, xv_scale);
 		} else if(!strcmp(tracker_type, "xv6p")){
-			return new XVSSDPyramidAffine(&xv_params, no_of_levels, scale);
+			return new XVSSDPyramidAffine(&xv_params, xv_no_of_levels, xv_scale);
 		} else if(!strcmp(tracker_type, "xve")){
 			return new XVEdgeTracker(&xv_params);
 		} else if(!strcmp(tracker_type, "xvc")){

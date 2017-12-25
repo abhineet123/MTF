@@ -43,7 +43,6 @@ int main(int argc, char * argv[]) {
 	cout << "source_id: " << seq_id << "\n";
 	cout << "source_name: " << seq_name << "\n";
 	cout << "actor: " << actor << "\n";
-	cout << "steps_per_frame: " << steps_per_frame << "\n";
 	cout << "pipeline: " << pipeline << "\n";
 	cout << "img_source: " << img_source << "\n";
 	cout << "show_cv_window: " << show_cv_window << "\n";
@@ -51,7 +50,6 @@ int main(int argc, char * argv[]) {
 	cout << "patch_size: " << patch_size << "\n";
 	cout << "read_obj_fname: " << read_obj_fname << "\n";
 	cout << "read_obj_from_gt: " << read_obj_from_gt << "\n";
-	cout << "show_warped_img: " << show_warped_img << "\n";
 	cout << "pause_after_frame: " << pause_after_frame << "\n";
 	cout << "write_tracker_states: " << write_tracker_states << "\n";
 	cout << "*******************************\n";

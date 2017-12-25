@@ -82,7 +82,6 @@ namespace mtf{
 		int write_tracking_data = 0;
 		bool overwrite_gt = 0;
 		int write_pts = 1;
-		int show_warped_img = 0;
 		int show_proc_img = 0;
 		int write_tracker_states = 0;
 		int write_objs = 0;
@@ -104,6 +103,7 @@ namespace mtf{
 		std::string opt_gt_ssm = "2";
 		int debug_mode = 0;
 		int reset_template = 0;
+		int patch_size = 0;
 
 		std::string read_obj_fname = "sel_objs/selected_objects.txt";
 		std::string write_obj_fname = "sel_objs/selected_objects.txt";
@@ -111,23 +111,10 @@ namespace mtf{
 		std::string record_frames_fname, record_frames_dir;
 
 		//! for Xvision trackers
-		int steps_per_frame = 1;
-		int patch_size = 0;
-
-		//char frame_dir[200];
-		//char pts_dir[200];
-		//char states_dir[200];
-
+		int xv_steps_per_frame = 1;
 		/* only for pyramidal trackers */
-		int no_of_levels = 2;
-		double scale = 0.5;
-		/* only for color tracker; enabling it causes tracker to hang and crash */
-		bool color_resample = false;
-
-		int search_width = 50;
-		int search_angle = 0;
-		int line_width = 4;
-
+		int xv_no_of_levels = 2;
+		double xv_scale = 0.5;
 		/* for xvision grid tracker */
 		int xv_patch_size = 32;
 		int xv_tracker_type = 't';
@@ -1168,6 +1155,23 @@ namespace mtf{
 				db_root_path = std::string(arg_val);
 				return;
 			}
+			//! Xvision trackers
+			if(!strcmp(arg_name, "xv_scale")){
+				xv_scale = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xv_no_of_levels")){
+				xv_no_of_levels = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xv_steps_per_frame")){
+				xv_steps_per_frame = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xv_patch_size")){
+				xv_patch_size = atoi(arg_val);
+				return;
+			}
 			if(!strcmp(arg_name, "xvg_grid_size_x")){
 				xvg_grid_size_x = atoi(arg_val);
 				return;
@@ -1188,24 +1192,12 @@ namespace mtf{
 				xvg_reset_pos = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "xv_patch_size")){
-				xv_patch_size = atoi(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "reset_template")){
-				reset_template = atoi(arg_val);
-				return;
-			}
 			if(!strcmp(arg_name, "xvg_reset_wts")){
 				xvg_reset_wts = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "xvg_pause_after_line")){
 				xvg_pause_after_line = atoi(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "debug_mode")){
-				debug_mode = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "xvg_use_constant_slope")){
@@ -1224,6 +1216,27 @@ namespace mtf{
 				xvg_intra_alpha_thresh = atof(arg_val);
 				return;
 			}
+			if(!strcmp(arg_name, "xvg_show_tracked_pts")){
+				xvg_show_tracked_pts = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_update_wts")){
+				xvg_update_wts = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "xvg_sel_reset_thresh")){
+				xvg_sel_reset_thresh = atof(arg_val);
+				return;
+			}
+
+			if(!strcmp(arg_name, "reset_template")){
+				reset_template = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "debug_mode")){
+				debug_mode = atoi(arg_val);
+				return;
+			}
 			if(!strcmp(arg_name, "pause_after_frame")){
 				pause_after_frame = atoi(arg_val);
 				return;
@@ -1236,28 +1249,12 @@ namespace mtf{
 				print_fps = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "xvg_show_tracked_pts")){
-				xvg_show_tracked_pts = atoi(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "show_warped_img")){
-				show_warped_img = atoi(arg_val);
-				return;
-			}
 			if(!strcmp(arg_name, "show_proc_img")){
 				show_proc_img = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "write_tracker_states")){
 				write_tracker_states = atoi(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "xvg_update_wts")){
-				xvg_update_wts = atoi(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "xvg_sel_reset_thresh")){
-				xvg_sel_reset_thresh = atof(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "res_from_size")){

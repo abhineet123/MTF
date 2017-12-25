@@ -274,7 +274,15 @@ Output parameters:
 			useful for benchmarking and batch mode testing;
 		Possible Values:
 			0: Disable
-			1: Enable
+			1: Enable	
+			
+	 Parameter:	'show_xv_window'
+		Description:
+			show the result of tracking from frame to frame in an Xvision window;
+			only matters if Xvision is enabled during compilation and Xvision pipeline is used;
+		Possible Values:
+			0: Disable
+			1: Enable	
 			
 	 Parameter:	'show_ground_truth'
 		Description:
@@ -300,6 +308,13 @@ Output parameters:
 			compute and show the the Jaccard error between the tracking result and the ground truth in the OpenCV window; 
 			only matters if show_tracking_error is enabled and the conditions specified for it to work are satisfied; 
 			this can be useful if both MCD/CLE and Jaccard error need to be shown together for comparative analysis;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'show_proc_img'
+		Description:
+			Show the pre processed images in a separate window.
 		Possible Values:
 			0: Disable
 			1: Enable
