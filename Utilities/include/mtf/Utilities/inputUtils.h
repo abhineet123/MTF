@@ -118,7 +118,9 @@ namespace utils{
 		enum class VpDepthPGFW{
 			Default, RGB, YUV422, Y8, Y16
 		};
-		enum class VpFpsUSB{ Default, fps25, fps50 };
+		enum class VpFpsUSB{
+			Default, fps25, fps50
+		};
 		enum class VpFpsFW{
 			Default, fps15, fps30, fps60, fps120, fps240,
 			fps7_5, fps3_75, fps1_875

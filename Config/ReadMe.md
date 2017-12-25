@@ -18,8 +18,8 @@ any invalid values for `arg_name` will be ignored along with its `arg_val`;
 
 Following are some of important parameters, their brief descriptions and possible values:
 
-Input/Output related parameters:
-================================
+Input parameters:
+=================
 	 Parameter:	'pipeline'
 		Description:
 			input video pipeline
@@ -39,6 +39,7 @@ Input/Output related parameters:
 			u: USB camera
 			f: Firewire camera (only ViSP and Xvision  pipelines; 
 				USB camera option(u) can be used to access Firewire cameras with OpenCV as long as no USB cameras are attached too)
+			p: PointGrey Firewire camera (accessed using the FlyCapture SDK - only ViSP pipelines; 
 			
 	 Parameter:	'actor_id'
 		Description:
@@ -140,7 +141,6 @@ Input/Output related parameters:
 		Possible Values:
 			0: Disable (default)
 			1: Enable		
-
 			
 	 Parameter:	'uchar_input'
 		Description:
@@ -154,7 +154,6 @@ Input/Output related parameters:
 		Description:
 			invert the input sequence, i.e. read its images in the reverse order with the last image being read first and the first one last;
 			ignored if a camera stream is being used;
-
 		Possible Values:
 			0: Disable (default)
 			1: Enable
@@ -165,12 +164,198 @@ Input/Output related parameters:
 
 	 Parameter:	'input_buffer_size'
 		Description:
-			no, of frames read and stored in the buffer in advance.
+			no. of frames read and stored in the buffer in advance.		
 			
+ViSP pipeline:
+==============
+			
+	 Parameter:	'vp_usb_n_buffers'
+		Description:
+			No. of buffers to use for USB camera source
+			
+	 Parameter:	'vp_usb_res'
+		Description:
+			Image resolution for USB camera source
+		Possible Values:
+			0: Default
+			1: 640 x 480
+			2: 800 x 600
+			3: 1024 x 768
+			4: 1280 x 720
+			5: 1920 x 1080
+			
+	 Parameter:	'vp_usb_fps'
+		Description:
+			Video speed in frames per second (FPS) for USB camera source
+		Possible Values:
+			0: Default
+			1: 25
+			2: 50
+			
+	 Parameter:	'vp_fw_fps'
+		Description:
+			Video speed in frames per second (FPS) for Firewire or PointGrey camera source
+		Possible Values:
+			0: Default
+			1: 15
+			2: 30
+			3: 60
+			4: 120
+			5: 240
+			6: 7.5 (only PointGrey)
+			7: 3.75 (only PointGrey)
+			8: 1.875 (only PointGrey)
+			
+	 Parameter:	'vp_fw_res'
+		Description:
+			Image resolution for Firewire or PointGrey camera source
+		Possible Values:
+			0: Default
+			1: 640 x 480
+			2: 800 x 600
+			3: 1024 x 768
+			4: 1280 x 960
+			5: 1600 x 1200
+			
+	 Parameter:	'vp_pg_fw_depth'
+		Description:
+			Image color depth / format for PointGrey camera source			
+		Possible Values:
+			0: Default
+			1: RGB
+			2: YUV422
+			3: Y8 (8 bit)
+			4: Y16 (16 bit)
+			
+	 Parameter:	'vp_pg_fw_shutter_ms'
+		Description:
+			Shutter speed in ms for PointGrey camera source			
+		Possible Values:
+			0: Default
+			< 0: auto
+			> 0: manual
+			
+	 Parameter:	'vp_pg_fw_gain'
+		Description:
+			Gain for PointGrey camera source			
+		Possible Values:
+			0: Default
+			< 0: auto
+			> 0: manual
+			
+	 Parameter:	'vp_pg_fw_exposure'
+		Description:
+			Exposure for PointGrey camera source			
+		Possible Values:
+			0: Default
+			< 0: auto
+			> 0: manual	
+			
+	 Parameter:	'vp_pg_fw_brightness'
+		Description:
+			Brightness for PointGrey camera source
+		Possible Values:
+			0: Default
+			< 0: auto
+			> 0: manual				
+			
+	 Parameter:	'visp_pg_fw_print_info'
+		Description:
+			Print detailed info for PointGrey camera source	
+		
+Output parameters:
+==================
+
+	 Parameter:	'show_cv_window'
+		Description:
+			show the result of tracking from frame to frame in an OpenCV window;
+			if a single object is being tracked, this is shown as a red bounding box; subsequent objects are shown in other colours defined in Utilities/src/objUtils.cc;
+			disabling it can speed up the overall tracking speed by eliminating the delay caused by drawing the object locations on the current frame;
+			useful for benchmarking and batch mode testing;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'show_ground_truth'
+		Description:
+			show the current location of the object in the ground truth in an OpenCV window;
+			this is always shown as a green color bounding box;
+			only matters if show_cv_window is enabled and the conditions required for ground truth to be available as specified for show_tracking_error are satisfied;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'show_tracking_error'
+		Description:
+			show the the tracking error between the tracking result and the ground truth in the OpenCV window; 
+			the metric used for computing this error is specified in tracking_err_type;
+			only matters if read_objs_from_gt is enabled and a file input source (video or image) is used; 
+			a valid text file containing the ground truth for all the frames in the source should also be present;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'show_jaccard_error'
+		Description:
+			compute and show the the Jaccard error between the tracking result and the ground truth in the OpenCV window; 
+			only matters if show_tracking_error is enabled and the conditions specified for it to work are satisfied; 
+			this can be useful if both MCD/CLE and Jaccard error need to be shown together for comparative analysis;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'record_frames'
+		Description:
+			record the tracked frames into a video file called Tracked_video.avi; 
+			enabling this may significantly decrease the overall tracking speed
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'pause_after_frame'
+		Description:
+			pause tracking after each frame; 
+			pressing space bar will resume tracking; 
+			pressing any other key (except Esc) will move to next frame (Esc will exit the program);
+		Possible Values:
+			0: Disable
+			1: Enable		
+		
+	 Parameter:	'print_corners'
+		Description:
+			show the x,y coordinates of the corners of the bounding region (usually a box with 4 corners) representing the tracker location on the terminal		
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'print_fps'
+		Description:
+			show the current tracking speed in frames per second (FPS)	on the terminal	
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'record_frames'
+		Description:
+			record the frames containing the output of the executable into a video file - this is currently used only in runMTF and showGroundTruth
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'record_frames_fname'
+		Description:
+			name of the video file into which the output frames are recorded; if this is not specified, a name is constructed from some relevant parameters
+			
+	 Parameter:	'record_frames_dir'
+		Description:
+			path of the directory where the recorded video file is saved; if this is not specified, a folder called "log" in the current working folder is used; this folder is created automatically if it does not exist
+			
+General parameters for example exceutables:
+===========================================
+
 	 Parameter:	'debug_mode'
 		Description:
-			enable debug messages in some of the modules - this is a rather obsolete parameter that will soon be removed; several modules have their own debug mode parameters in modules.cfg		
-
+			enable debug messages in some of the modules - this is a rather obsolete parameter that will soon be removed; several modules have their own debug mode parameters in modules.cfg
 	 
 	 Parameter:	'enable_nt'
 		Description:
@@ -243,45 +428,7 @@ Input/Output related parameters:
 				http://webdocs.cs.ualberta.ca/~vis/trackDB/firstpage.html
 		Possible Values:
 			0: Disable
-			1: Enable
-			
-	 Parameter:	'show_cv_window'
-		Description:
-			show the result of tracking from frame to frame in an OpenCV window;
-			if a single object is being tracked, this is shown as a red bounding box; subsequent objects are shown in other colours defined in Utilities/src/objUtils.cc;
-			disabling it can speed up the overall tracking speed by eliminating the delay caused by drawing the object locations on the current frame;
-			useful for benchmarking and batch mode testing;
-		Possible Values:
-			0: Disable
-			1: Enable
-			
-	 Parameter:	'show_ground_truth'
-		Description:
-			show the current location of the object in the ground truth in an OpenCV window;
-			this is always shown as a green color bounding box;
-			only matters if show_cv_window is enabled and the conditions required for ground truth to be available as specified for show_tracking_error are satisfied;
-		Possible Values:
-			0: Disable
-			1: Enable
-			
-	 Parameter:	'show_tracking_error'
-		Description:
-			show the the tracking error between the tracking result and the ground truth in the OpenCV window; 
-			the metric used for computing this error is specified in tracking_err_type;
-			only matters if read_objs_from_gt is enabled and a file input source (video or image) is used; 
-			a valid text file containing the ground truth for all the frames in the source should also be present;
-		Possible Values:
-			0: Disable
-			1: Enable
-			
-	 Parameter:	'show_jaccard_error'
-		Description:
-			compute and show the the Jaccard error between the tracking result and the ground truth in the OpenCV window; 
-			only matters if show_tracking_error is enabled and the conditions specified for it to work are satisfied; 
-			this can be useful if both MCD/CLE and Jaccard error need to be shown together for comparative analysis;
-		Possible Values:
-			0: Disable
-			1: Enable
+			1: Enable	
 			
 	 Parameter:	'tracking_err_type'
 		Description:		
@@ -290,23 +437,6 @@ Input/Output related parameters:
 			0: Mean Corner Distance or MCD error - mean euclidean distance between the corners of the two bounding boxes
 			1: Center Location Error or CLE - euclidean distance between the centroids of the two bounding boxes
 			2: Jaccard Error - ration of intersection to union between the two bounding boxes
-			
-	 Parameter:	'record_frames'
-		Description:
-			record the tracked frames into a video file called Tracked_video.avi; 
-			enabling this may significantly decrease the overall tracking speed
-		Possible Values:
-			0: Disable
-			1: Enable
-			
-	 Parameter:	'pause_after_frame'
-		Description:
-			pause tracking after each frame; 
-			pressing space bar will resume tracking; 
-			pressing any other key (except Esc) will move to next frame (Esc will exit the program);
-		Possible Values:
-			0: Disable
-			1: Enable		
 			
 	 Parameter:	'reinit_at_each_frame'
 		Description:
@@ -408,35 +538,7 @@ Input/Output related parameters:
 	 Parameter:	'patch_size'
 		Description:
 			if non-zero, the this is taken to be the size of the object to be tracked so that the user can simply click at the center to select a square bounding box of this size around the clicked point; if this is zero, the user must provide all 4 corners of the bounding box; only matters if a user-selected object is to be tracked, i.e. when using live/camera input or when the ground truth is not available or if read_obj_from_file and read_obj_from_gt are disabled;
-		
-	 Parameter:	'print_corners'
-		Description:
-			show the x,y coordinates of the corners of the bounding region (usually a box with 4 corners) representing the tracker location on the terminal		
-		Possible Values:
-			0: Disable
-			1: Enable
-			
-	 Parameter:	'print_fps'
-		Description:
-			show the current tracking speed in frames per second (FPS)	on the terminal	
-		Possible Values:
-			0: Disable
-			1: Enable
-			
-	 Parameter:	'record_frames'
-		Description:
-			record the frames containing the output of the executable into a video file- this is currently used only in runMTF and showGroundTruth
-		Possible Values:
-			0: Disable
-			1: Enable
-			
-	 Parameter:	'record_frames_fname'
-		Description:
-			name of the video file into which the output frames are recorded; if this is not specified, a name is constructed from some relevant parameters
-			
-	 Parameter:	'record_frames_dir'
-		Description:
-			path of the directory where the recorded video file is saved; if this is not specified, a folder called "log" in the current working folder is used; this folder is created automatically if it does not exist
+
 			
 MTF Tracker specific parameters:
 ================================
