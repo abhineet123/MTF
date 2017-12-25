@@ -481,7 +481,7 @@ void Affine::generatePerturbation(VectorXd &perturbation){
 			perturbed_pts(0, 2) += rand_dist[4](rand_gen[4]);
 			perturbed_pts(1, 2) += rand_dist[5](rand_gen[5]);
 		} else {
-			//! different perturbation for x,y coordinates of each corner
+			//! different perturbation for x,y coordinates of each point
 			//! followed by consistent translational perturbation to all corners
 			Matrix23d rand_d;
 			for(unsigned int pt_id = 0; pt_id < 3; ++pt_id){

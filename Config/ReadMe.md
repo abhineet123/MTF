@@ -854,21 +854,34 @@ MTF Tracker specific parameters:
 			0: Disable
 			1: Enable
 			
+Affine SSM:
+===========
+	 Parameter:	'aff_normalized_init'
+		Description:
+			use normalized initial bounding box with respect to which all subsequent transformations are computed;
+			the normalized box is a unit square centered at the origin;
+			using this can sometimes produce better performance with some LK type SMs;
 			
-Efficient Second order Minimization:
-====================================
+	 Parameter:	'aff_pt_based_sampling'
+		Description:
+			use point based sampling for stochastic SMs; this is performed by adding a random perturbation to the x,y coordinates of three points - bottom left, bottom right and top center of the bounding box - and then computing the corresponding affine transformation w.r.t. to the original points using DLT;
+			if this is disabled, then geometric warping is used where the affine transformation is decomposed into six constituent transforms and a random perturbation is added to each;
+		Possible Values:
+			0: Disable
+			1: Enable
+			2: modified version of point based sampling where the perturbation is performed in two steps: first 6 different random numbers generated from the same distribution are added to the x,y coordinates of the three points, then 2 numbers generated from a second distribution are added to all points to produce a consistent translation; 
+			
+Efficient Second order Minimization (ESM) SM:
+=============================================
 	 Parameter:	'esm_jac_type'
 		Description:
 			type of Jacobian to be used with ESM
 		Possible Values:
-			0:	Original formulation where it is computed using the mean of gradients
+			0: Original formulation where it is computed using the mean of gradients
 			1: Extended formulation where it is the difference between the forward and inverse Jacobians
 	 Parameter:	'esm_hess_type'
 		Description:
 			type of Hessian to be used with ESM
-	 Parameter:	'esm_chained_warp'
-		Description:
-			use chain rule to compute pixel Jacobian and Hessian
 		Possible Values:
 			0:	Inverse/initial Self (or extended Gauss Newton) Hessian
 			1:	Forward/current Self (or extended Gauss Newton) Hessian
@@ -876,6 +889,9 @@ Efficient Second order Minimization:
 			3:	Original formulation where it is computed using the mean of gradients
 			4:	Sum of forward and inverse Newton Hessians
 			5:	Forward Newton Hessian
+	 Parameter:	'esm_chained_warp'
+		Description:
+			use chain rule to compute pixel Jacobian and Hessian
 	 Parameter:	'esm_spi_enable'
 		Description:
 			Enable selective pixel integration by rejecting pixels whose residual is more than the given fraction of the maximum residual
