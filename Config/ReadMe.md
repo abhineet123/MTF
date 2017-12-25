@@ -350,7 +350,7 @@ Output parameters:
 		Description:
 			path of the directory where the recorded video file is saved; if this is not specified, a folder called "log" in the current working folder is used; this folder is created automatically if it does not exist
 			
-General parameters for example exceutables:
+General parameters for example executables:
 ===========================================
 
 	 Parameter:	'debug_mode'
