@@ -876,9 +876,22 @@ Anisotropic Diffusion Preprocessor:
 ===================================
 	 Parameter:	'aniso_lambda'
 		Description:
-			use normalized initial bounding box with respect to which all subsequent transformations are computed;
-			the normalized box is a unit square centered at the origin;
-			using this can sometimes produce better performance with some LK type SMs;
+			learning rate
+			
+	 Parameter:	'aniso_kappa'
+		Description:
+			gradient modulus threshold that controls the conduction
+			
+	 Parameter:	'aniso_n_iters'
+		Description:
+			number of iterations
+			
+	 Note:	Please refer to the following sources for more information on these parameters:
+		Paper:
+			'Scale-Space and Edge Detection using Anisotropic Diffusion', Pietro Perona and Jitendra Malik, IEEE Transactions on Pattern Analysis and Machine Intelligence, VOL. 12, NO. 7, JULY 1990
+		Web:
+			http://ishankgulati.github.io/posts/Anisotropic-(Perona-Malik)-Diffusion/
+			https://www.mathworks.com/matlabcentral/fileexchange/14995-anisotropic-diffusion--perona---malik-
 
 			
 Efficient Second order Minimization (ESM) SM:

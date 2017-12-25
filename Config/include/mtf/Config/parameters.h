@@ -222,7 +222,7 @@ namespace mtf{
 		bool sobel_normalize = false;
 		//! Anisotropic diffusion
 		double aniso_lambda = 0.14285714285;
-		double aniso_k = 30;
+		double aniso_kappa = 30;
 		unsigned int aniso_n_iters = 15;
 
 		//! Affine
@@ -1539,8 +1539,8 @@ namespace mtf{
 				aniso_lambda = atof(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "aniso_k")){
-				aniso_k = atof(arg_val);
+			if(!strcmp(arg_name, "aniso_kappa")){
+				aniso_kappa = atof(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "aniso_n_iters")){
