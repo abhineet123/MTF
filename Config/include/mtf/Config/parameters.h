@@ -77,13 +77,10 @@ namespace mtf{
 		bool sel_quad_obj = false;
 		int line_thickness = 2;
 		int record_frames = 0;
-		int write_frame_data = 0;
 		bool gt_write_ssm_params = false;
 		int write_tracking_data = 0;
 		bool overwrite_gt = 0;
-		int write_pts = 1;
 		int show_proc_img = 0;
-		int write_tracker_states = 0;
 		int write_objs = 0;
 		char rec_source = 'u';
 		std::string rec_seq_suffix;
@@ -983,7 +980,6 @@ namespace mtf{
 			parse_param(rec_fps, atoi);
 			parse_param(rec_seq_suffix, std::string);
 			parse_param(img_resize_factor, atof);
-			parse_param(write_frame_data, atoc_i);
 			parse_param(gt_write_ssm_params, atoi);
 			parse_param(write_tracking_data, atoc_i);
 			parse_param(overwrite_gt, atoc_i);
@@ -992,7 +988,6 @@ namespace mtf{
 			parse_param(record_frames_dir, std::string);
 			parse_param(read_obj_fname, std::string);
 			parse_param(write_obj_fname, std::string);
-			parse_param(write_pts, atoc_i);
 			parse_param(show_cv_window, atoc_i);
 			parse_param(show_ground_truth, atoc_i);
 			parse_param(show_xv_window, atoc_i);
@@ -1043,10 +1038,6 @@ namespace mtf{
 				img_resize_factor = atof(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "write_frame_data")){
-				write_frame_data = arg_val[0] - '0';
-				return;
-			}
 			if(!strcmp(arg_name, "gt_write_ssm_params")){
 				gt_write_ssm_params = atoi(arg_val);
 				return;
@@ -1077,10 +1068,6 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "write_obj_fname")){
 				write_obj_fname = std::string(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "write_pts")){
-				write_pts = arg_val[0] - '0';
 				return;
 			}
 			if(!strcmp(arg_name, "show_corner_ids")){
@@ -1251,10 +1238,6 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "show_proc_img")){
 				show_proc_img = atoi(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "write_tracker_states")){
-				write_tracker_states = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "res_from_size")){

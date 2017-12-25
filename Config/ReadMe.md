@@ -350,12 +350,48 @@ Output parameters:
 			0: Disable
 			1: Enable
 			
+	 Parameter:	'write_tracking_data'
+		Description:
+			write tracking result, i.e. the coordinates of the bounding box/region representing the tracked object location in each frame to a text file;
+			only matters if a single object is being tracked;
+			only supported in runMTF;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'overwrite_gt'
+		Description:
+			overwrite ground truth file with the tracking result; only matters if 'write_tracking_data' is enabled and a single object is being tracked;
+			can be useful when tracking is used to generate or refine ground truth (e.g. in coordination with refineGroundTruth.py script in PTF);
+			only supported in runMTF;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'tracking_data_fname'
+		Description:
+			name of the file to which the tracking result is written; if not specified, then a name is generated from the SM, AM and SSM used to construct the tracker;
+			only matters if 'write_tracking_data' is enabled, a single object is being tracked and 'overwrite_gt' is disabled;
+			only supported in runMTF;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'write_tracking_error'
+		Description:
+			write all 3 types of tracking errors - MCD, CLE and Jaccard - to a text file;
+			only matters if a single object is being tracked and ground truth is available;
+			only supported in runMTF;
+		Possible Values:
+			0: Disable
+			1: Enable
+	 
 	 Parameter:	'record_frames'
 		Description:
 			record the frames containing the output of the executable into a video file - this is currently used only in runMTF and showGroundTruth
 		Possible Values:
 			0: Disable
-			1: Enable
+			1: Enable		
 			
 	 Parameter:	'record_frames_fname'
 		Description:
@@ -364,6 +400,11 @@ Output parameters:
 	 Parameter:	'record_frames_dir'
 		Description:
 			path of the directory where the recorded video file is saved; if this is not specified, a folder called "log" in the current working folder is used; this folder is created automatically if it does not exist
+			
+	 Parameter:	'tracker_labels'
+		Description:
+			optional label to attach to each tracked object; if multiple objects are being tracked, labels can be provided for each separated by commas; if not specified, then the tracker name is used by default;
+			only used in runMTF;
 			
 General parameters for example executables:
 ===========================================
@@ -512,6 +553,19 @@ General parameters for example executables:
 			1: Enable
 		Applies to:
 			runMTF
+			
+	 Parameter:	'use_opt_gt'
+		Description:
+			use optimized low DOF ground truth instead of the normal one;
+			this can be generated from the normal ground truth using generateGTByOptimization.py or generateReinitGTByOptimization.py scripts in PTF;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'opt_gt_ssm'
+		Description:
+			SSM corresponding to the optimized low DOF ground truth that is to be used;
+			only matters if 'use_opt_gt' is enabled;
 			
 	 Parameter:	'use_reinit_gt'
 		Description:

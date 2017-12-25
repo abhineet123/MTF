@@ -51,7 +51,6 @@ int main(int argc, char * argv[]) {
 	cout << "read_obj_fname: " << read_obj_fname << "\n";
 	cout << "read_obj_from_gt: " << read_obj_from_gt << "\n";
 	cout << "pause_after_frame: " << pause_after_frame << "\n";
-	cout << "write_tracker_states: " << write_tracker_states << "\n";
 	cout << "*******************************\n";
 
 	Input_ input(mtf::getInput(pipeline));
