@@ -870,6 +870,15 @@ Affine SSM:
 			0: Disable
 			1: Enable
 			2: modified version of point based sampling where the perturbation is performed in two steps: first 6 different random numbers generated from the same distribution are added to the x,y coordinates of the three points, then 2 numbers generated from a second distribution are added to all points to produce a consistent translation; 
+
+Anisotropic Diffusion Preprocessor:
+===================================
+	 Parameter:	'aniso_lambda'
+		Description:
+			use normalized initial bounding box with respect to which all subsequent transformations are computed;
+			the normalized box is a unit square centered at the origin;
+			using this can sometimes produce better performance with some LK type SMs;
+
 			
 Efficient Second order Minimization (ESM) SM:
 =============================================
@@ -1268,14 +1277,14 @@ Pyramidal Tracker:
 		Description:
 			show the image for each level in the pyramid annotated with the tracker's location;	 
 			
-NSSD AM:
-========
+Normalized Sum of Squared Differences (NSSD) AM:
+================================================
 	 Parameter:	'norm_pix_min' / 'norm_pix_max'
 		Description:
 			minimum and maximum values within which to normalize the pixel values
 
-SCV/RSCV/LSCV/LRSCV AMs:
-======================== 
+Sum of Conditional Variance (SCV)/Reversed SCV (RSCV)/Localized SCV (LSCV)/Localized RSCV (LRSCV) AMs:
+===================================================================================================== 
 	 Parameter:	'scv_use_bspl'
 		Description:
 			use BSpline kernel of order 3 while computing the joint histogram that is used for computing the sum of conditional variance; the Dirac Delta function is used otherwise;
@@ -1292,8 +1301,8 @@ SCV/RSCV/LSCV/LRSCV AMs:
 		Description:
 			strictly enforce the partition of unity constraint for border bins while computing the BSpline joint histogram
 			
-MI AM:
-======
+Mutual Information (MI) AM:
+===========================
 	 Parameter:	'mi_n_bins' / 'mi_preseed' / 'mi_pou'
 		Description:
 			only for MI appearance model; 
