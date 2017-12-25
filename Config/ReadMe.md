@@ -166,6 +166,68 @@ Input parameters:
 		Description:
 			no. of frames read and stored in the buffer in advance.		
 			
+	 Parameter:	'read_obj_from_file'
+		Description:
+			read initial location of the object to be tracked from the text file specified by 'read_obj_fname' where they were previously written to by enabling 'write_objs';
+			this is meant to avoid having to specify a custom initialization locations for one or more trackers repeatedly
+		Possible Values:
+			0: Disable (default)
+			1: Enable
+			
+	 Parameter:	'read_obj_fname'
+		Description:
+			name of the text file where the initial location of the object to be tracked will be read from;
+			only matters if read_objs is 1
+			
+	 Parameter:	'read_obj_from_gt'
+		Description:
+			read initial object location from a ground truth file present in the same directory as the input source file;
+			matters only if a file stream is being used; 
+			the format of this file should be identical to the ground truth files for the TMT dataset available here:
+				http://webdocs.cs.ualberta.ca/~vis/trackDB/firstpage.html
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'use_opt_gt'
+		Description:
+			use optimized low DOF ground truth instead of the normal one;
+			this can be generated from the normal ground truth using generateGTByOptimization.py or generateReinitGTByOptimization.py scripts in PTF;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'opt_gt_ssm'
+		Description:
+			SSM corresponding to the optimized low DOF ground truth that is to be used;
+			only matters if 'use_opt_gt' is enabled;
+			
+	 Parameter:	'use_reinit_gt'
+		Description:
+			use reinitialization ground truth instead of the normal one;
+			this only differs from normal ground truth is optimized low DOF ground truth is being used, i.e. if use_opt_gt is enabled too;
+			this can be generated from the normal ground truth using generateReinitGTByOptimization.py script in PTF;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'reinit_gt_from_bin'
+		Description:
+			read reinitialization ground truth from binary file instead of ASCII text files;
+			this can be generated from the normal ground truth using generateReinitGTByOptimization.py script in PTF;
+		Possible Values:
+			0: Disable
+			1: Enable
+		Applies to:
+			runMTF
+			
+	 Parameter:	'sel_quad_obj'
+		Description:
+			select an arbitrary quadrilateral as the bounding box that defines the object to be tracked; this involves selecting the 4 corners by clicking at each; if disables, a rectangular object is selected instead by clicking on its two opposite corners;
+			only matters if a live/camera video stream is used or object selection from ground truth is disabled;
+		Applies to:
+			all examples
+			
 ViSP pipeline:
 ==============
 			
@@ -377,6 +439,20 @@ Output parameters:
 			0: Disable
 			1: Enable
 			
+	 Parameter:	'write_objs'
+		Description:
+			write the manually selected initial object location to the text file specified by 'write_obj_fname';
+			only matters if manual selection is enabled by disabling both 'read_objs' and 'read_obj_from_gt';
+			this is meant to avoid having to specify a custom initialization locations for one or more trackers repeatedly
+		Possible Values:
+			0: Disable (default)
+			1: Enable
+			
+	 Parameter:	'write_obj_fname'
+		Description:
+			name of the text file where the initial location of the object to be tracked will be written to;
+			only matters if manual selection is enabled by disabling both 'read_objs' and 'read_obj_from_gt' and enabling 'write_objs'
+			
 	 Parameter:	'write_tracking_error'
 		Description:
 			write all 3 types of tracking errors - MCD, CLE and Jaccard - to a text file;
@@ -405,6 +481,19 @@ Output parameters:
 		Description:
 			optional label to attach to each tracked object; if multiple objects are being tracked, labels can be provided for each separated by commas; if not specified, then the tracker name is used by default;
 			only used in runMTF;
+			
+	 Parameter:	'line_thickness'
+		Description:
+			thickness of the line used for drawing the bounding box that represents the current location of the tracker and/or the ground truth
+		Applies to:
+			all examples
+			
+	 Parameter:	'show_corner_ids'
+		Description:
+			show the numerical ID of each bounding box corner along with drawing the box itself; these IDs are 0-based and increase anti clockwise starting from the top left corner;
+			note that this convention is defined with respect to the initial orientation of the object; if the object rotates in the course of being tracked, the corner with ID 0 might no longer remain in the top left of its new orientation;
+		Applies to:
+			all examples
 			
 General parameters for example executables:
 ===========================================
@@ -447,44 +536,7 @@ General parameters for example executables:
 		Description:
 			id of the frame at which tracking is terminated
 		Possible Values:
-			should be greater than init_frame_id and start_frame_id and less than no_of_frames;	
-			
-	 Parameter:	'read_obj_from_file'
-		Description:
-			read initial location of the object to be tracked from the text file specified by 'read_obj_fname' where they were previously written to by enabling 'write_objs';
-			this is meant to avoid having to specify a custom initialization locations for one or more trackers repeatedly
-		Possible Values:
-			0: Disable (default)
-			1: Enable
-			
-	 Parameter:	'read_obj_fname'
-		Description:
-			name of the text file where the initial location of the object to be tracked will be read from;
-			only matters if read_objs is 1			
-			
-	 Parameter:	'write_objs'
-		Description:
-			write the manually selected initial object location to the text file specified by 'write_obj_fname';
-			only matters if manual selection is enabled by disabling both 'read_objs' and 'read_obj_from_gt';
-			this is meant to avoid having to specify a custom initialization locations for one or more trackers repeatedly
-		Possible Values:
-			0: Disable (default)
-			1: Enable
-			
-	 Parameter:	'write_obj_fname'
-		Description:
-			name of the text file where the initial location of the object to be tracked will be written to;
-			only matters if manual selection is enabled by disabling both 'read_objs' and 'read_obj_from_gt' and enabling 'write_objs'
-			
-	 Parameter:	'read_obj_from_gt'
-		Description:
-			read initial object location from a ground truth file present in the same directory as the input source file;
-			matters only if a file stream is being used; 
-			the format of this file should be identical to the ground truth files for the TMT dataset available here:
-				http://webdocs.cs.ualberta.ca/~vis/trackDB/firstpage.html
-		Possible Values:
-			0: Disable
-			1: Enable	
+			should be greater than init_frame_id and start_frame_id and less than no_of_frames;		
 			
 	 Parameter:	'tracking_err_type'
 		Description:		
@@ -552,39 +604,7 @@ General parameters for example executables:
 			0: Disable
 			1: Enable
 		Applies to:
-			runMTF
-			
-	 Parameter:	'use_opt_gt'
-		Description:
-			use optimized low DOF ground truth instead of the normal one;
-			this can be generated from the normal ground truth using generateGTByOptimization.py or generateReinitGTByOptimization.py scripts in PTF;
-		Possible Values:
-			0: Disable
-			1: Enable
-			
-	 Parameter:	'opt_gt_ssm'
-		Description:
-			SSM corresponding to the optimized low DOF ground truth that is to be used;
-			only matters if 'use_opt_gt' is enabled;
-			
-	 Parameter:	'use_reinit_gt'
-		Description:
-			use reinitialization ground truth instead of the normal one;
-			this only differs from normal ground truth is optimized low DOF ground truth is being used, i.e. if use_opt_gt is enabled too;
-			this can be generated from the normal ground truth using generateReinitGTByOptimization.py script in PTF;
-		Possible Values:
-			0: Disable
-			1: Enable
-			
-	 Parameter:	'reinit_gt_from_bin'
-		Description:
-			read reinitialization ground truth from binary file instead of ASCII text files;
-			this can be generated from the normal ground truth using generateReinitGTByOptimization.py script in PTF;
-		Possible Values:
-			0: Disable
-			1: Enable
-		Applies to:
-			runMTF
+			runMTF	
 			
 	 Parameter:	'reset_template'
 		Description:
@@ -609,8 +629,8 @@ General parameters for example executables:
 			if non-zero, the this is taken to be the size of the object to be tracked so that the user can simply click at the center to select a square bounding box of this size around the clicked point; if this is zero, the user must provide all 4 corners of the bounding box; only matters if a user-selected object is to be tracked, i.e. when using live/camera input or when the ground truth is not available or if read_obj_from_file and read_obj_from_gt are disabled;
 
 			
-MTF Tracker specific parameters:
-================================
+Tracker specific parameters:
+============================
 	 Parameter:	'mtf_sm'
 		Description:
 			Search method to use for the MTF tracker or the name of the third party tracker
@@ -771,27 +791,8 @@ MTF Tracker specific parameters:
 	 Parameter:	'res_from_size'
 		Description:
 			set the horizontal and vertical sampling resolutions equal to the actual size of the object selected for tracking;
-			overrides the last two parameters;
+			overrides the last two parameters; 
 
-	 Parameter:	'line_thickness'
-		Description:
-			thickness of the line used for drawing the bounding box that represents the current location of the tracker and/or the ground truth
-		Applies to:
-			all examples
-			
-	 Parameter:	'show_corner_ids'
-		Description:
-			show the numerical ID of each bounding box corner along with drawing the box itself; these IDs are 0-based and increase anti clockwise starting from the top left corner;
-			note that this convention is defined with respect to the initial orientation of the object; if the object rotates in the course of being tracked, the corner with ID 0 might no longer remain in the top left of its new orientation;
-		Applies to:
-			all examples
-	 
-	 Parameter:	'sel_quad_obj'
-		Description:
-			select an arbitrary quadrilateral as the bounding box that defines the object to be tracked; this involves selecting the 4 corners by clicking at each; if disables, a rectangular object is selected instead by clicking on its two opposite corners;
-			only matters if a live/camera video stream is used or object selection from ground truth is disabled
-		Applies to:
-			all examples
 			
 	 Parameter:	'enable_learning'
 		Description:
