@@ -876,7 +876,7 @@ Anisotropic Diffusion Preprocessor:
 ===================================
 	 Parameter:	'aniso_lambda'
 		Description:
-			learning rate
+			integration constant
 			
 	 Parameter:	'aniso_kappa'
 		Description:
