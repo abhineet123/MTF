@@ -1123,7 +1123,7 @@ Forward Compositional Lucas Kanade (FCLK) SM:
 
 	 Parameter:	'fc_write_ssm_updates'
 		Description:
-			write the state update computed in each iteration to a text file named 'fc_ssm_updates.txt' in a sub directory called 'log' in the current working directory;
+			write the SSM state update computed in each iteration of each frame to a text file named 'fc_ssm_updates.txt' in a sub directory called 'log' in the current working directory;
 			only works with NT version of the SM;
 			
 Nearest Neighbour (NN) SM:
