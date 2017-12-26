@@ -11,30 +11,26 @@
 	assert(warp(2, 2) == 1)
 
 #define ASRT_NORMALIZED_INIT false
-#define ASRT_GEOM_SAMPLING true
 #define ASRT_PT_BASED_SAMPLING 0
 #define ASRT_DEBUG_MODE 0
 
 _MTF_BEGIN_NAMESPACE
 
 ASRTParams::ASRTParams(const SSMParams *ssm_params,
-bool _normalized_init, bool _geom_sampling,
-int _pt_based_sampling, bool _debug_mode) :
+bool _normalized_init, int _pt_based_sampling,
+bool _debug_mode) :
 SSMParams(ssm_params),
 normalized_init(_normalized_init),
-geom_sampling(_geom_sampling),
 pt_based_sampling(_pt_based_sampling),
 debug_mode(_debug_mode){}
 
 ASRTParams::ASRTParams(const ASRTParams *params) :
 SSMParams(params),
 normalized_init(ASRT_NORMALIZED_INIT),
-geom_sampling(ASRT_GEOM_SAMPLING),
 pt_based_sampling(ASRT_PT_BASED_SAMPLING),
 debug_mode(ASRT_DEBUG_MODE){
 	if(params){
 		normalized_init = params->normalized_init;
-		geom_sampling = params->geom_sampling;
 		pt_based_sampling = params->pt_based_sampling;
 		debug_mode = params->debug_mode;
 	}
@@ -49,7 +45,6 @@ params(_params){
 	printf("resx: %d\n", resx);
 	printf("resy: %d\n", resy);
 	printf("normalized_init: %d\n", params.normalized_init);
-	printf("geom_sampling: %d\n", params.geom_sampling);
 	printf("pt_based_sampling: %d\n", params.pt_based_sampling);
 	printf("debug_mode: %d\n", params.debug_mode);
 

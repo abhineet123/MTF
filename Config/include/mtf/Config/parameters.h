@@ -247,7 +247,6 @@ namespace mtf{
 
 		//! ASRT
 		bool asrt_normalized_init = false;
-		bool asrt_geom_sampling = true;
 		int asrt_pt_based_sampling = 0;
 
 		//! Similitude
@@ -1586,10 +1585,6 @@ namespace mtf{
 			//! ASRT
 			if(!strcmp(arg_name, "asrt_normalized_init")){
 				asrt_normalized_init = atoi(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "asrt_geom_sampling")){
-				asrt_geom_sampling = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "asrt_pt_based_sampling")){

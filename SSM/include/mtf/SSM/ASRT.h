@@ -9,12 +9,11 @@ _MTF_BEGIN_NAMESPACE
 
 struct ASRTParams : SSMParams{
 	bool normalized_init;
-	bool geom_sampling;
 	int pt_based_sampling;
 	bool debug_mode;
 	ASRTParams(const SSMParams *ssm_params, 
-		bool _normalized_init, bool _geom_sampling,
-		int pt_based_sampling, bool _debug_mode);
+		bool _normalized_init, int pt_based_sampling,
+		bool _debug_mode);
 	ASRTParams(const ASRTParams *params = nullptr);
 };
 

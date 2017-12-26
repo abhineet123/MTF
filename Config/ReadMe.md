@@ -868,9 +868,11 @@ Affine SSM:
 			use point based sampling for stochastic SMs; this is performed by adding a random perturbation to the x,y coordinates of three points - bottom left, bottom right and top center of the bounding box - and then computing the corresponding affine transformation w.r.t. to the original points using DLT;
 			if this is disabled, then geometric warping is used where the affine transformation is decomposed into six constituent transforms and a random perturbation is added to each;
 		Possible Values:
-			0: Disable
-			1: Enable
+			0: Disable (use geometric sampling)
+			1: Enable (use standard point based sampling)
 			2: modified version of point based sampling where the perturbation is performed in two steps: first 6 different random numbers generated from the same distribution are added to the x,y coordinates of the three points, then 2 numbers generated from a second distribution are added to all points to produce a consistent translation; 
+		Additional References:
+			This paper presents details of the geometric sampling process: D. A. Ross, J. Lim, R.-S. Lin, and M.-H. Yang, “Incremental Learning for Robust Visual Tracking,” IJCV, vol. 77, no. 1-3, pp. 125–141, 2008
 
 Anisotropic Diffusion Preprocessor:
 ===================================
@@ -886,12 +888,25 @@ Anisotropic Diffusion Preprocessor:
 		Description:
 			number of iterations
 			
-	 Note:	Please refer to the following sources for more information on these parameters:
+	 Additional References:
 		Paper:
 			'Scale-Space and Edge Detection using Anisotropic Diffusion', Pietro Perona and Jitendra Malik, IEEE Transactions on Pattern Analysis and Machine Intelligence, VOL. 12, NO. 7, JULY 1990
 		Web:
 			http://ishankgulati.github.io/posts/Anisotropic-(Perona-Malik)-Diffusion/
 			https://www.mathworks.com/matlabcentral/fileexchange/14995-anisotropic-diffusion--perona---malik-
+
+Anisotropic Scaling, Rotation and Translation (ASRT) SSM:
+=========================================================
+	 Parameter:	'asrt_normalized_init'
+		Description:
+			use normalized initial bounding box with respect to which all subsequent transformations are computed;
+			the normalized box is a unit square centered at the origin;
+			using this can sometimes produce better performance with some LK type SMs;
+			
+	 Parameter:	'asrt_pt_based_sampling'
+		Description:
+			use point based sampling for stochastic SMs; refer 'aff_pt_based_sampling' for details;
+			geometric sampling in this case involves adding different perturbation directly to the 5 state parameters of this SSM unlike affine where a specialized geometric representation is used instead;
 
 			
 Efficient Second order Minimization (ESM) SM:
