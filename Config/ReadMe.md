@@ -1188,6 +1188,10 @@ Feature Tracker:
 		Description:
 			enable printing and writing of debugging data	
 			
+	 Note:	
+		these Grid Tracker parameters are shared by the feature tracker: 'grid_res', 'grid_patch_size', 'grid_reset_at_each_frame';
+		in addition, 'max_iters' and 'epsilon' are also shared;
+			
 Gaussian Filtering Preprocessor:
 ================================
 	 Parameter:	'gauss_kernel_size'

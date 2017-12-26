@@ -632,7 +632,7 @@ TrackerBase *getTracker(const char *sm_type,
 #ifndef DISABLE_FEAT
 	if(!strcmp(sm_type, "feat")){
 		bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
-		FeatureTrackerParams grid_params(
+		FeatureTrackerParams feat_params(
 			grid_res, grid_res, grid_patch_size, grid_patch_size, grid_reset_at_each_frame,
 			static_cast<FeatureTrackerParams::DetectorType>(feat_detector_type),
 			static_cast<FeatureTrackerParams::DescriptorType>(feat_descriptor_type),
@@ -642,9 +642,9 @@ TrackerBase *getTracker(const char *sm_type,
 		SIFTParams sift_params(sift_n_features, sift_n_octave_layers,
 			sift_contrast_thresh, sift_edge_thresh, sift_sigma);
 		typename SSMType::ParamType _ssm_params(ssm_params);
-		_ssm_params.resx = grid_params.getResX();
-		_ssm_params.resy = grid_params.getResY();
-		return new FeatureTracker<SSMType>(&grid_params, &sift_params,
+		_ssm_params.resx = feat_params.getResX();
+		_ssm_params.resy = feat_params.getResY();
+		return new FeatureTracker<SSMType>(&feat_params, &sift_params,
 			getFLANNParams().get(), getSSMEstParams().get(), &_ssm_params);
 	}
 #endif
