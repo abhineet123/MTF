@@ -908,6 +908,22 @@ Anisotropic Scaling, Rotation and Translation (ASRT) SSM:
 			use point based sampling for stochastic SMs; refer 'aff_pt_based_sampling' for details;
 			geometric sampling in this case involves adding different perturbation directly to the 5 state parameters of this SSM unlike affine where a specialized geometric representation is used instead;
 
+Bilateral Filtering Preprocessor:
+================================
+	 Parameter:	'bil_diameter'
+		Description:
+			diameter of each pixel neighbourhood that is used during filtering. If it is non-positive, it is computed from sigmaSpace
+			
+	 Parameter:	'bil_sigma_col'
+		Description:
+			filter sigma in the color space. A larger value of the parameter means that farther colors within the pixel neighborhood will be mixed together, resulting in larger areas of semi-equal color.
+			
+	 Parameter:	'bil_sigma_space'
+		Description:
+			filter sigma in the coordinate space. A larger value of the parameter means that farther pixels will influence each other as long as their colors are close enough. When bil_diameter>0 , it specifies the neighborhood size regardless of bil_sigma_space. Otherwise, bil_diameter is proportional to bil_sigma_space
+			
+	 Additional References:
+		https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#bilateralfilter
 			
 Efficient Second order Minimization (ESM) SM:
 =============================================
