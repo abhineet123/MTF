@@ -1081,22 +1081,26 @@ Forward Additive Lucas Kanade (FALK) SM:
 		Description:
 			show the sampled grid of points warped using the current transformation;
 			these are the (integral approximation to) points at which pixel values are extracted;
+			only works with NT version of the SM;
 			
 	 Parameter:	'fa_show_patch'
 		Description:
 			show the image patch corresponding to the tracked object in the top left corner of the image;
 			only matters if 'fa_show_grid' is enabled;
+			only works with NT version of the SM;
 
-	 Parameter:	'fa_patch_resize_factor'
+			Parameter:	'fa_patch_resize_factor'
 		Description:
 			multiplicative factor by which the image patch is resized before being drawn onto the image;
 			by default, the patch size is equal to the sampling resolution so this parameter can be used to make the patch more visible;
 			only matters if 'fa_show_grid' and 'fa_show_patch' are enabled;	
+			only works with NT version of the SM;
 			
 	 Parameter:	'fa_write_frames'
 		Description:
 			write the tracked frames with the point grid and image patch drawn onto it to JPEG files;
 			only matters if 'fa_show_grid' is enabled;
+			only works with NT version of the SM;			
 
 Nearest Neighbour (NN) SM:
 ==========================
