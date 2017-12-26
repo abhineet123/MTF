@@ -181,7 +181,7 @@ namespace utils{
 		printf("Using Median Filtering with:\n");
 		printf("kernel_size: %d\n", kernel_size);
 	}
-	NormalizedBoxFltering::NormalizedBoxFltering(int _output_type , double _resize_factor,
+	NormalizedBoxFiltering::NormalizedBoxFiltering(int _output_type , double _resize_factor,
 		bool _hist_eq,	int _kernel_size) :
 		PreProcBase(_output_type, _resize_factor, _hist_eq), kernel_size(_kernel_size, _kernel_size){
 		printf("Using Normalized Box Fltering with:\n");

@@ -82,7 +82,7 @@ inline utils::PreProcBase* createPreProc(int output_type, const std::string &_pr
 	} else if(_pre_proc_type_num == 2 || _pre_proc_type == "med"){
 		return new utils::MedianFiltering(output_type, img_resize_factor, pre_proc_hist_eq, med_kernel_size);
 	} else if(_pre_proc_type_num == 3 || _pre_proc_type == "box"){
-		return new utils::NormalizedBoxFltering(output_type, img_resize_factor, pre_proc_hist_eq, box_kernel_size);
+		return new utils::NormalizedBoxFiltering(output_type, img_resize_factor, pre_proc_hist_eq, box_kernel_size);
 	} else if(_pre_proc_type_num == 4 || _pre_proc_type == "bil"){
 		return new utils::BilateralFiltering(output_type, img_resize_factor, pre_proc_hist_eq,
 			bil_diameter, bil_sigma_col, bil_sigma_space);
