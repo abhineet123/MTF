@@ -1221,6 +1221,162 @@ Forward Compositional Steepest Descent:
 		Description:
 			learning rate for iteratively computing the SSM state update from the Jacobian;
 			
+			
+GridTracker and RKLT:
+===================== 
+	 Parameter:	'grid_sm' / 'grid_am' / 'grid_ssm'
+		Description:
+			Search method, appearance model and state space model for the individual patch trackers used by the Grid Tracker
+				providing 'cv' for grid_sm will run GridTrackerCV that uses OpenCV KLT trackers instead of MTF trackers as patch trackers
+				providing 'pyr' for grid_sm will cause each patch tracker to run on an image pyramid, the settings for which will be taken from the parameters for PyramidalTracker; 
+					a time saving measure employed in this case is to construct the image pyramid only once and share it amongst all the patch trackers;
+			
+	 Parameter:	'grid_res'
+		Description:
+			resolution of the grid into which the object is divided so that no. of patch trackers = grid_grid_res*grid_grid_res
+			
+	 Parameter:	'grid_patch_size'
+		Description:
+			size of the patch used for each sub tracker	in the grid
+			
+	 Parameter:	'grid_patch_res'
+		Description:
+			sampling resolution for each sub tracker; if it is set to 0, the sampling resolution is set equal to the patch size	
+			
+	 Parameter:	'grid_dyn_patch_size'
+		Description:
+			set to 1 to dynamically adjust the patch sizes based on the size of the overall object bounding box by dividing it evenly; 
+			the individual patches in this case are no longer rectangular;
+		
+	 Parameter:	'grid_reset_at_each_frame'
+		Description:
+			specify the level of resetting applied to the patch trackers at each frame based on the estimated location of the larger bounding box;
+		Possible Values:
+			0:	No resetting
+			1:	Reset both current location and template, i.e. reinitialize the trackers
+			2:	Reset only current location	(not available for GridTrackerCV and GridTrackerFlow)	
+			
+	 Parameter:	'grid_patch_centroid_inside'
+		Description:
+			set to 1 to initialize/reset all patch trackers such that their centroids lie completely inside the larger bounding box;
+			if set to 0, centroids of some of the trackers will lie on the edges of the bounding box so that part of the corresponding patches will be outside it;
+			
+	 Parameter:	'grid_fb_err_thresh'
+		Description:
+			error threshold for deciding tracking failures using the forward backward method;
+			first the points are tracked from the previous to the current frame;
+			results of this are then tracked back to the previous frame;
+			error is measured between the initial points during forward tracking and the final points during backward tracking;
+			setting this to <=0 disables this method of failure detection;		
+			
+	 Parameter:	'grid_fb_reinit'
+		Description:
+			reinitialize trackers in the current frame before tracking backwards to the last one;
+			does not apply to OpenCV grid tracker;		
+			
+	 Parameter:	'grid_show_trackers'
+		Description:
+			set to 1 to show the locations of all the patch trackers within the larger object patch	where each is marked by the location of its centroid
+			
+	 Parameter:	'grid_show_tracker_edges'
+		Description:
+			set to 1 to also show the edges of the bounding box representing each patch tracker (in addition to its centroid)
+			does not apply to OpenCV grid tracker;
+			
+	 Parameter:	'grid_use_tbb'
+		Description:
+			set to 1 to enable parallelization 	of the patch trackers using Intel TBB library
+			
+	 Parameter:	'grid_rgb_input'
+		Description:
+			set to 1 to use 3 channel RGB images as input to the OpenCV grid tracker;
+			only matters if 'grid_sm'is set to 'cv';
+			
+	 Parameter:	'grid_pyramid_levels'
+		Description:
+			number of levels in the image pyramids used by the OpenCV grid tracker;
+			only matters if 'grid_sm'is set to 'cv';
+			
+	 Parameter:	'grid_use_min_eig_vals'
+		Description:
+			use minimum eigen values as an error measure in the OpenCV grid tracker;	
+			only matters if 'grid_sm'is set to 'cv';
+			
+	 Parameter:	'grid_min_eig_thresh'
+		Description:
+			threshold for minimum eigen value of a 2x2 normal matrix of optical flow equations to filter out grid points in the OpenCV grid tracker;
+			only matters if 'grid_sm'is set to 'cv';
+			more details of this and the previous parameter can be found at: http://docs.opencv.org/2.4/modules/video/doc/motion_analysis_and_object_tracking.html#calcopticalflowpyrlk
+RKLT:
+=====
+	 Parameter:	'rkl_sm'
+		Description:
+			SM for the template tracker used by RKLT; the corresponding AM and SSM are specified by 'mtf_am' and 'mtf_ssm' respectively;
+			
+	 Parameter:	'rkl_enable_spi'
+		Description:
+			enable selective pixel integration where the template tracker is updated using only those pixels that are deemed inliers by the robust estimation method;
+			this only works if both the AM and SSM of the template tracker support SPI;	
+			if enabled, the sampling resolution of the template tracker is set equal to the grid size (as specified by 'gt_grid_res');
+			
+	 Parameter:	'rkl_enable_feedback'
+		Description:
+			reset the grid tracker to the location of the template tracker at each frame;
+			
+	 Parameter:	'rkl_failure_detection'
+		Description:
+			set to 1 to check if the template tracker has failed and ignore its output if so; 
+			this check is done by comparing the L2 norm of the difference in corners provided by the template tracker and the grid tracker with the failure threshold (specified by 'rkl_failure_thresh') 			
+	 
+	 Parameter:	'rkl_failure_thresh'
+		Description:
+			threshold to decide if the template tracker has failed; only matters if 'rkl_failure_detection' is enabled
+			
+In addition to these parameters, the performance of GridTracker/RKLT is also affected by the following SSM estimator parameters.
+		
+SSM Estimator:
+==============
+	 Parameter:	'est_method'
+		Description:
+			method used to estimate the best fit SSM parameters between the two sets of points representing the centroids of the locations of the patch trackers in two consecutive frames
+		Possible Values:
+			0: RANSAC
+			1: Least Median
+			2: LeastSquares
+			
+	 Parameter:	'est_ransac_reproj_thresh'
+		Description:
+			re-projection error threshold for a point to be considered an outlier by the OpenCV RANSAC  algorithm; 
+			only matters if this method is selected for grid_estimation_method;
+			
+	 Parameter:	'est_n_model_pts'
+		Description:
+			no. of corresponding points to use for least square estimation of SSM parameters
+			
+	 Parameter:	'est_max_iters'
+		Description:
+			maximum iterations for the robust estimator (RANSAC or Least Median)
+			
+	 Parameter:	'est_max_subset_attempts'
+		Description:
+			maximum attempts made to generate each valid point subset from which a candidate warp is estimated; 
+			if none is found in these many attempts, the RANSAC or LMS procedure will be terminated and the best warp found so far will be returned;	
+			
+	 Parameter:	'est_use_boost_rng'
+		Description:
+			Use the random number generator in boost library rather than the one in OpenCV;		
+			
+	 Parameter:	'est_confidence'
+		Description:
+			confidence threshold for the robust estimator 
+			
+	 Parameter:	'est_refine'
+		Description:
+			refine the parameters estimated by the robust method using a few iterations of Levenberg Marquardt algorithm 
+			
+	 Parameter:	'est_lm_max_iters'
+		Description:
+			no. of iterations to use for the optional Levenberg Marquardt refinement step if it is enabled; 
 
 Nearest Neighbour (NN) SM:
 ==========================
@@ -1409,163 +1565,6 @@ Multi Layer PF:
 	 Parameter:	'pfk_ssm_sigma_ids'
 		Description:
 			similar to 'pf_ssm_sigma_ids' except it must be provided for each layer of the tracker separately;
-			
-GridTracker and RKLT:
-===================== 
-	 Parameter:	'grid_sm' / 'grid_am' / 'grid_ssm'
-		Description:
-			Search method, appearance model and state space model for the individual patch trackers used by the Grid Tracker
-				providing 'cv' for grid_sm will run GridTrackerCV that uses OpenCV KLT trackers instead of MTF trackers as patch trackers
-				providing 'pyr' for grid_sm will cause each patch tracker to run on an image pyramid, the settings for which will be taken from the parameters for PyramidalTracker; 
-					a time saving measure employed in this case is to construct the image pyramid only once and share it amongst all the patch trackers;
-			
-	 Parameter:	'grid_res'
-		Description:
-			resolution of the grid into which the object is divided so that no. of patch trackers = grid_grid_res*grid_grid_res
-			
-	 Parameter:	'grid_patch_size'
-		Description:
-			size of the patch used for each sub tracker	in the grid
-			
-	 Parameter:	'grid_patch_res'
-		Description:
-			sampling resolution for each sub tracker; if it is set to 0, the sampling resolution is set equal to the patch size	
-			
-	 Parameter:	'grid_dyn_patch_size'
-		Description:
-			set to 1 to dynamically adjust the patch sizes based on the size of the overall object bounding box by dividing it evenly; 
-			the individual patches in this case are no longer rectangular;
-		
-	 Parameter:	'grid_reset_at_each_frame'
-		Description:
-			specify the level of resetting applied to the patch trackers at each frame based on the estimated location of the larger bounding box;
-		Possible Values:
-			0:	No resetting
-			1:	Reset both current location and template, i.e. reinitialize the trackers
-			2:	Reset only current location	(not available for GridTrackerCV and GridTrackerFlow)	
-			
-	 Parameter:	'grid_patch_centroid_inside'
-		Description:
-			set to 1 to initialize/reset all patch trackers such that their centroids lie completely inside the larger bounding box;
-			if set to 0, centroids of some of the trackers will lie on the edges of the bounding box so that part of the corresponding patches will be outside it;
-			
-	 Parameter:	'grid_fb_err_thresh'
-		Description:
-			error threshold for deciding tracking failures using the forward backward method;
-			first the points are tracked from the previous to the current frame;
-			results of this are then tracked back to the previous frame;
-			error is measured between the initial points during forward tracking and the final points during backward tracking;
-			setting this to <=0 disables this method of failure detection;		
-			
-	 Parameter:	'grid_fb_reinit'
-		Description:
-			reinitialize trackers in the current frame before tracking backwards to the last one;
-			does not apply to OpenCV grid tracker;		
-			
-	 Parameter:	'grid_show_trackers'
-		Description:
-			set to 1 to show the locations of all the patch trackers within the larger object patch	where each is marked by the location of its centroid
-			
-	 Parameter:	'grid_show_tracker_edges'
-		Description:
-			set to 1 to also show the edges of the bounding box representing each patch tracker (in addition to its centroid)
-			does not apply to OpenCV grid tracker;
-			
-	 Parameter:	'grid_use_tbb'
-		Description:
-			set to 1 to enable parallelization 	of the patch trackers using Intel TBB library
-			
-	 Parameter:	'grid_rgb_input'
-		Description:
-			set to 1 to use 3 channel RGB images as input to the OpenCV grid tracker;
-			only matters if 'grid_sm'is set to 'cv';
-			
-	 Parameter:	'grid_pyramid_levels'
-		Description:
-			number of levels in the image pyramids used by the OpenCV grid tracker;
-			only matters if 'grid_sm'is set to 'cv';
-			
-	 Parameter:	'grid_use_min_eig_vals'
-		Description:
-			use minimum eigen values as an error measure in the OpenCV grid tracker;	
-			only matters if 'grid_sm'is set to 'cv';
-			
-	 Parameter:	'grid_min_eig_thresh'
-		Description:
-			threshold for minimum eigen value of a 2x2 normal matrix of optical flow equations to filter out grid points in the OpenCV grid tracker;
-			only matters if 'grid_sm'is set to 'cv';
-			more details of this and the previous parameter can be found at: http://docs.opencv.org/2.4/modules/video/doc/motion_analysis_and_object_tracking.html#calcopticalflowpyrlk
-RKLT:
-=====
-	 Parameter:	'rkl_sm'
-		Description:
-			SM for the template tracker used by RKLT; the corresponding AM and SSM are specified by 'mtf_am' and 'mtf_ssm' respectively;
-			
-	 Parameter:	'rkl_enable_spi'
-		Description:
-			enable selective pixel integration where the template tracker is updated using only those pixels that are deemed inliers by the robust estimation method;
-			this only works if both the AM and SSM of the template tracker support SPI;	
-			if enabled, the sampling resolution of the template tracker is set equal to the grid size (as specified by 'gt_grid_res');
-			
-	 Parameter:	'rkl_enable_feedback'
-		Description:
-			reset the grid tracker to the location of the template tracker at each frame;
-			
-	 Parameter:	'rkl_failure_detection'
-		Description:
-			set to 1 to check if the template tracker has failed and ignore its output if so; 
-			this check is done by comparing the L2 norm of the difference in corners provided by the template tracker and the grid tracker with the failure threshold (specified by 'rkl_failure_thresh') 			
-	 
-	 Parameter:	'rkl_failure_thresh'
-		Description:
-			threshold to decide if the template tracker has failed; only matters if 'rkl_failure_detection' is enabled
-			
-In addition to these parameters, the performance of GridTracker/RKLT is also affected by the following SSM estimator parameters.
-		
-SSM Estimator:
-==============
-	 Parameter:	'est_method'
-		Description:
-			method used to estimate the best fit SSM parameters between the two sets of points representing the centroids of the locations of the patch trackers in two consecutive frames
-		Possible Values:
-			0: RANSAC
-			1: Least Median
-			2: LeastSquares
-			
-	 Parameter:	'est_ransac_reproj_thresh'
-		Description:
-			re-projection error threshold for a point to be considered an outlier by the OpenCV RANSAC  algorithm; 
-			only matters if this method is selected for grid_estimation_method;
-			
-	 Parameter:	'est_n_model_pts'
-		Description:
-			no. of corresponding points to use for least square estimation of SSM parameters
-			
-	 Parameter:	'est_max_iters'
-		Description:
-			maximum iterations for the robust estimator (RANSAC or Least Median)
-			
-	 Parameter:	'est_max_subset_attempts'
-		Description:
-			maximum attempts made to generate each valid point subset from which a candidate warp is estimated; 
-			if none is found in these many attempts, the RANSAC or LMS procedure will be terminated and the best warp found so far will be returned;	
-			
-	 Parameter:	'est_use_boost_rng'
-		Description:
-			Use the random number generator in boost library rather than the one in OpenCV;		
-			
-	 Parameter:	'est_confidence'
-		Description:
-			confidence threshold for the robust estimator 
-			
-	 Parameter:	'est_refine'
-		Description:
-			refine the parameters estimated by the robust method using a few iterations of Levenberg Marquardt algorithm 
-			
-	 Parameter:	'est_lm_max_iters'
-		Description:
-			no. of iterations to use for the optional Levenberg Marquardt refinement step if it is enabled; 
-
 			
 Pyramidal Tracker:
 ==================
