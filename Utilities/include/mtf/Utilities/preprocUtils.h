@@ -83,8 +83,8 @@ namespace utils{
 	private:
 		int kernel_size;
 	};
-	struct NormalizedBoxFltering : public PreProcBase{
-		NormalizedBoxFltering(
+	struct NormalizedBoxFiltering : public PreProcBase{
+		NormalizedBoxFiltering(
 			int _output_type = CV_32FC1, double _resize_factor = 1, bool _hist_eq = false,
 			int _kernel_size = 5);
 		void apply(cv::Mat &img_gs) const override{

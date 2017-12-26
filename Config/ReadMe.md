@@ -912,7 +912,7 @@ Bilateral Filtering Preprocessor:
 ================================
 	 Parameter:	'bil_diameter'
 		Description:
-			diameter of each pixel neighbourhood that is used during filtering. If it is non-positive, it is computed from sigmaSpace
+			diameter of each pixel neighbourhood that is used during filtering. If it is non-positive, it is computed from bil_sigma_space.
 			
 	 Parameter:	'bil_sigma_col'
 		Description:
@@ -920,11 +920,21 @@ Bilateral Filtering Preprocessor:
 			
 	 Parameter:	'bil_sigma_space'
 		Description:
-			filter sigma in the coordinate space. A larger value of the parameter means that farther pixels will influence each other as long as their colors are close enough. When bil_diameter>0 , it specifies the neighborhood size regardless of bil_sigma_space. Otherwise, bil_diameter is proportional to bil_sigma_space
+			filter sigma in the coordinate space. A larger value of the parameter means that farther pixels will influence each other as long as their colors are close enough. When bil_diameter>0 , it specifies the neighborhood size regardless of bil_sigma_space. Otherwise, bil_diameter is proportional to bil_sigma_space.
 			
 	 Additional References:
 		https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#bilateralfilter
-			
+		
+		
+Normalized Box Filtering Preprocessor:
+======================================
+	 Parameter:	'box_kernel_size'
+		Description:
+			filter kernel size		
+		
+	 Additional References:
+		https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#blur
+
 Efficient Second order Minimization (ESM) SM:
 =============================================
 	 Parameter:	'esm_jac_type'
