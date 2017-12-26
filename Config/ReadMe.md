@@ -999,7 +999,41 @@ Cross Cumulative Residual Entropy (CCRE) AM:
 	 
 	 Additional References:
 		Wang, F. & Vemuri, B. C. Non-rigid multi-modal image registration using cross-cumulative residual entropy IJCV, Springer, 2007, 74, 201-215			
+
+Deep Feature Maps (DFM) AM:
+===========================
+	 Parameter:	'dfm_nfmaps'
+		Description:
+			no. of feature maps 
 			
+	 Parameter:	'dfm_layer_name'
+		Description:
+			TBA
+			
+	 Parameter:	'dfm_vis'
+		Description:
+			TBA
+			
+	 Parameter:	'dfm_zncc'
+		Description:
+			TBA
+			
+	 Parameter:	'dfm_model_f_name'
+		Description:
+			path of the .prototxt file from where trained model is to be loaded
+			
+	 Parameter:	'dfm_params_f_name'
+		Description:
+			path of the .caffemodel file from where Caffe parameters are to be loaded
+			
+	 Parameter:	'dfm_mean_f_name'
+		Description:
+			path of the .binaryproto file
+			
+	 Additional References:
+		Mennatullah Siam, "CNN Based Appearance Model with Approximate Nearest Neigbour Search", Project Report, 2016
+		http://webdocs.cs.ualberta.ca/~vis/mtf/dfm_report.pdf
+		
 Efficient Second order Minimization (ESM) SM:
 =============================================
 	 Parameter:	'esm_jac_type'
