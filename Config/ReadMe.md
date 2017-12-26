@@ -1209,6 +1209,13 @@ Gaussian Filtering Preprocessor:
 	 Additional References:
 		https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#gaussianblur	
 		
+Gain & Bias (GB) ILM:
+=====================
+	 Parameter:	'gb_additive_update'
+		Description:
+			use additive instead of compositional updates for updating the ILM parameters;
+			
+		
 Nearest Neighbour (NN) SM:
 ==========================
 	 Parameter:	'nn_max_iters'
