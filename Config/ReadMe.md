@@ -900,9 +900,8 @@ Anisotropic Scaling, Rotation and Translation (ASRT) SSM:
 	 Parameter:	'asrt_normalized_init'
 		Description:
 			use normalized initial bounding box with respect to which all subsequent transformations are computed;
-			the normalized box is a unit square centered at the origin;
-			using this can sometimes produce better performance with some LK type SMs;
-			
+			refer 'aff_normalized_init' for more details;
+		
 	 Parameter:	'asrt_pt_based_sampling'
 		Description:
 			use point based sampling for stochastic SMs; refer 'aff_pt_based_sampling' for details;
@@ -958,6 +957,18 @@ Cascade Tracker/SM:
 	 Parameter:	'casc_reinit_frame_gap'
 		Description:
 			no. of frames before the one in which failure is detected where the tracker is reinitialized;
+
+Corner Based Homography SSM:
+============================
+	 Parameter:	'cbh_grad_eps'
+		Description:
+			offset used for computing the numerical estimate of the first gradient (or Jacobian) of the transformation w.r.t. pixel locations; this is the distance(in x or y direction) between the pixel locations that are used in the method of central differences; 
+			
+	 Parameter:	'cbh_normalized_init'
+		Description:
+			use normalized initial bounding box with respect to which all subsequent transformations are computed;
+			refer 'aff_normalized_init' for more details;
+			
 			
 Efficient Second order Minimization (ESM) SM:
 =============================================
