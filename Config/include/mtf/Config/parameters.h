@@ -416,7 +416,7 @@ namespace mtf{
 		double riu_likelihood_alpha = 50.0;
 
 		//! Gradient Descent
-		double gd_learning_rate = 0.1;
+		double sd_learning_rate = 0.1;
 
 		//! Gain and Bias Illumination Model
 		bool gb_additive_update = false;
@@ -2575,8 +2575,8 @@ namespace mtf{
 				return;
 			}
 			//! Gradient Descent
-			if(!strcmp(arg_name, "gd_learning_rate")){
-				gd_learning_rate = atof(arg_val);
+			if(!strcmp(arg_name, "sd_learning_rate")){
+				sd_learning_rate = atof(arg_val);
 				return;
 			}
 			//! Gain and Bias Illumination Model

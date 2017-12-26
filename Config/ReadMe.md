@@ -1215,7 +1215,13 @@ Gain & Bias (GB) ILM:
 		Description:
 			use additive instead of compositional updates for updating the ILM parameters;
 			
-		
+Forward Compositional Steepest Descent:
+=======================================
+	 Parameter:	'sd_learning_rate'
+		Description:
+			learning rate for iteratively computing the SSM state update from the Jacobian;
+			
+
 Nearest Neighbour (NN) SM:
 ==========================
 	 Parameter:	'nn_max_iters'
