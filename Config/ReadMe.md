@@ -1066,6 +1066,37 @@ Efficient Second order Minimization (ESM) SM:
 		Description:
 			Fraction of the maximum residual used as threshold for rejecting pixels;
 			only matters if esm_spi_enable	is enabled;	
+			
+Forward Additive Lucas Kanade (FALK) SM:
+========================================
+	 Parameter:	'fa_hess_type'
+		Description:
+			type of Hessian to be used with ESM
+		Possible Values:
+			0:	Inverse/initial Self (or extended Gauss Newton) Hessian
+			1:	Forward/current Self (or extended Gauss Newton) Hessian
+			2:	Standard or Forward Newton Hessian
+			
+	 Parameter:	'fa_show_grid'
+		Description:
+			show the sampled grid of points warped using the current transformation;
+			these are the (integral approximation to) points at which pixel values are extracted;
+			
+	 Parameter:	'fa_show_patch'
+		Description:
+			show the image patch corresponding to the tracked object in the top left corner of the image;
+			only matters if 'fa_show_grid' is enabled;
+
+	 Parameter:	'fa_patch_resize_factor'
+		Description:
+			multiplicative factor by which the image patch is resized before being drawn onto the image;
+			by default, the patch size is equal to the sampling resolution so this parameter can be used to make the patch more visible;
+			only matters if 'fa_show_grid' and 'fa_show_patch' are enabled;	
+			
+	 Parameter:	'fa_write_frames'
+		Description:
+			write the tracked frames with the point grid and image patch drawn onto it to JPEG files;
+			only matters if 'fa_show_grid' is enabled;
 
 Nearest Neighbour (NN) SM:
 ==========================
