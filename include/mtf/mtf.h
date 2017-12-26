@@ -1222,7 +1222,7 @@ inline nt::SearchMethod *getSM(const char *sm_type,
 		leven_marq = true;
 		return new nt::IALK(am, ssm, getIALKParams().get());
 	} else if(!strcmp(sm_type, "fcsd")){
-		FCSDParams fcsd_params(max_iters, epsilon, gd_learning_rate,
+		FCSDParams fcsd_params(max_iters, epsilon, sd_learning_rate,
 			debug_mode, fc_hess_type);
 		return new nt::FCSD(am, ssm, &fcsd_params);
 	} else if(!strcmp(sm_type, "pf")){
