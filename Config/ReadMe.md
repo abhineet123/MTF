@@ -1042,6 +1042,7 @@ Efficient Second order Minimization (ESM) SM:
 		Possible Values:
 			0: Original formulation where it is computed using the mean of gradients
 			1: Extended formulation where it is the difference between the forward and inverse Jacobians
+			
 	 Parameter:	'esm_hess_type'
 		Description:
 			type of Hessian to be used with ESM
@@ -1052,12 +1053,15 @@ Efficient Second order Minimization (ESM) SM:
 			3:	Original formulation where it is computed using the mean of gradients
 			4:	Sum of forward and inverse Newton Hessians
 			5:	Forward Newton Hessian
+			
 	 Parameter:	'esm_chained_warp'
 		Description:
 			use chain rule to compute pixel Jacobian and Hessian
+			
 	 Parameter:	'esm_spi_enable'
 		Description:
 			Enable selective pixel integration by rejecting pixels whose residual is more than the given fraction of the maximum residual
+
 	 Parameter:	'esm_spi_thresh'
 		Description:
 			Fraction of the maximum residual used as threshold for rejecting pixels;
