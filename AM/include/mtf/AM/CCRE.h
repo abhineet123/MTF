@@ -11,7 +11,7 @@ struct CCREParams : AMParams{
 	//! if partition_of_unity is enabled, this should be 2 more than the desired no. of bins (w.r.t normalized pixel range)
 	//! since the actual range within which the pixel values are normalized is 2 less than this value to avoid
 	//!	boundary conditions while computing the contribution of each pixel to different bins by ensuring that pixels with the maximum and
-	//! minimum values contribute to all 4 bins required by the bspl function of degree 3 used here;
+	//! minimum values contribute to all 4 bins required by the b-spline function of degree 3 used here;
 	int n_bins;
 	//! decides whether the partition of unity constraint has to be strictly observed for border bins;
 	//! if enabled, the pixel values will be normalized in the range [1, n_bins-2] so each pixel contributes to all 4 bins

@@ -958,8 +958,8 @@ Cascade Tracker/SM:
 		Description:
 			no. of frames before the one in which failure is detected where the tracker is reinitialized;
 
-Corner Based Homography SSM:
-============================
+Corner Based Homography (CBH) SSM:
+==================================
 	 Parameter:	'cbh_grad_eps'
 		Description:
 			offset used for computing the numerical estimate of the first gradient (or Jacobian) of the transformation w.r.t. pixel locations; this is the distance(in x or y direction) between the pixel locations that are used in the method of central differences; 
@@ -969,6 +969,36 @@ Corner Based Homography SSM:
 			use normalized initial bounding box with respect to which all subsequent transformations are computed;
 			refer 'aff_normalized_init' for more details;
 			
+Cross Cumulative Residual Entropy (CCRE) AM:
+============================================
+	 Parameter:	'ccre_n_bins'
+		Description:
+				no. of bins in the histograms used internally - dimensionality of the CCRE error vector will be n_bins * n_bins; 
+				if partition_of_unity ('ccre_pou') is enabled, this should be 2 more than the desired no. of bins (w.r.t normalized pixel range);
+				this is because the actual range within which the pixel values are normalized is 2 less than this value to avoid boundary conditions while computing the contribution of each pixel to different bins by ensuring that pixels with the maximum and minimum values contribute to all 4 bins required by the b-spline function of degree 3 used here;
+			
+	 Parameter:	'ccre_pre_seed'
+		Description:
+			value with which each histogram bin is pre-seeded to avoid empty bins and the resultant numerical stability issues;
+			
+	 Parameter:	'ccre_pou'
+		Description:
+			decides whether the partition of unity constraint has to be strictly observed for border bins;
+			if enabled, the pixel values will be normalized in the range [1, n_bins-2] so each pixel contributes to all 4 bins.
+			
+	 Parameter:	'ccre_symmetrical_grad'
+		Description:
+			decides if the model is to be symmetrical with respect to initial and current pixel values as far as the gradient and hessian computations are concerned;	
+		Additional References:
+			section 5.2.3.1 of the thesis
+			
+	 Parameter:	'ccre_n_blocks'
+		Description:
+			no. of blocks in which to divide pixel level computations to get better performance with parallelization libraries like TBB and OpenMP; only matters if these are enabled during compilation;
+			if set to 0 (default), this is set equal to the no. of pixels so that each block contains a single pixel
+	 
+	 Additional References:
+		Wang, F. & Vemuri, B. C. Non-rigid multi-modal image registration using cross-cumulative residual entropy IJCV, Springer, 2007, 74, 201-215			
 			
 Efficient Second order Minimization (ESM) SM:
 =============================================
