@@ -1126,6 +1126,68 @@ Forward Compositional Lucas Kanade (FCLK) SM:
 			write the SSM state update computed in each iteration of each frame to a text file named 'fc_ssm_updates.txt' in a sub directory called 'log' in the current working directory;
 			only works with NT version of the SM;
 			
+	 Parameter:	'fc_debug_mode'
+		Description:
+			write additional debugging data to a text file named 'fc_debug.txt' in a sub directory called 'log' in the current working directory;
+			only works with NT version of the SM;
+			
+Feature Tracker:
+================
+	 Parameter:	'feat_detector_type'
+		Description:
+			feature detector type
+		Possible Values:
+			0:	None - an equally spaced grid of points is used instead
+			1:	SIFT
+			2:	SURF
+			3:	FAST
+			4:	HARRIS
+			5:	ORB
+		Note:
+			Only SIFT feature detector is currently implemented
+			
+	 Parameter:	'feat_descriptor_type'
+		Description:
+			feature descriptor type
+		Possible Values:
+			0:	SIFT
+			1:	SURF
+			2:	BRIEF
+			3:	ORB
+		Note:
+			Only SIFT feature descriptor is currently implemented
+			
+	 Parameter:	'feat_max_dist_ratio'
+		Description:
+			maximum ratio between the distances of each point from the first and second best matched points from the previous frame for this point to be considered for computing the best fit transformation;
+			if this is <0, all points are considered;
+			
+	 Parameter:	'feat_min_matches'
+		Description:
+			minimum no. of good matching key points found for the best fit transformation to be computed otherwise matching is considered to have failed;
+			
+	 Parameter:	'feat_rebuild_index'
+		Description:
+			rebuild the FLANN index in each frame with the latest feature descriptors;
+			only matters if FLANN is enabled during compilation and feat_use_cv_flann is disabled;
+			
+	 Parameter:	'feat_use_cv_flann'
+		Description:
+			use OpenCV FLANN wrapper for keypoint matching;
+			if this is disabled, the FLANN library is used directly but that will work only if FLANN is enabled during compilation;
+			
+	 Parameter:	'feat_show_keypoints'
+		Description:
+			show all detected keypoints overlaid on each tracked image;
+			
+	 Parameter:	'feat_show_matches'
+		Description:
+			show the matches between the keypoints in the current and previous frames
+			
+	 Parameter:	'feat_debug_mode'
+		Description:
+			enable printing and writing of debugging data		
+	
 Nearest Neighbour (NN) SM:
 ==========================
 	 Parameter:	'nn_max_iters'
