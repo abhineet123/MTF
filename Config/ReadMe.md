@@ -934,7 +934,31 @@ Normalized Box Filtering Preprocessor:
 		
 	 Additional References:
 		https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#blur
-
+		
+Cascade Tracker/SM:
+===================
+	 Parameter:	'casc_n_trackers'
+		Description:
+			no. of trackers in the cascade
+			
+	 Parameter:	'casc_enable_feedback'
+		Description:
+			feed the output of the last tracker in the cascade back to the first tracker to use as the starting point in the next frame;
+			
+	 Parameter:	'casc_auto_reinit'
+		Description:
+			enable tracker failure detection and automatic reinitialization; tracking failure is assumed to have occurred if the result of any tracker contains non-finite values or the MCD error between the outputs of any two consecutive layer exceeds a threshold;
+			reinitialization is done using the tracker location in a previous frame as specified by casc_reinit_frame_gap;
+			
+	 Parameter:	'casc_reinit_err_thresh'
+		Description:
+			MCD error threshold between two consecutive trackers in the cascade above which tracking failure is assumed to have occured;
+			only matters if casc_auto_reinit is enabled;
+			
+	 Parameter:	'casc_reinit_frame_gap'
+		Description:
+			no. of frames before the one in which failure is detected where the tracker is reinitialized;
+			
 Efficient Second order Minimization (ESM) SM:
 =============================================
 	 Parameter:	'esm_jac_type'
