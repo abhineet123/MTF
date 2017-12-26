@@ -1186,8 +1186,25 @@ Feature Tracker:
 			
 	 Parameter:	'feat_debug_mode'
 		Description:
-			enable printing and writing of debugging data		
-	
+			enable printing and writing of debugging data	
+			
+Gaussian Filtering Preprocessor:
+================================
+	 Parameter:	'gauss_kernel_size'
+		Description:
+			Gaussian kernel size; this is a single number so that only square kernels are supported;
+			
+	 Parameter:	'gauss_sigma_x'
+		Description:
+			Gaussian kernel standard deviation in X direction
+			
+	 Parameter:	'gauss_sigma_y'
+		Description:
+			Gaussian kernel standard deviation in Y direction
+			
+	 Additional References:
+		https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#gaussianblur	
+		
 Nearest Neighbour (NN) SM:
 ==========================
 	 Parameter:	'nn_max_iters'
