@@ -1071,7 +1071,7 @@ Forward Additive Lucas Kanade (FALK) SM:
 ========================================
 	 Parameter:	'fa_hess_type'
 		Description:
-			type of Hessian to be used with ESM
+			type of Hessian to be used with FALK
 		Possible Values:
 			0:	Inverse/initial Self (or extended Gauss Newton) Hessian
 			1:	Forward/current Self (or extended Gauss Newton) Hessian
@@ -1100,8 +1100,32 @@ Forward Additive Lucas Kanade (FALK) SM:
 		Description:
 			write the tracked frames with the point grid and image patch drawn onto it to JPEG files;
 			only matters if 'fa_show_grid' is enabled;
-			only works with NT version of the SM;			
+			only works with NT version of the SM;
+			
+Forward Compositional Lucas Kanade (FCLK) SM:
+=============================================
+	 Parameter:	'fc_hess_type'
+		Description:
+			type of Hessian to be used with FCLK
+		Possible Values:
+			0:	Inverse/initial Self (or extended Gauss Newton) Hessian
+			1:	Forward/current Self (or extended Gauss Newton) Hessian
+			2:	Standard or Forward Newton Hessian
+			
+	 Parameter:	'fc_chained_warp'
+		Description:
+			use chain rule to compute pixel Jacobian and Hessian
+			
+	 Parameter:	'fc_show_grid'/'fc_show_patch'/'fc_patch_resize_factor'
+		Description:
+			same as the corresponding parameters for FALK;
+			only work with NT version of the SM;
 
+	 Parameter:	'fc_write_ssm_updates'
+		Description:
+			write the state update computed in each iteration to a text file named 'fc_ssm_updates.txt' in a sub directory called 'log' in the current working directory;
+			only works with NT version of the SM;
+			
 Nearest Neighbour (NN) SM:
 ==========================
 	 Parameter:	'nn_max_iters'
