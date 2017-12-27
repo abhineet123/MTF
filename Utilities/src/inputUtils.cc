@@ -640,7 +640,7 @@ namespace utils{
 						vp1394TwoGrabber::vpFRAMERATE_240,
 						vp1394TwoGrabber::vpFRAMERATE_7_5,
 						vp1394TwoGrabber::vpFRAMERATE_3_75,
-						vp1394TwoGrabber::vpFRAMERATE_1_875,
+						vp1394TwoGrabber::vpFRAMERATE_1_875
 					};
 					int fw_fps_idx = static_cast<int>(params.fw_fps) - 1;
 					printf("fw_fps_idx: %d\n", fw_fps_idx);
