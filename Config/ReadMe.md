@@ -1236,9 +1236,9 @@ Forward Compositional Steepest Descent:
 			
 GridTracker and RKLT:
 ===================== 
-	 Parameter:	'grid_sm' / 'grid_am' / 'grid_ssm'
+	 Parameter:	'grid_sm' / 'grid_am' / 'grid_ssm' / 'grid_ilm'
 		Description:
-			Search method, appearance model and state space model for the individual patch trackers used by the Grid Tracker
+			Search method, appearance model, state space model and illumination model for the individual patch trackers used by the Grid Tracker;
 				providing 'cv' for grid_sm will run GridTrackerCV that uses OpenCV KLT trackers instead of MTF trackers as patch trackers
 				providing 'pyr' for grid_sm will cause each patch tracker to run on an image pyramid, the settings for which will be taken from the parameters for PyramidalTracker; 
 					a time saving measure employed in this case is to construct the image pyramid only once and share it amongst all the patch trackers;

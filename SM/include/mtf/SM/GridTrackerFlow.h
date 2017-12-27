@@ -55,9 +55,7 @@ private:
 
 	cv::Mat warp_mat;
 	cv::Mat patch_corners;
-	std::vector<uchar> lk_status, pix_mask;
-	std::vector<float> lk_error;
-	int lk_flags;
+	std::vector<uchar> pix_mask;
 
 	VectorXd ssm_update;
 

@@ -53,23 +53,15 @@ GridTrackerFlow<AM, SSM >::GridTrackerFlow(const ParamType *grid_params,
 	curr_pts.resize(n_pts);
 
 	ssm_update.resize(ssm.getStateSize());
-	lk_status.resize(n_pts);
 	pix_mask.resize(n_pts);
 	std::fill(pix_mask.begin(), pix_mask.end(), 1);
 	pause_seq = 0;
-
-	if(params.use_const_grad){
-		lk_flags = cv::OPTFLOW_LK_GET_MIN_EIGENVALS;
-	} else{
-		lk_flags = 0;
-	}
 
 	if(params.show_trackers){
 		patch_win_name = "Patch Trackers";
 		cv::namedWindow(patch_win_name);
 	}
 }
-
 
 template <class AM, class SSM>
 void GridTrackerFlow<AM, SSM >::initialize(const cv::Mat &corners) {
