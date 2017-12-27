@@ -1417,7 +1417,16 @@ Hierarchical SSM tracker:
 		Description:
 			AM and SSM for the hierarchical SSM tracker	
 
-
+Inverse Additive Lucas Kanade (IALK) SM:
+========================================
+	 Parameter:	'ia_hess_type'
+		Description:
+			type of Hessian to be used with IALK
+		Possible Values:
+			0:	Inverse/initial Self (or extended Gauss Newton) Hessian
+			1:	Forward/current Self (or extended Gauss Newton) Hessian
+			2:	Standard or approximate Forward Newton Hessian
+			
 Nearest Neighbour (NN) SM:
 ==========================
 	 Parameter:	'nn_max_iters'
