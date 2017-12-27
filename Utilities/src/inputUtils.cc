@@ -524,11 +524,11 @@ namespace utils{
 		else if(params.img_source == SRC_FW_CAM) {
 			try {
 				vp1394TwoGrabber *dc1394_cap = new vp1394TwoGrabber;
-#ifndef _WIN32
-				printf("Opening FireWire camera with GUID %lu\n", dc1394_cap->getGuid());
-#else
-				printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
-#endif
+//#ifndef _WIN32
+//				printf("Opening FireWire camera with GUID %lu\n", dc1394_cap->getGuid());
+//#else
+//				printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
+//#endif
 				try{
 					switch(params.fw_res){
 					case VpResFW::Default:
@@ -576,10 +576,11 @@ namespace utils{
 					}
 				} catch(...) { 
 					// If settings are not available just catch execption to continue with default settings
+					printf("firewire camera settings could not be set so using defaults\n");
 				}
 				cap_obj.reset(dc1394_cap);
 			} catch(vpException &e) {
-				std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
+				std::cout << "Opening firewire camera failed with exception: " << e.getStringMessage() << std::endl;
 			}			
 		}
 #endif
