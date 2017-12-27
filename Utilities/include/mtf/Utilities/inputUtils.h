@@ -129,26 +129,33 @@ namespace utils{
 			Default, fps15, fps30, fps60, fps120, fps240,
 			fps7_5, fps3_75, fps1_875
 		};
+		enum class VpISOFW{
+			Default, iso100, iso200, iso400,
+			iso800, iso1600, iso3200
+		};
 		InputVPParams(const InputParams *_params,
 			int _usb_n_buffers,
 			VpResUSB _usb_res,
 			VpFpsUSB _usb_fps,
 			VpResFW _fw_res,
 			VpFpsFW _fw_fps,
-			VpDepthFW _pg_fw_depth,
+			VpDepthFW _fw_depth,
+			VpISOFW _fw_iso,
 			bool _pg_fw_print_info,
 			float _pg_fw_shutter_ms,
 			float _pg_fw_gain,
 			float _pg_fw_exposure,
 			float _pg_fw_brightness);
 		InputVPParams(const InputVPParams *_params=nullptr);
+
 		int usb_n_buffers;
 		VpResUSB usb_res;
 		VpFpsUSB usb_fps;
 		VpResFW fw_res;
 		VpFpsFW fw_fps;
 		VpDepthFW fw_depth;
-		bool pg_fw_print_info;
+		VpISOFW fw_iso;
+		bool fw_print_info;
 		float pg_fw_shutter_ms;
 		float pg_fw_gain;
 		float pg_fw_exposure;
@@ -162,14 +169,11 @@ namespace utils{
 		typedef InputVPParams::VpDepthFW VpDepthPGFW;
 		typedef InputVPParams::VpFpsUSB VpFpsUSB;
 		typedef InputVPParams::VpFpsFW VpFpsFW;
+		typedef InputVPParams::VpISOFW VpISOFW;
 
 		InputVP(const InputVPParams *_params = nullptr);
-		~InputVP(){
-			vp_buffer.clear();
-			if(cap_obj){
-				cap_obj->close();
-			}
-		}
+		~InputVP();
+
 		bool initialize() override;
 		bool update() override;
 		const cv::Mat& getFrame() const override{
@@ -190,7 +194,6 @@ namespace utils{
 		cv::Mat cv_frame;
 		int frame_id;
 		std::unique_ptr<vpFrameGrabber> cap_obj;
-
 		void convert(const VPImgType &vp_img, cv::Mat &cv_img);
 	};
 #endif

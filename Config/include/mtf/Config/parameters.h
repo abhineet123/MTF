@@ -681,8 +681,9 @@ namespace mtf{
 		int vp_usb_fps = 0;
 		int vp_fw_res = 0;
 		int vp_fw_fps = 0;
-		int vp_pg_fw_depth = 0;
-		bool vp_pg_fw_print_info;
+		int vp_fw_depth = 0;
+		int vp_fw_iso = 0;
+		bool vp_fw_print_info;
 		float vp_pg_fw_shutter_ms;
 		float vp_pg_fw_gain;
 		float vp_pg_fw_exposure;
@@ -2966,12 +2967,16 @@ namespace mtf{
 				vp_fw_fps = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "vp_pg_fw_depth")){
-				vp_pg_fw_depth = atoi(arg_val);
+			if(!strcmp(arg_name, "vp_fw_depth")){
+				vp_fw_depth = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, " vp_pg_fw_print_info")){
-				 vp_pg_fw_print_info = atoi(arg_val);
+			if(!strcmp(arg_name, "vp_fw_iso")){
+				vp_fw_iso = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, " vp_fw_print_info")){
+				vp_fw_print_info = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, " vp_pg_fw_shutter_ms")){

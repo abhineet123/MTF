@@ -205,7 +205,8 @@ namespace utils{
 #define VP_FW_RES VpResFW::Default
 #define VP_FW_FPS VpFpsFW::Default
 #define VP_FW_DEPTH VpDepthFW::Default
-#define VP_PG_FW_PRINT_INFO false
+#define VP_FW_ISO VpISOFW::Default
+#define VP_FW_PRINT_INFO false
 #define VP_PG_FW_SHUTTER_MS 0
 #define VP_PG_FW_GAIN 0
 #define VP_PG_FW_EXPOSURE 0
@@ -217,7 +218,8 @@ namespace utils{
 		VpFpsUSB _usb_fps,
 		VpResFW _fw_res,
 		VpFpsFW _fw_fps,
-		VpDepthFW _pg_fw_depth,
+		VpDepthFW _pg_depth,
+		VpISOFW _fw_iso,
 		bool _pg_fw_print_info,
 		float _pg_fw_shutter_ms,
 		float _pg_fw_gain,
@@ -229,8 +231,9 @@ namespace utils{
 		usb_fps(_usb_fps),
 		fw_res(_fw_res),
 		fw_fps(_fw_fps),
-		fw_depth(_pg_fw_depth),
-		pg_fw_print_info(_pg_fw_print_info),
+		fw_depth(_pg_depth),
+		fw_iso(_fw_iso),
+		fw_print_info(_pg_fw_print_info),
 		pg_fw_shutter_ms(_pg_fw_shutter_ms),
 		pg_fw_gain(_pg_fw_gain),
 		pg_fw_exposure(_pg_fw_exposure),
@@ -244,7 +247,8 @@ namespace utils{
 		fw_res(VP_FW_RES),
 		fw_fps(VP_FW_FPS),
 		fw_depth(VP_FW_DEPTH),
-		pg_fw_print_info(VP_PG_FW_PRINT_INFO),
+		fw_iso(VP_FW_ISO),
+		fw_print_info(VP_FW_PRINT_INFO),
 		pg_fw_shutter_ms(VP_PG_FW_SHUTTER_MS),
 		pg_fw_gain(VP_PG_FW_GAIN),
 		pg_fw_exposure(VP_PG_FW_EXPOSURE),
@@ -256,7 +260,8 @@ namespace utils{
 		 fw_res = _params->fw_res;
 		 fw_fps = _params->fw_fps;
 		 fw_depth = _params->fw_depth;
-		 pg_fw_print_info = _params->pg_fw_print_info;
+		 fw_iso = _params->fw_iso;
+		 fw_print_info = _params->fw_print_info;
 		 pg_fw_shutter_ms = _params->pg_fw_shutter_ms;
 		 pg_fw_gain = _params->pg_fw_gain;
 		 pg_fw_exposure = _params->pg_fw_exposure;
@@ -264,10 +269,13 @@ namespace utils{
 	}
 	InputVP::InputVP(const InputVPParams *_params) :
 		InputBase(_params), params(_params),
-		frame_id(0), cap_obj(nullptr){
-
+		frame_id(0), cap_obj(nullptr){}
+	InputVP::~InputVP(){
+		vp_buffer.clear();
+		if(cap_obj){
+			cap_obj->close();
+		}
 	}
-
 	bool InputVP::initialize(){
 		printf("Initializing ViSP pipeline...\n");
 #ifndef VISP_HAVE_FLYCAPTURE
@@ -558,7 +566,7 @@ namespace utils{
 						printf("Camera brightness could not be set so using defaults\n");
 					}
 				}
-				if(params.pg_fw_print_info){
+				if(params.fw_print_info){
 					try{
 						fly_cap->getCameraInfo(std::cout);
 					} catch(...) {
@@ -621,8 +629,8 @@ namespace utils{
 					};
 					int fw_res_idx = static_cast<int>(params.fw_res) - 1;
 					int pg_fw_depth_idx = static_cast<int>(params.fw_depth) - 1;
-					printf("fw_res: %d\n", params.fw_res);
-					printf("pg_fw_depth: %d\n", params.fw_depth);
+					//printf("fw_res: %d\n", params.fw_res);
+					//printf("pg_fw_depth: %d\n", params.fw_depth);
 					if(fw_res_idx >= 5){
 						printf("Invalid resolution provided for ViSP firewire pipeline\n");
 						return false;
@@ -671,9 +679,40 @@ namespace utils{
 						printf("Firewire camera FPS could not be set so using defaults\n");
 					}
 				}
+				if(params.fw_iso != VpISOFW::Default){
+					std::pair<vp1394TwoGrabber::vp1394TwoIsoSpeedType, std::string>
+						fw_iso_modes[6] = {
+						std::make_pair(vp1394TwoGrabber::vpISO_SPEED_100, "vpISO_SPEED_100"),
+						std::make_pair(vp1394TwoGrabber::vpISO_SPEED_200, "vpISO_SPEED_200"),
+						std::make_pair(vp1394TwoGrabber::vpISO_SPEED_400, "vpISO_SPEED_400"),
+						std::make_pair(vp1394TwoGrabber::vpISO_SPEED_800, "vpISO_SPEED_800"),
+						std::make_pair(vp1394TwoGrabber::vpISO_SPEED_1600, "vpISO_SPEED_1600"),
+						std::make_pair(vp1394TwoGrabber::vpISO_SPEED_3200, "vpISO_SPEED_3200")
+					};
+					int fw_iso_idx = static_cast<int>(params.fw_iso) - 1;
+					if(fw_iso_idx >= 6){
+						printf("Invalid ISO mode provided for ViSP firewire pipeline\n");
+						return false;
+					}
+					printf("fw_iso_mode: %s\n", fw_iso_modes[fw_iso_idx].second.c_str());
+					try{
+						dc1394_cap->setIsoTransmissionSpeed(fw_iso_modes[fw_iso_idx].first);
+					} catch(...) {
+						// If settings are not available just catch execption to continue with default settings
+						printf("Firewire camera ISO mode could not be set so using defaults\n");
+					}
+				}
+				if(params.fw_print_info){
+					try{
+						dc1394_cap->printCameraInfo();
+					} catch(...) {
+						printf("Camera info could not be obtained\n");
+					}
+				}
 				cap_obj.reset(dc1394_cap);
 			} catch(vpException &e) {
-				std::cout << "Opening firewire camera failed with exception: " << e.getStringMessage() << std::endl;
+				printf("Opening firewire camera failed with exception: %s\n", 
+					e.getStringMessage().c_str());
 			}
 		}
 #endif
