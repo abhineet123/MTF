@@ -1397,6 +1397,19 @@ SSM Estimator:
 		Description:
 			no. of iterations to use for the optional Levenberg Marquardt refinement step if it is enabled; 
 
+			
+Homography SSM:
+===============
+	 Parameter:	'hom_normalized_init'
+		Description:
+			use normalized initial bounding box with respect to which all subsequent transformations are computed;
+			refer 'aff_normalized_init' for more details;
+		
+	 Parameter:	'hom_corner_based_sampling'
+		Description:
+			use corner based sampling for stochastic SMs; similar to 'aff_pt_based_sampling' except that the perturbations are applied to the 4 bounding box corners instead of the 3 points as in affine;
+			also, geometric sampling in this case involves adding different perturbation directly to the 8 state parameters of this SSM unlike affine where a specialized geometric representation is used instead;
+			
 Nearest Neighbour (NN) SM:
 ==========================
 	 Parameter:	'nn_max_iters'
