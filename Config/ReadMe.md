@@ -279,15 +279,31 @@ ViSP pipeline:
 			4: 1280 x 960
 			5: 1600 x 1200
 			
-	 Parameter:	'vp_pg_fw_depth'
+	 Parameter:	'vp_fw_depth'
 		Description:
-			Image color depth / format for PointGrey camera source			
+			Image color depth / format for Firewire or PointGrey camera source			
 		Possible Values:
 			0: Default
 			1: RGB
 			2: YUV422
-			3: Y8 (8 bit)
-			4: Y16 (16 bit)
+			3: Mono 8 bit 
+			4: Mono 16 bit
+			
+	 Parameter:	'vp_fw_iso'
+		Description:
+			ISO mode for Firewire source			
+		Possible Values:
+			0: Default
+			1: ISO100
+			2: ISO200
+			3: ISO400
+			4: ISO800
+			5: ISO1600
+			6: ISO3200
+			
+	 Parameter:	'vp_fw_print_info'
+		Description:
+			Print detailed info for Firewire or PointGrey camera source	
 			
 	 Parameter:	'vp_pg_fw_shutter_ms'
 		Description:
@@ -320,10 +336,6 @@ ViSP pipeline:
 			0: Default
 			< 0: auto
 			> 0: manual				
-			
-	 Parameter:	'visp_pg_fw_print_info'
-		Description:
-			Print detailed info for PointGrey camera source	
 		
 Output parameters:
 ==================
