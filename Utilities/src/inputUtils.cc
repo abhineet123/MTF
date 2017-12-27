@@ -36,8 +36,8 @@ namespace utils{
 	}
 
 	InputParams::InputParams(char _img_source, string _dev_name, string _dev_fmt,
-		string _dev_path, int _n_buffers, bool _invert_seq):
-		img_source(_img_source), dev_name(_dev_name), dev_fmt(_dev_fmt), 
+		string _dev_path, int _n_buffers, bool _invert_seq) :
+		img_source(_img_source), dev_name(_dev_name), dev_fmt(_dev_fmt),
 		dev_path(_dev_path), n_buffers(_n_buffers), invert_seq(_invert_seq){
 		setDeafults();
 	}
@@ -77,7 +77,7 @@ namespace utils{
 				throw mtf::utils::InvalidArgument(
 					cv::format("InputBase :: Inverted sequence cannot be used without valid frame count"));
 			}
-			if(params.img_source == SRC_USB_CAM || 
+			if(params.img_source == SRC_USB_CAM ||
 				params.img_source == SRC_FW_CAM ||
 				params.img_source == SRC_PG_FW_CAM){
 				throw mtf::utils::InvalidArgument(
@@ -119,7 +119,7 @@ namespace utils{
 			cap_obj.open(file_path);
 		} else if(
 			params.img_source == SRC_USB_CAM ||
-			params.img_source == SRC_FW_CAM || 
+			params.img_source == SRC_FW_CAM ||
 			params.img_source == SRC_PG_FW_CAM) {
 			if(params.dev_path.empty()){
 				cap_obj.open(0);
@@ -233,10 +233,10 @@ namespace utils{
 			vid_cap->setFileName(file_path.c_str());
 			//n_frames=vid_cap->getLastFrameIndex();
 			if(params.img_source == SRC_VID){
-				printf("Opening %s video file: %s with %d frames\n", 
+				printf("Opening %s video file: %s with %d frames\n",
 					params.dev_fmt.c_str(), file_path.c_str(), n_frames);
 			} else{
-				printf("Opening %s image files at %s with %d frames\n", 
+				printf("Opening %s image files at %s with %d frames\n",
 					params.dev_fmt.c_str(), file_path.c_str(), n_frames);
 			}
 			cap_obj.reset(vid_cap);
@@ -446,11 +446,11 @@ namespace utils{
 						return false;
 					}
 					fly_cap->setVideoModeAndFrameRate(pg_fw_mode, pg_fw_fps);
-				} catch(...) { 
+				} catch(...) {
 					// If settings are not available just catch execption to continue with default settings
 					printf("Camera video mode / fps could not be set so using defaults\n");
 				}
-				if(params.pg_fw_gain != 0){					
+				if(params.pg_fw_gain != 0){
 					try{
 						float gain;
 						if(params.pg_fw_gain > 0){
@@ -464,7 +464,7 @@ namespace utils{
 						printf("Camera gain could not be set so using defaults\n");
 					}
 				}
-				if(params.pg_fw_shutter_ms != 0){					
+				if(params.pg_fw_shutter_ms != 0){
 					try{
 						float shutter_speed;
 						if(params.pg_fw_shutter_ms > 0){
@@ -514,74 +514,157 @@ namespace utils{
 					}
 				}
 				cap_obj.reset(fly_cap);
-			}  catch(vpException &e) {
-				printf("Exception occured while initializing the FlyCapture module: %s\n", 
+			} catch(vpException &e) {
+				printf("Exception occured while initializing the FlyCapture module: %s\n",
 					e.getStringMessage().c_str());
-			}			
+			}
 		}
 #endif
 #if defined( VISP_HAVE_DC1394 )
 		else if(params.img_source == SRC_FW_CAM) {
 			try {
 				vp1394TwoGrabber *dc1394_cap = new vp1394TwoGrabber;
-//#ifndef _WIN32
-//				printf("Opening FireWire camera with GUID %lu\n", dc1394_cap->getGuid());
-//#else
-//				printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
-//#endif
-				try{
-					switch(params.fw_res){
-					case VpResFW::Default:
-						break;
-					case VpResFW::res640x480:
-						dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_RGB8);
-						break;
-					case VpResFW::res800x600:
-						dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_800x600_RGB8);
-						break;
-					case VpResFW::res1024x768:
-						dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1024x768_RGB8);
-						break;
-					case VpResFW::res1280x960:
-						dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1280x960_RGB8);
-						break;
-					case VpResFW::res1600x1200:
-						dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1600x1200_RGB8);
-						break;
-					default:
+				//#ifndef _WIN32
+				//				printf("Opening FireWire camera with GUID %lu\n", dc1394_cap->getGuid());
+				//#else
+				//				printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
+				//#endif
+				if(params.fw_res != VpResFW::Default ||
+					params.pg_fw_depth != VpDepthPGFW::Default){
+					vp1394TwoGrabber::vp1394TwoVideoModeType fw_video_modes[][] = {
+						{
+							vp1394TwoGrabber::vpVIDEO_MODE_640x480_RGB8,
+							vp1394TwoGrabber::vpVIDEO_MODE_640x480_YUV422,
+							vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8,
+							vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO16
+						},
+						{
+							vp1394TwoGrabber::vpVIDEO_MODE_800x600_RGB8,
+							vp1394TwoGrabber::vpVIDEO_MODE_800x600_YUV422,
+							vp1394TwoGrabber::vpVIDEO_MODE_800x600_MONO8,
+							vp1394TwoGrabber::vpVIDEO_MODE_800x600_MONO16
+						},
+						{
+							vp1394TwoGrabber::vpVIDEO_MODE_1024x768_RGB8,
+							vp1394TwoGrabber::vpVIDEO_MODE_1024x768_YUV422,
+							vp1394TwoGrabber::vpVIDEO_MODE_1024x768_MONO8,
+							vp1394TwoGrabber::vpVIDEO_MODE_1024x768_MONO16
+						},
+						{
+							vp1394TwoGrabber::vpVIDEO_MODE_1280x960_RGB8,
+							vp1394TwoGrabber::vpVIDEO_MODE_1280x960_YUV422,
+							vp1394TwoGrabber::vpVIDEO_MODE_1280x960_MONO8,
+							vp1394TwoGrabber::vpVIDEO_MODE_1280x960_MONO16
+						},
+						{
+							vp1394TwoGrabber::vpVIDEO_MODE_1600x1200_RGB8,
+							vp1394TwoGrabber::vpVIDEO_MODE_1600x1200_YUV422,
+							vp1394TwoGrabber::vpVIDEO_MODE_1600x1200_MONO8,
+							vp1394TwoGrabber::vpVIDEO_MODE_1600x1200_MONO16
+						},
+					};
+					int fw_res_idx = static_cast<int>(params.fw_res) - 1;
+					int pg_fw_depth_idx = static_cast<int>(params.pg_fw_depth) - 1;
+					printf("fw_res: %d\n", params.fw_res);
+					printf("pg_fw_depth: %d\n", params.pg_fw_depth);
+					if(fw_res_idx >= 5){
 						printf("Invalid resolution provided for ViSP firewire pipeline\n");
 						return false;
 					}
-					switch(params.fw_fps){
-					case VpFpsFW::Default:
-						break;
-					case VpFpsFW::fps15:
-						dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
-						break;
-					case VpFpsFW::fps30:
-						dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
-						break;
-					case VpFpsFW::fps60:
-						dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-						break;
-					case VpFpsFW::fps120:
-						dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_120);
-						break;
-					case VpFpsFW::fps240:
-						dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_240);
-						break;
-					default:
+					if(pg_fw_depth_idx >= 4){
+						printf("Invalid color depth provided for ViSP firewire pipeline\n");
+						return false;
+					}
+
+					vp1394TwoGrabber::vp1394TwoVideoModeType fw_video_mode =
+						fw_video_modes[fw_res_idx][pg_fw_depth_idx];
+					printf("fw_video_mode: %s\n",
+						vp1394TwoGrabber::videoMode2string(fw_video_mode).c_str());
+					try{
+						dc1394_cap->setVideoMode(fw_video_mode);
+					} catch(...) {
+						// If settings are not available just catch execption to continue with default settings
+						printf("Firewire camera video mode could not be set so using defaults\n");
+					}
+				}
+				//switch(params.fw_res){
+				//case VpResFW::Default:
+				//	break;
+				//case VpResFW::res640x480:
+				//	dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_RGB8);
+				//	break;
+				//case VpResFW::res800x600:
+				//	dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_800x600_RGB8);
+				//	break;
+				//case VpResFW::res1024x768:
+				//	dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1024x768_RGB8);
+				//	break;
+				//case VpResFW::res1280x960:
+				//	dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1280x960_RGB8);
+				//	break;
+				//case VpResFW::res1600x1200:
+				//	dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1600x1200_RGB8);
+				//	break;
+				//default:
+				//	printf("Invalid resolution provided for ViSP firewire pipeline\n");
+				//	return false;
+				//}
+
+
+				if(params.fw_fps != VpFpsFW::Default){
+					vp1394TwoGrabber::vp1394TwoFramerateType fw_fps_modes[] = {
+						vp1394TwoGrabber::vpFRAMERATE_15,
+						vp1394TwoGrabber::vpFRAMERATE_30,
+						vp1394TwoGrabber::vpFRAMERATE_60,
+						vp1394TwoGrabber::vpFRAMERATE_120,
+						vp1394TwoGrabber::vpFRAMERATE_240,
+						vp1394TwoGrabber::vpFRAMERATE_7_5,
+						vp1394TwoGrabber::vpFRAMERATE_3_75,
+						vp1394TwoGrabber::vpFRAMERATE_1_875,
+					};
+					int fw_fps_idx = static_cast<int>(params.fw_fps) - 1;
+					printf("fw_fps_idx: %d\n", fw_fps_idx);
+					if(fw_fps_idx >= 8){
 						printf("Invalid frame rate provided for ViSP firewire pipeline\n");
 						return false;
 					}
-				} catch(...) { 
-					// If settings are not available just catch execption to continue with default settings
-					printf("firewire camera settings could not be set so using defaults\n");
+					vp1394TwoGrabber::vp1394TwoFramerateType fw_fps_mode =
+						fw_fps_modes[fw_fps_idx];
+					printf("fw_fps_mode: %s\n",
+						vp1394TwoGrabber::framerate2string(fw_fps_mode).c_str());
+					try{
+						dc1394_cap->setFramerate(fw_fps_mode);
+					} catch(...) {
+						// If settings are not available just catch execption to continue with default settings
+						printf("Firewire camera FPS could not be set so using defaults\n");
+					}
 				}
+				/*switch(params.fw_fps){
+				case VpFpsFW::Default:
+				break;
+				case VpFpsFW::fps15:
+				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
+				break;
+				case VpFpsFW::fps30:
+				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
+				break;
+				case VpFpsFW::fps60:
+				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
+				break;
+				case VpFpsFW::fps120:
+				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_120);
+				break;
+				case VpFpsFW::fps240:
+				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_240);
+				break;
+				default:
+				printf("Invalid frame rate provided for ViSP firewire pipeline\n");
+				return false;
+				}*/
 				cap_obj.reset(dc1394_cap);
 			} catch(vpException &e) {
 				std::cout << "Opening firewire camera failed with exception: " << e.getStringMessage() << std::endl;
-			}			
+			}
 		}
 #endif
 		else {
@@ -775,7 +858,7 @@ namespace utils{
 		if(params.img_source == SRC_VID){
 			src.reset(new InputXV32(params.img_source, file_path));
 		} else{
-			src.reset(new InputXV24(params.img_source, params.dev_path, params.dev_fmt, 
+			src.reset(new InputXV24(params.img_source, params.dev_path, params.dev_fmt,
 				file_path, n_buffers, n_frames));
 		}
 
