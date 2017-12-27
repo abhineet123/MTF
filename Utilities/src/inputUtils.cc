@@ -529,6 +529,10 @@ namespace utils{
 				//#else
 				//				printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
 				//#endif
+				printf("fw_res: %d\n", params.fw_res);
+				printf("pg_fw_depth: %d\n", params.pg_fw_depth);
+				printf("fw_fps: %d\n", params.fw_fps);
+
 				if(params.fw_res != VpResFW::Default ||
 					params.pg_fw_depth != VpDepthPGFW::Default){
 					vp1394TwoGrabber::vp1394TwoVideoModeType fw_video_modes[5][4] = {
