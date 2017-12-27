@@ -531,7 +531,7 @@ namespace utils{
 				//#endif
 				if(params.fw_res != VpResFW::Default ||
 					params.pg_fw_depth != VpDepthPGFW::Default){
-					vp1394TwoGrabber::vp1394TwoVideoModeType fw_video_modes[][] = {
+					vp1394TwoGrabber::vp1394TwoVideoModeType fw_video_modes[5][4] = {
 						{
 							vp1394TwoGrabber::vpVIDEO_MODE_640x480_RGB8,
 							vp1394TwoGrabber::vpVIDEO_MODE_640x480_YUV422,
@@ -612,7 +612,7 @@ namespace utils{
 
 
 				if(params.fw_fps != VpFpsFW::Default){
-					vp1394TwoGrabber::vp1394TwoFramerateType fw_fps_modes[] = {
+					vp1394TwoGrabber::vp1394TwoFramerateType fw_fps_modes[8] = {
 						vp1394TwoGrabber::vpFRAMERATE_15,
 						vp1394TwoGrabber::vpFRAMERATE_30,
 						vp1394TwoGrabber::vpFRAMERATE_60,
