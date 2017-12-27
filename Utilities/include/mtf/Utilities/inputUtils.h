@@ -33,9 +33,13 @@ namespace utils{
 	class InputParams{
 	public:
 		InputParams(const InputParams *_params = nullptr);
-		InputParams(char _img_source, string _dev_name, string _dev_fmt,
-			string _dev_path, int _n_buffers = 1, bool _invert_seq = false);
-
+		InputParams(
+			char _img_source, 
+			string _dev_name, 
+			string _dev_fmt,
+			string _dev_path,
+			int _n_buffers, 
+			bool _invert_seq);
 		char img_source;
 		string dev_name;
 		string dev_fmt;
@@ -44,7 +48,7 @@ namespace utils{
 		bool invert_seq;
 
 	protected:
-		void setDeafults();
+		void setDefaults();
 	};
 
 	class InputBase {

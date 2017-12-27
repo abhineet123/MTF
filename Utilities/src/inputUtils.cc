@@ -19,11 +19,17 @@
 
 #include <stdio.h>
 
+#define INPUT_IMG_SOURCE 'j'
+#define INPUT_N_BUFFERS 0
+#define INPUT_INVERT_SEQ false
+
 
 _MTF_BEGIN_NAMESPACE
 namespace utils{
 	InputParams::InputParams(const InputParams *_params) :
-		img_source('j'), n_buffers(0), invert_seq(false){
+		img_source(INPUT_IMG_SOURCE),
+		n_buffers(INPUT_N_BUFFERS),
+		invert_seq(INPUT_INVERT_SEQ){
 		if(_params){
 			img_source = _params->img_source;
 			dev_name = _params->dev_name;
@@ -32,16 +38,20 @@ namespace utils{
 			n_buffers = _params->n_buffers;
 			invert_seq = _params->invert_seq;
 		}
-		setDeafults();
+		setDefaults();
 	}
 
 	InputParams::InputParams(char _img_source, string _dev_name, string _dev_fmt,
 		string _dev_path, int _n_buffers, bool _invert_seq) :
-		img_source(_img_source), dev_name(_dev_name), dev_fmt(_dev_fmt),
-		dev_path(_dev_path), n_buffers(_n_buffers), invert_seq(_invert_seq){
-		setDeafults();
+		img_source(_img_source), 
+		dev_name(_dev_name), 
+		dev_fmt(_dev_fmt),
+		dev_path(_dev_path), 
+		n_buffers(_n_buffers), 
+		invert_seq(_invert_seq){
+		setDefaults();
 	}
-	void InputParams::setDeafults(){
+	void InputParams::setDefaults(){
 		if(img_source == SRC_VID){
 			if(dev_fmt.empty()){ dev_fmt = "mpg"; }
 			if(dev_path.empty()){ dev_path = "."; }
