@@ -214,7 +214,21 @@ namespace utils{
 
 	InputVP::InputVP(const InputVPParams *_params) :
 		InputBase(_params), params(_params),
-		frame_id(0), cap_obj(nullptr){}
+		frame_id(0), cap_obj(nullptr){
+		if(!_params){
+			return;
+		}
+		params.usb_n_buffers = _params->usb_n_buffers;
+		params.usb_res = _params->usb_res;
+		params.usb_fps = _params->usb_fps;
+		params.fw_res=_params->fw_res;
+		params.fw_fps=_params->fw_fps;
+		params.pg_fw_print_info = _params->pg_fw_print_info;
+		params.pg_fw_shutter_ms=_params->pg_fw_shutter_ms;
+		params.pg_fw_gain=_params->pg_fw_gain;
+		params.pg_fw_exposure = _params->pg_fw_exposure;
+		params.pg_fw_brightness = _params->pg_fw_brightness;
+	}
 
 	bool InputVP::initialize(){
 		printf("Initializing ViSP pipeline...\n");
