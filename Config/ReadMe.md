@@ -1446,6 +1446,14 @@ Inverse Compositional Lucas Kanade (ICLK) SM:
 			enable updating the SSM gradient in the setRegion function;
 			only works with the templated version of the SM;
 			
+Isometry SSM:
+=============
+	 Parameter:	'iso_pt_based_sampling'
+		Description:
+			use point based sampling for stochastic SMs; refer 'aff_pt_based_sampling' for details;
+			here the perturbations are applied to the two opposite bounding box corners and geometric sampling involves adding different perturbation directly to the 5 state parameters of this SSM unlike affine where a specialized geometric representation is used instead;
+			
+			
 Nearest Neighbour (NN) SM:
 ==========================
 	 Parameter:	'nn_max_iters'
