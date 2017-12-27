@@ -38,8 +38,7 @@ inline utils::InputBase* getInput(char _pipeline_type){
 	switch(_pipeline_type){
 	case OPENCV_PIPELINE:
 	{
-		utils::InputCVParams _params(&_base_params);
-		return new utils::InputCV(&_params);
+		return new utils::InputCV(&_base_params);
 	}
 #ifndef DISABLE_XVISION
 	case XVISION_PIPELINE:
