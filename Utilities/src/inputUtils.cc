@@ -206,6 +206,7 @@ namespace utils{
 		usb_fps(_usb_fps),
 		fw_res(_fw_res),
 		fw_fps(_fw_fps),
+		pg_fw_depth(_pg_fw_depth),
 		pg_fw_print_info(_pg_fw_print_info),
 		pg_fw_shutter_ms(_pg_fw_shutter_ms),
 		pg_fw_gain(_pg_fw_gain),
@@ -223,6 +224,7 @@ namespace utils{
 		params.usb_fps = _params->usb_fps;
 		params.fw_res=_params->fw_res;
 		params.fw_fps=_params->fw_fps;
+		params.pg_fw_depth = _params->pg_fw_depth;
 		params.pg_fw_print_info = _params->pg_fw_print_info;
 		params.pg_fw_shutter_ms=_params->pg_fw_shutter_ms;
 		params.pg_fw_gain=_params->pg_fw_gain;
