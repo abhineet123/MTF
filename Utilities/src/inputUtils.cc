@@ -581,7 +581,7 @@ namespace utils{
 							vp1394TwoGrabber::vpVIDEO_MODE_1600x1200_YUV422,
 							vp1394TwoGrabber::vpVIDEO_MODE_1600x1200_MONO8,
 							vp1394TwoGrabber::vpVIDEO_MODE_1600x1200_MONO16
-						},
+						}
 					};
 					int fw_res_idx = static_cast<int>(params.fw_res) - 1;
 					int pg_fw_depth_idx = static_cast<int>(params.pg_fw_depth) - 1;
