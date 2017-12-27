@@ -188,13 +188,26 @@ namespace utils{
 		}
 	}
 #ifndef DISABLE_VISP
+
+#define	VP_USB_N_BUFFERS 3
+#define	VP_USB_RES VpResUSB::Default
+#define VP_USB_FPS VpFpsUSB::Default
+#define VP_FW_RES VpResFW::Default
+#define VP_FW_FPS VpFpsFW::Default
+#define VP_FW_DEPTH VpDepthFW::Default
+#define VP_PG_FW_PRINT_INFO false
+#define VP_PG_FW_SHUTTER_MS 0
+#define VP_PG_FW_GAIN 0
+#define VP_PG_FW_EXPOSURE 0
+#define VP_PG_FW_BRIGHTNESS 0
+
 	InputVPParams::InputVPParams(const InputParams *_params,
 		int _usb_n_buffers,
 		VpResUSB _usb_res,
 		VpFpsUSB _usb_fps,
 		VpResFW _fw_res,
 		VpFpsFW _fw_fps,
-		VpDepthPGFW _pg_fw_depth,
+		VpDepthFW _pg_fw_depth,
 		bool _pg_fw_print_info,
 		float _pg_fw_shutter_ms,
 		float _pg_fw_gain,
@@ -206,30 +219,43 @@ namespace utils{
 		usb_fps(_usb_fps),
 		fw_res(_fw_res),
 		fw_fps(_fw_fps),
-		pg_fw_depth(_pg_fw_depth),
+		fw_depth(_pg_fw_depth),
 		pg_fw_print_info(_pg_fw_print_info),
 		pg_fw_shutter_ms(_pg_fw_shutter_ms),
 		pg_fw_gain(_pg_fw_gain),
 		pg_fw_exposure(_pg_fw_exposure),
 		pg_fw_brightness(_pg_fw_brightness){}
 
+	InputVPParams::InputVPParams(const InputVPParams *_params) :
+		InputParams(_params),
+		usb_n_buffers(VP_USB_N_BUFFERS),
+		usb_res(VP_USB_RES),
+		usb_fps(VP_USB_FPS),
+		fw_res(VP_FW_RES),
+		fw_fps(VP_FW_FPS),
+		fw_depth(VP_FW_DEPTH),
+		pg_fw_print_info(VP_PG_FW_PRINT_INFO),
+		pg_fw_shutter_ms(VP_PG_FW_SHUTTER_MS),
+		pg_fw_gain(VP_PG_FW_GAIN),
+		pg_fw_exposure(VP_PG_FW_EXPOSURE),
+		pg_fw_brightness(VP_PG_FW_BRIGHTNESS){
+		if(!_params){ return; }
+		 usb_n_buffers = _params->usb_n_buffers;
+		 usb_res = _params->usb_res;
+		 usb_fps = _params->usb_fps;
+		 fw_res = _params->fw_res;
+		 fw_fps = _params->fw_fps;
+		 fw_depth = _params->fw_depth;
+		 pg_fw_print_info = _params->pg_fw_print_info;
+		 pg_fw_shutter_ms = _params->pg_fw_shutter_ms;
+		 pg_fw_gain = _params->pg_fw_gain;
+		 pg_fw_exposure = _params->pg_fw_exposure;
+		 pg_fw_brightness = _params->pg_fw_brightness;		
+	}
 	InputVP::InputVP(const InputVPParams *_params) :
 		InputBase(_params), params(_params),
 		frame_id(0), cap_obj(nullptr){
-		if(!_params){
-			return;
-		}
-		params.usb_n_buffers = _params->usb_n_buffers;
-		params.usb_res = _params->usb_res;
-		params.usb_fps = _params->usb_fps;
-		params.fw_res=_params->fw_res;
-		params.fw_fps=_params->fw_fps;
-		params.pg_fw_depth = _params->pg_fw_depth;
-		params.pg_fw_print_info = _params->pg_fw_print_info;
-		params.pg_fw_shutter_ms=_params->pg_fw_shutter_ms;
-		params.pg_fw_gain=_params->pg_fw_gain;
-		params.pg_fw_exposure = _params->pg_fw_exposure;
-		params.pg_fw_brightness = _params->pg_fw_brightness;
+
 	}
 
 	bool InputVP::initialize(){
@@ -331,7 +357,7 @@ namespace utils{
 					case VpResFW::Default:
 						break;
 					case VpResFW::res640x480:
-						switch(params.pg_fw_depth){
+						switch(params.fw_depth){
 						case VpDepthPGFW::RGB:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_640x480RGB;
 							break;
@@ -350,7 +376,7 @@ namespace utils{
 						}
 						break;
 					case VpResFW::res800x600:
-						switch(params.pg_fw_depth){
+						switch(params.fw_depth){
 						case VpDepthPGFW::RGB:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_800x600RGB;
 							break;
@@ -369,7 +395,7 @@ namespace utils{
 						}
 						break;
 					case VpResFW::res1024x768:
-						switch(params.pg_fw_depth){
+						switch(params.fw_depth){
 						case VpDepthPGFW::RGB:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_1024x768RGB;
 							break;
@@ -388,7 +414,7 @@ namespace utils{
 						}
 						break;
 					case VpResFW::res1280x960:
-						switch(params.pg_fw_depth){
+						switch(params.fw_depth){
 						case VpDepthPGFW::RGB:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_1280x960RGB;
 							break;
@@ -407,7 +433,7 @@ namespace utils{
 						}
 						break;
 					case VpResFW::res1600x1200:
-						switch(params.pg_fw_depth){
+						switch(params.fw_depth){
 						case VpDepthPGFW::RGB:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_1600x1200RGB;
 							break;
@@ -546,11 +572,11 @@ namespace utils{
 				//				printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
 				//#endif
 				printf("fw_res: %d\n", params.fw_res);
-				printf("pg_fw_depth: %d\n", params.pg_fw_depth);
+				printf("pg_fw_depth: %d\n", params.fw_depth);
 				printf("fw_fps: %d\n", params.fw_fps);
 
 				if(params.fw_res != VpResFW::Default ||
-					params.pg_fw_depth != VpDepthPGFW::Default){
+					params.fw_depth != VpDepthPGFW::Default){
 					vp1394TwoGrabber::vp1394TwoVideoModeType fw_video_modes[5][4] = {
 						{
 							vp1394TwoGrabber::vpVIDEO_MODE_640x480_RGB8,
@@ -584,9 +610,9 @@ namespace utils{
 						}
 					};
 					int fw_res_idx = static_cast<int>(params.fw_res) - 1;
-					int pg_fw_depth_idx = static_cast<int>(params.pg_fw_depth) - 1;
+					int pg_fw_depth_idx = static_cast<int>(params.fw_depth) - 1;
 					printf("fw_res: %d\n", params.fw_res);
-					printf("pg_fw_depth: %d\n", params.pg_fw_depth);
+					printf("pg_fw_depth: %d\n", params.fw_depth);
 					if(fw_res_idx >= 5){
 						printf("Invalid resolution provided for ViSP firewire pipeline\n");
 						return false;
@@ -607,30 +633,6 @@ namespace utils{
 						printf("Firewire camera video mode could not be set so using defaults\n");
 					}
 				}
-				//switch(params.fw_res){
-				//case VpResFW::Default:
-				//	break;
-				//case VpResFW::res640x480:
-				//	dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_RGB8);
-				//	break;
-				//case VpResFW::res800x600:
-				//	dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_800x600_RGB8);
-				//	break;
-				//case VpResFW::res1024x768:
-				//	dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1024x768_RGB8);
-				//	break;
-				//case VpResFW::res1280x960:
-				//	dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1280x960_RGB8);
-				//	break;
-				//case VpResFW::res1600x1200:
-				//	dc1394_cap->setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_1600x1200_RGB8);
-				//	break;
-				//default:
-				//	printf("Invalid resolution provided for ViSP firewire pipeline\n");
-				//	return false;
-				//}
-
-
 				if(params.fw_fps != VpFpsFW::Default){
 					vp1394TwoGrabber::vp1394TwoFramerateType fw_fps_modes[8] = {
 						vp1394TwoGrabber::vpFRAMERATE_15,
@@ -659,28 +661,6 @@ namespace utils{
 						printf("Firewire camera FPS could not be set so using defaults\n");
 					}
 				}
-				/*switch(params.fw_fps){
-				case VpFpsFW::Default:
-				break;
-				case VpFpsFW::fps15:
-				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_15);
-				break;
-				case VpFpsFW::fps30:
-				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_30);
-				break;
-				case VpFpsFW::fps60:
-				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
-				break;
-				case VpFpsFW::fps120:
-				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_120);
-				break;
-				case VpFpsFW::fps240:
-				dc1394_cap->setFramerate(vp1394TwoGrabber::vpFRAMERATE_240);
-				break;
-				default:
-				printf("Invalid frame rate provided for ViSP firewire pipeline\n");
-				return false;
-				}*/
 				cap_obj.reset(dc1394_cap);
 			} catch(vpException &e) {
 				std::cout << "Opening firewire camera failed with exception: " << e.getStringMessage() << std::endl;

@@ -115,7 +115,7 @@ namespace utils{
 			Default, res640x480, res800x600, res1024x768,
 			res1280x960, res1600x1200
 		};
-		enum class VpDepthPGFW{
+		enum class VpDepthFW{
 			Default, RGB, YUV422, Y8, Y16
 		};
 		enum class VpFpsUSB{
@@ -126,24 +126,24 @@ namespace utils{
 			fps7_5, fps3_75, fps1_875
 		};
 		InputVPParams(const InputParams *_params,
-			int _usb_n_buffers = 3,
-			VpResUSB _usb_res = VpResUSB::Default,
-			VpFpsUSB _usb_fps = VpFpsUSB::Default,
-			VpResFW _fw_res = VpResFW::Default,
-			VpFpsFW _fw_fps = VpFpsFW::Default,
-			VpDepthPGFW _pg_fw_depth = VpDepthPGFW::Default,
-			bool _pg_fw_print_info = false,
-			float _pg_fw_shutter_ms = 0,
-			float _pg_fw_gain = 0,
-			float _pg_fw_exposure = 0,
-			float _pg_fw_brightness = 0);
-
+			int _usb_n_buffers,
+			VpResUSB _usb_res,
+			VpFpsUSB _usb_fps,
+			VpResFW _fw_res,
+			VpFpsFW _fw_fps,
+			VpDepthFW _pg_fw_depth,
+			bool _pg_fw_print_info,
+			float _pg_fw_shutter_ms,
+			float _pg_fw_gain,
+			float _pg_fw_exposure,
+			float _pg_fw_brightness);
+		InputVPParams(const InputVPParams *_params=nullptr);
 		int usb_n_buffers;
 		VpResUSB usb_res;
 		VpFpsUSB usb_fps;
 		VpResFW fw_res;
 		VpFpsFW fw_fps;
-		VpDepthPGFW pg_fw_depth;
+		VpDepthFW fw_depth;
 		bool pg_fw_print_info;
 		float pg_fw_shutter_ms;
 		float pg_fw_gain;
@@ -155,7 +155,7 @@ namespace utils{
 	public:
 		typedef InputVPParams::VpResUSB VpResUSB;
 		typedef InputVPParams::VpResFW VpResFW;
-		typedef InputVPParams::VpDepthPGFW VpDepthPGFW;
+		typedef InputVPParams::VpDepthFW VpDepthPGFW;
 		typedef InputVPParams::VpFpsUSB VpFpsUSB;
 		typedef InputVPParams::VpFpsFW VpFpsFW;
 
