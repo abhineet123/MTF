@@ -1453,6 +1453,17 @@ Isometry SSM:
 			use point based sampling for stochastic SMs; refer 'aff_pt_based_sampling' for details;
 			here the perturbations are applied to the two opposite bounding box corners and geometric sampling involves adding different perturbation directly to the 5 state parameters of this SSM unlike affine where a specialized geometric representation is used instead;
 			
+Mutual Information (MI) AM:
+===========================
+	 Parameter:	'mi_n_bins' / 'mi_preseed' / 'mi_pou'
+		Description:
+			meaning is same as the corresponding parameters for CCRE;
+			
+Normalized Sum of Squared Differences (NSSD) AM:
+================================================
+	 Parameter:	'norm_pix_min' / 'norm_pix_max'
+		Description:
+			minimum and maximum values within which to normalize the pixel values
 			
 Nearest Neighbour (NN) SM:
 ==========================
@@ -1664,12 +1675,6 @@ Pyramidal Tracker:
 	 Parameter:	'pyr_show_levels'
 		Description:
 			show the image for each level in the pyramid annotated with the tracker's location;	 
-			
-Normalized Sum of Squared Differences (NSSD) AM:
-================================================
-	 Parameter:	'norm_pix_min' / 'norm_pix_max'
-		Description:
-			minimum and maximum values within which to normalize the pixel values
 
 Sum of Conditional Variance (SCV)/Reversed SCV (RSCV)/Localized SCV (LSCV)/Localized RSCV (LRSCV) AMs:
 ===================================================================================================== 
@@ -1689,12 +1694,7 @@ Sum of Conditional Variance (SCV)/Reversed SCV (RSCV)/Localized SCV (LSCV)/Local
 		Description:
 			strictly enforce the partition of unity constraint for border bins while computing the BSpline joint histogram
 			
-Mutual Information (MI) AM:
-===========================
-	 Parameter:	'mi_n_bins' / 'mi_preseed' / 'mi_pou'
-		Description:
-			only for MI appearance model; 
-			meaning is same as the corresponding parameters for SCV;
+
 			
 	 
 	
