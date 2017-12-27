@@ -34,11 +34,11 @@ namespace utils{
 	public:
 		InputParams(const InputParams *_params = nullptr);
 		InputParams(
-			char _img_source, 
-			string _dev_name, 
+			char _img_source,
+			string _dev_name,
 			string _dev_fmt,
 			string _dev_path,
-			int _n_buffers, 
+			int _n_buffers,
 			bool _invert_seq);
 		char img_source;
 		string dev_name;
@@ -53,7 +53,7 @@ namespace utils{
 
 	class InputBase {
 	public:
-		InputBase(const InputParams *_params=nullptr);
+		InputBase(const InputParams *_params = nullptr);
 		virtual ~InputBase(){}
 		virtual bool initialize() = 0;
 		virtual bool update() = 0;
@@ -77,7 +77,7 @@ namespace utils{
 		string file_path;
 		bool const_buffer;
 	};
-	
+
 	class InputCV : public InputBase {
 	public:
 		InputCV(const InputParams *_params = nullptr,
@@ -107,7 +107,7 @@ namespace utils{
 	class InputVPParams : public InputParams {
 	public:
 		enum class VpResUSB{
-			Default, res640x480, res800x600, res1024x768, 
+			Default, res640x480, res800x600, res1024x768,
 			res1280x720, res1920x1080
 		};
 		enum class VpResFW{
@@ -141,7 +141,7 @@ namespace utils{
 			float _pg_fw_gain,
 			float _pg_fw_exposure,
 			float _pg_fw_brightness);
-		InputVPParams(const InputVPParams *_params=nullptr);
+		InputVPParams(const InputVPParams *_params = nullptr);
 
 		int usb_n_buffers;
 		VpResUSB usb_res;
@@ -298,7 +298,7 @@ namespace utils{
 		typedef XVImageRGB<PIX_TYPE> IMAGE_TYPE;
 		typedef XVImageScalar<PIX_TYPE_GS> IMAGE_TYPE_GS;
 
-		InputXV(const InputParams *_params=nullptr) : InputBase(_params),
+		InputXV(const InputParams *_params = nullptr) : InputBase(_params),
 			params(_params), src(nullptr){}
 
 		~InputXV(){
