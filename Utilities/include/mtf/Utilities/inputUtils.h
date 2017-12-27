@@ -78,16 +78,10 @@ namespace utils{
 		bool const_buffer;
 	};
 	
-	class InputCVParams : public InputParams {
-	public:
-		InputCVParams(const InputParams *_params = nullptr,
-			int _img_type = CV_8UC3);
-		int img_type;
-	};
-
 	class InputCV : public InputBase {
 	public:
-		InputCV(const InputCVParams *_params = nullptr);
+		InputCV(const InputParams *_params = nullptr,
+			int _img_type = CV_8UC3);
 		~InputCV();
 		bool initialize() override;
 		bool update() override;
@@ -102,10 +96,11 @@ namespace utils{
 		int getFrameID() const override{ return frame_id; }
 
 	private:
-		InputCVParams params;
+		InputParams params;
 		cv::VideoCapture cap_obj;
 		vector<cv::Mat> cv_buffer;
 		int frame_id;
+		const int img_type;
 	};
 
 #ifndef DISABLE_VISP

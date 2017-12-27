@@ -23,6 +23,23 @@
 #define INPUT_N_BUFFERS 0
 #define INPUT_INVERT_SEQ false
 
+#ifndef DISABLE_VISP
+
+#define	VP_USB_N_BUFFERS 3
+#define	VP_USB_RES VpResUSB::Default
+#define VP_USB_FPS VpFpsUSB::Default
+#define VP_FW_RES VpResFW::Default
+#define VP_FW_FPS VpFpsFW::Default
+#define VP_FW_DEPTH VpDepthFW::Default
+#define VP_FW_ISO VpISOFW::Default
+#define VP_FW_PRINT_INFO false
+#define VP_PG_FW_SHUTTER_MS 0
+#define VP_PG_FW_GAIN 0
+#define VP_PG_FW_EXPOSURE 0
+#define VP_PG_FW_BRIGHTNESS 0
+
+#endif
+
 
 _MTF_BEGIN_NAMESPACE
 namespace utils{
@@ -102,11 +119,10 @@ namespace utils{
 		//printf("dev_path: %s\n", dev_path.c_str());
 		//printf("dev_fmt: %s\n", dev_fmt.c_str());
 	}
-	InputCVParams::InputCVParams(const InputParams *_params, int _img_type) :
-		InputParams(_params), img_type(_img_type){}
 
-	InputCV::InputCV(const InputCVParams *_params) : InputBase(_params),
-		params(_params), frame_id(0){}
+	InputCV::InputCV(const InputParams *_params, int _img_type) :
+		InputBase(_params), params(_params), 
+		frame_id(0), img_type(_img_type){}
 	InputCV::~InputCV(){
 		cv_buffer.clear();
 		cap_obj.release();
@@ -161,7 +177,7 @@ namespace utils{
 			img_width, img_height);
 		cv_buffer.resize(n_buffers);
 		for(int i = 0; i < n_buffers; ++i){
-			cv_buffer[i].create(img_height, img_width, params.img_type);
+			cv_buffer[i].create(img_height, img_width, img_type);
 		}
 		buffer_id = 0;
 		frame_id = 0;
@@ -198,19 +214,6 @@ namespace utils{
 		}
 	}
 #ifndef DISABLE_VISP
-
-#define	VP_USB_N_BUFFERS 3
-#define	VP_USB_RES VpResUSB::Default
-#define VP_USB_FPS VpFpsUSB::Default
-#define VP_FW_RES VpResFW::Default
-#define VP_FW_FPS VpFpsFW::Default
-#define VP_FW_DEPTH VpDepthFW::Default
-#define VP_FW_ISO VpISOFW::Default
-#define VP_FW_PRINT_INFO false
-#define VP_PG_FW_SHUTTER_MS 0
-#define VP_PG_FW_GAIN 0
-#define VP_PG_FW_EXPOSURE 0
-#define VP_PG_FW_BRIGHTNESS 0
 
 	InputVPParams::InputVPParams(const InputParams *_params,
 		int _usb_n_buffers,
