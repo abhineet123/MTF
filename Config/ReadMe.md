@@ -1427,6 +1427,25 @@ Inverse Additive Lucas Kanade (IALK) SM:
 			1:	Forward/current Self (or extended Gauss Newton) Hessian
 			2:	Standard or approximate Forward Newton Hessian
 			
+Inverse Compositional Lucas Kanade (ICLK) SM:
+=============================================
+	 Parameter:	'ic_hess_type'
+		Description:
+			type of Hessian to be used with ICLK
+		Possible Values:
+			0:	Inverse/initial Self (or extended Gauss Newton) Hessian
+			1:	Forward/current Self (or extended Gauss Newton) Hessian
+			2:	Standard or Inverse Newton Hessian
+			
+	 Parameter:	'ic_chained_warp'
+		Description:
+			use chain rule to compute pixel Jacobian and Hessian
+			
+	 Parameter:	'ic_update_ssm'
+		Description:
+			enable updating the SSM gradient in the setRegion function;
+			only works with the templated version of the SM;
+			
 Nearest Neighbour (NN) SM:
 ==========================
 	 Parameter:	'nn_max_iters'
