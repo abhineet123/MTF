@@ -1398,6 +1398,7 @@ SSM Estimator:
 			no. of iterations to use for the optional Levenberg Marquardt refinement step if it is enabled; 
 
 			
+
 Homography SSM:
 ===============
 	 Parameter:	'hom_normalized_init'
@@ -1410,6 +1411,13 @@ Homography SSM:
 			use corner based sampling for stochastic SMs; similar to 'aff_pt_based_sampling' except that the perturbations are applied to the 4 bounding box corners instead of the 3 points as in affine;
 			also, geometric sampling in this case involves adding different perturbation directly to the 8 state parameters of this SSM unlike affine where a specialized geometric representation is used instead;
 			
+Hierarchical SSM tracker:
+=========================
+	 Parameter:	'hrch_sm' / 'hrch_sm'
+		Description:
+			AM and SSM for the hierarchical SSM tracker	
+
+
 Nearest Neighbour (NN) SM:
 ==========================
 	 Parameter:	'nn_max_iters'
