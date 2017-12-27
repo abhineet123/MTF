@@ -1240,6 +1240,7 @@ GridTracker and RKLT:
 		Description:
 			Search method, appearance model, state space model and illumination model for the individual patch trackers used by the Grid Tracker;
 				providing 'cv' for grid_sm will run GridTrackerCV that uses OpenCV KLT trackers instead of MTF trackers as patch trackers
+				providing 'flow' for grid_sm will run GridTrackerFlow that uses LK Optical flow implementation provided by the AM; currently supported only by SSD and NCC;
 				providing 'pyr' for grid_sm will cause each patch tracker to run on an image pyramid, the settings for which will be taken from the parameters for PyramidalTracker; 
 					a time saving measure employed in this case is to construct the image pyramid only once and share it amongst all the patch trackers;
 			
@@ -1302,23 +1303,29 @@ GridTracker and RKLT:
 	 Parameter:	'grid_rgb_input'
 		Description:
 			set to 1 to use 3 channel RGB images as input to the OpenCV grid tracker;
-			only matters if 'grid_sm'is set to 'cv';
+			only matters if 'grid_sm' is set to 'cv';
 			
 	 Parameter:	'grid_pyramid_levels'
 		Description:
 			number of levels in the image pyramids used by the OpenCV grid tracker;
-			only matters if 'grid_sm'is set to 'cv';
+			only matters if 'grid_sm' is set to 'cv';
 			
 	 Parameter:	'grid_use_min_eig_vals'
 		Description:
 			use minimum eigen values as an error measure in the OpenCV grid tracker;	
-			only matters if 'grid_sm'is set to 'cv';
+			only matters if 'grid_sm' is set to 'cv';
 			
 	 Parameter:	'grid_min_eig_thresh'
 		Description:
 			threshold for minimum eigen value of a 2x2 normal matrix of optical flow equations to filter out grid points in the OpenCV grid tracker;
-			only matters if 'grid_sm'is set to 'cv';
+			only matters if 'grid_sm' is set to 'cv';
 			more details of this and the previous parameter can be found at: http://docs.opencv.org/2.4/modules/video/doc/motion_analysis_and_object_tracking.html#calcopticalflowpyrlk
+
+	 Parameter:	'grid_use_const_grad'
+		Description:
+			maintain the image gradient constant across iterations while computing the optical flow;
+			only matters if 'grid_sm' is set to 'flow';
+			
 RKLT:
 =====
 	 Parameter:	'rkl_sm'
