@@ -2066,4 +2066,59 @@ Sobel Filtering Preprocessor:
 		
 	 Additional Reference:
 		https://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/sobel_derivatives/sobel_derivatives.html
+		
+Selective pixel integration (SPI):
+==================================
+	 Parameter:	'spi_type'
+		Description:
+			TBA
+			
+	 Parameter:	'spi_pix_diff_thresh'
+		Description:
+			TBA
+			
+	 Parameter:	'spi_grad_thresh'
+		Description:
+			TBA
+			
+	 Parameter:	'spi_grad_use_union'
+		Description:
+			TBA
+			
+	 Parameter:	'spi_gftt_max_corners'
+		Description:
+			TBA
+			
+	 Parameter:	'spi_gftt_quality_level'
+		Description:
+			TBA
+			
+	 Parameter:	'spi_gftt_min_distance'
+		Description:
+			TBA
+			
+	 Parameter:	'spi_gftt_block_size'
+		Description:
+			TBA
+			
+	 Parameter:	'spi_gftt_use_harris_detector'
+		Description:
+			TBA
+			
+	 Parameter:	'spi_gftt_k'
+		Description:
+			TBA
+			
+	 Parameter:	'spi_gftt_use_union'
+		Description:
+			TBA
+			
+	 Parameter:	'spi_gftt_neigh_offset'
+		Description:
+			TBA
+			
+
+			
+	
+
 			
