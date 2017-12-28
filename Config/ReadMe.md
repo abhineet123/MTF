@@ -2137,4 +2137,26 @@ GFTT SPI model:
 	 Additional Reference:
 		https://docs.opencv.org/2.4/modules/imgproc/doc/feature_detection.html#goodfeaturestotrack
 
+Spline based SSM:
+=================
+	 Parameter:	'spl_control_size'
+		Description:
+			resolution of spline control patch, i.e. each spline control point influences pixels in a neighbourhood of size spl_control_size x spl_control_size  around it;
+	 
+	 Parameter:	'spl_control_overlap'
+		Description:
+			overlap in pixels between the influence regions of neighbouring spline control points;
 			
+	 Parameter:	'spl_interp_type'
+		Description:
+			interpolation method to compute the displacements of individual pixels based on those of the spline control points;
+			
+	 Parameter:	'spl_static_wts'
+		Description:
+			keep the weights associated with control points constant during tracking
+			
+	 Parameter:	'spl_debug_mode'
+		Description:
+			enable printing and writing of debugging data	
+
+						
