@@ -2048,5 +2048,22 @@ SL3 SSM:
 			
 	 Parameter:	'sl3_sample_mean_max_iters' / 'sl3_sample_mean_eps'
 		Description:
-			maximum iterations and epsilon used for controlling the iterative SL3 mean estimation process;
+			maximum iterations and epsilon used for controlling the iterative SL3 mean estimation process;		
+			
+	 Parameter:	'sl3_debug_mode'
+		Description:
+			enable printing and writing of debugging data
+			
+Sobel Filtering Preprocessor:
+=============================
+	 Parameter:	'sobel_kernel_size'
+		Description:
+			Sobel filter kernel size; this is a single number so that only square kernels are supported;
+		
+	 Parameter:	'sobel_normalize'
+		Description:
+			normalize the X and Y Sobel derivative images by their squared norm before computing their average;
+		
+	 Additional Reference:
+		https://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/sobel_derivatives/sobel_derivatives.html
 			
