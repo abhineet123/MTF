@@ -1397,8 +1397,6 @@ SSM Estimator:
 		Description:
 			no. of iterations to use for the optional Levenberg Marquardt refinement step if it is enabled; 
 
-			
-
 Homography SSM:
 ===============
 	 Parameter:	'hom_normalized_init'
@@ -1452,6 +1450,43 @@ Isometry SSM:
 		Description:
 			use point based sampling for stochastic SMs; refer 'aff_pt_based_sampling' for details;
 			here the perturbations are applied to the two opposite bounding box corners and geometric sampling involves adding different perturbation directly to the 5 state parameters of this SSM unlike affine where a specialized geometric representation is used instead;
+			
+Lie Affine SSM:
+===============
+	 Parameter:	'laff_normalized_init'
+		Description:
+			use normalized initial bounding box with respect to which all subsequent transformations are computed;
+			refer 'aff_normalized_init' for more details;
+		
+	 Parameter:	'laff_grad_eps'
+		Description:
+			offset used for computing the numerical estimate of the first gradient (or Jacobian) of the transformation w.r.t. pixel locations; this is the distance(in x or y direction) between the pixel locations that are used in the method of central differences; 
+	
+Lie Homography SSM:
+===================
+	 Parameter:	'lhom_normalized_init'
+		Description:
+			use normalized initial bounding box with respect to which all subsequent transformations are computed;
+			refer 'aff_normalized_init' for more details;
+		
+	 Parameter:	'lhom_grad_eps'
+		Description:
+			offset used for computing the numerical estimate of the first gradient (or Jacobian) of the transformation w.r.t. pixel locations; this is the distance(in x or y direction) between the pixel locations that are used in the method of central differences; 
+			
+Localized Kullback-Leibler Divergence Information (LKLD) AM:
+============================================================	
+	 Parameter:	'lkld_n_bins' / 'lkld_pre_seed' / 'lkld_pou'
+		Description:
+			meaning is same as the corresponding parameters for CCRE;
+			
+	 Parameter:	'lkld_sub_regions'
+		Description:
+			size of the grid of subregions into which the image patch is divided so that the KL-Divergence is computed between each pair of corresponding sub-patches;
+			e.g. 'lkld_sub_regions' of 3 means that the patch will be divided into a 3 x 3 grid of sub-regions for a total of 9 sub-patches
+			
+	 Parameter:	'lkld_spacing'
+		Description:
+			gap in pixels between adjacent subregions in both x and y directions, i.e. subregions in the same row are separated by this gap in the x direction while those in adjacent rows are separated by this gap in the y direction;
 			
 Mutual Information (MI) AM:
 ===========================
