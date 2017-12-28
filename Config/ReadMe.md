@@ -1551,20 +1551,24 @@ Nearest Neighbour (NN) SM:
 	 Parameter:	'nn_max_iters'
 		Description:
 			maximum no. of iterations per frame 
+			
 	 Parameter:	'nn_n_samples'
 		Description:
 			no. of samples in the index/dataset that is searched for the nearest neighbour 
+			
 	 Parameter:	'nn_ssm_sigma_ids'
 		Description:
 			one or more numeric IDs (separated by commas with no spaces) corresponding to the list of "ssm_sigma" specified at the end of modules.cfg
 			each specifies the standard deviation of the joint Gaussian distribution used for generating the random SSM parameters for the samples in the index; 
 			normally a vector of the same size as the SSM state vector but may have special meaning/format depending on the specific SSM being used;
 			only matters if nn_pix_sigma is <=0;
+			
 	 Parameter:	'nn_pix_sigma'
 		Description:
 			one or more standard deviations of displacement of corners in pixels produced by random SSM samples in the index; 
 			a gradient based method is current used for converting this to the sigma for each SSM parameter and may not work well for some SSMs (especially more complex ones with higher DOFs);
 			overrides the values specified in 'nn_ssm_sigma' unless it is <= 0;
+			
 	 Parameter:	'nn_ssm_mean_ids'
 		Description:
 			one or more numeric IDs (separated by commas with no spaces) that correspond to the list of "ssm_mean" specified at the end of modules.cfg (if any);
@@ -1573,6 +1577,7 @@ Nearest Neighbour (NN) SM:
 			any ID that is < 0 or > no. of specified ssm_mean vectors will be ignored; 
 			if the number of IDs specified < that for "pf_ssm_sigma_ids", the last one is used for all remaining distributions; 
 			therefore if no valid ID is specified here (either all IDs < 0 or no "ssm_mean" specified), all distributions will be zero mean;
+			
 	 Parameter:	'nn_index_type'
 		Description:
 			ID of the type of FLANN index to be built;			
@@ -1586,31 +1591,54 @@ Nearest Neighbour (NN) SM:
 			6:	KDTreeSingle
 			7:	KDTreeCuda3d
 			8:	Autotuned
-			please refer FLANN manual(www.cs.ubc.ca/~mariusm/uploads/FLANN/flann_manual-1.6.pdf) for more details on index types 1-7 and this paper for index type 0: ijcai.org/papers11/Papers/IJCAI11-222.pdf;
+		Additional References:
+			Muja, M. & Lowe, D. G., 'Fast Approximate Nearest Neighbors with Automatic Algorithm Configuration', VISAPP (1), 2009, 2, 331-340
+			FLANN manual(www.cs.ubc.ca/~mariusm/uploads/FLANN/flann_manual-1.6.pdf) [index types 1-7]
+			Hajebi, K.; Abbasi-Yadkori, Y.; Shahbazi, H. & Zhang, H., 'Fast approximate nearest-neighbor search with k-nearest neighbor graph', IJCAI Proceedings-International Joint Conference on Artificial Intelligence, 2011, 22, 1312 (ijcai.org/papers11/Papers/IJCAI11-222.pdf) [index type 0]
+			
 	Parameter:	'nn_fgnn_index_type'
 		Description:
 			ID of the type of FLANN index to be used to build GNN index; set to 0 to disable the use of FLANN with GNN; only matters if nn_index_type is set to 0;
+			
+	 Parameter:	'nn_search_type'
+		Description:
+			ID of the search type used for the FLANN index			
+		Possible Values:
+			0:	K-Nearest Neighbours (KNN) search
+			1:	Radius search
+		Additional References:
+			sections 3.1.6 and 3.1.7 of FLANN manual (www.cs.ubc.ca/~mariusm/uploads/FLANN/flann_manual-1.6.pdf)
+			
 	Parameter:	'nn_save_index'
 		Description:
 			save the dataset and index to a binary file so it can be loaded again in a later run to avoid rebuilding;
+			
 	 Parameter:	'nn_load_index'
 		Description:
 			load the dataset and index from a previously saved binary file; if the file does not exist, it will revert to building the dataset and index instead;
+			
+	 Parameter:	'nn_additive_update'
+		Description:
+			use additive method to update SSM parameters instead of compositional one;
+			
 	 Parameter:	'nn_show_samples'
 		Description:
 			show the location of the samples used for building the dataset;	
 			non zero values for it specify the no. of samples to be shown simultaneously while zero disables it; 
 			program execution will be paused after drawing these many samples and can be continued by pressing any key; 
 			pressing space will disable the pausing after each time these many samples are drawn while escape will turn off the showing samples option;
+			
 	 Parameter:	'nn_add_samples_gap'
 		Description:
 			gap between frames at which the index is updated with new samples;
 			setting this to  0 disables the addition of samples;
 			does not work with GNN at present;
+			
 	 Parameter:	'nn_n_samples_to_add'
 		Description:
 			no. of samples added to the index at each update;
 			only matters if nn_add_samples_gap > 0;
+			
 	 Parameter:	'nn_remove_samples'
 		Description:
 			remove the sample corresponding to the nearest neighbour found in each frame;
@@ -1621,6 +1649,7 @@ Multi Layer NN:
 	 Parameter:	'nnk_n_layers'
 		Description:
 			no. of layers in the cascade setup;
+			
 	 Parameter:	'nnk_ssm_sigma_ids'
 		Description:
 			similar to nn_ssm_sigma_ids except it must be provided for each layer of the tracker separately;
@@ -1630,9 +1659,11 @@ Particle Filter (PF) SM:
 	 Parameter:	'pf_max_iters'
 		Description:
 			maximum no. of iterations per frame 
+			
 	 Parameter:	'pf_n_particles'
 		Description:
 			no. of particles used for searching for the optimal SSM parameters; 
+			
 	 Parameter:	'pf_ssm_sigma_ids'
 		Description:
 			one or more numeric IDs separated by commas (NO spaces) that correspond to the list of "ssm_sigma" vectors specified at the end of modules.cfg; must be <= no. of such vectors;
@@ -1641,6 +1672,7 @@ Particle Filter (PF) SM:
 			if the number of IDs specified < that for "pf_ssm_mean_ids", the last one is used for all remaining distributions so that the number of samplers used is maximum of the lengths of these two arguments; 
 			only matters if pf_pix_sigma is <=0;
 			only NT version of PF supports multiple samplers so the standard version will simply use the first value specified here;
+			
 	 Parameter:	'pf_ssm_mean_ids'
 		Description:
 			one or more numeric IDs separated by commas (NO spaces) that correspond to the list of "ssm_mean" specified at the end of modules.cfg (if any);
@@ -1649,38 +1681,46 @@ Particle Filter (PF) SM:
 			any ID that is < 0 or > no. of specified ssm_mean vectors will be ignored; 
 			if the number of IDs specified < that for "pf_ssm_sigma_ids", the last one is used for all remaining distributions; 
 			therefore if no valid ID is specified here (either all IDs < 0 or no "ssm_mean" specified), all distributions will be zero mean;
+			
 	 Parameter:	'pf_pix_sigma'
 		Description:
 			one or more standard deviations for displacement of corners in pixels produced by each sampler used for generating the random SSM samples corresponding to different particles; 
 			a gradient based method is current used for converting this to the sigma for each SSM parameter and may not work well for some SSMs (especially more complex ones with higher DOFs);
 			overrides the values specified in 'pf_ssm_sigma' unless it is set to 0;
 			only NT version of PF supports multiple samplers so the standard version will simply use the first value specified here;
+			
 	 Parameter:	'pf_update_sampler_wts'
 		Description:
 			update the proportion of samples taken from different sampler in each frame according to the weights of the samples generated by each
+			
 	 Parameter:	'pf_min_particles_ratio'
 		Description:
 				fraction of the total particles that will always be evenly distributed between the samplers; only the proportion of remaining particles will be adjusted dynamically;
 				only matters if "pf_update_sampler_wts" is enabled
+				
 	 Parameter:	'pf_measurement_sigma'
 		Description:
 			standard deviation for introducing randomness to the measurement function;
 			only matters if pf_likelihood_func is set to 1;
+			
 	 Parameter:	'pf_n_particles'
 		Description:
 			no. of particles used for searching for the optimal SSM parameters; 
+			
 	 Parameter:	'pf_dynamic_model'
 		Description:
 			dynamic model used for generating random perturbed SSM parameters for different particles;
 		Possible Values:
 			0:	Random Walk
 			1:	First Order Auto Regression1
+			
 	 Parameter:	'pf_update_type'
 		Description:
 			method used for combining a state perturbation with existing SSM parameter values to update the particle states;
 		Possible Values:
 			0:	Additive
 			1:	Compositional
+			
 	 Parameter:	'pf_likelihood_func'
 		Description:
 			method used for generating the likelihood of the patch corresponding to each particle;
@@ -1688,6 +1728,7 @@ Particle Filter (PF) SM:
 			0:	use the getLikelihood() function of the AM
 			1:	Gaussian - use an exponential function on the negative similarity
 			2:	Reciprocal of the similarity
+			
 	 Parameter:	'pf_resampling_type'
 		Description:
 			method used for re sampling the particles to avoid degeneration
@@ -1698,12 +1739,14 @@ Particle Filter (PF) SM:
 			1:	Binary Multinomial
 			2:	Linear Multinomial			
 			3:	Residual	
+			
 	 Parameter:	'pf_adaptive_resampling_thresh'
 		Description:
 				maximum ratio between the number of effective particles and the	total particles for resampling to be performed;
 				setting it to <=0 or >1 disables adaptive resampling;
 				refer section III.D of this paper for details about adaptive resampling:
 				Grisetti, Giorgio, Stachniss, Cyrill, and Burgard, Wolfram. “Improved techniques for grid mapping with Rao-Blackwellized particle filters.” IEEE transactions on Robotics 23.1 (2007): 34-46			
+				
 	 Parameter:	'pf_mean_type'
 		Description:
 			method used for generating the weighted mean of all the particles which serves as the overall state of the tracker;
@@ -1711,13 +1754,16 @@ Particle Filter (PF) SM:
 			0:	No averaging is done and the state of the particle with the highest weight is simply used instead
 			1:	use the dedicated function provided by the SSM
 			2:	take the mean of the bounding box corners corresponding to all the particles as the overall bounding box corners specifying the state of the tracker
+			
 	 Parameter:	'pf_reset_to_mean'
 		Description:
 			reset the states of all particles to their mean state for each frame;
+			
 	 Parameter:	'pf_mean_of_corners'
 		Description:
 			use the mean of corners corresponding to different particles to compute the mean location and use the corresponding SSM parameters as the mean state;	
 			if disabled, the function "estimateMeanOfSamples()" provided by the SSM is used instead;
+			
 	 Parameter:	'pf_show_particles'
 		Description:
 			show the location of the patch corresponding to each particle;	
@@ -1730,6 +1776,7 @@ Multi Layer PF:
 	 Parameter:	'pfk_n_layers'
 		Description:
 			no. of layers in the cascade setup;
+			
 	 Parameter:	'pfk_ssm_sigma_ids'
 		Description:
 			similar to 'pf_ssm_sigma_ids' except it must be provided for each layer of the tracker separately;

@@ -343,7 +343,6 @@ namespace mtf{
 		double nn_corner_sigma_t = 0.06;
 		vectord nn_pix_sigma;
 		int nn_n_trees = 6;
-		int nn_n_checks = 50;
 		double nn_ssm_sigma_prec = 1.1;
 		int nn_index_type = 1;
 		int nn_search_type = 0;
@@ -2072,10 +2071,6 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "nn_n_trees")){
 				nn_n_trees = atoi(arg_val);
-				return;
-			}
-			if(!strcmp(arg_name, "nn_n_checks")){
-				nn_n_checks = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "nn_index_type")){
