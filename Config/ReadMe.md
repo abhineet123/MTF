@@ -1995,25 +1995,26 @@ SIFT feature detector and descriptor:
 =====================================
 	 Parameter:	'sift_n_features'
 		Description:
-			number of features
+			number of best features to retain. The features are ranked by their scores (measured in SIFT algorithm as the local contrast)
 			
 	 Parameter:	'sift_n_octave_layers'
 		Description:
-			TBA	 
+			number of layers in each octave. 3 is the value used in D. Lowe paper. The number of octaves is computed automatically from the image resolution.	 
 			
 	 Parameter:	'sift_contrast_thresh'
 		Description:
-			TBA	 
+			contrast threshold used to filter out weak features in semi-uniform (low-contrast) regions. The larger the threshold, the less features are produced by the detector.	 
 			
 	 Parameter:	'sift_edge_thresh'
 		Description:
-			TBA	 
+			threshold used to filter out edge-like features. Note that the its meaning is different from the contrastThreshold, i.e. the larger the edgeThreshold, the less features are filtered out (more features are retained).	 
 			
 	 Parameter:	'sift_sigma'
 		Description:
-			TBA	 
+			sigma of the Gaussian applied to the input image at the octave #0. If your image is captured with a weak camera with soft lenses, you might want to reduce the number.	 
 			
 	 Additional Reference:
+		https://docs.opencv.org/2.4/modules/nonfree/doc/feature_detection.html#sift-sift
 		Lowe, D. G., 'Distinctive image features from scale-invariant keypoints', International journal of computer vision, Springer, 2004, 60, 91-110
 		
 Similitude SSM:
@@ -2071,54 +2072,69 @@ Selective pixel integration (SPI):
 ==================================
 	 Parameter:	'spi_type'
 		Description:
-			TBA
+			SPI model
+		Possible Values:
+			0:	None (disable SPI)
+			1:	Pixel difference
+			2:  Pixel gradient norm
+			3: Good Features To Track (GFTT)
 			
+Pixel difference SPI model:
+===========================			
 	 Parameter:	'spi_pix_diff_thresh'
 		Description:
-			TBA
+			pixel difference threshold between the template and the current patch so that pixels with difference above this value are turned off
 			
+Pixel gradient norm SPI model:
+==============================
 	 Parameter:	'spi_grad_thresh'
 		Description:
-			TBA
+			pixel gradient norm threshold so that pixels with gradient norm less than value this are turned off
 			
 	 Parameter:	'spi_grad_use_union'
 		Description:
-			TBA
+			use the union of the SPI masks computed using the initial and current gradients as the overall SPI mask so that only pixels that are turned on in both masks will be turned on in the final mask
 			
+GFTT SPI model:
+===============
 	 Parameter:	'spi_gftt_max_corners'
 		Description:
-			TBA
+			Maximum number of corners to return. If there are more corners than are found, the strongest of them is returned.
 			
 	 Parameter:	'spi_gftt_quality_level'
 		Description:
-			TBA
+			parameter characterizing the minimal accepted quality of image corners;
+			the parameter value is multiplied by the best corner quality measure, which is the minimal eigenvalue or the Harris function response;
+			the corners with the quality measure less than the product are rejected;
+			for example, if the best corner has the quality measure = 1500, and the qualityLevel=0.01 , then all the corners with the quality measure less than 15 are rejected.
 			
 	 Parameter:	'spi_gftt_min_distance'
 		Description:
-			TBA
+			Minimum possible Euclidean distance between the returned corners.
 			
 	 Parameter:	'spi_gftt_block_size'
 		Description:
-			TBA
+			size of an average block for computing a derivative covariation matrix over each pixel neighbourhood.
 			
 	 Parameter:	'spi_gftt_use_harris_detector'
 		Description:
-			TBA
+			parameter indicating whether to use a Harris detector
 			
 	 Parameter:	'spi_gftt_k'
 		Description:
-			TBA
+			Free parameter of the Harris detector;
+			only matters if 'spi_gftt_use_harris_detector' is enabled
 			
 	 Parameter:	'spi_gftt_use_union'
 		Description:
-			TBA
+			use the union of the SPI masks computed using the initial and current gradients as the overall SPI mask so that only pixels that are turned on in both masks will be turned on in the final mask
 			
 	 Parameter:	'spi_gftt_neigh_offset'
 		Description:
-			TBA
+			size of the neighbourhood around each detected corner or feature point point in which all pixels are turned on;
+			this is a single number so that only square neighbourhoods are supported;  
 			
-
-			
-	
+	 Additional Reference:
+		https://docs.opencv.org/2.4/modules/imgproc/doc/feature_detection.html#goodfeaturestotrack
 
 			
