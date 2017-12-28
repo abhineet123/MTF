@@ -2013,7 +2013,7 @@ SIFT feature detector and descriptor:
 		Description:
 			sigma of the Gaussian applied to the input image at the octave #0. If your image is captured with a weak camera with soft lenses, you might want to reduce the number.	 
 			
-	 Additional Reference:
+	 Additional References:
 		https://docs.opencv.org/2.4/modules/nonfree/doc/feature_detection.html#sift-sift
 		Lowe, D. G., 'Distinctive image features from scale-invariant keypoints', International journal of computer vision, Springer, 2004, 60, 91-110
 		
@@ -2137,8 +2137,8 @@ GFTT SPI model:
 	 Additional Reference:
 		https://docs.opencv.org/2.4/modules/imgproc/doc/feature_detection.html#goodfeaturestotrack
 
-Spline based SSM:
-=================
+Spline SSM:
+===========
 	 Parameter:	'spl_control_size'
 		Description:
 			resolution of spline control patch, i.e. each spline control point influences pixels in a neighbourhood of size spl_control_size x spl_control_size  around it;
@@ -2158,5 +2158,39 @@ Spline based SSM:
 	 Parameter:	'spl_debug_mode'
 		Description:
 			enable printing and writing of debugging data	
+			
+	 Note:	this SSM is not completely implemented yet so might not work with some SMs
 
-						
+Sum of Pixel wise Structural Similarity (SPSS) AM:
+==================================================
+	 Parameter:	'spss_k'
+		Description:
+			constant added to the numerator and denominator to avoid numerical instability issues caused by too small denominators;
+	 Additional Reference:
+		Singh, A.; Siam, M. & Jagersand, M., 'Unifying Registration based Tracking: A Case Study with Structural Similarity', WACV, 2017 			
+
+Structural Similarity (SSIM) AM:
+================================
+	 Parameter:	'ssim_k1' / 'ssim_k2'
+		Description:
+			constants added to the two terms in the numerator and denominator to avoid numerical instability issues caused by too small denominators;
+			
+	 Additional References:
+		Wang, Z.; Bovik, A.; Sheikh, H. & Simoncelli, E., 'Image quality assessment: from error visibility to structural similarity Image Processing', IEEE Transactions on, 2004, 13, 600-6
+		Singh, A.; Siam, M. & Jagersand, M., 'Unifying Registration based Tracking: A Case Study with Structural Similarity', WACV, 2017 	
+
+Sum of Squared Differences (SSD) AM:
+====================================
+	 Parameter:	'ssd_show_template'
+		Description:
+			show the image patch corresponding to the template
+			
+Sum of AMs:
+===========
+	 Parameter:	'sum_am1' / 'sum_am2'
+		Description:
+			the two AMs whose sum will make up the composite AM	
+		Possible Values:
+			refer 'mtf_am' for a list of AMs
+			
+	 Note:	this composite AM is not completely implemented yet so might not work with some combinations of AMs and SMs
