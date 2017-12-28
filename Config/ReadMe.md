@@ -1822,6 +1822,28 @@ Multi Layer PF:
 		Description:
 			similar to 'pf_ssm_sigma_ids' except it must be provided for each layer of the tracker separately;
 			
+Piecewise Gain & Bias (PGB) ILM:
+================================
+	 Parameter:	'pgb_additive_update'
+		Description:
+			use additive instead of compositional updates for updating the ILM parameters;	
+			not implemented yet;
+			
+	 Parameter:	'pgb_sub_regions_x' / 'pgb_sub_regions_y'
+		Description:
+			size of the grid of subregions in x and y directions into which the image patch is divided;	
+			
+Radial Basis Function (RBF) ILM:
+================================
+	 Parameter:	'rbf_additive_update'
+		Description:
+			use additive instead of compositional updates for updating the ILM parameters;	
+			not implemented yet;
+			
+	 Parameter:	'rbf_n_ctrl_pts_x' / 'rbf_n_ctrl_pts_y'
+		Description:
+			size of the grid of control points in x and y directions that is used for computing the RBF surface;	
+	
 Pyramidal Tracker:
 ==================
 	 Parameter:	'pyr_sm'
