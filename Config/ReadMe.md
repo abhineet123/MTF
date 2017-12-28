@@ -556,7 +556,7 @@ General parameters for example executables:
 		Possible Values:
 			0: Mean Corner Distance or MCD error - mean euclidean distance between the corners of the two bounding boxes
 			1: Center Location Error or CLE - euclidean distance between the centroids of the two bounding boxes
-			2: Jaccard Error - ration of intersection to union between the two bounding boxes
+			2: Jaccard Error - ratio of intersection to union between the two bounding boxes
 			
 	 Parameter:	'reinit_at_each_frame'
 		Description:
@@ -1843,7 +1843,29 @@ Radial Basis Function (RBF) ILM:
 	 Parameter:	'rbf_n_ctrl_pts_x' / 'rbf_n_ctrl_pts_y'
 		Description:
 			size of the grid of control points in x and y directions that is used for computing the RBF surface;	
-	
+			
+Parallel Tracker:
+=================
+	 Parameter:	'prl_n_trackers'
+		Description:
+			number of trackers to be run in parallel;
+			
+	 Parameter:	'prl_estimation_method'
+		Description:
+			method used for estimating the overall object location from the locations of the individual trackers;
+			only works with ParallelSM;			
+		Possible Values:
+			0:	Mean Of Corners - overall bounding box corners are computed as a mean of the individual bounding boxes 
+			1:	Mean Of State - overall SSM estate is computed as the element wise mean of the SSM states produced by the individual trackers;
+			
+	 Parameter:	'prl_reset_to_mean'
+		Description:
+			reset the locations of all the trackers to the overall object location in each frame;
+			
+	 Parameter:	'prl_auto_reinit' / 'prl_reinit_err_thresh' / 'prl_reinit_frame_gap'
+		Description:
+			same meaning as the corresponding parameters of cascade tracker;
+	 
 Pyramidal Tracker:
 ==================
 	 Parameter:	'pyr_sm'
@@ -1856,7 +1878,7 @@ Pyramidal Tracker:
 			
 	 Parameter:	'pyr_scale_factor'
 		Description:
-			ration between the image sizes in consecutive levels of the pyramid;
+			ratio between the image sizes in consecutive levels of the pyramid;
 			for instance if the main image is 800x600 and there are 3 levels in the pyramid, a scale factor of 0.5 means that level 2 and 3 have image sizes of 400x300 and 200x150 respectively;
 			
 	 Parameter:	'pyr_scale_res'
