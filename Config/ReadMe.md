@@ -1991,5 +1991,28 @@ LSCV and LRSCV:
 	 Additional Reference:
 		Richa, R.; Souza, M.; Scandaroli, G.; Comunello, E. & von Wangenheim, A. 'Direct visual tracking under extreme illumination variations using the sum of conditional variance', Image Processing (ICIP), 2014 IEEE International Conference on, 2014, 373-377			
 			
-	 
+SIFT feature detector and descriptor:
+=====================================
+	 Parameter:	'sift_n_features'
+		Description:
+			number of features
+			
+	 Parameter:	'sift_n_octave_layers'
+		Description:
+			TBA	 
+			
+	 Parameter:	'sift_contrast_thresh'
+		Description:
+			TBA	 
+			
+	 Parameter:	'sift_edge_thresh'
+		Description:
+			TBA	 
+			
+	 Parameter:	'sift_sigma'
+		Description:
+			TBA	 
+			
+	 Additional Reference:
+		Lowe, D. G., 'Distinctive image features from scale-invariant keypoints', International journal of computer vision, Springer, 2004, 60, 91-110
 	
