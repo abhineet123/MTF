@@ -2015,4 +2015,23 @@ SIFT feature detector and descriptor:
 			
 	 Additional Reference:
 		Lowe, D. G., 'Distinctive image features from scale-invariant keypoints', International journal of computer vision, Springer, 2004, 60, 91-110
+		
+Similitude SSM:
+===============
+	 Parameter:	'sim_normalized_init'
+		Description:
+			use normalized initial bounding box with respect to which all subsequent transformations are computed;
+			refer 'aff_normalized_init' for more details;
+	 
+	 Parameter:	'sim_geom_sampling'
+		Description:
+			use geometric sampling for stochastic SMs;
+			
+	 Parameter:	'sim_pt_based_sampling'
+		Description:
+			use point based sampling for stochastic SMs; refer 'aff_pt_based_sampling' for details;
+			here the perturbations are applied to the two opposite bounding box corners;
+			only matters if 'sim_geom_sampling' is disabled;
+			if both sim_geom_sampling and sim_pt_based_sampling are disabled, perturbations are applied directly to the state parameters;
+			
 	
