@@ -1653,7 +1653,28 @@ Multi Layer NN:
 	 Parameter:	'nnk_ssm_sigma_ids'
 		Description:
 			similar to nn_ssm_sigma_ids except it must be provided for each layer of the tracker separately;
-
+			
+Principal Component Analysis (PCA) AM:
+======================================
+	 Parameter:	'pca_n_eigenvec'
+		Description:
+			no. of eigen vectors
+			
+	 Parameter:	'pca_batchsize'
+		Description:
+			no. of frames in each batch used for updating the basis
+			
+	 Parameter:	'pca_f_factor'
+		Description:
+			forgetting factor for updating the basis
+			
+	 Parameter:	'pca_show_basis'
+		Description:
+			show the image patches corresponding to the basis
+			
+	Additional References:
+		D. A. Ross, J. Lim, R.-S. Lin, and M.-H. Yang, “Incremental Learning for Robust Visual Tracking,” IJCV, vol. 77, no. 1-3, pp. 125–141, 2008
+			
 Particle Filter (PF) SM:
 ========================
 	 Parameter:	'pf_max_iters'
