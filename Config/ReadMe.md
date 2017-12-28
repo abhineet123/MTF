@@ -1473,8 +1473,8 @@ Lie Homography SSM:
 		Description:
 			offset used for computing the numerical estimate of the first gradient (or Jacobian) of the transformation w.r.t. pixel locations; this is the distance(in x or y direction) between the pixel locations that are used in the method of central differences; 
 			
-Localized Kullback-Leibler Divergence Information (LKLD) AM:
-============================================================	
+Localized Kullback-Leibler Divergence (LKLD) AM:
+================================================
 	 Parameter:	'lkld_n_bins' / 'lkld_pre_seed' / 'lkld_pou'
 		Description:
 			meaning is same as the corresponding parameters for CCRE;
