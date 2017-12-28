@@ -2034,4 +2034,19 @@ Similitude SSM:
 			only matters if 'sim_geom_sampling' is disabled;
 			if both sim_geom_sampling and sim_pt_based_sampling are disabled, perturbations are applied directly to the state parameters;
 			
-	
+SL3 SSM:
+========
+	 Parameter:	'sl3_normalized_init'
+		Description:
+			use normalized initial bounding box with respect to which all subsequent transformations are computed;
+			refer 'aff_normalized_init' for more details;	
+			
+	 Parameter:	'sl3_iterative_sample_mean'
+		Description:
+			use iterative method for computing the mean of SL3 samples;
+			if disabled, mean is computed as the simple element wise mean of the state vectors;
+			
+	 Parameter:	'sl3_sample_mean_max_iters' / 'sl3_sample_mean_eps'
+		Description:
+			maximum iterations and epsilon used for controlling the iterative SL3 mean estimation process;
+			
