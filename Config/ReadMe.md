@@ -1921,10 +1921,6 @@ Regression networks (RG) SM:
 			
 Sum of Conditional Variance (SCV)/Reversed SCV (RSCV)/Localized SCV (LSCV)/Localized RSCV (LRSCV) AMs:
 ===================================================================================================== 
-	 Parameter:	'scv_use_bspl'
-		Description:
-			use BSpline kernel of order 3 while computing the joint histogram that is used for computing the sum of conditional variance; the Dirac Delta function is used otherwise;
-			
 	 Parameter:	'scv_n_bins'
 		Description:
 			number of bins in the joint histogram
@@ -1937,11 +1933,53 @@ Sum of Conditional Variance (SCV)/Reversed SCV (RSCV)/Localized SCV (LSCV)/Local
 		Description:
 			strictly enforce the partition of unity constraint for border bins while computing the BSpline joint histogram
 			
+	 Parameter:	'scv_approx_dist_feat'
+		Description:
+			decides if true SCV will be computed between the distance features; if it is turned off then the joint distribution will be computed from the two arguments to the distance functor itself after which the first argument will be mapped according to the expectation formula; 
+			note that using a KD tree index with this turned off will not produce the desired results because in that case this AM is no longer KD Tree compatible;
+			not supported in LRSCV;
+			
+	 Parameter:	'scv_weighted_mapping'
+		Description:
+			enable this to map each intensity to the weighted average of the two entries of the intensity map corresponding to the floor and ceil of that intensity;
+			if disabled, it will be mapped to the entry corresponding to its floor leading to some information loss due to the fractional part that was discarded
+			
+	 Parameter:	'scv_mapped_gradient'
+		Description:
+			enable this to automatically update the initial pixel gradient and hessian using the latest intensity map whenever the current pixel gradient is updated assuming that the current pixel values and thus the intensity map must have changed since the last time the initial pixel gradient was computed;
+			only supported in SCV and RSCV;
+			
 	 Additional Reference:
 		Richa, R.; Sznitman, R.; Taylor, R. & Hager, G. 'Visual tracking using the sum of conditional variance', IROS, 2011, 2953-2958
+
+SCV:
+====
+	 Parameter:	'scv_hist_type'
+		Description:
+			method used for computing the joint histogram:
+		Possible Values:
+			0:	Dirac delta function that uses nearest neighbor interpolation
+			1:	Bilinearr interpolation
+			2:  Parzen density estimation with BSpline function of order 3 is used as the kernel function
+RSCV:
+=====
+	 Parameter:	'scv_use_bspl'
+		Description:
+			use BSpline kernel of order 3 while computing the joint histogram that is used for computing the sum of conditional variance; the Dirac Delta function is used otherwise;
 			
-Localized SCV (LSCV) AM:
-========================
+LSCV and LRSCV:
+===============
+	 Parameter:	'scv_affine_mapping'
+		Description:
+			use affine or linear mapping instead of the standard one;
+			only supported in LSCV and LRSCV;
+			
+	 Parameter:	'scv_once_per_frame'
+		Description:
+			update the template only once per frame so that it remains constant across all iterations in that frame;
+			this can help to speed up processing a bit at the cost of slight inaccuracy;
+			only supported in LSCV and LRSCV;
+			
 	 Parameter:	'lscv_sub_regions' / 'lscv_spacing'
 		Description:
 			same meaning as the corresponding parameters for LKLD;
