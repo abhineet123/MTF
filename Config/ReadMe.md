@@ -1497,19 +1497,55 @@ Levenberg Marquardt SM:
 	 Parameter:	'lm_delta_update'
 		Description:
 			multiplicative factor by which the delta is modified in each iteration, i.e. if the current value leads to better performance then the delta is multiplied by this factor and if it leads to poorer performance, then it is divided by this factor;
+			
+	 Additional Reference:
+		Baker, S. & Matthews, I., 'Lucas-Kanade 20 Years On: A Unifying Framework', IJCV, Kluwer Academic Publishers, 2004, 56, 221-255
 	
+Median Filtering Preprocessor:
+==============================
+	 Parameter:	'med_kernel_size'
+		Description:
+			Median filter kernel size; this is a single number so that only square kernels are supported;
+		
+	 Additional Reference:
+		https://docs.opencv.org/2.4/modules/imgproc/doc/filtering.html#medianblur	
+		
+Normalized Cross Correlation (NCC) AM:
+======================================
+	 Parameter:	'ncc_fast_hess'
+		Description:
+			use an approximate version of the self Hessian that is faster to compute; this was originally implemented as a buggy version of the correct self Hessian but was found to perform just as well at lower computational cost;
+			
+Normalized Gradient Fields (NGF) AM:
+====================================
+	 Parameter:	'ngf_eta'
+		Description:
+			estimate of noise level in the image
+
+	 Parameter:	'ngf_use_ssd'
+		Description:
+			use SSD formulation of NGF (not implemented completely yet); 
+			
+	 Additional References:
+		Haber, E. & Modersitzki, J., 'Beyond mutual information: A simple and robust alternative', Bildverarbeitung für die Medizin 2005, Springer, 2005, 350-354
+		Jan Modersitzki: FAIR - Flexible Algorithms for Image Registration, SIAM 2009
+		https://github.com/C4IR/FAIR.m		
+			
 Mutual Information (MI) AM:
 ===========================
 	 Parameter:	'mi_n_bins' / 'mi_preseed' / 'mi_pou'
 		Description:
 			meaning is same as the corresponding parameters for CCRE;
 			
+	 Additional Reference:
+		Dame, A., 'A unified direct approach for visual servoing and visual tracking using mutual information', University of Rennes, 2010
+			
 Normalized Sum of Squared Differences (NSSD) AM:
 ================================================
 	 Parameter:	'norm_pix_min' / 'norm_pix_max'
 		Description:
-			minimum and maximum values within which to normalize the pixel values
-			
+			minimum and maximum values within which to normalize the pixel values		
+		
 Nearest Neighbour (NN) SM:
 ==========================
 	 Parameter:	'nn_max_iters'
@@ -1739,7 +1775,21 @@ Sum of Conditional Variance (SCV)/Reversed SCV (RSCV)/Localized SCV (LSCV)/Local
 		Description:
 			strictly enforce the partition of unity constraint for border bins while computing the BSpline joint histogram
 			
-
+	 Additional Reference:
+		Richa, R.; Sznitman, R.; Taylor, R. & Hager, G. 'Visual tracking using the sum of conditional variance', IROS, 2011, 2953-2958
+			
+Localized SCV (LSCV) AM:
+========================
+	 Parameter:	'lscv_sub_regions' / 'lscv_spacing'
+		Description:
+			same meaning as the corresponding parameters for LKLD;
+			
+	 Parameter:	'lscv_show_subregions'
+		Description:
+			show the sub regions overlaid on the patch
+			
+	 Additional Reference:
+		Richa, R.; Souza, M.; Scandaroli, G.; Comunello, E. & von Wangenheim, A. 'Direct visual tracking under extreme illumination variations using the sum of conditional variance', Image Processing (ICIP), 2014 IEEE International Conference on, 2014, 373-377			
 			
 	 
 	
