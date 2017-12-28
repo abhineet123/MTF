@@ -1833,17 +1833,6 @@ Piecewise Gain & Bias (PGB) ILM:
 		Description:
 			size of the grid of subregions in x and y directions into which the image patch is divided;	
 			
-Radial Basis Function (RBF) ILM:
-================================
-	 Parameter:	'rbf_additive_update'
-		Description:
-			use additive instead of compositional updates for updating the ILM parameters;	
-			not implemented yet;
-			
-	 Parameter:	'rbf_n_ctrl_pts_x' / 'rbf_n_ctrl_pts_y'
-		Description:
-			size of the grid of control points in x and y directions that is used for computing the RBF surface;	
-			
 Parallel Tracker:
 =================
 	 Parameter:	'prl_n_trackers'
@@ -1889,6 +1878,17 @@ Pyramidal Tracker:
 		Description:
 			show the image for each level in the pyramid annotated with the tracker's location;	 
 
+Radial Basis Function (RBF) ILM:
+================================
+	 Parameter:	'rbf_additive_update'
+		Description:
+			use additive instead of compositional updates for updating the ILM parameters;	
+			not implemented yet;
+			
+	 Parameter:	'rbf_n_ctrl_pts_x' / 'rbf_n_ctrl_pts_y'
+		Description:
+			size of the grid of control points in x and y directions that is used for computing the RBF surface;	
+			
 Regression networks (RG) SM:
 ============================
 	 Parameter:	'rg_n_samples' / 'rg_load_index' / 'rg_save_index' / 'rg_ssm_sigma_ids' / 'rg_ssm_mean_ids' / 'rg_pix_sigma' / 'rg_additive_update' / 'rg_add_points' / 'rg_remove_points'
@@ -1914,6 +1914,10 @@ Regression networks (RG) SM:
 	 Parameter:	'rg_mean'
 		Description:
 			path of the .binaryproto file			
+			
+	 Parameter:	'rg_preproc'
+		Description:
+			enable preprocessing			
 			
 Sum of Conditional Variance (SCV)/Reversed SCV (RSCV)/Localized SCV (LSCV)/Localized RSCV (LRSCV) AMs:
 ===================================================================================================== 
