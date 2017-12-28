@@ -580,6 +580,7 @@ namespace utils{
 			} catch(vpException &e) {
 				printf("Exception occured while initializing the FlyCapture module: %s\n",
 					e.getStringMessage().c_str());
+				return false;
 			}
 		}
 #endif
@@ -716,6 +717,7 @@ namespace utils{
 			} catch(vpException &e) {
 				printf("Opening firewire camera failed with exception: %s\n", 
 					e.getStringMessage().c_str());
+				return false;
 			}
 		}
 #endif
