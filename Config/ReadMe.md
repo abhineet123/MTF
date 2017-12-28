@@ -1487,7 +1487,17 @@ Localized Kullback-Leibler Divergence Information (LKLD) AM:
 	 Parameter:	'lkld_spacing'
 		Description:
 			gap in pixels between adjacent subregions in both x and y directions, i.e. subregions in the same row are separated by this gap in the x direction while those in adjacent rows are separated by this gap in the y direction;
+
+Levenberg Marquardt SM:
+=======================
+	 Parameter:	'lm_delta_init'
+		Description:
+			value with which the delta is initialized in each frame;
 			
+	 Parameter:	'lm_delta_update'
+		Description:
+			multiplicative factor by which the delta is modified in each iteration, i.e. if the current value leads to better performance then the delta is multiplied by this factor and if it leads to poorer performance, then it is divided by this factor;
+	
 Mutual Information (MI) AM:
 ===========================
 	 Parameter:	'mi_n_bins' / 'mi_preseed' / 'mi_pou'
