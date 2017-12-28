@@ -1889,6 +1889,32 @@ Pyramidal Tracker:
 		Description:
 			show the image for each level in the pyramid annotated with the tracker's location;	 
 
+Regression networks (RG) SM:
+============================
+	 Parameter:	'rg_n_samples' / 'rg_load_index' / 'rg_save_index' / 'rg_ssm_sigma_ids' / 'rg_ssm_mean_ids' / 'rg_pix_sigma' / 'rg_additive_update' / 'rg_add_points' / 'rg_remove_points'
+		Description:
+			same as the corresponding parameters for NN
+			
+	 Parameter:	'rg_nepochs'
+		Description:
+			number of the epochs in training the network
+			
+	 Parameter:	'rg_bs'
+		Description:
+			number of the epochs in training the network
+			
+	 Parameter:	'rg_train'
+		Description:
+			path of the .caffemodel file from where Caffe parameters are to be loaded
+			
+	 Parameter:	'rg_solver'
+		Description:
+			path of the .prototxt file from where trained model is to be loaded
+			
+	 Parameter:	'rg_mean'
+		Description:
+			path of the .binaryproto file			
+			
 Sum of Conditional Variance (SCV)/Reversed SCV (RSCV)/Localized SCV (LSCV)/Localized RSCV (LRSCV) AMs:
 ===================================================================================================== 
 	 Parameter:	'scv_use_bspl'
