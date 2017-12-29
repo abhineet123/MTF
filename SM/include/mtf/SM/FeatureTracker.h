@@ -50,8 +50,9 @@ struct FAST{
 struct BRISK{
 	int thresh = 30;
 	int octaves = 3;
-	float patternScale = 1.0f;
-	BRISK(const vector<boost::any> &params);
+	float pattern_scale = 1.0f;
+	BRISK(const vector<boost::any> &params,
+		std::string _type = "detector");
 	void create(cv::Ptr<cv::Feature2D> &ptr);
 };
 struct MSER{

@@ -31,9 +31,12 @@
 #define FEAT_SHOW_TRACKER_EDGES 0
 #define FEAT_DEBUG_MODE 0
 
-#define parse_feat_param(name, data_type, param, feat_type)\
+#define parse_feat_param(name, data_type, fmt, param, feat_type)\
 try{\
 	name = boost::any_cast<data_type>(param);\
+	printf("%s: ", #name);\
+	printf(fmt, name);\
+	printf("\n");\
 } catch(const boost::bad_any_cast &){\
 	throw utils::InvalidArgument(cv::format("%s :: Invalid parameter type provided for %s", #feat_type, #name));\
 }
@@ -64,17 +67,12 @@ n_octave_layers(SIFT_N_OCTAVE_LAYERS),
 contrast_thresh(SIFT_CONTRAST_THRESH),
 edge_thresh(SIFT_EDGE_THRESH),
 sigma(SIFT_SIGMA){
-	parse_feat_param(n_features, int, params[0], SIFTParams);
-	parse_feat_param(n_octave_layers, int, params[1], SIFTParams);
-	parse_feat_param(contrast_thresh, double, params[2], SIFTParams);
-	parse_feat_param(edge_thresh, double, params[3], SIFTParams);
-	parse_feat_param(sigma, double, params[4], SIFTParams);
 	printf("Using SIFT %s with:\n", _type.c_str());
-	printf("contrast_thresh: %f\n", contrast_thresh);
-	printf("n_features: %d\n", n_features);
-	printf("n_octave_layers: %d\n", n_octave_layers);
-	printf("edge_thresh: %f\n", edge_thresh);
-	printf("sigma: %f\n", sigma);
+	parse_feat_param(n_features, int, "%d", params[0], SIFT);
+	parse_feat_param(n_octave_layers, int, "%d", params[1], SIFT);
+	parse_feat_param(contrast_thresh, double, "%f", params[2], SIFT);
+	parse_feat_param(edge_thresh, double, "%f", params[3], SIFT);
+	parse_feat_param(sigma, double, "%f", params[4], SIFT);
 	printf("\n");
 }
 
@@ -102,17 +100,12 @@ n_octaves(SURF_N_OCTAVES),
 n_octave_layers(SURF_N_OCTAVE_LAYERS),
 extended(SURF_EXTENDED),
 upright(SURF_UPRIGHT){
-	parse_feat_param(hessian_threshold, double, params[0], SURFParams);
-	parse_feat_param(n_octaves, int, params[1], SURFParams);
-	parse_feat_param(n_octave_layers, int, params[2], SURFParams);
-	parse_feat_param(extended, bool, params[3], SURFParams);
-	parse_feat_param(upright, bool, params[4], SURFParams);
 	printf("Using SURF %s with:\n", _type.c_str());
-	printf("hessian_threshold: %f\n", hessian_threshold);
-	printf("n_octaves: %d\n", n_octaves);
-	printf("n_octave_layers: %d\n", n_octave_layers);
-	printf("extended: %d\n", extended);
-	printf("upright: %d\n", upright);
+	parse_feat_param(hessian_threshold, double, "%f", params[0], SURF);
+	parse_feat_param(n_octaves, int, "%d", params[1], SURF);
+	parse_feat_param(n_octave_layers, int, "%d", params[2], SURF);
+	parse_feat_param(extended, bool, "%d", params[3], SURF);
+	parse_feat_param(upright, bool, "%d", params[4], SURF);
 	printf("\n");
 }
 void SURF::create(cv::Ptr<cv::Feature2D> &ptr){
@@ -138,13 +131,10 @@ FAST::FAST(const vector<boost::any> &params) :
 threshold(FAST_THRESHOLD),
 non_max_suppression(FAST_NON_MAX_SUPPRESSION),
 type(FAST_TYPE){
-	parse_feat_param(threshold, int, params[0], FASTParams);
-	parse_feat_param(non_max_suppression, bool, params[1], FASTParams);
-	parse_feat_param(type, int, params[2], FASTParams);
 	printf("Using FAST detector with:\n");
-	printf("threshold: %d\n", threshold);
-	printf("non_max_suppression: %d\n", non_max_suppression);
-	printf("type: %d\n", type);
+	parse_feat_param(threshold, int, "%d", params[0], FAST);
+	parse_feat_param(non_max_suppression, bool, "%d", params[1], FAST);
+	parse_feat_param(type, int, "%d", params[2], FAST);
 	printf("\n");
 }
 void FAST::create(cv::Ptr<cv::Feature2D> &ptr){
@@ -158,6 +148,17 @@ void FAST::create(cv::Ptr<cv::Feature2D> &ptr){
 		threshold, non_max_suppression, type);
 #endif
 }
+BRISK::BRISK(const vector<boost::any> &params, std::string _type) :
+thresh(SURF_HESSIAN_THRESHOLD),
+octaves(SURF_N_OCTAVES),
+pattern_scale(SURF_N_OCTAVE_LAYERS)
+{
+	printf("Using BRISK %s with:\n", _type.c_str());
+	parse_feat_param(thresh, int, "%d", params[0], BRISK);
+	parse_feat_param(octaves, int, "%d", params[1], BRISK);
+	parse_feat_param(pattern_scale, float, "%f", params[2], BRISK);
+	printf("\n");
+}
 void BRISK::create(cv::Ptr<cv::Feature2D> &ptr){
 #if CV_MAJOR_VERSION < 3
 	ptr.reset(new cv::BRISK(
@@ -168,7 +169,7 @@ void BRISK::create(cv::Ptr<cv::Feature2D> &ptr){
 	ptr = cv::BRISK::create(
 		thresh,
 		octaves, 
-		patternScale);
+		pattern_scale);
 #endif
 }
 void MSER::create(cv::Ptr<cv::Feature2D> &ptr){
@@ -338,25 +339,22 @@ FeatureTracker<SSM>::FeatureTracker(
 		printf("Feature detection is disabled.\n");
 		use_feature_detector = false;
 	} else if(params.detector_type == DetectorType::SIFT){
-		SIFT sift_params(feat_params);
+		SIFT(feat_params).create(detector);
 	} else if(params.detector_type == DetectorType::SURF){
-		SURF surf_params(feat_params);
+		SURF(feat_params).create(detector);
 	} else if(params.detector_type == DetectorType::FAST){
-		FAST fast_params(feat_params);
+		FAST(feat_params).create(detector);
 	} else if(params.detector_type == DetectorType::BRISK){
-		BRISK brisk_params(feat_params);
+		BRISK(feat_params).create(detector);
 		printf("Using BRISK feature detector with:\n");
-		brisk_params.print();
 		printf("\n");
 	} else if(params.detector_type == DetectorType::MSER){
-		MSER mser_params(feat_params);
+		MSER(feat_params).create(detector);
 		printf("Using MSER feature detector with:\n");
-		mser_params.print();
 		printf("\n");
 	} else if(params.detector_type == DetectorType::ORB){
-		ORBarams orb_params(feat_params);
+		ORB(feat_params).create(detector);
 		printf("Using ORB feature detector with:\n");
-		orb_params.print();
 		printf("\n");
 	} else{
 		throw utils::FunctonNotImplemented(cv::format(
