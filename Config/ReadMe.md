@@ -1680,7 +1680,7 @@ Graph based NN (GNN):
 			print detailed debugging and other state related information at runtime	
 			
 	 Additional Reference:	
-		Hajebi, K.; Abbasi-Yadkori, Y.; Shahbazi, H. & Zhang, H., 'Fast approximate nearest-neighbor search with k-nearest neighbor graph', IJCAI Proceedings-International Joint Conference on Artificial Intelligence, 2011, 22, 1312 (ijcai.org/papers11/Papers/IJCAI11-222.pdf) [index type 0]
+		Hajebi, K.; Abbasi-Yadkori, Y.; Shahbazi, H. & Zhang, H., 'Fast approximate nearest-neighbor search with k-nearest neighbor graph', IJCAI Proceedings-International Joint Conference on Artificial Intelligence, 2011, 22, 1312 (ijcai.org/papers11/Papers/IJCAI11-222.pdf)
 			
 			
 FLANN based GNN (FGNN):
@@ -1690,6 +1690,9 @@ FLANN based GNN (FGNN):
 			FLANN index type of the approximate NN search method used for building the graph;
 			if set to 0, then FLANN based graph building in GNN is disabled;
 			only matters if nn_index_type is set to 0 and templated version of NN is used;
+			
+	 Additional Reference:	
+		section 4.2.1.1 of the thesis (http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_thesis.pdf)
 				
 Principal Component Analysis (PCA) AM:
 ======================================
