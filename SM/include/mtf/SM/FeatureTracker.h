@@ -16,30 +16,74 @@
 
 #include <memory>
 #include <vector>
+#include <boost/any.hpp>
 
 _MTF_BEGIN_NAMESPACE
 
-struct SIFTParams{
-
+struct SIFT{
 	int n_features;
 	int n_octave_layers;
 	double contrast_thresh;
 	double edge_thresh;
 	double sigma;
-
-	SIFTParams(
-		int _n_features,
-		int _n_octave_layers,
-		double _contrast_thresh,
-		double _edge_thresh,
-		double _sigma);
-	SIFTParams(const SIFTParams *params = nullptr);
-	void print() const;
-
+	SIFT(const vector<boost::any> &params,
+		std::string _type = "detector");
+	void create(cv::Ptr<cv::Feature2D> &ptr);
+};
+struct SURF{
+	double hessian_threshold;
+	int n_octaves;
+	int n_octave_layers;
+	bool extended;
+	bool upright;
+	SURF(const vector<boost::any> &params,
+		std::string _type = "detector");
+	void create(cv::Ptr<cv::Feature2D> &ptr);
+};
+struct FAST{
+	int threshold;
+	bool non_max_suppression;
+	int type;
+	FAST(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::Feature2D> &ptr);
+};
+struct BRISK{
+	int thresh = 30;
+	int octaves = 3;
+	float patternScale = 1.0f;
+	BRISK(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::Feature2D> &ptr);
+};
+struct MSER{
+	int delta = 5;
+	int min_area = 60;
+	int max_area = 14400;
+	double max_variation = 0.25;
+	double min_diversity = .2;
+	int max_evolution = 200;
+	double area_threshold = 1.01;
+	double min_margin = 0.003;
+	int edge_blur_size = 5;
+	MSER(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::Feature2D> &ptr);
+};
+struct ORB{
+	int n_features = 500;
+	float scale_factor = 1.2f;
+	int n_levels = 8;
+	int edge_threshold = 31;
+	int first_level = 0;
+	int WTA_K = 2;
+	int score_type =cv:: ORB::HARRIS_SCORE;
+	int patch_size = 31;
+	int fast_threshold = 20;
+	ORB(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::Feature2D> &ptr);
 };
 
 struct FeatureTrackerParams{
-	enum class DetectorType { NONE, SIFT, SURF, FAST, HARRIS, ORB };
+	enum class DetectorType { NONE, SIFT, SURF, FAST,
+		BRISK, MSER, ORB, AGAST, GFTT };
 	enum class DescriptorType { SIFT, SURF, BRIEF, ORB };
 
 	int grid_size_x, grid_size_y;
@@ -90,6 +134,7 @@ class FeatureTracker : public FeatureBase{
 
 public:
 	typedef FeatureTrackerParams ParamType;
+	typedef std::vector<boost::any> FeatParamsType;
 	typedef ParamType::DetectorType DetectorType;
 	typedef ParamType::DescriptorType DescriptorType;
 	typedef typename SSM::ParamType SSMParams;
@@ -105,19 +150,15 @@ public:
 #else
 	typedef FLANNCVParams FLANNParams;
 #endif
-	//typedef std::unique_ptr<cv::Feature2D> Feature2DPtr;
-#if CV_MAJOR_VERSION < 3
-	typedef std::unique_ptr<cv::SIFT> SIFTPtr;
-#else
-	typedef std::unique_ptr<cv::xfeatures2d::SIFT> SIFTPtr;
-#endif
+	
+	typedef cv::Ptr<cv::Feature2D> FeatPtr;
 
 	FeatureTracker(
 		const ParamType *grid_params = nullptr,
-		const SIFTParams *_sift_params = nullptr,
 		const FLANNParams *_flann_params = nullptr,
 		const EstimatorParams *_est_params = nullptr,
-		const SSMParams *ssm_params = nullptr);
+		const SSMParams *ssm_params = nullptr,
+		const FeatParamsType &feat_params);
 	~FeatureTracker(){}
 
 	void initialize(const cv::Mat &corners) override;
@@ -144,13 +185,11 @@ public:
 
 private:
 	SSM ssm;
-	ParamType params;
-	SIFTParams sift_params;
+	ParamType params;	
 	FLANNParams flann_params;
 	EstimatorParams est_params;
-
 	cv::FlannBasedMatcher matcher;
-	SIFTPtr feat;
+	FeatPtr detector;
 
 #ifndef DISABLE_FLANN
 	FlannIdxPtr flann_idx;
@@ -176,6 +215,7 @@ private:
 
 	MatrixXi _linear_idx;//used for indexing the sub region locations
 	int pause_seq;
+	bool use_feature_detector;
 
 	void matchKeyPoints();
 	void cmptWarpedCorners();
