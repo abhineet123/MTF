@@ -1649,11 +1649,44 @@ Multi Layer NN:
 	 Parameter:	'nnk_n_layers'
 		Description:
 			no. of layers in the cascade setup;
-			
+
 	 Parameter:	'nnk_ssm_sigma_ids'
 		Description:
-			similar to nn_ssm_sigma_ids except it must be provided for each layer of the tracker separately;
+			similar to nn_ssm_sigma_ids except it must be provided for each layer of the tracker separately;er of steps for which the search for the best matching sample within the graph is carried out;
 			
+Graph based NN (GNN):
+=====================
+	 Parameter:	'nn_gnn_degree'
+		Description:
+			no. of neighbouring nodes with which each node in the graph is connected
+			
+	 Parameter:	'nn_gnn_max_steps'
+		Description:
+			Maximum number of steps for which the search for the best matching sample within the graph is carried out;
+			
+	 Parameter:	'nn_gnn_cmpt_dist_thresh'
+		Description:
+			minimum number of samples in the index for which the distance is computed during initialization between each pair of samples;
+			if the number of samples is large enough, then this approach can help to reduce real-time computation costs by computing all possible distances at once, thus avoiding having to compute the distances between the same pair multiple times;
+	
+	 Parameter:	'nn_gnn_random_start'
+		Description:
+			always start each search at a random node within the graph
+			if this is disabled, then the search is started and the node corresponding to the result of the previous search;
+			for sequential tasks like tracking where the transformation of the object patch in each frame is likely to be very similar to that in the previous frame, disabling this can help to reduce the search time since the target nodes in consecutive frames are likely to be close to each other in the graph;
+
+	 Parameter:	'nn_gnn_verbose'
+		Description:
+			print detailed debugging and other state related information at runtime	
+			
+FLANN based GNN (FGNN):
+=======================
+	 Parameter:	'nn_fgnn_index_type'
+		Description:
+			FLANN index type of the approximate NN search method used for building the graph;
+			if set to 0, then FLANN based graph building in GNN is disabled;
+			only matters if nn_index_type is set to 0 and templated version of NN is used;
+				
 Principal Component Analysis (PCA) AM:
 ======================================
 	 Parameter:	'pca_n_eigenvec'
@@ -2078,6 +2111,8 @@ Selective pixel integration (SPI):
 			1:	Pixel difference
 			2:  Pixel gradient norm
 			3: Good Features To Track (GFTT)
+	 
+	 Note:	SPI can only be used if it is enabled during compilation; also SSD and NCC are the only AMs for which SPI support has been implemented though all SSMs do support it;
 			
 Pixel difference SPI model:
 ===========================			
