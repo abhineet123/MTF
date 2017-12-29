@@ -1679,6 +1679,10 @@ Graph based NN (GNN):
 		Description:
 			print detailed debugging and other state related information at runtime	
 			
+	 Additional Reference:	
+		Hajebi, K.; Abbasi-Yadkori, Y.; Shahbazi, H. & Zhang, H., 'Fast approximate nearest-neighbor search with k-nearest neighbor graph', IJCAI Proceedings-International Joint Conference on Artificial Intelligence, 2011, 22, 1312 (ijcai.org/papers11/Papers/IJCAI11-222.pdf) [index type 0]
+			
+			
 FLANN based GNN (FGNN):
 =======================
 	 Parameter:	'nn_fgnn_index_type'
