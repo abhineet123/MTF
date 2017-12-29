@@ -639,7 +639,7 @@ TrackerBase *getTracker(const char *sm_type,
 			feat_rebuild_index, max_iters, epsilon, enable_pyr, feat_use_cv_flann,
 			feat_max_dist_ratio, feat_min_matches, uchar_input, feat_show_keypoints,
 			feat_show_matches, feat_debug_mode);
-		SIFTParams sift_params(sift_n_features, sift_n_octave_layers,
+		SIFT sift_params(sift_n_features, sift_n_octave_layers,
 			sift_contrast_thresh, sift_edge_thresh, sift_sigma);
 		typename SSMType::ParamType _ssm_params(ssm_params);
 		_ssm_params.resx = feat_params.getResX();
