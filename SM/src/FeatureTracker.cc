@@ -54,11 +54,6 @@ try{\
 #define SURF_EXTENDED true
 #define SURF_UPRIGHT false
 
-#define FAST_THRESHOLD 10
-#define FAST_NON_MAX_SUPPRESSION true
-#define FAST_TYPE cv::FastFeatureDetector::TYPE_9_16
-
-
 _MTF_BEGIN_NAMESPACE
 
 SIFT::SIFT(const vector<boost::any> &params, std::string _type) :
@@ -148,10 +143,13 @@ void FAST::create(cv::Ptr<cv::Feature2D> &ptr){
 		threshold, non_max_suppression, type);
 #endif
 }
+#define BRISK_THRESH 30
+#define BRISK_OCTAVES 3
+#define BRISK_PATTERN_SCALE 1.0
 BRISK::BRISK(const vector<boost::any> &params, std::string _type) :
-thresh(SURF_HESSIAN_THRESHOLD),
-octaves(SURF_N_OCTAVES),
-pattern_scale(SURF_N_OCTAVE_LAYERS)
+thresh(BRISK_THRESH),
+octaves(BRISK_OCTAVES),
+pattern_scale(BRISK_PATTERN_SCALE)
 {
 	printf("Using BRISK %s with:\n", _type.c_str());
 	parse_feat_param(thresh, int, "%d", params[0], BRISK);
@@ -171,6 +169,38 @@ void BRISK::create(cv::Ptr<cv::Feature2D> &ptr){
 		octaves, 
 		pattern_scale);
 #endif
+}
+#define MSER_DELTA 5
+#define MSER_MIN_AREA 60
+#define MSER_MAX_AREA 14400
+#define MSER_MAX_VARIATION 0.25
+#define MSER_MIN_DIVERSITY .2
+#define MSER_MAX_EVOLUTION 200
+#define MSER_AREA_THRESHOLD 1.01
+#define MSER_MIN_MARGIN 0.003
+#define MSER_EDGE_BLUR_SIZE 5
+MSER::MSER(const vector<boost::any> &params) :
+delta(MSER_DELTA),
+min_area(MSER_MIN_AREA),
+max_area(MSER_MAX_AREA),
+max_variation(MSER_MAX_VARIATION),
+min_diversity(MSER_MIN_DIVERSITY),
+max_evolution(MSER_MAX_EVOLUTION),
+area_threshold(MSER_AREA_THRESHOLD),
+min_margin(MSER_MIN_MARGIN),
+edge_blur_size(MSER_EDGE_BLUR_SIZE)
+{
+	printf("Using MSER detector with:\n");
+	parse_feat_param(delta, int, "%d", params[0], MSER);
+	parse_feat_param(min_area, int, "%d", params[1], MSER);
+	parse_feat_param(max_area, int, "%d", params[2], MSER);
+	parse_feat_param(max_variation, double, "%f", params[3], MSER);
+	parse_feat_param(min_diversity, double, "%f", params[4], MSER);
+	parse_feat_param(max_evolution, int, "%d", params[5], MSER);
+	parse_feat_param(area_threshold, double, "%f", params[6], MSER);
+	parse_feat_param(min_margin, double, "%f", params[7], MSER);
+	parse_feat_param(edge_blur_size, int, "%d", params[8], MSER);
+	printf("\n");
 }
 void MSER::create(cv::Ptr<cv::Feature2D> &ptr){
 #if CV_MAJOR_VERSION < 3
@@ -199,6 +229,38 @@ void MSER::create(cv::Ptr<cv::Feature2D> &ptr){
 		);
 #endif
 }
+#define ORB_N_FEATURES 500
+#define ORB_SCALE_FACTOR 1.2f
+#define ORB_N_LEVELS 8
+#define ORB_EDGE_THRESHOLD 31
+#define ORB_FIRST_LEVEL 0
+#define ORB_WTA_K 2
+#define ORB_SCORE_TYPE cv::ORB::HARRIS_SCORE
+#define ORB_PATCH_SIZE 31
+#define ORB_FAST_THRESHOLD 20
+ORB::ORB(const vector<boost::any> &params, std::string _type) :
+n_features(ORB_N_FEATURES),
+scale_factor(ORB_SCALE_FACTOR),
+n_levels(ORB_N_LEVELS),
+edge_threshold(ORB_EDGE_THRESHOLD),
+first_level(ORB_FIRST_LEVEL),
+WTA_K(ORB_WTA_K),
+score_type(ORB_SCORE_TYPE),
+patch_size(ORB_PATCH_SIZE),
+fast_threshold(ORB_FAST_THRESHOLD)
+{
+	printf("Using ORB %s with:\n", _type.c_str());
+	parse_feat_param(n_features, int, "%d", params[0], ORB);
+	parse_feat_param(scale_factor, float, "%f", params[1], ORB);
+	parse_feat_param(n_levels, int, "%d", params[2], ORB);
+	parse_feat_param(edge_threshold, int, "%d", params[3], ORB);
+	parse_feat_param(first_level, int, "%d", params[4], ORB);
+	parse_feat_param(WTA_K, int, "%d", params[5], ORB);
+	parse_feat_param(score_type, int, "%d", params[6], ORB);
+	parse_feat_param(patch_size, int, "%d", params[7], ORB);
+	parse_feat_param(fast_threshold, int, "%d", params[8], ORB);
+	printf("\n");
+}
 void ORB::create(cv::Ptr<cv::Feature2D> &ptr){
 #if CV_MAJOR_VERSION < 3
 	ptr.reset(new cv::ORB(
@@ -224,6 +286,63 @@ void ORB::create(cv::Ptr<cv::Feature2D> &ptr){
 		patch_size,
 		fast_threshold
 		);
+#endif
+}
+#define AGAST_THRESHOLD 10
+#define AGAST_NON_MAX_SUPPRESSION true
+#define AGAST_TYPE cv::AgastFeatureDetector::OAST_9_16
+AGAST::AGAST(const vector<boost::any> &params) :
+threshold(AGAST_THRESHOLD),
+non_max_suppression(AGAST_NON_MAX_SUPPRESSION),
+type(AGAST_TYPE){
+	printf("Using AGAST detector with:\n");
+	parse_feat_param(threshold, int, "%d", params[0], AGAST);
+	parse_feat_param(non_max_suppression, bool, "%d", params[1], AGAST);
+	parse_feat_param(type, int, "%d", params[2], AGAST);
+	printf("\n");
+}
+void AGAST::create(cv::Ptr<cv::Feature2D> &ptr){
+#if CV_MAJOR_VERSION < 3
+	ptr.reset(new cv::AgastFeatureDetector(
+		threshold,
+		non_max_suppression,
+		type));
+#else
+	ptr = cv::AgastFeatureDetector::create(
+		threshold, non_max_suppression, type);
+#endif
+}
+#define GFTT_MAX_CORNERS 1000
+#define GFTT_QUALITY_LEVEL 0.01
+#define GFTT_MIN_DISTANCE 1
+#define GFTT_BLOCK_SIZE 3
+#define GFTT_USE_HARRIS_DETECTOR false
+#define GFTT_K 0.04
+GFTT::GFTT(const vector<boost::any> &params) :
+max_corners(GFTT_MAX_CORNERS),
+quality_level(GFTT_QUALITY_LEVEL),
+min_distance(GFTT_MIN_DISTANCE),
+block_size(GFTT_BLOCK_SIZE),
+use_harris_detector(GFTT_USE_HARRIS_DETECTOR),
+k(GFTT_K)
+{
+	printf("Using GFTT detector with:\n");
+	parse_feat_param(max_corners, int, "%d", params[0], GFTT);
+	parse_feat_param(quality_level, double, "%f", params[1], GFTT);
+	parse_feat_param(min_distance, double, "%f", params[2], GFTT);
+	parse_feat_param(block_size, int, "%d", params[3], GFTT);
+	parse_feat_param(use_harris_detector, bool, "%d", params[4], GFTT);
+	parse_feat_param(k, double, "%f", params[5], GFTT);
+	printf("\n");
+}
+void GFTT::create(cv::Ptr<cv::Feature2D> &ptr){
+#if CV_MAJOR_VERSION < 3
+	ptr.reset(new cv::GFTTDetector(max_corners, quality_level, min_distance,
+		block_size, use_harris_detector, k));
+#else
+	ptr = cv::GFTTDetector::create(
+		max_corners, quality_level, min_distance,
+		block_size, use_harris_detector, k);
 #endif
 }
 FeatureTrackerParams::FeatureTrackerParams(
@@ -299,11 +418,12 @@ debug_mode(FEAT_DEBUG_MODE){
 }
 template<class SSM>
 FeatureTracker<SSM>::FeatureTracker(
+	const FeatParamsType &detect_params,
+	const FeatParamsType &desc_params,
 	const ParamType *grid_params,
 	const FLANNParams *_flann_params,
 	const EstimatorParams *_est_params,
-	const SSMParams *_ssm_params,
-	const FeatParamsType &feat_params) :
+	const SSMParams *_ssm_params) :
 	FeatureBase(), ssm(_ssm_params), params(grid_params),
 	flann_params(_flann_params), est_params(_est_params),
 	use_feature_detector(true){
@@ -339,26 +459,36 @@ FeatureTracker<SSM>::FeatureTracker(
 		printf("Feature detection is disabled.\n");
 		use_feature_detector = false;
 	} else if(params.detector_type == DetectorType::SIFT){
-		SIFT(feat_params).create(detector);
+		SIFT(detect_params).create(detector);
 	} else if(params.detector_type == DetectorType::SURF){
-		SURF(feat_params).create(detector);
+		SURF(detect_params).create(detector);
 	} else if(params.detector_type == DetectorType::FAST){
-		FAST(feat_params).create(detector);
+		FAST(detect_params).create(detector);
 	} else if(params.detector_type == DetectorType::BRISK){
-		BRISK(feat_params).create(detector);
-		printf("Using BRISK feature detector with:\n");
-		printf("\n");
+		BRISK(detect_params).create(detector);
 	} else if(params.detector_type == DetectorType::MSER){
-		MSER(feat_params).create(detector);
-		printf("Using MSER feature detector with:\n");
-		printf("\n");
+		MSER(detect_params).create(detector);
 	} else if(params.detector_type == DetectorType::ORB){
-		ORB(feat_params).create(detector);
-		printf("Using ORB feature detector with:\n");
-		printf("\n");
+		ORB(detect_params).create(detector);
+	} else if(params.detector_type == DetectorType::AGAST){
+		AGAST(detect_params).create(detector);
+	} else if(params.detector_type == DetectorType::GFTT){
+		GFTT(detect_params).create(detector);
 	} else{
-		throw utils::FunctonNotImplemented(cv::format(
-			"Feature detector %s is not implemented yet", toString(detector_type)));
+		throw utils::InvalidArgument(cv::format(
+			"Invalid feature detector type provided %d", static_cast<int>(params.detector_type)));
+	}
+	if(params.descriptor_type == DescriptorType::SIFT){
+		SIFT(desc_params).create(descriptor);
+	} else if(params.descriptor_type == DescriptorType::SURF){
+		SURF(desc_params).create(descriptor);
+	} else if(params.descriptor_type == DescriptorType::BRISK){
+		BRISK(desc_params).create(descriptor);
+	} else if(params.descriptor_type == DescriptorType::ORB){
+		ORB(desc_params).create(descriptor);
+	} else{
+		throw utils::InvalidArgument(cv::format(
+			"Invalid feature descriptor type provided %d", static_cast<int>(params.descriptor_type)));
 	}
 	n_pts = params.grid_size_x *params.grid_size_y;
 	search_window = cv::Size(params.search_window_x, params.search_window_y);
@@ -419,7 +549,7 @@ void FeatureTracker<SSM>::initialize(const cv::Mat &corners) {
 			prev_key_pts[pt_id].pt.y = static_cast<float>(patch_centroid(1));
 		}
 	}
-	detector->compute(curr_img, prev_key_pts, prev_descriptors);
+	descriptor->compute(curr_img, prev_key_pts, prev_descriptors);
 	//printf("prev_descriptors.type: %s\n", utils::getType(prev_descriptors));
 
 	if(params.debug_mode){
@@ -461,7 +591,7 @@ void FeatureTracker<SSM>::update() {
 	mask(search_region) = 255;
 
 	detector->detect(curr_img, curr_key_pts, mask);
-	detector->compute(curr_img, curr_key_pts, curr_descriptors);
+	descriptor->compute(curr_img, curr_key_pts, curr_descriptors);
 
 	matchKeyPoints();
 	if(n_good_key_pts < params.min_matches){
@@ -502,7 +632,7 @@ bool FeatureTracker<SSM>::detect(const cv::Mat &mask, cv::Mat &obj_location) {
 	}
 
 	detector->detect(curr_img, curr_key_pts, mask);
-	detector->compute(curr_img, curr_key_pts, curr_descriptors);
+	descriptor->compute(curr_img, curr_key_pts, curr_descriptors);
 
 	matchKeyPoints();
 
@@ -637,7 +767,7 @@ void FeatureTracker<SSM>::setRegion(const cv::Mat& corners) {
 	cv::Mat mask = cv::Mat::zeros(curr_img.rows, curr_img.cols, CV_8U);
 	mask(utils::getBestFitRectangle<int>(corners)) = 1;	
 
-	detector->compute(curr_img, prev_key_pts, prev_descriptors);
+	descriptor->compute(curr_img, prev_key_pts, prev_descriptors);
 
 #ifndef DISABLE_FLANN
 	if(!params.use_cv_flann){

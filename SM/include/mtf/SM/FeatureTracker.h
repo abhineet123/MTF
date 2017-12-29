@@ -48,44 +48,63 @@ struct FAST{
 	void create(cv::Ptr<cv::Feature2D> &ptr);
 };
 struct BRISK{
-	int thresh = 30;
-	int octaves = 3;
-	float pattern_scale = 1.0f;
+	int thresh;
+	int octaves;
+	float pattern_scale;
 	BRISK(const vector<boost::any> &params,
 		std::string _type = "detector");
 	void create(cv::Ptr<cv::Feature2D> &ptr);
 };
 struct MSER{
-	int delta = 5;
-	int min_area = 60;
-	int max_area = 14400;
-	double max_variation = 0.25;
-	double min_diversity = .2;
-	int max_evolution = 200;
-	double area_threshold = 1.01;
-	double min_margin = 0.003;
-	int edge_blur_size = 5;
+	int delta;
+	int min_area;
+	int max_area;
+	double max_variation;
+	double min_diversity;
+	int max_evolution;
+	double area_threshold;
+	double min_margin;
+	int edge_blur_size;
 	MSER(const vector<boost::any> &params);
 	void create(cv::Ptr<cv::Feature2D> &ptr);
 };
 struct ORB{
-	int n_features = 500;
-	float scale_factor = 1.2f;
-	int n_levels = 8;
-	int edge_threshold = 31;
-	int first_level = 0;
-	int WTA_K = 2;
-	int score_type =cv:: ORB::HARRIS_SCORE;
-	int patch_size = 31;
-	int fast_threshold = 20;
-	ORB(const vector<boost::any> &params);
+	int n_features;
+	float scale_factor;
+	int n_levels;
+	int edge_threshold;
+	int first_level;
+	int WTA_K;
+	int score_type;
+	int patch_size;
+	int fast_threshold;
+	ORB(const vector<boost::any> &params,
+		std::string _type = "detector");
 	void create(cv::Ptr<cv::Feature2D> &ptr);
 };
-
+struct AGAST{
+	int threshold;
+	bool non_max_suppression;
+	int type;
+	AGAST(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::Feature2D> &ptr);
+};
+struct GFTT{
+	int max_corners;
+	double quality_level;
+	double min_distance;
+	int block_size;
+	bool use_harris_detector;
+	double k;
+	GFTT(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::Feature2D> &ptr);
+};
 struct FeatureTrackerParams{
-	enum class DetectorType { NONE, SIFT, SURF, FAST,
-		BRISK, MSER, ORB, AGAST, GFTT };
-	enum class DescriptorType { SIFT, SURF, BRIEF, ORB };
+	enum class DetectorType {
+		NONE, SIFT, SURF, FAST,
+		BRISK, MSER, ORB, AGAST, GFTT
+	};
+	enum class DescriptorType { SIFT, SURF, BRISK, ORB };
 
 	int grid_size_x, grid_size_y;
 	int search_window_x, search_window_y;
@@ -155,11 +174,12 @@ public:
 	typedef cv::Ptr<cv::Feature2D> FeatPtr;
 
 	FeatureTracker(
+		const FeatParamsType &feat_params,
+		const FeatParamsType &desc_params,
 		const ParamType *grid_params = nullptr,
 		const FLANNParams *_flann_params = nullptr,
 		const EstimatorParams *_est_params = nullptr,
-		const SSMParams *ssm_params = nullptr,
-		const FeatParamsType &feat_params);
+		const SSMParams *ssm_params = nullptr);
 	~FeatureTracker(){}
 
 	void initialize(const cv::Mat &corners) override;
@@ -191,6 +211,7 @@ private:
 	EstimatorParams est_params;
 	cv::FlannBasedMatcher matcher;
 	FeatPtr detector;
+	FeatPtr descriptor;
 
 #ifndef DISABLE_FLANN
 	FlannIdxPtr flann_idx;
