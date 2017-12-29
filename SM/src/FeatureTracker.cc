@@ -418,8 +418,8 @@ debug_mode(FEAT_DEBUG_MODE){
 }
 template<class SSM>
 FeatureTracker<SSM>::FeatureTracker(
-	const FeatParamsType &detect_params,
-	const FeatParamsType &desc_params,
+	const DetectorParamsType &detect_params,
+	const DescriptorParamsType &desc_params,
 	const ParamType *grid_params,
 	const FLANNParams *_flann_params,
 	const EstimatorParams *_est_params,

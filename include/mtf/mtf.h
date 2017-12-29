@@ -227,9 +227,16 @@ typedef std::unique_ptr<FLANNParams> FLANNParams_;
 typedef std::unique_ptr<FLANNCVParams> FLANNParams_;
 #endif
 #endif
+#ifndef DISABLE_FEAT
+typedef FeatureTrackerParams::DetectorParamsType DetectorParamsType;
+typedef FeatureTrackerParams::DescriptorParamsType DescriptorParamsType;
+#endif
+
 #ifndef DISABLE_REGNET
 typedef std::unique_ptr<RegNetParams> RegNetParams_;
 #endif
+
+
 
 AMParams_ getAMParams(const char *am_type, const char *ilm_type);
 SSMParams_ getSSMParams(const char *ssm_type);
@@ -1431,6 +1438,35 @@ inline FLANNParams_ getFLANNParams(){
 		));
 }
 #endif
+#endif
+#ifndef DISABLE_FEAT
+inline std::vector<boost::any> getDetectorParams(){
+	std::vector<boost::any> detector_params;
+	switch(static_cast<SPIType>(spi_type)){
+	case SPIType::None:
+		break;
+	case SPIType::PixDiff:
+		spi_params.push_back(spi_pix_diff_thresh);
+		break;
+	case SPIType::Gradient:
+		spi_params.push_back(spi_grad_thresh);
+		spi_params.push_back(spi_grad_use_union);
+		break;
+	case SPIType::GFTT:
+		spi_params.push_back(spi_gftt_max_corners);
+		spi_params.push_back(spi_gftt_quality_level);
+		spi_params.push_back(spi_gftt_min_distance);
+		spi_params.push_back(spi_gftt_block_size);
+		spi_params.push_back(spi_gftt_use_harris_detector);
+		spi_params.push_back(spi_gftt_k);
+		spi_params.push_back(spi_gftt_use_union);
+		spi_params.push_back(spi_gftt_neigh_offset);
+		break;
+	default:
+		throw utils::InvalidArgument("Invalid SPI type provided");
+	}
+	return spi_params;
+}
 #endif
 
 #ifndef DISABLE_REGNET

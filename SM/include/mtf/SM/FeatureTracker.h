@@ -106,6 +106,12 @@ struct FeatureTrackerParams{
 	};
 	enum class DescriptorType { SIFT, SURF, BRISK, ORB };
 
+	typedef std::vector<boost::any> DetectorParamsType;
+	typedef std::vector<boost::any> DescriptorParamsType;
+
+	DetectorParamsType detector;
+	DescriptorParamsType descriptor;
+
 	int grid_size_x, grid_size_y;
 	int search_window_x, search_window_y;
 	bool init_at_each_frame;
@@ -135,10 +141,13 @@ struct FeatureTrackerParams{
 	bool debug_mode;
 
 	FeatureTrackerParams(
+		DetectorType detector_type,
+		DescriptorType descriptor_type,
+		const DetectorParamsType &detect_params,
+		const DescriptorParamsType &desc_params,
 		int _grid_size_x, int _grid_size_y,
 		int _search_win_x, int _search_win_y,
-		bool _init_at_each_frame, DetectorType detector_type,
-		DescriptorType descriptor_type, bool _rebuild_index,
+		bool _init_at_each_frame, bool _rebuild_index,
 		int _max_iters, double _epsilon, bool _enable_pyr,
 		bool _use_cv_flann,
 		double _max_dist_ratio, int _min_matches, bool _uchar_input,
@@ -154,7 +163,6 @@ class FeatureTracker : public FeatureBase{
 
 public:
 	typedef FeatureTrackerParams ParamType;
-	typedef std::vector<boost::any> FeatParamsType;
 	typedef ParamType::DetectorType DetectorType;
 	typedef ParamType::DescriptorType DescriptorType;
 	typedef typename SSM::ParamType SSMParams;
@@ -174,8 +182,6 @@ public:
 	typedef cv::Ptr<cv::Feature2D> FeatPtr;
 
 	FeatureTracker(
-		const FeatParamsType &feat_params,
-		const FeatParamsType &desc_params,
 		const ParamType *grid_params = nullptr,
 		const FLANNParams *_flann_params = nullptr,
 		const EstimatorParams *_est_params = nullptr,
