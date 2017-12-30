@@ -137,7 +137,7 @@ type(FAST_TYPE){
 void FAST::create(cv::Ptr<cv::Feature2D> &ptr){
 #if CV_MAJOR_VERSION < 3
 	ptr.reset(new cv::FastFeatureDetector(
-		threshold, non_max_suppression, type));
+		threshold, non_max_suppression));
 #else
 	ptr = cv::FastFeatureDetector::create(
 		threshold, non_max_suppression, type);
@@ -160,7 +160,7 @@ pattern_scale(BRISK_PATTERN_SCALE)
 void BRISK::create(cv::Ptr<cv::Feature2D> &ptr){
 #if CV_MAJOR_VERSION < 3
 	ptr.reset(new cv::BRISK(
-		thresh, octaves, patternScale));
+		thresh, octaves, pattern_scale));
 #else
 	ptr = cv::BRISK::create(
 		thresh, octaves, pattern_scale);
@@ -267,8 +267,7 @@ void ORB::create(cv::Ptr<cv::Feature2D> &ptr){
 		first_level,
 		WTA_K,
 		score_type,
-		patch_size,
-		fast_threshold
+		patch_size
 		));
 #else
 	ptr = cv::ORB::create(
@@ -284,7 +283,7 @@ void ORB::create(cv::Ptr<cv::Feature2D> &ptr){
 		);
 #endif
 }
-
+#if CV_MAJOR_VERSION >= 3
 #define AGAST_THRESHOLD 10
 #define AGAST_NON_MAX_SUPPRESSION true
 #define AGAST_TYPE cv::AgastFeatureDetector::OAST_9_16
@@ -299,14 +298,11 @@ type(AGAST_TYPE){
 	printf("\n");
 }
 void AGAST::create(cv::Ptr<cv::Feature2D> &ptr){
-#if CV_MAJOR_VERSION < 3
-	ptr.reset(new cv::AgastFeatureDetector(
-		threshold, non_max_suppression, type));
-#else
 	ptr = cv::AgastFeatureDetector::create(
 		threshold, non_max_suppression, type);
-#endif
 }
+#endif
+
 #define GFTT_MAX_CORNERS 1000
 #define GFTT_QUALITY_LEVEL 0.01
 #define GFTT_MIN_DISTANCE 1
@@ -472,11 +468,15 @@ FeatureTracker<SSM>::FeatureTracker(
 		MSER(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::ORB){
 		ORB(params.detector).create(detector);
-	} else if(params.detector_type == DetectorType::AGAST){
-		AGAST(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::GFTT){
 		GFTT(params.detector).create(detector);
-	} else{
+	}
+#if CV_MAJOR_VERSION >= 3
+	else if(params.detector_type == DetectorType::AGAST){
+		AGAST(params.detector).create(detector);
+	}
+#endif
+	else{
 		throw utils::InvalidArgument(cv::format(
 			"Invalid feature detector type provided %d", static_cast<int>(params.detector_type)));
 	}

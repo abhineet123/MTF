@@ -9,9 +9,9 @@
 #include "FLANNCVParams.h"
 #endif
 #if CV_MAJOR_VERSION < 3
-#include "opencv2/nonfree/nonfree.hpp"
+#include "opencv2/features2d/features2d.hpp"
 #else
-#include "opencv2/xfeatures2d/nonfree.hpp"
+#include "opencv2/xfeatures2d.hpp"
 #endif
 
 #include <memory>
@@ -82,13 +82,6 @@ struct ORB{
 		std::string _type = "detector");
 	void create(cv::Ptr<cv::Feature2D> &ptr);
 };
-struct AGAST{
-	int threshold;
-	bool non_max_suppression;
-	int type;
-	AGAST(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::Feature2D> &ptr);
-};
 struct GFTT{
 	int max_corners;
 	double quality_level;
@@ -109,10 +102,20 @@ struct FREAK{
 	FREAK(const vector<boost::any> &params);
 	void create(cv::Ptr<cv::Feature2D> &ptr);
 };
+#if CV_MAJOR_VERSION >= 3
+struct AGAST{
+	int threshold;
+	bool non_max_suppression;
+	int type;
+	AGAST(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::Feature2D> &ptr);
+};
+#endif
 struct FeatureTrackerParams{
 	enum class DetectorType {
 		NONE, SIFT, SURF, FAST,
-		BRISK, MSER, ORB, AGAST, GFTT
+		BRISK, MSER, ORB, GFTT,
+		AGAST
 	};
 	enum class DescriptorType{
 		SIFT, SURF, BRISK, ORB, FREAK, 
