@@ -186,7 +186,7 @@ struct FeatureTrackerParams{
 	int getResY() const{ return grid_size_y; }
 
 	std::string toString(DetectorType _detector_type);
-	std::string FeatureTrackerParams::toString(DescriptorType _descriptor_type);
+	std::string toString(DescriptorType _descriptor_type);
 };
 template<class SSM>
 class FeatureTracker : public FeatureBase{
