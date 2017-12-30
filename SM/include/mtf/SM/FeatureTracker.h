@@ -99,12 +99,25 @@ struct GFTT{
 	GFTT(const vector<boost::any> &params);
 	void create(cv::Ptr<cv::Feature2D> &ptr);
 };
+struct FREAK{
+	int max_corners;
+	double quality_level;
+	double min_distance;
+	int block_size;
+	bool use_harris_detector;
+	double k;
+	FREAK(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::Feature2D> &ptr);
+};
 struct FeatureTrackerParams{
 	enum class DetectorType {
 		NONE, SIFT, SURF, FAST,
 		BRISK, MSER, ORB, AGAST, GFTT
 	};
-	enum class DescriptorType { SIFT, SURF, BRISK, ORB };
+	enum class DescriptorType{
+		SIFT, SURF, BRISK, ORB, FREAK, 
+		LUCID, LATCH, DAISY, VGG, BoostDesc
+	};
 
 	typedef std::vector<boost::any> DetectorParamsType;
 	typedef std::vector<boost::any> DescriptorParamsType;
@@ -141,10 +154,10 @@ struct FeatureTrackerParams{
 	bool debug_mode;
 
 	FeatureTrackerParams(
-		DetectorType detector_type,
-		DescriptorType descriptor_type,
-		const DetectorParamsType &detect_params,
-		const DescriptorParamsType &desc_params,
+		DetectorType _detector_type,
+		DescriptorType _descriptor_type,
+		const DetectorParamsType &_detector,
+		const DescriptorParamsType &_descriptor,
 		int _grid_size_x, int _grid_size_y,
 		int _search_win_x, int _search_win_y,
 		bool _init_at_each_frame, bool _rebuild_index,

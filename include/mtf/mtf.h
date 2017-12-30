@@ -228,8 +228,12 @@ typedef std::unique_ptr<FLANNCVParams> FLANNParams_;
 #endif
 #endif
 #ifndef DISABLE_FEAT
+typedef FeatureTrackerParams::DetectorType DetectorType;
+typedef FeatureTrackerParams::DescriptorType DescriptorType;
 typedef FeatureTrackerParams::DetectorParamsType DetectorParamsType;
 typedef FeatureTrackerParams::DescriptorParamsType DescriptorParamsType;
+DetectorParamsType getDetectorParams(int detector_type);
+DescriptorParamsType getDescriptorParams(int descriptor_type);
 #endif
 
 #ifndef DISABLE_REGNET
@@ -638,20 +642,19 @@ TrackerBase *getTracker(const char *sm_type,
 #endif
 #ifndef DISABLE_FEAT
 	if(!strcmp(sm_type, "feat")){
-		bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");
+		bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");		
 		FeatureTrackerParams feat_params(
-			grid_res, grid_res, grid_patch_size, grid_patch_size, grid_reset_at_each_frame,
 			static_cast<FeatureTrackerParams::DetectorType>(feat_detector_type),
 			static_cast<FeatureTrackerParams::DescriptorType>(feat_descriptor_type),
+			getDetectorParams(feat_detector_type), getDescriptorParams(feat_descriptor_type),
+			grid_res, grid_res, grid_patch_size, grid_patch_size, grid_reset_at_each_frame,
 			feat_rebuild_index, max_iters, epsilon, enable_pyr, feat_use_cv_flann,
 			feat_max_dist_ratio, feat_min_matches, uchar_input, feat_show_keypoints,
 			feat_show_matches, feat_debug_mode);
-		SIFT sift_params(sift_n_features, sift_n_octave_layers,
-			sift_contrast_thresh, sift_edge_thresh, sift_sigma);
 		typename SSMType::ParamType _ssm_params(ssm_params);
 		_ssm_params.resx = feat_params.getResX();
 		_ssm_params.resy = feat_params.getResY();
-		return new FeatureTracker<SSMType>(&feat_params, &sift_params,
+		return new FeatureTracker<SSMType>(&feat_params, 
 			getFLANNParams().get(), getSSMEstParams().get(), &_ssm_params);
 	}
 #endif
@@ -1440,32 +1443,112 @@ inline FLANNParams_ getFLANNParams(){
 #endif
 #endif
 #ifndef DISABLE_FEAT
-inline std::vector<boost::any> getDetectorParams(){
-	std::vector<boost::any> detector_params;
-	switch(static_cast<SPIType>(spi_type)){
-	case SPIType::None:
+inline DetectorParamsType getDetectorParams(int detector_type){
+	DetectorParamsType detector_params;
+	switch(static_cast<DetectorType>(detector_type)){
+	case DetectorType::NONE:
 		break;
-	case SPIType::PixDiff:
-		spi_params.push_back(spi_pix_diff_thresh);
+	case DetectorType::SIFT:
+		detector_params.push_back(sift_n_features);
+		detector_params.push_back(sift_n_octave_layers);
+		detector_params.push_back(sift_contrast_thresh);
+		detector_params.push_back(sift_edge_thresh);
+		detector_params.push_back(sift_sigma);
 		break;
-	case SPIType::Gradient:
-		spi_params.push_back(spi_grad_thresh);
-		spi_params.push_back(spi_grad_use_union);
+	case DetectorType::SURF:
+		detector_params.push_back(surf_hessian_threshold);
+		detector_params.push_back(surf_n_octaves);
+		detector_params.push_back(surf_n_octave_layers);
+		detector_params.push_back(surf_extended);
+		detector_params.push_back(surf_upright);
 		break;
-	case SPIType::GFTT:
-		spi_params.push_back(spi_gftt_max_corners);
-		spi_params.push_back(spi_gftt_quality_level);
-		spi_params.push_back(spi_gftt_min_distance);
-		spi_params.push_back(spi_gftt_block_size);
-		spi_params.push_back(spi_gftt_use_harris_detector);
-		spi_params.push_back(spi_gftt_k);
-		spi_params.push_back(spi_gftt_use_union);
-		spi_params.push_back(spi_gftt_neigh_offset);
+	case DetectorType::FAST:
+		detector_params.push_back(fast_threshold);
+		detector_params.push_back(fast_non_max_suppression);
+		detector_params.push_back(fast_type);
+		break;
+	case DetectorType::BRISK:
+		detector_params.push_back(brisk_thresh);
+		detector_params.push_back(brisk_octaves);
+		detector_params.push_back(brisk_pattern_scale);
+		break;
+	case DetectorType::MSER:
+		detector_params.push_back(mser_delta);
+		detector_params.push_back(mser_min_area);
+		detector_params.push_back(mser_max_area);
+		detector_params.push_back(mser_max_variation);
+		detector_params.push_back(mser_min_diversity);
+		detector_params.push_back(mser_max_evolution);
+		detector_params.push_back(mser_area_threshold);
+		detector_params.push_back(mser_min_margin);
+		detector_params.push_back(mser_edge_blur_size);
+		break;
+	case DetectorType::ORB:
+		detector_params.push_back(orb_n_features);
+		detector_params.push_back(orb_scale_factor);
+		detector_params.push_back(orb_n_levels);
+		detector_params.push_back(orb_edge_threshold);
+		detector_params.push_back(orb_first_level);
+		detector_params.push_back(orb_WTA_K);
+		detector_params.push_back(orb_score_type);
+		detector_params.push_back(orb_patch_size);
+		detector_params.push_back(orb_fast_threshold);
+		break;
+	case DetectorType::AGAST:
+		detector_params.push_back(agast_threshold);
+		detector_params.push_back(agast_non_max_suppression);
+		detector_params.push_back(agast_type);
+		break;
+	case DetectorType::GFTT:
+		detector_params.push_back(gftt_max_corners);
+		detector_params.push_back(gftt_quality_level);
+		detector_params.push_back(gftt_min_distance);
+		detector_params.push_back(gftt_block_size);
+		detector_params.push_back(gftt_use_harris_detector);
+		detector_params.push_back(gftt_k);
 		break;
 	default:
-		throw utils::InvalidArgument("Invalid SPI type provided");
+		throw utils::InvalidArgument("Invalid detector type provided");
 	}
-	return spi_params;
+	return detector_params;
+}
+DescriptorParamsType getDescriptorParams(int descriptor_type){
+	DescriptorParamsType descriptor_params;
+	switch(static_cast<DescriptorType>(descriptor_type)){
+	case DescriptorType::SIFT:
+		descriptor_params.push_back(sift_n_features);
+		descriptor_params.push_back(sift_n_octave_layers);
+		descriptor_params.push_back(sift_contrast_thresh);
+		descriptor_params.push_back(sift_edge_thresh);
+		descriptor_params.push_back(sift_sigma);
+		break;
+	case DescriptorType::SURF:
+		descriptor_params.push_back(surf_hessian_threshold);
+		descriptor_params.push_back(surf_n_octaves);
+		descriptor_params.push_back(surf_n_octave_layers);
+		descriptor_params.push_back(surf_extended);
+		descriptor_params.push_back(surf_upright);
+		break;
+	case DescriptorType::BRISK:
+		descriptor_params.push_back(brisk_thresh);
+		descriptor_params.push_back(brisk_octaves);
+		descriptor_params.push_back(brisk_pattern_scale);
+		break;
+	case DescriptorType::ORB:
+		descriptor_params.push_back(orb_n_features);
+		descriptor_params.push_back(orb_scale_factor);
+		descriptor_params.push_back(orb_n_levels);
+		descriptor_params.push_back(orb_edge_threshold);
+		descriptor_params.push_back(orb_first_level);
+		descriptor_params.push_back(orb_WTA_K);
+		descriptor_params.push_back(orb_score_type);
+		descriptor_params.push_back(orb_patch_size);
+		descriptor_params.push_back(orb_fast_threshold);
+		break;
+	default:
+		throw utils::InvalidArgument("Invalid descriptor type provided");
+	}
+	return descriptor_params;
 }
 #endif
 

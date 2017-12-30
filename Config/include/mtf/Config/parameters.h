@@ -513,6 +513,51 @@ namespace mtf{
 		double sift_edge_thresh = 10;
 		double sift_sigma = 1.6;
 
+		double surf_hessian_threshold = 100;
+		int surf_n_octaves = 4;
+		int surf_n_octave_layers = 3;
+		bool surf_extended = false;
+		bool surf_upright = false;
+
+		int fast_threshold = 10;
+		bool fast_non_max_suppression = true;
+		int fast_type = 2;
+
+		int brisk_thresh = 30; 
+		int brisk_octaves = 3;
+		float brisk_pattern_scale = 1.0f;
+
+		int mser_delta = 5;
+		int mser_min_area = 60;
+		int mser_max_area = 14400;
+		double mser_max_variation = 0.25;
+		double mser_min_diversity = .2;
+		int mser_max_evolution = 200;
+		double mser_area_threshold = 1.01;
+		double mser_min_margin = 0.003;
+		int mser_edge_blur_size = 5;
+
+		int orb_n_features = 500;
+		float orb_scale_factor = 1.2f;
+		int orb_n_levels = 8;
+		int orb_edge_threshold = 31;
+		int orb_first_level = 0;
+		int orb_WTA_K = 2;
+		int orb_score_type = 0;
+		int orb_patch_size = 31;
+		int orb_fast_threshold = 20;
+
+		int agast_threshold = 10;
+		bool agast_non_max_suppression = true;
+		int agast_type = 3;
+
+		int gftt_max_corners = 1000;
+		double gftt_quality_level = 0.01;
+		double gftt_min_distance = 1;
+		int gftt_block_size = 3;
+		bool gftt_use_harris_detector = false;
+		double gftt_k = 0.04;
+
 		//! SSM Estimator
 		int est_method = 0;
 		double est_ransac_reproj_thresh = 10;
@@ -762,12 +807,14 @@ namespace mtf{
 		double spi_pix_diff_thresh = 10;
 		double spi_grad_thresh = 0.005;
 		bool spi_grad_use_union = false;
+		// GFTT
 		int spi_gftt_max_corners = 1000;
 		double spi_gftt_quality_level = 0.01;
 		double spi_gftt_min_distance = 0;
 		int spi_gftt_block_size = 3;
 		bool spi_gftt_use_harris_detector = false;
 		double spi_gftt_k = 0.04;
+		// SPI with GFTT
 		bool spi_gftt_use_union = false;
 		int spi_gftt_neigh_offset = 0;
 
@@ -2445,7 +2492,7 @@ namespace mtf{
 				feat_debug_mode = atoi(arg_val);
 				return;
 			}
-			//! SIFT Feature Detector
+			//! SIFT detector and descriptor
 			if(!strcmp(arg_name, "sift_n_features")){
 				sift_n_features = atoi(arg_val);
 				return;
@@ -2466,6 +2513,73 @@ namespace mtf{
 				sift_sigma = atof(arg_val);
 				return;
 			}
+
+
+			if(!strcmp(arg_name, "surf_hessian_threshold")){
+				surf_hessian_threshold = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "surf_n_octaves")){
+				surf_n_octaves = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "surf_n_octaves")){
+				surf_n_octaves = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "sift_sigma")){
+				sift_sigma = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "sift_sigma")){
+				sift_sigma = atof(arg_val);
+				return;
+			}
+
+			double  = 100;
+			int  = 4;
+			int surf_n_octave_layers = 3;
+			bool surf_extended = false;
+			bool surf_upright = false;
+
+			int fast_threshold = 10;
+			bool fast_non_max_suppression = true;
+			int fast_type = 2;
+
+			int brisk_thresh = 30;
+			int brisk_octaves = 3;
+			float brisk_pattern_scale = 1.0f;
+
+			int mser_delta = 5;
+			int mser_min_area = 60;
+			int mser_max_area = 14400;
+			double mser_max_variation = 0.25;
+			double mser_min_diversity = .2;
+			int mser_max_evolution = 200;
+			double mser_area_threshold = 1.01;
+			double mser_min_margin = 0.003;
+			int mser_edge_blur_size = 5;
+
+			int orb_n_features = 500;
+			float orb_scale_factor = 1.2f;
+			int orb_n_levels = 8;
+			int orb_edge_threshold = 31;
+			int orb_first_level = 0;
+			int orb_WTA_K = 2;
+			int orb_score_type = 0;
+			int orb_patch_size = 31;
+			int orb_fast_threshold = 20;
+
+			int agast_threshold = 10;
+			bool agast_non_max_suppression = true;
+			int agast_type = 3;
+
+			int gftt_max_corners = 1000;
+			double gftt_quality_level = 0.01;
+			double gftt_min_distance = 1;
+			int gftt_block_size = 3;
+			bool gftt_use_harris_detector = false;
+			double gftt_k = 0.04;
 			//! SSM Estimator
 			if(!strcmp(arg_name, "est_method")){
 				est_method = atoi(arg_val);

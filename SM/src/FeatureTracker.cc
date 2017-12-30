@@ -7,8 +7,10 @@
 
 #if CV_MAJOR_VERSION < 3
 #include "opencv2/nonfree/nonfree.hpp"
+#include "opencv2/features2d/features2d.hpp"
 #else
 #include "opencv2/xfeatures2d/nonfree.hpp"
+#include "opencv2/xfeatures2d.hpp"
 #endif
 #include <stdexcept>
 
@@ -41,21 +43,13 @@ try{\
 	throw utils::InvalidArgument(cv::format("%s :: Invalid parameter type provided for %s", #feat_type, #name));\
 }
 
+_MTF_BEGIN_NAMESPACE
 
 #define SIFT_N_FEATURES 0
 #define SIFT_N_OCTAVE_LAYERS 3
 #define SIFT_CONTRAST_THRESH 0.04
 #define SIFT_EDGE_THRESH 10
 #define SIFT_SIGMA 1.6
-
-#define SURF_HESSIAN_THRESHOLD 400
-#define SURF_N_OCTAVES 4
-#define SURF_N_OCTAVE_LAYERS 2
-#define SURF_EXTENDED true
-#define SURF_UPRIGHT false
-
-_MTF_BEGIN_NAMESPACE
-
 SIFT::SIFT(const vector<boost::any> &params, std::string _type) :
 n_features(SIFT_N_FEATURES),
 n_octave_layers(SIFT_N_OCTAVE_LAYERS),
@@ -89,6 +83,12 @@ void SIFT::create(cv::Ptr<cv::Feature2D> &ptr){
 		sigma);
 #endif
 }
+
+#define SURF_HESSIAN_THRESHOLD 400
+#define SURF_N_OCTAVES 4
+#define SURF_N_OCTAVE_LAYERS 2
+#define SURF_EXTENDED true
+#define SURF_UPRIGHT false
 SURF::SURF(const vector<boost::any> &params, std::string _type) :
 hessian_threshold(SURF_HESSIAN_THRESHOLD),
 n_octaves(SURF_N_OCTAVES),
@@ -121,7 +121,9 @@ void SURF::create(cv::Ptr<cv::Feature2D> &ptr){
 		upright);
 #endif
 }
-
+#define FAST_THRESHOLD 10
+#define FAST_NON_MAX_SUPPRESSION true
+#define FAST_TYPE cv::FastFeatureDetector::TYPE_9_16
 FAST::FAST(const vector<boost::any> &params) :
 threshold(FAST_THRESHOLD),
 non_max_suppression(FAST_NON_MAX_SUPPRESSION),
@@ -135,9 +137,7 @@ type(FAST_TYPE){
 void FAST::create(cv::Ptr<cv::Feature2D> &ptr){
 #if CV_MAJOR_VERSION < 3
 	ptr.reset(new cv::FastFeatureDetector(
-		threshold,
-		non_max_suppression, 
-		type));
+		threshold, non_max_suppression, type));
 #else
 	ptr = cv::FastFeatureDetector::create(
 		threshold, non_max_suppression, type);
@@ -160,14 +160,10 @@ pattern_scale(BRISK_PATTERN_SCALE)
 void BRISK::create(cv::Ptr<cv::Feature2D> &ptr){
 #if CV_MAJOR_VERSION < 3
 	ptr.reset(new cv::BRISK(
-		thresh,
-		octaves, 
-		patternScale));
+		thresh, octaves, patternScale));
 #else
 	ptr = cv::BRISK::create(
-		thresh,
-		octaves, 
-		pattern_scale);
+		thresh, octaves, pattern_scale);
 #endif
 }
 #define MSER_DELTA 5
@@ -288,6 +284,7 @@ void ORB::create(cv::Ptr<cv::Feature2D> &ptr){
 		);
 #endif
 }
+
 #define AGAST_THRESHOLD 10
 #define AGAST_NON_MAX_SUPPRESSION true
 #define AGAST_TYPE cv::AgastFeatureDetector::OAST_9_16
@@ -304,9 +301,7 @@ type(AGAST_TYPE){
 void AGAST::create(cv::Ptr<cv::Feature2D> &ptr){
 #if CV_MAJOR_VERSION < 3
 	ptr.reset(new cv::AgastFeatureDetector(
-		threshold,
-		non_max_suppression,
-		type));
+		threshold, non_max_suppression, type));
 #else
 	ptr = cv::AgastFeatureDetector::create(
 		threshold, non_max_suppression, type);
@@ -337,7 +332,8 @@ k(GFTT_K)
 }
 void GFTT::create(cv::Ptr<cv::Feature2D> &ptr){
 #if CV_MAJOR_VERSION < 3
-	ptr.reset(new cv::GFTTDetector(max_corners, quality_level, min_distance,
+	ptr.reset(new cv::GFTTDetector(
+		max_corners, quality_level, min_distance,
 		block_size, use_harris_detector, k));
 #else
 	ptr = cv::GFTTDetector::create(
@@ -346,24 +342,28 @@ void GFTT::create(cv::Ptr<cv::Feature2D> &ptr){
 #endif
 }
 FeatureTrackerParams::FeatureTrackerParams(
+	DetectorType _detector_type,
+	DescriptorType _descriptor_type,
+	const DetectorParamsType &_detector,
+	const DescriptorParamsType &_descriptor,
 	int _grid_size_x, int _grid_size_y,
 	int _search_win_x, int _search_win_y,
 	bool _init_at_each_frame,
-	DetectorType _detector_type,
-	DescriptorType _descriptor_type,
 	bool _rebuild_index, int _max_iters, double _epsilon,
 	bool _enable_pyr, bool _use_cv_flann,
 	double _max_dist_ratio,
 	int _min_matches, bool _uchar_input,
 	bool _show_keypoints, bool _show_matches,
 	bool _debug_mode) :
+	detector_type(_detector_type),
+	descriptor_type(_descriptor_type),
+	detector(_detector),
+	descriptor(_descriptor),
 	grid_size_x(_grid_size_x),
 	grid_size_y(_grid_size_y),
 	search_window_x(_search_win_x),
 	search_window_y(_search_win_y),
 	init_at_each_frame(_init_at_each_frame),
-	detector_type(_detector_type),
-	descriptor_type(_descriptor_type),
 	rebuild_index(_rebuild_index),
 	max_iters(_max_iters),
 	epsilon(_epsilon),
@@ -396,13 +396,17 @@ show_keypoints(FEAT_SHOW_TRACKERS),
 show_matches(FEAT_SHOW_TRACKER_EDGES),
 debug_mode(FEAT_DEBUG_MODE){
 	if(params){
+		detector = params->detector;
+		descriptor = params->descriptor;
+		detector_type = params->detector_type;
+		descriptor_type = params->descriptor_type;
+		detector_type = params->detector_type;
+		descriptor_type = params->descriptor_type;
 		grid_size_x = params->grid_size_x;
 		grid_size_y = params->grid_size_y;
 		search_window_x = params->search_window_x;
 		search_window_y = params->search_window_y;
 		init_at_each_frame = params->init_at_each_frame;
-		detector_type = params->detector_type;
-		descriptor_type = params->descriptor_type;
 		rebuild_index = params->rebuild_index;
 		max_iters = params->max_iters;
 		epsilon = params->epsilon;
@@ -418,8 +422,6 @@ debug_mode(FEAT_DEBUG_MODE){
 }
 template<class SSM>
 FeatureTracker<SSM>::FeatureTracker(
-	const DetectorParamsType &detect_params,
-	const DescriptorParamsType &desc_params,
 	const ParamType *grid_params,
 	const FLANNParams *_flann_params,
 	const EstimatorParams *_est_params,
@@ -459,33 +461,33 @@ FeatureTracker<SSM>::FeatureTracker(
 		printf("Feature detection is disabled.\n");
 		use_feature_detector = false;
 	} else if(params.detector_type == DetectorType::SIFT){
-		SIFT(detect_params).create(detector);
+		SIFT(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::SURF){
-		SURF(detect_params).create(detector);
+		SURF(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::FAST){
-		FAST(detect_params).create(detector);
+		FAST(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::BRISK){
-		BRISK(detect_params).create(detector);
+		BRISK(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::MSER){
-		MSER(detect_params).create(detector);
+		MSER(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::ORB){
-		ORB(detect_params).create(detector);
+		ORB(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::AGAST){
-		AGAST(detect_params).create(detector);
+		AGAST(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::GFTT){
-		GFTT(detect_params).create(detector);
+		GFTT(params.detector).create(detector);
 	} else{
 		throw utils::InvalidArgument(cv::format(
 			"Invalid feature detector type provided %d", static_cast<int>(params.detector_type)));
 	}
 	if(params.descriptor_type == DescriptorType::SIFT){
-		SIFT(desc_params).create(descriptor);
+		SIFT(params.descriptor).create(descriptor);
 	} else if(params.descriptor_type == DescriptorType::SURF){
-		SURF(desc_params).create(descriptor);
+		SURF(params.descriptor).create(descriptor);
 	} else if(params.descriptor_type == DescriptorType::BRISK){
-		BRISK(desc_params).create(descriptor);
+		BRISK(params.descriptor).create(descriptor);
 	} else if(params.descriptor_type == DescriptorType::ORB){
-		ORB(desc_params).create(descriptor);
+		ORB(params.descriptor).create(descriptor);
 	} else{
 		throw utils::InvalidArgument(cv::format(
 			"Invalid feature descriptor type provided %d", static_cast<int>(params.descriptor_type)));
