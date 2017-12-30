@@ -83,8 +83,8 @@ void SIFT::create(cv::Ptr<cv::FeatureDetector> &ptr){
 		sigma);
 #endif
 }
-void SIFT::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 #if CV_MAJOR_VERSION < 3
+void SIFT::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 	ptr = cv::Ptr<cv::DescriptorExtractor>(new cv::SIFT(
 		n_features,
 		n_octave_layers,
@@ -92,15 +92,9 @@ void SIFT::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 		edge_thresh,
 		sigma
 		));
-#else
-	ptr = cv::xfeatures2d::SIFT::create(
-		n_features, 
-		n_octave_layers,
-		contrast_thresh,
-		edge_thresh,
-		sigma);
-#endif
 }
+#endif
+
 #define SURF_HESSIAN_THRESHOLD 400
 #define SURF_N_OCTAVES 4
 #define SURF_N_OCTAVE_LAYERS 2
@@ -138,8 +132,8 @@ void SURF::create(cv::Ptr<cv::FeatureDetector> &ptr){
 		upright);
 #endif
 }
-void SURF::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 #if CV_MAJOR_VERSION < 3
+void SURF::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 	ptr = cv::Ptr<cv::DescriptorExtractor>(new cv::SURF(
 		hessian_threshold,
 		n_octaves, 
@@ -147,15 +141,9 @@ void SURF::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 		extended, 
 		upright
 		));
-#else
-	ptr = cv::xfeatures2d::SURF::create(
-		hessian_threshold,
-		n_octaves, 
-		n_octave_layers,
-		extended, 
-		upright);
-#endif
 }
+#endif
+
 
 #define BRISK_THRESH 30
 #define BRISK_OCTAVES 3
@@ -180,15 +168,12 @@ void BRISK::create(cv::Ptr<cv::FeatureDetector> &ptr){
 		thresh, octaves, pattern_scale);
 #endif
 }
-void BRISK::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 #if CV_MAJOR_VERSION < 3
+void BRISK::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 	ptr = cv::Ptr<cv::DescriptorExtractor>(new cv::BRISK(
 		thresh, octaves, pattern_scale));
-#else
-	ptr = cv::BRISK::create(
-		thresh, octaves, pattern_scale);
-#endif
 }
+#endif
 
 #define ORB_N_FEATURES 500
 #define ORB_SCALE_FACTOR 1.2f
@@ -248,8 +233,8 @@ void ORB::create(cv::Ptr<cv::FeatureDetector> &ptr){
 		);
 #endif
 }
-void ORB::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 #if CV_MAJOR_VERSION < 3
+void ORB::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 	ptr = cv::Ptr<cv::DescriptorExtractor>(new cv::ORB(
 		n_features,
 		scale_factor,
@@ -260,20 +245,9 @@ void ORB::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 		score_type,
 		patch_size
 		));
-#else
-	ptr = cv::ORB::create(
-		n_features,
-		scale_factor,
-		n_levels,
-		edge_threshold,
-		first_level,
-		WTA_K,
-		score_type,
-		patch_size,
-		fast_threshold
-		);
-#endif
 }
+#endif
+
 
 #define FAST_THRESHOLD 10
 #define FAST_NON_MAX_SUPPRESSION true

@@ -30,7 +30,9 @@ struct SIFT{
 	SIFT(const vector<boost::any> &params,
 		std::string _type = "detector");
 	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+#if CV_MAJOR_VERSION < 3
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+#endif
 };
 struct SURF{
 	double hessian_threshold;
@@ -41,7 +43,10 @@ struct SURF{
 	SURF(const vector<boost::any> &params,
 		std::string _type = "detector");
 	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+#if CV_MAJOR_VERSION < 3
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+#endif
 };
 struct BRISK{
 	int thresh;
@@ -50,7 +55,10 @@ struct BRISK{
 	BRISK(const vector<boost::any> &params,
 		std::string _type = "detector");
 	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+#if CV_MAJOR_VERSION < 3
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+#endif
 };
 struct ORB{
 	int n_features;
@@ -65,7 +73,10 @@ struct ORB{
 	ORB(const vector<boost::any> &params,
 		std::string _type = "detector");
 	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+#if CV_MAJOR_VERSION < 3
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+#endif
 };
 struct FAST{
 	int threshold;
