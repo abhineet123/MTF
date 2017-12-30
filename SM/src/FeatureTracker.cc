@@ -757,6 +757,8 @@ void FeatureTracker<SSM>::cmptWarpedCorners() {
 template<class SSM>
 void FeatureTracker<SSM>::setRegion(const cv::Mat& corners) {
 	ssm.setCorners(corners);
+	cv::Mat mask = cv::Mat::zeros(curr_img.rows, curr_img.cols, CV_8U);
+	mask(utils::getBestFitRectangle<int>(corners)) = 1;
 	if(use_feature_detector){
 		detector->detect(curr_img, prev_key_pts, mask);
 	} else{
@@ -766,9 +768,6 @@ void FeatureTracker<SSM>::setRegion(const cv::Mat& corners) {
 			prev_key_pts[pt_id].pt.y = static_cast<float>(patch_centroid(1));
 		}
 	}
-	cv::Mat mask = cv::Mat::zeros(curr_img.rows, curr_img.cols, CV_8U);
-	mask(utils::getBestFitRectangle<int>(corners)) = 1;	
-
 	descriptor->compute(curr_img, prev_key_pts, prev_descriptors);
 
 #ifndef DISABLE_FLANN
