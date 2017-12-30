@@ -2083,6 +2083,24 @@ SURF feature detector and descriptor:
 		https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_surf_intro/py_surf_intro.html
 		https://docs.opencv.org/2.4/modules/nonfree/doc/feature_detection.html#surf
 		Bay, H. and Tuytelaars, T. and Van Gool, L. “SURF: Speeded Up Robust Features”, 9th European Conference on Computer Vision, 2006
+
+BRISK feature detector and descriptor:
+======================================
+	 Parameter:	'brisk_thresh'
+		Description:
+			FAST/AGAST detection threshold score
+			
+	 Parameter:	'brisk_octaves'
+		Description:
+			detection octaves. Use 0 to do single scale.
+			
+	 Parameter:	'brisk_pattern_scale'
+		Description:
+			apply this scale to the pattern used for sampling the neighbourhood of a keypoint.
+			
+	 Additional References:
+		https://docs.opencv.org/2.4/modules/features2d/doc/feature_detection_and_description.html#brisk
+		Stefan Leutenegger, Margarita Chli and Roland Siegwart: BRISK: Binary Robust Invariant Scalable Keypoints. ICCV 2011: 2548-2555.
 		
 Similitude SSM:
 ===============

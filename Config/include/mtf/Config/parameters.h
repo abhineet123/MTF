@@ -2548,7 +2548,7 @@ namespace mtf{
 				fast_type = atoi(arg_val);
 				return;
 			}
-			//! BRISK detector
+			//! BRISK detector and descriptor
 			if(!strcmp(arg_name, "brisk_thresh")){
 				brisk_thresh = atoi(arg_val);
 				return;
