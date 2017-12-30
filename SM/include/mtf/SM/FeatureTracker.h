@@ -12,7 +12,7 @@
 #if CV_MAJOR_VERSION < 3
 #include "opencv2/features2d/features2d.hpp"
 #else
-#include "opencv2/xfeatures2d.hpp"
+#include "opencv2/features2d.hpp"
 #endif
 
 #include <memory>
