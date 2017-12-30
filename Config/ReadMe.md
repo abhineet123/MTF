@@ -1152,11 +1152,13 @@ Feature Tracker:
 			0:	None - an equally spaced grid of points is used instead
 			1:	SIFT
 			2:	SURF
-			3:	FAST
-			4:	HARRIS
-			5:	ORB
-		Note:
-			Only SIFT feature detector is currently implemented
+			3:	BRISK
+			4:	ORB
+			5:	FAST
+			6:	MSER
+			7:	GFTT
+			Only OpenCV 3:
+			8:	AGAST
 			
 	 Parameter:	'feat_descriptor_type'
 		Description:
@@ -1164,10 +1166,8 @@ Feature Tracker:
 		Possible Values:
 			0:	SIFT
 			1:	SURF
-			2:	BRIEF
+			2:	BRISK
 			3:	ORB
-		Note:
-			Only SIFT feature descriptor is currently implemented
 			
 	 Parameter:	'feat_max_dist_ratio'
 		Description:
@@ -2056,6 +2056,33 @@ SIFT feature detector and descriptor:
 	 Additional References:
 		https://docs.opencv.org/2.4/modules/nonfree/doc/feature_detection.html#sift-sift
 		Lowe, D. G., 'Distinctive image features from scale-invariant keypoints', International journal of computer vision, Springer, 2004, 60, 91-110
+
+SURF feature detector and descriptor:
+=====================================
+	 Parameter:	'surf_hessian_threshold'
+		Description:
+			Threshold for hessian keypoint detector used in SURF.
+			
+	 Parameter:	'surf_n_octaves'
+		Description:
+			Number of pyramid octaves the keypoint detector will use. 
+			
+	 Parameter:	'surf_n_octave_layers'
+		Description:
+			Number of octave layers within each octave.	 
+			
+	 Parameter:	'surf_extended'
+		Description:
+			Extended descriptor flag (true - use extended 128-element descriptors; false - use 64-element descriptors).	 
+			
+	 Parameter:	'surf_upright'
+		Description:
+			Up-right or rotated features flag (true - do not compute orientation of features; false - compute orientation).	 
+			
+	 Additional References:
+		https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_surf_intro/py_surf_intro.html
+		https://docs.opencv.org/2.4/modules/nonfree/doc/feature_detection.html#surf
+		Bay, H. and Tuytelaars, T. and Van Gool, L. “SURF: Speeded Up Robust Features”, 9th European Conference on Computer Vision, 2006
 		
 Similitude SSM:
 ===============
