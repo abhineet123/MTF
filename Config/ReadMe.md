@@ -2112,7 +2112,7 @@ BRISK feature detector and descriptor:
     patchSize – size of the patch used by the oriented BRIEF descriptor. Of course, on smaller pyramid layers the perceived image area covered by a feature will be larger.
 
 ORB feature detector and descriptor:
-======================================
+====================================
 	 Parameter:	'orb_n_features'
 		Description:
 			The maximum number of features to retain.
@@ -2158,6 +2158,50 @@ ORB feature detector and descriptor:
 	 Additional References:
 		https://docs.opencv.org/2.4/modules/features2d/doc/feature_detection_and_description.html#orb
 		Ethan Rublee, Vincent Rabaud, Kurt Konolige, Gary R. Bradski: ORB: An efficient alternative to SIFT or SURF. ICCV 2011: 2564-2571.
+		
+
+MSER feature detector:
+======================
+	 Parameter:	'mser_delta'
+		Description:
+			TBA
+			
+	 Parameter:	'mser_min_area'
+		Description:
+			TBA.
+			
+	 Parameter:	'mser_max_area'
+		Description:
+			TBA
+			
+	 Parameter:	'mser_max_variation'
+		Description:
+			 TBA
+			
+	 Parameter:	'mser_min_diversity'
+		Description:
+			this should be 0 in the current implementation.
+			
+	 Parameter:	'mser_max_evolution'
+		Description:
+			TBA
+			
+	 Parameter:	'mser_area_threshold'
+		Description:
+			 TBA
+			
+	 Parameter:	'mser_min_margin'
+		Description:
+			TBA
+			
+	 Parameter:	'mser_edge_blur_size'
+		Description:
+			TBA
+			
+	 Additional References:
+		https://en.wikipedia.org/wiki/Maximally_stable_extremal_regions
+		https://stackoverflow.com/questions/17647500/exact-meaning-of-the-parameters-given-to-initialize-mser-in-opencv-2-4-x
+		J. Matas, O. Chum, M. Urban, and T. Pajdla. "Robust wide baseline stereo from maximally stable extremal regions." Proc. of British Machine Vision Conference, pages 384-396, 2002.
 		
 Similitude SSM:
 ===============
