@@ -2,11 +2,13 @@
 #define MTF_FEATURE_TRACKER_H
 
 #include "FeatureBase.h"
+
 #ifndef DISABLE_FLANN
 #include "FLANNParams.h"
 #else
 #include "FLANNCVParams.h"
 #endif
+
 #if CV_MAJOR_VERSION < 3
 #include "opencv2/features2d/features2d.hpp"
 #else
@@ -41,14 +43,6 @@ struct SURF{
 	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 };
-struct FAST{
-	int threshold;
-	bool non_max_suppression;
-	int type;
-	FAST(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::FeatureDetector> &ptr);
-	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
-};
 struct BRISK{
 	int thresh;
 	int octaves;
@@ -57,19 +51,6 @@ struct BRISK{
 		std::string _type = "detector");
 	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
-};
-struct MSER{
-	int delta;
-	int min_area;
-	int max_area;
-	double max_variation;
-	double min_diversity;
-	int max_evolution;
-	double area_threshold;
-	double min_margin;
-	int edge_blur_size;
-	MSER(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 };
 struct ORB{
 	int n_features;
@@ -83,6 +64,27 @@ struct ORB{
 	int fast_threshold;
 	ORB(const vector<boost::any> &params,
 		std::string _type = "detector");
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+};
+struct FAST{
+	int threshold;
+	bool non_max_suppression;
+	int type;
+	FAST(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+};
+struct MSER{
+	int delta;
+	int min_area;
+	int max_area;
+	double max_variation;
+	double min_diversity;
+	int max_evolution;
+	double area_threshold;
+	double min_margin;
+	int edge_blur_size;
+	MSER(const vector<boost::any> &params);
 	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 };
 struct GFTT{

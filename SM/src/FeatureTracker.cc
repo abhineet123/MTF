@@ -356,25 +356,6 @@ void MSER::create(cv::Ptr<cv::FeatureDetector> &ptr){
 		);
 #endif
 }
-#if CV_MAJOR_VERSION >= 3
-#define AGAST_THRESHOLD 10
-#define AGAST_NON_MAX_SUPPRESSION true
-#define AGAST_TYPE cv::AgastFeatureDetector::OAST_9_16
-AGAST::AGAST(const vector<boost::any> &params) :
-threshold(AGAST_THRESHOLD),
-non_max_suppression(AGAST_NON_MAX_SUPPRESSION),
-type(AGAST_TYPE){
-	printf("Using AGAST detector with:\n");
-	parse_feat_param(threshold, int, "%d", params[0], AGAST);
-	parse_feat_param(non_max_suppression, bool, "%d", params[1], AGAST);
-	parse_feat_param(type, int, "%d", params[2], AGAST);
-	printf("\n");
-}
-void AGAST::create(cv::Ptr<cv::Feature2D> &ptr){
-	ptr = cv::AgastFeatureDetector::create(
-		threshold, non_max_suppression, type);
-}
-#endif
 
 #define GFTT_MAX_CORNERS 1000
 #define GFTT_QUALITY_LEVEL 0.01
@@ -399,9 +380,9 @@ k(GFTT_K)
 	parse_feat_param(k, double, "%f", params[5], GFTT);
 	printf("\n");
 }
-void GFTT::create(cv::Ptr<cv::Feature2D> &ptr){
+void GFTT::create(cv::Ptr<cv::FeatureDetector> &ptr){
 #if CV_MAJOR_VERSION < 3
-	ptr = cv::Ptr<cv::Feature2D>(new cv::GFTTDetector(
+	ptr = cv::Ptr<cv::FeatureDetector>(new cv::GFTTDetector(
 		max_corners, quality_level, min_distance,
 		block_size, use_harris_detector, k));
 #else
@@ -410,6 +391,27 @@ void GFTT::create(cv::Ptr<cv::Feature2D> &ptr){
 		block_size, use_harris_detector, k);
 #endif
 }
+
+#if CV_MAJOR_VERSION >= 3
+#define AGAST_THRESHOLD 10
+#define AGAST_NON_MAX_SUPPRESSION true
+#define AGAST_TYPE cv::AgastFeatureDetector::OAST_9_16
+AGAST::AGAST(const vector<boost::any> &params) :
+threshold(AGAST_THRESHOLD),
+non_max_suppression(AGAST_NON_MAX_SUPPRESSION),
+type(AGAST_TYPE){
+	printf("Using AGAST detector with:\n");
+	parse_feat_param(threshold, int, "%d", params[0], AGAST);
+	parse_feat_param(non_max_suppression, bool, "%d", params[1], AGAST);
+	parse_feat_param(type, int, "%d", params[2], AGAST);
+	printf("\n");
+}
+void AGAST::create(cv::Ptr<cv::Feature2D> &ptr){
+	ptr = cv::AgastFeatureDetector::create(
+		threshold, non_max_suppression, type);
+}
+#endif
+
 FeatureTrackerParams::FeatureTrackerParams(
 	DetectorType _detector_type,
 	DescriptorType _descriptor_type,
