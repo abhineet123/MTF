@@ -2492,6 +2492,7 @@ namespace mtf{
 				feat_debug_mode = atoi(arg_val);
 				return;
 			}
+
 			//! SIFT detector and descriptor
 			if(!strcmp(arg_name, "sift_n_features")){
 				sift_n_features = atoi(arg_val);
@@ -2513,73 +2514,166 @@ namespace mtf{
 				sift_sigma = atof(arg_val);
 				return;
 			}
-
-
+			//! SURF detector and descriptor
 			if(!strcmp(arg_name, "surf_hessian_threshold")){
 				surf_hessian_threshold = atof(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "surf_n_octaves")){
-				surf_n_octaves = atof(arg_val);
+				surf_n_octaves = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "surf_n_octaves")){
-				surf_n_octaves = atof(arg_val);
+			if(!strcmp(arg_name, "surf_n_octave_layers")){
+				surf_n_octave_layers = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "sift_sigma")){
-				sift_sigma = atof(arg_val);
+			if(!strcmp(arg_name, "surf_extended")){
+				surf_extended = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "sift_sigma")){
-				sift_sigma = atof(arg_val);
+			if(!strcmp(arg_name, "surf_upright")){
+				surf_upright = atoi(arg_val);
+				return;
+			}
+			//! FAST detector
+			if(!strcmp(arg_name, "fast_non_max_suppression")){
+				fast_non_max_suppression = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "fast_threshold")){
+				fast_threshold = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "fast_type")){
+				fast_type = atoi(arg_val);
+				return;
+			}
+			//! BRISK detector
+			if(!strcmp(arg_name, "brisk_thresh")){
+				brisk_thresh = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "brisk_octaves")){
+				brisk_octaves = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "brisk_pattern_scale")){
+				brisk_pattern_scale = atof(arg_val);
+				return;
+			}
+			//! MSER detector
+			if(!strcmp(arg_name, "mser_delta")){
+				mser_delta = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mser_min_area")){
+				mser_min_area = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mser_max_area")){
+				mser_max_area = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mser_max_evolution")){
+				mser_max_evolution = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mser_edge_blur_size")){
+				mser_edge_blur_size = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mser_max_variation")){
+				mser_max_variation = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mser_min_diversity")){
+				mser_min_diversity = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mser_area_threshold")){
+				mser_area_threshold = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mser_min_margin")){
+				mser_min_margin = atof(arg_val);
+				return;
+			}
+			//! ORB detector and descriptor
+			if(!strcmp(arg_name, "orb_n_features")){
+				orb_n_features = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "orb_scale_factor")){
+				orb_scale_factor = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "orb_n_levels")){
+				orb_n_levels = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "orb_edge_threshold")){
+				orb_edge_threshold = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "orb_first_level")){
+				orb_first_level = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "orb_WTA_K")){
+				orb_WTA_K = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "orb_score_type")){
+				orb_score_type = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "orb_patch_size")){
+				orb_patch_size = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "orb_fast_threshold")){
+				orb_fast_threshold = atoi(arg_val);
+				return;
+			}
+			//! AGAST detector
+			if(!strcmp(arg_name, "agast_non_max_suppression")){
+				agast_non_max_suppression = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "agast_threshold")){
+				agast_threshold = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "agast_type")){
+				agast_type = atoi(arg_val);
+				return;
+			}
+			//! GFTT detector
+			if(!strcmp(arg_name, "gftt_max_corners")){
+				gftt_max_corners = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "gftt_quality_level")){
+				gftt_quality_level = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "gftt_min_distance")){
+				gftt_min_distance = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "gftt_block_size")){
+				gftt_block_size = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "gftt_use_harris_detector")){
+				gftt_use_harris_detector = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "gftt_k")){
+				gftt_k = atof(arg_val);
 				return;
 			}
 
-			double  = 100;
-			int  = 4;
-			int surf_n_octave_layers = 3;
-			bool surf_extended = false;
-			bool surf_upright = false;
-
-			int fast_threshold = 10;
-			bool fast_non_max_suppression = true;
-			int fast_type = 2;
-
-			int brisk_thresh = 30;
-			int brisk_octaves = 3;
-			float brisk_pattern_scale = 1.0f;
-
-			int mser_delta = 5;
-			int mser_min_area = 60;
-			int mser_max_area = 14400;
-			double mser_max_variation = 0.25;
-			double mser_min_diversity = .2;
-			int mser_max_evolution = 200;
-			double mser_area_threshold = 1.01;
-			double mser_min_margin = 0.003;
-			int mser_edge_blur_size = 5;
-
-			int orb_n_features = 500;
-			float orb_scale_factor = 1.2f;
-			int orb_n_levels = 8;
-			int orb_edge_threshold = 31;
-			int orb_first_level = 0;
-			int orb_WTA_K = 2;
-			int orb_score_type = 0;
-			int orb_patch_size = 31;
-			int orb_fast_threshold = 20;
-
-			int agast_threshold = 10;
-			bool agast_non_max_suppression = true;
-			int agast_type = 3;
-
-			int gftt_max_corners = 1000;
-			double gftt_quality_level = 0.01;
-			double gftt_min_distance = 1;
-			int gftt_block_size = 3;
-			bool gftt_use_harris_detector = false;
-			double gftt_k = 0.04;
 			//! SSM Estimator
 			if(!strcmp(arg_name, "est_method")){
 				est_method = atoi(arg_val);
