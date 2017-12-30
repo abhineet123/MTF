@@ -392,12 +392,10 @@ show_keypoints(FEAT_SHOW_TRACKERS),
 show_matches(FEAT_SHOW_TRACKER_EDGES),
 debug_mode(FEAT_DEBUG_MODE){
 	if(params){
+		detector_type = params->detector_type;
+		descriptor_type = params->descriptor_type;
 		detector = params->detector;
 		descriptor = params->descriptor;
-		detector_type = params->detector_type;
-		descriptor_type = params->descriptor_type;
-		detector_type = params->detector_type;
-		descriptor_type = params->descriptor_type;
 		grid_size_x = params->grid_size_x;
 		grid_size_y = params->grid_size_y;
 		search_window_x = params->search_window_x;
@@ -414,6 +412,46 @@ debug_mode(FEAT_DEBUG_MODE){
 		show_keypoints = params->show_keypoints;
 		show_matches = params->show_matches;
 		debug_mode = params->debug_mode;
+	}
+}
+std::string FeatureTrackerParams::toString(DetectorType _detector_type){
+	switch(_detector_type){
+	case DetectorType::SIFT:
+		return "SIFT";
+	case DetectorType::SURF:
+		return "SURF";
+	case DetectorType::BRISK:
+		return "BRISK";
+	case DetectorType::ORB:
+		return "ORB";
+	case DetectorType::FAST:
+		return "FAST";
+	case DetectorType::MSER:
+		return "MSER";
+	case DetectorType::GFTT:
+		return "GFTT";
+#if CV_MAJOR_VERSION >= 3
+	case DetectorType::AGAST:
+		return "AGAST";
+#endif
+	default:
+		throw utils::InvalidArgument(cv::format(
+			"Invalid feature detector type provided %d", static_cast<int>(_detector_type)));
+	}
+}
+std::string FeatureTrackerParams::toString(DescriptorType _descriptor_type){
+	switch(_descriptor_type){
+	case DescriptorType::SIFT:
+		return "SIFT";
+	case DescriptorType::SURF:
+		return "SURF";
+	case DescriptorType::BRISK:
+		return "BRISK";
+	case DescriptorType::ORB:
+		return "ORB";
+	default:
+		throw utils::InvalidArgument(cv::format(
+			"Invalid feature descriptor type provided %d", static_cast<int>(_descriptor_type)));
 	}
 }
 template<class SSM>
@@ -460,15 +498,15 @@ FeatureTracker<SSM>::FeatureTracker(
 		SIFT(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::SURF){
 		SURF(params.detector).create(detector);
-	} else if(params.detector_type == DetectorType::FAST){
-		FAST(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::BRISK){
 		BRISK(params.detector).create(detector);
-	} else if(params.detector_type == DetectorType::MSER){
-		MSER(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::ORB){
 		ORB(params.detector).create(detector);
-	} else if(params.detector_type == DetectorType::GFTT){
+	} else if(params.detector_type == DetectorType::FAST){
+		FAST(params.detector).create(detector);
+	} else if(params.detector_type == DetectorType::MSER){
+		MSER(params.detector).create(detector);
+	}  else if(params.detector_type == DetectorType::GFTT){
 		GFTT(params.detector).create(detector);
 	}
 #if CV_MAJOR_VERSION >= 3
@@ -481,13 +519,13 @@ FeatureTracker<SSM>::FeatureTracker(
 			"Invalid feature detector type provided %d", static_cast<int>(params.detector_type)));
 	}
 	if(params.descriptor_type == DescriptorType::SIFT){
-		SIFT(params.descriptor).create(descriptor);
+		SIFT(params.descriptor, "descriptor").create(descriptor);
 	} else if(params.descriptor_type == DescriptorType::SURF){
-		SURF(params.descriptor).create(descriptor);
+		SURF(params.descriptor, "descriptor").create(descriptor);
 	} else if(params.descriptor_type == DescriptorType::BRISK){
-		BRISK(params.descriptor).create(descriptor);
+		BRISK(params.descriptor, "descriptor").create(descriptor);
 	} else if(params.descriptor_type == DescriptorType::ORB){
-		ORB(params.descriptor).create(descriptor);
+		ORB(params.descriptor, "descriptor").create(descriptor);
 	} else{
 		throw utils::InvalidArgument(cv::format(
 			"Invalid feature descriptor type provided %d", static_cast<int>(params.descriptor_type)));

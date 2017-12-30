@@ -3,7 +3,6 @@
 
 #include "FeatureBase.h"
 #ifndef DISABLE_FLANN
-#include <flann/flann.hpp>
 #include "FLANNParams.h"
 #else
 #include "FLANNCVParams.h"
@@ -113,9 +112,8 @@ struct AGAST{
 #endif
 struct FeatureTrackerParams{
 	enum class DetectorType {
-		NONE, SIFT, SURF, FAST,
-		BRISK, MSER, ORB, GFTT,
-		AGAST
+		NONE, SIFT, SURF, BRISK, ORB,
+		FAST, MSER, GFTT, AGAST
 	};
 	enum class DescriptorType{
 		SIFT, SURF, BRISK, ORB, FREAK, 
@@ -125,15 +123,15 @@ struct FeatureTrackerParams{
 	typedef std::vector<boost::any> DetectorParamsType;
 	typedef std::vector<boost::any> DescriptorParamsType;
 
+	DetectorType detector_type;
+	DescriptorType descriptor_type;
+
 	DetectorParamsType detector;
 	DescriptorParamsType descriptor;
 
 	int grid_size_x, grid_size_y;
 	int search_window_x, search_window_y;
 	bool init_at_each_frame;
-
-	DetectorType detector_type;
-	DescriptorType descriptor_type;
 
 	bool rebuild_index;
 	double max_dist_ratio;
@@ -173,6 +171,8 @@ struct FeatureTrackerParams{
 	int getResX() const{ return grid_size_x; }
 	int getResY() const{ return grid_size_y; }
 
+	std::string toString(DetectorType _detector_type);
+	std::string FeatureTrackerParams::toString(DescriptorType _descriptor_type);
 };
 template<class SSM>
 class FeatureTracker : public FeatureBase{
