@@ -2102,15 +2102,6 @@ BRISK feature detector and descriptor:
 		https://docs.opencv.org/2.4/modules/features2d/doc/feature_detection_and_description.html#brisk
 		Stefan Leutenegger, Margarita Chli and Roland Siegwart: BRISK: Binary Robust Invariant Scalable Keypoints. ICCV 2011: 2548-2555.
 
-    nfeatures – 
-    scaleFactor – 
-    nlevels – 
-    edgeThreshold –
-    firstLevel – 
-    WTA_K – 
-    scoreType –
-    patchSize – size of the patch used by the oriented BRIEF descriptor. Of course, on smaller pyramid layers the perceived image area covered by a feature will be larger.
-
 ORB feature detector and descriptor:
 ====================================
 	 Parameter:	'orb_n_features'
