@@ -43,7 +43,6 @@ struct SURF{
 	SURF(const vector<boost::any> &params,
 		std::string _type = "detector");
 	void create(cv::Ptr<cv::FeatureDetector> &ptr);
-	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 #if CV_MAJOR_VERSION < 3
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 #endif
@@ -54,7 +53,6 @@ struct BRISK{
 	float pattern_scale;
 	BRISK(const vector<boost::any> &params,
 		std::string _type = "detector");
-	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 #if CV_MAJOR_VERSION < 3
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
@@ -72,7 +70,6 @@ struct ORB{
 	int fast_threshold;
 	ORB(const vector<boost::any> &params,
 		std::string _type = "detector");
-	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 #if CV_MAJOR_VERSION < 3
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
