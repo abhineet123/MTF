@@ -27,7 +27,8 @@ struct SIFT{
 	double sigma;
 	SIFT(const vector<boost::any> &params,
 		std::string _type = "detector");
-	void create(cv::Ptr<cv::Feature2D> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 };
 struct SURF{
 	double hessian_threshold;
@@ -37,14 +38,16 @@ struct SURF{
 	bool upright;
 	SURF(const vector<boost::any> &params,
 		std::string _type = "detector");
-	void create(cv::Ptr<cv::Feature2D> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 };
 struct FAST{
 	int threshold;
 	bool non_max_suppression;
 	int type;
 	FAST(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::Feature2D> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 };
 struct BRISK{
 	int thresh;
@@ -52,7 +55,8 @@ struct BRISK{
 	float pattern_scale;
 	BRISK(const vector<boost::any> &params,
 		std::string _type = "detector");
-	void create(cv::Ptr<cv::Feature2D> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 };
 struct MSER{
 	int delta;
@@ -65,7 +69,7 @@ struct MSER{
 	double min_margin;
 	int edge_blur_size;
 	MSER(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::Feature2D> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 };
 struct ORB{
 	int n_features;
@@ -79,7 +83,7 @@ struct ORB{
 	int fast_threshold;
 	ORB(const vector<boost::any> &params,
 		std::string _type = "detector");
-	void create(cv::Ptr<cv::Feature2D> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 };
 struct GFTT{
 	int max_corners;
@@ -89,7 +93,7 @@ struct GFTT{
 	bool use_harris_detector;
 	double k;
 	GFTT(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::Feature2D> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 };
 struct FREAK{
 	int max_corners;
@@ -99,7 +103,7 @@ struct FREAK{
 	bool use_harris_detector;
 	double k;
 	FREAK(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::Feature2D> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 };
 #if CV_MAJOR_VERSION >= 3
 struct AGAST{
@@ -107,7 +111,7 @@ struct AGAST{
 	bool non_max_suppression;
 	int type;
 	AGAST(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::Feature2D> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 };
 #endif
 struct FeatureTrackerParams{
@@ -195,7 +199,8 @@ public:
 	typedef FLANNCVParams FLANNParams;
 #endif
 	
-	typedef cv::Ptr<cv::Feature2D> FeatPtr;
+	typedef cv::Ptr<cv::FeatureDetector> DetectorPtr;
+	typedef cv::Ptr<cv::DescriptorExtractor> DescriptorPtr;
 
 	FeatureTracker(
 		const ParamType *grid_params = nullptr,
@@ -232,8 +237,8 @@ private:
 	FLANNParams flann_params;
 	EstimatorParams est_params;
 	cv::FlannBasedMatcher matcher;
-	FeatPtr detector;
-	FeatPtr descriptor;
+	DetectorPtr detector;
+	DescriptorPtr descriptor;
 
 #ifndef DISABLE_FLANN
 	FlannIdxPtr flann_idx;

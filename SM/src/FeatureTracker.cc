@@ -65,9 +65,9 @@ sigma(SIFT_SIGMA){
 	printf("\n");
 }
 
-void SIFT::create(cv::Ptr<cv::Feature2D> &ptr){
+void SIFT::create(cv::Ptr<cv::FeatureDetector> &ptr){
 #if CV_MAJOR_VERSION < 3
-	ptr.reset(new cv::SIFT(
+	ptr = cv::Ptr<cv::FeatureDetector>(new cv::SIFT(
 		n_features,
 		n_octave_layers, 
 		contrast_thresh,
@@ -83,7 +83,24 @@ void SIFT::create(cv::Ptr<cv::Feature2D> &ptr){
 		sigma);
 #endif
 }
-
+void SIFT::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
+#if CV_MAJOR_VERSION < 3
+	ptr = cv::Ptr<cv::DescriptorExtractor>(new cv::SIFT(
+		n_features,
+		n_octave_layers,
+		contrast_thresh,
+		edge_thresh,
+		sigma
+		));
+#else
+	ptr = cv::xfeatures2d::SIFT::create(
+		n_features, 
+		n_octave_layers,
+		contrast_thresh,
+		edge_thresh,
+		sigma);
+#endif
+}
 #define SURF_HESSIAN_THRESHOLD 400
 #define SURF_N_OCTAVES 4
 #define SURF_N_OCTAVE_LAYERS 2
@@ -103,9 +120,9 @@ upright(SURF_UPRIGHT){
 	parse_feat_param(upright, bool, "%d", params[4], SURF);
 	printf("\n");
 }
-void SURF::create(cv::Ptr<cv::Feature2D> &ptr){
+void SURF::create(cv::Ptr<cv::FeatureDetector> &ptr){
 #if CV_MAJOR_VERSION < 3
-	ptr.reset(new cv::SURF(
+	ptr = cv::Ptr<cv::FeatureDetector>(new cv::SURF(
 		hessian_threshold,
 		n_octaves, 
 		n_octave_layers,
@@ -121,28 +138,25 @@ void SURF::create(cv::Ptr<cv::Feature2D> &ptr){
 		upright);
 #endif
 }
-#define FAST_THRESHOLD 10
-#define FAST_NON_MAX_SUPPRESSION true
-#define FAST_TYPE cv::FastFeatureDetector::TYPE_9_16
-FAST::FAST(const vector<boost::any> &params) :
-threshold(FAST_THRESHOLD),
-non_max_suppression(FAST_NON_MAX_SUPPRESSION),
-type(FAST_TYPE){
-	printf("Using FAST detector with:\n");
-	parse_feat_param(threshold, int, "%d", params[0], FAST);
-	parse_feat_param(non_max_suppression, bool, "%d", params[1], FAST);
-	parse_feat_param(type, int, "%d", params[2], FAST);
-	printf("\n");
-}
-void FAST::create(cv::Ptr<cv::Feature2D> &ptr){
+void SURF::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 #if CV_MAJOR_VERSION < 3
-	ptr.reset(new cv::FastFeatureDetector(
-		threshold, non_max_suppression));
+	ptr = cv::Ptr<cv::DescriptorExtractor>(new cv::SURF(
+		hessian_threshold,
+		n_octaves, 
+		n_octave_layers,
+		extended, 
+		upright
+		));
 #else
-	ptr = cv::FastFeatureDetector::create(
-		threshold, non_max_suppression, type);
+	ptr = cv::xfeatures2d::SURF::create(
+		hessian_threshold,
+		n_octaves, 
+		n_octave_layers,
+		extended, 
+		upright);
 #endif
 }
+
 #define BRISK_THRESH 30
 #define BRISK_OCTAVES 3
 #define BRISK_PATTERN_SCALE 1.0
@@ -157,13 +171,130 @@ pattern_scale(BRISK_PATTERN_SCALE)
 	parse_feat_param(pattern_scale, float, "%f", params[2], BRISK);
 	printf("\n");
 }
-void BRISK::create(cv::Ptr<cv::Feature2D> &ptr){
+void BRISK::create(cv::Ptr<cv::FeatureDetector> &ptr){
 #if CV_MAJOR_VERSION < 3
-	ptr.reset(new cv::BRISK(
+	ptr = cv::Ptr<cv::FeatureDetector>(new cv::BRISK(
 		thresh, octaves, pattern_scale));
 #else
 	ptr = cv::BRISK::create(
 		thresh, octaves, pattern_scale);
+#endif
+}
+void BRISK::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
+#if CV_MAJOR_VERSION < 3
+	ptr = cv::Ptr<cv::DescriptorExtractor>(new cv::BRISK(
+		thresh, octaves, pattern_scale));
+#else
+	ptr = cv::BRISK::create(
+		thresh, octaves, pattern_scale);
+#endif
+}
+
+#define ORB_N_FEATURES 500
+#define ORB_SCALE_FACTOR 1.2f
+#define ORB_N_LEVELS 8
+#define ORB_EDGE_THRESHOLD 31
+#define ORB_FIRST_LEVEL 0
+#define ORB_WTA_K 2
+#define ORB_SCORE_TYPE cv::ORB::HARRIS_SCORE
+#define ORB_PATCH_SIZE 31
+#define ORB_FAST_THRESHOLD 20
+ORB::ORB(const vector<boost::any> &params, std::string _type) :
+n_features(ORB_N_FEATURES),
+scale_factor(ORB_SCALE_FACTOR),
+n_levels(ORB_N_LEVELS),
+edge_threshold(ORB_EDGE_THRESHOLD),
+first_level(ORB_FIRST_LEVEL),
+WTA_K(ORB_WTA_K),
+score_type(ORB_SCORE_TYPE),
+patch_size(ORB_PATCH_SIZE),
+fast_threshold(ORB_FAST_THRESHOLD)
+{
+	printf("Using ORB %s with:\n", _type.c_str());
+	parse_feat_param(n_features, int, "%d", params[0], ORB);
+	parse_feat_param(scale_factor, float, "%f", params[1], ORB);
+	parse_feat_param(n_levels, int, "%d", params[2], ORB);
+	parse_feat_param(edge_threshold, int, "%d", params[3], ORB);
+	parse_feat_param(first_level, int, "%d", params[4], ORB);
+	parse_feat_param(WTA_K, int, "%d", params[5], ORB);
+	parse_feat_param(score_type, int, "%d", params[6], ORB);
+	parse_feat_param(patch_size, int, "%d", params[7], ORB);
+	parse_feat_param(fast_threshold, int, "%d", params[8], ORB);
+	printf("\n");
+}
+void ORB::create(cv::Ptr<cv::FeatureDetector> &ptr){
+#if CV_MAJOR_VERSION < 3
+	ptr = cv::Ptr<cv::FeatureDetector>(new cv::ORB(
+		n_features,
+		scale_factor,
+		n_levels,
+		edge_threshold,
+		first_level,
+		WTA_K,
+		score_type,
+		patch_size
+		));
+#else
+	ptr = cv::ORB::create(
+		n_features,
+		scale_factor,
+		n_levels,
+		edge_threshold,
+		first_level,
+		WTA_K,
+		score_type,
+		patch_size,
+		fast_threshold
+		);
+#endif
+}
+void ORB::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
+#if CV_MAJOR_VERSION < 3
+	ptr = cv::Ptr<cv::DescriptorExtractor>(new cv::ORB(
+		n_features,
+		scale_factor,
+		n_levels,
+		edge_threshold,
+		first_level,
+		WTA_K,
+		score_type,
+		patch_size
+		));
+#else
+	ptr = cv::ORB::create(
+		n_features,
+		scale_factor,
+		n_levels,
+		edge_threshold,
+		first_level,
+		WTA_K,
+		score_type,
+		patch_size,
+		fast_threshold
+		);
+#endif
+}
+
+#define FAST_THRESHOLD 10
+#define FAST_NON_MAX_SUPPRESSION true
+#define FAST_TYPE cv::FastFeatureDetector::TYPE_9_16
+FAST::FAST(const vector<boost::any> &params) :
+threshold(FAST_THRESHOLD),
+non_max_suppression(FAST_NON_MAX_SUPPRESSION),
+type(FAST_TYPE){
+	printf("Using FAST detector with:\n");
+	parse_feat_param(threshold, int, "%d", params[0], FAST);
+	parse_feat_param(non_max_suppression, bool, "%d", params[1], FAST);
+	parse_feat_param(type, int, "%d", params[2], FAST);
+	printf("\n");
+}
+void FAST::create(cv::Ptr<cv::FeatureDetector> &ptr){
+#if CV_MAJOR_VERSION < 3
+	ptr = cv::Ptr<cv::FeatureDetector>(new cv::FastFeatureDetector(
+		threshold, non_max_suppression));
+#else
+	ptr = cv::FastFeatureDetector::create(
+		threshold, non_max_suppression, type);
 #endif
 }
 #define MSER_DELTA 5
@@ -198,9 +329,9 @@ edge_blur_size(MSER_EDGE_BLUR_SIZE)
 	parse_feat_param(edge_blur_size, int, "%d", params[8], MSER);
 	printf("\n");
 }
-void MSER::create(cv::Ptr<cv::Feature2D> &ptr){
+void MSER::create(cv::Ptr<cv::FeatureDetector> &ptr){
 #if CV_MAJOR_VERSION < 3
-	ptr.reset(new cv::MSER(
+	ptr = cv::Ptr<cv::FeatureDetector>(new cv::MSER(
 		delta,
 		min_area,
 		max_area,
@@ -222,64 +353,6 @@ void MSER::create(cv::Ptr<cv::Feature2D> &ptr){
 		area_threshold,
 		min_margin,
 		edge_blur_size
-		);
-#endif
-}
-#define ORB_N_FEATURES 500
-#define ORB_SCALE_FACTOR 1.2f
-#define ORB_N_LEVELS 8
-#define ORB_EDGE_THRESHOLD 31
-#define ORB_FIRST_LEVEL 0
-#define ORB_WTA_K 2
-#define ORB_SCORE_TYPE cv::ORB::HARRIS_SCORE
-#define ORB_PATCH_SIZE 31
-#define ORB_FAST_THRESHOLD 20
-ORB::ORB(const vector<boost::any> &params, std::string _type) :
-n_features(ORB_N_FEATURES),
-scale_factor(ORB_SCALE_FACTOR),
-n_levels(ORB_N_LEVELS),
-edge_threshold(ORB_EDGE_THRESHOLD),
-first_level(ORB_FIRST_LEVEL),
-WTA_K(ORB_WTA_K),
-score_type(ORB_SCORE_TYPE),
-patch_size(ORB_PATCH_SIZE),
-fast_threshold(ORB_FAST_THRESHOLD)
-{
-	printf("Using ORB %s with:\n", _type.c_str());
-	parse_feat_param(n_features, int, "%d", params[0], ORB);
-	parse_feat_param(scale_factor, float, "%f", params[1], ORB);
-	parse_feat_param(n_levels, int, "%d", params[2], ORB);
-	parse_feat_param(edge_threshold, int, "%d", params[3], ORB);
-	parse_feat_param(first_level, int, "%d", params[4], ORB);
-	parse_feat_param(WTA_K, int, "%d", params[5], ORB);
-	parse_feat_param(score_type, int, "%d", params[6], ORB);
-	parse_feat_param(patch_size, int, "%d", params[7], ORB);
-	parse_feat_param(fast_threshold, int, "%d", params[8], ORB);
-	printf("\n");
-}
-void ORB::create(cv::Ptr<cv::Feature2D> &ptr){
-#if CV_MAJOR_VERSION < 3
-	ptr.reset(new cv::ORB(
-		n_features,
-		scale_factor,
-		n_levels,
-		edge_threshold,
-		first_level,
-		WTA_K,
-		score_type,
-		patch_size
-		));
-#else
-	ptr = cv::ORB::create(
-		n_features,
-		scale_factor,
-		n_levels,
-		edge_threshold,
-		first_level,
-		WTA_K,
-		score_type,
-		patch_size,
-		fast_threshold
 		);
 #endif
 }
@@ -328,7 +401,7 @@ k(GFTT_K)
 }
 void GFTT::create(cv::Ptr<cv::Feature2D> &ptr){
 #if CV_MAJOR_VERSION < 3
-	ptr.reset(new cv::GFTTDetector(
+	ptr = cv::Ptr<cv::Feature2D>(new cv::GFTTDetector(
 		max_corners, quality_level, min_distance,
 		block_size, use_harris_detector, k));
 #else
