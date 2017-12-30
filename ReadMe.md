@@ -188,7 +188,7 @@ Compile/Runtime Notes:
 * if MTF had earlier been compiled with `only_nt=0` (or `nn=1`) and is recompiled with `only_nt=1` (or `nn=0`) such that the **executable does not get recompiled**, a runtime error of the type: `symbol lookup error: runMTF: undefined symbol:` may occur on running the executable; to resolve this, remove `runMTF` (or whatever executable is causing the error) from the build folder (Build/Release or Build/Debug) by running, for instance `rm Build/Release/runMTF` and recompile; this happens because using `only_nt=1` or `nn=0` turns off part of the code in the library but the executable will continue to expect these to be present till it is recompiled;
 * if a compile time error similar to this occurs: `/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h:233:98: error: no matching function for call to ‘Eigen::internal::blas_traits`, please update Eigen to the latest version;
 * **Using MTF on Macintosh Systems**
-	* if make build system is used, some thirdparty modules might not compile successfully if cmake uses clang instead of gcc as the default compiler; in such cases compiling with `lt=0` to disable all thirdparty modules is the best option.
+	* if make build system is used, some third party modules might not compile successfully if cmake uses clang instead of gcc as the default compiler; in such cases compiling with `lt=0` to disable all third party modules is the best option.
     * if cmake build system is used, then following commands must be run so that cmake uses gcc during compilation:  
 	`export CC=/usr/bin/gcc`  
 	`export CXX=/usr/bin/g++` 
@@ -196,7 +196,7 @@ Compile/Runtime Notes:
 	`export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/Applications/HDF_Group/HDF5/1.10.0-patch1/`
 * **Using MTF with OpenCV 3.x**
     * MTF has been tested and found to work with OpenCV 3.1 installed using [this method (option 2)](http://milq.github.io/install-opencv-ubuntu-debian/) on Ubuntu 14.04 but general compatibility with other system configurations is not guaranteed since comprehensive testing has only been doe with 2.4.x.
-    * third party trackers in particular are likely to have issues with OpenCV 3.x as many use legacy versions so these should be disabled using `lt=0` if compilation or linking errors pertaining to these are found.
+    * third party trackers in particular are likely to have issues with OpenCV 3.x as many use legacy versions so these should be disabled using `lt=0`/`-DWITH_THIRD_PARTY=OFF` if compilation or linking errors pertaining to these are found.
     * if a linking error of type `/usr/bin/ld: cannot find -lippicv` occurs, remove `-ippicv` from opencv pkg-config configuration file which is usually located at `/usr/local/lib/pkgconfig/opencv.pc` or follow the procedures suggested [here](http://answers.opencv.org/question/84265/compiling-error-with-lippicv/)
 * if compilation is taking too long and optional components are not needed, following cmake/make commands can be used to build a minimal version of MTF with full core functionality:  
 	`cmake .. -DWITH_THIRD_PARTY=OFF -DWITH_TEMPLATED=OFF` (if FLANN based NN is not needed (graph based NN will still be available), `-DWITH_FLANN=OFF` can be specified too)  
