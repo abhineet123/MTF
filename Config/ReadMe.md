@@ -2244,6 +2244,41 @@ AGAST feature detector:
 		http://www.i6.in.tum.de/Main/ResearchAgast
 		Elmar Mair, Gregory D. Hager, Darius Burschka, Michael Suppa, and Gerhard Hirzinger. Adaptive and generic corner detection based on the accelerated segment test. In Proceedings of the European Conference on Computer Vision (ECCV'10), September 2010.
 		
+GFTT feature detector:
+======================
+	 Parameter:	'gftt_max_corners'
+		Description:
+			Maximum number of corners to return. If there are more corners than are found, the strongest of them is returned.
+			
+	 Parameter:	'gftt_quality_level'
+		Description:
+			parameter characterizing the minimal accepted quality of image corners;
+			the parameter value is multiplied by the best corner quality measure, which is the minimal eigenvalue or the Harris function response;
+			the corners with the quality measure less than the product are rejected;
+			for example, if the best corner has the quality measure = 1500, and the qualityLevel=0.01 , then all the corners with the quality measure less than 15 are rejected.
+			
+	 Parameter:	'gftt_min_distance'
+		Description:
+			Minimum possible Euclidean distance between the returned corners.
+			
+	 Parameter:	'gftt_block_size'
+		Description:
+			size of an average block for computing a derivative covariation matrix over each pixel neighbourhood.
+			
+	 Parameter:	'gftt_use_harris_detector'
+		Description:
+			parameter indicating whether to use a Harris detector
+			
+	 Parameter:	'gftt_k'
+		Description:
+			Free parameter of the Harris detector;
+			only matters if 'gftt_use_harris_detector' is enabled
+			
+	 Additional References:
+		https://docs.opencv.org/2.4/modules/imgproc/doc/feature_detection.html#goodfeaturestotrack
+		https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_shi_tomasi/py_shi_tomasi.html
+		J. Shi and C. Tomasi. Good Features to Track. Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pages 593-600, June 1994.
+		
 Similitude SSM:
 ===============
 	 Parameter:	'sim_normalized_init'
@@ -2326,34 +2361,10 @@ Pixel gradient norm SPI model:
 			
 GFTT SPI model:
 ===============
-	 Parameter:	'spi_gftt_max_corners'
+	 Parameter:	'spi_gftt_max_corners' / 'spi_gftt_quality_level' / 'spi_gftt_min_distance' / 'spi_gftt_block_size' / 'spi_gftt_use_harris_detector' / 	'spi_gftt_k'
 		Description:
-			Maximum number of corners to return. If there are more corners than are found, the strongest of them is returned.
-			
-	 Parameter:	'spi_gftt_quality_level'
-		Description:
-			parameter characterizing the minimal accepted quality of image corners;
-			the parameter value is multiplied by the best corner quality measure, which is the minimal eigenvalue or the Harris function response;
-			the corners with the quality measure less than the product are rejected;
-			for example, if the best corner has the quality measure = 1500, and the qualityLevel=0.01 , then all the corners with the quality measure less than 15 are rejected.
-			
-	 Parameter:	'spi_gftt_min_distance'
-		Description:
-			Minimum possible Euclidean distance between the returned corners.
-			
-	 Parameter:	'spi_gftt_block_size'
-		Description:
-			size of an average block for computing a derivative covariation matrix over each pixel neighbourhood.
-			
-	 Parameter:	'spi_gftt_use_harris_detector'
-		Description:
-			parameter indicating whether to use a Harris detector
-			
-	 Parameter:	'spi_gftt_k'
-		Description:
-			Free parameter of the Harris detector;
-			only matters if 'spi_gftt_use_harris_detector' is enabled
-			
+			refer GFTT feature detector
+		
 	 Parameter:	'spi_gftt_use_union'
 		Description:
 			use the union of the SPI masks computed using the initial and current gradients as the overall SPI mask so that only pixels that are turned on in both masks will be turned on in the final mask
