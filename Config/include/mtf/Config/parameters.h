@@ -2558,7 +2558,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "brisk_pattern_scale")){
-				brisk_pattern_scale = atof(arg_val);
+				brisk_pattern_scale = static_cast<float>(atof(arg_val));
 				return;
 			}
 			//! MSER detector
@@ -2604,7 +2604,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "orb_scale_factor")){
-				orb_scale_factor = atof(arg_val);
+				orb_scale_factor = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, "orb_n_levels")){
@@ -3183,19 +3183,19 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, " vp_pg_fw_shutter_ms")){
-				 vp_pg_fw_shutter_ms = atof(arg_val);
+				 vp_pg_fw_shutter_ms = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, " vp_pg_fw_gain")){
-				 vp_pg_fw_gain = atof(arg_val);
+				 vp_pg_fw_gain = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, " vp_pg_fw_exposure")){
-				 vp_pg_fw_exposure = atof(arg_val);
+				 vp_pg_fw_exposure = static_cast<float>(atof(arg_val));
 				return;
 			}
 			if(!strcmp(arg_name, " vp_pg_fw_brightness")){
-				 vp_pg_fw_brightness = atof(arg_val);
+				 vp_pg_fw_brightness = static_cast<float>(atof(arg_val));
 				return;
 			}
 			//! PFSL3
