@@ -519,13 +519,19 @@ namespace mtf{
 		bool surf_extended = false;
 		bool surf_upright = false;
 
-		int fast_threshold = 10;
-		bool fast_non_max_suppression = true;
-		int fast_type = 2;
-
 		int brisk_thresh = 30; 
 		int brisk_octaves = 3;
 		float brisk_pattern_scale = 1.0f;
+
+		int orb_n_features = 500;
+		float orb_scale_factor = 1.2f;
+		int orb_n_levels = 8;
+		int orb_edge_threshold = 31;
+		int orb_first_level = 0;
+		int orb_WTA_K = 2;
+		int orb_score_type = 0;
+		int orb_patch_size = 31;
+		int orb_fast_threshold = 20;
 
 		int mser_delta = 5;
 		int mser_min_area = 60;
@@ -537,15 +543,9 @@ namespace mtf{
 		double mser_min_margin = 0.003;
 		int mser_edge_blur_size = 5;
 
-		int orb_n_features = 500;
-		float orb_scale_factor = 1.2f;
-		int orb_n_levels = 8;
-		int orb_edge_threshold = 31;
-		int orb_first_level = 0;
-		int orb_WTA_K = 2;
-		int orb_score_type = 0;
-		int orb_patch_size = 31;
-		int orb_fast_threshold = 20;
+		int fast_threshold = 10;
+		bool fast_non_max_suppression = true;
+		int fast_type = 2;
 
 		int agast_threshold = 10;
 		bool agast_non_max_suppression = true;

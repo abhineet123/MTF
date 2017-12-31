@@ -2194,6 +2194,56 @@ MSER feature detector:
 		https://stackoverflow.com/questions/17647500/exact-meaning-of-the-parameters-given-to-initialize-mser-in-opencv-2-4-x
 		J. Matas, O. Chum, M. Urban, and T. Pajdla. "Robust wide baseline stereo from maximally stable extremal regions." Proc. of British Machine Vision Conference, pages 384-396, 2002.
 		
+		
+		int  = 10;
+		bool  = true;
+		int  = 3;
+		
+FAST feature detector:
+======================
+	 Parameter:	'fast_threshold'
+		Description:
+			threshold on difference between intensity of the central pixel and pixels of a circle around this pixel.
+			
+	 Parameter:	'fast_non_max_suppression'
+		Description:
+			if true, non-maximum suppression is applied to detected corners (keypoints).
+			
+	 Parameter:	'fast_type'
+		Description:
+			one of the four neighbourhoods as defined in the paper;
+		Possible Values:
+			0:	TYPE_5_8
+			1:	AGAST_7_12d
+			2:	AGAST_7_12s
+			4:	TYPE_9_16
+			
+	 Additional References:
+		https://docs.opencv.org/3.0-beta/modules/features2d/doc/feature_detection_and_description.html#fast
+		E. Rosten. Machine Learning for High-speed Corner Detection, 2006.
+		
+AGAST feature detector:
+=======================
+	 Parameter:	'agast_threshold' / 'agast_non_max_suppression'
+		Description:
+			refer the corresponding parameters for the FAST detector
+			
+	 Parameter:	'fast_non_max_suppression'
+		Description:
+			if true, non-maximum suppression is applied to detected corners (keypoints).
+			
+	 Parameter:	'agast_type'
+		Description:
+			one of the three neighbourhoods as defined in the paper;
+		Possible Values:
+			0:	TYPE_5_8
+			1:	TYPE_7_12
+			2:	TYPE_9_16
+			
+	 Additional References:
+		http://www.i6.in.tum.de/Main/ResearchAgast
+		Elmar Mair, Gregory D. Hager, Darius Burschka, Michael Suppa, and Gerhard Hirzinger. Adaptive and generic corner detection based on the accelerated segment test. In Proceedings of the European Conference on Computer Vision (ECCV'10), September 2010.
+		
 Similitude SSM:
 ===============
 	 Parameter:	'sim_normalized_init'
