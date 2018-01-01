@@ -660,7 +660,13 @@ Tracker specific parameters:
 			
 			Note:	LM formulation can also be enabled for all of the above SMs by setting leven_marq to 1
 			
-			pf:	Particle filter 
+			pf:	Particle filter			
+				pf100:	PF with 100 particles
+				pf250:	PF with 250 particles
+				pf500:	PF with 500 particles
+				pf1k:	PF with 1000 particles
+				pf2k:	PF with 2000 particles
+				pf5k:	PF with 5000 particles
 				pfic:	cascade tracker with PF+ICLK
 				pffc:	cascade tracker with PF+FCLK
 				pfes:	cascade tracker with PF+ESM
@@ -671,6 +677,11 @@ Tracker specific parameters:
 				pfrk:	cascade tracker with PF+RKLT
 			if NN is not disabled during compilation:
 				nn:	Nearest Neighbour (based on FLANN)
+				nn1k:	NN with 1000 samples
+				nn2k:	NN with 2000 samples
+				nn5k:	NN with 5000 samples
+				nn10k:	NN with 10000 samples
+				nn100k:	NN with 100000 samples
 				nnic:	cascade tracker with NN+ICLK
 				nnfc:	cascade tracker with NN+FCLK
 				nnes:	cascade tracker with NN+ESM
@@ -692,8 +703,7 @@ Tracker specific parameters:
 				pyr_sm in modules.cfg specifies the search method in the underlying tracker
 			pysm/pyrs:	Pyramidal search method - identical to Pyramidal tracker except all constituents SMs must have same AM and SSM;
 			grid:	Grid Tracker
-				setting grid_sm in modules.cfg to cv will run the OpenCV version of this tracker
-			Special composite configurations of grid tracker for convenience:
+			Cascade configurations of grid tracker provided for convenience:
 				gric:	cascade tracker with Grid Tracker+ICLK
 				grfc:	cascade tracker with Grid Tracker+FCLK
 				gres:	cascade tracker with Grid Tracker+ESM				

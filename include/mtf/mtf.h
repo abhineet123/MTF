@@ -346,6 +346,24 @@ TrackerBase *getTracker(const char *sm_type,
 	//! Particle Filter 
 	else if(!strcmp(sm_type, "pf")){
 		return new PF<AMType, SSMType>(getPFParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "pf100")){// PF with 100 particles
+		pf_n_particles = 100;
+		return new PF<AMType, SSMType>(getPFParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "pf250")){// PF with 250 particles
+		pf_n_particles = 250;
+		return new PF<AMType, SSMType>(getPFParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "pf500")){// PF with 500 particles
+		pf_n_particles = 500;
+		return new PF<AMType, SSMType>(getPFParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "pf1k")){// PF with 1000 particles
+		pf_n_particles = 1000;
+		return new PF<AMType, SSMType>(getPFParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "pf2k")){// PF with 2000 particles
+		pf_n_particles = 2000;
+		return new PF<AMType, SSMType>(getPFParams().get(), am_params, ssm_params);
+	} else if(!strcmp(sm_type, "pf5k")){// PF with 5000 particles
+		pf_n_particles = 5000;
+		return new PF<AMType, SSMType>(getPFParams().get(), am_params, ssm_params);
 	} else if(!strcmp(sm_type, "pfic")){// PF + ICLK
 		vector<SMType*> trackers;
 		trackers.push_back(dynamic_cast<SMType*>(getTracker<AMType, SSMType>("pf", am_params, ssm_params)));
@@ -1247,7 +1265,25 @@ inline nt::SearchMethod *getSM(const char *sm_type,
 		FCSDParams fcsd_params(max_iters, epsilon, sd_learning_rate,
 			debug_mode, fc_hess_type);
 		return new nt::FCSD(am, ssm, &fcsd_params);
-	} else if(!strcmp(sm_type, "pf")){
+	} else if(!strcmp(sm_type, "pf")){		
+		return new nt::PF(am, ssm, getPFParams().get());
+	} else if(!strcmp(sm_type, "pf100")){// PF with 100 particles
+		pf_n_particles = 100;
+		return new nt::PF(am, ssm, getPFParams().get());
+	} else if(!strcmp(sm_type, "pf250")){// PF with 250 particles
+		pf_n_particles = 250;
+		return new nt::PF(am, ssm, getPFParams().get());
+	} else if(!strcmp(sm_type, "pf500")){// PF with 500 particles
+		pf_n_particles = 500;
+		return new nt::PF(am, ssm, getPFParams().get());
+	} else if(!strcmp(sm_type, "pf1k")){// PF with 1000 particles
+		pf_n_particles = 1000;
+		return new nt::PF(am, ssm, getPFParams().get());
+	} else if(!strcmp(sm_type, "pf2k")){// PF with 2000 particles
+		pf_n_particles = 2000;
+		return new nt::PF(am, ssm, getPFParams().get());
+	} else if(!strcmp(sm_type, "pf5k")){// PF with 5000 particles
+		pf_n_particles = 5000;
 		return new nt::PF(am, ssm, getPFParams().get());
 	} else if(!strcmp(sm_type, "nn")){
 		return new nt::NN(am, ssm, getNNParams().get());
