@@ -663,7 +663,7 @@ Tracker specific parameters:
 			pf:	Particle filter 
 				pfic:	cascade tracker with PF+ICLK
 				pffc:	cascade tracker with PF+FCLK
-				pfes:	cascade tracker with PF+NESM
+				pfes:	cascade tracker with PF+ESM
 				pfk:	k layer PF - k can be set using pfk_n_layers
 				pfkic:	cascade tracker with k layer PF + ICLK - k can be set using pfk_n_layers
 				pfkfc:	cascade tracker with k layer PF + FCLK - k can be set using pfk_n_layers
@@ -673,7 +673,7 @@ Tracker specific parameters:
 				nn:	Nearest Neighbour (based on FLANN)
 				nnic:	cascade tracker with NN+ICLK
 				nnfc:	cascade tracker with NN+FCLK
-				nnes:	cascade tracker with NN+NESM
+				nnes:	cascade tracker with NN+ESM
 				nnk:	k layer NN - k can be set using nnk_n_layers
 				nnkic:	cascade tracker with k layer NN + ICLK - k can be set using nnk_n_layers
 				nnkfc:	cascade tracker with k layer NN + FCLK - k can be set using nnk_n_layers
@@ -683,7 +683,7 @@ Tracker specific parameters:
 				this is implemented as a special case of the general NN tracker so can also be run by setting 'mtf_sm' to 'nn' and 'nn_index_type' to 0
 			Following SMs have only NT implementations:
 				aesm:	Additive formulation of ESM 
-				fcgd:	Forward Compositional Gradient Descent
+				fcsd:	Forward Compositional Steepest Descent
 			casc:	general cascade tracker whose configuration is read from multi.cfg
 			casm:	cascade of SMs whose configuration is read from multi.cfg
 			prl/prlt:	Parallel tracker whose configuration is read from multi.cfg
@@ -693,9 +693,14 @@ Tracker specific parameters:
 			pysm/pyrs:	Pyramidal search method - identical to Pyramidal tracker except all constituents SMs must have same AM and SSM;
 			grid:	Grid Tracker
 				setting grid_sm in modules.cfg to cv will run the OpenCV version of this tracker
+			Special composite configurations of grid tracker for convenience:
+				gric:	cascade tracker with Grid Tracker+ICLK
+				grfc:	cascade tracker with Grid Tracker+FCLK
+				gres:	cascade tracker with Grid Tracker+ESM				
 			feat:	Feature Tracker
-				only works if this was enabled during compilation ()with feat=1 switch)
+				only works if this was enabled during compilation
 			rkl/rklt:	RKLT (Grid tracker + template tracker with SPI and failure detection)
+			lmes:	RKLT Grid Tracker + ESM and LMS estimation method
 			hrch:	Hierarchical SSM tracker - uses same SM ('hrch_sm') and AM with four different SSMs - 2, 4, 6 and 8 dof that are run in a cascade
 			if third party trackers are not disabled during compilation:
 				dsst:	Discriminative Scale Space Tracker 

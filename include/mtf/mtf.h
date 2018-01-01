@@ -500,6 +500,18 @@ TrackerBase *getTracker(const char *sm_type,
 		RKLTParams rkl_params(rkl_enable_spi, rkl_enable_feedback,
 			rkl_failure_detection, rkl_failure_thresh, debug_mode);
 		return new RKLT<AMType, SSMType>(&rkl_params, grid_tracker, templ_tracker);
+	} else if(!strcmp(sm_type, "lmes")){
+		// LMS + ESM
+		est_method = 1;
+		GridBase *grid_tracker = dynamic_cast<GridBase*>(getTracker<AMType, SSMType>("grid", am_params, ssm_params));
+		SMType *templ_tracker = dynamic_cast<SMType*>(getTracker<AMType, SSMType>("esm", am_params, ssm_params));
+		if(!templ_tracker){
+			//! ESM is not available
+			throw utils::InvalidArgument("ESM is not available");
+		}
+		RKLTParams rkl_params(rkl_enable_spi, rkl_enable_feedback,
+			rkl_failure_detection, rkl_failure_thresh, debug_mode);
+		return new RKLT<AMType, SSMType>(&rkl_params, grid_tracker, templ_tracker);
 	}
 #endif
 	//! cascade of search methods
@@ -1756,6 +1768,18 @@ inline TrackerBase *getCompositeSM(const char *sm_type,
 	} else if(!strcmp(sm_type, "rklt") || !strcmp(sm_type, "rkl")){// Grid + Template tracker with SPI
 		GridBase *grid_tracker = dynamic_cast<GridBase*>(getTracker("grid", am_type, ssm_type, ilm_type));
 		nt::SearchMethod *templ_tracker = getSM(rkl_sm, am_type, ssm_type, ilm_type);
+		if(!templ_tracker){
+			// invalid or third party tracker has been specified in 'rkl_sm'
+			throw utils::InvalidArgument(cv::format("Search method provided: %s is not compatible with RKLT", rkl_sm));
+		}
+		RKLTParams rkl_params(rkl_enable_spi, rkl_enable_feedback,
+			rkl_failure_detection, rkl_failure_thresh, debug_mode);
+		return new nt::RKLT(&rkl_params, grid_tracker, templ_tracker);
+	} else if(!strcmp(sm_type, "lmes")){
+		// LMS + ESM
+		est_method = 1;
+		GridBase *grid_tracker = dynamic_cast<GridBase*>(getTracker("grid", am_type, ssm_type, ilm_type));
+		nt::SearchMethod *templ_tracker = getSM("esm", am_type, ssm_type, ilm_type);
 		if(!templ_tracker){
 			// invalid or third party tracker has been specified in 'rkl_sm'
 			throw utils::InvalidArgument(cv::format("Search method provided: %s is not compatible with RKLT", rkl_sm));
