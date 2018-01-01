@@ -1739,6 +1739,8 @@ Localized Kullback-Leibler Divergence (LKLD) AM:
 	 Parameter:	'lkld_spacing'
 		Description:
 			gap in pixels between adjacent subregions in both x and y directions, i.e. subregions in the same row are separated by this gap in the x direction while those in adjacent rows are separated by this gap in the y direction;
+			
+	 Note:	This AM is not completely implemented yet so might not work correctly with all SMs;
 
 Levenberg Marquardt SM:
 =======================
