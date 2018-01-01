@@ -218,12 +218,14 @@ const flann::IndexParams FLANNParams::getIndexParams(IdxType _index_type,
 			hc_centers_init, hc_trees, hc_leaf_max_size);
 	case IdxType::KDTreeSingle:
 		printf("Using KDTreeSingle index with:\n");
-		printf("leaf_max_size: %d\n", kdtc_leaf_max_size);
+		printf("leaf_max_size: %d\n", kdts_leaf_max_size);
 		return flann::KDTreeSingleIndexParams(kdts_leaf_max_size);
-		//case KDTreeCuda3d:
-		//	printf("Using KDTreeCuda3d index with:\n");
-		//	printf("leaf_max_size: %d\n", kdtc_leaf_max_size);
-		//	return flann::KDTreeCuda3dIndexParams(kdtc_leaf_max_size);
+#ifdef FLANN_USE_CUDA
+	case IdxType::KDTreeCuda3d:
+		printf("Using KDTreeCuda3d index with:\n");
+		printf("leaf_max_size: %d\n", kdtc_leaf_max_size);
+		return flann::KDTreeCuda3dIndexParams(kdtc_leaf_max_size);
+#endif
 	case IdxType::Autotuned:
 		printf("Using Autotuned index with:\n");
 		printf("target_precision: %f\n", auto_target_precision);

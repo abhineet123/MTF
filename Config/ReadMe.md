@@ -1203,6 +1203,258 @@ Feature Tracker:
 	 Note:	
 		these Grid Tracker parameters are shared by the feature tracker: 'grid_res', 'grid_patch_size', 'grid_reset_at_each_frame';
 		in addition, 'max_iters' and 'epsilon' are also shared;
+		each of the feature detectors and descriptors have their own parameters whose descriptions follow;
+		FLANN (or its OpenCV) wrapper is used for matching the features so its parameters are also used here;
+		
+			
+SIFT feature detector and descriptor:
+=====================================
+	 Parameter:	'sift_n_features'
+		Description:
+			number of best features to retain. The features are ranked by their scores (measured in SIFT algorithm as the local contrast)
+			
+	 Parameter:	'sift_n_octave_layers'
+		Description:
+			number of layers in each octave. 3 is the value used in D. Lowe paper. The number of octaves is computed automatically from the image resolution.	 
+			
+	 Parameter:	'sift_contrast_thresh'
+		Description:
+			contrast threshold used to filter out weak features in semi-uniform (low-contrast) regions. The larger the threshold, the less features are produced by the detector.	 
+			
+	 Parameter:	'sift_edge_thresh'
+		Description:
+			threshold used to filter out edge-like features. Note that the its meaning is different from the contrastThreshold, i.e. the larger the edgeThreshold, the less features are filtered out (more features are retained).	 
+			
+	 Parameter:	'sift_sigma'
+		Description:
+			sigma of the Gaussian applied to the input image at the octave #0. If your image is captured with a weak camera with soft lenses, you might want to reduce the number.	 
+			
+	 Additional References:
+		https://docs.opencv.org/2.4/modules/nonfree/doc/feature_detection.html#sift-sift
+		Lowe, D. G., 'Distinctive image features from scale-invariant keypoints', International journal of computer vision, Springer, 2004, 60, 91-110
+
+SURF feature detector and descriptor:
+=====================================
+	 Parameter:	'surf_hessian_threshold'
+		Description:
+			Threshold for hessian keypoint detector used in SURF.
+			
+	 Parameter:	'surf_n_octaves'
+		Description:
+			Number of pyramid octaves the keypoint detector will use. 
+			
+	 Parameter:	'surf_n_octave_layers'
+		Description:
+			Number of octave layers within each octave.	 
+			
+	 Parameter:	'surf_extended'
+		Description:
+			Extended descriptor flag (true - use extended 128-element descriptors; false - use 64-element descriptors).	 
+			
+	 Parameter:	'surf_upright'
+		Description:
+			Up-right or rotated features flag (true - do not compute orientation of features; false - compute orientation).	 
+			
+	 Additional References:
+		https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_surf_intro/py_surf_intro.html
+		https://docs.opencv.org/2.4/modules/nonfree/doc/feature_detection.html#surf
+		Bay, H. and Tuytelaars, T. and Van Gool, L. “SURF: Speeded Up Robust Features”, 9th European Conference on Computer Vision, 2006
+
+BRISK feature detector and descriptor:
+======================================
+	 Parameter:	'brisk_thresh'
+		Description:
+			FAST/AGAST detection threshold score
+			
+	 Parameter:	'brisk_octaves'
+		Description:
+			detection octaves. Use 0 to do single scale.
+			
+	 Parameter:	'brisk_pattern_scale'
+		Description:
+			apply this scale to the pattern used for sampling the neighbourhood of a keypoint.
+			
+	 Additional References:
+		https://docs.opencv.org/2.4/modules/features2d/doc/feature_detection_and_description.html#brisk
+		Stefan Leutenegger, Margarita Chli and Roland Siegwart: BRISK: Binary Robust Invariant Scalable Keypoints. ICCV 2011: 2548-2555.
+
+ORB feature detector and descriptor:
+====================================
+	 Parameter:	'orb_n_features'
+		Description:
+			The maximum number of features to retain.
+			
+	 Parameter:	'orb_scale_factor'
+		Description:
+			Pyramid decimation ratio, greater than 1. scaleFactor==2 means the classical pyramid, where each next level has 4x less pixels than the previous, but such a big scale factor will degrade feature matching scores dramatically. On the other hand, too close to 1 scale factor will mean that to cover certain scale range you will need more pyramid levels and so the speed will suffer.
+			
+	 Parameter:	'orb_n_levels'
+		Description:
+			The number of pyramid levels;
+			the smallest level will have linear size equal to input_image_linear_size/pow(orb_scale_factor, orb_n_levels).
+			
+	 Parameter:	'orb_edge_threshold'
+		Description:
+			 size of the border where the features are not detected;
+			 it should roughly match the patchSize parameter.
+			
+	 Parameter:	'orb_first_level'
+		Description:
+			this should be 0 in the current implementation.
+			
+	 Parameter:	'orb_WTA_K'
+		Description:
+			number of points that produce each element of the oriented BRIEF descriptor. The default value 2 means the BRIEF where we take a random point pair and compare their brightnesses, so we get 0/1 response. Other possible values are 3 and 4. For example, 3 means that we take 3 random points (of course, those point coordinates are random, but they are generated from the pre-defined seed, so each element of BRIEF descriptor is computed deterministically from the pixel rectangle), find point of maximum brightness and output index of the winner (0, 1 or 2). Such output will occupy 2 bits, and therefore it will need a special variant of Hamming distance, denoted as NORM_HAMMING2 (2 bits per bin). When WTA_K=4, we take 4 random points to compute each bin (that will also occupy 2 bits with possible values 0, 1, 2 or 3).
+			
+	 Parameter:	'orb_score_type'
+		Description:
+			 The default HARRIS_SCORE means that Harris algorithm is used to rank features (the score is written to KeyPoint::score and is used to retain best nfeatures features); FAST_SCORE is alternative value of the parameter that produces slightly less stable keypoints, but it is a little faster to compute.
+		Possible Values:
+			0:	Harris score
+			1:	FAST score
+			
+	 Parameter:	'orb_patch_size'
+		Description:
+			size of the patch used by the oriented BRIEF descriptor. Of course, on smaller pyramid layers the perceived image area covered by a feature will be larger.
+			
+	 Parameter:	'orb_fast_threshold'
+		Description:
+			threshold for the FAST descriptor if it is used;
+			only applies to OpenCV 3;
+			
+	 Additional References:
+		https://docs.opencv.org/2.4/modules/features2d/doc/feature_detection_and_description.html#orb
+		Ethan Rublee, Vincent Rabaud, Kurt Konolige, Gary R. Bradski: ORB: An efficient alternative to SIFT or SURF. ICCV 2011: 2564-2571.
+		
+
+MSER feature detector:
+======================
+	 Parameter:	'mser_delta'
+		Description:
+			TBA
+			
+	 Parameter:	'mser_min_area'
+		Description:
+			TBA.
+			
+	 Parameter:	'mser_max_area'
+		Description:
+			TBA
+			
+	 Parameter:	'mser_max_variation'
+		Description:
+			 TBA
+			
+	 Parameter:	'mser_min_diversity'
+		Description:
+			this should be 0 in the current implementation.
+			
+	 Parameter:	'mser_max_evolution'
+		Description:
+			TBA
+			
+	 Parameter:	'mser_area_threshold'
+		Description:
+			 TBA
+			
+	 Parameter:	'mser_min_margin'
+		Description:
+			TBA
+			
+	 Parameter:	'mser_edge_blur_size'
+		Description:
+			TBA
+			
+	 Additional References:
+		https://en.wikipedia.org/wiki/Maximally_stable_extremal_regions
+		https://stackoverflow.com/questions/17647500/exact-meaning-of-the-parameters-given-to-initialize-mser-in-opencv-2-4-x
+		J. Matas, O. Chum, M. Urban, and T. Pajdla. "Robust wide baseline stereo from maximally stable extremal regions." Proc. of British Machine Vision Conference, pages 384-396, 2002.
+		
+		
+		int  = 10;
+		bool  = true;
+		int  = 3;
+		
+FAST feature detector:
+======================
+	 Parameter:	'fast_threshold'
+		Description:
+			threshold on difference between intensity of the central pixel and pixels of a circle around this pixel.
+			
+	 Parameter:	'fast_non_max_suppression'
+		Description:
+			if true, non-maximum suppression is applied to detected corners (keypoints).
+			
+	 Parameter:	'fast_type'
+		Description:
+			one of the four neighbourhoods as defined in the paper;
+		Possible Values:
+			0:	TYPE_5_8
+			1:	AGAST_7_12d
+			2:	AGAST_7_12s
+			4:	TYPE_9_16
+			
+	 Additional References:
+		https://docs.opencv.org/3.0-beta/modules/features2d/doc/feature_detection_and_description.html#fast
+		E. Rosten. Machine Learning for High-speed Corner Detection, 2006.
+		
+AGAST feature detector:
+=======================
+	 Parameter:	'agast_threshold' / 'agast_non_max_suppression'
+		Description:
+			refer the corresponding parameters for the FAST detector
+			
+	 Parameter:	'fast_non_max_suppression'
+		Description:
+			if true, non-maximum suppression is applied to detected corners (keypoints).
+			
+	 Parameter:	'agast_type'
+		Description:
+			one of the three neighbourhoods as defined in the paper;
+		Possible Values:
+			0:	TYPE_5_8
+			1:	TYPE_7_12
+			2:	TYPE_9_16
+			
+	 Additional References:
+		http://www.i6.in.tum.de/Main/ResearchAgast
+		Elmar Mair, Gregory D. Hager, Darius Burschka, Michael Suppa, and Gerhard Hirzinger. Adaptive and generic corner detection based on the accelerated segment test. In Proceedings of the European Conference on Computer Vision (ECCV'10), September 2010.
+		
+GFTT feature detector:
+======================
+	 Parameter:	'gftt_max_corners'
+		Description:
+			Maximum number of corners to return. If there are more corners than are found, the strongest of them is returned.
+			
+	 Parameter:	'gftt_quality_level'
+		Description:
+			parameter characterizing the minimal accepted quality of image corners;
+			the parameter value is multiplied by the best corner quality measure, which is the minimal eigenvalue or the Harris function response;
+			the corners with the quality measure less than the product are rejected;
+			for example, if the best corner has the quality measure = 1500, and the qualityLevel=0.01 , then all the corners with the quality measure less than 15 are rejected.
+			
+	 Parameter:	'gftt_min_distance'
+		Description:
+			Minimum possible Euclidean distance between the returned corners.
+			
+	 Parameter:	'gftt_block_size'
+		Description:
+			size of an average block for computing a derivative covariation matrix over each pixel neighbourhood.
+			
+	 Parameter:	'gftt_use_harris_detector'
+		Description:
+			parameter indicating whether to use a Harris detector
+			
+	 Parameter:	'gftt_k'
+		Description:
+			Free parameter of the Harris detector;
+			only matters if 'gftt_use_harris_detector' is enabled
+			
+	 Additional References:
+		https://docs.opencv.org/2.4/modules/imgproc/doc/feature_detection.html#goodfeaturestotrack
+		https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_shi_tomasi/py_shi_tomasi.html
+		J. Shi and C. Tomasi. Good Features to Track. Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pages 593-600, June 1994.
+
 			
 Gaussian Filtering Preprocessor:
 ================================
@@ -1693,7 +1945,134 @@ FLANN based GNN (FGNN):
 			
 	 Additional Reference:	
 		section 4.2.1.1 of the thesis (http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_thesis.pdf)
-				
+		
+FLANN search parameters:
+========================
+	 Parameter:	'nn_srch_checks'
+		Description:
+			specifies the maximum leafs to visit when searching for neighbours; a higher value for this parameter would give better search precision, but also take more time;
+			for all leafs to be checked use the value CHECKS UNLIMITED (-1); if automatic configuration was used when the index was created, the number of checks required to achieve the specified precision was also computed, to use that value specify CHECKS_AUTOTUNED (-2)
+			
+	 Parameter:	'nn_srch_eps'
+		Description:
+			search for eps-approximate neighbours;
+			used only by KDTreeSingleIndex and KDTreeCuda3dIndex;
+			
+	 Parameter:	'nn_srch_sorted'
+		Description:
+			specifies if the neighbours returned should be sorted by distance;
+			used only by radius search;
+			
+	 Parameter:	'nn_srch_max_neighbors'
+		Description:
+			specifies the maximum number of neighbours radius search should return (default: -1 = unlimited);
+			used only for radius search;
+			
+	 Parameter:	'nn_srch_cores'
+		Description:
+			number of cores to assign to the search (specify 0 for automatic core selection)
+			
+	 Parameter:	'nn_srch_matrices_in_gpu_ram'
+		Description:
+			 for GPU search, indicates if matrices are already in GPU ram.
+			
+	 Parameter:	'nn_srch_use_heap'
+		Description:
+			use a heap to manage the result set (default: FLANN_Undefined (2))		
+			
+	 Additional Reference:	
+		section 3.1.6 of FLANN manual (https://www.cs.ubc.ca/research/flann/uploads/FLANN/flann_manual-1.8.4.pdf)	
+
+FLANN KD Tree index:
+=====================
+	 Parameter:	'nn_kdt_trees'
+		Description:
+			no. of trees to use for KDTree index;
+			
+FLANN KMeans and Composite index:
+==================================	
+	 Parameter:	'nn_km_branching'
+		Description:
+			branching factor;
+			
+	 Parameter:	'nn_km_iterations'
+		Description:
+			maximum iterations to perform in one kmeans clustering
+			
+	 Parameter:	'nn_km_centers_init'
+		Description:
+			algorithm used for picking the initial cluster centers for kmeans tree
+			
+	 Parameter:	'nn_km_cb_index'
+		Description:
+			cluster boundary index. Used when searching the kmeans tree			
+			
+FLANN KMeans and Composite index:
+==================================	
+	 Parameter:	'nn_km_branching'
+		Description:
+			branching factor;
+			
+	 Parameter:	'nn_km_iterations'
+		Description:
+			maximum iterations to perform in one kmeans clustering
+			
+	 Parameter:	'nn_km_centers_init'
+		Description:
+			algorithm used for picking the initial cluster centers for kmeans tree
+			
+	 Parameter:	'nn_km_cb_index'
+		Description:
+			cluster boundary index. Used when searching the kmeans tree	
+			
+FLANN KD Tree Single index:
+===========================
+	 Parameter:	'nn_kdts_leaf_max_size'
+		Description:
+			maximum no. of leaf nodes		
+			
+FLANN KD Tree CUDA index:
+===========================
+	 Parameter:	'nn_kdtc_leaf_max_size'
+		Description:
+			maximum no. of leaf nodes		
+			
+FLANN Hierarchical Clustering index:
+====================================	
+	 Parameter:	'nn_hc_branching'
+		Description:
+			branching factor;
+			
+	 Parameter:	'nn_hc_centers_init'
+		Description:
+			Algorithm used for picking the initial cluster centers;
+			
+	 Parameter:	'nn_hc_trees'
+		Description:
+			number of parallel trees to build
+			
+	 Parameter:	'nn_hc_leaf_max_size'
+		Description:
+			maximum leaf size
+			
+FLANN Auto-tuned index:
+=======================
+	 Parameter:	'nn_auto_target_precision'
+		Description:
+			precision desired (used for autotuning, -1 otherwise);
+			
+	 Parameter:	'nn_auto_build_weight'
+		Description:
+			build tree time weighting factor
+			
+	 Parameter:	'nn_auto_memory_weight'
+		Description:
+			index memory weighting factor
+			
+	 Parameter:	'nn_auto_sample_fraction'
+		Description:
+			 what fraction of the dataset to use for autotuning
+		
 Principal Component Analysis (PCA) AM:
 ======================================
 	 Parameter:	'pca_n_eigenvec'
@@ -2030,254 +2409,6 @@ LSCV and LRSCV:
 			
 	 Additional Reference:
 		Richa, R.; Souza, M.; Scandaroli, G.; Comunello, E. & von Wangenheim, A. 'Direct visual tracking under extreme illumination variations using the sum of conditional variance', Image Processing (ICIP), 2014 IEEE International Conference on, 2014, 373-377			
-			
-SIFT feature detector and descriptor:
-=====================================
-	 Parameter:	'sift_n_features'
-		Description:
-			number of best features to retain. The features are ranked by their scores (measured in SIFT algorithm as the local contrast)
-			
-	 Parameter:	'sift_n_octave_layers'
-		Description:
-			number of layers in each octave. 3 is the value used in D. Lowe paper. The number of octaves is computed automatically from the image resolution.	 
-			
-	 Parameter:	'sift_contrast_thresh'
-		Description:
-			contrast threshold used to filter out weak features in semi-uniform (low-contrast) regions. The larger the threshold, the less features are produced by the detector.	 
-			
-	 Parameter:	'sift_edge_thresh'
-		Description:
-			threshold used to filter out edge-like features. Note that the its meaning is different from the contrastThreshold, i.e. the larger the edgeThreshold, the less features are filtered out (more features are retained).	 
-			
-	 Parameter:	'sift_sigma'
-		Description:
-			sigma of the Gaussian applied to the input image at the octave #0. If your image is captured with a weak camera with soft lenses, you might want to reduce the number.	 
-			
-	 Additional References:
-		https://docs.opencv.org/2.4/modules/nonfree/doc/feature_detection.html#sift-sift
-		Lowe, D. G., 'Distinctive image features from scale-invariant keypoints', International journal of computer vision, Springer, 2004, 60, 91-110
-
-SURF feature detector and descriptor:
-=====================================
-	 Parameter:	'surf_hessian_threshold'
-		Description:
-			Threshold for hessian keypoint detector used in SURF.
-			
-	 Parameter:	'surf_n_octaves'
-		Description:
-			Number of pyramid octaves the keypoint detector will use. 
-			
-	 Parameter:	'surf_n_octave_layers'
-		Description:
-			Number of octave layers within each octave.	 
-			
-	 Parameter:	'surf_extended'
-		Description:
-			Extended descriptor flag (true - use extended 128-element descriptors; false - use 64-element descriptors).	 
-			
-	 Parameter:	'surf_upright'
-		Description:
-			Up-right or rotated features flag (true - do not compute orientation of features; false - compute orientation).	 
-			
-	 Additional References:
-		https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_surf_intro/py_surf_intro.html
-		https://docs.opencv.org/2.4/modules/nonfree/doc/feature_detection.html#surf
-		Bay, H. and Tuytelaars, T. and Van Gool, L. “SURF: Speeded Up Robust Features”, 9th European Conference on Computer Vision, 2006
-
-BRISK feature detector and descriptor:
-======================================
-	 Parameter:	'brisk_thresh'
-		Description:
-			FAST/AGAST detection threshold score
-			
-	 Parameter:	'brisk_octaves'
-		Description:
-			detection octaves. Use 0 to do single scale.
-			
-	 Parameter:	'brisk_pattern_scale'
-		Description:
-			apply this scale to the pattern used for sampling the neighbourhood of a keypoint.
-			
-	 Additional References:
-		https://docs.opencv.org/2.4/modules/features2d/doc/feature_detection_and_description.html#brisk
-		Stefan Leutenegger, Margarita Chli and Roland Siegwart: BRISK: Binary Robust Invariant Scalable Keypoints. ICCV 2011: 2548-2555.
-
-ORB feature detector and descriptor:
-====================================
-	 Parameter:	'orb_n_features'
-		Description:
-			The maximum number of features to retain.
-			
-	 Parameter:	'orb_scale_factor'
-		Description:
-			Pyramid decimation ratio, greater than 1. scaleFactor==2 means the classical pyramid, where each next level has 4x less pixels than the previous, but such a big scale factor will degrade feature matching scores dramatically. On the other hand, too close to 1 scale factor will mean that to cover certain scale range you will need more pyramid levels and so the speed will suffer.
-			
-	 Parameter:	'orb_n_levels'
-		Description:
-			The number of pyramid levels;
-			the smallest level will have linear size equal to input_image_linear_size/pow(orb_scale_factor, orb_n_levels).
-			
-	 Parameter:	'orb_edge_threshold'
-		Description:
-			 size of the border where the features are not detected;
-			 it should roughly match the patchSize parameter.
-			
-	 Parameter:	'orb_first_level'
-		Description:
-			this should be 0 in the current implementation.
-			
-	 Parameter:	'orb_WTA_K'
-		Description:
-			number of points that produce each element of the oriented BRIEF descriptor. The default value 2 means the BRIEF where we take a random point pair and compare their brightnesses, so we get 0/1 response. Other possible values are 3 and 4. For example, 3 means that we take 3 random points (of course, those point coordinates are random, but they are generated from the pre-defined seed, so each element of BRIEF descriptor is computed deterministically from the pixel rectangle), find point of maximum brightness and output index of the winner (0, 1 or 2). Such output will occupy 2 bits, and therefore it will need a special variant of Hamming distance, denoted as NORM_HAMMING2 (2 bits per bin). When WTA_K=4, we take 4 random points to compute each bin (that will also occupy 2 bits with possible values 0, 1, 2 or 3).
-			
-	 Parameter:	'orb_score_type'
-		Description:
-			 The default HARRIS_SCORE means that Harris algorithm is used to rank features (the score is written to KeyPoint::score and is used to retain best nfeatures features); FAST_SCORE is alternative value of the parameter that produces slightly less stable keypoints, but it is a little faster to compute.
-		Possible Values:
-			0:	Harris score
-			1:	FAST score
-			
-	 Parameter:	'orb_patch_size'
-		Description:
-			size of the patch used by the oriented BRIEF descriptor. Of course, on smaller pyramid layers the perceived image area covered by a feature will be larger.
-			
-	 Parameter:	'orb_fast_threshold'
-		Description:
-			threshold for the FAST descriptor if it is used;
-			only applies to OpenCV 3;
-			
-	 Additional References:
-		https://docs.opencv.org/2.4/modules/features2d/doc/feature_detection_and_description.html#orb
-		Ethan Rublee, Vincent Rabaud, Kurt Konolige, Gary R. Bradski: ORB: An efficient alternative to SIFT or SURF. ICCV 2011: 2564-2571.
-		
-
-MSER feature detector:
-======================
-	 Parameter:	'mser_delta'
-		Description:
-			TBA
-			
-	 Parameter:	'mser_min_area'
-		Description:
-			TBA.
-			
-	 Parameter:	'mser_max_area'
-		Description:
-			TBA
-			
-	 Parameter:	'mser_max_variation'
-		Description:
-			 TBA
-			
-	 Parameter:	'mser_min_diversity'
-		Description:
-			this should be 0 in the current implementation.
-			
-	 Parameter:	'mser_max_evolution'
-		Description:
-			TBA
-			
-	 Parameter:	'mser_area_threshold'
-		Description:
-			 TBA
-			
-	 Parameter:	'mser_min_margin'
-		Description:
-			TBA
-			
-	 Parameter:	'mser_edge_blur_size'
-		Description:
-			TBA
-			
-	 Additional References:
-		https://en.wikipedia.org/wiki/Maximally_stable_extremal_regions
-		https://stackoverflow.com/questions/17647500/exact-meaning-of-the-parameters-given-to-initialize-mser-in-opencv-2-4-x
-		J. Matas, O. Chum, M. Urban, and T. Pajdla. "Robust wide baseline stereo from maximally stable extremal regions." Proc. of British Machine Vision Conference, pages 384-396, 2002.
-		
-		
-		int  = 10;
-		bool  = true;
-		int  = 3;
-		
-FAST feature detector:
-======================
-	 Parameter:	'fast_threshold'
-		Description:
-			threshold on difference between intensity of the central pixel and pixels of a circle around this pixel.
-			
-	 Parameter:	'fast_non_max_suppression'
-		Description:
-			if true, non-maximum suppression is applied to detected corners (keypoints).
-			
-	 Parameter:	'fast_type'
-		Description:
-			one of the four neighbourhoods as defined in the paper;
-		Possible Values:
-			0:	TYPE_5_8
-			1:	AGAST_7_12d
-			2:	AGAST_7_12s
-			4:	TYPE_9_16
-			
-	 Additional References:
-		https://docs.opencv.org/3.0-beta/modules/features2d/doc/feature_detection_and_description.html#fast
-		E. Rosten. Machine Learning for High-speed Corner Detection, 2006.
-		
-AGAST feature detector:
-=======================
-	 Parameter:	'agast_threshold' / 'agast_non_max_suppression'
-		Description:
-			refer the corresponding parameters for the FAST detector
-			
-	 Parameter:	'fast_non_max_suppression'
-		Description:
-			if true, non-maximum suppression is applied to detected corners (keypoints).
-			
-	 Parameter:	'agast_type'
-		Description:
-			one of the three neighbourhoods as defined in the paper;
-		Possible Values:
-			0:	TYPE_5_8
-			1:	TYPE_7_12
-			2:	TYPE_9_16
-			
-	 Additional References:
-		http://www.i6.in.tum.de/Main/ResearchAgast
-		Elmar Mair, Gregory D. Hager, Darius Burschka, Michael Suppa, and Gerhard Hirzinger. Adaptive and generic corner detection based on the accelerated segment test. In Proceedings of the European Conference on Computer Vision (ECCV'10), September 2010.
-		
-GFTT feature detector:
-======================
-	 Parameter:	'gftt_max_corners'
-		Description:
-			Maximum number of corners to return. If there are more corners than are found, the strongest of them is returned.
-			
-	 Parameter:	'gftt_quality_level'
-		Description:
-			parameter characterizing the minimal accepted quality of image corners;
-			the parameter value is multiplied by the best corner quality measure, which is the minimal eigenvalue or the Harris function response;
-			the corners with the quality measure less than the product are rejected;
-			for example, if the best corner has the quality measure = 1500, and the qualityLevel=0.01 , then all the corners with the quality measure less than 15 are rejected.
-			
-	 Parameter:	'gftt_min_distance'
-		Description:
-			Minimum possible Euclidean distance between the returned corners.
-			
-	 Parameter:	'gftt_block_size'
-		Description:
-			size of an average block for computing a derivative covariation matrix over each pixel neighbourhood.
-			
-	 Parameter:	'gftt_use_harris_detector'
-		Description:
-			parameter indicating whether to use a Harris detector
-			
-	 Parameter:	'gftt_k'
-		Description:
-			Free parameter of the Harris detector;
-			only matters if 'gftt_use_harris_detector' is enabled
-			
-	 Additional References:
-		https://docs.opencv.org/2.4/modules/imgproc/doc/feature_detection.html#goodfeaturestotrack
-		https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_shi_tomasi/py_shi_tomasi.html
-		J. Shi and C. Tomasi. Good Features to Track. Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pages 593-600, June 1994.
 		
 Similitude SSM:
 ===============
