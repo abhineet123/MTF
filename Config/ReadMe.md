@@ -709,7 +709,7 @@ Tracker specific parameters:
 			feat:	Feature Tracker
 				only works if this was enabled during compilation
 			rkl/rklt:	RKLT (Grid tracker + template tracker with SPI and failure detection)
-				lmes:	RKLT with Grid Tracker (LMS estimation method) + ESM 
+				lmes:	RKLT with LMS estimation method and ESM based template tracker
 			hrch:	Hierarchical SSM tracker - uses same SM ('hrch_sm') and AM with four different SSMs - 2, 4, 6 and 8 dof that are run in a cascade
 			if third party trackers are not disabled during compilation:
 				dsst:	Discriminative Scale Space Tracker 
