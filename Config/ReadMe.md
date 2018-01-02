@@ -228,8 +228,8 @@ Input parameters:
 		Applies to:
 			all examples
 			
-ViSP pipeline:
-==============
+ViSP input pipeline:
+====================
 			
 	 Parameter:	'vp_usb_n_buffers'
 		Description:
