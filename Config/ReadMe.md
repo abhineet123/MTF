@@ -703,14 +703,13 @@ Tracker specific parameters:
 				pyr_sm in modules.cfg specifies the search method in the underlying tracker
 			pysm/pyrs:	Pyramidal search method - identical to Pyramidal tracker except all constituents SMs must have same AM and SSM;
 			grid:	Grid Tracker
-			Cascade configurations of grid tracker provided for convenience:
 				gric:	cascade tracker with Grid Tracker+ICLK
 				grfc:	cascade tracker with Grid Tracker+FCLK
 				gres:	cascade tracker with Grid Tracker+ESM				
 			feat:	Feature Tracker
 				only works if this was enabled during compilation
 			rkl/rklt:	RKLT (Grid tracker + template tracker with SPI and failure detection)
-			lmes:	RKLT Grid Tracker + ESM and LMS estimation method
+				lmes:	RKLT Grid Tracker + ESM and LMS estimation method
 			hrch:	Hierarchical SSM tracker - uses same SM ('hrch_sm') and AM with four different SSMs - 2, 4, 6 and 8 dof that are run in a cascade
 			if third party trackers are not disabled during compilation:
 				dsst:	Discriminative Scale Space Tracker 
