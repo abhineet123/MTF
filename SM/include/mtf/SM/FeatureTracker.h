@@ -129,11 +129,13 @@ struct AGAST{
 #endif
 struct FeatureTrackerParams{
 	enum class DetectorType {
-		NONE, SIFT, SURF, BRISK, ORB,
-		FAST, MSER, GFTT, AGAST
+		NONE = -1, 
+		ORB, BRISK, 
+		FAST, MSER, GFTT, AGAST,
+		SIFT, SURF		
 	};
 	enum class DescriptorType{
-		SIFT, SURF, BRISK, ORB, FREAK, 
+		ORB, BRISK, SIFT, SURF, FREAK,
 		LUCID, LATCH, DAISY, VGG, BoostDesc
 	};
 

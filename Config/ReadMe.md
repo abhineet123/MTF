@@ -707,7 +707,6 @@ Tracker specific parameters:
 				grfc:	cascade tracker with Grid Tracker+FCLK
 				gres:	cascade tracker with Grid Tracker+ESM				
 			feat:	Feature Tracker
-				only works if this was enabled during compilation
 			rkl/rklt:	RKLT (Grid tracker + template tracker with SPI and failure detection)
 				lmes:	RKLT with LMS estimation method and ESM based template tracker
 			hrch:	Hierarchical SSM tracker - uses same SM ('hrch_sm') and AM with four different SSMs - 2, 4, 6 and 8 dof that are run in a cascade
@@ -1163,25 +1162,27 @@ Feature Tracker:
 		Description:
 			feature detector type
 		Possible Values:
-			0:	None - an equally spaced grid of points is used instead
-			1:	SIFT
-			2:	SURF
-			3:	BRISK
-			4:	ORB
-			5:	FAST
-			6:	MSER
-			7:	GFTT
+			-1:	None - an equally spaced grid of points is used instead
+			0:	ORB
+			1:	BRISK
+			2:	FAST
+			3:	MSER
+			4:	GFTT
 			Only OpenCV 3:
-			8:	AGAST
+				5:	AGAST
+			Only if OpenCV nonfree module is available
+				6:	SIFT
+				7:	SURF
 			
 	 Parameter:	'feat_descriptor_type'
 		Description:
 			feature descriptor type
 		Possible Values:
-			0:	SIFT
-			1:	SURF
-			2:	BRISK
-			3:	ORB
+			0:	ORB
+			1:	BRISK
+			Only if OpenCV nonfree module is available
+				2:	SIFT
+				3:	SURF
 			
 	 Parameter:	'feat_max_dist_ratio'
 		Description:

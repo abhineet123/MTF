@@ -35,7 +35,7 @@ Installation:
 	    - version 3.2.10 or newer is needed
     * [OpenCV](http://opencv.org/) should be installed.
 		- **OpenCV 2.4.x is recommended since possible compatibility issues with OpenCV 3.x may prevent successful compilation** (see [Compile/Runtime Notes](#compileruntime-notes) section below)
-		- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) module should be [installed too](http://stackoverflow.com/a/31097788) if the feature tracker is enabled during compilation
+		- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) / [contrib](https://github.com/opencv/opencv_contrib) module should be [installed too](http://stackoverflow.com/a/31097788) if the corresponding feature detectors and descriptors (SIFT and SURF) are to be available in the feature tracker
     * [Boost](http://www.boost.org/) should be installed
     * [FLANN](http://www.cs.ubc.ca/research/flann/) should be installed for the NN search method
 	    - Compilation from source of version **1.8.4**  available on the [website](http://www.cs.ubc.ca/research/flann/#download) is recommended as the version in the Ubuntu (and git) repo might give linker errors ([Issue #3](https://github.com/abhineet123/MTF/issues/3)).
@@ -145,8 +145,8 @@ Installation:
 		    -  currently only SSD and NCC AMs support this along with all the SSMs
 		    -  this might decrease the performance slightly when not using SPI because some optimizations of Eigen cannot be used with SPI
 	    - `grid=0`(`WITH_GRID_TRACKERS=OFF`) will disable the Grid trackers and RKLT (enabled by default).
-	    - `feat=1`(`WITH_FEAT=OFF`) will enable (disable) the Feature tracker (disabled (enabled) by default).
-		    -  this uses functionality in the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) module of OpenCV so this should be [installed too](http://stackoverflow.com/a/31097788).
+	    - `feat=0`(`WITH_FEAT=OFF`) will disable the Feature tracker (enabled by default).
+		    -  this uses optional functionality in the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) / [contrib](https://github.com/opencv/opencv_contrib) module of OpenCV so this should be [installed too](http://stackoverflow.com/a/31097788) if these are to be available.
 	    - `lt=0`(`WITH_THIRD_PARTY=OFF`) will disable the third party open source learning based trackers - [DSST](http://www.cvl.isy.liu.se/en/research/objrec/visualtracking/scalvistrack/index.html), [KCF](http://home.isr.uc.pt/~henriques/circulant/), [CMT](http://www.gnebehay.com/cmt/), [TLD](http://www.gnebehay.com/tld/), [RCT](http://www4.comp.polyu.edu.hk/~cslzhang/CT/CT.htm), [MIL](http://vision.ucsd.edu/~bbabenko/project_miltrack.html), [Struck](http://www.samhare.net/research/struck), [FragTrack](http://www.cs.technion.ac.il/~amita/fragtrack/fragtrack.htm), [GOTURN](https://github.com/davheld/GOTURN) and [DFT](http://cvlab.epfl.ch/page-107683-en.html) - that are also bundled with this library (in _ThirdParty_ subfolder) (enabled by default except MIL, DFT and GOTURN).
 		    - several third party trackers that have a CMake build system do not compile under Windows yet and are thus not available;
 	    - `gtrn=1`(`WITH_GOTURN=ON`) will enable [GOTURN](https://github.com/davheld/GOTURN) deep learning based tracker (disabled by default)
