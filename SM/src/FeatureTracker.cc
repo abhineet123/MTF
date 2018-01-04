@@ -474,6 +474,8 @@ debug_mode(FEAT_DEBUG_MODE){
 }
 std::string FeatureTrackerParams::toString(DetectorType _detector_type){
 	switch(_detector_type){
+	case DetectorType::NONE:
+		return "None";
 #ifndef FEAT_DISABLE_NONFREE
 	case DetectorType::SIFT:
 		return "SIFT";
@@ -553,52 +555,62 @@ FeatureTracker<SSM>::FeatureTracker(
 			cv::format("FeatureTracker: SSM has invalid sampling resolution: %d x %d",
 			ssm.getResX(), ssm.getResY()));
 	}
-	if(params.detector_type == DetectorType::NONE){
+
+	switch(params.detector_type){
+	case DetectorType::NONE:
 		printf("Feature detection is disabled.\n");
 		use_feature_detector = false;
-	}
+		break;
 #ifndef FEAT_DISABLE_NONFREE
-	else if(params.detector_type == DetectorType::SIFT){
+	case DetectorType::SIFT:
 		SIFT(params.detector).create(detector);
-	} else if(params.detector_type == DetectorType::SURF){
+		break;
+	case DetectorType::SURF:
 		SURF(params.detector).create(detector);
-	}
+		break;
 #endif
-	else if(params.detector_type == DetectorType::BRISK){
+	case DetectorType::BRISK:
 		BRISK(params.detector).create(detector);
-	} else if(params.detector_type == DetectorType::ORB){
+		break;
+	case DetectorType::ORB:
 		ORB(params.detector).create(detector);
-	} else if(params.detector_type == DetectorType::FAST){
+		break;
+	case DetectorType::FAST:
 		FAST(params.detector).create(detector);
-	} else if(params.detector_type == DetectorType::MSER){
+		break;
+	case DetectorType::MSER:
 		MSER(params.detector).create(detector);
-	}  else if(params.detector_type == DetectorType::GFTT){
+		break;
+	case DetectorType::GFTT:
 		GFTT(params.detector).create(detector);
-	}
+		break;
 #if CV_MAJOR_VERSION >= 3
-	else if(params.detector_type == DetectorType::AGAST){
+	case DetectorType::AGAST:
 		AGAST(params.detector).create(detector);
-	}
+		break;
 #endif
-	else{
+	default:
 		throw utils::InvalidArgument(cv::format(
 			"Invalid feature detector type provided %d", static_cast<int>(params.detector_type)));
 	}
-	if(params.descriptor_type == DescriptorType::BRISK){
-		BRISK(params.descriptor, "descriptor").create(descriptor);
-	} else if(params.descriptor_type == DescriptorType::ORB){
-		ORB(params.descriptor, "descriptor").create(descriptor);
-	}
+	switch(params.descriptor_type){
 #ifndef FEAT_DISABLE_NONFREE
-	else if(params.descriptor_type == DescriptorType::SIFT){
+	case DescriptorType::SIFT:
 		SIFT(params.descriptor, "descriptor").create(descriptor);
-	} else if(params.descriptor_type == DescriptorType::SURF){
+		break;
+	case DescriptorType::SURF:
 		SURF(params.descriptor, "descriptor").create(descriptor);
-	}
+		break;
 #endif
-	else{
-		throw utils::InvalidArgument(cv::format(
-			"Invalid feature descriptor type provided %d", static_cast<int>(params.descriptor_type)));
+	case DescriptorType::BRISK:
+		BRISK(params.descriptor, "descriptor").create(descriptor);
+		break;
+	case DescriptorType::ORB:
+		ORB(params.descriptor, "descriptor").create(descriptor);
+		break;
+	default:
+		throw utils::InvalidArgument(cv::format("Invalid feature descriptor type provided %d",
+			static_cast<int>(params.descriptor_type)));
 	}
 	n_pts = params.grid_size_x *params.grid_size_y;
 	search_window = cv::Size(params.search_window_x, params.search_window_y);
