@@ -6,12 +6,18 @@
 #include "mtf/Utilities/excpUtils.h"
 
 #if CV_MAJOR_VERSION < 3
-#include "opencv2/nonfree/nonfree.hpp"
 #include "opencv2/features2d/features2d.hpp"
-#else
-#include "opencv2/xfeatures2d/nonfree.hpp"
-#include "opencv2/features2d.hpp"
+#ifndef FEAT_DISABLE_NONFREE
+#include "opencv2/nonfree/nonfree.hpp"
 #endif
+#else
+#include "opencv2/features2d.hpp"
+#ifndef FEAT_DISABLE_NONFREE
+#include "opencv2/xfeatures2d/nonfree.hpp"
+#endif
+#endif
+
+
 #include <stdexcept>
 
 #define FEAT_GRID_SIZE_X 10
@@ -44,6 +50,8 @@ try{\
 }
 
 _MTF_BEGIN_NAMESPACE
+
+#ifndef FEAT_DISABLE_NONFREE
 
 #define SIFT_N_FEATURES 0
 #define SIFT_N_OCTAVE_LAYERS 3
@@ -142,6 +150,7 @@ void SURF::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
 		upright
 		));
 }
+#endif
 #endif
 
 
@@ -465,10 +474,12 @@ debug_mode(FEAT_DEBUG_MODE){
 }
 std::string FeatureTrackerParams::toString(DetectorType _detector_type){
 	switch(_detector_type){
+#ifndef FEAT_DISABLE_NONFREE
 	case DetectorType::SIFT:
 		return "SIFT";
 	case DetectorType::SURF:
 		return "SURF";
+#endif
 	case DetectorType::BRISK:
 		return "BRISK";
 	case DetectorType::ORB:
@@ -490,10 +501,12 @@ std::string FeatureTrackerParams::toString(DetectorType _detector_type){
 }
 std::string FeatureTrackerParams::toString(DescriptorType _descriptor_type){
 	switch(_descriptor_type){
+#ifndef FEAT_DISABLE_NONFREE
 	case DescriptorType::SIFT:
 		return "SIFT";
 	case DescriptorType::SURF:
 		return "SURF";
+#endif
 	case DescriptorType::BRISK:
 		return "BRISK";
 	case DescriptorType::ORB:
@@ -543,11 +556,15 @@ FeatureTracker<SSM>::FeatureTracker(
 	if(params.detector_type == DetectorType::NONE){
 		printf("Feature detection is disabled.\n");
 		use_feature_detector = false;
-	} else if(params.detector_type == DetectorType::SIFT){
+	}
+#ifndef FEAT_DISABLE_NONFREE
+	else if(params.detector_type == DetectorType::SIFT){
 		SIFT(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::SURF){
 		SURF(params.detector).create(detector);
-	} else if(params.detector_type == DetectorType::BRISK){
+	}
+#endif
+	else if(params.detector_type == DetectorType::BRISK){
 		BRISK(params.detector).create(detector);
 	} else if(params.detector_type == DetectorType::ORB){
 		ORB(params.detector).create(detector);
@@ -567,15 +584,19 @@ FeatureTracker<SSM>::FeatureTracker(
 		throw utils::InvalidArgument(cv::format(
 			"Invalid feature detector type provided %d", static_cast<int>(params.detector_type)));
 	}
-	if(params.descriptor_type == DescriptorType::SIFT){
-		SIFT(params.descriptor, "descriptor").create(descriptor);
-	} else if(params.descriptor_type == DescriptorType::SURF){
-		SURF(params.descriptor, "descriptor").create(descriptor);
-	} else if(params.descriptor_type == DescriptorType::BRISK){
+	if(params.descriptor_type == DescriptorType::BRISK){
 		BRISK(params.descriptor, "descriptor").create(descriptor);
 	} else if(params.descriptor_type == DescriptorType::ORB){
 		ORB(params.descriptor, "descriptor").create(descriptor);
-	} else{
+	}
+#ifndef FEAT_DISABLE_NONFREE
+	else if(params.descriptor_type == DescriptorType::SIFT){
+		SIFT(params.descriptor, "descriptor").create(descriptor);
+	} else if(params.descriptor_type == DescriptorType::SURF){
+		SURF(params.descriptor, "descriptor").create(descriptor);
+	}
+#endif
+	else{
 		throw utils::InvalidArgument(cv::format(
 			"Invalid feature descriptor type provided %d", static_cast<int>(params.descriptor_type)));
 	}

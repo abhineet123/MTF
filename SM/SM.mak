@@ -9,8 +9,10 @@ only_nt ?= 0
 nt ?= 0
 # enable grid tracker (and its OpenCV variants) - only matters if only_nt is 1 otherwise these are enabled anyway
 grid ?= 1
-# enable feature tracker - requires nonfree module of OpenCV to be installed
+# enable feature tracker
 feat ?= 0
+# enable non free modules of the feature tracker - requires nonfree module of OpenCV to be installed
+feat_nf ?= 0
 # enable templated FLANN based implementation of NN SM
 ifeq ($(OS),Windows_NT)
 	# FLANN has compatibility issue with GNU Make in Windows 
@@ -107,6 +109,10 @@ endif
 ifeq (${feat}, 1)
 	COMPOSITE += FeatureTracker
 	COMPOSITE_BASE_HEADERS +=  ${SM_HEADER_DIR}/FeatureBase.h
+	ifeq (${feat_nf}, 0)
+		MTF_RUNTIME_FLAGS += -D FEAT_DISABLE_NONFREE
+		MTF_COMPILETIME_FLAGS += -D FEAT_DISABLE_NONFREE
+	endif	
 else
 	MTF_RUNTIME_FLAGS += -D DISABLE_FEAT
 	MTF_COMPILETIME_FLAGS += -D DISABLE_FEAT

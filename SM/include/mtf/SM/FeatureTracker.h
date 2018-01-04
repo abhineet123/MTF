@@ -21,6 +21,7 @@
 
 _MTF_BEGIN_NAMESPACE
 
+#ifndef FEAT_DISABLE_NONFREE
 struct SIFT{
 	int n_features;
 	int n_octave_layers;
@@ -47,6 +48,8 @@ struct SURF{
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 #endif
 };
+#endif
+
 struct BRISK{
 	int thresh;
 	int octaves;
