@@ -1168,11 +1168,11 @@ Feature Tracker:
 			2:	FAST
 			3:	MSER
 			4:	GFTT
+			Only if OpenCV 2 nonfree / OpenCV 3 contrib module is available
+				5:	SIFT
+				6:	SURF
 			Only OpenCV 3:
-				5:	AGAST
-			Only if OpenCV nonfree module is available
-				6:	SIFT
-				7:	SURF
+				7:	AGAST
 			
 	 Parameter:	'feat_descriptor_type'
 		Description:
@@ -1180,7 +1180,7 @@ Feature Tracker:
 		Possible Values:
 			0:	ORB
 			1:	BRISK
-			Only if OpenCV nonfree module is available
+			Only if OpenCV 2 nonfree / OpenCV 3 contrib module is available
 				2:	SIFT
 				3:	SURF
 			

@@ -108,35 +108,117 @@ struct GFTT{
 	GFTT(const vector<boost::any> &params);
 	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 };
-struct FREAK{
-	int max_corners;
-	double quality_level;
-	double min_distance;
-	int block_size;
-	bool use_harris_detector;
-	double k;
-	FREAK(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::FeatureDetector> &ptr);
-};
 #if CV_MAJOR_VERSION >= 3
 struct AGAST{
 	int threshold;
 	bool non_max_suppression;
 	int type;
 	AGAST(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::FeatureDetector> &ptr);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 };
+#ifndef FEAT_DISABLE_NONFREE
+//! descriptors
+struct BRIEF{
+	int max_corners;
+	double quality_level;
+	double min_distance;
+	int block_size;
+	bool use_harris_detector;
+	double k;
+	BRIEF(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+};
+struct LUCID{
+	int max_corners;
+	double quality_level;
+	double min_distance;
+	int block_size;
+	bool use_harris_detector;
+	double k;
+	LUCID(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+};
+struct LATCH{
+	int max_corners;
+	double quality_level;
+	double min_distance;
+	int block_size;
+	bool use_harris_detector;
+	double k;
+	LATCH(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+};
+struct DAISY{
+	int max_corners;
+	double quality_level;
+	double min_distance;
+	int block_size;
+	bool use_harris_detector;
+	double k;
+	DAISY(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+};
+struct VGG{
+	int max_corners;
+	double quality_level;
+	double min_distance;
+	int block_size;
+	bool use_harris_detector;
+	double k;
+	VGG(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+};
+struct BoostDesc{
+	int max_corners;
+	double quality_level;
+	double min_distance;
+	int block_size;
+	bool use_harris_detector;
+	double k;
+	BoostDesc(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+};
+//! detectors
+struct Star{
+	int max_corners;
+	double quality_level;
+	double min_distance;
+	int block_size;
+	bool use_harris_detector;
+	double k;
+	Star(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+};
+struct MSD{
+	int max_corners;
+	double quality_level;
+	double min_distance;
+	int block_size;
+	bool use_harris_detector;
+	double k;
+	MSD(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+};
+#endif
 #endif
 struct FeatureTrackerParams{
 	enum class DetectorType {
 		NONE = -1, 
-		ORB, BRISK, 
-		FAST, MSER, GFTT, AGAST,
-		SIFT, SURF		
+		ORB, BRISK, FAST, MSER, GFTT,
+		//!  OpenCV 2 nonfree / OpenCV 3 contrib
+		SIFT, SURF,
+		//!  OpenCV 3
+		AGAST,
+		//! OpenCV 3 contrib
+		Star, MSD
 	};
 	enum class DescriptorType{
-		ORB, BRISK, SIFT, SURF, FREAK,
-		LUCID, LATCH, DAISY, VGG, BoostDesc
+		ORB, BRISK, 
+		//!  OpenCV 2 nonfree / OpenCV 3 contrib
+		SIFT, SURF, 
+		//! OpenCV 3 contrib
+		BRIEF, FREAK, LUCID, LATCH, DAISY,
+		VGG, BoostDesc
 	};
 
 	typedef std::vector<boost::any> DetectorParamsType;

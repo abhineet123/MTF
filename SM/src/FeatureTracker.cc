@@ -14,6 +14,7 @@
 #include "opencv2/features2d.hpp"
 #ifndef FEAT_DISABLE_NONFREE
 #include "opencv2/xfeatures2d/nonfree.hpp"
+#include "opencv2/xfeatures2d.hpp"
 #endif
 #endif
 
