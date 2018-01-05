@@ -394,6 +394,34 @@ void AGAST::create(cv::Ptr<cv::Feature2D> &ptr){
 	ptr = cv::AgastFeatureDetector::create(
 		threshold, non_max_suppression, type);
 }
+
+#define Star_MAX_SIZE 45
+#define Star_RESPONSE_THRESHOLD 30
+#define Star_LINE_THRESHOLD_PROJECTED 10
+#define Star_LINE_THRESHOLD_BINARIZED 8
+#define Star_SUPPRESS_NONMAX_SIZE 5
+Star::Star(const vector<boost::any> &params) :
+max_size(Star_MAX_SIZE),
+response_threshold(Star_RESPONSE_THRESHOLD),
+line_threshold_projected(Star_LINE_THRESHOLD_PROJECTED),
+line_threshold_binarized(Star_LINE_THRESHOLD_BINARIZED),
+suppress_nonmax_size(Star_SUPPRESS_NONMAX_SIZE){
+	printf("Using Star descriptor with:\n");
+	int id = 0;
+	parse_feat_param(max_size, int, "%d", params[id++], Star);
+	parse_feat_param(response_threshold, int, "%d", params[id++], Star);
+	parse_feat_param(line_threshold_projected, int, "%d", params[id++], Star);
+	parse_feat_param(line_threshold_binarized, int, "%d", params[id++], Star);
+	parse_feat_param(suppress_nonmax_size, int, "%d", params[id++], Star);
+	printf("\n");
+}
+void Star::create(cv::Ptr<cv::FeatureDetector> &ptr){
+	ptr = cv::xfeatures2d::StarDetector::create(
+		max_size, response_threshold, line_threshold_projected, line_threshold_binarized,
+		suppress_nonmax_size);
+}
+
+
 #endif
 
 FeatureTrackerParams::FeatureTrackerParams(
@@ -496,6 +524,10 @@ std::string FeatureTrackerParams::toString(DetectorType _detector_type){
 #if CV_MAJOR_VERSION >= 3
 	case DetectorType::AGAST:
 		return "AGAST";
+#ifndef FEAT_DISABLE_NONFREE
+	case DetectorType::Star:
+		return "Star";
+#endif
 #endif
 	default:
 		throw utils::InvalidArgument(cv::format(
@@ -589,6 +621,11 @@ FeatureTracker<SSM>::FeatureTracker(
 	case DetectorType::AGAST:
 		AGAST(params.detector).create(detector);
 		break;
+#ifndef FEAT_DISABLE_NONFREE
+	case DetectorType::Star:
+		Star(params.detector).create(detector);
+		break;
+#endif
 #endif
 	default:
 		throw utils::InvalidArgument(cv::format(

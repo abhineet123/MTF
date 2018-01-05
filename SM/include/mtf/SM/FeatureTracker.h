@@ -118,16 +118,6 @@ struct AGAST{
 };
 #ifndef FEAT_DISABLE_NONFREE
 //! descriptors
-struct BRIEF{
-	int max_corners;
-	double quality_level;
-	double min_distance;
-	int block_size;
-	bool use_harris_detector;
-	double k;
-	BRIEF(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
-};
 struct LUCID{
 	int max_corners;
 	double quality_level;
@@ -180,14 +170,13 @@ struct BoostDesc{
 };
 //! detectors
 struct Star{
-	int max_corners;
-	double quality_level;
-	double min_distance;
-	int block_size;
-	bool use_harris_detector;
-	double k;
+	int max_size;
+	int response_threshold;
+	int line_threshold_projected;
+	int line_threshold_binarized;
+	int suppress_nonmax_size;
 	Star(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 };
 struct MSD{
 	int max_corners;
