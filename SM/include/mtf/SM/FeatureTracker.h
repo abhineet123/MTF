@@ -186,14 +186,17 @@ struct Star{
 	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 };
 struct MSD{
-	int max_corners;
-	double quality_level;
-	double min_distance;
-	int block_size;
-	bool use_harris_detector;
-	double k;
+	int patch_radius = 3;
+	int search_area_radius = 5;
+	int nms_radius = 5;
+	int nms_scale_radius = 0;
+	float th_saliency = 250.0f;
+	int kNN = 4;
+	float scale_factor = 1.25f;
+	int n_scales = -1;
+	bool compute_orientation = false;
 	MSD(const vector<boost::any> &params);
-	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+	void create(cv::Ptr<cv::FeatureDetector> &ptr);
 };
 #endif
 #endif

@@ -589,7 +589,7 @@ response_threshold(STAR_RESPONSE_THRESHOLD),
 line_threshold_projected(STAR_LINE_THRESHOLD_PROJECTED),
 line_threshold_binarized(STAR_LINE_THRESHOLD_BINARIZED),
 suppress_nonmax_size(STAR_SUPPRESS_NONMAX_SIZE){
-	printf("Using Star descriptor with:\n");
+	printf("Using Star detector with:\n");
 	int id = 0;
 	parse_feat_param(max_size, int, "%d", params[id++], Star);
 	parse_feat_param(response_threshold, int, "%d", params[id++], Star);
@@ -603,6 +603,46 @@ void Star::create(cv::Ptr<cv::FeatureDetector> &ptr){
 		max_size, response_threshold, line_threshold_projected, line_threshold_binarized,
 		suppress_nonmax_size);
 }
+
+#define MSD_PATCH_RADIUS 3
+#define MSD_SEARCH_AREA_RADIUS 5
+#define MSD_NMS_RADIUS 5
+#define MSD_NMS_SCALE_RADIUS 0
+#define MSD_TH_SALIENCY 250.0f
+#define MSD_KNN 4
+#define MSD_SCALE_FACTOR 1.25f
+#define MSD_N_SCALES -1
+#define MSD_COMPUTE_ORIENTATION false
+MSD::MSD(const vector<boost::any> &params) :
+patch_radius(MSD_PATCH_RADIUS),
+search_area_radius(MSD_SEARCH_AREA_RADIUS),
+nms_radius(MSD_NMS_RADIUS),
+nms_scale_radius(MSD_NMS_SCALE_RADIUS),
+th_saliency(MSD_TH_SALIENCY),
+kNN(MSD_KNN),
+scale_factor(MSD_SCALE_FACTOR),
+n_scales(MSD_N_SCALES),
+compute_orientation(MSD_COMPUTE_ORIENTATION)
+{
+	printf("Using MSD detector with:\n");
+	int id = 0;
+	parse_feat_param(patch_radius, int, "%d", params[id++], MSD);
+	parse_feat_param(search_area_radius, int, "%d", params[id++], MSD);
+	parse_feat_param(nms_radius, int, "%d", params[id++], MSD);
+	parse_feat_param(nms_scale_radius, int, "%d", params[id++], MSD);
+	parse_feat_param(th_saliency, float, "%f", params[id++], MSD);
+	parse_feat_param(kNN, int, "%d", params[id++], MSD);
+	parse_feat_param(scale_factor, float, "%f", params[id++], MSD);
+	parse_feat_param(n_scales, int, "%d", params[id++], MSD);
+	parse_feat_param(compute_orientation, bool, "%d", params[id++], MSD);
+	printf("\n");
+}
+void MSD::create(cv::Ptr<cv::FeatureDetector> &ptr){
+	ptr = cv::xfeatures2d::MSDDetector::create(
+		patch_radius, search_area_radius, nms_radius, nms_scale_radius,
+		th_saliency, kNN, scale_factor, n_scales, compute_orientation);
+}
+
 #endif
 
 #endif
