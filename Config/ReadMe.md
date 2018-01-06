@@ -1652,12 +1652,12 @@ DAISY feature descriptor:
 			
 	 Parameter:	'daisy_norm'
 		Description:
-			choose descriptors normalization type, where DAISY::NRM_NONE will not do any normalization (default), DAISY::NRM_PARTIAL mean that histograms are normalized independently for L2 norm equal to 1.0, DAISY::NRM_FULL mean that descriptors are normalized for L2 norm equal to 1.0, DAISY::NRM_SIFT mean that descriptors are normalized for L2 norm equal to 1.0 but no individual one is bigger than 0.154 as in SIFT
+			choose descriptors normalization type
 		Possible Values:
-			6.25f is default and fits for KAZE, SURF detected keypoints window ratio;
-			6.75f should be the scale for SIFT detected keypoints window ratio;
-			5.00f should be the scale for AKAZE, MSD, AGAST, FAST, BRISK keypoints window ratio;
-			0.75f should be the scale for ORB keypoints ratio
+			100: NRM_NONE (No normalization (default))
+			101: NRM_PARTIAL (histograms are normalized independently for L2 norm equal to 1.0)
+			102: NRM_FULL (descriptors are normalized for L2 norm equal to 1.0)
+			103: NRM_SIFT (descriptors are normalized for L2 norm equal to 1.0 but no individual one is bigger than 0.154 as in SIFT)
 			
 	 Parameter:	'daisy_H'
 		Description:
