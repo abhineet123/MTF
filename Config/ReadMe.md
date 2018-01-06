@@ -1550,7 +1550,49 @@ Maximal Self-Dissimilarity (MSD) feature detector:
 		https://docs.opencv.org/3.3.1/d0/dcf/classcv_1_1xfeatures2d_1_1MSDDetector.html
 		Federico Tombari and Luigi Di Stefano. Interest points via maximal self-dissimilarities. In Asian Conference on Computer Vision – ACCV 2014, 2014.
 
-					
+BoostDesc feature descriptor:
+=============================
+	 Parameter:	'boost_desc_desc'
+		Description:
+			type of descriptor to use
+		Possible Values:
+			100: BGM
+			101: BGM_HARD
+			102: BGM_BILINEAR
+			200: LBGM
+			300: BINBOOST_64 (64 bit long dimension)
+			301: BINBOOST_128 (128 bit long dimension)
+			302: BINBOOST_256 (256 bit long dimension)
+		Note:		
+			BGM is the base descriptor where each binary dimension is computed as the output of a single weak learner.
+			BGM_HARD and BGM_BILINEAR refers to same BGM but use different type of gradient binning.
+			In the BGM_HARD that use ASSIGN_HARD binning type the gradient is assigned to the nearest orientation bin.
+			In the BGM_BILINEAR that use ASSIGN_BILINEAR binning type the gradient is assigned to the two neighbouring bins.
+			In the BGM and all other modes that use ASSIGN_SOFT binning type the gradient is assigned to 8 nearest bins according to the cosine value between the gradient
+			angle and the bin center.
+			LBGM (alias FP-Boost) is the floating point extension where each dimension is computed as a linear combination of the weak learner responses.
+			BINBOOST and subvariants are the binary extensions of LBGM where each bit is computed as a thresholded linear combination of a set of weak learners.
+			
+			
+	 Parameter:	'boost_desc_use_scale_orientation'
+		Description:
+			sample patterns using keypoints orientation
+			
+	 Parameter:	'boost_desc_scale_factor'
+		Description:
+			adjust the sampling window of detected keypoints
+			6.25f is default and fits for KAZE, SURF detected keypoints window ratio
+			6.75f should be the scale for SIFT detected keypoints window ratio
+			5.00f should be the scale for AKAZE, MSD, AGAST, FAST, BRISK keypoints window ratio
+			0.75f should be the scale for ORB keypoints ratio
+			1.50f was the default in original implementation
+			
+	 Additional References:
+		https://docs.opencv.org/3.3.1/d1/dfd/classcv_1_1xfeatures2d_1_1BoostDesc.html
+		V. Lepetit T. Trzcinski, M. Christoudias and P. Fua. Boosting Binary Keypoint Descriptors. In Computer Vision and Pattern Recognition, 2013.
+		M. Christoudias T. Trzcinski and V. Lepetit. Learning Image Descriptors with Boosting. submitted to IEEE Transactions on Pattern Analysis and Machine Intelligence (PAMI), 2013.
+
+			
 Gaussian Filtering Preprocessor:
 ================================
 	 Parameter:	'gauss_kernel_size'
