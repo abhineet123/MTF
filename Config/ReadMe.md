@@ -1733,6 +1733,20 @@ FREAK (Fast Retina Keypoint) feature descriptor:
 		https://docs.opencv.org/3.3.1/df/db4/classcv_1_1xfeatures2d_1_1FREAK.html
 		Alexandre Alahi, Raphael Ortiz, and Pierre Vandergheynst. Freak: Fast retina keypoint. In Computer Vision and Pattern Recognition (CVPR), 2012 IEEE Conference on, pages 510–517. Ieee, 2012.
 
+BRIEF (Binary Robust Independent Elementary Features) feature descriptor:
+=========================================================================
+	 Parameter:	'freak_orientation_normalized'
+		Description:
+			legth of the descriptor in bytes, valid values are: 16, 32 (default) or 64
+
+	 Parameter:	'freak_scale_normalized'
+		Description:
+			sample patterns using keypoints orientation, disabled by default			
+			
+	 Additional References:
+		https://docs.opencv.org/3.3.1/d1/d93/classcv_1_1xfeatures2d_1_1BriefDescriptorExtractor.html
+		Michael Calonder, Vincent Lepetit, Christoph Strecha, and Pascal Fua. Brief: Binary robust independent elementary features. In Computer Vision–ECCV 2010, pages 778–792. Springer, 2010.
+
 			
 Gaussian Filtering Preprocessor:
 ================================
