@@ -1555,6 +1555,24 @@ inline DetectorParamsType getDetectorParams(int detector_type){
 		detector_params.push_back(gftt_use_harris_detector);
 		detector_params.push_back(gftt_k);
 		break;
+	case DetectorType::Star:
+		detector_params.push_back(star_max_size);
+		detector_params.push_back(star_response_threshold);
+		detector_params.push_back(star_line_threshold_projected);
+		detector_params.push_back(star_line_threshold_binarized);
+		detector_params.push_back(star_suppress_nonmax_size);
+		break;
+	case DetectorType::MSD:
+		detector_params.push_back(msd_patch_radius);
+		detector_params.push_back(msd_search_area_radius);
+		detector_params.push_back(msd_nms_radius);
+		detector_params.push_back(msd_nms_scale_radius);
+		detector_params.push_back(msd_th_saliency);
+		detector_params.push_back(msd_kNN);
+		detector_params.push_back(msd_scale_factor);
+		detector_params.push_back(msd_n_scales);
+		detector_params.push_back(msd_compute_orientation);
+		break;
 	default:
 		throw utils::InvalidArgument("Invalid detector type provided");
 	}
@@ -1593,11 +1611,54 @@ inline DescriptorParamsType getDescriptorParams(int descriptor_type){
 		descriptor_params.push_back(orb_patch_size);
 		descriptor_params.push_back(orb_fast_threshold);
 		break;
+	case DescriptorType::BRIEF:
+		descriptor_params.push_back(brief_bytes);
+		descriptor_params.push_back(brief_use_orientation);
+		break;
+	case DescriptorType::FREAK:
+		descriptor_params.push_back(freak_orientation_normalized);
+		descriptor_params.push_back(freak_scale_normalized);
+		descriptor_params.push_back(freak_pattern_scale);
+		descriptor_params.push_back(freak_n_octaves);
+		break;
+	case DescriptorType::LUCID:
+		descriptor_params.push_back(lucid_kernel);
+		descriptor_params.push_back(lucid_blur_kernel);
+		break;
+	case DescriptorType::LATCH:
+		descriptor_params.push_back(latch_bytes);
+		descriptor_params.push_back(latch_rotation_invariance);
+		descriptor_params.push_back(latch_half_ssd_size);
+		break;
+	case DescriptorType::DAISY:
+		descriptor_params.push_back(daisy_radius);
+		descriptor_params.push_back(daisy_q_radius);
+		descriptor_params.push_back(daisy_q_theta);
+		descriptor_params.push_back(daisy_q_hist);
+		descriptor_params.push_back(daisy_norm);
+		descriptor_params.push_back(daisy_H);
+		descriptor_params.push_back(daisy_interpolation);
+		descriptor_params.push_back(daisy_use_orientation);
+		break;
+	case DescriptorType::VGG:
+		descriptor_params.push_back(vgg_desc);
+		descriptor_params.push_back(vgg_isigma);
+		descriptor_params.push_back(vgg_img_normalize);
+		descriptor_params.push_back(vgg_use_scale_orientation);
+		descriptor_params.push_back(vgg_scale_factor);
+		descriptor_params.push_back(vgg_dsc_normalize);
+		break;
+	case DescriptorType::BoostDesc:
+		descriptor_params.push_back(boost_desc_desc);
+		descriptor_params.push_back(boost_desc_use_scale_orientation);
+		descriptor_params.push_back(boost_desc_scale_factor);
+		break;
 	default:
 		throw utils::InvalidArgument("Invalid descriptor type provided");
 	}
 	return descriptor_params;
 }
+
 #endif
 
 #ifndef DISABLE_REGNET
