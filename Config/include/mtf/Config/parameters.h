@@ -577,20 +577,19 @@ namespace mtf{
 		int daisy_q_radius = 3; 
 		int daisy_q_theta = 8;
 		int daisy_q_hist = 8; 
-		int daisy_norm = DAISY::NRM_NONE; 
-		vectorf daisy_H = noArray();
+		int daisy_norm = 100; 
+		vectorf daisy_H;
 		bool daisy_interpolation = true; 
 		bool daisy_use_orientation = false;
 
-		int vgg_desc = VGG::VGG_120; 
+		int vgg_desc = 100; 
 		float vgg_isigma = 1.4f;
 		bool vgg_img_normalize = true; 
 		bool vgg_use_scale_orientation = true;
 		float vgg_scale_factor = 6.25f; 
 		bool vgg_dsc_normalize = false;
 
-
-		int boost_desc_desc = BoostDesc::BINBOOST_256;
+		int boost_desc_desc = 302;
 		bool boost_desc_use_scale_orientation = true;
 		float boost_desc_scale_factor = 6.25f;
 
@@ -2723,6 +2722,149 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "gftt_k")){
 				gftt_k = atof(arg_val);
+				return;
+			}
+
+			int brief_bytes = 32;
+			bool brief_use_orientation = false;
+
+			bool freak_orientation_normalized = true;
+			bool freak_scale_normalized = true;
+			float freak_pattern_scale = 22.0f;
+			int freak_n_octaves = 4;
+
+			int lucid_kernel = 1;
+			int lucid_blur_kernel = 2;
+
+			int latch_bytes = 32;
+			bool latch_rotation_invariance = true;
+			int latch_half_ssd_size = 3;
+
+			//! DAISY descriptor
+			if(!strcmp(arg_name, "daisy_radius")){
+				daisy_radius = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "daisy_q_radius")){
+				daisy_q_radius = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "daisy_q_theta")){
+				daisy_q_theta = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "daisy_q_hist")){
+				daisy_q_hist = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "daisy_H")){
+				daisy_H = atof32_arr(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "daisy_interpolation")){
+				daisy_interpolation = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "daisy_use_orientation")){
+				daisy_use_orientation = atoi(arg_val);
+				return;
+			}
+			//! VGG descriptor
+			if(!strcmp(arg_name, "vgg_desc")){
+				vgg_desc = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "vgg_isigma")){
+				vgg_isigma = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "vgg_img_normalize")){
+				vgg_img_normalize = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "vgg_use_scale_orientation")){
+				vgg_use_scale_orientation = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "vgg_scale_factor")){
+				vgg_scale_factor = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "vgg_dsc_normalize")){
+				vgg_dsc_normalize = atoi(arg_val);
+				return;
+			}
+
+			//! BoostDesc descriptor
+			if(!strcmp(arg_name, "boost_desc_desc")){
+				boost_desc_desc = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "boost_desc_use_scale_orientation")){
+				boost_desc_use_scale_orientation = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "boost_desc_scale_factor")){
+				boost_desc_scale_factor = atof(arg_val);
+				return;
+			}
+			//! Star detector
+			if(!strcmp(arg_name, "star_max_size")){
+				star_max_size = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "star_response_threshold")){
+				star_response_threshold = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "star_line_threshold_projected")){
+				star_line_threshold_projected = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "star_line_threshold_binarized")){
+				star_line_threshold_binarized = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "star_suppress_nonmax_size")){
+				star_suppress_nonmax_size = atoi(arg_val);
+				return;
+			}
+
+			//! MSD detector
+			if(!strcmp(arg_name, "msd_patch_radius")){
+				msd_patch_radius = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "msd_search_area_radius")){
+				msd_search_area_radius = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "msd_nms_radius")){
+				msd_nms_radius = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "msd_nms_scale_radius")){
+				msd_nms_scale_radius = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "msd_th_saliency")){
+				msd_th_saliency = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "msd_kNN")){
+				msd_kNN = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "msd_scale_factor")){
+				msd_scale_factor = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "msd_n_scales")){
+				msd_n_scales = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "msd_compute_orientation")){
+				msd_compute_orientation = atoi(arg_val);
 				return;
 			}
 
