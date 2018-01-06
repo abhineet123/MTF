@@ -45,7 +45,7 @@ params(cv3_params){
 #if (CV_MINOR_VERSION < 3)
 	tracker = cv::Tracker::create(tracker_type_str);
 #else
-	switch(_tracker_type){
+	switch(params.tracker_type){
 	case TrackerType::MIL:
 		tracker = TrackerMIL::create();
 	case TrackerType::BOOSTING:
@@ -60,7 +60,7 @@ params(cv3_params){
 		tracker = TrackerGOTURN::create();
 	default:
 		throw mtf::utils::InvalidArgument(cv::format(
-			"Invalid tracker type provided %d", static_cast<int>(_tracker_type)));
+			"Invalid tracker type provided %d", static_cast<int>(params.tracker_type)));
 	}
 #endif
 	cv_corners_mat.create(2, 4, CV_64FC1);
