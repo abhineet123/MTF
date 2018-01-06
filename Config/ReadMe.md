@@ -1711,6 +1711,28 @@ LUCID (Locally Uniform Comparison Image Descriptor) feature descriptor:
 		https://docs.opencv.org/3.3.1/d4/d86/classcv_1_1xfeatures2d_1_1LUCID.html
 		Eric Christiansen David Kriegman Ziegler, Andrew and Serge J. Belongie. Locally uniform comparison image descriptor.
 
+FREAK (Fast Retina Keypoint) feature descriptor:
+================================================
+	 Parameter:	'freak_orientation_normalized'
+		Description:
+			enable orientation normalization
+
+	 Parameter:	'freak_scale_normalized'
+		Description:
+			enable scale normalization. 	
+		
+	 Parameter:	'freak_pattern_scale'
+		Description:
+			scaling of the description pattern
+		
+	 Parameter:	'freak_n_octaves'
+		Description:
+			number of octaves covered by the detected keypoints
+			
+	 Additional References:
+		https://docs.opencv.org/3.3.1/df/db4/classcv_1_1xfeatures2d_1_1FREAK.html
+		Alexandre Alahi, Raphael Ortiz, and Pierre Vandergheynst. Freak: Fast retina keypoint. In Computer Vision and Pattern Recognition (CVPR), 2012 IEEE Conference on, pages 510–517. Ieee, 2012.
+
 			
 Gaussian Filtering Preprocessor:
 ================================
