@@ -2724,22 +2724,54 @@ namespace mtf{
 				gftt_k = atof(arg_val);
 				return;
 			}
-
-			int brief_bytes = 32;
-			bool brief_use_orientation = false;
-
-			bool freak_orientation_normalized = true;
-			bool freak_scale_normalized = true;
-			float freak_pattern_scale = 22.0f;
-			int freak_n_octaves = 4;
-
-			int lucid_kernel = 1;
-			int lucid_blur_kernel = 2;
-
-			int latch_bytes = 32;
-			bool latch_rotation_invariance = true;
-			int latch_half_ssd_size = 3;
-
+			//! BRIEF descriptor
+			if(!strcmp(arg_name, "brief_bytes")){
+				brief_bytes = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "brief_use_orientation")){
+				brief_use_orientation = atoi(arg_val);
+				return;
+			}
+			//! FREAK descriptor
+			if(!strcmp(arg_name, "freak_orientation_normalized")){
+				freak_orientation_normalized = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "freak_scale_normalized")){
+				freak_scale_normalized = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "freak_pattern_scale")){
+				freak_pattern_scale = atof(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "freak_n_octaves")){
+				freak_n_octaves = atoi(arg_val);
+				return;
+			}
+			//! LUCID descriptor
+			if(!strcmp(arg_name, "lucid_kernel")){
+				lucid_kernel = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "lucid_blur_kernel")){
+				lucid_blur_kernel = atoi(arg_val);
+				return;
+			}
+			//! LATCH descriptor
+			if(!strcmp(arg_name, "latch_bytes")){
+				latch_bytes = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "latch_rotation_invariance")){
+				latch_rotation_invariance = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "latch_half_ssd_size")){
+				latch_half_ssd_size = atoi(arg_val);
+				return;
+			}
 			//! DAISY descriptor
 			if(!strcmp(arg_name, "daisy_radius")){
 				daisy_radius = atof(arg_val);
@@ -2794,7 +2826,6 @@ namespace mtf{
 				vgg_dsc_normalize = atoi(arg_val);
 				return;
 			}
-
 			//! BoostDesc descriptor
 			if(!strcmp(arg_name, "boost_desc_desc")){
 				boost_desc_desc = atoi(arg_val);
@@ -2829,7 +2860,6 @@ namespace mtf{
 				star_suppress_nonmax_size = atoi(arg_val);
 				return;
 			}
-
 			//! MSD detector
 			if(!strcmp(arg_name, "msd_patch_radius")){
 				msd_patch_radius = atoi(arg_val);
