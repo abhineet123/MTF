@@ -2859,3 +2859,84 @@ Sum of AMs:
 			refer 'mtf_am' for a list of AMs
 			
 	 Note:	this composite AM is not completely implemented yet so might not work with some combinations of AMs and SMs
+
+OpenCV 3 Tracking module:
+=========================
+	 Parameter:	'cv3_tracker_type'
+		Description:
+			Tracker type
+		Possible Values:		
+			0:	MIL
+			1:	BOOSTING
+			2:	MEDIANFLOW
+			3:	MIL
+			4:	TLD
+			5:	KCF
+			6:	GOTURN
+	 Additional References:
+		https://www.learnopencv.com/object-tracking-using-opencv-cpp-python/
+		https://docs.opencv.org/3.1.0/d2/d0a/tutorial_introduction_to_tracker.html
+		https://docs.opencv.org/3.1.0/d9/df8/group__tracking.html
+		https://docs.opencv.org/3.0-beta/modules/tracking/doc/tracker_algorithms.html#trackermedianflow-params
+		
+ViSP Template Tracking module:
+==============================
+	 Parameter:	'vptt_sm'
+		Description:
+			Search method
+		Possible Values:		
+			fc/fclk:	FCLK
+			ic/iclk:	ICLK
+			fa/falk:	FALK
+			esm:	ESM
+			
+	 Parameter:	'vptt_am'
+		Description:
+			Appearance model
+		Possible Values:		
+			ssd:	SSD
+			zncc:	ZNCC
+			mi:	MI
+			
+	 Parameter:	'vptt_ssm'
+		Description:
+			State space model
+		Possible Values:		
+			8:	Homography
+			l8/sl3:	SL3
+			6:	Affine
+			4:	Similarity/Similitude
+			3:	Isometry
+			2:	Translation
+			
+	 Parameter:	'vptt_max_iters'	 
+		Description:
+			maximum no. of iterations per frame
+			
+	 Parameter:	'vptt_res'	 
+		Description:
+			sampling resolution;
+		Note:
+			ViSP only supports sampling resolutions that are integral factors of the object size in each dimension; 
+			vertical and horizontal resolutions are thus computed to be  as close as possible to this while being divisors of the object size;
+			
+	 Parameter:	'vptt_lambda'	 
+		Description:
+			convergence gain used in the estimation scheme		 
+			
+	 Parameter:	'vptt_thresh_grad'	 
+		Description:
+			threshold of the gradient at a pixel for it to be included in the integration process;
+			only matters if it is > 0;
+
+	 Parameter:	'vptt_pyr_n_levels'	 
+		Description:
+			Number of pyramid levels. Algorithm starts at level vptt_pyr_n_levels-1.
+			
+	 Parameter:	'vptt_pyr_level_to_stop'	 
+		Description:
+			Last level of the pyramid that will be considered; lowest level is zero.
+
+	 Additional References:
+		https://visp.inria.fr/template-tracking/
+		http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-tt.html

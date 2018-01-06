@@ -2003,11 +2003,11 @@ inline TrackerBase *getTracker(const char *tracker_type){
 #ifndef DISABLE_VISP
 	else if(!strcmp(tracker_type, "visp")){
 		ViSPParams::SMType vp_sm_type = ViSPParams::SMType::FCLK;
-		if(!strcmp(vptt_sm, "fclk")){
+		if(!strcmp(vptt_sm, "fc") || !strcmp(vptt_sm, "fclk")){
 			vp_sm_type = ViSPParams::SMType::FCLK;
-		} else if(!strcmp(vptt_sm, "iclk")){
+		} else if(!strcmp(vptt_sm, "ic") || !strcmp(vptt_sm, "iclk")){
 			vp_sm_type = ViSPParams::SMType::ICLK;
-		} else if(!strcmp(vptt_sm, "falk")){
+		} else if(!strcmp(vptt_sm, "fa") || !strcmp(vptt_sm, "falk")){
 			vp_sm_type = ViSPParams::SMType::FALK;
 		} else if(!strcmp(vptt_sm, "esm")){
 			vp_sm_type = ViSPParams::SMType::ESM;
