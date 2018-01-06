@@ -558,6 +558,58 @@ namespace mtf{
 		bool gftt_use_harris_detector = false;
 		double gftt_k = 0.04;
 
+		int brief_bytes = 32;
+		bool brief_use_orientation = false;
+
+		bool freak_orientation_normalized = true;
+		bool freak_scale_normalized = true;
+		float freak_pattern_scale = 22.0f;
+		int freak_n_octaves = 4;
+
+		int lucid_kernel = 1;
+		int lucid_blur_kernel = 2;
+
+		int latch_bytes = 32;
+		bool latch_rotation_invariance = true; 
+		int latch_half_ssd_size = 3;
+
+		float daisy_radius = 15; 
+		int daisy_q_radius = 3; 
+		int daisy_q_theta = 8;
+		int daisy_q_hist = 8; 
+		int daisy_norm = DAISY::NRM_NONE; 
+		vectorf daisy_H = noArray();
+		bool daisy_interpolation = true; 
+		bool daisy_use_orientation = false;
+
+		int vgg_desc = VGG::VGG_120; 
+		float vgg_isigma = 1.4f;
+		bool vgg_img_normalize = true; 
+		bool vgg_use_scale_orientation = true;
+		float vgg_scale_factor = 6.25f; 
+		bool vgg_dsc_normalize = false;
+
+
+		int boost_desc_desc = BoostDesc::BINBOOST_256;
+		bool boost_desc_use_scale_orientation = true;
+		float boost_desc_scale_factor = 6.25f;
+
+		int star_max_size = 45; 
+		int star_response_threshold = 30;
+		int star_line_threshold_projected = 10;
+		int star_line_threshold_binarized = 8;
+		int star_suppress_nonmax_size = 5;
+
+		int msd_patch_radius = 3;
+		int msd_search_area_radius = 5;
+		int msd_nms_radius = 5;
+		int msd_nms_scale_radius = 0;
+		float msd_th_saliency = 250.0f;
+		int msd_kNN = 4;
+		float msd_scale_factor = 1.25f;
+		int msd_n_scales = -1;
+		bool msd_compute_orientation = false;
+
 		//! SSM Estimator
 		int est_method = 0;
 		double est_ransac_reproj_thresh = 10;

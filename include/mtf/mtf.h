@@ -1560,7 +1560,7 @@ inline DetectorParamsType getDetectorParams(int detector_type){
 	}
 	return detector_params;
 }
-DescriptorParamsType getDescriptorParams(int descriptor_type){
+inline DescriptorParamsType getDescriptorParams(int descriptor_type){
 	DescriptorParamsType descriptor_params;
 	switch(static_cast<DescriptorType>(descriptor_type)){
 	case DescriptorType::SIFT:
