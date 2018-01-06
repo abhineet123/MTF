@@ -118,53 +118,60 @@ struct AGAST{
 };
 #ifndef FEAT_DISABLE_NONFREE
 //! descriptors
+struct BRIEF{
+	int bytes = 32;
+	bool use_orientation = false;
+	BRIEF(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+};
+struct FREAK{
+	bool orientation_normalized;
+	bool scale_normalized;
+	float pattern_scale;
+	int n_octaves;
+	FREAK(const vector<boost::any> &params);
+	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
+};
 struct LUCID{
-	int max_corners;
-	double quality_level;
-	double min_distance;
-	int block_size;
-	bool use_harris_detector;
-	double k;
+	int kernel;
+	int blur_kernel;
 	LUCID(const vector<boost::any> &params);
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 };
 struct LATCH{
-	int max_corners;
-	double quality_level;
-	double min_distance;
-	int block_size;
-	bool use_harris_detector;
-	double k;
+	int bytes;
+	bool rotation_invariance;
+	int half_ssd_size;
 	LATCH(const vector<boost::any> &params);
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 };
 struct DAISY{
-	int max_corners;
-	double quality_level;
-	double min_distance;
-	int block_size;
-	bool use_harris_detector;
-	double k;
+	typedef vector<float> vectorf;
+	float radius;
+	int q_radius;
+	int q_theta;
+	int q_hist;
+	int norm;
+	vectorf H;
+	bool interpolation;
+	bool use_orientation;
 	DAISY(const vector<boost::any> &params);
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 };
 struct VGG{
-	int max_corners;
-	double quality_level;
-	double min_distance;
-	int block_size;
-	bool use_harris_detector;
-	double k;
+	int desc;
+	float isigma;
+	bool img_normalize;
+	bool use_scale_orientation;
+	float scale_factor;
+	bool dsc_normalize;
 	VGG(const vector<boost::any> &params);
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 };
 struct BoostDesc{
-	int max_corners;
-	double quality_level;
-	double min_distance;
-	int block_size;
-	bool use_harris_detector;
-	double k;
+	int desc;
+	bool use_scale_orientation;
+	float scale_factor;
 	BoostDesc(const vector<boost::any> &params);
 	void create(cv::Ptr<cv::DescriptorExtractor> &ptr);
 };
@@ -304,7 +311,8 @@ public:
 	int getResY() override{ return params.grid_size_y; }
 	const cv::Mat& getRegion() override{ return cv_corners_mat; }
 	int inputType() const override{
-		return params.uchar_input ? CV_8UC1 : CV_32FC1;
+		return params.descriptor_type==DescriptorType::LUCID ? CV_8UC3:
+			params.uchar_input ? CV_8UC1 : CV_32FC1;
 	}
 	bool detect(const cv::Mat &mask, cv::Mat &obj_location) override;
 

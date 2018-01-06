@@ -49,6 +49,18 @@ try{\
 } catch(const boost::bad_any_cast &){\
 	throw utils::InvalidArgument(cv::format("%s :: Invalid parameter type provided for %s", #feat_type, #name));\
 }
+#define parse_feat_param_vec(name, data_type, fmt, param, feat_type)\
+try{\
+	name = boost::any_cast<data_type>(param);\
+	printf("%s: ", #name);\
+	for(int i = 0; i<name.size(); ++i){\
+		printf(fmt, name[i]);\	
+		printf(", ");\
+	}\
+	printf("\n");\
+} catch(const boost::bad_any_cast &){\
+	throw utils::InvalidArgument(cv::format("%s :: Invalid parameter type provided for %s", #feat_type, #name));\
+}
 
 _MTF_BEGIN_NAMESPACE
 
@@ -395,17 +407,188 @@ void AGAST::create(cv::Ptr<cv::Feature2D> &ptr){
 		threshold, non_max_suppression, type);
 }
 
-#define Star_MAX_SIZE 45
-#define Star_RESPONSE_THRESHOLD 30
-#define Star_LINE_THRESHOLD_PROJECTED 10
-#define Star_LINE_THRESHOLD_BINARIZED 8
-#define Star_SUPPRESS_NONMAX_SIZE 5
+#ifndef FEAT_DISABLE_NONFREE
+
+#define BRIEF_BYTES 32
+#define BRIEF_USE_ORIENTATION false
+BRIEF::BRIEF(const vector<boost::any> &params) :
+bytes(BRIEF_BYTES),
+use_orientation(BRIEF_USE_ORIENTATION){
+	printf("Using BRIEF descriptor with:\n");
+	int id = 0;
+	parse_feat_param(bytes, int, "%d", params[id++], BRIEF);
+	parse_feat_param(use_orientation, bool, "%d", params[id++], BRIEF);
+	printf("\n");
+}
+void BRIEF::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
+	ptr = cv::xfeatures2d::BriefDescriptorExtractor::create(
+		bytes, use_orientation);
+}
+
+#define FREAK_ORIENTATION_NORMALIZED true
+#define FREAK_SCALE_NORMALIZED true
+#define FREAK_PATTERN_SCALE 22.0f
+#define FREAK_N_OCTAVES 4
+FREAK::FREAK(const vector<boost::any> &params) :
+orientation_normalized(FREAK_ORIENTATION_NORMALIZED),
+scale_normalized(FREAK_SCALE_NORMALIZED),
+pattern_scale(FREAK_PATTERN_SCALE),
+n_octaves(FREAK_N_OCTAVES)
+{
+	printf("Using FREAK descriptor with:\n");
+	int id = 0;
+	parse_feat_param(orientation_normalized, bool, "%d", params[id++], FREAK);
+	parse_feat_param(scale_normalized, bool, "%d", params[id++], FREAK);
+	parse_feat_param(pattern_scale, float, "%f", params[id++], FREAK);
+	parse_feat_param(n_octaves, int, "%d", params[id++], FREAK);
+	printf("\n");
+}
+void FREAK::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
+	ptr = cv::xfeatures2d::FREAK::create(orientation_normalized, 
+		scale_normalized, pattern_scale, n_octaves);
+}
+
+#define LUCID_KERNEL 1
+#define LUCID_BLUR_KERNEL 2
+LUCID::LUCID(const vector<boost::any> &params) :
+kernel(LUCID_KERNEL),
+blur_kernel(LUCID_BLUR_KERNEL)
+{
+	printf("Using LUCID descriptor with:\n");
+	int id = 0;
+	parse_feat_param(kernel, int, "%d", params[id++], LUCID);
+	parse_feat_param(blur_kernel, int, "%d", params[id++], LUCID);
+	printf("\n");
+}
+void LUCID::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
+	ptr = cv::xfeatures2d::LUCID::create(kernel, blur_kernel);
+}
+
+#define LATCH_BYTES 32
+#define LATCH_ROTATION_INVARIANCE true
+#define LATCH_HALF_SSD_SIZE 3
+LATCH::LATCH(const vector<boost::any> &params) :
+bytes(LATCH_BYTES),
+rotation_invariance(LATCH_ROTATION_INVARIANCE),
+half_ssd_size(LATCH_HALF_SSD_SIZE)
+{
+	printf("Using LATCH descriptor with:\n");
+	int id = 0;
+	parse_feat_param(bytes, int, "%d", params[id++], LATCH);
+	parse_feat_param(rotation_invariance, bool, "%d", params[id++], LATCH);
+	parse_feat_param(half_ssd_size, int, "%d", params[id++], LATCH);
+	printf("\n");
+}
+void LATCH::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
+	ptr = cv::xfeatures2d::LATCH::create(bytes, rotation_invariance, half_ssd_size);
+}
+
+#define DAISY_RADIUS 15
+#define DAISY_Q_RADIUS 3
+#define DAISY_Q_THETA 8
+#define DAISY_Q_HIST 8
+#define DAISY_NORM cv::xfeatures2d::DAISY::NRM_NONE
+#define DAISY_H
+#define DAISY_INTERPOLATION true
+#define DAISY_USE_ORIENTATION false
+DAISY::DAISY(const vector<boost::any> &params) :
+radius(DAISY_RADIUS),
+q_radius(DAISY_Q_RADIUS),
+q_theta(DAISY_Q_THETA),
+q_hist(DAISY_Q_HIST),
+norm(DAISY_NORM),
+H(DAISY_H),
+interpolation(DAISY_INTERPOLATION),
+use_orientation(DAISY_USE_ORIENTATION)
+{
+	printf("Using DAISY descriptor with:\n");
+	int id = 0;
+	parse_feat_param(radius, float, "%f", params[id++], DAISY);
+	parse_feat_param(q_radius, int, "%d", params[id++], DAISY);
+	parse_feat_param(q_theta, int, "%d", params[id++], DAISY);
+	parse_feat_param(q_hist, int, "%d", params[id++], DAISY);
+	parse_feat_param(norm, int, "%d", params[id++], DAISY);
+	parse_feat_param_vec(H, vectorf, "%f", params[id++], DAISY);
+	parse_feat_param(interpolation, bool, "%d", params[id++], DAISY);
+	parse_feat_param(use_orientation, bool, "%d", params[id++], DAISY);
+	printf("\n");
+}
+void DAISY::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
+	if(H.size() == 9){
+		cv::Mat cv_H(3, 3, CV_32FC1);
+		for(int i = 0; i < 3; ++i){
+			for(int j = 0; j < 3; ++j){
+				cv_H.at<float>(i, j) = H[i * 3 + j];
+			}
+		}
+		ptr = cv::xfeatures2d::DAISY::create(radius, q_radius, q_theta,
+			q_hist, norm, cv_H, interpolation, use_orientation);
+	} else{
+		ptr = cv::xfeatures2d::DAISY::create(radius, q_radius, q_theta,
+			q_hist, norm, cv::noArray(), interpolation, use_orientation);
+	}
+}
+
+#define VGG_DESC cv::xfeatures2d::VGG::VGG_120
+#define VGG_ISIGMA 1.4f
+#define VGG_IMG_NORMALIZE true
+#define VGG_USE_SCALE_ORIENTATION true
+#define VGG_SCALE_FACTOR 6.25f
+#define VGG_DSC_NORMALIZE false
+VGG::VGG(const vector<boost::any> &params) :
+desc(VGG_DESC),
+isigma(VGG_ISIGMA),
+img_normalize(VGG_IMG_NORMALIZE),
+use_scale_orientation(VGG_USE_SCALE_ORIENTATION),
+scale_factor(VGG_SCALE_FACTOR),
+dsc_normalize(VGG_DSC_NORMALIZE)
+{
+	printf("Using VGG descriptor with:\n");
+	int id = 0;
+	parse_feat_param(desc, int, "%d", params[id++], VGG);
+	parse_feat_param(isigma, float, "%f", params[id++], VGG);
+	parse_feat_param(img_normalize, bool, "%d", params[id++], VGG);
+	parse_feat_param(use_scale_orientation, bool, "%d", params[id++], VGG);
+	parse_feat_param(scale_factor, float, "%f", params[id++], VGG);
+	parse_feat_param(dsc_normalize, bool, "%d", params[id++], VGG);
+	printf("\n");
+}
+void VGG::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
+	ptr = cv::xfeatures2d::VGG::create(desc, isigma, img_normalize,
+		use_scale_orientation, scale_factor, dsc_normalize);
+}
+
+#define BOOST_DESC cv::xfeatures2d::BoostDesc::BINBOOST_256
+#define BOOST_DESC_USE_SCALE_ORIENTATION true
+#define BOOST_DESC_SCALE_FACTOR 6.25f
+BoostDesc::BoostDesc(const vector<boost::any> &params) :
+desc(BOOST_DESC),
+use_scale_orientation(BOOST_DESC_USE_SCALE_ORIENTATION),
+scale_factor(BOOST_DESC_SCALE_FACTOR)
+{
+	printf("Using BoostDesc descriptor with:\n");
+	int id = 0;
+	parse_feat_param(desc, int, "%d", params[id++], BoostDesc);
+	parse_feat_param(scale_factor, float, "%f", params[id++], BoostDesc);
+	parse_feat_param(use_scale_orientation, bool, "%d", params[id++], BoostDesc);
+	printf("\n");
+}
+void BoostDesc::create(cv::Ptr<cv::DescriptorExtractor> &ptr){
+	ptr = cv::xfeatures2d::BoostDesc::create(desc, use_scale_orientation, scale_factor);
+}
+
+
+#define STAR_MAX_SIZE 45
+#define STAR_RESPONSE_THRESHOLD 30
+#define STAR_LINE_THRESHOLD_PROJECTED 10
+#define STAR_LINE_THRESHOLD_BINARIZED 8
+#define STAR_SUPPRESS_NONMAX_SIZE 5
 Star::Star(const vector<boost::any> &params) :
-max_size(Star_MAX_SIZE),
-response_threshold(Star_RESPONSE_THRESHOLD),
-line_threshold_projected(Star_LINE_THRESHOLD_PROJECTED),
-line_threshold_binarized(Star_LINE_THRESHOLD_BINARIZED),
-suppress_nonmax_size(Star_SUPPRESS_NONMAX_SIZE){
+max_size(STAR_MAX_SIZE),
+response_threshold(STAR_RESPONSE_THRESHOLD),
+line_threshold_projected(STAR_LINE_THRESHOLD_PROJECTED),
+line_threshold_binarized(STAR_LINE_THRESHOLD_BINARIZED),
+suppress_nonmax_size(STAR_SUPPRESS_NONMAX_SIZE){
 	printf("Using Star descriptor with:\n");
 	int id = 0;
 	parse_feat_param(max_size, int, "%d", params[id++], Star);
@@ -420,7 +603,7 @@ void Star::create(cv::Ptr<cv::FeatureDetector> &ptr){
 		max_size, response_threshold, line_threshold_projected, line_threshold_binarized,
 		suppress_nonmax_size);
 }
-
+#endif
 
 #endif
 

@@ -1,0 +1,37 @@
+ifeq ($(OS),Windows_NT)
+VP_INCLUDE_DIR ?= C:/ViSP/include
+VP_LIB_DIR ?= C:/ViSP/lib
+VP_LIBS_SUFFIX ?= 300d
+else
+VP_INCLUDE_DIR ?= /usr/local/lib/x86_64-linux-gnu
+VP_LIB_DIR ?= /usr/local/include
+endif
+
+_VP_LIBS = -lvisp_core -lvisp_tt -lvisp_tt_mi
+ifeq ($(OS),Windows_NT)
+VP_LIBS = $(addsuffix ${VP_LIBS_SUFFIX}, ${_VP_LIBS})	
+else
+VP_LIBS = ${_VP_LIBS}
+endif
+
+VISP_ROOT_DIR = ThirdParty/ViSP
+VISP_SRC_DIR = ${VISP_ROOT_DIR}/src
+VISP_INCLUDE_DIR = ${VISP_ROOT_DIR}/include
+VISP_HEADER_DIR = ${VISP_INCLUDE_DIR}/mtf/${VISP_ROOT_DIR}
+
+ViSP_HEADERS = $(addprefix  ${VISP_HEADER_DIR}/, ViSP.h)
+
+vp ?= 0
+ifeq (${vp}, 1)
+THIRD_PARTY_TRACKERS += ViSP
+THIRD_PARTY_RUNTIME_FLAGS += -I${VP_INCLUDE_DIR}
+THIRD_PARTY_LINK_LIBS += -L${VP_LIB_DIR} ${VP_LIBS}
+THIRD_PARTY_HEADERS += ${ViSP_HEADERS}
+THIRD_PARTY_INCLUDE_DIRS += ${VISP_INCLUDE_DIR}
+else
+THIRD_PARTY_RUNTIME_FLAGS += -D DISABLE_VISP
+endif
+
+${BUILD_DIR}/ViSP.o: ${VISP_SRC_DIR}/ViSP.cc ${ViSP_HEADERS} ${ROOT_HEADER_DIR}/TrackerBase.h ${UTILITIES_HEADER_DIR}/excpUtils.h ${UTILITIES_HEADER_DIR}/miscUtils.h 
+	${CXX} -c ${MTF_PIC_FLAG} ${WARNING_FLAGS} ${OPT_FLAGS} ${MTF_COMPILETIME_FLAGS} $< ${OPENCV_FLAGS} -I${VISP_INCLUDE_DIR} -I${ROOT_INCLUDE_DIR} -I${UTILITIES_INCLUDE_DIR} -I${MACROS_INCLUDE_DIR} -I${VP_INCLUDE_DIR} -o $@
+	
