@@ -12,25 +12,12 @@ struct CV3Params{
 		BOOSTING,
 		MEDIANFLOW,
 		TLD,
-		KCF
+		KCF,
+		GOTURN
 	};
 	TrackerType tracker_type;
-
-	int max_iters;
-	int resx, resy;
-	double lambda;
-	double thresh_grad;
-	int pyr_n_levels;
-	int pyr_level_to_stop;
-
-	CV3Params(TrackerType _sm_type,
-		int _max_iters,
-		int _resx,
-		int _resy,
-		double _lambda,
-		double _thresh_grad,
-		int _pyr_n_levels,
-		int _pyr_level_to_stop);
+	CV3Params(
+		TrackerType _tracker_type);
 
 	CV3Params(const CV3Params *params = nullptr);
 	std::string toString(TrackerType _detector_type);
@@ -47,10 +34,8 @@ public:
 	void initialize(const cv::Mat &corners) override;
 	void update() override;
 	const cv::Mat& getRegion() override{ return cv_corners_mat; }
-	void setRegion(const cv::Mat& corners) override;
 	void setImage(const cv::Mat &img) override;
 	int inputType() const override{ return CV_8UC1; }
-	void updateCorners();
 
 protected:
 	ParamType params;
