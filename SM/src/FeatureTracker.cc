@@ -54,7 +54,7 @@ try{\
 	name = boost::any_cast<data_type>(param);\
 	printf("%s: ", #name);\
 	for(int i = 0; i<name.size(); ++i){\
-		printf(fmt, name[i]);\	
+		printf(fmt, name[i]);\
 		printf(", ");\
 	}\
 	printf("\n");\
