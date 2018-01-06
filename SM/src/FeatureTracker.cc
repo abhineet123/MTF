@@ -750,6 +750,8 @@ std::string FeatureTrackerParams::toString(DetectorType _detector_type){
 #ifndef FEAT_DISABLE_NONFREE
 	case DetectorType::Star:
 		return "Star";
+	case DetectorType::MSD:
+		return "MSD";
 #endif
 #endif
 	default:
@@ -769,6 +771,24 @@ std::string FeatureTrackerParams::toString(DescriptorType _descriptor_type){
 		return "BRISK";
 	case DescriptorType::ORB:
 		return "ORB";
+#if CV_MAJOR_VERSION >= 3
+#ifndef FEAT_DISABLE_NONFREE
+	case DescriptorType::BRIEF:
+		return "BRIEF";
+	case DescriptorType::FREAK:
+		return "FREAK";
+	case DescriptorType::LUCID:
+		return "LUCID";
+	case DescriptorType::LATCH:
+		return "LATCH";
+	case DescriptorType::DAISY:
+		return "DAISY";
+	case DescriptorType::VGG:
+		return "VGG";
+	case DescriptorType::BoostDesc:
+		return "BoostDesc";
+#endif
+#endif
 	default:
 		throw utils::InvalidArgument(cv::format(
 			"Invalid feature descriptor type provided %d", static_cast<int>(_descriptor_type)));
@@ -848,6 +868,9 @@ FeatureTracker<SSM>::FeatureTracker(
 	case DetectorType::Star:
 		Star(params.detector).create(detector);
 		break;
+	case DetectorType::MSD:
+		MSD(params.detector).create(detector);
+		break;
 #endif
 #endif
 	default:
@@ -869,6 +892,31 @@ FeatureTracker<SSM>::FeatureTracker(
 	case DescriptorType::ORB:
 		ORB(params.descriptor, "descriptor").create(descriptor);
 		break;
+#if CV_MAJOR_VERSION >= 3
+#ifndef FEAT_DISABLE_NONFREE
+	case DescriptorType::BRIEF:
+		BRIEF(params.descriptor).create(descriptor);
+		break;
+	case DescriptorType::FREAK:
+		FREAK(params.descriptor).create(descriptor);
+		break;
+	case DescriptorType::LUCID:
+		LUCID(params.descriptor).create(descriptor);
+		break;
+	case DescriptorType::LATCH:
+		LATCH(params.descriptor).create(descriptor);
+		break;
+	case DescriptorType::DAISY:
+		DAISY(params.descriptor).create(descriptor);
+		break;
+	case DescriptorType::VGG:
+		VGG(params.descriptor).create(descriptor);
+		break;
+	case DescriptorType::BoostDesc:
+		BoostDesc(params.descriptor).create(descriptor);
+		break;
+#endif
+#endif
 	default:
 		throw utils::InvalidArgument(cv::format("Invalid feature descriptor type provided %d",
 			static_cast<int>(params.descriptor_type)));
