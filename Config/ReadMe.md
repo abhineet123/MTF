@@ -1165,14 +1165,18 @@ Feature Tracker:
 			-1:	None - an equally spaced grid of points is used instead
 			0:	ORB
 			1:	BRISK
-			2:	FAST
-			3:	MSER
-			4:	GFTT
 			Only if OpenCV 2 nonfree / OpenCV 3 contrib module is available
-				5:	SIFT
-				6:	SURF
+				2:	SIFT
+				3:	SURF
+			4:	FAST
+			5:	MSER
+			6:	GFTT
 			Only OpenCV 3:
 				7:	AGAST
+			Only OpenCV 3 with contrib module available:
+				8:	Star
+				9:	MSD
+
 			
 	 Parameter:	'feat_descriptor_type'
 		Description:
@@ -1183,7 +1187,15 @@ Feature Tracker:
 			Only if OpenCV 2 nonfree / OpenCV 3 contrib module is available
 				2:	SIFT
 				3:	SURF
-			
+			Only OpenCV 3 with contrib module available:
+				4:	BRIEF
+				5:	FREAK
+				6:	LUCID
+				7:	LATCH
+				8:	DAISY
+				9:	VGG
+				10:	BoostDesc
+		 
 	 Parameter:	'feat_max_dist_ratio'
 		Description:
 			maximum ratio between the distances of each point from the first and second best matched points from the previous frame for this point to be considered for computing the best fit transformation;

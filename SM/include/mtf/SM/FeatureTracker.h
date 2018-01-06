@@ -203,15 +203,19 @@ struct MSD{
 struct FeatureTrackerParams{
 	enum class DetectorType {
 		NONE = -1, 
-		ORB, BRISK, FAST, MSER, GFTT,
+		//! all
+		ORB, BRISK, 
 		//!  OpenCV 2 nonfree / OpenCV 3 contrib
-		SIFT, SURF,
+		SIFT, SURF,		
+		//! all
+		FAST, MSER, GFTT,
 		//!  OpenCV 3
 		AGAST,
 		//! OpenCV 3 contrib
 		Star, MSD
 	};
 	enum class DescriptorType{
+		//! all
 		ORB, BRISK, 
 		//!  OpenCV 2 nonfree / OpenCV 3 contrib
 		SIFT, SURF, 
