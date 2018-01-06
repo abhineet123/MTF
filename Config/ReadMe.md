@@ -1676,6 +1676,27 @@ DAISY feature descriptor:
 		https://docs.opencv.org/3.3.1/d9/d37/classcv_1_1xfeatures2d_1_1DAISY.html
 		E. Tola, V. Lepetit, and P. Fua. DAISY: An Efficient Dense Descriptor Applied to Wide Baseline Stereo. IEEE Transactions on Pattern Analysis and Machine Intelligence, 32(5):815–830, May 2010.
 
+LATCH feature descriptor:
+=========================
+	 Parameter:	'latch_bytes'
+		Description:
+			size of the descriptor - can be 64, 32, 16, 8, 4, 2 or 1
+
+	 Parameter:	'latch_rotation_invariance'
+		Description:
+			whether or not the descriptor should compensates for orientation changes
+			
+	 Parameter:	'latch_half_ssd_size'
+		Description:
+			size of half of the mini-patches size. For example, if we would like to compare triplets of patches of size 7x7x then the half_ssd_size should be (7-1)/2 = 3.
+			
+	 Note:
+		the descriptor can be coupled with any keypoint extractor; the only demand is that if you use set latch_rotation_invariance = 1 then you will have to use an extractor which estimates the patch orientation (in degrees). Examples for such extractors are ORB and SIFT;
+		
+	 Additional References:
+		https://docs.opencv.org/3.3.1/d6/d36/classcv_1_1xfeatures2d_1_1LATCH.html
+		Gil Levi and Tal Hassner, "LATCH: Learned Arrangements of Three Patch Codes", arXiv preprint arXiv:1501.03719, 15 Jan. 2015
+
 			
 Gaussian Filtering Preprocessor:
 ================================
