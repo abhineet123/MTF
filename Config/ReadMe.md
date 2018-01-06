@@ -1508,7 +1508,7 @@ Star feature detector:
 		https://docs.opencv.org/3.0-beta/modules/xfeatures2d/doc/extra_features.html#starfeaturedetector
 		Agrawal, M., Konolige, K., & Blas, M. R. (2008). Censure: Center surround extremas for realtime feature detection and matching. In Computer Vision–ECCV 2008 (pp. 102-115). Springer Berlin Heidelberg.
 		
-Maximal Self-Dissimilarity (MSD) feature detector:
+MSD (Maximal Self-Dissimilarity) feature detector:
 ==================================================
 	 Parameter:	'msd_patch_radius'
 		Description:
@@ -1573,7 +1573,6 @@ BoostDesc feature descriptor:
 			LBGM (alias FP-Boost) is the floating point extension where each dimension is computed as a linear combination of the weak learner responses.
 			BINBOOST and subvariants are the binary extensions of LBGM where each bit is computed as a thresholded linear combination of a set of weak learners.
 			
-			
 	 Parameter:	'boost_desc_use_scale_orientation'
 		Description:
 			sample patterns using keypoints orientation
@@ -1581,6 +1580,7 @@ BoostDesc feature descriptor:
 	 Parameter:	'boost_desc_scale_factor'
 		Description:
 			adjust the sampling window of detected keypoints
+		Possible Values:
 			6.25f is default and fits for KAZE, SURF detected keypoints window ratio
 			6.75f should be the scale for SIFT detected keypoints window ratio
 			5.00f should be the scale for AKAZE, MSD, AGAST, FAST, BRISK keypoints window ratio
@@ -1591,6 +1591,46 @@ BoostDesc feature descriptor:
 		https://docs.opencv.org/3.3.1/d1/dfd/classcv_1_1xfeatures2d_1_1BoostDesc.html
 		V. Lepetit T. Trzcinski, M. Christoudias and P. Fua. Boosting Binary Keypoint Descriptors. In Computer Vision and Pattern Recognition, 2013.
 		M. Christoudias T. Trzcinski and V. Lepetit. Learning Image Descriptors with Boosting. submitted to IEEE Transactions on Pattern Analysis and Machine Intelligence (PAMI), 2013.
+
+VGG (Oxford Visual Geometry Group) feature descriptor:
+======================================================
+	 Parameter:	'vgg_desc'
+		Description:
+			type of descriptor to use
+		Possible Values:
+			100: VGG_120 (120 dimensions float) 
+			101: VGG_80 (80 dimensions float) 
+			102: VGG_64 (64 dimensions float) 
+			103: VGG_48 (48 dimensions float) 
+
+	 Parameter:	'vgg_isigma'
+		Description:
+			gaussian kernel value for image blur (default is 1.4) 
+			
+	 Parameter:	'vgg_img_normalize'
+		Description:
+			use image sample intensity normalization (enabled by default) 
+			
+	 Parameter:	'vgg_use_scale_orientation'
+		Description:
+			sample patterns using keypoints orientation, enabled by default 
+			
+	 Parameter:	'vgg_scale_factor'
+		Description:
+			adjust the sampling window of detected keypoints to 64.0f (VGG sampling window);
+		Possible Values:
+			6.25f is default and fits for KAZE, SURF detected keypoints window ratio;
+			6.75f should be the scale for SIFT detected keypoints window ratio;
+			5.00f should be the scale for AKAZE, MSD, AGAST, FAST, BRISK keypoints window ratio;
+			0.75f should be the scale for ORB keypoints ratio
+			
+	 Parameter:	'vgg_dsc_normalize'
+		Description:
+			clamp descriptors to 255 and convert to uchar CV_8UC1 (disabled by default)
+			
+	 Additional References:
+		https://docs.opencv.org/3.3.1/d6/d00/classcv_1_1xfeatures2d_1_1VGG.html
+		K. Simonyan, A. Vedaldi, and A. Zisserman. Learning local feature descriptors using convex optimisation. IEEE Transactions on Pattern Analysis and Machine Intelligence, 2014.
 
 			
 Gaussian Filtering Preprocessor:
