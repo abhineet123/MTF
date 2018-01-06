@@ -2909,6 +2909,9 @@ ViSP Template Tracking module:
 			3:	Isometry
 			2:	Translation
 			
+	 Note:
+		not all combinations of SM, AM and SSM are supported	
+			
 	 Parameter:	'vptt_max_iters'	 
 		Description:
 			maximum no. of iterations per frame
