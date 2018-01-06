@@ -1632,6 +1632,50 @@ VGG (Oxford Visual Geometry Group) feature descriptor:
 		https://docs.opencv.org/3.3.1/d6/d00/classcv_1_1xfeatures2d_1_1VGG.html
 		K. Simonyan, A. Vedaldi, and A. Zisserman. Learning local feature descriptors using convex optimisation. IEEE Transactions on Pattern Analysis and Machine Intelligence, 2014.
 
+DAISY feature descriptor:
+=========================
+	 Parameter:	'daisy_radius'
+		Description:
+			radius of the descriptor at the initial scale 
+
+	 Parameter:	'daisy_q_radius'
+		Description:
+			amount of radial range division quantity 
+			
+	 Parameter:	'daisy_q_theta'
+		Description:
+			amount of angular range division quantity 
+			
+	 Parameter:	'daisy_q_hist'
+		Description:
+				amount of gradient orientations range division quantity 
+			
+	 Parameter:	'daisy_norm'
+		Description:
+			choose descriptors normalization type, where DAISY::NRM_NONE will not do any normalization (default), DAISY::NRM_PARTIAL mean that histograms are normalized independently for L2 norm equal to 1.0, DAISY::NRM_FULL mean that descriptors are normalized for L2 norm equal to 1.0, DAISY::NRM_SIFT mean that descriptors are normalized for L2 norm equal to 1.0 but no individual one is bigger than 0.154 as in SIFT
+		Possible Values:
+			6.25f is default and fits for KAZE, SURF detected keypoints window ratio;
+			6.75f should be the scale for SIFT detected keypoints window ratio;
+			5.00f should be the scale for AKAZE, MSD, AGAST, FAST, BRISK keypoints window ratio;
+			0.75f should be the scale for ORB keypoints ratio
+			
+	 Parameter:	'daisy_H'
+		Description:
+			optional 3x3 homography matrix used to warp the grid of daisy but sampling keypoints remains unwarped on image;
+			specified as a vector of size 9 (9 values separated by commas) which holds the matrix entries in row-major order;
+			
+	 Parameter:	'daisy_interpolation'
+		Description:
+			switch to disable interpolation for speed improvement at minor quality loss 
+			
+	 Parameter:	'daisy_use_orientation'
+		Description:
+			sample patterns using keypoints orientation, disabled by default. 
+			
+	 Additional References:
+		https://docs.opencv.org/3.3.1/d9/d37/classcv_1_1xfeatures2d_1_1DAISY.html
+		E. Tola, V. Lepetit, and P. Fua. DAISY: An Efficient Dense Descriptor Applied to Wide Baseline Stereo. IEEE Transactions on Pattern Analysis and Machine Intelligence, 32(5):815–830, May 2010.
+
 			
 Gaussian Filtering Preprocessor:
 ================================
