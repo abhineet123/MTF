@@ -2943,3 +2943,108 @@ ViSP Template Tracking module:
 	 Additional References:
 		https://visp.inria.fr/template-tracking/
 		http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-tt.html
+		
+Discriminative Scale Space Tracker (DSST):
+==========================================
+	 Parameter:	'dsst_padding'
+		Description:
+			TBA 
+			
+	 Parameter:	'dsst_sigma'
+		Description:
+			TBA
+			
+	 Parameter:	'dsst_scale_sigma'
+		Description:
+			TBA
+			
+	 Parameter:	'dsst_lambda'
+		Description:
+			TBA
+			
+	 Parameter:	'dsst_learning_rate'
+		Description:
+			TBA
+			
+	 Parameter:	'dsst_lambda'
+		Description:
+			TBA
+			
+	 Parameter:	'dsst_number_scales'
+		Description:
+			TBA
+			
+	 Parameter:	'dsst_scale_step'
+		Description:
+			TBA
+			
+	 Parameter:	'dsst_resize_factor'
+		Description:
+			TBA
+			
+	 Parameter:	'dsst_is_scaling'
+		Description:
+			TBA
+			
+	 Parameter:	'dsst_is_rotating'
+		Description:
+			TBA
+			
+	 Parameter:	'dsst_bin_size'
+		Description:
+			TBA
+			
+	 Parameter:	'dsst_number_rots'
+		Description:
+			TBA
+			
+	 Parameter:	'dsst_rot_step'
+		Description:
+			TBA
+			
+Kernelized Correlation Filter (KCF) Tracker:
+============================================
+	 Parameter:	'kcf_padding'
+		Description:
+			TBA 
+			
+	 Parameter:	'kcf_lambda'
+		Description:
+			TBA
+			
+	 Parameter:	'kcf_output_sigma_factor'
+		Description:
+			TBA
+			
+	 Parameter:	'kcf_interp_factor'
+		Description:
+			TBA
+			
+	 Parameter:	'kcf_kernel_sigma'
+		Description:
+			TBA
+			
+	 Parameter:	'kcf_number_scales'
+		Description:
+			TBA
+			
+	 Parameter:	'kcf_scale_step'
+		Description:
+			TBA
+			
+	 Parameter:	'kcf_scale_sigma_factor'
+		Description:
+			TBA
+			
+	 Parameter:	'kcf_scale_learning_rate'
+		Description:
+			TBA
+			
+	 Parameter:	'kcf_enableScaling'
+		Description:
+			TBA
+			
+	 Parameter:	'kcf_resize_factor'
+		Description:
+			TBA
+			
