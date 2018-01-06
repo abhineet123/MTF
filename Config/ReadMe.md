@@ -1696,6 +1696,20 @@ LATCH feature descriptor:
 	 Additional References:
 		https://docs.opencv.org/3.3.1/d6/d36/classcv_1_1xfeatures2d_1_1LATCH.html
 		Gil Levi and Tal Hassner, "LATCH: Learned Arrangements of Three Patch Codes", arXiv preprint arXiv:1501.03719, 15 Jan. 2015
+		
+LUCID (Locally Uniform Comparison Image Descriptor) feature descriptor:
+=======================================================================
+	 Parameter:	'lucid_kernel'
+		Description:
+			kernel for descriptor construction, where 1=3x3, 2=5x5, 3=7x7 and so forth 
+
+	 Parameter:	'lucid_blur_kernel'
+		Description:
+			kernel for blurring image prior to descriptor construction, where 1=3x3, 2=5x5, 3=7x7 and so forth 	
+		
+	 Additional References:
+		https://docs.opencv.org/3.3.1/d4/d86/classcv_1_1xfeatures2d_1_1LUCID.html
+		Eric Christiansen David Kriegman Ziegler, Andrew and Serge J. Belongie. Locally uniform comparison image descriptor.
 
 			
 Gaussian Filtering Preprocessor:
