@@ -47,17 +47,17 @@ params(cv3_params){
 #else
 	switch(params.tracker_type){
 	case TrackerType::MIL:
-		tracker = TrackerMIL::create();
+		tracker = cv::TrackerMIL::create();
 	case TrackerType::BOOSTING:
-		tracker = TrackerBoosting::create();
+		tracker = cv::TrackerBoosting::create();
 	case TrackerType::MEDIANFLOW:
-		tracker = TrackerMedianFlow::create();
+		tracker = cv::TrackerMedianFlow::create();
 	case TrackerType::TLD:
-		tracker = TrackerTLD::create();
+		tracker = cv::TrackerTLD::create();
 	case TrackerType::KCF:
-		tracker = TrackerKCF::create();
+		tracker = cv::TrackerKCF::create();
 	case TrackerType::GOTURN:
-		tracker = TrackerGOTURN::create();
+		tracker = cv::TrackerGOTURN::create();
 	default:
 		throw mtf::utils::InvalidArgument(cv::format(
 			"Invalid tracker type provided %d", static_cast<int>(params.tracker_type)));
