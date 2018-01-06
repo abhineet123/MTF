@@ -1481,8 +1481,76 @@ GFTT feature detector:
 		https://docs.opencv.org/2.4/modules/imgproc/doc/feature_detection.html#goodfeaturestotrack
 		https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_shi_tomasi/py_shi_tomasi.html
 		J. Shi and C. Tomasi. Good Features to Track. Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pages 593-600, June 1994.
-
+		
+Star feature detector:
+======================
+	 Parameter:	'star_max_size'
+		Description:
+			TBA
 			
+	 Parameter:	'star_response_threshold'
+		Description:
+			TBA
+			
+	 Parameter:	'star_line_threshold_projected'
+		Description:
+			TBA
+			
+	 Parameter:	'star_line_threshold_binarized'
+		Description:
+			TBA
+			
+	 Parameter:	'star_suppress_nonmax_size'
+		Description:
+			TBA
+			
+	 Additional References:
+		https://docs.opencv.org/3.0-beta/modules/xfeatures2d/doc/extra_features.html#starfeaturedetector
+		Agrawal, M., Konolige, K., & Blas, M. R. (2008). Censure: Center surround extremas for realtime feature detection and matching. In Computer Vision–ECCV 2008 (pp. 102-115). Springer Berlin Heidelberg.
+		
+Maximal Self-Dissimilarity (MSD) feature detector:
+==================================================
+	 Parameter:	'msd_patch_radius'
+		Description:
+			TBA
+			
+	 Parameter:	'msd_search_area_radius'
+		Description:
+			TBA
+			
+	 Parameter:	'msd_nms_radius'
+		Description:
+			TBA
+			
+	 Parameter:	'msd_nms_scale_radius'
+		Description:
+			TBA
+			
+	 Parameter:	'msd_th_saliency'
+		Description:
+			TBA
+			
+	 Parameter:	'msd_kNN'
+		Description:
+			TBA
+			
+	 Parameter:	'msd_scale_factor'
+		Description:
+			TBA
+			
+	 Parameter:	'msd_n_scales'
+		Description:
+			TBA
+			
+	 Parameter:	'msd_compute_orientation'
+		Description:
+			TBA
+			
+	 Additional References:
+		https://docs.opencv.org/3.3.1/d0/dcf/classcv_1_1xfeatures2d_1_1MSDDetector.html
+		Federico Tombari and Luigi Di Stefano. Interest points via maximal self-dissimilarities. In Asian Conference on Computer Vision – ACCV 2014, 2014.
+
+					
 Gaussian Filtering Preprocessor:
 ================================
 	 Parameter:	'gauss_kernel_size'
