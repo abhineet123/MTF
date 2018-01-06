@@ -761,18 +761,16 @@ std::string FeatureTrackerParams::toString(DetectorType _detector_type){
 }
 std::string FeatureTrackerParams::toString(DescriptorType _descriptor_type){
 	switch(_descriptor_type){
+	case DescriptorType::ORB:
+		return "ORB";
+	case DescriptorType::BRISK:
+		return "BRISK";
 #ifndef FEAT_DISABLE_NONFREE
 	case DescriptorType::SIFT:
 		return "SIFT";
 	case DescriptorType::SURF:
 		return "SURF";
-#endif
-	case DescriptorType::BRISK:
-		return "BRISK";
-	case DescriptorType::ORB:
-		return "ORB";
 #if CV_MAJOR_VERSION >= 3
-#ifndef FEAT_DISABLE_NONFREE
 	case DescriptorType::BRIEF:
 		return "BRIEF";
 	case DescriptorType::FREAK:
@@ -837,19 +835,11 @@ FeatureTracker<SSM>::FeatureTracker(
 		printf("Feature detection is disabled.\n");
 		use_feature_detector = false;
 		break;
-#ifndef FEAT_DISABLE_NONFREE
-	case DetectorType::SIFT:
-		SIFT(params.detector).create(detector);
-		break;
-	case DetectorType::SURF:
-		SURF(params.detector).create(detector);
-		break;
-#endif
-	case DetectorType::BRISK:
-		BRISK(params.detector).create(detector);
-		break;
 	case DetectorType::ORB:
 		ORB(params.detector).create(detector);
+		break;
+	case DetectorType::BRISK:
+		BRISK(params.detector).create(detector);
 		break;
 	case DetectorType::FAST:
 		FAST(params.detector).create(detector);
@@ -860,6 +850,14 @@ FeatureTracker<SSM>::FeatureTracker(
 	case DetectorType::GFTT:
 		GFTT(params.detector).create(detector);
 		break;
+#ifndef FEAT_DISABLE_NONFREE
+	case DetectorType::SIFT:
+		SIFT(params.detector).create(detector);
+		break;
+	case DetectorType::SURF:
+		SURF(params.detector).create(detector);
+		break;
+#endif
 #if CV_MAJOR_VERSION >= 3
 	case DetectorType::AGAST:
 		AGAST(params.detector).create(detector);
@@ -878,6 +876,12 @@ FeatureTracker<SSM>::FeatureTracker(
 			"Invalid feature detector type provided %d", static_cast<int>(params.detector_type)));
 	}
 	switch(params.descriptor_type){
+	case DescriptorType::ORB:
+		ORB(params.descriptor, "descriptor").create(descriptor);
+		break;
+	case DescriptorType::BRISK:
+		BRISK(params.descriptor, "descriptor").create(descriptor);
+		break;
 #ifndef FEAT_DISABLE_NONFREE
 	case DescriptorType::SIFT:
 		SIFT(params.descriptor, "descriptor").create(descriptor);
@@ -885,15 +889,7 @@ FeatureTracker<SSM>::FeatureTracker(
 	case DescriptorType::SURF:
 		SURF(params.descriptor, "descriptor").create(descriptor);
 		break;
-#endif
-	case DescriptorType::BRISK:
-		BRISK(params.descriptor, "descriptor").create(descriptor);
-		break;
-	case DescriptorType::ORB:
-		ORB(params.descriptor, "descriptor").create(descriptor);
-		break;
 #if CV_MAJOR_VERSION >= 3
-#ifndef FEAT_DISABLE_NONFREE
 	case DescriptorType::BRIEF:
 		BRIEF(params.descriptor).create(descriptor);
 		break;
