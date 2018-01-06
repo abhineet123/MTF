@@ -142,6 +142,9 @@
 #ifndef DISABLE_VISP
 #include "mtf/ThirdParty/ViSP/ViSP.h"
 #endif
+#ifndef DISABLE_CV3
+#include "mtf/ThirdParty/CV3/CV3.h"
+#endif
 //! some thirdparty trackers do not compile in Windows yet
 #ifndef DISABLE_DFT
 #include "mtf/ThirdParty/DFT/DFT.h"
@@ -2042,6 +2045,13 @@ inline TrackerBase *getTracker(const char *tracker_type){
 		return new ViSP(&visp_params);
 	}
 #endif
+#ifndef DISABLE_CV3
+	else if(!strcmp(tracker_type, "cv3")){
+		CV3Params cv3_params(static_cast<CV3::TrackerType>(cv3_tracker_type));
+		return new CV3(&cv3_params);
+	}
+#endif
+
 #ifndef DISABLE_DFT
 	else if(!strcmp(tracker_type, "dft")){
 		dft::DFTParams dft_params(dft_res_to_l, dft_p_to_l, dft_max_iter,

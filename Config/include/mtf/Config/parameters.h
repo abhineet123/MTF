@@ -784,6 +784,9 @@ namespace mtf{
 		float vp_pg_fw_exposure;
 		float vp_pg_fw_brightness;
 
+		//! OpenCV 3 Tracking
+		int cv3_tracker_type = 0;
+
 		//! PFSL3
 		int pfsl3_p_x = 40;
 		int pfsl3_p_y = 40;
@@ -3420,6 +3423,11 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, " vp_pg_fw_brightness")){
 				 vp_pg_fw_brightness = static_cast<float>(atof(arg_val));
+				return;
+			}
+			//! CV3
+			if(!strcmp(arg_name, "cv3_tracker_type")){
+				cv3_tracker_type = atoi(arg_val);
 				return;
 			}
 			//! PFSL3
