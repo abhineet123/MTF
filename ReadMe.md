@@ -197,7 +197,7 @@ Compile/Runtime Notes:
 	* if FLANN based NN is enabled with cmake, environment variables may need to be set for hdf5 to be found using, for instance:  
 	`export CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/Applications/HDF_Group/HDF5/1.10.0-patch1/`
 * **Using MTF with OpenCV 3.x**
-    * MTF has been tested and found to work with OpenCV 3.1 installed using [this method (option 2)](http://milq.github.io/install-opencv-ubuntu-debian/) on Ubuntu 14.04 but general compatibility with other system configurations is not guaranteed since comprehensive testing has only been doe with 2.4.x.
+    * MTF has been tested and found to work on Ubuntu 14.04 with OpenCV 3.1 installed using [this method (option 2)](http://milq.github.io/install-opencv-ubuntu-debian/) and OpenCV 3.3 installed using [this method](https://www.learnopencv.com/install-opencv3-on-ubuntu/)  but general compatibility with all system configurations is not guaranteed.
     * third party trackers in particular are likely to have issues with OpenCV 3.x as many use legacy versions so these should be disabled using `lt=0`/`-DWITH_THIRD_PARTY=OFF` if compilation or linking errors pertaining to these are found.
     * if a linking error of type `/usr/bin/ld: cannot find -lippicv` occurs, remove `-ippicv` from opencv pkg-config configuration file which is usually located at `/usr/local/lib/pkgconfig/opencv.pc` or follow the procedures suggested [here](http://answers.opencv.org/question/84265/compiling-error-with-lippicv/)
 * if compilation is taking too long and optional components are not needed, following cmake/make commands can be used to build a minimal version of MTF with full core functionality:  
