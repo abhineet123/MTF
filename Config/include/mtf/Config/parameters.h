@@ -495,8 +495,8 @@ namespace mtf{
 		bool grid_rgb_input = false;
 		double grid_min_eig_thresh = 1e-4;
 
-		int feat_detector_type = 1;
-		int feat_descriptor_type = 0;
+		std::string feat_detector_type = "orb";
+		std::string feat_descriptor_type = "orb";
 		double feat_max_dist_ratio = 0.75;
 		int feat_min_matches = 10;
 		bool feat_rebuild_index = false;
@@ -785,7 +785,7 @@ namespace mtf{
 		float vp_pg_fw_brightness;
 
 		//! OpenCV 3 Tracking
-		int cv3_tracker_type = 0;
+		std::string cv3_tracker_type = "mil";
 
 		//! PFSL3
 		int pfsl3_p_x = 40;
@@ -2515,11 +2515,11 @@ namespace mtf{
 			}
 			//! Feature Tracker
 			if(!strcmp(arg_name, "feat_detector_type")){
-				feat_detector_type = atoi(arg_val);
+				feat_detector_type = std::string(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "feat_descriptor_type")){
-				feat_descriptor_type = atoi(arg_val);
+				feat_descriptor_type = std::string(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "feat_max_dist_ratio")){
@@ -3427,7 +3427,7 @@ namespace mtf{
 			}
 			//! CV3
 			if(!strcmp(arg_name, "cv3_tracker_type")){
-				cv3_tracker_type = atoi(arg_val);
+				cv3_tracker_type = std::string(arg_val);
 				return;
 			}
 			//! PFSL3

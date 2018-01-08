@@ -235,15 +235,13 @@ typedef FeatureTrackerParams::DetectorType DetectorType;
 typedef FeatureTrackerParams::DescriptorType DescriptorType;
 typedef FeatureTrackerParams::DetectorParamsType DetectorParamsType;
 typedef FeatureTrackerParams::DescriptorParamsType DescriptorParamsType;
-DetectorParamsType getDetectorParams(int detector_type);
-DescriptorParamsType getDescriptorParams(int descriptor_type);
+DetectorParamsType getDetectorParams(DetectorType detector_type);
+DescriptorParamsType getDescriptorParams(DescriptorType descriptor_type);
 #endif
 
 #ifndef DISABLE_REGNET
 typedef std::unique_ptr<RegNetParams> RegNetParams_;
 #endif
-
-
 
 AMParams_ getAMParams(const char *am_type, const char *ilm_type);
 SSMParams_ getSSMParams(const char *ssm_type);
@@ -675,11 +673,62 @@ TrackerBase *getTracker(const char *sm_type,
 #endif
 #ifndef DISABLE_FEAT
 	if(!strcmp(sm_type, "feat")){
-		bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");		
+		bool enable_pyr = !strcmp(grid_sm, "pyr") || !strcmp(grid_sm, "pyrt");	
+		DetectorType detector_type;
+		if(feat_detector_type == "none" || feat_detector_type == "-1"){
+			detector_type = DetectorType::NONE;
+		} else if(feat_detector_type == "orb" || feat_detector_type == "0"){
+			detector_type = DetectorType::ORB;
+		} else if(feat_detector_type == "brisk" || feat_detector_type == "1"){
+			detector_type = DetectorType::BRISK;
+		} else if(feat_detector_type == "sift" || feat_detector_type == "2"){
+			detector_type = DetectorType::SIFT;
+		} else if(feat_detector_type == "surf" || feat_detector_type == "3"){
+			detector_type = DetectorType::SURF;
+		} else if(feat_detector_type == "fast" || feat_detector_type == "4"){
+			detector_type = DetectorType::FAST;
+		} else if(feat_detector_type == "mser" || feat_detector_type == "5"){
+			detector_type = DetectorType::MSER;
+		} else if(feat_detector_type == "gftt" || feat_detector_type == "6"){
+			detector_type = DetectorType::GFTT;
+		} else if(feat_detector_type == "agast" || feat_detector_type == "7"){
+			detector_type = DetectorType::AGAST;
+		} else if(feat_detector_type == "star" || feat_detector_type == "8"){
+			detector_type = DetectorType::Star;
+		} else if(feat_detector_type == "msd" || feat_detector_type == "9"){
+			detector_type = DetectorType::MSD;
+		} else{
+			throw utils::InvalidArgument(cv::format("Invalid detector type provided: %s", feat_detector_type.c_str()));
+		}
+		DescriptorType descriptor_type;
+		if(feat_descriptor_type == "orb" || feat_descriptor_type == "0"){
+			descriptor_type = DescriptorType::ORB;
+		} else if(feat_descriptor_type == "brisk" || feat_descriptor_type == "1"){
+			descriptor_type = DescriptorType::BRISK;
+		} else if(feat_descriptor_type == "sift" || feat_descriptor_type == "2"){
+			descriptor_type = DescriptorType::ORB;
+		} else if(feat_descriptor_type == "surf" || feat_descriptor_type == "3"){
+			descriptor_type = DescriptorType::ORB;
+		} else if(feat_descriptor_type == "brief" || feat_descriptor_type == "4"){
+			descriptor_type = DescriptorType::BRIEF;
+		} else if(feat_descriptor_type == "freak" || feat_descriptor_type == "5"){
+			descriptor_type = DescriptorType::FREAK;
+		} else if(feat_descriptor_type == "lucid" || feat_descriptor_type == "6"){
+			descriptor_type = DescriptorType::LUCID;
+		} else if(feat_descriptor_type == "latch" || feat_descriptor_type == "7"){
+			descriptor_type = DescriptorType::LATCH;
+		} else if(feat_descriptor_type == "daisy" || feat_descriptor_type == "8"){
+			descriptor_type = DescriptorType::DAISY;
+		} else if(feat_descriptor_type == "vgg" || feat_descriptor_type == "9"){
+			descriptor_type = DescriptorType::VGG;
+		} else if(feat_descriptor_type == "bd" || feat_descriptor_type == "boost" || feat_descriptor_type == "10"){
+			descriptor_type = DescriptorType::BoostDesc;
+		} else{
+			throw utils::InvalidArgument(cv::format("Invalid descriptor type provided: %s", feat_descriptor_type.c_str()));
+		}
 		FeatureTrackerParams feat_params(
-			static_cast<FeatureTrackerParams::DetectorType>(feat_detector_type),
-			static_cast<FeatureTrackerParams::DescriptorType>(feat_descriptor_type),
-			getDetectorParams(feat_detector_type), getDescriptorParams(feat_descriptor_type),
+			detector_type, descriptor_type,
+			getDetectorParams(detector_type), getDescriptorParams(descriptor_type),
 			grid_res, grid_res, grid_patch_size, grid_patch_size, grid_reset_at_each_frame,
 			feat_rebuild_index, max_iters, epsilon, enable_pyr, feat_use_cv_flann,
 			feat_max_dist_ratio, feat_min_matches, uchar_input, feat_show_keypoints,
@@ -1494,9 +1543,9 @@ inline FLANNParams_ getFLANNParams(){
 #endif
 #endif
 #ifndef DISABLE_FEAT
-inline DetectorParamsType getDetectorParams(int detector_type){
+inline DetectorParamsType getDetectorParams(DetectorType detector_type){
 	DetectorParamsType detector_params;
-	switch(static_cast<DetectorType>(detector_type)){
+	switch(detector_type){
 	case DetectorType::NONE:
 		break;
 	case DetectorType::SIFT:
@@ -1581,9 +1630,9 @@ inline DetectorParamsType getDetectorParams(int detector_type){
 	}
 	return detector_params;
 }
-inline DescriptorParamsType getDescriptorParams(int descriptor_type){
+inline DescriptorParamsType getDescriptorParams(DescriptorType descriptor_type){
 	DescriptorParamsType descriptor_params;
-	switch(static_cast<DescriptorType>(descriptor_type)){
+	switch(descriptor_type){
 	case DescriptorType::SIFT:
 		descriptor_params.push_back(sift_n_features);
 		descriptor_params.push_back(sift_n_octave_layers);
@@ -2047,7 +2096,23 @@ inline TrackerBase *getTracker(const char *tracker_type){
 #endif
 #ifndef DISABLE_CV3
 	else if(!strcmp(tracker_type, "cv3")){
-		CV3Params cv3_params(static_cast<CV3::TrackerType>(cv3_tracker_type));
+		CV3::TrackerType _tracker_type;
+		if(cv3_tracker_type == "mil" || cv3_tracker_type == "0"){
+			_tracker_type = CV3::TrackerType::MIL;
+		} else if(cv3_tracker_type == "boost" || cv3_tracker_type == "bst" || cv3_tracker_type == "1"){
+			_tracker_type = CV3::TrackerType::BOOSTING;
+		} else if(cv3_tracker_type == "mdf" || cv3_tracker_type == "2"){
+			_tracker_type = CV3::TrackerType::MEDIANFLOW;
+		} else if(cv3_tracker_type == "tld" || cv3_tracker_type == "3"){
+			_tracker_type = CV3::TrackerType::TLD;
+		} else if(cv3_tracker_type == "kcf" || cv3_tracker_type == "4"){
+			_tracker_type = CV3::TrackerType::KCF;
+		} else if(cv3_tracker_type == "gtrn" || cv3_tracker_type == "5"){
+			_tracker_type = CV3::TrackerType::GOTURN;
+		} else{
+			throw utils::InvalidArgument(cv::format("Invalid tracker type provided: %s", cv3_tracker_type.c_str()));
+		}
+		CV3Params cv3_params(_tracker_type);
 		return new CV3(&cv3_params);
 	}
 #endif
