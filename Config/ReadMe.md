@@ -1162,39 +1162,38 @@ Feature Tracker:
 		Description:
 			feature detector type
 		Possible Values:
-			-1:	None - an equally spaced grid of points is used instead
-			0:	ORB
-			1:	BRISK
+			none/-1:	None - an equally spaced grid of points is used instead
+			orb/0:	ORB
+			brisk/1:	BRISK
 			Only if OpenCV 2 nonfree / OpenCV 3 contrib module is available
-				2:	SIFT
-				3:	SURF
-			4:	FAST
-			5:	MSER
-			6:	GFTT
+				sift/2:	SIFT
+				surf/3:	SURF
+			fast/4:	FAST
+			mser/5:	MSER
+			gftt/6:	GFTT
 			Only OpenCV 3:
-				7:	AGAST
+				agast/7:	AGAST
 			Only OpenCV 3 with contrib module available:
-				8:	Star
-				9:	MSD
-
+				star/8:	Star
+				msd/9:	MSD
 			
 	 Parameter:	'feat_descriptor_type'
 		Description:
 			feature descriptor type
 		Possible Values:
-			0:	ORB
-			1:	BRISK
+			orb/0:	ORB
+			brisk/brk/1:	BRISK
 			Only if OpenCV 2 nonfree / OpenCV 3 contrib module is available
-				2:	SIFT
-				3:	SURF
+				sift/2:	SIFT
+				surf/3:	SURF
 			Only OpenCV 3 with contrib module available:
-				4:	BRIEF
-				5:	FREAK
-				6:	LUCID
-				7:	LATCH
-				8:	DAISY
-				9:	VGG
-				10:	BoostDesc
+				brief/brf/4:	BRIEF
+				freak/frk/5:	FREAK
+				lucid/lcd/6:	LUCID
+				latch/lth/7:	LATCH
+				daisy/dsy/8:	DAISY
+				vgg/9:	VGG
+				boost/bd/10:	BoostDesc
 		 
 	 Parameter:	'feat_max_dist_ratio'
 		Description:
@@ -2866,13 +2865,13 @@ OpenCV 3 Tracking module:
 		Description:
 			Tracker type
 		Possible Values:		
-			0:	MIL
-			1:	BOOSTING
-			2:	MEDIANFLOW
-			3:	MIL
-			4:	TLD
-			5:	KCF
-			6:	GOTURN
+			mil/0:	MIL
+			boost/bst/1:	BOOSTING
+			mdf/2:	MEDIANFLOW
+			mil/3:	MIL
+			tld/4:	TLD
+			kcf/5:	KCF
+			gtrn/6:	GOTURN
 	 Additional References:
 		https://www.learnopencv.com/object-tracking-using-opencv-cpp-python/
 		https://docs.opencv.org/3.1.0/d2/d0a/tutorial_introduction_to_tracker.html

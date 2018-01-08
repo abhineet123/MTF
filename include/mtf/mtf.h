@@ -703,25 +703,25 @@ TrackerBase *getTracker(const char *sm_type,
 		DescriptorType descriptor_type;
 		if(feat_descriptor_type == "orb" || feat_descriptor_type == "0"){
 			descriptor_type = DescriptorType::ORB;
-		} else if(feat_descriptor_type == "brisk" || feat_descriptor_type == "1"){
+		} else if(feat_descriptor_type == "brisk" || feat_descriptor_type == "brk" || feat_descriptor_type == "1"){
 			descriptor_type = DescriptorType::BRISK;
 		} else if(feat_descriptor_type == "sift" || feat_descriptor_type == "2"){
 			descriptor_type = DescriptorType::ORB;
 		} else if(feat_descriptor_type == "surf" || feat_descriptor_type == "3"){
 			descriptor_type = DescriptorType::ORB;
-		} else if(feat_descriptor_type == "brief" || feat_descriptor_type == "4"){
+		} else if(feat_descriptor_type == "brief" || feat_descriptor_type == "brf" || feat_descriptor_type == "4"){
 			descriptor_type = DescriptorType::BRIEF;
-		} else if(feat_descriptor_type == "freak" || feat_descriptor_type == "5"){
+		} else if(feat_descriptor_type == "freak" || feat_descriptor_type == "frk" || feat_descriptor_type == "5"){
 			descriptor_type = DescriptorType::FREAK;
-		} else if(feat_descriptor_type == "lucid" || feat_descriptor_type == "6"){
+		} else if(feat_descriptor_type == "lucid" || feat_descriptor_type == "lcd" || feat_descriptor_type == "6"){
 			descriptor_type = DescriptorType::LUCID;
-		} else if(feat_descriptor_type == "latch" || feat_descriptor_type == "7"){
+		} else if(feat_descriptor_type == "latch" || feat_descriptor_type == "lth" || feat_descriptor_type == "7"){
 			descriptor_type = DescriptorType::LATCH;
-		} else if(feat_descriptor_type == "daisy" || feat_descriptor_type == "8"){
+		} else if(feat_descriptor_type == "daisy" || feat_descriptor_type == "dsy" || feat_descriptor_type == "8"){
 			descriptor_type = DescriptorType::DAISY;
 		} else if(feat_descriptor_type == "vgg" || feat_descriptor_type == "9"){
 			descriptor_type = DescriptorType::VGG;
-		} else if(feat_descriptor_type == "bd" || feat_descriptor_type == "boost" || feat_descriptor_type == "10"){
+		} else if(feat_descriptor_type == "boost" || feat_descriptor_type == "bd" || feat_descriptor_type == "10"){
 			descriptor_type = DescriptorType::BoostDesc;
 		} else{
 			throw utils::InvalidArgument(cv::format("Invalid descriptor type provided: %s", feat_descriptor_type.c_str()));
