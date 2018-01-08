@@ -201,8 +201,8 @@ Compile/Runtime Notes:
     * third party trackers in particular are likely to have issues with OpenCV 3.x as many use legacy versions so these should be disabled using `lt=0`/`-DWITH_THIRD_PARTY=OFF` if compilation or linking errors pertaining to these are found.
     * if a linking error of type `/usr/bin/ld: cannot find -lippicv` occurs, remove `-ippicv` from opencv pkg-config configuration file which is usually located at `/usr/local/lib/pkgconfig/opencv.pc` or follow the procedures suggested [here](http://answers.opencv.org/question/84265/compiling-error-with-lippicv/)
 * if compilation is taking too long and optional components are not needed, following cmake/make commands can be used to build a minimal version of MTF with full core functionality:  
-	`cmake .. -DWITH_THIRD_PARTY=OFF -DWITH_TEMPLATED=OFF`
-	`make mtfall lt=0 nt=1`
+	`cmake .. -DWITH_THIRD_PARTY=OFF -DWITH_TEMPLATED=OFF`  
+	`make mtfall lt=0 nt=1`  
     * if FLANN based NN is not needed (graph based NN will still be available), `-DWITH_FLANN=OFF`/`nn=0` can be specified too  
 	
 <!--- 
