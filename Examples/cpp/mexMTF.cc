@@ -165,7 +165,8 @@ void parseParams(const mxArray *prhs){
 	mxGetString(prhs, param_str, param_str_len);
 	std::vector<char*> fargv;
 	fargv.push_back(nullptr);
-	std::istringstream iss(std::string(param_str));
+	std::string _param_str = std::string(param_str);
+	std::istringstream iss(_param_str);
 	do{
 		string subs;
 		iss >> subs;

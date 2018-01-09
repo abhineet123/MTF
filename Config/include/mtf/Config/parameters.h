@@ -40,6 +40,7 @@
 		param_name.push_back(param_func(arg_val));\
 		return;\
 							}} while(0)
+#define atof32(x) static_cast<float>(atof(x))
 
 namespace mtf{
 	namespace params{
@@ -1034,7 +1035,7 @@ namespace mtf{
 			char *param_str = strtok(str, sep);
 			std::vector<float> param_arr;
 			while(param_str){
-				float param_num = static_cast<float>(atof(param_str));
+				float param_num = atof32(param_str);
 				param_arr.push_back(param_num);
 				param_str = strtok(nullptr, sep);
 			}
@@ -2200,7 +2201,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "nn_srch_eps")){
-				nn_srch_eps = static_cast<float>(atof(arg_val));
+				nn_srch_eps = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "nn_srch_sorted")){
@@ -2264,7 +2265,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "nn_km_cb_index")){
-				nn_km_cb_index = static_cast<float>(atof(arg_val));
+				nn_km_cb_index = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "nn_kdts_leaf_max_size")){
@@ -2292,19 +2293,19 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "nn_auto_target_precision")){
-				nn_auto_target_precision = static_cast<float>(atof(arg_val));
+				nn_auto_target_precision = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "ann_uto_build_weight")){
-				nn_auto_build_weight = static_cast<float>(atof(arg_val));
+				nn_auto_build_weight = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "nn_auto_memory_weight")){
-				nn_auto_memory_weight = static_cast<float>(atof(arg_val));
+				nn_auto_memory_weight = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "nn_auto_sample_fraction")){
-				nn_auto_sample_fraction = static_cast<float>(atof(arg_val));
+				nn_auto_sample_fraction = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "nnk_n_layers")){
@@ -2612,7 +2613,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "brisk_pattern_scale")){
-				brisk_pattern_scale = static_cast<float>(atof(arg_val));
+				brisk_pattern_scale = atof32(arg_val);
 				return;
 			}
 			//! MSER detector
@@ -2658,7 +2659,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "orb_scale_factor")){
-				orb_scale_factor = static_cast<float>(atof(arg_val));
+				orb_scale_factor = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "orb_n_levels")){
@@ -2746,7 +2747,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "freak_pattern_scale")){
-				freak_pattern_scale = atof(arg_val);
+				freak_pattern_scale = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "freak_n_octaves")){
@@ -2777,7 +2778,7 @@ namespace mtf{
 			}
 			//! DAISY descriptor
 			if(!strcmp(arg_name, "daisy_radius")){
-				daisy_radius = atof(arg_val);
+				daisy_radius = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "daisy_q_radius")){
@@ -2810,7 +2811,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "vgg_isigma")){
-				vgg_isigma = atof(arg_val);
+				vgg_isigma = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "vgg_img_normalize")){
@@ -2822,7 +2823,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "vgg_scale_factor")){
-				vgg_scale_factor = atof(arg_val);
+				vgg_scale_factor = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "vgg_dsc_normalize")){
@@ -2839,7 +2840,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "boost_desc_scale_factor")){
-				boost_desc_scale_factor = atof(arg_val);
+				boost_desc_scale_factor = atof32(arg_val);
 				return;
 			}
 			//! Star detector
@@ -2881,7 +2882,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "msd_th_saliency")){
-				msd_th_saliency = atof(arg_val);
+				msd_th_saliency = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "msd_kNN")){
@@ -2889,7 +2890,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "msd_scale_factor")){
-				msd_scale_factor = atof(arg_val);
+				msd_scale_factor = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "msd_n_scales")){
@@ -3273,15 +3274,15 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "mil_overlap")){
-				mil_overlap = static_cast<float>(atof(arg_val));
+				mil_overlap = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "mil_search_factor")){
-				mil_search_factor = static_cast<float>(atof(arg_val));
+				mil_search_factor = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "mil_pos_radius_train")){
-				mil_pos_radius_train = static_cast<float>(atof(arg_val));
+				mil_pos_radius_train = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "mil_neg_num_train")){
@@ -3410,19 +3411,19 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, " vp_pg_fw_shutter_ms")){
-				 vp_pg_fw_shutter_ms = static_cast<float>(atof(arg_val));
+				 vp_pg_fw_shutter_ms = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, " vp_pg_fw_gain")){
-				 vp_pg_fw_gain = static_cast<float>(atof(arg_val));
+				 vp_pg_fw_gain = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, " vp_pg_fw_exposure")){
-				 vp_pg_fw_exposure = static_cast<float>(atof(arg_val));
+				 vp_pg_fw_exposure = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, " vp_pg_fw_brightness")){
-				 vp_pg_fw_brightness = static_cast<float>(atof(arg_val));
+				 vp_pg_fw_brightness = atof32(arg_val);
 				return;
 			}
 			//! CV3
@@ -3500,7 +3501,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "pfsl3_ff")){
-				pfsl3_ff = static_cast<float>(atof(arg_val));
+				pfsl3_ff = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "pfsl3_basis_thr")){
@@ -3551,11 +3552,11 @@ namespace mtf{
 			}
 			//! DFT
 			if(!strcmp(arg_name, "dft_res_to_l")){
-				dft_res_to_l = static_cast<float>(atof(arg_val));
+				dft_res_to_l = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "dft_p_to_l")){
-				dft_p_to_l = static_cast<float>(atof(arg_val));
+				dft_p_to_l = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "dft_max_iter")){
@@ -3571,7 +3572,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "dft_presmoothing_variance")){
-				dft_presmoothing_variance = static_cast<float>(atof(arg_val));
+				dft_presmoothing_variance = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "dft_n_control_points_on_edge")){
@@ -3708,7 +3709,7 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "pca_f_factor")){
-				pca_f_factor = static_cast<float>(atof(arg_val));
+				pca_f_factor = atof32(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "pca_show_basis")){
