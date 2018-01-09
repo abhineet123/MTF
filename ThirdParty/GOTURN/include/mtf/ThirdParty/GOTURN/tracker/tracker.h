@@ -9,10 +9,10 @@
 #include "mtf/ThirdParty/GOTURN/train/example_generator.h"
 #include "mtf/ThirdParty/GOTURN/network/regressor.h"
 
-class Tracker
+class GoturnTracker
 {
 public:
-  Tracker(const bool show_tracking);
+  GoturnTracker(const bool show_tracking);
 
   // Estimate the location of the target object in the current image.
   virtual void Track(const cv::Mat& image_curr, RegressorBase* regressor,

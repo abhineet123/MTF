@@ -41,7 +41,7 @@ private:
 	ParamType params;
 
 	Regressor *regressor;
-	Tracker *tracker;
+	GoturnTracker *tracker;
 
 	cv::Mat curr_img;
 	BoundingBox bbox_estimate;

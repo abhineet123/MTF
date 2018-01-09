@@ -8,7 +8,7 @@
 using std::string;
 
 TrackerManager::TrackerManager(const std::vector<Video>& videos,
-                               RegressorBase* regressor, Tracker* tracker) :
+                               RegressorBase* regressor, GoturnTracker* tracker) :
   videos_(videos),
   regressor_(regressor),
   tracker_(tracker)
@@ -69,7 +69,7 @@ void TrackerManager::TrackAll(const size_t start_video_num, const int pause_val)
 }
 
 TrackerVisualizer::TrackerVisualizer(const std::vector<Video>& videos,
-                                     RegressorBase* regressor, Tracker* tracker) :
+                                     RegressorBase* regressor, GoturnTracker* tracker) :
   TrackerManager(videos, regressor, tracker)
 {
 }
@@ -104,7 +104,7 @@ void TrackerVisualizer::VideoInit(const Video& video, const size_t video_num) {
 
 TrackerTesterAlov::TrackerTesterAlov(const std::vector<Video>& videos,
                                      const bool save_videos,
-                                     RegressorBase* regressor, Tracker* tracker,
+                                     RegressorBase* regressor, GoturnTracker* tracker,
                                      const std::string& output_folder) :
   TrackerManager(videos, regressor, tracker),
   output_folder_(output_folder),

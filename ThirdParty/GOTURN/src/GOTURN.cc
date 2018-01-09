@@ -39,7 +39,7 @@ params(cmt_params), tracker(nullptr), regressor(nullptr){
 
 	regressor = new Regressor(params.model_file, params.trained_file,
 		params.gpu_id, params.do_train);
-	tracker = new Tracker(params.show_intermediate_output);
+	tracker = new GoturnTracker(params.show_intermediate_output);
 	bounding_box_vec.resize(4);
 	cv_corners_mat.create(2, 4, CV_64FC1);
 }

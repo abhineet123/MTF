@@ -36,7 +36,7 @@ int main (int argc, char *argv[]) {
 
   // Create a tracker object.
   const bool show_intermediate_output = false;
-  Tracker tracker(show_intermediate_output);
+  GoturnTracker tracker(show_intermediate_output);
 
   VOT vot; // Initialize the communcation
 

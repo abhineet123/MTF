@@ -9,12 +9,12 @@
 #include "mtf/ThirdParty/GOTURN/helper/high_res_timer.h"
 #include "mtf/ThirdParty/GOTURN/helper/image_proc.h"
 
-Tracker::Tracker(const bool show_tracking) :
+GoturnTracker::GoturnTracker(const bool show_tracking) :
   show_tracking_(show_tracking)
 {
 }
 
-void Tracker::Init(const cv::Mat& image, const BoundingBox& bbox_gt,
+void GoturnTracker::Init(const cv::Mat& image, const BoundingBox& bbox_gt,
                    RegressorBase* regressor) {
   image_prev_ = image;
   bbox_prev_tight_ = bbox_gt;
@@ -28,7 +28,7 @@ void Tracker::Init(const cv::Mat& image, const BoundingBox& bbox_gt,
   regressor->Init();
 }
 
-void Tracker::Init(const std::string& image_curr_path, const VOTRegion& region,
+void GoturnTracker::Init(const std::string& image_curr_path, const VOTRegion& region,
                    RegressorBase* regressor) {
   // Read the given image.
   const cv::Mat& image = cv::imread(image_curr_path);
@@ -40,7 +40,7 @@ void Tracker::Init(const std::string& image_curr_path, const VOTRegion& region,
   Init(image, bbox_gt, regressor);
 }
 
-void Tracker::Track(const cv::Mat& image_curr, RegressorBase* regressor,
+void GoturnTracker::Track(const cv::Mat& image_curr, RegressorBase* regressor,
                     BoundingBox* bbox_estimate_uncentered) {
   // Get target from previous image.
   cv::Mat target_pad;
@@ -78,7 +78,7 @@ void Tracker::Track(const cv::Mat& image_curr, RegressorBase* regressor,
   bbox_curr_prior_tight_ = *bbox_estimate_uncentered;
 }
 
-void Tracker::ShowTracking(const cv::Mat& target_pad, const cv::Mat& curr_search_region, const BoundingBox& bbox_estimate) const {
+void GoturnTracker::ShowTracking(const cv::Mat& target_pad, const cv::Mat& curr_search_region, const BoundingBox& bbox_estimate) const {
   // Resize the target.
   cv::Mat target_resize;
   cv::resize(target_pad, target_resize, cv::Size(227, 227));

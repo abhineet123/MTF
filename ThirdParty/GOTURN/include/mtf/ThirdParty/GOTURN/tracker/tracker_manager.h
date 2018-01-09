@@ -11,7 +11,7 @@ class TrackerManager
 {
 public:
   TrackerManager(const std::vector<Video>& videos,
-                 RegressorBase* regressor, Tracker* tracker);
+                 RegressorBase* regressor, GoturnTracker* tracker);
 
   // Iterate over all videos and track the target object in each.
   void TrackAll() ;
@@ -47,7 +47,7 @@ protected:
   RegressorBase* regressor_;
 
   // Tracker.
-  Tracker* tracker_;
+  GoturnTracker* tracker_;
 };
 
 // Track objects and visualize the tracker output.
@@ -55,7 +55,7 @@ class TrackerVisualizer : public TrackerManager
 {
 public:
   TrackerVisualizer(const std::vector<Video>& videos,
-                    RegressorBase* regressor, Tracker* tracker);
+                    RegressorBase* regressor, GoturnTracker* tracker);
 
   // Print which video is being visualized.
   virtual void VideoInit(const Video& video, const size_t video_num);
@@ -73,7 +73,7 @@ class TrackerTesterAlov : public TrackerManager
 public:
   TrackerTesterAlov(const std::vector<Video>& videos,
                     const bool save_videos,
-                    RegressorBase* regressor, Tracker* tracker,
+                    RegressorBase* regressor, GoturnTracker* tracker,
                     const std::string& output_folder);
 
   // Set up folder to save tracking output to a video.

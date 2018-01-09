@@ -51,7 +51,7 @@ int main (int argc, char *argv[]) {
   const bool do_train = false;
   Regressor regressor(model_file, trained_file, gpu_id, do_train);
 
-  Tracker tracker(show_intermediate_output);
+  GoturnTracker tracker(show_intermediate_output);
 
   // Get videos.
   std::vector<Video> videos;

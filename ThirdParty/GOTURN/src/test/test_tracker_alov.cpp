@@ -51,7 +51,7 @@ int main (int argc, char *argv[]) {
 
   // Create a tracker object.
   const bool show_intermediate_output = false;
-  Tracker tracker(show_intermediate_output);
+  GoturnTracker tracker(show_intermediate_output);
 
   // Track all objects in all videos.
   TrackerTesterAlov tracker_tester(videos, save_videos, &regressor, &tracker, output_folder);
