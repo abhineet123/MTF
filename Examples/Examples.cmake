@@ -3,13 +3,16 @@ option(WITH_MEX "Enable compilation of the Matlab interface. This will be automa
 
 if (WIN32)
 	set(MTF_PY_INSTALL_DIR_DEFAULT C:/Python27/Lib/site-packages)
+	set(MTF_MEX_INSTALL_DIR_DEFAULT C:/Python27/Lib/site-packages)
 	set(Matlab_ROOT_DIR_DEFAULT I:/MATLAB/R2014a/)
 else()
 	set(MTF_PY_INSTALL_DIR_DEFAULT /usr/local/lib/python2.7/dist-packages)
+	set(MTF_MEX_INSTALL_DIR_DEFAULT /usr/local/lib/python2.7/dist-packages)
 	set(Matlab_ROOT_DIR_DEFAULT /usr/local/MATLAB/MATLAB_Production_Server/R2013a/)
 endif()
 set(MTF_PY_INSTALL_DIR ${MTF_PY_INSTALL_DIR_DEFAULT} CACHE PATH "Directory to install the Python interface module") 
 set(Matlab_ROOT_DIR ${Matlab_ROOT_DIR_DEFAULT} CACHE PATH "MATLAB root directory") 
+set(MTF_MEX_INSTALL_DIR ${Matlab_ROOT_DIR}/toolbox/local CACHE PATH "Directory to install the Matlab interface module") 
 
 # set(WARNING_FLAGS -Wfatal-errors -Wno-write-strings -Wno-unused-result)
 # set(MTF_COMPILETIME_FLAGS -std=c++11)
@@ -204,8 +207,8 @@ if(WITH_MEX)
 			LINK_TO mtf ${MTF_LIBS} ${Matlab_LIBRARIES}
 		)
 		install(TARGETS mexMTF 
-		RUNTIME DESTINATION ${Matlab_ROOT_DIR}/toolbox/local 
-		LIBRARY DESTINATION ${Matlab_ROOT_DIR}/toolbox/local
+		RUNTIME DESTINATION ${MTF_MEX_INSTALL_DIR} 
+		LIBRARY DESTINATION ${MTF_MEX_INSTALL_DIR}
 		COMPONENT mex)
 		add_custom_target(mex DEPENDS mexMTF)
 		if(NOT WIN32)

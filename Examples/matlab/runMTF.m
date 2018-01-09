@@ -36,7 +36,7 @@ if use_mtf_pipeline
     else
         fprintf('MTF input pipeline created successfully');
         if n_frames > 0
-            fprintf(' with %d frames');
+            fprintf(' with %d frames', n_frames);
         end
         fprintf('\n');
     end
@@ -80,7 +80,7 @@ else
 end
 % pause
 avg_error = 0;
-frame_id = init_frame_id + 1
+frame_id = init_frame_id + 1;
 while  1
     if use_mtf_pipeline
         [success, curr_img] = mexMTF('update_input', input_id);
