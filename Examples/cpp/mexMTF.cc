@@ -206,7 +206,7 @@ bool createInput(mxArray* &plhs) {
 	}
 	++_input_id;
 	input_pipelines.insert(std::pair<int, Input>(_input_id, input));
-	unsigned int dims[2] = { 1, 1 };
+	mwSize dims[2] = { 1, 1 };
 	plhs = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
 	//plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
 	unsigned int *ret_val = (unsigned int*)mxGetPr(plhs);
@@ -227,7 +227,7 @@ bool updateInput(unsigned int input_id, mxArray* &plhs) {
 		n_channels = 1;
 		n_dims = 2;
 	}	
-	unsigned *dims = new unsigned[n_dims];
+	mwSize *dims = new mwSize[n_dims];
 	dims[0] = frame.rows;
 	dims[1] = frame.cols;
 	if(n_channels == 3){
@@ -362,7 +362,7 @@ bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) 
 }
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
-	unsigned int dims[2] = { 1, 1 };
+	mwSize dims[2] = { 1, 1 };
 	plhs[0] = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
 	//plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
 	unsigned int *ret_val = (unsigned int*)mxGetPr(plhs[0]);
