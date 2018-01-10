@@ -40,6 +40,17 @@
 		param_name.push_back(param_func(arg_val));\
 		return;\
 							}} while(0)
+
+#define parse_cfg(fname) \
+			fargc = readParams(fargv, (config_dir + "/" + fname).c_str());\
+			if(fargc){\
+				if(!parseArgumentPairs(fargv.data(), fargc)){\
+					printf("Error in parsing %s\n", fname);\
+					return false;\
+				}\
+				fargv.clear();\
+			}
+
 #define atof32(x) static_cast<float>(atof(x))
 
 namespace mtf{
@@ -4125,7 +4136,16 @@ namespace mtf{
 				}
 				fargv.clear();
 			}
-			//! read parameters for different example applications
+			//! read parameters for feature detectors and descriptors
+			fargc = readParams(fargv, (config_dir + "/feat.cfg").c_str());
+			if(fargc){
+				if(!parseArgumentPairs(fargv.data(), fargc)){
+					printf("Error in parsing feat.cfg\n");
+					return false;
+				}
+				fargv.clear();
+			}
+			//! read parameters for example applications
 			fargc = readParams(fargv, (config_dir + "/examples.cfg").c_str());
 			if(fargc){
 				if(!parseArgumentPairs(fargv.data(), fargc)){
