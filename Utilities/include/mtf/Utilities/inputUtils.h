@@ -115,7 +115,7 @@ namespace utils{
 			res1280x960, res1600x1200
 		};
 		enum class VpDepthFW{
-			Default, RGB, YUV422, Y8, Y16
+			Default, RGB, YUV422, MONO8, MONO16
 		};
 		enum class VpFpsUSB{
 			Default, fps25, fps50

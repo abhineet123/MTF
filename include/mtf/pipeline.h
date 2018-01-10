@@ -96,10 +96,10 @@ inline utils::InputBase* getInput(char _pipeline_type){
 			fw_depth = utils::InputVPParams::VpDepthFW::RGB;
 		} else if(vp_fw_depth == "yuv422" || vp_fw_depth == "2"){
 			fw_depth = utils::InputVPParams::VpDepthFW::YUV422;
-		} else if(vp_fw_depth == "y8" || vp_fw_depth == "3"){
-			fw_depth = utils::InputVPParams::VpDepthFW::Y8;
-		} else if(vp_fw_depth == "y16" || vp_fw_depth == "4"){
-			fw_depth = utils::InputVPParams::VpDepthFW::Y16;
+		} else if(vp_fw_depth == "mono8" || vp_fw_depth == "3"){
+			fw_depth = utils::InputVPParams::VpDepthFW::MONO8;
+		} else if(vp_fw_depth == "mono16" || vp_fw_depth == "4"){
+			fw_depth = utils::InputVPParams::VpDepthFW::MONO16;
 		} else{
 			throw utils::InvalidArgument(
 				cv::format("Invalid image depth mode specified for ViSP firewire camera: %s\n",
