@@ -23,8 +23,8 @@ end
 if ~exist('pipeline', 'var')
 	pipeline = 'c';
 end
-if ~exist('img_source 'var')
-	img_source = 'c';
+if ~exist('img_source', 'var')
+	img_source = 'j';
 end
 if ~exist('actor_id', 'var')
 	actor_id = 0;
