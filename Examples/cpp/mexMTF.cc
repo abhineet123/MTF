@@ -23,6 +23,7 @@
 #define MEX_TRACKER_UPDATE 6
 #define MEX_TRACKER_SET_REGION 7
 #define MEX_TRACKER_REMOVE 8
+#define MEX_QUIT 9
 
 #define _A3D_IDX_COLUMN_MAJOR(i,j,k,nrows,ncols) ((i)+((j)+(k)*ncols)*nrows)
 // interleaved row-major indexing for 2-D OpenCV images
@@ -43,7 +44,8 @@ static std::map<std::string, const int> cmd_list = {
 	{ "initialize_tracker", MEX_TRACKER_INITIALIZE },
 	{ "update_tracker", MEX_TRACKER_UPDATE },
 	{ "set_region", MEX_TRACKER_SET_REGION },
-	{ "remove_tracker", MEX_TRACKER_REMOVE }
+	{ "remove_tracker", MEX_TRACKER_REMOVE },
+	{ "quit", MEX_QUIT }
 };
 
 struct TrackerStruct{
@@ -549,7 +551,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		*ret_val = 1;
 		return;
 	}
+	case MEX_QUIT:
+	{
+		input_pipelines.clear();
+		trackers.clear();		
+		*ret_val = 1;
+		return;
+	}
 	default:
-		mexErrMsgTxt(cv::format("Invalid comand provided: %s.", cmd_str).c_str());
+		mexErrMsgTxt(cv::format("Invalid command provided: %s.", cmd_str).c_str());
 	}
 }
