@@ -784,8 +784,8 @@ namespace mtf{
 
 		//! ViSP Pipeline
 		int vp_usb_n_buffers = 3;
-		int vp_usb_res = 0;
-		int vp_usb_fps = 0;
+		std::string vp_usb_res = "0";
+		std::string vp_usb_fps = "0";
 		std::string vp_fw_res = "0";
 		std::string vp_fw_fps = "0";
 		std::string vp_fw_depth = "0";
@@ -3390,11 +3390,11 @@ namespace mtf{
 			}
 			//! ViSP pipeline
 			if(!strcmp(arg_name, "vp_usb_res")){
-				vp_usb_res = atoi(arg_val);
+				vp_usb_res = std::string(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "vp_usb_fps")){
-				vp_usb_fps = atoi(arg_val);
+				vp_usb_fps = std::string(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "vp_usb_n_buffers")){

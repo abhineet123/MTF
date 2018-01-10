@@ -239,34 +239,34 @@ ViSP input pipeline:
 		Description:
 			Image resolution for USB camera source
 		Possible Values:
-			0: Default
-			1: 640 x 480
-			2: 800 x 600
-			3: 1024 x 768
-			4: 1280 x 720
-			5: 1920 x 1080
+			default/0: Default
+			640x480/1: 640 x 480
+			800x600/2: 800 x 600
+			1024x768/3: 1024 x 768
+			1280x720/4: 1280 x 720
+			1920x1080/5: 1920 x 1080
 			
 	 Parameter:	'vp_usb_fps'
 		Description:
 			Video speed in frames per second (FPS) for USB camera source
 		Possible Values:
-			0: Default
-			1: 25
-			2: 50
+			default/0: Default
+			25/1: 25
+			50/2: 50
 			
 	 Parameter:	'vp_fw_fps'
 		Description:
 			Video speed in frames per second (FPS) for Firewire or PointGrey camera source
 		Possible Values:
-			0: Default
-			1: 15
-			2: 30
-			3: 60
-			4: 120
-			5: 240
-			6: 7.5 (only PointGrey)
-			7: 3.75 (only PointGrey)
-			8: 1.875 (only PointGrey)
+			default/0: Default
+			15/1: 15
+			30/2: 30
+			60/3: 60
+			120/4: 120
+			240/5: 240
+			7.5/6: 7.5 (only PointGrey)
+			3.75/7: 3.75 (only PointGrey)
+			1.875/8: 1.875 (only PointGrey)
 			
 	 Parameter:	'vp_fw_res'
 		Description:

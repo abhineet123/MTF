@@ -47,6 +47,36 @@ inline utils::InputBase* getInput(char _pipeline_type){
 #ifndef DISABLE_VISP
 	case VISP_PIPELINE:
 	{
+		utils::InputVPParams::VpResUSB usb_res;
+		if(vp_usb_res == "default" || vp_usb_res == "0"){
+			usb_res = utils::InputVPParams::VpResUSB::Default;
+		} else if(vp_usb_res == "640x480" || vp_usb_res == "1"){
+			usb_res = utils::InputVPParams::VpResUSB::res640x480;
+		} else if(vp_usb_res == "800x600" || vp_usb_res == "2"){
+			usb_res = utils::InputVPParams::VpResUSB::res800x600;
+		} else if(vp_usb_res == "1024x768" || vp_usb_res == "3"){
+			usb_res = utils::InputVPParams::VpResUSB::res1024x768;
+		} else if(vp_usb_res == "1280x720" || vp_usb_res == "4"){
+			usb_res = utils::InputVPParams::VpResUSB::res1280x720;
+		} else if(vp_usb_res == "1920x1080" || vp_usb_res == "5"){
+			usb_res = utils::InputVPParams::VpResUSB::res1920x1080;
+		} else{
+			throw utils::InvalidArgument(
+				cv::format("Invalid resolution mode specified for ViSP USB pipeline: %s\n",
+				vp_usb_res.c_str()));
+		}
+		utils::InputVPParams::VpFpsUSB usb_fps;
+		if(vp_usb_fps == "default" || vp_usb_fps == "0"){
+			usb_fps = utils::InputVPParams::VpFpsUSB::Default;
+		} else if(vp_usb_fps == "25" || vp_usb_fps == "1"){
+			usb_fps = utils::InputVPParams::VpFpsUSB::fps25;
+		} else if(vp_usb_fps == "50" || vp_usb_fps == "2"){
+			usb_fps = utils::InputVPParams::VpFpsUSB::fps50;
+		} else{
+			throw utils::InvalidArgument(
+				cv::format("Invalid FPS mode specified for ViSP USB pipeline: %s\n",
+				vp_usb_fps.c_str()));
+		}
 		utils::InputVPParams::VpResFW fw_res;
 		if(vp_fw_res == "default" || vp_fw_res == "0"){
 			fw_res = utils::InputVPParams::VpResFW::Default;
@@ -62,7 +92,7 @@ inline utils::InputBase* getInput(char _pipeline_type){
 			fw_res = utils::InputVPParams::VpResFW::res1600x1200;
 		} else{
 			throw utils::InvalidArgument(
-				cv::format("Invalid resolution mode specified for ViSP firewire camera: %s\n",
+				cv::format("Invalid resolution mode specified for ViSP firewire pipeline: %s\n",
 				vp_fw_res.c_str()));
 		}
 		utils::InputVPParams::VpFpsFW fw_fps;
@@ -86,7 +116,7 @@ inline utils::InputBase* getInput(char _pipeline_type){
 			fw_fps = utils::InputVPParams::VpFpsFW::fps1_875;
 		} else{
 			throw utils::InvalidArgument(
-				cv::format("Invalid FPS mode specified for ViSP firewire camera: %s\n",
+				cv::format("Invalid FPS mode specified for ViSP firewire pipeline: %s\n",
 				vp_fw_fps.c_str()));
 		}
 		utils::InputVPParams::VpDepthFW fw_depth;
@@ -102,7 +132,7 @@ inline utils::InputBase* getInput(char _pipeline_type){
 			fw_depth = utils::InputVPParams::VpDepthFW::MONO16;
 		} else{
 			throw utils::InvalidArgument(
-				cv::format("Invalid image depth mode specified for ViSP firewire camera: %s\n",
+				cv::format("Invalid image depth mode specified for ViSP firewire pipeline: %s\n",
 				vp_fw_depth.c_str()));
 		}
 		utils::InputVPParams::VpISOFW fw_iso;
@@ -122,13 +152,12 @@ inline utils::InputBase* getInput(char _pipeline_type){
 			fw_iso = utils::InputVPParams::VpISOFW::iso3200;
 		} else{
 			throw utils::InvalidArgument(
-				cv::format("Invalid ISO mode specified for ViSP firewire camera: %s\n",
+				cv::format("Invalid ISO mode specified for ViSP firewire pipeline: %s\n",
 				vp_fw_iso.c_str()));
 		}
 		utils::InputVPParams _params(&_base_params,
 			vp_usb_n_buffers,
-			static_cast<utils::InputVPParams::VpResUSB>(vp_usb_res),
-			static_cast<utils::InputVPParams::VpFpsUSB>(vp_usb_fps),
+			usb_res, usb_fps,
 			fw_res, fw_fps, fw_depth, fw_iso,
 			vp_fw_print_info,
 			vp_pg_fw_shutter_ms,
