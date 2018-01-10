@@ -42,6 +42,9 @@ if ~exist('frame_gap', 'var')
 	frame_gap = 1;
 end
 
+actor = actors{actor_id+1};
+seq_name = sequences{actor_id + 1}{seq_id + 1};
+seq_path = sprintf('%s/%s/%s', db_root_path, actor, seq_name);
 
 if use_mtf_pipeline
     param_str = sprintf('config_dir %s', config_dir);
@@ -68,9 +71,6 @@ if use_mtf_pipeline
         error('MTF input pipeline update was unsuccessful');
     end
 else
-    actor = actors{actor_id+1};
-    seq_name = sequences{actor_id + 1}{seq_id + 1};
-    seq_path = sprintf('%s/%s/%s', db_root_path, actor, seq_name);
     img_files = dir([seq_path, sprintf('/*.%s', seq_fmt)]);
     n_frames = length(img_files(not([img_files.isdir])));
     init_img_path = sprintf('%s/frame%05d.%s', seq_path, init_frame_id, seq_fmt);
