@@ -18,7 +18,7 @@ if ~exist('config_dir', 'var')
 	config_dir = '../../Config';
 end
 if ~exist('db_root_path', 'var')
-	db_root_path = '../../../../../Datasets';
+	db_root_path = '../../../Datasets';
 end
 if ~exist('pipeline', 'var')
 	pipeline = 'c';
@@ -27,7 +27,7 @@ if ~exist('img_source', 'var')
 	img_source = 'j';
 end
 if ~exist('actor_id', 'var')
-	actor_id = 0;
+	actor_id = 1;
 end
 if ~exist('seq_id', 'var')
 	seq_id = 16;
