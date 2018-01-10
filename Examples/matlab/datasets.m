@@ -1,3 +1,5 @@
+function [sequences, actors] = datasets
+
 sequences_tmt = {
     'nl_bookI_s3',...%0
     'nl_bookII_s3',...%1

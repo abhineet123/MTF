@@ -1,13 +1,8 @@
+function runMTF(varargin)
+
 close all;
-% clear all;
-% if isunix
-% %     addpath('/home/abhineet/E/UofA/Thesis/Code/TrackingFramework/Matlab/');
-% %     addpath('/home/abhineet/E/UofA/Thesis/Code/TrackingFramework/C++/MTF/Build/Release/');
-% else
-    % addpath('E:\UofA\Thesis\Code\TrackingFramework\Matlab');
-% %     addpath('E:\UofA\Thesis\Code\TrackingFramework\C++\MTF\Build\Release');
-% end
-datasets;
+
+[sequences, actors] = datasets;
 
 use_mtf_pipeline = 1;
 use_rgb_input = 1;
@@ -45,17 +40,22 @@ end
 actor = actors{actor_id+1};
 seq_name = sequences{actor_id + 1}{seq_id + 1};
 seq_path = sprintf('%s/%s/%s', db_root_path, actor, seq_name);
+param_str = sprintf('config_dir %s', config_dir);
+param_str = sprintf('%s db_root_path %s', param_str, db_root_path);
+param_str = sprintf('%s pipeline %s', param_str, pipeline);
+param_str = sprintf('%s img_source %s', param_str, img_source);
+param_str = sprintf('%s actor_id %d', param_str, actor_id);
+param_str = sprintf('%s seq_id %d', param_str, seq_id);
+param_str = sprintf('%s seq_fmt %s', param_str, seq_fmt);
+param_str = sprintf('%s init_frame_id %d', param_str, init_frame_id);
+if mod(nargin, 2) ~= 0
+    error('Optional arguments must be specified in pairs');
+end
+for i = 1:nargin
+    param_str = sprintf('%s %s', param_str, string(varargin{i}));
+end   
 
-if use_mtf_pipeline
-    param_str = sprintf('config_dir %s', config_dir);
-    param_str = sprintf('%s db_root_path %s', param_str, db_root_path);
-    param_str = sprintf('%s pipeline %s', param_str, pipeline);
-    param_str = sprintf('%s img_source %s', param_str, img_source);
-    param_str = sprintf('%s actor_id %d', param_str, actor_id);
-    param_str = sprintf('%s seq_id %d', param_str, seq_id);
-    param_str = sprintf('%s seq_fmt %s', param_str, seq_fmt);
-    param_str = sprintf('%s init_frame_id %d', param_str, init_frame_id);
-    
+if use_mtf_pipeline 
     [input_id, n_frames] = mexMTF('create_input', param_str);
     if input_id == 0
         error('MTF input pipeline creation was unsuccessful');
@@ -78,7 +78,7 @@ else
 end
 
 
-tracker_id = mexMTF('create_tracker', sprintf('config_dir %s', config_dir));
+tracker_id = mexMTF('create_tracker', param_str);
 if tracker_id == 0
     error('Tracker creation was unsuccessful');
 else
