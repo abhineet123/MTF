@@ -464,7 +464,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	}
 	case MEX_TRACKER_INITIALIZE:
 	{
-		if(nlhs != 3){
+		if(nlhs != 2){
 			mexErrMsgTxt("2 output arguments are needed to initialize tracker.");
 		}		
 
