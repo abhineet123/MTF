@@ -78,7 +78,7 @@ else
 end
 
 
-tracker_id = mexMTF('create_tracker', config_dir);
+tracker_id = mexMTF('create_tracker', sprintf('config_dir %s', config_dir));
 if tracker_id == 0
     error('Tracker creation was unsuccessful');
 else
