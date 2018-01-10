@@ -9,10 +9,19 @@ close all;
 % end
 datasets;
 
-use_mtf_pipeline = 1;
-use_rgb_input = 1;
-show_fps = 0;
-show_window = 0;
+params = {
+    {'pipeline', 'c'},...
+    {'actor_id', 0},...
+    {'seq_id', 16},...
+    {'img_source', 'j'},...
+    {'seq_fmt', 'c'},...
+    
+};
+pipeline = 'c';
+actor_id = 0;
+seq_id = 16;
+img_source = 'j';
+seq_fmt = 'jpg';
 
 if ~exist('config_dir', 'var')
 	config_dir = '../../Config';
@@ -20,35 +29,16 @@ end
 if ~exist('db_root_dir', 'var')
 	db_root_dir = '../../../../../Datasets';
 end
-if ~exist('pipeline', 'var')
-	pipeline = 'c';
-end
-if ~exist('actor_id', 'var')
-	actor_id = 0;
-end
-if ~exist('seq_id', 'var')
-	seq_id = 16;
-end
-if ~exist('seq_fmt', 'var')
-	seq_fmt = 'jpg';
-end
-if ~exist('init_frame_id', 'var')
-	init_frame_id = 1;
-end
-if ~exist('frame_gap', 'var')
-	frame_gap = 1;
-end
 
+
+use_mtf_pipeline = 1;
+init_frame_id = 1;
+use_rgb_input = 1;
+show_fps = 0;
+show_window = 1;
 
 if use_mtf_pipeline
-    param_str = sprintf('config_dir %s', config_dir);
-    param_str = sprintf('%s config_dir %s', param_str, config_dir);
-    param_str = sprintf('%s db_root_dir %s', param_str, db_root_dir);
-    param_str = sprintf('%s pipeline %s', param_str, pipeline);
-    param_str = sprintf('%s actor_id %d', param_str, actor_id);
-    param_str = sprintf('%s seq_id %d', param_str, seq_id);
-    param_str = sprintf('%s init_frame_id %d', param_str, init_frame_id);
-    
+    param_str = sprintf('config_dir %s db_root_dir %s', config_dir, db_root_dir);
     [input_id, n_frames] = mexMTF('create_input', param_str);
     if input_id == 0
         error('MTF input pipeline creation was unsuccessful');

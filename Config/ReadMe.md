@@ -2951,19 +2951,22 @@ Discriminative Scale Space Tracker (DSST):
 			
 	 Parameter:	'dsst_sigma'
 		Description:
-			TBA
+			sigma used to generate the 2D gaussian for desired correlation output for translation
 			
 	 Parameter:	'dsst_scale_sigma'
 		Description:
-			TBA
+			sigma used to generate the 1D gaussian for desired correlation output for scale
 			
 	 Parameter:	'dsst_lambda'
 		Description:
-			TBA
+			small value is used in the computation of the correlation filter to avoid div by zero
 			
 	 Parameter:	'dsst_learning_rate'
 		Description:
-			TBA
+			The learning rate by which you want the numerator and denominator of your correlation filter to be updated with the new template
+			A_t= (1-lr)A_{t-1}+lr*new_A
+			B_t= (1-lr)A_{t-1}+lr*new_B
+			Where A_t, B_t the numerator and denominator of correlation filter respectively
 			
 	 Parameter:	'dsst_lambda'
 		Description:
@@ -2971,23 +2974,23 @@ Discriminative Scale Space Tracker (DSST):
 			
 	 Parameter:	'dsst_number_scales'
 		Description:
-			TBA
+			Number of scales considered for the template
 			
 	 Parameter:	'dsst_scale_step'
 		Description:
-			TBA
+			scale step between each scale
 			
 	 Parameter:	'dsst_resize_factor'
 		Description:
-			TBA
+			Default=1, Increase resize_factor to 2 or 4 to resize the template by 1/resize_factor to have faster solution but less accurate
 			
 	 Parameter:	'dsst_is_scaling'
 		Description:
-			TBA
+			Flag to compute scaling, 0/1
 			
 	 Parameter:	'dsst_is_rotating'
 		Description:
-			TBA
+			Flag to compute rotation, 0/1
 			
 	 Parameter:	'dsst_bin_size'
 		Description:
@@ -2995,21 +2998,24 @@ Discriminative Scale Space Tracker (DSST):
 			
 	 Parameter:	'dsst_number_rots'
 		Description:
-			TBA
+			Number of rotations considered for the template
 			
 	 Parameter:	'dsst_rot_step'
 		Description:
-			TBA
+			rotation angle step between each rotation
+			
+	 Additional References:
+		M. Danelljan, G. Hager, F. S. Khan, and M. Felsberg, “Discriminative Scale Space Tracking,” IEEE Transactions on Pattern Analysis and Machine Intelligence, 2016
 			
 Kernelized Correlation Filter (KCF) Tracker:
 ============================================
-	 Parameter:	'kcf_padding'
+	 Parameter:	'kcf_padding'/'kcf_lambda'/'kcf_is_scaling'/'kcf_resize_factor'/'kcf_number_scales'/'kcf_scale_step'
 		Description:
-			TBA 
+			same as corresponding parameters for DSST 
 			
-	 Parameter:	'kcf_lambda'
+	 Parameter:	'kcf_scale_sigma_factor'
 		Description:
-			TBA
+			TBA			
 			
 	 Parameter:	'kcf_output_sigma_factor'
 		Description:
@@ -3021,29 +3027,13 @@ Kernelized Correlation Filter (KCF) Tracker:
 			
 	 Parameter:	'kcf_kernel_sigma'
 		Description:
-			TBA
-			
-	 Parameter:	'kcf_number_scales'
-		Description:
-			TBA
-			
-	 Parameter:	'kcf_scale_step'
-		Description:
-			TBA
-			
-	 Parameter:	'kcf_scale_sigma_factor'
-		Description:
-			TBA
+			TBA			
 			
 	 Parameter:	'kcf_scale_learning_rate'
 		Description:
 			TBA
 			
-	 Parameter:	'kcf_enableScaling'
-		Description:
-			TBA
+	 Additional References:
+		J. F. Henriques, R. Caseiro, P. Martins, and J. Batista, “High-speed tracking with kernelized correlation fiters,” IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 37, no. 3, pp. 583–596, 2015
 			
-	 Parameter:	'kcf_resize_factor'
-		Description:
-			TBA
-			
+		

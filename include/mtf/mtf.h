@@ -1995,7 +1995,7 @@ inline TrackerBase *getTracker(const char *tracker_type){
 			kcf_scale_model_max_area,
 			kcf_scale_sigma_factor,
 			kcf_scale_learning_rate,
-			kcf_enableScaling,
+			kcf_is_scaling,
 			kcf_resize_factor
 			);
 		return new KCF(&kcf_params);

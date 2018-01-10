@@ -737,7 +737,7 @@ namespace mtf{
 		double kcf_scale_model_max_area;
 		double kcf_scale_sigma_factor;
 		double kcf_scale_learning_rate;
-		bool kcf_enableScaling;
+		bool kcf_is_scaling;
 		int kcf_resize_factor;
 
 		int mil_algorithm = 100;
@@ -3271,8 +3271,8 @@ namespace mtf{
 				kcf_scale_learning_rate = atof(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "kcf_enableScaling")){
-				kcf_enableScaling = atoi(arg_val);
+			if(!strcmp(arg_name, "kcf_is_scaling")){
+				kcf_is_scaling = atoi(arg_val);
 				return;
 			}
 			//! MIL
