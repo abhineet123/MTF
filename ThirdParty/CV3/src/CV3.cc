@@ -36,7 +36,7 @@ std::string CV3Params::toString(TrackerType _tracker_type){
 }
 
 CV3::CV3(const ParamType *cv3_params) : TrackerBase(),
-params(cv3_params){
+params(cv3_params), input_type(CV_8UC1){
 	std::string tracker_type_str = params.toString(params.tracker_type);
 
 	printf("Using CV3 Tracker with:\n");
@@ -69,6 +69,11 @@ params(cv3_params){
 			"Invalid tracker type provided %d", static_cast<int>(params.tracker_type)));
 	}
 #endif
+	if(params.tracker_type == TrackerType::BOOSTING || 
+		params.tracker_type == TrackerType::TLD ||
+		params.tracker_type == TrackerType::KCF){
+		input_type = CV_8UC3;
+	}
 	cv_corners_mat.create(2, 4, CV_64FC1);
 
 }
