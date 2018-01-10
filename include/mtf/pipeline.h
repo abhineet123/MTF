@@ -77,6 +77,7 @@ inline utils::InputBase* getInput(char _pipeline_type){
 				cv::format("Invalid FPS mode specified for ViSP USB pipeline: %s\n",
 				vp_usb_fps.c_str()));
 		}
+
 		utils::InputVPParams::VpResFW fw_res;
 		if(vp_fw_res == "default" || vp_fw_res == "0"){
 			fw_res = utils::InputVPParams::VpResFW::Default;
