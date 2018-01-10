@@ -3,12 +3,12 @@
 #ifndef DISABLE_VISP
 #if defined _WIN32
 // for visual studio intellisense
-//#define VISP_HAVE_FFMPEG
-//#define VISP_HAVE_V4L2
-//#define VISP_HAVE_DC1394
-//#define VISP_HAVE_FLYCAPTURE
-//#define VISP_HAVE_OPENCV
-//#define VISP_HAVE_OPENCV_VERSION 0x020100
+#define VISP_HAVE_FFMPEG
+#define VISP_HAVE_V4L2
+#define VISP_HAVE_DC1394
+#define VISP_HAVE_FLYCAPTURE
+#define VISP_HAVE_OPENCV
+#define VISP_HAVE_OPENCV_VERSION 0x020100
 #endif
 #include <visp3/io/vpDiskGrabber.h>
 #include <visp3/io/vpVideoReader.h>
@@ -385,10 +385,10 @@ namespace utils{
 						case VpDepthPGFW::YUV422:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_640x480YUV422;
 							break;
-						case VpDepthPGFW::Y16:
+						case VpDepthPGFW::MONO16:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_640x480Y16;
 							break;
-						case VpDepthPGFW::Y8:
+						case VpDepthPGFW::MONO8:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_640x480Y8;
 							break;
 						default:
@@ -404,10 +404,10 @@ namespace utils{
 						case VpDepthPGFW::YUV422:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_800x600YUV422;
 							break;
-						case VpDepthPGFW::Y16:
+						case VpDepthPGFW::MONO16:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_800x600Y16;
 							break;
-						case VpDepthPGFW::Y8:
+						case VpDepthPGFW::MONO8:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_800x600Y8;
 							break;
 						default:
@@ -423,10 +423,10 @@ namespace utils{
 						case VpDepthPGFW::YUV422:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_1024x768YUV422;
 							break;
-						case VpDepthPGFW::Y16:
+						case VpDepthPGFW::MONO16:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_1024x768Y16;
 							break;
-						case VpDepthPGFW::Y8:
+						case VpDepthPGFW::MONO8:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_1024x768Y8;
 							break;
 						default:
@@ -442,10 +442,10 @@ namespace utils{
 						case VpDepthPGFW::YUV422:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_1280x960YUV422;
 							break;
-						case VpDepthPGFW::Y16:
+						case VpDepthPGFW::MONO16:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_1280x960Y16;
 							break;
-						case VpDepthPGFW::Y8:
+						case VpDepthPGFW::MONO8:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_1280x960Y8;
 							break;
 						default:
@@ -461,10 +461,10 @@ namespace utils{
 						case VpDepthPGFW::YUV422:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_1600x1200YUV422;
 							break;
-						case VpDepthPGFW::Y16:
+						case VpDepthPGFW::MONO16:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_1600x1200Y16;
 							break;
-						case VpDepthPGFW::Y8:
+						case VpDepthPGFW::MONO8:
 							pg_fw_mode = FlyCapture2::VIDEOMODE_1600x1200Y8;
 							break;
 						default:
