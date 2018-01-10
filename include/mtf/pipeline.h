@@ -47,14 +47,89 @@ inline utils::InputBase* getInput(char _pipeline_type){
 #ifndef DISABLE_VISP
 	case VISP_PIPELINE:
 	{
+		utils::InputVPParams::VpResFW fw_res;
+		if(vp_fw_res == "default" || vp_fw_res == "0"){
+			fw_res = utils::InputVPParams::VpResFW::Default;
+		} else if(vp_fw_res == "640x480" || vp_fw_res == "1"){
+			fw_res = utils::InputVPParams::VpResFW::res640x480;
+		} else if(vp_fw_res == "800x600" || vp_fw_res == "2"){
+			fw_res = utils::InputVPParams::VpResFW::res800x600;
+		} else if(vp_fw_res == "1024x768" || vp_fw_res == "3"){
+			fw_res = utils::InputVPParams::VpResFW::res1024x768;
+		} else if(vp_fw_res == "1280x960" || vp_fw_res == "4"){
+			fw_res = utils::InputVPParams::VpResFW::res1280x960;
+		} else if(vp_fw_res == "1600x1200" || vp_fw_res == "5"){
+			fw_res = utils::InputVPParams::VpResFW::res1600x1200;
+		} else{
+			throw utils::InvalidArgument(
+				cv::format("Invalid resolution mode specified for ViSP firewire camera: %s\n",
+				vp_fw_res.c_str()));
+		}
+		utils::InputVPParams::VpFpsFW fw_fps;
+		if(vp_fw_fps == "default" || vp_fw_fps == "0"){
+			fw_fps = utils::InputVPParams::VpFpsFW::Default;
+		} else if(vp_fw_fps == "15" || vp_fw_fps == "1"){
+			fw_fps = utils::InputVPParams::VpFpsFW::fps15;
+		} else if(vp_fw_fps == "30" || vp_fw_fps == "2"){
+			fw_fps = utils::InputVPParams::VpFpsFW::fps30;
+		} else if(vp_fw_fps == "60" || vp_fw_fps == "3"){
+			fw_fps = utils::InputVPParams::VpFpsFW::fps60;
+		} else if(vp_fw_fps == "120" || vp_fw_fps == "4"){
+			fw_fps = utils::InputVPParams::VpFpsFW::fps120;
+		} else if(vp_fw_fps == "240" || vp_fw_fps == "5"){
+			fw_fps = utils::InputVPParams::VpFpsFW::fps240;
+		}  else if(vp_fw_fps == "7.5" || vp_fw_fps == "6"){
+			fw_fps = utils::InputVPParams::VpFpsFW::fps7_5;
+		}  else if(vp_fw_fps == "3.75" || vp_fw_fps == "7"){
+			fw_fps = utils::InputVPParams::VpFpsFW::fps3_75;
+		}  else if(vp_fw_fps == "1.875" || vp_fw_fps == "8"){
+			fw_fps = utils::InputVPParams::VpFpsFW::fps1_875;
+		} else{
+			throw utils::InvalidArgument(
+				cv::format("Invalid FPS mode specified for ViSP firewire camera: %s\n",
+				vp_fw_fps.c_str()));
+		}
+		utils::InputVPParams::VpDepthFW fw_depth;
+		if(vp_fw_depth == "default" || vp_fw_depth == "0"){
+			fw_depth = utils::InputVPParams::VpDepthFW::Default;
+		} else if(vp_fw_depth == "rgb" || vp_fw_depth == "1"){
+			fw_depth = utils::InputVPParams::VpDepthFW::RGB;
+		} else if(vp_fw_depth == "yuv422" || vp_fw_depth == "2"){
+			fw_depth = utils::InputVPParams::VpDepthFW::YUV422;
+		} else if(vp_fw_depth == "y8" || vp_fw_depth == "3"){
+			fw_depth = utils::InputVPParams::VpDepthFW::Y8;
+		} else if(vp_fw_depth == "y16" || vp_fw_depth == "4"){
+			fw_depth = utils::InputVPParams::VpDepthFW::Y16;
+		} else{
+			throw utils::InvalidArgument(
+				cv::format("Invalid image depth mode specified for ViSP firewire camera: %s\n",
+				vp_fw_depth.c_str()));
+		}
+		utils::InputVPParams::VpISOFW fw_iso;
+		if(vp_fw_iso == "default" || vp_fw_iso == "0"){
+			fw_iso = utils::InputVPParams::VpISOFW::Default;
+		} else if(vp_fw_iso == "100" || vp_fw_iso == "1"){
+			fw_iso = utils::InputVPParams::VpISOFW::iso100;
+		} else if(vp_fw_iso == "200" || vp_fw_iso == "2"){
+			fw_iso = utils::InputVPParams::VpISOFW::iso200;
+		} else if(vp_fw_iso == "400" || vp_fw_iso == "3"){
+			fw_iso = utils::InputVPParams::VpISOFW::iso400;
+		} else if(vp_fw_iso == "800" || vp_fw_iso == "4"){
+			fw_iso = utils::InputVPParams::VpISOFW::iso800;
+		} else if(vp_fw_iso == "1600" || vp_fw_iso == "5"){
+			fw_iso = utils::InputVPParams::VpISOFW::iso1600;
+		} else if(vp_fw_iso == "3200" || vp_fw_iso == "6"){
+			fw_iso = utils::InputVPParams::VpISOFW::iso3200;
+		} else{
+			throw utils::InvalidArgument(
+				cv::format("Invalid ISO mode specified for ViSP firewire camera: %s\n",
+				vp_fw_iso.c_str()));
+		}
 		utils::InputVPParams _params(&_base_params,
 			vp_usb_n_buffers,
 			static_cast<utils::InputVPParams::VpResUSB>(vp_usb_res),
 			static_cast<utils::InputVPParams::VpFpsUSB>(vp_usb_fps),
-			static_cast<utils::InputVPParams::VpResFW>(vp_fw_res),
-			static_cast<utils::InputVPParams::VpFpsFW>(vp_fw_fps),
-			static_cast<utils::InputVPParams::VpDepthFW>(vp_fw_depth),
-			static_cast<utils::InputVPParams::VpISOFW>(vp_fw_iso),
+			fw_res, fw_fps, fw_depth, fw_iso,
 			vp_fw_print_info,
 			vp_pg_fw_shutter_ms,
 			vp_pg_fw_gain,

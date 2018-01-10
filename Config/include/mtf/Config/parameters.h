@@ -786,10 +786,10 @@ namespace mtf{
 		int vp_usb_n_buffers = 3;
 		int vp_usb_res = 0;
 		int vp_usb_fps = 0;
-		int vp_fw_res = 0;
-		int vp_fw_fps = 0;
-		int vp_fw_depth = 0;
-		int vp_fw_iso = 0;
+		std::string vp_fw_res = "0";
+		std::string vp_fw_fps = "0";
+		std::string vp_fw_depth = "0";
+		std::string vp_fw_iso = "0";
 		bool vp_fw_print_info;
 		float vp_pg_fw_shutter_ms;
 		float vp_pg_fw_gain;
@@ -3402,19 +3402,19 @@ namespace mtf{
 				return;
 			}
 			if(!strcmp(arg_name, "vp_fw_res")){
-				vp_fw_res = atoi(arg_val);
+				vp_fw_res = std::string(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "vp_fw_fps")){
-				vp_fw_fps = atoi(arg_val);
+				vp_fw_fps = std::string(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "vp_fw_depth")){
-				vp_fw_depth = atoi(arg_val);
+				vp_fw_depth = std::string(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "vp_fw_iso")){
-				vp_fw_iso = atoi(arg_val);
+				vp_fw_iso = std::string(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, " vp_fw_print_info")){
