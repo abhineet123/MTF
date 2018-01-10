@@ -17,8 +17,8 @@ show_window = 0;
 if ~exist('config_dir', 'var')
 	config_dir = '../../Config';
 end
-if ~exist('db_root_dir', 'var')
-	db_root_dir = '../../../../../Datasets';
+if ~exist('db_root_path', 'var')
+	db_root_path = '../../../../../Datasets';
 end
 if ~exist('pipeline', 'var')
 	pipeline = 'c';
@@ -45,7 +45,7 @@ end
 
 if use_mtf_pipeline
     param_str = sprintf('config_dir %s', config_dir);
-    param_str = sprintf('%s db_root_dir %s', param_str, db_root_dir);
+    param_str = sprintf('%s db_root_path %s', param_str, db_root_path);
     param_str = sprintf('%s pipeline %s', param_str, pipeline);
     param_str = sprintf('%s img_source %s', param_str, img_source);
     param_str = sprintf('%s actor_id %d', param_str, actor_id);
@@ -70,7 +70,7 @@ if use_mtf_pipeline
 else
     actor = actors{actor_id+1};
     seq_name = sequences{actor_id + 1}{seq_id + 1};
-    seq_path = sprintf('%s/%s/%s', db_root_dir, actor, seq_name);
+    seq_path = sprintf('%s/%s/%s', db_root_path, actor, seq_name);
     img_files = dir([seq_path, sprintf('/*.%s', seq_fmt)]);
     n_frames = length(img_files(not([img_files.isdir])));
     init_img_path = sprintf('%s/frame%05d.%s', seq_path, init_frame_id, seq_fmt);
