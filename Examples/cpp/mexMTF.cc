@@ -153,10 +153,10 @@ cv::Mat getCorners(const mxArray *mx_corners){
 	}
 	double *corners_ptr = mxGetPr(mx_corners);
 	cv::Mat corners_transposed(4, 2, CV_64FC1, corners_ptr);
-	cout << "corners_transposed: \n" << corners_transposed << "\n";
+	//cout << "corners_transposed: \n" << corners_transposed << "\n";
 	cv::Mat corners(2, 4, CV_64FC1);
 	cv::transpose(corners_transposed, corners);
-	cout << "corners: \n" << corners << "\n";
+	//cout << "corners: \n" << corners << "\n";
 	return corners;
 }
 void parseParams(const mxArray *prhs){
@@ -280,13 +280,12 @@ bool initializeTracker(unsigned int tracker_id, const cv::Mat &init_img, const c
 	img_height = init_img.rows;
 	img_width = init_img.cols;
 
-	printf("img_height: %d\n", img_height);
-	printf("img_width: %d\n", img_width);
-
-	printf("init_corners:\n");
-	for(unsigned int corner_id = 0; corner_id < 4; ++corner_id) {
-		printf("%d: (%f, %f)\n", corner_id, init_corners.at<double>(0, corner_id), init_corners.at<double>(1, corner_id));
-	}
+	//printf("img_height: %d\n", img_height);
+	//printf("img_width: %d\n", img_width);
+	//printf("init_corners:\n");
+	//for(unsigned int corner_id = 0; corner_id < 4; ++corner_id) {
+	//	printf("%d: (%f, %f)\n", corner_id, init_corners.at<double>(0, corner_id), init_corners.at<double>(1, corner_id));
+	//}
 	min_x = init_corners.at<double>(0, 0);
 	min_y = init_corners.at<double>(1, 0);
 	max_x = init_corners.at<double>(0, 2);
