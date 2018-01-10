@@ -174,7 +174,8 @@ void parseParams(const mxArray *prhs){
 		strcpy(cstr, subs.c_str());
 		fargv.push_back(cstr);
 	} while(iss);
-	if(fargv.size() % 2 == 1){
+	if(fargv.size() % 2 == 0){
+		printf("param_str: %s\n", param_str);
 		mexErrMsgTxt("Parameters must be provided in pairs");
 	}
 	if(!readParams(fargv.size(), fargv.data())){
