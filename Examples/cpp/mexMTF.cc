@@ -170,11 +170,15 @@ void parseParams(const mxArray *prhs){
 	do{
 		string subs;
 		iss >> subs;
+
+		if(subs.empty()){ continue; }
+
 		printf("subs: %s\n", subs.c_str());
 		char *cstr = new char[subs.length() + 1];
 		strcpy(cstr, subs.c_str());
 		fargv.push_back(cstr);
 	} while(iss);
+	//fargv.pop_back();
 	printf("fargv.size(): %d\n", fargv.size());
 	if(fargv.size() % 2 == 0){
 		printf("param_str: %s\n", param_str);
