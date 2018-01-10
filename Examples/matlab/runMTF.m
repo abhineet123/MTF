@@ -23,6 +23,9 @@ end
 if ~exist('pipeline', 'var')
 	pipeline = 'c';
 end
+if ~exist('img_source 'var')
+	img_source = 'c';
+end
 if ~exist('actor_id', 'var')
 	actor_id = 0;
 end
@@ -45,8 +48,10 @@ if use_mtf_pipeline
     param_str = sprintf('%s config_dir %s', param_str, config_dir);
     param_str = sprintf('%s db_root_dir %s', param_str, db_root_dir);
     param_str = sprintf('%s pipeline %s', param_str, pipeline);
+    param_str = sprintf('%s img_source %d', param_str, img_source);
     param_str = sprintf('%s actor_id %d', param_str, actor_id);
     param_str = sprintf('%s seq_id %d', param_str, seq_id);
+    param_str = sprintf('%s seq_id %d', param_str, seq_fmt);
     param_str = sprintf('%s init_frame_id %d', param_str, init_frame_id);
     
     [input_id, n_frames] = mexMTF('create_input', param_str);
