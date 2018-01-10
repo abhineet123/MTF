@@ -45,7 +45,6 @@ end
 
 if use_mtf_pipeline
     param_str = sprintf('config_dir %s', config_dir);
-    param_str = sprintf('%s config_dir %s', param_str, config_dir);
     param_str = sprintf('%s db_root_dir %s', param_str, db_root_dir);
     param_str = sprintf('%s pipeline %s', param_str, pipeline);
     param_str = sprintf('%s img_source %s', param_str, img_source);
