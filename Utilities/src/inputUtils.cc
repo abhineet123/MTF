@@ -594,7 +594,7 @@ namespace utils{
 				//				printf("Opening FireWire camera with GUID %llu\n", dc1394_cap->getGuid());
 				//#endif
 				printf("fw_res: %d\n", params.fw_res);
-				printf("pg_fw_depth: %d\n", params.fw_depth);
+				printf("fw_depth: %d\n", params.fw_depth);
 				printf("fw_fps: %d\n", params.fw_fps);
 
 				if(params.fw_res != VpResFW::Default ||
@@ -632,20 +632,24 @@ namespace utils{
 						}
 					};
 					int fw_res_idx = static_cast<int>(params.fw_res) - 1;
-					int pg_fw_depth_idx = static_cast<int>(params.fw_depth) - 1;
+					int fw_depth_idx = static_cast<int>(params.fw_depth) - 1;
 					//printf("fw_res: %d\n", params.fw_res);
-					//printf("pg_fw_depth: %d\n", params.fw_depth);
-					if(fw_res_idx >= 5){
+					//printf("fw_depth: %d\n", params.fw_depth);
+					if(fw_res_idx < 0){
+						fw_res_idx = 0;						
+					} else if(fw_res_idx >= 5){
 						printf("Invalid resolution provided for ViSP firewire pipeline\n");
 						return false;
 					}
-					if(pg_fw_depth_idx >= 4){
+					if(fw_depth_idx < 0){
+						fw_depth_idx = 0;
+					} else if(fw_depth_idx >= 4){
 						printf("Invalid color depth provided for ViSP firewire pipeline\n");
 						return false;
 					}
 
 					vp1394TwoGrabber::vp1394TwoVideoModeType fw_video_mode =
-						fw_video_modes[fw_res_idx][pg_fw_depth_idx];
+						fw_video_modes[fw_res_idx][fw_depth_idx];
 					printf("fw_video_mode: %s\n",
 						vp1394TwoGrabber::videoMode2string(fw_video_mode).c_str());
 					try{
