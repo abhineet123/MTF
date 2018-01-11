@@ -2,44 +2,23 @@ function runMTF(varargin)
 
 close all;
 
-[sequences, actors] = datasets;
-
+% script parameters
 use_mtf_pipeline = 1;
 use_rgb_input = 1;
+init_from_gt = 1;
 show_fps = 0;
 show_window = 0;
 
-if ~exist('config_dir', 'var')
-	config_dir = '../../Config';
-end
-if ~exist('db_root_path', 'var')
-	db_root_path = '../../../Datasets';
-end
-if ~exist('pipeline', 'var')
-	pipeline = 'c';
-end
-if ~exist('img_source', 'var')
-	img_source = 'j';
-end
-if ~exist('actor_id', 'var')
-	actor_id = 1;
-end
-if ~exist('seq_id', 'var')
-	seq_id = 16;
-end
-if ~exist('seq_fmt', 'var')
-	seq_fmt = 'jpg';
-end
-if ~exist('init_frame_id', 'var')
-	init_frame_id = 1;
-end
-if ~exist('frame_gap', 'var')
-	frame_gap = 1;
-end
+% MTF parameters
+config_dir = '../../Config';
+db_root_path = '../../../Datasets';
+pipeline = 'c';
+img_source = 'j';
+actor_id = 1;
+seq_id = 16;
+seq_fmt = 'jpg';
+init_frame_id = 1;
 
-actor = actors{actor_id+1};
-seq_name = sequences{actor_id + 1}{seq_id + 1};
-seq_path = sprintf('%s/%s/%s', db_root_path, actor, seq_name);
 param_str = sprintf('config_dir %s', config_dir);
 param_str = sprintf('%s db_root_path %s', param_str, db_root_path);
 param_str = sprintf('%s pipeline %s', param_str, pipeline);
@@ -51,9 +30,30 @@ param_str = sprintf('%s init_frame_id %d', param_str, init_frame_id);
 if mod(nargin, 2) ~= 0
     error('Optional arguments must be specified in pairs');
 end
-for i = 1:nargin
-    param_str = sprintf('%s %s', param_str, string(varargin{i}));
+% parse optional arguments
+arg_id = 1;
+while arg_id <= nargin    
+    arg_name = varargin{arg_id};
+    arg_val = varargin{arg_id + 1};
+    if strcmp(arg_name, 'use_mtf_pipeline')
+        use_mtf_pipeline = arg_val;
+    elseif strcmp(arg_name, 'init_from_gt')
+        init_from_gt = arg_val;
+    elseif strcmp(arg_name, 'show_fps')
+        show_fps = arg_val;
+    elseif strcmp(arg_name, 'show_window')
+        show_window = arg_val;
+    else
+        param_str = sprintf('%s %s %s', param_str,...
+            string(arg_name), string(arg_val));
+    end
+    arg_id = arg_id + 2;
 end   
+
+[sequences, actors] = datasets;
+actor = actors{actor_id+1};
+seq_name = sequences{actor_id + 1}{seq_id + 1};
+seq_path = sprintf('%s/%s/%s', db_root_path, actor, seq_name);
 
 if use_mtf_pipeline 
     [input_id, n_frames] = mexMTF('create_input', param_str);
@@ -77,26 +77,30 @@ else
     init_img = imread(init_img_path);
 end
 
-
 tracker_id = mexMTF('create_tracker', param_str);
-if tracker_id == 0
+if ~tracker_id
     error('Tracker creation was unsuccessful');
 else
     fprintf('Tracker created successfully\n');
 end
 % pause;
-
-gt_path = sprintf('%s.txt', seq_path);
-gt_struct = importdata(gt_path);
-gt_data = gt_struct.data;
-gt_corners = zeros(2, 4);
-gt_corners(1, :) = gt_data(init_frame_id, [1, 3, 5, 7]);
-gt_corners(2, :) = gt_data(init_frame_id, [2, 4, 6, 8]);
-if ~use_rgb_input
-    init_img = rgb2gray(init_img);
+if init_from_gt
+    gt_path = sprintf('%s.txt', seq_path);
+    gt_struct = importdata(gt_path);
+    gt_data = gt_struct.data;
+    gt_corners = zeros(2, 4);
+    gt_corners(1, :) = gt_data(init_frame_id, [1, 3, 5, 7]);
+    gt_corners(2, :) = gt_data(init_frame_id, [2, 4, 6, 8]);
+    if ~use_rgb_input
+        init_img = rgb2gray(init_img);
+    end
+    [success, init_corners] = mexMTF('initialize_tracker',... 
+    tracker_id, uint8(init_img), double(gt_corners));
+else
+    [success, init_corners] = mexMTF('initialize_tracker',... 
+    tracker_id, uint8(init_img));
 end
-[success, init_corners] = mexMTF('initialize_tracker',... 
-tracker_id, uint8(init_img), double(gt_corners));
+
 if ~success
     error('Tracker initialization was unsuccessful');
 else
