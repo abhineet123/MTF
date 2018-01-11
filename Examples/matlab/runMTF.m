@@ -164,3 +164,4 @@ while  1
         break;
     end
 end
+mexMTF('quit');

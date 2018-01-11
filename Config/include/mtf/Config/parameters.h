@@ -915,6 +915,7 @@ namespace mtf{
 		int syn_video_fps = 24;
 		int syn_jpg_quality = 100;
 		bool syn_show_output = true;
+
 		//! Online mosaic creator
 		bool mos_inv_tracking = true;
 		int mos_use_norm_corners = true;
@@ -934,6 +935,7 @@ namespace mtf{
 		std::string mos_out_fname;
 		std::string mos_out_fmt = "jpg";
 
+		//! QR tracker
 		std::vector<std::string> qr_input;
 		std::string qr_root_dir = "Data/QRTracker";
 		std::string qr_detector_ssm = "4";
@@ -942,6 +944,8 @@ namespace mtf{
 		bool qr_init_with_rect = 1;
 		int qr_n_markers = -1;
 
+		//! mexMTF
+		int mex_live_init = 0;
 
 		inline void split(const std::string &s, char delim, std::vector<std::string> &elems) {
 			stringstream ss(s);
@@ -3946,6 +3950,10 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "qr_n_markers")){
 				qr_n_markers = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mex_live_init")){
+				mex_live_init = atoi(arg_val);
 				return;
 			}
 		}

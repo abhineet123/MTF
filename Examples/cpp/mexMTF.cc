@@ -480,10 +480,24 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		} else{
 			mtf::utils::ObjUtils obj_utils;
 			try{
-				if(!obj_utils.selectObjects(init_img, 1, patch_size, line_thickness,
-					write_objs, sel_quad_obj, write_obj_fname.c_str())){
-					mexErrMsgTxt("Object(s) to be tracked could not be obtained.\n");
+				if(mex_live_init){
+					if(input_pipelines.empty()){
+						printf("At least one input pipeline must exist for live initialization: %d\n", tracker_id);
+						*ret_val = 0;
+						return;
+					}
+					if(!obj_utils.selectObjects(input_pipelines.begin()->second.get(), 1, 
+						patch_size, line_thickness, write_objs, sel_quad_obj,
+						write_obj_fname.c_str())){
+						mexErrMsgTxt("Object(s) to be tracked could not be obtained.\n");
+					}
+				} else{
+					if(!obj_utils.selectObjects(init_img, 1, patch_size, line_thickness,
+						write_objs, sel_quad_obj, write_obj_fname.c_str())){
+						mexErrMsgTxt("Object(s) to be tracked could not be obtained.\n");
+					}
 				}
+
 			} catch(const mtf::utils::Exception &err){
 				mexErrMsgTxt(cv::format("Exception of type %s encountered while obtaining the objects to track: %s\n",
 					err.type(), err.what()).c_str());
