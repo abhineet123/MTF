@@ -165,4 +165,4 @@ while ishandle(h)
         break;
     end
 end
-mexMTF('quit');
+mexMTF('clear');
