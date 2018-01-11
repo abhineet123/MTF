@@ -94,11 +94,11 @@ if init_from_gt
     if ~use_rgb_input
         init_img = rgb2gray(init_img);
     end
-    [success, init_corners] = mexMTF('initialize_tracker',... 
-    tracker_id, uint8(init_img), double(gt_corners));
+    [success, init_corners] = mexMTF('initialize_tracker',...
+        tracker_id, uint8(init_img), double(gt_corners));
 else
-    [success, init_corners] = mexMTF('initialize_tracker',... 
-    tracker_id, uint8(init_img));
+    [success, init_corners] = mexMTF('initialize_tracker',...
+        tracker_id, uint8(init_img));
 end
 
 if ~success
@@ -132,20 +132,29 @@ while  1
 		fps = 1.0 /double(time_passed);
 		fprintf('time_passed: %f\t fps: %f\n',time_passed, fps);
     end
-    gt_corners(1, :) = gt_data(frame_id, [1, 3, 5, 7]);
-    gt_corners(2, :) = gt_data(frame_id, [2, 4, 6, 8]);
-	curr_error = norm((gt_corners - curr_corners), 'fro')';
-	avg_error = avg_error + (curr_error - avg_error)/(frame_id - init_frame_id);
 	if show_window
 		imshow(curr_img);
 		hold on;
-		plot(gt_data(frame_id, [1, 3, 5, 7, 1]), gt_data(frame_id, [2, 4, 6, 8, 2]), 'Color','g', 'LineWidth',2);
-		plot([curr_corners(1, :),curr_corners(1, 1)], [curr_corners(2, :), curr_corners(2, 1)], 'Color','r', 'LineWidth',2);
+		plot(gt_data(frame_id, [1, 3, 5, 7, 1]),...
+            gt_data(frame_id, [2, 4, 6, 8, 2]),...
+            'Color','g', 'LineWidth',2);
+		plot([curr_corners(1, :),curr_corners(1, 1)],...
+            [curr_corners(2, :), curr_corners(2, 1)],...
+            'Color','r', 'LineWidth',2);
 		hold off;
 		pause(0.001);
-	else
+    else
 		if mod(frame_id, 50)==0
-			fprintf('frame_id: %d\t curr_error: %f\t avg_error: %f\n', frame_id, curr_error, avg_error)
+			fprintf('frame_id: %d\t', frame_id);
+            if init_from_gt
+                gt_corners(1, :) = gt_data(frame_id, [1, 3, 5, 7]);
+                gt_corners(2, :) = gt_data(frame_id, [2, 4, 6, 8]);
+                curr_error = norm((gt_corners - curr_corners), 'fro')';
+                avg_error = avg_error + (curr_error - avg_error)/(frame_id - init_frame_id);
+                fprintf('\t curr_error: %f\t avg_error: %f',...
+                    frame_id, curr_error, avg_error);
+            end 
+            fprintf('\n');
 		end
 	end
     frame_id = frame_id + 1;
