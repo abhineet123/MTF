@@ -469,13 +469,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			mexErrMsgTxt("2 output arguments are needed to initialize tracker.");
 		}		
 
-		if(nrhs <= 3){
+		if(nrhs < 3){
 			mexErrMsgTxt("At least 3 input arguments are needed to initialize tracker.");
 		}
 		unsigned int tracker_id = getID(prhs[1]);
 		cv::Mat init_img = getImage(prhs[2]);
 		cv::Mat init_corners;
-		if(nrhs > 2){
+		if(nrhs > 3){
 			init_corners = getCorners(prhs[3]);
 		} else{
 			mtf::utils::ObjUtils obj_utils;
