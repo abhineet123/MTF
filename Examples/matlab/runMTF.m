@@ -109,8 +109,10 @@ end
 % pause
 avg_error = 0;
 frame_id = init_frame_id + 1;
-h = axes;
-while ishandle(h)
+if show_window
+    h = figure; 
+end
+while 1
     if use_mtf_pipeline
         [success, curr_img] = mexMTF('update_input', input_id);
         if ~success
@@ -134,6 +136,9 @@ while ishandle(h)
 		fprintf('time_passed: %f\t fps: %f\n',time_passed, fps);
     end
 	if show_window
+        if ~ ishghandle(h)
+            break;
+        end
 		imshow(curr_img);
 		hold on;
 		plot([curr_corners(1, :),curr_corners(1, 1)],...
