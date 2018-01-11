@@ -23,7 +23,7 @@
 #define MEX_TRACKER_UPDATE 6
 #define MEX_TRACKER_SET_REGION 7
 #define MEX_TRACKER_REMOVE 8
-#define MEX_QUIT 9
+#define MEX_CLEAR 9
 
 #define _A3D_IDX_COLUMN_MAJOR(i,j,k,nrows,ncols) ((i)+((j)+(k)*ncols)*nrows)
 // interleaved row-major indexing for 2-D OpenCV images
@@ -45,7 +45,7 @@ static std::map<std::string, const int> cmd_list = {
 	{ "update_tracker", MEX_TRACKER_UPDATE },
 	{ "set_region", MEX_TRACKER_SET_REGION },
 	{ "remove_tracker", MEX_TRACKER_REMOVE },
-	{ "quit", MEX_QUIT }
+	{ "clear", MEX_CLEAR }
 };
 
 struct TrackerStruct{
@@ -565,11 +565,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		*ret_val = 1;
 		return;
 	}
-	case MEX_QUIT:
+	case MEX_CLEAR:
 	{
+		printf("Clearing up...");
 		input_pipelines.clear();
 		trackers.clear();		
 		*ret_val = 1;
+		printf("Done\n");
 		return;
 	}
 	default:
