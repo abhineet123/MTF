@@ -110,7 +110,7 @@ end
 avg_error = 0;
 frame_id = init_frame_id + 1;
 h = axes;
-while ishandle(h),
+while ishandle(h)
     if use_mtf_pipeline
         [success, curr_img] = mexMTF('update_input', input_id);
         if ~success
