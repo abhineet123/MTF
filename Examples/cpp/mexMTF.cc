@@ -175,15 +175,15 @@ void parseParams(const mxArray *prhs){
 
 		if(subs.empty()){ continue; }
 
-		printf("subs: %s\n", subs.c_str());
+		//printf("subs: %s\n", subs.c_str());
 		char *cstr = new char[subs.length() + 1];
 		strcpy(cstr, subs.c_str());
 		fargv.push_back(cstr);
 	} while(iss);
 	//fargv.pop_back();
-	printf("fargv.size(): %d\n", fargv.size());
+	//printf("fargv.size(): %d\n", fargv.size());
 	if(fargv.size() % 2 == 0){
-		printf("param_str: %s\n", param_str);
+		//printf("param_str: %s\n", param_str);
 		mexErrMsgTxt("Parameters must be provided in pairs");
 	}
 	if(!readParams(fargv.size(), fargv.data())){
