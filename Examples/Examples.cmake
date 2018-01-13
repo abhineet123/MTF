@@ -244,7 +244,7 @@ if(WITH_MEX)
 			if(NOT WIN32)
 				add_custom_target(install_mex2
 				  ${CMAKE_COMMAND}
-				  -D "CMAKE_INSTALL_COMPONENT=mex"
+				  -D "CMAKE_INSTALL_COMPONENT=mex2"
 				  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
 				   DEPENDS mexMTF2
 				  )
