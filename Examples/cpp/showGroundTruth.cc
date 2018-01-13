@@ -79,7 +79,7 @@ int main(int argc, char * argv[]) {
 	// ******************************************************************************************** //
 
 	string cv_win_name = "showGroundTruth :: " + seq_name;
-	if(show_cv_window) {
+	if(enable_visualization) {
 		cv::namedWindow(cv_win_name, cv::WINDOW_AUTOSIZE);
 	}
 	int valid_gt_frames = obj_utils.getGTSize();
@@ -143,7 +143,7 @@ int main(int argc, char * argv[]) {
 		}
 		putText(input->getFrame(mtf::utils::MUTABLE), cv::format("frame: %d", input->getFrameID() + 1),
 			text_origin, cv::FONT_HERSHEY_SIMPLEX, text_font_size, text_color);
-		if(show_cv_window){
+		if(enable_visualization){
 			imshow(cv_win_name, input->getFrame());
 			int pressed_key = cv::waitKey(1 - pause_after_frame);
 

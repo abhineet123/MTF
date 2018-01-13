@@ -76,12 +76,11 @@ namespace mtf{
 		int buffer_id = 0;
 
 		//! flags
-		int show_xv_window = 0;
 		int pause_after_frame = 0;
 		bool print_corners = false;
 		bool print_fps = false;
+		int enable_visualization = 1;
 		int show_corner_ids = 0;
-		int show_cv_window = 1;
 		int show_ground_truth = 0;
 		int reinit_gt_from_bin = 1;
 		int read_obj_from_file = 0;
@@ -120,6 +119,7 @@ namespace mtf{
 		std::string record_frames_fname, record_frames_dir;
 
 		//! for Xvision trackers
+		int xv_visualize = 0;
 		int xv_steps_per_frame = 1;
 		/* only for pyramidal trackers */
 		int xv_no_of_levels = 2;
@@ -943,8 +943,10 @@ namespace mtf{
 		double qr_min_size = 10;
 		bool qr_init_with_rect = 1;
 		int qr_n_markers = -1;
-
+		//! pyMTF
+		int py_visualize = 0;
 		//! mexMTF
+		int mex_visualize = 0;
 		int mex_live_init = 0;
 
 		inline void split(const std::string &s, char delim, std::vector<std::string> &elems) {
@@ -1104,9 +1106,9 @@ namespace mtf{
 			parse_param(record_frames_dir, std::string);
 			parse_param(read_obj_fname, std::string);
 			parse_param(write_obj_fname, std::string);
-			parse_param(show_cv_window, atoc_i);
+			parse_param(enable_visualization, atoc_i);
 			parse_param(show_ground_truth, atoc_i);
-			parse_param(show_xv_window, atoc_i);
+			parse_param(xv_visualize, atoc_i);
 			parse_param(read_obj_from_gt, atoi);
 			parse_param(sel_quad_obj, atoi);
 		}
@@ -1194,16 +1196,16 @@ namespace mtf{
 				tracker_labels.push_back(std::string(arg_val));
 				return;
 			}
-			if(!strcmp(arg_name, "show_cv_window")){
-				show_cv_window = arg_val[0] - '0';
+			if(!strcmp(arg_name, "enable_visualization")){
+				enable_visualization = arg_val[0] - '0';
 				return;
 			}
 			if(!strcmp(arg_name, "show_ground_truth")){
 				show_ground_truth = arg_val[0] - '0';
 				return;
 			}
-			if(!strcmp(arg_name, "show_xv_window")){
-				show_xv_window = arg_val[0] - '0';
+			if(!strcmp(arg_name, "xv_visualize")){
+				xv_visualize = arg_val[0] - '0';
 				return;
 			}
 			if(!strcmp(arg_name, "read_obj_from_gt")){
@@ -3950,6 +3952,14 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "qr_n_markers")){
 				qr_n_markers = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "py_visualize")){
+				py_visualize = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "mex_visualize")){
+				mex_visualize = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "mex_live_init")){

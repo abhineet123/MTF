@@ -53,6 +53,8 @@ namespace utils{
 
 	class InputBase {
 	public:
+		bool destroy;
+
 		InputBase(const InputParams *_params = nullptr);
 		virtual ~InputBase(){}
 		virtual bool initialize() = 0;

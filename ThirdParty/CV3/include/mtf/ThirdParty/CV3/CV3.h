@@ -35,7 +35,7 @@ public:
 	void update() override;
 	const cv::Mat& getRegion() override{ return cv_corners_mat; }
 	void setImage(const cv::Mat &img) override;
-	int inputType() const override{ return input_type; }
+	int inputType() const override{ return CV_8UC3; }
 
 protected:
 	ParamType params;
@@ -44,7 +44,7 @@ protected:
 	
 private:
 	int input_type;
-	virtual ~CV3(){}
+	virtual ~CV3();
 };
 #endif
 //#endif

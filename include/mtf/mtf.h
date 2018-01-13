@@ -2137,7 +2137,7 @@ inline TrackerBase *getTracker(const char *tracker_type){
 #ifndef DISABLE_XVISION
 	else if(strstr(tracker_type, "xv")){
 		using_xv_tracker = true;
-		XVParams &xv_params(show_xv_window, xv_steps_per_frame, false, false);
+		XVParams &xv_params(xv_visualize, xv_steps_per_frame, false, false);
 		if(!strcmp(tracker_type, "xv1r")){
 			return new XVSSDRotate(&xv_params);
 		} else if(!strcmp(tracker_type, "xv1s")){

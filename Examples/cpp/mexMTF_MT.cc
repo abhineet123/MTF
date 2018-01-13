@@ -56,11 +56,58 @@ struct TrackerStruct{
 		tracker(_tracker), pre_proc(_pre_proc){}
 };
 
-static std::map<int, Input> input_pipelines;
-static std::map<int, bool> destroy_input;
+struct RunInput{
+	RunInput(Input _input) : input(_input){}
+	void operator()(){
+		while(input->update()){
+			if(input->destroy){return;}		
+		}
+		input->destroy = true;
+	}
 
+private:
+	Input input;
+};
+struct RunTracker{
+	RunTracker(Tracker _tracker, PreProc _pre_proc, Input _input) :
+		tracker(_tracker), pre_proc(_pre_proc), input(_input){}
+	void operator()(){
+		while(!input->destroy){
+			double tracking_time, tracking_time_with_input;
+			mtf_clock_get(start_time_with_input);
+			try{
+				//! update pre processor
+				pre_proc->update(input->getFrame());
+				mtf_clock_get(start_time);
+				//! update tracker
+				tracker->update();
+				if(print_fps){
+					mtf_clock_get(end_time);
+					mtf_clock_measure(start_time, end_time, tracking_time);
+					mtf_clock_measure(start_time_with_input, end_time, tracking_time_with_input);
+					double fps = 1.0 / tracking_time;
+					double fps_win = 1.0 / tracking_time_with_input;
+					printf("fps: %f\t fps_win=%f\n", fps, fps_win);
+				}
+				if(reset_template){
+					tracker->initialize(tracker->getRegion());
+				}
+			} catch(const mtf::utils::Exception &err){
+				printf("Exception of type %s encountered while updating the tracker: %s\n",
+					err.type(), err.what());
+				return;
+			}
+		}
+	}
+
+private:
+	Input input;
+	PreProc pre_proc;
+	Tracker tracker;	
+};
+
+static std::map<int, Input> input_pipelines;
 static std::map<int, TrackerStruct> trackers;
-static std::map<int, bool> destroy_tracker;
 
 static double min_x, min_y, max_x, max_y;
 static double size_x, size_y;
@@ -205,6 +252,9 @@ mxArray *setCorners(const cv::Mat &corners){
 }
 
 bool createInput(mxArray* &plhs) {
+	if(input_buffer_size <= 1){
+		input_buffer_size = 100;
+	}
 	Input input;
 	try{
 		input.reset(mtf::getInput(pipeline));
@@ -224,7 +274,7 @@ bool createInput(mxArray* &plhs) {
 	//plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
 	unsigned int *ret_val = (unsigned int*)mxGetPr(plhs);
 	*ret_val = static_cast<unsigned int>(input->getNFrames());
-	destroy_input.insert(std::pair<int, bool>(_input_id, false));
+	boost::thread t{RunInput(input)};
 	return true;
 }
 
@@ -257,11 +307,6 @@ bool updateInput(unsigned int input_id) {
 		printf("Invalid input ID: %d\n", input_id);
 		return false;
 	}
-	while(it->second->update()){
-		
-	}
-	;
-
 	return true;
 }
 bool createTracker() {
@@ -338,32 +383,6 @@ bool updateTracker(unsigned int tracker_id, const cv::Mat &curr_img, mxArray* &p
 	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
 		printf("Invalid tracker ID: %d\n", tracker_id);
-		return false;
-	}
-	double fps = 0, fps_win = 0;
-	double tracking_time, tracking_time_with_input;
-	++frame_id;
-	mtf_clock_get(start_time_with_input);
-	try{
-		//! update pre processor
-		it->second.pre_proc->update(curr_img);
-		mtf_clock_get(start_time);
-		//! update tracker
-		it->second.tracker->update();
-		if(print_fps){
-			mtf_clock_get(end_time);
-			mtf_clock_measure(start_time, end_time, tracking_time);
-			mtf_clock_measure(start_time_with_input, end_time, tracking_time_with_input);
-			fps = 1.0 / tracking_time;
-			fps_win = 1.0 / tracking_time_with_input;
-			printf("fps: %f\t fps_win=%f\n", fps, fps_win);
-		}
-		if(reset_template){
-			it->second.tracker->initialize(it->second.tracker->getRegion());
-		}
-	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while updating the tracker: %s\n",
-			err.type(), err.what());
 		return false;
 	}
 	plhs = setCorners(it->second.tracker->getRegion());

@@ -75,7 +75,7 @@ static PyObject* create(PyObject* self, PyObject* args) {
 	PySys_WriteStdout("mtf_sm: %s\n", mtf_sm);
 	PySys_WriteStdout("mtf_am: %s\n", mtf_am);
 	PySys_WriteStdout("mtf_ssm: %s\n", mtf_ssm);
-	PySys_WriteStdout("show_cv_window: %d\n", show_cv_window);
+	PySys_WriteStdout("py_visualize: %d\n", py_visualize);
 	PySys_WriteStdout("*******************************\n");
 
 	/*********************************** initialize tracker ***********************************/
@@ -190,7 +190,7 @@ static PyObject* initialize(PyObject* self, PyObject* args) {
 			err.type(), err.what());
 		return Py_BuildValue("i", 0);
 	}
-	if(show_cv_window) {
+	if(py_visualize) {
 		cv::namedWindow("PyMTF", cv::WINDOW_AUTOSIZE);
 	}
 	tracker_initialized[tracker_id] = true;
@@ -247,7 +247,7 @@ static PyObject* update(PyObject* self, PyObject* args) {
 			err.type(), err.what());
 		return Py_BuildValue("i", 0);
 	}
-	if(show_cv_window) {
+	if(py_visualize) {
 		/* draw tracker positions to OpenCV window */
 		cv::Point fps_origin(10, 20);
 		double fps_font_size = 0.50;

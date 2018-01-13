@@ -122,7 +122,7 @@ int main(int argc, char * argv[]){
 	std::string mos_disp_win = cv::format("Mosaic :: %s", seq_name.c_str()), mos_mask_win = "Mask",
 		mos_patch_win = "Current Patch", img_win = "Current Image";
 	double mos_resize_factor;
-	if(show_cv_window){
+	if(enable_visualization){
 		double resize_factor_x = static_cast<double>(mos_disp_width) / static_cast<double>(mos_img.cols);
 		double resize_factor_y = static_cast<double>(mos_disp_height) / static_cast<double>(mos_img.rows);
 		mos_resize_factor = resize_factor_x < resize_factor_y ? resize_factor_x : resize_factor_y;
@@ -150,7 +150,7 @@ int main(int argc, char * argv[]){
 			cv::Mat temp;
 			mtf::utils::writePixelsToImage(mos_prev_tracked_img, prev_patch, mos_ssm->getPts(), n_channels, temp);
 			mtf::utils::writePixelsToImage(mos_curr_tracked_img, mos_patch, mos_ssm->getPts(), n_channels, temp);
-			if(show_cv_window && mos_show_tracked_img){
+			if(enable_visualization && mos_show_tracked_img){
 				//! resize the mosaic image to display on screen
 				cv::resize(mos_prev_tracked_img, mos_disp_img, mos_disp_img.size());
 				mtf::utils::drawRegion(mos_disp_img, curr_corners_norm_3*mos_resize_factor, CV_RGB(0, 255, 0), 2);
@@ -221,7 +221,7 @@ int main(int argc, char * argv[]){
 		prev_mos_location = curr_mos_location;
 		prev_mos_location_norm = curr_mos_location_norm;
 
-		if(show_cv_window){
+		if(enable_visualization){
 			//! resize the mosaic image to display on screen
 			cv::resize(mos_img, mos_disp_img, mos_disp_img.size());
 			//! draw the location of the current warped bounding box given by the tracker
@@ -253,7 +253,7 @@ int main(int argc, char * argv[]){
 			printf("Done %d frames\n", input->getFrameID());
 		}
 	}
-	if(show_cv_window){ cv::destroyAllWindows(); }
+	if(enable_visualization){ cv::destroyAllWindows(); }
 	if(mos_save_img){
 		if(mos_out_fname.empty()){
 			mos_out_fname = cv::format("mosaic_%s_%s_%s_%s_inv%d_norm%d_mask%d_%ld.%s",

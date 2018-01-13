@@ -78,7 +78,7 @@ namespace utils{
 		}
 	}
 
-	InputBase::InputBase(const InputParams *_params) : n_frames(0){
+	InputBase::InputBase(const InputParams *_params) : n_frames(0), destroy(false){
 		InputParams params(_params);
 		//printf("InputBase :: img_source: %c\n", img_source);
 

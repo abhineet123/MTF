@@ -51,7 +51,7 @@ int main(int argc, char * argv[]) {
 	printf("actor: %s\n", actor.c_str());
 	printf("pipeline: %c\n", pipeline);
 	printf("img_source: %c\n", img_source);
-	printf("show_cv_window: %d\n", show_cv_window);
+	printf("enable_visualization: %d\n", enable_visualization);
 	printf("mtf_sm: %s\n", mtf_sm);
 	printf("mtf_am: %s\n", mtf_am);
 	printf("mtf_ssm: %s\n", mtf_ssm);
@@ -116,7 +116,7 @@ int main(int argc, char * argv[]) {
 	uav_pre_proc.initialize(input->getFrame());
 
 	string satellite_win_name = "Satellite Image";
-	if(show_cv_window) {
+	if(enable_visualization) {
 		cv::namedWindow(satellite_win_name, cv::WINDOW_AUTOSIZE);
 	}
 
@@ -153,7 +153,7 @@ int main(int argc, char * argv[]) {
 
 		satellite_img_copy1.copyTo(satellite_img_copy);
 
-		if(record_frames || show_cv_window){
+		if(record_frames || enable_visualization){
 			/* draw tracker positions to satellite image */
 			obj_utils.cornersToPoint2D(corners, uav_tracker->getRegion());
 			line(satellite_img_copy, corners[0], corners[1], obj_utils.getObjCol(0), line_thickness);
@@ -188,7 +188,7 @@ int main(int argc, char * argv[]) {
 			//	putText(satellite_img_copy, err_text, err_origin, cv::FONT_HERSHEY_SIMPLEX, err_font_size, err_color);
 			//}
 
-			if(show_cv_window){
+			if(enable_visualization){
 				cv::resize(satellite_img_copy, satellite_img_small, cv::Size(satellite_img_small.cols, satellite_img_small.rows));
 				imshow(satellite_win_name, satellite_img_small);
 				cv::imshow("UAV Image", input->getFrame());
@@ -201,7 +201,7 @@ int main(int argc, char * argv[]) {
 				}
 			}
 		}
-		if(!show_cv_window && (input->getFrameID() + 1) % 50 == 0){
+		if(!enable_visualization && (input->getFrameID() + 1) % 50 == 0){
 			printf("frame_id: %5d avg_fps: %15.9f avg_fps_win: %15.9f avg_err: %15.9f\n",
 				input->getFrameID() + 1, avg_fps, avg_fps_win, avg_err);
 		}

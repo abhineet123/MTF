@@ -75,7 +75,11 @@ params(cv3_params), input_type(CV_8UC1){
 		input_type = CV_8UC3;
 	}
 	cv_corners_mat.create(2, 4, CV_64FC1);
-
+}
+CV3::~CV3(){
+	if(tracker){
+		tracker.release();
+	}
 }
 void CV3::setImage(const cv::Mat &img){
 	curr_img_cv = img;
