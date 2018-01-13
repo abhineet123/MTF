@@ -60,11 +60,16 @@ namespace utils{
 		virtual bool initialize() = 0;
 		virtual bool update() = 0;
 
-		virtual void remapBuffer(unsigned char **new_addr) = 0;
-		virtual int getFrameID() const = 0;
-		virtual const cv::Mat& getFrame() const = 0;
+		virtual void remapBuffer(unsigned char **new_addr);
+
+		virtual int getFrameID() const{ return frame_id; }
+		virtual const cv::Mat& getFrame() const{
+			return cv_buffer[buffer_id];
+		}
 		//! apparently a const function cannot return a non const object by reference
-		virtual cv::Mat& getFrame(FrameType frame_type) = 0;
+		virtual cv::Mat& getFrame(FrameType frame_type){
+			return cv_buffer[buffer_id];
+		}
 		virtual int getNFrames() const{ return n_frames; }
 		virtual int getHeight() const{ return img_height; }
 		virtual int getWidth() const{ return img_width; }
@@ -75,9 +80,12 @@ namespace utils{
 		virtual bool constBuffer(){ return const_buffer; }
 
 	protected:
-		int n_frames, img_width, img_height, n_channels, n_buffers, buffer_id;
+		int n_frames, img_width, img_height, n_channels, frame_id;
+		int n_buffers, buffer_id, invert_seq;
+
 		string file_path;
 		bool const_buffer;
+		vector<cv::Mat> cv_buffer;
 	};
 
 	class InputCV : public InputBase {
@@ -88,20 +96,9 @@ namespace utils{
 		bool initialize() override;
 		bool update() override;
 
-		void remapBuffer(unsigned char** new_addr) override;
-		const cv::Mat& getFrame() const override{
-			return cv_buffer[buffer_id];
-		}
-		cv::Mat& getFrame(FrameType frame_type) override{
-			return cv_buffer[buffer_id];
-		}
-		int getFrameID() const override{ return frame_id; }
-
 	private:
 		InputParams params;
-		cv::VideoCapture cap_obj;
-		vector<cv::Mat> cv_buffer;
-		int frame_id;
+		cv::VideoCapture cap_obj;		
 		const int img_type;
 	};
 
@@ -173,23 +170,14 @@ namespace utils{
 
 		bool initialize() override;
 		bool update() override;
-		const cv::Mat& getFrame() const override{
-			return cv_frame;
-		}
-		cv::Mat& getFrame(FrameType frame_type) override{
-			return cv_frame;
-		}
-		int getFrameID() const override{ return frame_id; }
 
-		void remapBuffer(unsigned char** new_addr) override;
 		bool constBuffer() override{ return true; }
 
 	private:
 		InputVPParams params;
 		typedef vpImage<vpRGBa> VPImgType;
-		vector<VPImgType> vp_buffer;
-		cv::Mat cv_frame;
-		int frame_id;
+		VPImgType vp_img;
+		vector<cv::Mat> cv_buffer;
 		std::unique_ptr<vpFrameGrabber> cap_obj;
 		void convert(const VPImgType &vp_img, cv::Mat &cv_img);
 	};
@@ -310,20 +298,10 @@ namespace utils{
 		bool initialize() override;
 		bool update() override;
 		void remapBuffer(unsigned char** new_addr) override;
-		const cv::Mat& getFrame() const override{
-			return cv_buffer[buffer_id];
-		}
-		cv::Mat& getFrame(FrameType frame_type) override{
-			return cv_buffer[buffer_id];
-		}
-		int getFrameID() const override{ return frame_id; }
-
 	private:
 		InputParams params;
 		std::unique_ptr<InputXVSource> src;
 		vector<IMAGE_TYPE> xv_buffer;
-		vector<cv::Mat> cv_buffer;
-		int frame_id;
 		void copyXVToCV(IMAGE_TYPE_GS &xv_img, cv::Mat &cv_img);
 		void copyXVToCVIter(IMAGE_TYPE_GS &xv_img, cv::Mat &cv_img);
 		void copyXVToCVIter(IMAGE_TYPE &xv_img, cv::Mat &cv_img);

@@ -99,6 +99,7 @@ namespace utils{
 			n_frames = getNumberOfFrames(file_path.c_str());
 		}
 		n_buffers = params.n_buffers;
+		invert_seq = params.invert_seq;
 		if(params.invert_seq){
 			if(n_frames <= 0){
 				throw mtf::utils::InvalidArgument(
@@ -118,6 +119,22 @@ namespace utils{
 		//printf("dev_name: %s\n", dev_name.c_str());
 		//printf("dev_path: %s\n", dev_path.c_str());
 		//printf("dev_fmt: %s\n", dev_fmt.c_str());
+	}
+
+	void InputBase::remapBuffer(unsigned char** new_addr){
+		if(invert_seq){
+			for(int i = 0; i < n_buffers; ++i){
+				cv_buffer[i].copyTo(cv::Mat(cv_buffer[i].rows, cv_buffer[i].cols, cv_buffer[i].type(), new_addr[i]));
+				cv_buffer[i].data = new_addr[i];
+			}
+		} else{
+			for(int i = 0; i < n_buffers; ++i){
+				//printf("Remapping CV buffer %d to: %lu\n", i, (unsigned long)new_addr[i]);
+				cv_buffer[i].data = new_addr[i];
+			}
+			buffer_id = -1;
+			update();
+		}
 	}
 
 	InputCV::InputCV(const InputParams *_params, int _img_type) :
@@ -191,27 +208,12 @@ namespace utils{
 		return cap_obj.read(cv_buffer[buffer_id]);
 	}
 	bool InputCV::update(){
-		buffer_id = (buffer_id + 1) % n_buffers;
+		int _buffer_id = (buffer_id + 1) % n_buffers;
 		++frame_id;
-		if(params.invert_seq){
-			return true;
-		}
-		return cap_obj.read(cv_buffer[buffer_id]);
-	}
-	void InputCV::remapBuffer(unsigned char** new_addr){
-		if(params.invert_seq){
-			for(int i = 0; i < n_buffers; ++i){
-				cv_buffer[i].copyTo(cv::Mat(cv_buffer[i].rows, cv_buffer[i].cols, cv_buffer[i].type(), new_addr[i]));
-				cv_buffer[i].data = new_addr[i];
-			}
-		} else{
-			for(int i = 0; i < n_buffers; ++i){
-				//printf("Remapping CV buffer %d to: %lu\n", i, (unsigned long)new_addr[i]);
-				cv_buffer[i].data = new_addr[i];
-			}
-			buffer_id = -1;
-			update();
-		}
+		if(params.invert_seq){ return true; }
+		bool success = cap_obj.read(cv_buffer[_buffer_id]);
+		if(success){ buffer_id = _buffer_id; }
+		return success;
 	}
 #ifndef DISABLE_VISP
 
@@ -273,8 +275,9 @@ namespace utils{
 	InputVP::InputVP(const InputVPParams *_params) :
 		InputBase(_params), params(_params),
 		frame_id(0), cap_obj(nullptr){}
+
 	InputVP::~InputVP(){
-		vp_buffer.clear();
+		cv_buffer.clear();
 		if(cap_obj){
 			cap_obj->close();
 		}
@@ -578,7 +581,7 @@ namespace utils{
 				}
 				cap_obj.reset(fly_cap);
 			} catch(vpException &e) {
-				printf("Exception occured while initializing the FlyCapture module: %s\n",
+				printf("Exception occurred while initializing the FlyCapture module: %s\n",
 					e.getStringMessage().c_str());
 				return false;
 			}
@@ -740,56 +743,47 @@ namespace utils{
 		img_height = cap_obj->getHeight();
 		printf("ViSP pipeline initialized successfully to grab frames of size: %d x %d\n",
 			img_width, img_height);
-		vp_buffer.resize(n_buffers);
+
+		vp_img.init(img_height, img_width);
+		cv_buffer.resize(n_buffers);
 		for(int i = 0; i < n_buffers; ++i){
-			vp_buffer[i].init(img_height, img_width);
+			cv_buffer[i].create(img_height, img_width, CV_8UC3);
 		}
 		buffer_id = 0;
 		frame_id = 0;
 		if(params.invert_seq){
 			printf("Reading sequence into buffer....\n");
 			for(int i = 1; i < n_buffers; ++i){
-				cap_obj->acquire(vp_buffer[n_buffers - i - 1]);
+				cap_obj->acquire(vp_img);
+				convert(vp_img, cv_buffer[n_buffers - i - 1]);				
 			}
-			vp_buffer[n_buffers - 1] = temp_img;
+			convert(temp_img, cv_buffer[n_buffers - 1]);
 		} else{
-			vp_buffer[buffer_id] = temp_img;
+			convert(temp_img, cv_buffer[buffer_id]);
 		}
-		cv_frame.create(img_height, img_width, CV_8UC3);
-#ifdef VISP_HAVE_OPENCV
-		vpImageConvert::convert(vp_buffer[buffer_id], cv_frame);
-#else
-		convert(vp_buffer[buffer_id], cv_frame);
-#endif		
 		return true;
 	}
 	bool InputVP::update(){
-		buffer_id = (buffer_id + 1) % n_buffers;
+		int _buffer_id = (buffer_id + 1) % n_buffers;
 		++frame_id;
 		if(!params.invert_seq){
-			cap_obj->acquire(vp_buffer[buffer_id]);
+			cap_obj->acquire(vp_img);
+			convert(vp_img, cv_buffer[_buffer_id]);
 		}
-#ifdef VISP_HAVE_OPENCV
-		vpImageConvert::convert(vp_buffer[buffer_id], cv_frame);
-#else
-		convert(vp_buffer[buffer_id], cv_frame);
-#endif
+		buffer_id = _buffer_id;
 		return true;
 	}
-	void InputVP::remapBuffer(unsigned char** new_addr){
-		for(int i = 0; i < n_buffers; ++i){
-			vp_buffer[i].bitmap = (vpRGBa*)(new_addr[i]);
-		}
-		buffer_id = -1;
-		update();
-	}
 	void InputVP::convert(const VPImgType &vp_img, cv::Mat &cv_img){
+#ifdef VISP_HAVE_OPENCV
+		vpImageConvert::convert(vp_img, cv_img);
+#else
 		for(unsigned int row_id = 0; row_id < vp_img.getHeight(); ++row_id){
 			for(unsigned int col_id = 0; col_id < vp_img.getWidth(); ++col_id){
 				vpRGBa vp_val = vp_img(row_id, col_id);
 				cv_img.at<cv::Vec3b>(row_id, col_id) = cv::Vec3b(vp_val.B, vp_val.G, vp_val.R);
-			}
+			}		
 		}
+#endif	
 	}
 #endif
 #ifndef DISABLE_XVISION
