@@ -78,7 +78,7 @@ namespace utils{
 		}
 	}
 
-	InputBase::InputBase(const InputParams *_params) : n_frames(0), destroy(false){
+	InputBase::InputBase(const InputParams *_params) : destroy(false), n_frames(0), frame_id(0){
 		InputParams params(_params);
 		//printf("InputBase :: img_source: %c\n", img_source);
 
@@ -138,8 +138,7 @@ namespace utils{
 	}
 
 	InputCV::InputCV(const InputParams *_params, int _img_type) :
-		InputBase(_params), params(_params), 
-		frame_id(0), img_type(_img_type){}
+		InputBase(_params), params(_params), img_type(_img_type){}
 	InputCV::~InputCV(){
 		cv_buffer.clear();
 		cap_obj.release();
