@@ -65,7 +65,7 @@ struct InputStruct{
 	boost::thread t;
 	InputStruct(Input _input) :
 		input(_input){
-		 t = boost::thread{ RunInput(input) };
+		 //t = boost::thread{ RunInput(input) };
 	}
 
 };
@@ -121,7 +121,7 @@ struct TrackerStruct{
 	boost::thread t;
 	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, Input &_input) :
 		tracker(_tracker), pre_proc(_pre_proc){
-		t = boost::thread{ RunTracker(tracker, pre_proc, _input) };
+		//t = boost::thread{ RunTracker(tracker, pre_proc, _input) };
 	}
 
 };
