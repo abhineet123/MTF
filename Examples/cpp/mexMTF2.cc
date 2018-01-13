@@ -348,7 +348,7 @@ bool initializeTracker(Tracker &tracker, PreProc &pre_proc,
 		return false;
 	}
 	try{
-		for(PreProc curr_obj = it->second.pre_proc; curr_obj; curr_obj = curr_obj->next){
+		for(PreProc curr_obj = pre_proc; curr_obj; curr_obj = curr_obj->next){
 			tracker->setImage(curr_obj->getFrame());
 		}
 		printf("Initializing tracker with object of size %f x %f\n", size_x, size_y);
