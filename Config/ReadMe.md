@@ -340,7 +340,7 @@ ViSP input pipeline:
 Output parameters:
 ==================
 
-	 Parameter:	'show_cv_window'
+	 Parameter:	'enable_visualization'
 		Description:
 			show the result of tracking from frame to frame in an OpenCV window;
 			if a single object is being tracked, this is shown as a red bounding box; subsequent objects are shown in other colours defined in Utilities/src/objUtils.cc;
@@ -348,15 +348,7 @@ Output parameters:
 			useful for benchmarking and batch mode testing;
 		Possible Values:
 			0: Disable
-			1: Enable	
-			
-	 Parameter:	'show_xv_window'
-		Description:
-			show the result of tracking from frame to frame in an Xvision window;
-			only matters if Xvision is enabled during compilation and Xvision pipeline is used;
-		Possible Values:
-			0: Disable
-			1: Enable	
+			1: Enable		
 			
 	 Parameter:	'show_ground_truth'
 		Description:
@@ -3008,7 +3000,7 @@ Discriminative Scale Space Tracker (DSST):
 		M. Danelljan, G. Hager, F. S. Khan, and M. Felsberg, “Discriminative Scale Space Tracking,” IEEE Transactions on Pattern Analysis and Machine Intelligence, 2016
 			
 Kernelized Correlation Filter (KCF) Tracker:
-============================================
+=============================================
 	 Parameter:	'kcf_padding'/'kcf_lambda'/'kcf_is_scaling'/'kcf_resize_factor'/'kcf_number_scales'/'kcf_scale_step'
 		Description:
 			same as corresponding parameters for DSST 
@@ -3035,5 +3027,39 @@ Kernelized Correlation Filter (KCF) Tracker:
 			
 	 Additional References:
 		J. F. Henriques, R. Caseiro, P. Martins, and J. Batista, “High-speed tracking with kernelized correlation fiters,” IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 37, no. 3, pp. 583–596, 2015
-			
 		
+Xvision Trackers:
+=================		
+	 Parameter:	'xv_visualize'
+		Description:
+			show the result of tracking from frame to frame in an Xvision window;
+			only matters if Xvision is enabled during compilation and Xvision pipeline is used;
+		Possible Values:
+			0: Disable
+			1: Enable	
+
+Python interface (pyMTF):
+==========================
+	 Parameter:	'py_visualize'
+		Description:
+			show the result of tracking from frame to frame;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+Matlab interface (mexMTF):
+==========================
+	 Parameter:	'mex_visualize'
+		Description:
+			show the result of tracking from frame to frame;
+		Possible Values:
+			0: Disable
+			1: Enable
+			
+	 Parameter:	'mex_live_init'
+		Description:
+			use live video stream for selecting the object to be tracked during tracker initialization; if this is disabled, a static image will be used instead;
+			at least one input pipeline must be created for this to work;
+		Possible Values:
+			0: Disable
+			1: Enable			
