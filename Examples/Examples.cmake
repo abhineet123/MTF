@@ -12,7 +12,7 @@ else()
 endif()
 set(MTF_PY_INSTALL_DIR ${MTF_PY_INSTALL_DIR_DEFAULT} CACHE PATH "Directory to install the Python interface module") 
 set(Matlab_ROOT_DIR ${Matlab_ROOT_DIR_DEFAULT} CACHE PATH "MATLAB root directory") 
-set(MTF_MEX_INSTALL_DIR ${Matlab_ROOT_DIR}/toolbox/local CACHE PATH "Directory to install the Matlab interface module") 
+set(MTF_MEX_INSTALL_DIR "" CACHE PATH "Directory to install the Matlab interface module") 
 
 # set(WARNING_FLAGS -Wfatal-errors -Wno-write-strings -Wno-unused-result)
 # set(MTF_COMPILETIME_FLAGS -std=c++11)
@@ -199,8 +199,13 @@ endif(WITH_PY)
 if(WITH_MEX)
 	find_package(Matlab COMPONENTS MEX_COMPILER MX_LIBRARY)
 	if(Matlab_FOUND)
+		if ("${MTF_MEX_INSTALL_DIR}" STREQUAL "")
+			set(MTF_MEX_INSTALL_DIR ${Matlab_ROOT_DIR}/toolbox/local) 
+		endif()
+		message(STATUS "Matlab_ROOT_DIR: ${Matlab_ROOT_DIR}")
 		message(STATUS "Matlab_MEX_LIBRARY: ${Matlab_MEX_LIBRARY}")
 		message(STATUS "Matlab_LIBRARIES: ${Matlab_LIBRARIES}")
+		message(STATUS "MTF_MEX_INSTALL_DIR: ${MTF_MEX_INSTALL_DIR}")
 		matlab_add_mex(
 			NAME mexMTF
 			SRC Examples/cpp/mexMTF.cc
