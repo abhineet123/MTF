@@ -9,13 +9,13 @@ ifeq ($(OS),Windows_NT)
 	BOOST_LIBS_SUFFIX ?= -mgw53-1_58
 	MTF_LIB_EXT = .dll
 	MTF_EXE_EXT = .exe
-	BUILD_ROOT_DIR = Build\\Windows
+	BUILD_ROOT_DIR = build\\windows
 else
 	MTF_INSTALL_DIR ?= /usr/local
 	EIGEN_INCLUDE_DIRS ?= /usr/local/include/eigen3 /usr/include/eigen3
 	MTF_LIB_EXT = .so
 	MTF_EXE_EXT =
-	BUILD_ROOT_DIR = Build
+	BUILD_ROOT_DIR = build
 endif
 
 # enable optimization (or Release build)
@@ -106,9 +106,9 @@ ifeq (${o}, 1)
 	MTF_NT_LIB_NAME = mtf_nt
 	# Build Version
 	ifneq (${ver}, 0)
-		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}Release${PATHSEP}${ver}
+		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}release${PATHSEP}${ver}
 	else
-		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}Release
+		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}release
 	endif	
 else ifeq (${o}, 2)
 	OPT_FLAGS = -O3 -ffast-math -D NDEBUG -D EIGEN_NO_DEBUG
@@ -116,9 +116,9 @@ else ifeq (${o}, 2)
 	MTF_NT_LIB_NAME = mtf_nt_fast
 	# Build Version
 	ifneq (${ver}, 0)
-		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}Fast${PATHSEP}${ver}
+		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}fast${PATHSEP}${ver}
 	else
-		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}Fast
+		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}fast
 	endif	
 else
 	OPT_FLAGS += -g -O0
@@ -126,9 +126,9 @@ else
 	MTF_NT_LIB_NAME = mtf_nt_debug
 	# Build Version
 	ifneq (${ver}, 0)
-		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}Debug${PATHSEP}${ver}
+		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}debug${PATHSEP}${ver}
 	else
-		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}Debug
+		BUILD_DIR = ${BUILD_ROOT_DIR}${PATHSEP}debug
 	endif
 endif
 # Profiling

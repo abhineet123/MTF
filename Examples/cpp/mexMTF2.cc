@@ -425,7 +425,15 @@ bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) 
 	plhs = setCorners(it->second.tracker->getRegion());
 	return true;
 }
-
+bool getRegion(unsigned int tracker_id, mxArray* &plhs) {
+	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
+	if(it == trackers.end()){
+		printf("Invalid tracker ID: %d\n", tracker_id);
+		return false;
+	}
+	plhs = setCorners(it->second.tracker->getRegion());
+	return true;
+}
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	mwSize dims[2] = { 1, 1 };
 	plhs[0] = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
@@ -470,6 +478,22 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		*ret_val = _input_id;
 		return;
 	}
+	case MEX_GET_FRAME:
+	{
+		if(nlhs != 2){
+			mexErrMsgTxt("2 output arguments (success, frame) are needed to get frame.");
+		}
+		if(nrhs < 2){
+			mexErrMsgTxt("At least 2 input arguments are needed to get frame.");
+		}
+		unsigned int input_id = getID(prhs[1]);
+		if(!getFrame(input_id, plhs[1])){
+			*ret_val = 0;
+			return;
+		}
+		*ret_val = 1;
+		return;
+	}
 	case MEX_REMOVE_INPUT:
 	{
 		if(nrhs < 2){
@@ -510,6 +534,22 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			return;
 		}
 		*ret_val = _tracker_id;
+		return;
+	}
+	case MEX_GET_REGION:
+	{
+		if(nlhs != 2){
+			mexErrMsgTxt("2 output arguments (tracker_id, init_region) are needed to create tracker.");
+		}
+		if(nrhs < 2){
+			mexErrMsgTxt("At least 2 input arguments are needed to create tracker.");
+		}
+		unsigned int tracker_id = getID(prhs[1]);
+		if(!getRegion(tracker_id, plhs[1])){
+			*ret_val = 0;
+			return;
+		}
+		*ret_val = 1;
 		return;
 	}
 	case MEX_SET_REGION:
