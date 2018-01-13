@@ -393,7 +393,7 @@ bool createTracker(int input_id, mxArray* &plhs) {
 	try{
 		if(!obj_utils.selectObjects(input.get(), 1,
 			patch_size, line_thickness, write_objs, sel_quad_obj,
-			write_obj_fname.c_str())){
+			write_obj_fname.c_str(), false)){
 			mexErrMsgTxt("Object to be tracked could not be obtained.\n");
 		}
 	} catch(const mtf::utils::Exception &err){
