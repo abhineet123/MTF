@@ -19,8 +19,7 @@ seq_id = 16;
 seq_fmt = 'jpg';
 init_frame_id = 1;
 
-param_str = sprintf('config_dir %s', config_dir);
-param_str = sprintf('%s db_root_path %s', param_str, db_root_path);
+param_str = sprintf('db_root_path %s', db_root_path);
 param_str = sprintf('%s pipeline %s', param_str, pipeline);
 param_str = sprintf('%s img_source %s', param_str, img_source);
 param_str = sprintf('%s actor_id %d', param_str, actor_id);
@@ -43,12 +42,15 @@ while arg_id <= nargin
         show_fps = arg_val;
     elseif strcmp(arg_name, 'show_window')
         show_window = arg_val;
+    elseif strcmp(arg_name, 'config_dir')
+        config_dir = arg_val;
     else
         param_str = sprintf('%s %s %s', param_str,...
             string(arg_name), string(arg_val));
     end
     arg_id = arg_id + 2;
 end   
+param_str = sprintf('config_dir %s %s', config_dir, param_str);
 
 [sequences, actors] = datasets;
 actor = actors{actor_id+1};
