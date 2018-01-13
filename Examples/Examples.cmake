@@ -223,6 +223,34 @@ if(WITH_MEX)
 			set(EX_COMBINED_TARGET_NAMES ${EX_COMBINED_TARGET_NAMES} mtfx)			  
 		endif()
 		set(EX_TARGET_NAMES ${EX_TARGET_NAMES} mexMTF)
+		
+		find_package(Boost REQUIRED COMPONENTS thread)
+		if(Boost_FOUND)
+			matlab_add_mex(
+				NAME mexMTF2
+				SRC Examples/cpp/mexMTF2.cc
+				LINK_TO mtf ${MTF_LIBS} ${Matlab_LIBRARIES} ${Boost_LIBRARIES}
+			)
+			install(TARGETS mexMTF2 
+			RUNTIME DESTINATION ${MTF_MEX_INSTALL_DIR} 
+			LIBRARY DESTINATION ${MTF_MEX_INSTALL_DIR}
+			COMPONENT mex)
+			add_custom_target(mex DEPENDS mexMTF2)
+			if(NOT WIN32)
+				add_custom_target(install_mex2
+				  ${CMAKE_COMMAND}
+				  -D "CMAKE_INSTALL_COMPONENT=mex"
+				  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+				   DEPENDS mexMTF2
+				  )
+				add_custom_target(mtfx2 DEPENDS mexMTF2 install_mex2)			
+				set(EX_INSTALL_TARGET_NAMES ${EX_INSTALL_TARGET_NAMES} install_mex2)	
+				set(EX_COMBINED_TARGET_NAMES ${EX_COMBINED_TARGET_NAMES} mtfx2)			  
+			endif()
+			set(EX_TARGET_NAMES ${EX_TARGET_NAMES} mexMTF2)
+		else(Boost_FOUND)
+			message(STATUS "Boost thread module not found")	
+		endif(Boost_FOUND)	
 	else()
 		message(STATUS "Matlab not found so mexMTF is disabled")
 		if(NOT WIN32)
