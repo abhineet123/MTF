@@ -53,12 +53,15 @@ else
     fprintf('\n');
 end
 
-tracker_id = mexMTF2('create_tracker', param_str);
+[tracker_id, init_corners] = mexMTF2('create_tracker', param_str);
 if ~tracker_id
     error('Tracker creation was unsuccessful');
 else
     fprintf('Tracker created successfully\n');
 end
+
+disp('init_corners');
+disp(init_corners);
 
 % pause
 if show_window
@@ -84,6 +87,9 @@ while 1
             'Color','r', 'LineWidth',2);
 		hold off;
 		pause(0.001);
-	end
+    else
+        disp('curr_corners');
+        disp(curr_corners);
+    end
 end
 mexMTF2('clear');
