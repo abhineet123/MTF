@@ -294,7 +294,7 @@ bool createInput(mxArray* &plhs) {
 	//plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
 	unsigned int *ret_val = (unsigned int*)mxGetPr(plhs);
 	*ret_val = static_cast<unsigned int>(input->getNFrames());	
-	input_pipelines.insert(std::pair<int, Input>(_input_id, input));
+	input_pipelines.insert(std::pair<int, InputStruct>(_input_id, InputStruct(input)));
 	return true;
 }
 
@@ -404,7 +404,6 @@ bool createTracker(int input_id, mxArray* &plhs) {
 				mexErrMsgTxt("Object to be tracked could not be obtained.\n");
 			}
 		}
-
 	} catch(const mtf::utils::Exception &err){
 		mexErrMsgTxt(cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
 			err.type(), err.what()).c_str());
@@ -414,7 +413,8 @@ bool createTracker(int input_id, mxArray* &plhs) {
 		mexErrMsgTxt("Tracker initialization failed");
 	}
 	++_tracker_id;
-	trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, TrackerStruct(tracker, pre_proc, input)));
+	trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, 
+		TrackerStruct(tracker, pre_proc, input)));
 	return true;
 }
 
