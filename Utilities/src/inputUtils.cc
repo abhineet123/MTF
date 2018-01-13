@@ -272,8 +272,7 @@ namespace utils{
 		 pg_fw_brightness = _params->pg_fw_brightness;		
 	}
 	InputVP::InputVP(const InputVPParams *_params) :
-		InputBase(_params), params(_params),
-		frame_id(0), cap_obj(nullptr){}
+		InputBase(_params), params(_params), cap_obj(nullptr){}
 
 	InputVP::~InputVP(){
 		cv_buffer.clear();
