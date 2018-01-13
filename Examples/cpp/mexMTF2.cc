@@ -401,7 +401,7 @@ bool createTracker(int input_id, mxArray* &plhs) {
 			err.type(), err.what()).c_str());
 	}
 	cv::Mat init_corners = obj_utils.getObj().corners.clone();
-	if(!initializeTracker(tracker, pre_proc, input->getFrame(), init_corners)){
+	if(!initializeTracker(tracker, pre_proc, input->getFrame(), init_corners, plhs)){
 		mexErrMsgTxt("Tracker initialization failed");
 	}
 	++_tracker_id;
