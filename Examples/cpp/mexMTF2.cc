@@ -592,7 +592,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	case MEX_CLEAR:
 	{
 		printf("Clearing up...");
+		for(auto it = input_pipelines.begin(); it != input_pipelines.end(); it++){
+			it->second.t.interrupt();			
+		}
 		input_pipelines.clear();
+		for(auto it = trackers.begin(); it != trackers.end(); it++){
+			it->second.t.interrupt();
+		}
 		trackers.clear();		
 		*ret_val = 1;
 		printf("Done\n");

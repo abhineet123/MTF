@@ -53,7 +53,8 @@ else
     fprintf('\n');
 end
 
-[tracker_id, init_corners] = mexMTF2('create_tracker', param_str);
+[tracker_id, init_corners] = mexMTF2('create_tracker',...
+    input_id, param_str);
 if ~tracker_id
     error('Tracker creation was unsuccessful');
 else
