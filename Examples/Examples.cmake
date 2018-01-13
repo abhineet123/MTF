@@ -234,8 +234,8 @@ if(WITH_MEX)
 			install(TARGETS mexMTF2 
 			RUNTIME DESTINATION ${MTF_MEX_INSTALL_DIR} 
 			LIBRARY DESTINATION ${MTF_MEX_INSTALL_DIR}
-			COMPONENT mex)
-			add_custom_target(mex DEPENDS mexMTF2)
+			COMPONENT mex2)
+			add_custom_target(mex2 DEPENDS mexMTF2)
 			if(NOT WIN32)
 				add_custom_target(install_mex2
 				  ${CMAKE_COMMAND}
