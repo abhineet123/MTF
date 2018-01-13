@@ -289,12 +289,12 @@ bool createInput(mxArray* &plhs) {
 		return false;
 	}
 	++_input_id;
-	input_pipelines.insert(std::pair<int, Input>(_input_id, input));
 	mwSize dims[2] = { 1, 1 };
 	plhs = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
 	//plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
 	unsigned int *ret_val = (unsigned int*)mxGetPr(plhs);
 	*ret_val = static_cast<unsigned int>(input->getNFrames());	
+	input_pipelines.insert(std::pair<int, Input>(_input_id, input));
 	return true;
 }
 
@@ -319,6 +319,47 @@ bool getFrame(unsigned int input_id, mxArray* &plhs){
 	plhs = mxCreateNumericArray(n_dims, dims, mxUINT8_CLASS, mxREAL);
 	copyMatrixToMatlab<unsigned char>(frame, (unsigned char*)mxGetPr(plhs), n_channels);
 	delete(dims);
+	return true;
+}
+
+
+bool initializeTracker(Tracker &tracker, PreProc &pre_proc,
+	const cv::Mat &init_img, const cv::Mat &init_corners, mxArray* &plhs) {
+	img_height = init_img.rows;
+	img_width = init_img.cols;
+
+	//printf("img_height: %d\n", img_height);
+	//printf("img_width: %d\n", img_width);
+	//printf("init_corners:\n");
+	//for(unsigned int corner_id = 0; corner_id < 4; ++corner_id) {
+	//	printf("%d: (%f, %f)\n", corner_id, init_corners.at<double>(0, corner_id), init_corners.at<double>(1, corner_id));
+	//}
+	min_x = init_corners.at<double>(0, 0);
+	min_y = init_corners.at<double>(1, 0);
+	max_x = init_corners.at<double>(0, 2);
+	max_y = init_corners.at<double>(1, 2);
+	size_x = max_x - min_x;
+	size_y = max_y - min_y;
+	try{
+		pre_proc->initialize(init_img);
+	} catch(const mtf::utils::Exception &err){
+		printf("Exception of type %s encountered while initializing the pre processor: %s\n",
+			err.type(), err.what());
+		return false;
+	}
+	try{
+		for(PreProc curr_obj = it->second.pre_proc; curr_obj; curr_obj = curr_obj->next){
+			tracker->setImage(curr_obj->getFrame());
+		}
+		printf("Initializing tracker with object of size %f x %f\n", size_x, size_y);
+		tracker->initialize(init_corners);
+	} catch(const mtf::utils::Exception &err){
+		printf("Exception of type %s encountered while initializing the tracker: %s\n",
+			err.type(), err.what());
+		return false;
+	}
+	frame_id = 0;
+	plhs = setCorners(tracker->getRegion());
 	return true;
 }
 bool createTracker(int input_id, mxArray* &plhs) {
@@ -368,55 +409,6 @@ bool createTracker(int input_id, mxArray* &plhs) {
 	return true;
 }
 
-bool initializeTracker(Tracker &tracker, PreProc &pre_proc, 
-	const cv::Mat &init_img, const cv::Mat &init_corners, mxArray* &plhs) {
-	img_height = init_img.rows;
-	img_width = init_img.cols;
-
-	//printf("img_height: %d\n", img_height);
-	//printf("img_width: %d\n", img_width);
-	//printf("init_corners:\n");
-	//for(unsigned int corner_id = 0; corner_id < 4; ++corner_id) {
-	//	printf("%d: (%f, %f)\n", corner_id, init_corners.at<double>(0, corner_id), init_corners.at<double>(1, corner_id));
-	//}
-	min_x = init_corners.at<double>(0, 0);
-	min_y = init_corners.at<double>(1, 0);
-	max_x = init_corners.at<double>(0, 2);
-	max_y = init_corners.at<double>(1, 2);
-	size_x = max_x - min_x;
-	size_y = max_y - min_y;
-	try{
-		pre_proc->initialize(init_img);
-	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while initializing the pre processor: %s\n",
-			err.type(), err.what());
-		return false;
-	}
-	try{
-		for(PreProc curr_obj = it->second.pre_proc; curr_obj; curr_obj = curr_obj->next){
-			tracker->setImage(curr_obj->getFrame());
-		}
-		printf("Initializing tracker with object of size %f x %f\n", size_x, size_y);
-		tracker->initialize(init_corners);
-	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while initializing the tracker: %s\n",
-			err.type(), err.what());
-		return false;
-	}
-	frame_id = 0;
-	plhs = setCorners(tracker->getRegion());
-	return true;
-}
-
-bool updateTracker(unsigned int tracker_id, const cv::Mat &curr_img, mxArray* &plhs) {
-	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
-	if(it == trackers.end()){
-		printf("Invalid tracker ID: %d\n", tracker_id);
-		return false;
-	}
-	plhs = setCorners(it->second.tracker->getRegion());
-	return true;
-}
 bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) {
 	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
@@ -455,7 +447,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 
 	auto cmd_iter = cmd_list.find(std::string(cmd_str));
 	if(cmd_iter == cmd_list.end()){
-		mexErrMsgTxt(cv::format("Invalid comand provided: %s.", cmd_str).c_str());
+		mexErrMsgTxt(cv::format("Invalid command provided: %s.", cmd_str).c_str());
 	}
 	const int cmd_id = cmd_iter->second;
 
