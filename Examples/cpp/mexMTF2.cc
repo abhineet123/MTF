@@ -46,6 +46,19 @@ static std::map<std::string, const int> cmd_list = {
 	{ "remove_tracker", MEX_REMOVE_TRACKER },
 	{ "clear", MEX_CLEAR }
 };
+struct RunInput{
+	RunInput(Input _input) : input(_input){}
+	void operator()(){
+		while(input->update()){
+			if(input->destroy){ return; }
+			boost::this_thread::interruption_point();
+		}
+		input->destroy = true;
+	}
+
+private:
+	Input input;
+};
 
 struct InputStruct{
 	Input input;
@@ -53,30 +66,6 @@ struct InputStruct{
 	InputStruct(Input _input) :
 		input(_input){
 		 t = boost::thread{ RunInput(input) };
-	}
-
-};
-struct RunInput{
-	RunInput(Input _input) : input(_input){}
-	void operator()(){
-		while(input->update()){
-			if(input->destroy){return;}	
-			boost::this_thread::interruption_point();
-		}
-		input->destroy = true;
-	}
-
-private:
-	Input input;	
-};
-
-struct TrackerStruct{
-	Tracker tracker;
-	PreProc pre_proc;
-	boost::thread t;
-	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, Input &_input) :
-		tracker(_tracker), pre_proc(_pre_proc){
-		t = boost::thread{ RunTracker(tracker, pre_proc, _input) };
 	}
 
 };
@@ -124,8 +113,19 @@ struct RunTracker{
 private:
 	Input input;
 	PreProc pre_proc;
-	Tracker tracker;	
+	Tracker tracker;
 };
+struct TrackerStruct{
+	Tracker tracker;
+	PreProc pre_proc;
+	boost::thread t;
+	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, Input &_input) :
+		tracker(_tracker), pre_proc(_pre_proc){
+		t = boost::thread{ RunTracker(tracker, pre_proc, _input) };
+	}
+
+};
+
 
 static std::map<int, InputStruct> input_pipelines;
 static std::map<int, TrackerStruct> trackers;
