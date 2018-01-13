@@ -318,8 +318,9 @@ public:
 	int getResY() override{ return params.grid_size_y; }
 	const cv::Mat& getRegion() override{ return cv_corners_mat; }
 	int inputType() const override{
-		return params.descriptor_type==DescriptorType::LUCID ? CV_8UC3:
-			params.uchar_input ? CV_8UC1 : CV_32FC1;
+		return CV_8UC3;
+		//return params.descriptor_type==DescriptorType::LUCID ? CV_8UC3:
+		//	params.uchar_input ? CV_8UC1 : CV_32FC1;
 	}
 	bool detect(const cv::Mat &mask, cv::Mat &obj_location) override;
 
