@@ -18,24 +18,24 @@
 #define DEBUG_MODE 0
 
 struct XVParams{
-	bool show_xv_window;
+	bool visualize;
 	int steps_per_frame;
 	bool copy_frame;
 	bool refresh_win;
 
-	XVParams() : show_xv_window(false), steps_per_frame(STEPS_PER_FRAME),
+	XVParams() : visualize(false), steps_per_frame(STEPS_PER_FRAME),
 		copy_frame(false), refresh_win(false){}
 	XVParams(int _show_xv_window, double _steps_per_frame,
 		bool _copy_frame, bool _refresh_win){
-		show_xv_window = _show_xv_window;
+		visualize = _show_xv_window;
 		steps_per_frame = _steps_per_frame;
 		copy_frame = _copy_frame;
 		refresh_win = _refresh_win;
 	}
-	XVParams(const XVParams *params) : show_xv_window(false), steps_per_frame(STEPS_PER_FRAME),
+	XVParams(const XVParams *params) : visualize(false), steps_per_frame(STEPS_PER_FRAME),
 		copy_frame(false), refresh_win(false){
 		if(params){
-			show_xv_window = params->show_xv_window;
+			visualize = params->visualize;
 			steps_per_frame = params->steps_per_frame;
 			copy_frame = params->copy_frame;
 			refresh_win = params->refresh_win;
@@ -269,7 +269,7 @@ private:
 		fprintf(stdout, "img_width=%d\n", img_width);
 		fprintf(stdout, "no_of_pixels=%d\n", no_of_pixels);*/
 
-		//if(params.show_xv_window) {
+		//if(params.visualize) {
 		//	//fprintf(stdout, "Calling initWindow\n");
 		//	initWindow(win_int_in);
 		//	//fprintf(stdout, "Calling updateWindow\n");
