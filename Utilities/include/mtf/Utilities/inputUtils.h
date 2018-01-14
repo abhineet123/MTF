@@ -177,7 +177,6 @@ namespace utils{
 		InputVPParams params;
 		typedef vpImage<vpRGBa> VPImgType;
 		VPImgType vp_img;
-		vector<cv::Mat> cv_buffer;
 		std::unique_ptr<vpFrameGrabber> cap_obj;
 		void convert(const VPImgType &vp_img, cv::Mat &cv_img);
 	};

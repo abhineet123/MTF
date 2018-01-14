@@ -771,14 +771,14 @@ namespace utils{
 		buffer_id = _buffer_id;
 		return true;
 	}
-	void InputVP::convert(const VPImgType &vp_img, cv::Mat &cv_img){
+	void InputVP::convert(const VPImgType &_vp_img, cv::Mat &_cv_img){
 #ifdef VISP_HAVE_OPENCV
-		vpImageConvert::convert(vp_img, cv_img);
+		vpImageConvert::convert(_vp_img, _cv_img);
 #else
-		for(unsigned int row_id = 0; row_id < vp_img.getHeight(); ++row_id){
-			for(unsigned int col_id = 0; col_id < vp_img.getWidth(); ++col_id){
-				vpRGBa vp_val = vp_img(row_id, col_id);
-				cv_img.at<cv::Vec3b>(row_id, col_id) = cv::Vec3b(vp_val.B, vp_val.G, vp_val.R);
+		for(unsigned int row_id = 0; row_id < _vp_img.getHeight(); ++row_id){
+			for(unsigned int col_id = 0; col_id < _vp_img.getWidth(); ++col_id){
+				vpRGBa vp_val = _vp_img(row_id, col_id);
+				_cv_img.at<cv::Vec3b>(row_id, col_id) = cv::Vec3b(vp_val.B, vp_val.G, vp_val.R);
 			}		
 		}
 #endif	
