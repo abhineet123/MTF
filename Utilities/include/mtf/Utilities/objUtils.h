@@ -59,7 +59,7 @@ namespace utils{
 		allows the user to select a quadrilateral by clicking on its 4 corners
 		*/
 		bool addQuadObject(InputBase *input, string selection_window,
-			int line_thickness = 2, int patch_size = 0);
+			int line_thickness = 2);
 		//! overloaded variant for non-live input feed
 		bool selectObjects(const cv::Mat &img, int no_of_objs,
 			int patch_size = 0, int line_thickness = 1, int write_objs = 0, bool sel_quad_obj = false,
@@ -105,7 +105,7 @@ namespace utils{
 		int no_of_cols;
 		double resize_factor;
 		bool invert_seq;
-		//! read reinit GT for a speciic frame
+		//! read reinit GT for a specific frame
 		void readReinitGT(int _reinit_frame_id);
 		const vector<cv::Mat> &getReinitGT(){ return reinit_ground_truth; }
 	};

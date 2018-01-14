@@ -219,7 +219,7 @@ namespace utils{
 	allows the user to select a quadrilateral by clicking on its 4 corners
 	*/
 	bool ObjUtils::addQuadObject(InputBase *input, string selection_window,
-		int line_thickness, int patch_size) {
+		int line_thickness) {
 		//cout<<"Start getObject\n";
 
 		ObjStruct new_obj;
@@ -366,7 +366,7 @@ namespace utils{
 		for(int i = 0; i < no_of_objs; i++) {
 			if(sel_quad_obj){
 				printf("selecting quadrilateral object...\n");
-				if(!addQuadObject(input, window_title, line_thickness, patch_size)){
+				if(!addQuadObject(input, window_title, line_thickness)){
 					cv::destroyWindow(window_title);
 					return false;
 				};
