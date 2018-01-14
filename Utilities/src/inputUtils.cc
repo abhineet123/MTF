@@ -206,10 +206,13 @@ namespace utils{
 		}
 		return cap_obj.read(cv_buffer[buffer_id]);
 	}
-	bool InputCV::update(){
-		int _buffer_id = (buffer_id + 1) % n_buffers;
+	bool InputCV::update(){		
 		++frame_id;
-		if(params.invert_seq){ return true; }
+		if(params.invert_seq) {
+			buffer_id = (buffer_id + 1) % n_buffers;
+			return true;
+		}
+		int _buffer_id = (buffer_id + 1) % n_buffers;
 		bool success = cap_obj.read(cv_buffer[_buffer_id]);
 		if(success){ buffer_id = _buffer_id; }
 		return success;
@@ -684,7 +687,7 @@ namespace utils{
 					try{
 						dc1394_cap->setFramerate(fw_fps_mode);
 					} catch(...) {
-						// If settings are not available just catch execption to continue with default settings
+						// If settings are not available just catch exception to continue with default settings
 						printf("Firewire camera FPS could not be set so using defaults\n");
 					}
 				}

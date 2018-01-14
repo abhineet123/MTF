@@ -94,8 +94,6 @@ template <typename T>
 inline void
 copyMatrixToMatlab(const cv::Mat& from, T* to, int n_channels)
 {
-	assert(from.dims == 2); // =2 <=> 2-D image
-
 	const int n_rows = from.rows;
 	const int n_cols = from.cols;
 
@@ -106,7 +104,7 @@ copyMatrixToMatlab(const cv::Mat& from, T* to, int n_channels)
 			for(int y = 0; y < n_rows; ++y){
 				//const T element = pdata[_A3D_IDX_OPENCV(x,y,c,from)];
 				const T element = pdata[_A3D_IDX_OPENCV(y, x, c, rows, n_cols, n_channels)];
-				to[_A3D_IDX_COLUMN_MAJOR(y, x, c, n_rows, n_cols)] = element;
+				to[_A3D_IDX_COLUMN_MAJOR(y, x, n_channels - c - 1, n_rows, n_cols)] = element;
 			}
 		}
 	}
