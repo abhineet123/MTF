@@ -394,7 +394,7 @@ bool createTracker(int input_id, mxArray* &plhs) {
 		if(mex_live_init){
 			if(!obj_utils.selectObjects(input.get(), 1,
 				patch_size, line_thickness, write_objs, sel_quad_obj,
-				write_obj_fname.c_str(), false)){
+				write_obj_fname.c_str())){
 				mexErrMsgTxt("Object to be tracked could not be obtained.\n");
 			}
 		} else {
