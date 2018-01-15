@@ -4201,6 +4201,29 @@ namespace mtf{
 			}
 			return true;
 		}
+		inline bool readParams(const char* param_str){
+			std::vector<char*> fargv;
+			fargv.push_back(nullptr);
+			std::string _param_str = std::string(param_str);
+			std::istringstream iss(_param_str);
+			do{
+				string subs;
+				iss >> subs;
+				if(subs.empty()){ continue; }
+				//printf("subs: %s\n", subs.c_str());
+				char *cstr = new char[subs.length() + 1];
+				strcpy(cstr, subs.c_str());
+				fargv.push_back(cstr);
+			} while(iss);
+			//fargv.pop_back();
+			//printf("fargv.size(): %d\n", fargv.size());
+			if(fargv.size() % 2 == 0){
+				//printf("param_str: %s\n", param_str);
+				printf("Parameters must be provided in pairs");
+				return false;
+			}
+			return readParams(fargv.size(), fargv.data());
+		}
 		inline void getSamplerParams(vectorvd &sigma, vectorvd &mean,
 			const vectori &sigma_ids, const vectori &mean_ids,
 			const char* name){

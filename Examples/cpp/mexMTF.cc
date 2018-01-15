@@ -3,7 +3,7 @@
 //! videos and cameras as well as for pre processing them
 #include "mtf/pipeline.h"
 #include "mtf/Config/parameters.h"
-#include "mtf/Utilities/miscUtils.h"
+#include "mtf/Utilities/mexUtils.h"
 
 #include <time.h>
 #include <string.h>
@@ -11,9 +11,6 @@
 #include <map>
 #include <memory>
 #include <sstream>
-
-#include "opencv2/core/core.hpp"
-#include <mex.h>
 
 #define MEX_INPUT_CREATE 1
 #define MEX_INPUT_UPDATE 2
@@ -24,11 +21,6 @@
 #define MEX_TRACKER_SET_REGION 7
 #define MEX_TRACKER_REMOVE 8
 #define MEX_CLEAR 9
-
-#define _A3D_IDX_COLUMN_MAJOR(i,j,k,nrows,ncols) ((i)+((j)+(k)*ncols)*nrows)
-// interleaved row-major indexing for 2-D OpenCV images
-//#define _A3D_IDX_OPENCV(x,y,c,mat) (((y)*mat.step[0]) + ((x)*mat.step[1]) + (c))
-#define _A3D_IDX_OPENCV(i,j,k,nrows,ncols,nchannels) (((i*ncols + j)*nchannels) + (k))
 
 using namespace std;
 using namespace mtf::params;
@@ -66,137 +58,6 @@ static vector<cv::Scalar> obj_cols;
 
 static int frame_id;
 static unsigned int _tracker_id = 0, _input_id = 0;
-
-/**
-* Copy the (image) data from Matlab-algorithm compatible (column-major) representation to cv::Mat.
-* The information about the image are taken from the OpenCV cv::Mat structure.
-adapted from OpenCV-Matlab package available at: https://se.mathworks.com/matlabcentral/fileexchange/41530-opencv-matlab
-*/
-template <typename T>
-inline void
-copyMatrixFromMatlab(const T* from, cv::Mat& to, int n_channels){
-
-	const int n_rows = to.rows;
-	const int n_cols = to.cols;
-
-	T* pdata = (T*)to.data;
-
-	for(int c = 0; c < n_channels; ++c){
-		for(int x = 0; x < n_cols; ++x){
-			for(int y = 0; y < n_rows; ++y){
-				const T element = from[_A3D_IDX_COLUMN_MAJOR(y, x, c, n_rows, n_cols)];
-				pdata[_A3D_IDX_OPENCV(y, x, c, rows, n_cols, n_channels)] = element;
-			}
-		}
-	}
-}
-template <typename T>
-inline void
-copyMatrixToMatlab(const cv::Mat& from, T* to, int n_channels)
-{
-	const int n_rows = from.rows;
-	const int n_cols = from.cols;
-
-	const T* pdata = (T*)from.data;
-
-	for(int c = 0; c < n_channels; ++c){
-		for(int x = 0; x < n_cols; ++x){
-			for(int y = 0; y < n_rows; ++y){
-				//const T element = pdata[_A3D_IDX_OPENCV(x,y,c,from)];
-				const T element = pdata[_A3D_IDX_OPENCV(y, x, c, rows, n_cols, n_channels)];
-				to[_A3D_IDX_COLUMN_MAJOR(y, x, n_channels - c - 1, n_rows, n_cols)] = element;
-			}
-		}
-	}
-}
-unsigned int getID(const mxArray *mx_id){
-	if(!mxIsClass(mx_id, "uint32")){
-		mexErrMsgTxt("ID must be of 32 bit unsigned integral type");
-	}
-	unsigned int* id_ptr = (unsigned int*)mxGetData(mx_id);
-	return *id_ptr;
-}
-cv::Mat getImage(const mxArray *mx_img){
-	int img_n_dims = mxGetNumberOfDimensions(mx_img);
-	if(!mxIsClass(mx_img, "uint8")){
-		mexErrMsgTxt("Input image must be of 8 bit unsigned integral type");
-	}
-	if(img_n_dims < 2 || img_n_dims > 3){
-		mexErrMsgTxt("Input image must have 2 or 3 dimensions");
-	}
-	int img_type = img_n_dims == 2 ? CV_8UC1 : CV_8UC3;
-	const mwSize *img_dims = mxGetDimensions(mx_img);
-	int height = img_dims[0];
-	int width = img_dims[1];
-	//printf("width: %d\t height=%d\t img_n_dims: %d\n", width, height, img_n_dims);
-	unsigned char *img_ptr = (unsigned char*)mxGetData(mx_img);
-	cv::Mat img(height, width, img_type);
-	if(img_n_dims == 2){
-		cv::Mat img_transpose(width, height, img_type, img_ptr);
-		cv::transpose(img_transpose, img);
-	} else{
-		copyMatrixFromMatlab(img_ptr, img, 3);
-	}
-	return img;
-}
-cv::Mat getCorners(const mxArray *mx_corners){
-	int corners_n_dims = mxGetNumberOfDimensions(mx_corners);
-	if(!mxIsClass(mx_corners, "double")){
-		mexErrMsgTxt("Input corner array must be of 64 bit floating point type");
-	}
-	if(corners_n_dims != 2){
-		mexErrMsgTxt("Input corner array must have 2 dimensions");
-	}
-	const mwSize *corners_dims = mxGetDimensions(mx_corners);
-	if(corners_dims[0] != 2 || corners_dims[1] != 4){
-		mexErrMsgTxt("Input corner array must be of size 2 x 4");
-	}
-	double *corners_ptr = mxGetPr(mx_corners);
-	cv::Mat corners_transposed(4, 2, CV_64FC1, corners_ptr);
-	//cout << "corners_transposed: \n" << corners_transposed << "\n";
-	cv::Mat corners(2, 4, CV_64FC1);
-	cv::transpose(corners_transposed, corners);
-	//cout << "corners: \n" << corners << "\n";
-	return corners;
-}
-void parseParams(const mxArray *prhs){
-	int param_str_len = mxGetM(prhs)*mxGetN(prhs) + 1;
-	char* param_str = (char *)mxMalloc(param_str_len);
-	mxGetString(prhs, param_str, param_str_len);
-	std::vector<char*> fargv;
-	fargv.push_back(nullptr);
-	std::string _param_str = std::string(param_str);
-	std::istringstream iss(_param_str);
-	do{
-		string subs;
-		iss >> subs;
-
-		if(subs.empty()){ continue; }
-
-		//printf("subs: %s\n", subs.c_str());
-		char *cstr = new char[subs.length() + 1];
-		strcpy(cstr, subs.c_str());
-		fargv.push_back(cstr);
-	} while(iss);
-	//fargv.pop_back();
-	//printf("fargv.size(): %d\n", fargv.size());
-	if(fargv.size() % 2 == 0){
-		//printf("param_str: %s\n", param_str);
-		mexErrMsgTxt("Parameters must be provided in pairs");
-	}
-	if(!readParams(fargv.size(), fargv.data())){
-		mexErrMsgTxt("Parameters could not be parsed");
-	}
-}
-
-mxArray *setCorners(const cv::Mat &corners){
-	mxArray *mx_corners = mxCreateDoubleMatrix(2, 4, mxREAL);
-	/* get a pointer to the real data in the output matrix */
-	double *out_corners_ptr = mxGetPr(mx_corners);
-	cv::Mat out_corners(4, 2, CV_64FC1, out_corners_ptr);
-	cv::transpose(corners, out_corners);
-	return mx_corners;
-}
 
 bool createInput(mxArray* &plhs) {
 	Input input;
@@ -241,7 +102,7 @@ bool updateInput(unsigned int input_id, mxArray* &plhs) {
 		dims[2] = n_channels;
 	}
 	plhs = mxCreateNumericArray(n_dims, dims, mxUINT8_CLASS, mxREAL);
-	copyMatrixToMatlab<unsigned char>(frame, (unsigned char*)mxGetPr(plhs), n_channels);
+	mtf::utils::copyMatrixToMatlab<unsigned char>(frame, (unsigned char*)mxGetPr(plhs), n_channels);
 	delete(dims);
 	return true;
 }
@@ -311,7 +172,7 @@ bool initializeTracker(unsigned int tracker_id, const cv::Mat &init_img, const c
 		return false;
 	}
 	frame_id = 0;
-	plhs = setCorners(it->second.tracker->getRegion());
+	plhs = mtf::utils::setCorners(it->second.tracker->getRegion());
 	return true;
 }
 
@@ -347,7 +208,7 @@ bool updateTracker(unsigned int tracker_id, const cv::Mat &curr_img, mxArray* &p
 			err.type(), err.what());
 		return false;
 	}
-	plhs = setCorners(it->second.tracker->getRegion());
+	plhs = mtf::utils::setCorners(it->second.tracker->getRegion());
 	return true;
 }
 bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) {
@@ -363,7 +224,7 @@ bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) 
 			err.type(), err.what());
 		return false;
 	}
-	plhs = setCorners(it->second.tracker->getRegion());
+	plhs = mtf::utils::setCorners(it->second.tracker->getRegion());
 	return true;
 }
 
@@ -388,7 +249,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 
 	auto cmd_iter = cmd_list.find(std::string(cmd_str));
 	if(cmd_iter == cmd_list.end()){
-		mexErrMsgTxt(cv::format("Invalid comand provided: %s.", cmd_str).c_str());
+		mexErrMsgTxt(cv::format("Invalid command provided: %s.", cmd_str).c_str());
 	}
 	const int cmd_id = cmd_iter->second;
 
@@ -402,7 +263,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			if(!mxIsChar(prhs[1])){
 				mexErrMsgTxt("Second input argument for creating input pipeline must be a string.");
 			}
-			parseParams(prhs[1]);
+			if(!readParams(mtf::utils::toString(prhs[1]))) {
+				mexErrMsgTxt("Parameters could not be parsed");
+			}
 		}
 		if(!createInput(plhs[1])){
 			*ret_val = 0;
@@ -419,7 +282,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(nlhs != 2){
 			mexErrMsgTxt("2 output arguments are needed to update input pipeline.");
 		}
-		unsigned int input_id = getID(prhs[1]);
+		unsigned int input_id = mtf::utils::getID(prhs[1]);
 		if(!updateInput(input_id, plhs[1])){
 			*ret_val = 0;
 			return;
@@ -435,7 +298,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(nlhs != 1){
 			mexErrMsgTxt("1 output argument is needed to remove input pipeline.");
 		}
-		unsigned int input_id = getID(prhs[1]);
+		unsigned int input_id = mtf::utils::getID(prhs[1]);
 		std::map<int, Input>::iterator it = input_pipelines.find(input_id);
 		if(it == input_pipelines.end()){
 			printf("Invalid input ID: %d\n", input_id);
@@ -452,7 +315,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			if(!mxIsChar(prhs[1])){
 				mexErrMsgTxt("Second input argument for creating tracker must be a string.");
 			}
-			parseParams(prhs[1]);
+			if(!readParams(mtf::utils::toString(prhs[1]))) {
+				mexErrMsgTxt("Parameters could not be parsed");
+			}
 		}
 		if(!createTracker()){
 			*ret_val = 0;
@@ -470,11 +335,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(nrhs < 3){
 			mexErrMsgTxt("At least 3 input arguments are needed to initialize tracker.");
 		}
-		unsigned int tracker_id = getID(prhs[1]);
-		cv::Mat init_img = getImage(prhs[2]);
+		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
+		cv::Mat init_img = mtf::utils::getImage(prhs[2]);
 		cv::Mat init_corners;
 		if(nrhs > 3){
-			init_corners = getCorners(prhs[3]);
+			init_corners = mtf::utils::getCorners(prhs[3]);
 		} else{
 			mtf::utils::ObjUtils obj_utils;
 			try{
@@ -517,8 +382,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(nlhs != 2){
 			mexErrMsgTxt("2 output arguments are needed to update tracker.");
 		}
-		unsigned int tracker_id = getID(prhs[1]);
-		cv::Mat curr_img = getImage(prhs[2]);
+		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
+		cv::Mat curr_img = mtf::utils::getImage(prhs[2]);
 		if(!updateTracker(tracker_id, curr_img, plhs[1])){
 			*ret_val = 0;
 			return;
@@ -534,8 +399,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(nlhs != 2){
 			mexErrMsgTxt("2 output arguments are needed to reset tracker.");
 		}
-		unsigned int tracker_id = getID(prhs[1]);
-		cv::Mat curr_corners = getCorners(prhs[2]);
+		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
+		cv::Mat curr_corners = mtf::utils::getCorners(prhs[2]);
 		if(!setRegion(tracker_id, curr_corners, plhs[1])){
 			*ret_val = 0;
 			return;
@@ -552,7 +417,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(nlhs != 1){
 			mexErrMsgTxt("1 output argument is needed to reset tracker.");
 		}
-		unsigned int tracker_id = getID(prhs[1]);
+		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
 		std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 		if(it == trackers.end()){
 			printf("Invalid tracker ID: %d\n", tracker_id);

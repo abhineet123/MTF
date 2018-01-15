@@ -8,7 +8,7 @@ UTILITIES_HEADER_DIR = ${UTILITIES_INCLUDE_DIR}/mtf/Utilities
 MTF_INCLUDE_DIRS += ${UTILITIES_INCLUDE_DIR}
 
 UTILITIES = imgUtils warpUtils histUtils miscUtils spiUtils inputUtils preprocUtils objUtils
-UTILITIES_HEADER_ONLY = excpUtils
+UTILITIES_HEADER_ONLY = excpUtils mexUtils
 MTF_UTIL_OBJS = $(addprefix ${BUILD_DIR}/,$(addsuffix .o, ${UTILITIES}))
 MTF_UTIL_HEADERS = $(addprefix ${UTILITIES_HEADER_DIR}/, $(addsuffix .h, ${UTILITIES} ${UTILITIES_HEADER_ONLY}))
 
