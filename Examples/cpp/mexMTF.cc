@@ -327,7 +327,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	}
 	case MEX_TRACKER_INITIALIZE:
 	{
-S		if(nrhs < 3){
+		if(nrhs < 3){
 			mexErrMsgTxt("At least 3 input arguments are needed to initialize tracker.");
 		}
 		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
@@ -362,7 +362,7 @@ S		if(nrhs < 3){
 			}
 			init_corners = obj_utils.getObj().corners.clone();
 		}
-		if(!initializeTracker(tracker_id, init_img, init_corners, plhs[1])){
+		if(!initializeTracker(tracker_id, init_img, init_corners)){
 			*ret_val = 0;
 			return;
 		}
