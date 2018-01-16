@@ -3,12 +3,12 @@
 #ifndef DISABLE_VISP
 #if defined _WIN32
 // for visual studio intellisense
-#define VISP_HAVE_FFMPEG
-#define VISP_HAVE_V4L2
-#define VISP_HAVE_DC1394
-#define VISP_HAVE_FLYCAPTURE
-#define VISP_HAVE_OPENCV
-#define VISP_HAVE_OPENCV_VERSION 0x020100
+//#define VISP_HAVE_FFMPEG
+//#define VISP_HAVE_V4L2
+//#define VISP_HAVE_DC1394
+//#define VISP_HAVE_FLYCAPTURE
+//#define VISP_HAVE_OPENCV
+//#define VISP_HAVE_OPENCV_VERSION 0x020100
 #endif
 #include <visp3/io/vpDiskGrabber.h>
 #include <visp3/io/vpVideoReader.h>
