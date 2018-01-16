@@ -92,7 +92,7 @@ endif()
 # find_library(CV_BLOBS_LIB ${CV_BLOBS_LIB_NAME} HINTS ${CVBLOBS_SRC_DIR})
 
 target_link_libraries(${CV_BLOBS_LIB_NAME} ${OpenCV_LIBS})
-target_include_directories(${CV_BLOBS_LIB_NAME} ${OpenCV_INCLUDE_DIRS})
+target_include_directories(${CV_BLOBS_LIB_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
 target_compile_options(${CV_BLOBS_LIB_NAME} PUBLIC ${CV_BLOBS_FLAGS})
 
 target_link_libraries(${TLD_LIB_NAME} ${CV_BLOBS_LIB_NAME} ${OpenCV_LIBS})
