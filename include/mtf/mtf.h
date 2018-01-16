@@ -2050,7 +2050,7 @@ inline TrackerBase *getTracker(const char *tracker_type){
 	}
 #endif
 #ifndef DISABLE_VISP
-	else if(!strcmp(tracker_type, "visp")){
+	else if(!strcmp(tracker_type, "vp") || !strcmp(tracker_type, "vptt")){
 		ViSPParams::SMType vp_sm_type = ViSPParams::SMType::FCLK;
 		if(!strcmp(vptt_sm, "fc") || !strcmp(vptt_sm, "fclk")){
 			vp_sm_type = ViSPParams::SMType::FCLK;
