@@ -132,7 +132,7 @@ bool createTracker() {
 	return true;
 }
 
-bool initializeTracker(unsigned int tracker_id, const cv::Mat &init_img, const cv::Mat &init_corners, mxArray* &plhs) {
+bool initializeTracker(unsigned int tracker_id, const cv::Mat &init_img, const cv::Mat &init_corners) {
 	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
 		printf("Invalid tracker ID: %d\n", tracker_id);
@@ -172,7 +172,6 @@ bool initializeTracker(unsigned int tracker_id, const cv::Mat &init_img, const c
 		return false;
 	}
 	frame_id = 0;
-	plhs = mtf::utils::setCorners(it->second.tracker->getRegion());
 	return true;
 }
 
@@ -328,11 +327,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	}
 	case MEX_TRACKER_INITIALIZE:
 	{
-		if(nlhs != 2){
-			mexErrMsgTxt("2 output arguments are needed to initialize tracker.");
-		}		
-
-		if(nrhs < 3){
+S		if(nrhs < 3){
 			mexErrMsgTxt("At least 3 input arguments are needed to initialize tracker.");
 		}
 		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
