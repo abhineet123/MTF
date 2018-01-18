@@ -74,11 +74,6 @@ bool createInput() {
 	}
 	++_input_id;
 	input_pipelines.insert(std::pair<int, Input>(_input_id, input));
-	//mwSize dims[2] = { 1, 1 };
-	//plhs = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
-	////plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
-	//unsigned int *ret_val = (unsigned int*)mxGetPr(plhs);
-	//*ret_val = static_cast<unsigned int>(input->getNFrames());
 	return true;
 }
 
@@ -269,6 +264,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(!createInput()){
 			*ret_val = 0;
 			return;
+		}
+		if(nlhs >= 2){
+			std::map<int, Input>::iterator it = input_pipelines.find(_input_id);
+			mwSize dims[2] = { 1, 1 };
+			plhs[1] = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
+			unsigned int *n_frames = (unsigned int*)mxGetPr(plhs[1]);
+			*n_frames = static_cast<unsigned int>(it->second->getNFrames());
 		}
 		*ret_val = _input_id;
 		return;
