@@ -59,7 +59,7 @@ static vector<cv::Scalar> obj_cols;
 static int frame_id;
 static unsigned int _tracker_id = 0, _input_id = 0;
 
-bool createInput(mxArray* &plhs) {
+bool createInput() {
 	Input input;
 	try{
 		input.reset(mtf::getInput(pipeline));
@@ -74,11 +74,11 @@ bool createInput(mxArray* &plhs) {
 	}
 	++_input_id;
 	input_pipelines.insert(std::pair<int, Input>(_input_id, input));
-	mwSize dims[2] = { 1, 1 };
-	plhs = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
-	//plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
-	unsigned int *ret_val = (unsigned int*)mxGetPr(plhs);
-	*ret_val = static_cast<unsigned int>(input->getNFrames());
+	//mwSize dims[2] = { 1, 1 };
+	//plhs = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
+	////plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
+	//unsigned int *ret_val = (unsigned int*)mxGetPr(plhs);
+	//*ret_val = static_cast<unsigned int>(input->getNFrames());
 	return true;
 }
 
@@ -255,9 +255,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	switch(cmd_id) {
 	case MEX_INPUT_CREATE:
 	{
-		if(nlhs != 2){
-			mexErrMsgTxt("2 output arguments (input_id, n_frames) are needed to create input pipeline.");
-		}
+		//if(nlhs != 2){
+		//	mexErrMsgTxt("2 output arguments (input_id, n_frames) are needed to create input pipeline.");
+		//}
 		if(nrhs > 1){
 			if(!mxIsChar(prhs[1])){
 				mexErrMsgTxt("Second input argument for creating input pipeline must be a string.");
@@ -266,7 +266,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 				mexErrMsgTxt("Parameters could not be parsed");
 			}
 		}
-		if(!createInput(plhs[1])){
+		if(!createInput()){
 			*ret_val = 0;
 			return;
 		}
