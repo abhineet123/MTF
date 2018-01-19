@@ -79,7 +79,7 @@ private:
 	bool is_valid;
 };
 struct TrackerThread{
-	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, InputConstPtr &_input) :
+	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputConstPtr &_input) :
 		tracker(_tracker), pre_proc(_pre_proc), input(_input){}
 	void operator()(){
 		int frame_id = 0;
@@ -124,7 +124,7 @@ private:
 	Tracker tracker;
 };
 struct TrackerConst{
-	TrackerConst(Tracker &_tracker, PreProc &_pre_proc, const Input &_input) :
+	TrackerConst(Tracker &_tracker, PreProc &_pre_proc, const InputConstPtr &_input) :
 		tracker(_tracker), pre_proc(_pre_proc){
 		t = boost::thread{ TrackerThread(tracker, pre_proc, _input) };
 	}
