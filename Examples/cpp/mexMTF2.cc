@@ -40,8 +40,9 @@ static std::map<std::string, const int> cmd_list = {
 	{ "remove_tracker", MEX_REMOVE_TRACKER },
 	{ "clear", MEX_CLEAR }
 };
-struct RunInput{
-	RunInput(Input _input) : input(_input){}
+
+struct InputThread{
+	InputThread(Input &_input) : input(_input){}
 	void operator()(){
 		while(input->update()){
 			if(input->destroy){ return; }
@@ -52,18 +53,28 @@ struct RunInput{
 private:
 	Input input;
 };
+struct InputConst : public mtf::utils::InputBase {
+	InputConst(Input &_input) : input(_input) {
+		t = boost::thread{ InputThread(input) };
+	}
+	~InputConst() {}
+	bool initialize() override{ return true; }
+	bool update() override{ return true; }
+	void remapBuffer(unsigned char** new_addr) override{}
+	const cv::Mat& getFrame() const override{ return input->getFrame(); }
+	cv::Mat& getFrame(mtf::utils::FrameType) override{ 
+		throw mtf::utils::InvalidArgument("Multable frame cannot be obtained");
+	}	
+	int getFrameID() const override{ return input->getFrameID(); }
+	int getHeight() const override{ return input->getHeight(); }
+	int getWidth() const override{ return input->getWidth(); }	
 
-struct InputStruct{
+private:
 	Input input;
 	boost::thread t;
-	InputStruct(Input _input) :
-		input(_input){
-		 //t = boost::thread{ RunInput(input) };
-	}
-
 };
-struct RunTracker{
-	RunTracker(Tracker _tracker, PreProc _pre_proc, Input _input) :
+struct TrackerThread{
+	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, Input &_input) :
 		tracker(_tracker), pre_proc(_pre_proc), input(_input){}
 	void operator()(){
 		int frame_id = 0;
@@ -107,19 +118,19 @@ private:
 	PreProc pre_proc;
 	Tracker tracker;
 };
-struct TrackerStruct{
+struct TrackerConst{
+	TrackerConst(Tracker &_tracker, PreProc &_pre_proc, Input &_input) :
+		tracker(_tracker), pre_proc(_pre_proc){
+		t = boost::thread{ TrackerThread(tracker, pre_proc, _input) };
+	}
+private:
 	Tracker tracker;
 	PreProc pre_proc;
 	boost::thread t;
-	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, Input &_input) :
-		tracker(_tracker), pre_proc(_pre_proc){
-		//t = boost::thread{ RunTracker(tracker, pre_proc, _input) };
-	}
-
 };
 
-static std::map<int, InputStruct> input_pipelines;
-static std::map<int, TrackerStruct> trackers;
+InputConst input_pipeline;
+static std::map<int, TrackerConst> trackers;
 
 static double min_x, min_y, max_x, max_y;
 static double size_x, size_y;
@@ -271,13 +282,13 @@ bool createTracker(int input_id, mxArray* &plhs) {
 		mexErrMsgTxt("Tracker initialization failed");
 	}
 	++_tracker_id;
-	trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, 
-		TrackerStruct(tracker, pre_proc, input)));
+	trackers.insert(std::pair<int, TrackerConst>(_tracker_id, 
+		TrackerConst(tracker, pre_proc, input)));
 	return true;
 }
 
 bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) {
-	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
+	std::map<int, TrackerConst>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
 		printf("Invalid tracker ID: %d\n", tracker_id);
 		return false;
@@ -293,7 +304,7 @@ bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) 
 	return true;
 }
 bool getRegion(unsigned int tracker_id, mxArray* &plhs) {
-	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
+	std::map<int, TrackerConst>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
 		printf("Invalid tracker ID: %d\n", tracker_id);
 		return false;
@@ -449,7 +460,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			mexErrMsgTxt("1 output argument is needed to reset tracker.");
 		}
 		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
-		std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
+		std::map<int, TrackerConst>::iterator it = trackers.find(tracker_id);
 		if(it == trackers.end()){
 			printf("Invalid tracker ID: %d\n", tracker_id);
 			*ret_val = 0;
