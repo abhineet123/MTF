@@ -31,6 +31,7 @@ static std::map<std::string, const int> cmd_list = {
 };
 
 struct TrackerStruct{
+	TrackerStruct() : tracker(nullptr), pre_proc(nullptr){}
 	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc) :
 		tracker(_tracker), pre_proc(_pre_proc){
 	}
