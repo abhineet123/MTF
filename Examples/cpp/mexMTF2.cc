@@ -119,8 +119,8 @@ private:
 	PreProc pre_proc;
 	Tracker tracker;
 };
-struct TrackerConst{
-	TrackerConst(Tracker &_tracker, PreProc &_pre_proc, const InputConstPtr &_input) :
+struct TrackerStruct{
+	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputConstPtr &_input) :
 		tracker(_tracker), pre_proc(_pre_proc){
 		t = boost::thread{ TrackerThread(tracker, pre_proc, _input) };
 	}
@@ -141,7 +141,7 @@ private:
 };
 
 InputConstPtr input;
-static std::map<int, TrackerConst> trackers;
+static std::map<int, TrackerStruct> trackers;
 
 static double min_x, min_y, max_x, max_y;
 static double size_x, size_y;
@@ -289,13 +289,13 @@ bool createTracker(mxArray* &plhs) {
 		mexErrMsgTxt("Tracker initialization failed");
 	}
 	++_tracker_id;
-	trackers.insert(std::pair<int, TrackerConst>(_tracker_id, 
-		TrackerConst(tracker, pre_proc, input)));
+	trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, 
+		TrackerStruct(tracker, pre_proc, input)));
 	return true;
 }
 
 bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) {
-	std::map<int, TrackerConst>::iterator it = trackers.find(tracker_id);
+	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
 		printf("Invalid tracker ID: %d\n", tracker_id);
 		return false;
@@ -311,7 +311,7 @@ bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) 
 	return true;
 }
 bool getRegion(unsigned int tracker_id, mxArray* &plhs) {
-	std::map<int, TrackerConst>::iterator it = trackers.find(tracker_id);
+	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
 		printf("Invalid tracker ID: %d\n", tracker_id);
 		return false;
@@ -444,7 +444,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			mexErrMsgTxt("1 output argument is needed to reset tracker.");
 		}
 		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
-		std::map<int, TrackerConst>::iterator it = trackers.find(tracker_id);
+		std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 		if(it == trackers.end()){
 			printf("Invalid tracker ID: %d\n", tracker_id);
 			*ret_val = 0;

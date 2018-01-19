@@ -34,15 +34,15 @@ static std::map<std::string, const int> cmd_list = {
 	{ "clear", MEX_CLEAR }
 };
 
-struct TrackerConst{
+struct TrackerStruct{
 	Tracker tracker;
 	PreProc pre_proc;
-	TrackerConst(Tracker _tracker, PreProc _pre_proc) :
+	TrackerStruct(Tracker _tracker, PreProc _pre_proc) :
 		tracker(_tracker), pre_proc(_pre_proc){}
 };
 
 static std::map<int, Input> input_pipelines;
-static std::map<int, TrackerConst> trackers;
+static std::map<int, TrackerStruct> trackers;
 
 static double min_x, min_y, max_x, max_y;
 static double size_x, size_y;
@@ -117,12 +117,12 @@ bool createTracker() {
 		return false;
 	}
 	++_tracker_id;
-	trackers.insert(std::pair<int, TrackerConst>(_tracker_id, TrackerConst(tracker, pre_proc)));
+	trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, TrackerStruct(tracker, pre_proc)));
 	return true;
 }
 
 bool initializeTracker(unsigned int tracker_id, const cv::Mat &init_img, const cv::Mat &init_corners) {
-	std::map<int, TrackerConst>::iterator it = trackers.find(tracker_id);
+	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
 		printf("Invalid tracker ID: %d\n", tracker_id);
 		return false;
@@ -165,7 +165,7 @@ bool initializeTracker(unsigned int tracker_id, const cv::Mat &init_img, const c
 }
 
 bool updateTracker(unsigned int tracker_id, const cv::Mat &curr_img, mxArray* &plhs) {
-	std::map<int, TrackerConst>::iterator it = trackers.find(tracker_id);
+	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
 		printf("Invalid tracker ID: %d\n", tracker_id);
 		return false;
@@ -200,7 +200,7 @@ bool updateTracker(unsigned int tracker_id, const cv::Mat &curr_img, mxArray* &p
 	return true;
 }
 bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) {
-	std::map<int, TrackerConst>::iterator it = trackers.find(tracker_id);
+	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
 		printf("Invalid tracker ID: %d\n", tracker_id);
 		return false;
@@ -409,7 +409,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			mexErrMsgTxt("1 output argument is needed to reset tracker.");
 		}
 		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
-		std::map<int, TrackerConst>::iterator it = trackers.find(tracker_id);
+		std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 		if(it == trackers.end()){
 			printf("Invalid tracker ID: %d\n", tracker_id);
 			*ret_val = 0;
