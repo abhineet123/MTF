@@ -6,15 +6,13 @@
 #include <map>
 #include <memory>
 
-#define MEX_INPUT_CREATE 1
-#define MEX_INPUT_UPDATE 2
-#define MEX_INPUT_REMOVE 3
-#define MEX_TRACKER_CREATE 4
-#define MEX_TRACKER_INITIALIZE 5
-#define MEX_TRACKER_UPDATE 6
-#define MEX_TRACKER_SET_REGION 7
-#define MEX_TRACKER_REMOVE 8
-#define MEX_CLEAR 9
+#define MEX_INIT 1
+#define MEX_GET_FRAME 2
+#define MEX_TRACKER_CREATE 3
+#define MEX_GET_REGION 4
+#define MEX_SET_REGION 5
+#define MEX_TRACKER_REMOVE 6
+#define MEX_QUIT 7
 
 using namespace std;
 using namespace mtf::params;
@@ -23,38 +21,122 @@ typedef std::shared_ptr<mtf::TrackerBase> Tracker;
 typedef PreProc_ PreProc;
 
 static std::map<std::string, const int> cmd_list = {
-	{ "create_input", MEX_INPUT_CREATE },
-	{ "update_input", MEX_INPUT_UPDATE },
-	{ "remove_input", MEX_INPUT_REMOVE },
+	{ "init", MEX_INIT },
+	{ "get_frame", MEX_GET_FRAME },
 	{ "create_tracker", MEX_TRACKER_CREATE },
-	{ "initialize_tracker", MEX_TRACKER_INITIALIZE },
-	{ "update_tracker", MEX_TRACKER_UPDATE },
-	{ "set_region", MEX_TRACKER_SET_REGION },
+	{ "get_region", MEX_GET_REGION },
+	{ "set_region", MEX_SET_REGION },
 	{ "remove_tracker", MEX_TRACKER_REMOVE },
-	{ "clear", MEX_CLEAR }
+	{ "quit", MEX_QUIT }
 };
 
 struct TrackerStruct{
+	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc) :
+		tracker(_tracker), pre_proc(_pre_proc){
+	}
+	bool create(const cv::Mat init_frame, const cv::Mat init_corners) {
+		try{
+			tracker.reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
+			if(!tracker){
+				printf("Tracker could not be created successfully\n");
+				return false;
+			}
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception of type %s encountered while creating the tracker: %s\n",
+				err.type(), err.what());
+			return false;
+		}
+		try{
+			pre_proc = mtf::getPreProc(tracker->inputType(), pre_proc_type);
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception of type %s encountered while creating the pre processor: %s\n",
+				err.type(), err.what());
+			return false;
+		}
+		try{
+			pre_proc->initialize(init_frame);
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception of type %s encountered while initializing the pre processor: %s\n",
+				err.type(), err.what());
+			return false;
+		}
+		double min_x = init_corners.at<double>(0, 0);
+		double min_y = init_corners.at<double>(1, 0);
+		double max_x = init_corners.at<double>(0, 2);
+		double max_y = init_corners.at<double>(1, 2);
+		double size_x = max_x - min_x;
+		double size_y = max_y - min_y;
+		try{
+			for(PreProc curr_obj = pre_proc; curr_obj; curr_obj = curr_obj->next){
+				tracker->setImage(curr_obj->getFrame());
+			}
+			printf("Initializing tracker with object of size %f x %f\n", size_x, size_y);
+			tracker->initialize(init_corners);
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception of type %s encountered while initializing the tracker: %s\n",
+				err.type(), err.what());
+			return false;
+		}
+	}
+	bool update(const cv::Mat &curr_img, mxArray* &plhs) {
+		if(!pre_proc || !tracker){
+			printf("Tracker has not been created");
+			return false;
+		}
+		double fps = 0, fps_win = 0;
+		double tracking_time, tracking_time_with_input;
+		mtf_clock_get(start_time_with_input);
+		try{
+			//! update pre-processor
+			pre_proc->update(curr_img);
+			mtf_clock_get(start_time);
+			//! update tracker
+			tracker->update();
+			if(print_fps){
+				mtf_clock_get(end_time);
+				mtf_clock_measure(start_time, end_time, tracking_time);
+				mtf_clock_measure(start_time_with_input, end_time, tracking_time_with_input);
+				fps = 1.0 / tracking_time;
+				fps_win = 1.0 / tracking_time_with_input;
+				printf("fps: %f\t fps_win=%f\n", fps, fps_win);
+			}
+			if(reset_template){
+				tracker->initialize(tracker->getRegion());
+			}
+		} catch(const mtf::utils::Exception &err){
+			printf("Exception of type %s encountered while updating the tracker: %s\n",
+				err.type(), err.what());
+			return false;
+		}
+		plhs = mtf::utils::setCorners(tracker->getRegion());
+		return true;
+	}
+
+	void setRegion(const cv::Mat& corners){
+		if(!pre_proc || !tracker){
+			printf("Tracker has not been created");
+			return;
+		}
+		tracker->setRegion(corners);
+	}
+	const cv::Mat& getRegion() {
+		return tracker->getRegion();
+	}
+	void reset() {
+		tracker.reset();
+	}
+private:
 	Tracker tracker;
 	PreProc pre_proc;
-	TrackerStruct(Tracker _tracker, PreProc _pre_proc) :
-		tracker(_tracker), pre_proc(_pre_proc){}
 };
 
-static std::map<int, Input> input_pipelines;
+static Input input;
 static std::map<int, TrackerStruct> trackers;
 
-static double min_x, min_y, max_x, max_y;
-static double size_x, size_y;
+static unsigned int _tracker_id = 0;
 
-static int img_height, img_width;
-static vector<cv::Scalar> obj_cols;
-
-static int frame_id;
-static unsigned int _tracker_id = 0, _input_id = 0;
 
 bool createInput() {
-	Input input;
 	try{
 		input.reset(mtf::getInput(pipeline));
 		if(!input->initialize()){
@@ -66,19 +148,26 @@ bool createInput() {
 			err.type(), err.what());
 		return false;
 	}
-	++_input_id;
-	input_pipelines.insert(std::pair<int, Input>(_input_id, input));
 	return true;
 }
 
-bool updateInput(unsigned int input_id, mxArray* &plhs) {
-	std::map<int, Input>::iterator it = input_pipelines.find(input_id);
-	if(it == input_pipelines.end()){
-		printf("Invalid input ID: %d\n", input_id);
+bool updateInput(){
+	if(!input){
+		printf("Input pipeline is not initialized");
 		return false;
 	}
-	it->second->update();
-	const cv::Mat frame = it->second->getFrame();
+	if(!input->update()){
+		printf("Input pipeline could not be updated");
+		return false;
+	}
+	return true;
+}
+
+bool getFrame(mxArray* &plhs) {
+	if(!updateInput()){
+		return false;
+	}
+	const cv::Mat frame = input->getFrame();
 	int n_channels = 3, n_dims = 3;
 	if(frame.type() == CV_8UC1){
 		n_channels = 1;
@@ -95,110 +184,7 @@ bool updateInput(unsigned int input_id, mxArray* &plhs) {
 	delete(dims);
 	return true;
 }
-bool createTracker() {
-	Tracker tracker;
-	try{
-		tracker.reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
-		if(!tracker){
-			printf("Tracker could not be created successfully\n");
-			return false;
-		}
-	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while creating the tracker: %s\n",
-			err.type(), err.what());
-		return false;
-	}
-	PreProc pre_proc;
-	try{
-		pre_proc = mtf::getPreProc(tracker->inputType(), pre_proc_type);
-	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while creating the pre processor: %s\n",
-			err.type(), err.what());
-		return false;
-	}
-	++_tracker_id;
-	trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, TrackerStruct(tracker, pre_proc)));
-	return true;
-}
 
-bool initializeTracker(unsigned int tracker_id, const cv::Mat &init_img, const cv::Mat &init_corners) {
-	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
-	if(it == trackers.end()){
-		printf("Invalid tracker ID: %d\n", tracker_id);
-		return false;
-	}
-	img_height = init_img.rows;
-	img_width = init_img.cols;
-
-	//printf("img_height: %d\n", img_height);
-	//printf("img_width: %d\n", img_width);
-	//printf("init_corners:\n");
-	//for(unsigned int corner_id = 0; corner_id < 4; ++corner_id) {
-	//	printf("%d: (%f, %f)\n", corner_id, init_corners.at<double>(0, corner_id), init_corners.at<double>(1, corner_id));
-	//}
-	min_x = init_corners.at<double>(0, 0);
-	min_y = init_corners.at<double>(1, 0);
-	max_x = init_corners.at<double>(0, 2);
-	max_y = init_corners.at<double>(1, 2);
-	size_x = max_x - min_x;
-	size_y = max_y - min_y;
-	try{
-		it->second.pre_proc->initialize(init_img);
-	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while initializing the pre processor: %s\n",
-			err.type(), err.what());
-		return false;
-	}
-	try{
-		for(PreProc curr_obj = it->second.pre_proc; curr_obj; curr_obj = curr_obj->next){
-			it->second.tracker->setImage(curr_obj->getFrame());
-		}
-		printf("Initializing tracker with object of size %f x %f\n", size_x, size_y);
-		it->second.tracker->initialize(init_corners);
-	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while initializing the tracker: %s\n",
-			err.type(), err.what());
-		return false;
-	}
-	frame_id = 0;
-	return true;
-}
-
-bool updateTracker(unsigned int tracker_id, const cv::Mat &curr_img, mxArray* &plhs) {
-	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
-	if(it == trackers.end()){
-		printf("Invalid tracker ID: %d\n", tracker_id);
-		return false;
-	}
-	double fps = 0, fps_win = 0;
-	double tracking_time, tracking_time_with_input;
-	++frame_id;
-	mtf_clock_get(start_time_with_input);
-	try{
-		//! update pre processor
-		it->second.pre_proc->update(curr_img);
-		mtf_clock_get(start_time);
-		//! update tracker
-		it->second.tracker->update();
-		if(print_fps){
-			mtf_clock_get(end_time);
-			mtf_clock_measure(start_time, end_time, tracking_time);
-			mtf_clock_measure(start_time_with_input, end_time, tracking_time_with_input);
-			fps = 1.0 / tracking_time;
-			fps_win = 1.0 / tracking_time_with_input;
-			printf("fps: %f\t fps_win=%f\n", fps, fps_win);
-		}
-		if(reset_template){
-			it->second.tracker->initialize(it->second.tracker->getRegion());
-		}
-	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while updating the tracker: %s\n",
-			err.type(), err.what());
-		return false;
-	}
-	plhs = mtf::utils::setCorners(it->second.tracker->getRegion());
-	return true;
-}
 bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) {
 	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
@@ -206,13 +192,13 @@ bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) 
 		return false;
 	}
 	try{
-		it->second.tracker->setRegion(corners);
+		it->second.setRegion(corners);
 	} catch(const mtf::utils::Exception &err){
 		printf("Exception of type %s encountered while resetting the tracker: %s\n",
 			err.type(), err.what());
 		return false;
 	}
-	plhs = mtf::utils::setCorners(it->second.tracker->getRegion());
+	plhs = mtf::utils::setCorners(it->second.getRegion());
 	return true;
 }
 
@@ -231,10 +217,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	char *cmd_str = (char *)mxMalloc(cmd_str_len);
 	mxGetString(prhs[0], cmd_str, cmd_str_len);
 
-	//printf("cmd_str: %s\n", cmd_str);
-	//int k;
-	//scanf("Press any key to continue: %d", &k);
-
 	auto cmd_iter = cmd_list.find(std::string(cmd_str));
 	if(cmd_iter == cmd_list.end()){
 		mexErrMsgTxt(cv::format("Invalid command provided: %s.", cmd_str).c_str());
@@ -242,7 +224,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	const int cmd_id = cmd_iter->second;
 
 	switch(cmd_id) {
-	case MEX_INPUT_CREATE:
+	case MEX_INIT:
 	{
 		//if(nlhs != 2){
 		//	mexErrMsgTxt("2 output arguments (input_id, n_frames) are needed to create input pipeline.");
@@ -260,93 +242,55 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			return;
 		}
 		if(nlhs >= 2){
-			std::map<int, Input>::iterator it = input_pipelines.find(_input_id);
 			mwSize dims[2] = { 1, 1 };
 			plhs[1] = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
 			unsigned int *n_frames = (unsigned int*)mxGetPr(plhs[1]);
-			*n_frames = static_cast<unsigned int>(it->second->getNFrames());
+			*n_frames = static_cast<unsigned int>(input->getNFrames());
 		}
-		*ret_val = _input_id;
 		return;
 	}
-	case MEX_INPUT_UPDATE:
+	case MEX_GET_FRAME:
 	{
-		if(nrhs < 2){
-			mexErrMsgTxt("At least 2 input arguments are needed to update tracker.");
-		}
 		if(nlhs != 2){
-			mexErrMsgTxt("2 output arguments are needed to update input pipeline.");
+			mexErrMsgTxt("2 output arguments are needed to get frame from input pipeline.");
 		}
-		unsigned int input_id = mtf::utils::getID(prhs[1]);
-		if(!updateInput(input_id, plhs[1])){
+		if(!getFrame(plhs[1])){
 			*ret_val = 0;
 			return;
 		}
-		*ret_val = 1;
-		return;
-	}
-	case MEX_INPUT_REMOVE:
-	{
-		if(nrhs < 2){
-			mexErrMsgTxt("At least 2 input arguments are needed to remove input pipeline.");
-		}
-		if(nlhs != 1){
-			mexErrMsgTxt("1 output argument is needed to remove input pipeline.");
-		}
-		unsigned int input_id = mtf::utils::getID(prhs[1]);
-		std::map<int, Input>::iterator it = input_pipelines.find(input_id);
-		if(it == input_pipelines.end()){
-			printf("Invalid input ID: %d\n", input_id);
-			*ret_val = 0;
-			return;
-		}
-		input_pipelines.erase(it);
 		*ret_val = 1;
 		return;
 	}
 	case MEX_TRACKER_CREATE:
 	{
-		if(nrhs > 1){
-			if(!mxIsChar(prhs[1])){
-				mexErrMsgTxt("Second input argument for creating tracker must be a string.");
-			}
-			if(!readParams(mtf::utils::toString(prhs[1]))) {
-				mexErrMsgTxt("Parameters could not be parsed");
-			}
+		if(nrhs < 2){
+			mexErrMsgTxt("At least 2 input arguments are needed to create tracker.");
 		}
-		if(!createTracker()){
-			*ret_val = 0;
+		if(!mxIsChar(prhs[1])){
+			mexErrMsgTxt("Second input argument for creating tracker must be a string.");
+		}
+		if(!readParams(mtf::utils::toString(prhs[1]))) {
+			mexErrMsgTxt("Parameters could not be parsed");
+		}
+		*ret_val = 0;
+
+		if(!updateInput()){
 			return;
 		}
-		*ret_val = _tracker_id;
-		return;
-	}
-	case MEX_TRACKER_INITIALIZE:
-	{
-		if(nrhs < 3){
-			mexErrMsgTxt("At least 3 input arguments are needed to initialize tracker.");
-		}
-		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
-		cv::Mat init_img = mtf::utils::getImage(prhs[2]);
 		cv::Mat init_corners;
-		if(nrhs > 3){
-			init_corners = mtf::utils::getCorners(prhs[3]);
+		if(nrhs > 2){
+			init_corners = mtf::utils::getCorners(prhs[2]);
 		} else{
 			mtf::utils::ObjUtils obj_utils;
 			try{
 				if(mex_live_init){
-					if(input_pipelines.empty()){
-						printf("At least one input pipeline must exist for live initialization: %d\n", tracker_id);
-						*ret_val = 0;
-						return;
-					}
-					if(!obj_utils.selectObjects(input_pipelines.begin()->second.get(), 1, 
+					if(!obj_utils.selectObjects(input.get(), 1,
 						patch_size, line_thickness, write_objs, sel_quad_obj,
 						write_obj_fname.c_str())){
 						mexErrMsgTxt("Object(s) to be tracked could not be obtained.\n");
 					}
 				} else{
-					if(!obj_utils.selectObjects(init_img, 1, patch_size, line_thickness,
+					if(!obj_utils.selectObjects(input->getFrame(), 1, patch_size, line_thickness,
 						write_objs, sel_quad_obj, write_obj_fname.c_str())){
 						mexErrMsgTxt("Object(s) to be tracked could not be obtained.\n");
 					}
@@ -357,32 +301,41 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 					err.type(), err.what()).c_str());
 			}
 			init_corners = obj_utils.getObj().corners.clone();
-		}
-		if(!initializeTracker(tracker_id, init_img, init_corners)){
-			*ret_val = 0;
+		
+		TrackerStruct tracker;
+		if(!tracker.create(input->getFrame(), init_corners)){			
 			return;
 		}
-		*ret_val = 1;
+		++_tracker_id;
+		trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, tracker));
+		*ret_val = _tracker_id;
 		return;
 	}
-	case MEX_TRACKER_UPDATE:
+	case MEX_GET_REGION:
 	{
-		if(nrhs <= 2){
-			mexErrMsgTxt("At least 3 input arguments are needed to update tracker.");
-		}
+		if(nrhs < 2){
+			mexErrMsgTxt("At least 2 input arguments are needed to get tracker region.");
+		}		
 		if(nlhs != 2){
-			mexErrMsgTxt("2 output arguments are needed to update tracker.");
+			mexErrMsgTxt("2 output arguments are needed to get tracker region.");
 		}
+		if(!updateInput()){
+			return;
+		}
+		*ret_val = 0;
 		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
-		cv::Mat curr_img = mtf::utils::getImage(prhs[2]);
-		if(!updateTracker(tracker_id, curr_img, plhs[1])){
-			*ret_val = 0;
+		std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
+		if(it == trackers.end()){
+			printf("Invalid tracker ID: %d\n", tracker_id);
+			return;
+		}
+		if(!it->second.update(input->getFrame(), plhs[1])){			
 			return;
 		}
 		*ret_val = 1;
 		return;
 	}
-	case MEX_TRACKER_SET_REGION:
+	case MEX_SET_REGION:
 	{
 		if(nrhs < 2){
 			mexErrMsgTxt("At least 2 input arguments are needed to reset tracker.");
@@ -419,10 +372,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		*ret_val = 1;
 		return;
 	}
-	case MEX_CLEAR:
+	case MEX_QUIT:
 	{
 		printf("Clearing up...");
-		input_pipelines.clear();
+		input.reset();
 		trackers.clear();		
 		*ret_val = 1;
 		printf("Done\n");

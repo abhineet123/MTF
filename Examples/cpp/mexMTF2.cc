@@ -140,7 +140,7 @@ private:
 	boost::thread t;
 };
 
-InputConstPtr input;
+static InputConstPtr input;
 static std::map<int, TrackerStruct> trackers;
 
 static double min_x, min_y, max_x, max_y;
