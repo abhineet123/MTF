@@ -300,13 +300,13 @@ bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) 
 		return false;
 	}
 	try{
-		it->second->setRegion(corners);
+		it->second.setRegion(corners);
 	} catch(const mtf::utils::Exception &err){
 		printf("Exception of type %s encountered while resetting the tracker: %s\n",
 			err.type(), err.what());
 		return false;
 	}
-	plhs = mtf::utils::setCorners(it->second->getRegion());
+	plhs = mtf::utils::setCorners(it->second.getRegion());
 	return true;
 }
 bool getRegion(unsigned int tracker_id, mxArray* &plhs) {
@@ -315,7 +315,7 @@ bool getRegion(unsigned int tracker_id, mxArray* &plhs) {
 		printf("Invalid tracker ID: %d\n", tracker_id);
 		return false;
 	}
-	plhs = mtf::utils::setCorners(it->second->getRegion());
+	plhs = mtf::utils::setCorners(it->second.getRegion());
 	return true;
 }
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
