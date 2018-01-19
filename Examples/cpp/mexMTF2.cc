@@ -365,7 +365,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			unsigned int *n_frames = (unsigned int*)mxGetPr(plhs[1]);
 			*n_frames = static_cast<unsigned int>(input->getNFrames());
 		}
-		*ret_val = _input_id;
+		*ret_val = 1;
 		return;
 	}
 	case MEX_GET_FRAME:
