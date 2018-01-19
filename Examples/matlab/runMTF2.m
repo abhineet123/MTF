@@ -42,8 +42,8 @@ while arg_id <= nargin
 end   
 param_str = sprintf('config_dir %s %s', config_dir, param_str);
 
-[input_id, n_frames] = mexMTF2('create_input', param_str);
-if input_id == 0
+success = mexMTF2('init', param_str);
+if ~success
     error('MTF input pipeline creation was unsuccessful');
 else
     fprintf('MTF input pipeline created successfully');
@@ -53,8 +53,7 @@ else
     fprintf('\n');
 end
 
-[tracker_id, init_corners] = mexMTF2('create_tracker',...
-    input_id, param_str);
+[tracker_id, init_corners] = mexMTF2('create_tracker', param_str);
 if ~tracker_id
     error('Tracker creation was unsuccessful');
 else
@@ -69,7 +68,7 @@ if show_window
     h = figure; 
 end
 while 1
-    [success, curr_img] = mexMTF2('get_frame', input_id);
+    [success, curr_img] = mexMTF2('get_frame');
     if ~success
         error('Frame extraction was unsuccessful');
     end 
@@ -81,16 +80,17 @@ while 1
         if ~ ishghandle(h)
             break;
         end
-		imshow(curr_img);
+		imshow(curr_img);        
 		hold on;
 		plot([curr_corners(1, :),curr_corners(1, 1)],...
             [curr_corners(2, :), curr_corners(2, 1)],...
             'Color','r', 'LineWidth',2);
 		hold off;
+        drawnow;
 		pause(0.001);
     else
         disp('curr_corners');
         disp(curr_corners);
     end
 end
-mexMTF2('clear');
+mexMTF2('quit');
