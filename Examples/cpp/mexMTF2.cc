@@ -171,7 +171,7 @@ bool createInput() {
 	if(input) {
 		input->reset(_input);
 	} else {
-		input.reset(_input);
+		input.reset(new InputStruct(_input));
 	}
 		
 	return true;
