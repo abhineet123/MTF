@@ -302,15 +302,16 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 					err.type(), err.what()).c_str());
 			}
 			init_corners = obj_utils.getObj().corners.clone();
-		
-		TrackerStruct tracker;
-		if(!tracker.create(input->getFrame(), init_corners)){			
+
+			TrackerStruct tracker;
+			if(!tracker.create(input->getFrame(), init_corners)){
+				return;
+			}
+			++_tracker_id;
+			trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, tracker));
+			*ret_val = _tracker_id;
 			return;
 		}
-		++_tracker_id;
-		trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, tracker));
-		*ret_val = _tracker_id;
-		return;
 	}
 	case MEX_GET_REGION:
 	{
