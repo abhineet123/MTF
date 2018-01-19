@@ -17,8 +17,11 @@
 
 using namespace std;
 using namespace mtf::params;
+
+struct InputConst;
 typedef std::shared_ptr<mtf::utils::InputBase> Input;
 typedef std::shared_ptr<mtf::TrackerBase> Tracker;
+typedef std::shared_ptr<InputConst> InputConstPtr;
 typedef PreProc_ PreProc;
 
 static std::map<std::string, const int> cmd_list = {
@@ -141,9 +144,7 @@ private:
 	boost::thread t;
 };
 
-typedef std::shared_ptr<InputConst> InputConstPtr;
 InputConstPtr input;
-
 static std::map<int, TrackerConst> trackers;
 
 static double min_x, min_y, max_x, max_y;
