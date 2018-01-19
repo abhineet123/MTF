@@ -1,28 +1,19 @@
 #include "mtf/mtf.h"
-//! tools for reading in images from various sources like image sequences, 
-//! videos and cameras as well as for pre processing them
 #include "mtf/pipeline.h"
-#include "mtf/Config/parameters.h"
 #include "mtf/Utilities/mexUtils.h"
 
-#include <time.h>
-#include <string.h>
 #include <vector>
 #include <map>
 #include <memory>
-#include <sstream>
-
-#include "opencv2/core/core.hpp"
 #include <boost/thread.hpp>
 
-#define MEX_CREATE_INPUT 1
+#define MEX_INIT_INPUT 1
 #define MEX_GET_FRAME 2
-#define MEX_REMOVE_INPUT 3
+#define MEX_QUIT 3
 #define MEX_CREATE_TRACKER 4
 #define MEX_GET_REGION 5
 #define MEX_SET_REGION 6
 #define MEX_REMOVE_TRACKER 7
-#define MEX_CLEAR 8
 
 using namespace std;
 using namespace mtf::params;
@@ -31,14 +22,13 @@ typedef std::shared_ptr<mtf::TrackerBase> Tracker;
 typedef PreProc_ PreProc;
 
 static std::map<std::string, const int> cmd_list = {
-	{ "create_input", MEX_CREATE_INPUT },
+	{ "init", MEX_INIT_INPUT },
+	{ "quit", MEX_QUIT },
 	{ "get_frame", MEX_GET_FRAME },
-	{ "remove_input", MEX_REMOVE_INPUT },
 	{ "create_tracker", MEX_CREATE_TRACKER },
 	{ "get_region", MEX_GET_REGION },
 	{ "set_region", MEX_SET_REGION },
-	{ "remove_tracker", MEX_REMOVE_TRACKER },
-	{ "clear", MEX_CLEAR }
+	{ "remove_tracker", MEX_REMOVE_TRACKER }
 };
 
 struct InputThread{
@@ -54,6 +44,7 @@ private:
 	Input input;
 };
 struct InputConst : public mtf::utils::InputBase {
+	InputConst() : is_valid(false){}
 	InputConst(Input &_input) : input(_input) {
 		t = boost::thread{ InputThread(input) };
 	}
@@ -63,18 +54,29 @@ struct InputConst : public mtf::utils::InputBase {
 	void remapBuffer(unsigned char** new_addr) override{}
 	const cv::Mat& getFrame() const override{ return input->getFrame(); }
 	cv::Mat& getFrame(mtf::utils::FrameType) override{ 
-		throw mtf::utils::InvalidArgument("Multable frame cannot be obtained");
+		throw mtf::utils::InvalidArgument("Mutable frame cannot be obtained");
 	}	
 	int getFrameID() const override{ return input->getFrameID(); }
 	int getHeight() const override{ return input->getHeight(); }
 	int getWidth() const override{ return input->getWidth(); }	
 
+	void reset(Input &_input) {
+		t.interrupt();
+		input = _input;
+	}
+	void reset() {
+		t.interrupt();
+		input.reset();
+		is_valid = false;
+	}
+	bool isValid() { return is_valid; }
 private:
 	Input input;
 	boost::thread t;
+	bool is_valid;
 };
 struct TrackerThread{
-	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, Input &_input) :
+	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, InputConstPtr &_input) :
 		tracker(_tracker), pre_proc(_pre_proc), input(_input){}
 	void operator()(){
 		int frame_id = 0;
@@ -114,14 +116,24 @@ struct TrackerThread{
 	}
 
 private:
-	Input input;
+	std::shared_ptr<const InputConst> input;
 	PreProc pre_proc;
 	Tracker tracker;
 };
 struct TrackerConst{
-	TrackerConst(Tracker &_tracker, PreProc &_pre_proc, Input &_input) :
+	TrackerConst(Tracker &_tracker, PreProc &_pre_proc, const Input &_input) :
 		tracker(_tracker), pre_proc(_pre_proc){
 		t = boost::thread{ TrackerThread(tracker, pre_proc, _input) };
+	}
+	void setRegion(const cv::Mat& corners){
+		tracker->setRegion(corners);		
+	}
+	const cv::Mat& getRegion() {
+		return tracker->getRegion();
+	}
+	void reset() {
+		t.interrupt();
+		tracker.reset();
 	}
 private:
 	Tracker tracker;
@@ -129,7 +141,9 @@ private:
 	boost::thread t;
 };
 
-InputConst input_pipeline;
+typedef std::shared_ptr<InputConst> InputConstPtr;
+InputConstPtr input;
+
 static std::map<int, TrackerConst> trackers;
 
 static double min_x, min_y, max_x, max_y;
@@ -139,16 +153,16 @@ static int img_height, img_width;
 static vector<cv::Scalar> obj_cols;
 
 static int frame_id;
-static unsigned int _tracker_id = 0, _input_id = 0;
+static unsigned int _tracker_id = 0;
 
-bool createInput(mxArray* &plhs) {
+bool createInput() {
 	if(input_buffer_size <= 1){
 		input_buffer_size = 100;
 	}
-	Input input;
+	Input _input;
 	try{
-		input.reset(mtf::getInput(pipeline));
-		if(!input->initialize()){
+		_input.reset(mtf::getInput(pipeline));
+		if(!_input->initialize()){
 			printf("Pipeline could not be initialized successfully. Exiting...\n");
 			return false;
 		}
@@ -157,23 +171,16 @@ bool createInput(mxArray* &plhs) {
 			err.type(), err.what());
 		return false;
 	}
-	++_input_id;
-	mwSize dims[2] = { 1, 1 };
-	plhs = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
-	//plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
-	unsigned int *ret_val = (unsigned int*)mxGetPr(plhs);
-	*ret_val = static_cast<unsigned int>(input->getNFrames());	
-	input_pipelines.insert(std::pair<int, InputStruct>(_input_id, InputStruct(input)));
+	input->reset(_input);	
 	return true;
 }
 
-bool getFrame(unsigned int input_id, mxArray* &plhs){
-	std::map<int, InputStruct>::iterator it = input_pipelines.find(input_id);
-	if(it == input_pipelines.end()){
-		printf("Invalid input ID: %d\n", input_id);
+bool getFrame(mxArray* &plhs){
+	if(!input->isValid()){
+		printf("Input has not been initialized\n");
 		return false;
 	}
-	const cv::Mat frame = it->second.input->getFrame();
+	const cv::Mat frame = input->getFrame();
 	int n_channels = 3, n_dims = 3;
 	if(frame.type() == CV_8UC1){
 		n_channels = 1;
@@ -231,13 +238,11 @@ bool initializeTracker(Tracker &tracker, PreProc &pre_proc,
 	plhs = mtf::utils::setCorners(tracker->getRegion());
 	return true;
 }
-bool createTracker(int input_id, mxArray* &plhs) {
-	std::map<int, InputStruct>::iterator it = input_pipelines.find(input_id);
-	if(it == input_pipelines.end()){
-		printf("Invalid input ID: %d\n", input_id);
+bool createTracker(mxArray* &plhs) {
+	if(!input->isValid()){
+		printf("Input has not been initialized\n");
 		return false;
 	}
-	Input input = it->second.input;
 	Tracker tracker;
 	try{
 		tracker.reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
@@ -294,13 +299,13 @@ bool setRegion(unsigned int tracker_id, const cv::Mat &corners, mxArray* &plhs) 
 		return false;
 	}
 	try{
-		it->second.tracker->setRegion(corners);
+		it->second->setRegion(corners);
 	} catch(const mtf::utils::Exception &err){
 		printf("Exception of type %s encountered while resetting the tracker: %s\n",
 			err.type(), err.what());
 		return false;
 	}
-	plhs = mtf::utils::setCorners(it->second.tracker->getRegion());
+	plhs = mtf::utils::setCorners(it->second->getRegion());
 	return true;
 }
 bool getRegion(unsigned int tracker_id, mxArray* &plhs) {
@@ -309,7 +314,7 @@ bool getRegion(unsigned int tracker_id, mxArray* &plhs) {
 		printf("Invalid tracker ID: %d\n", tracker_id);
 		return false;
 	}
-	plhs = mtf::utils::setCorners(it->second.tracker->getRegion());
+	plhs = mtf::utils::setCorners(it->second->getRegion());
 	return true;
 }
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
@@ -338,22 +343,26 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	const int cmd_id = cmd_iter->second;
 
 	switch(cmd_id) {
-	case MEX_CREATE_INPUT:
+	case MEX_INIT_INPUT:
 	{
-		if(nlhs != 2){
-			mexErrMsgTxt("2 output arguments (input_id, n_frames) are needed to create input pipeline.");
+		if(nrhs < 2){
+			mexErrMsgTxt("At least two input arguments are needed to initialize input pipeline.");
 		}
-		if(nrhs > 1){
-			if(!mxIsChar(prhs[1])){
-				mexErrMsgTxt("Second input argument for creating input pipeline must be a string.");
-			}
-			if(!readParams(mtf::utils::toString(prhs[1]))) {
-				mexErrMsgTxt("Parameters could not be parsed");
-			}
+		if(!mxIsChar(prhs[1])){
+			mexErrMsgTxt("Second input argument for creating input pipeline must be a string.");
 		}
-		if(!createInput(plhs[1])){
+		if(!readParams(mtf::utils::toString(prhs[1]))) {
+			mexErrMsgTxt("Parameters could not be parsed");
+		}
+		if(!createInput()){
 			*ret_val = 0;
 			return;
+		}
+		if(nlhs >= 2){
+			mwSize dims[2] = { 1, 1 };
+			plhs[1] = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
+			unsigned int *n_frames = (unsigned int*)mxGetPr(plhs[1]);
+			*n_frames = static_cast<unsigned int>(input->getNFrames());
 		}
 		*ret_val = _input_id;
 		return;
@@ -363,34 +372,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(nlhs != 2){
 			mexErrMsgTxt("2 output arguments (success, frame) are needed to get frame.");
 		}
-		if(nrhs < 2){
-			mexErrMsgTxt("At least 2 input arguments are needed to get frame.");
-		}
-		unsigned int input_id = mtf::utils::getID(prhs[1]);
-		if(!getFrame(input_id, plhs[1])){
+		if(!getFrame(plhs[1])){
 			*ret_val = 0;
 			return;
 		}
-		*ret_val = 1;
-		return;
-	}
-	case MEX_REMOVE_INPUT:
-	{
-		if(nrhs < 2){
-			mexErrMsgTxt("At least 2 input arguments are needed to remove input pipeline.");
-		}
-		if(nlhs != 1){
-			mexErrMsgTxt("1 output argument is needed to remove input pipeline.");
-		}
-		unsigned int input_id = mtf::utils::getID(prhs[1]);
-		std::map<int, InputStruct>::iterator it = input_pipelines.find(input_id);
-		if(it == input_pipelines.end()){
-			printf("Invalid input ID: %d\n", input_id);
-			*ret_val = 0;
-			return;
-		}
-		it->second.t.interrupt();
-		input_pipelines.erase(it);
 		*ret_val = 1;
 		return;
 	}
@@ -402,16 +387,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(nrhs < 2){
 			mexErrMsgTxt("At least 2 input arguments are needed to create tracker.");
 		}
-		if(nrhs > 2){
-			if(!mxIsChar(prhs[2])){
-				mexErrMsgTxt("The optional third input argument for creating tracker must be a string.");
-			}
-			if(!readParams(mtf::utils::toString(prhs[1]))) {
-				mexErrMsgTxt("Parameters could not be parsed");
-			}
+		if(!mxIsChar(prhs[1])){
+			mexErrMsgTxt("The optional third input argument for creating tracker must be a string.");
 		}
-		unsigned int input_id = mtf::utils::getID(prhs[1]);
-		if(!createTracker(input_id, plhs[1])){
+		if(!readParams(mtf::utils::toString(prhs[1]))) {
+			mexErrMsgTxt("Parameters could not be parsed");
+		}
+		if(!createTracker(plhs[1])){
 			*ret_val = 0;
 			return;
 		}
@@ -466,20 +448,17 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			*ret_val = 0;
 			return;
 		}
-		it->second.t.interrupt();
+		it->second.reset();
 		trackers.erase(it);
 		*ret_val = 1;
 		return;
 	}
-	case MEX_CLEAR:
+	case MEX_QUIT:
 	{
 		printf("Clearing up...");
-		for(auto it = input_pipelines.begin(); it != input_pipelines.end(); it++){
-			it->second.t.interrupt();			
-		}
-		input_pipelines.clear();
-		for(auto it = trackers.begin(); it != trackers.end(); it++){
-			it->second.t.interrupt();
+		input->reset();
+		for(auto it = trackers.begin(); it != trackers.end(); ++it){
+			it->second.reset();
 		}
 		trackers.clear();		
 		*ret_val = 1;

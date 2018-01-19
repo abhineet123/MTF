@@ -30,7 +30,7 @@ namespace utils{
 			for(int x = 0; x < n_cols; ++x){
 				for(int y = 0; y < n_rows; ++y){
 					const T element = from[_A3D_IDX_COLUMN_MAJOR(y, x, c, n_rows, n_cols)];
-					pdata[_A3D_IDX_OPENCV(y, x, c, rows, n_cols, n_channels)] = element;
+					pdata[_A3D_IDX_OPENCV(y, x, n_channels - c, rows, n_cols, n_channels)] = element;
 				}
 			}
 		}
