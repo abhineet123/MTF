@@ -18,10 +18,10 @@
 using namespace std;
 using namespace mtf::params;
 
-struct InputConst;
+struct InputStruct;
 typedef std::shared_ptr<mtf::utils::InputBase> Input;
 typedef std::shared_ptr<mtf::TrackerBase> Tracker;
-typedef std::shared_ptr<InputConst> InputConstPtr;
+typedef std::shared_ptr<InputStruct> InputConstPtr;
 typedef PreProc_ PreProc;
 
 static std::map<std::string, const int> cmd_list = {
@@ -46,12 +46,13 @@ struct InputThread{
 private:
 	Input input;
 };
-struct InputConst : public mtf::utils::InputBase {
-	InputConst() : is_valid(false){}
-	InputConst(Input &_input) : input(_input) {
+struct InputStruct : public mtf::utils::InputBase {
+	InputStruct() : is_valid(false), thread_created(false){}
+	InputStruct(Input &_input) : input(_input), thread_created(false){
 		t = boost::thread{ InputThread(input) };
+		thread_created = true;
 	}
-	~InputConst() {}
+	~InputStruct() {}
 	bool initialize() override{ return true; }
 	bool update() override{ return true; }
 	void remapBuffer(unsigned char** new_addr) override{}
@@ -64,19 +65,26 @@ struct InputConst : public mtf::utils::InputBase {
 	int getWidth() const override{ return input->getWidth(); }	
 
 	void reset(Input &_input) {
-		t.interrupt();
+		reset();
 		input = _input;
+		t = boost::thread{ InputThread(input) };
+		is_valid = thread_created = true;
 	}
 	void reset() {
-		t.interrupt();
-		input.reset();
-		is_valid = false;
+		if(thread_created) {
+			t.interrupt();
+			thread_created = false;
+		}
+		if(is_valid) {
+			input.reset();
+			is_valid = false;
+		}		
 	}
 	bool isValid() { return is_valid; }
 private:
 	Input input;
 	boost::thread t;
-	bool is_valid;
+	bool is_valid, thread_created;
 };
 struct TrackerThread{
 	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputConstPtr &_input) :
@@ -107,7 +115,7 @@ struct TrackerThread{
 	}
 
 private:
-	std::shared_ptr<const InputConst> input;
+	std::shared_ptr<const InputStruct> input;
 	PreProc pre_proc;
 	Tracker tracker;
 };
@@ -160,7 +168,12 @@ bool createInput() {
 			err.type(), err.what());
 		return false;
 	}
-	input->reset(_input);	
+	if(input) {
+		input->reset(_input);
+	} else {
+		input.reset(_input);
+	}
+		
 	return true;
 }
 
