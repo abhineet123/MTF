@@ -89,28 +89,16 @@ struct TrackerThread{
 				continue;
 			}
 			frame_id = input->getFrameID();
-
-			double tracking_time, tracking_time_with_input;
-			mtf_clock_get(start_time_with_input);
 			try{
-				//! update pre processor
+				//! update pre-processor
 				pre_proc->update(input->getFrame());
-				mtf_clock_get(start_time);
 				//! update tracker
 				tracker->update();
-				if(print_fps){
-					mtf_clock_get(end_time);
-					mtf_clock_measure(start_time, end_time, tracking_time);
-					mtf_clock_measure(start_time_with_input, end_time, tracking_time_with_input);
-					double fps = 1.0 / tracking_time;
-					double fps_win = 1.0 / tracking_time_with_input;
-					printf("fps: %f\t fps_win=%f\n", fps, fps_win);
-				}
 				if(reset_template){
 					tracker->initialize(tracker->getRegion());
 				}
 			} catch(const mtf::utils::Exception &err){
-				printf("Exception of type %s encountered while updating the tracker: %s\n",
+				cout << cv::format("Exception of type %s encountered while updating the tracker: %s\n",
 					err.type(), err.what());
 				return;
 			}
