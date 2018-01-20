@@ -227,9 +227,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	switch(cmd_id) {
 	case MEX_INIT:
 	{
-		//if(nlhs != 2){
-		//	mexErrMsgTxt("2 output arguments (input_id, n_frames) are needed to create input pipeline.");
-		//}
 		if(nrhs > 1){
 			if(!mxIsChar(prhs[1])){
 				mexErrMsgTxt("Second input argument for creating input pipeline must be a string.");

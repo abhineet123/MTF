@@ -193,16 +193,6 @@ private:
 	boost::thread t;
 };
 
-struct VisualizerThread{
-	VisualizerThread(InputStructPtr &_input, Tracker &_tracker) : 
-		input(_input), tracker(_tracker){}
-	void operator()(){
-	}
-private:
-	InputStructPtr input;
-	Tracker tracker;
-};
-
 static InputStructPtr input;
 static std::map<int, TrackerStruct> trackers;
 
@@ -426,8 +416,13 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		} else {
 			ObjectSelectorThread obj_sel_thread(input);
 			boost::thread t(obj_sel_thread);
-			t.join();
+			try{
+				t.join();
+			} catch(boost::thread_interrupted) {
+				printf("Caught exception from object selector thread");
+			}
 			init_corners = obj_sel_thread.getCorners();
+			if(init_corners.empty()) { return; }
 		}
 
 		if(!createTracker(init_corners)){ return; }
