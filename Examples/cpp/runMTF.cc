@@ -53,7 +53,7 @@ int main(int argc, char * argv[]) {
 	printf("actor: %s\n", actor.c_str());
 	printf("pipeline: %c\n", pipeline);
 	printf("img_source: %c\n", img_source);
-	printf("enable_visualization: %d\n", enable_visualization);
+	printf("mtf_visualize: %d\n", mtf_visualize);
 	printf("read_obj_from_gt: %d\n", read_obj_from_gt);
 	printf("write_tracking_data: %d\n", write_tracking_data);
 	printf("mtf_sm: %s\n", mtf_sm);
@@ -221,7 +221,7 @@ int main(int argc, char * argv[]) {
 	string cv_win_name = "MTF :: " + seq_name;
 	string proc_win_name = "Processed Image :: " + seq_name;
 	try{
-		if(enable_visualization) {
+		if(mtf_visualize) {
 			cv::namedWindow(cv_win_name, cv::WINDOW_AUTOSIZE);
 			if(show_proc_img) {
 				cv::namedWindow(proc_win_name, cv::WINDOW_AUTOSIZE);
@@ -229,7 +229,7 @@ int main(int argc, char * argv[]) {
 		}
 	} catch(...){
 		printf("OpenCV window could not be created to show tracking output. Turning this option off...");
-		enable_visualization = 0;
+		mtf_visualize = 0;
 	}
 
 	/**
@@ -381,7 +381,7 @@ int main(int argc, char * argv[]) {
 		output.open(record_frames_path, CV_FOURCC('M', 'J', 'P', 'G'), 24, input->getFrame().size());
 	}
 
-	if(enable_visualization){
+	if(mtf_visualize){
 		for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
 			if(static_cast<int>(tracker_labels.size()) < tracker_id + 1){
 				tracker_labels.push_back(trackers[tracker_id]->name);
@@ -572,7 +572,7 @@ int main(int argc, char * argv[]) {
 
 		// *************************** display/save tracking output *************************** //
 
-		if(record_frames || enable_visualization) {
+		if(record_frames || mtf_visualize) {
 			if(record_frames && write_tracking_data){
 				output.write(input->getFrame());
 			}
@@ -619,7 +619,7 @@ int main(int argc, char * argv[]) {
 			if(record_frames && !write_tracking_data){
 				output.write(input->getFrame());
 			}
-			if(enable_visualization){
+			if(mtf_visualize){
 				imshow(cv_win_name, input->getFrame());
 				if(show_proc_img){
 					pre_procs[0]->showFrame(proc_win_name);
@@ -633,7 +633,7 @@ int main(int argc, char * argv[]) {
 				}
 			}
 		}
-		if(!enable_visualization && (input->getFrameID() + 1) % 50 == 0){
+		if(!mtf_visualize && (input->getFrameID() + 1) % 50 == 0){
 			printf("frame_id: %5d avg_fps: %15.9f avg_fps_win: %15.9f avg_err: %15.9f\n",
 				input->getFrameID() + 1, avg_fps, avg_fps_win, avg_err);
 		}

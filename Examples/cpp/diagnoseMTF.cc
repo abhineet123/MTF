@@ -45,7 +45,7 @@ int main(int argc, char * argv[]) {
 	cout << "actor: " << actor << "\n";
 	cout << "pipeline: " << pipeline << "\n";
 	cout << "img_source: " << img_source << "\n";
-	cout << "enable_visualization: " << enable_visualization << "\n";
+	cout << "mtf_visualize: " << mtf_visualize << "\n";
 	cout << "read_obj_from_file: " << read_obj_from_file << "\n";
 	cout << "patch_size: " << patch_size << "\n";
 	cout << "read_obj_fname: " << read_obj_fname << "\n";

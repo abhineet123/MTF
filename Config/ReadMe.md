@@ -340,7 +340,7 @@ ViSP input pipeline:
 Output parameters:
 ==================
 
-	 Parameter:	'enable_visualization'
+	 Parameter:	'mtf_visualize'
 		Description:
 			show the result of tracking from frame to frame in an OpenCV window;
 			if a single object is being tracked, this is shown as a red bounding box; subsequent objects are shown in other colours defined in Utilities/src/objUtils.cc;
@@ -354,7 +354,7 @@ Output parameters:
 		Description:
 			show the current location of the object in the ground truth in an OpenCV window;
 			this is always shown as a green color bounding box;
-			only matters if show_cv_window is enabled and the conditions required for ground truth to be available as specified for show_tracking_error are satisfied;
+			only matters if mtf_visualize is enabled and the conditions required for ground truth to be available as specified for show_tracking_error are satisfied;
 		Possible Values:
 			0: Disable
 			1: Enable
@@ -384,6 +384,8 @@ Output parameters:
 		Possible Values:
 			0: Disable
 			1: Enable
+		Applies to:
+			runMTF, mexMTF
 			
 	 Parameter:	'record_frames'
 		Description:

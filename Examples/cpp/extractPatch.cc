@@ -34,7 +34,7 @@ int main(int argc, char * argv[]) {
 	printf("actor: %s\n", actor.c_str());
 	printf("pipeline: %c\n", pipeline);
 	printf("img_source: %c\n", img_source);
-	printf("enable_visualization: %d\n", enable_visualization);
+	printf("mtf_visualize: %d\n", mtf_visualize);
 	printf("*******************************\n");
 
 	/* initialize pipeline*/

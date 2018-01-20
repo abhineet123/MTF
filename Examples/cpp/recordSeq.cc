@@ -43,14 +43,14 @@ int main(int argc, char * argv[]) {
 	}
 
 	string cv_win_name = "Recording Sequence...";
-	if(enable_visualization) {
+	if(mtf_visualize) {
 		cv::namedWindow(cv_win_name, cv::WINDOW_AUTOSIZE);
 	}
 	cv::VideoWriter output;
 	output.open(cv::format("rec_seq_%s.avi", rec_seq_suffix.c_str()), CV_FOURCC('M', 'J', 'P', 'G'), rec_fps, input->getFrame().size());
 
 	while(true) {
-		if(enable_visualization){
+		if(mtf_visualize){
 			imshow(cv_win_name, input->getFrame());
 			int pressed_key = cv::waitKey(1);
 			if(pressed_key == 27){

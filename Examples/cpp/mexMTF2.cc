@@ -89,8 +89,8 @@ private:
 	bool is_valid, thread_created;
 };
 
-struct ObjectSelectionThread{
-	ObjectSelectionThread(InputStructPtr &_input) : input(_input) {}
+struct ObjectSelectorThread{
+	ObjectSelectorThread(InputStructPtr &_input) : input(_input) {}
 	void operator()(){
 		mtf::utils::ObjUtils obj_utils;
 		try{
@@ -120,10 +120,19 @@ private:
 };
 
 struct TrackerThread{
-	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input) :
-		input(_input), pre_proc(_pre_proc), tracker(_tracker) {}
+	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input, 
+		unsigned int id = 1) : input(_input), pre_proc(_pre_proc), tracker(_tracker) {
+		win_name = cv::format("mexMTF:: %d", id);
+		proc_win_name = cv::format("%s (Pre-processed)", win_name.c_str());
+	}
 	void operator()(){
 		int frame_id = 0;
+		if(mex_visualize) {
+			cv::namedWindow(win_name, cv::WINDOW_AUTOSIZE);
+			if(show_proc_img) {
+				cv::namedWindow(proc_win_name, cv::WINDOW_AUTOSIZE);
+			}
+		}
 		while(!input->isValid()){
 			if(frame_id == input->getFrameID()){
 				//! do not process the same image multiple times
@@ -135,6 +144,16 @@ struct TrackerThread{
 				pre_proc->update(input->getFrame());
 				//! update tracker
 				tracker->update();
+				if(mex_visualize) {
+					imshow(win_name, input->getFrame());
+					if(show_proc_img){
+						pre_proc->showFrame(proc_win_name);
+					}
+					int pressed_key = cv::waitKey(1 - pause_after_frame);
+					if(pressed_key % 256 == 27){
+						break;
+					}
+				}
 				if(reset_template){
 					tracker->initialize(tracker->getRegion());
 				}
@@ -151,6 +170,7 @@ private:
 	std::shared_ptr<const InputStruct> input;
 	PreProc pre_proc;
 	Tracker tracker;
+	string win_name, proc_win_name;
 };
 struct TrackerStruct{
 	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input) :
@@ -171,6 +191,16 @@ private:
 	Tracker tracker;
 	PreProc pre_proc;
 	boost::thread t;
+};
+
+struct VisualizerThread{
+	VisualizerThread(InputStructPtr &_input, Tracker &_tracker) : 
+		input(_input), tracker(_tracker){}
+	void operator()(){
+	}
+private:
+	InputStructPtr input;
+	Tracker tracker;
 };
 
 static InputStructPtr input;
@@ -394,7 +424,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(nrhs>2) {
 			init_corners = mtf::utils::getCorners(prhs[2]);
 		} else {
-			ObjectSelectionThread obj_sel_thread(input);
+			ObjectSelectorThread obj_sel_thread(input);
 			boost::thread t(obj_sel_thread);
 			t.join();
 			init_corners = obj_sel_thread.getCorners();

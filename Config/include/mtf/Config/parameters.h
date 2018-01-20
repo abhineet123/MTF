@@ -79,10 +79,10 @@ namespace mtf{
 		int buffer_id = 0;
 
 		//! flags
+		int mtf_visualize = 1;
 		int pause_after_frame = 0;
 		bool print_corners = false;
 		bool print_fps = false;
-		int enable_visualization = 1;
 		int show_corner_ids = 0;
 		int show_ground_truth = 0;
 		int reinit_gt_from_bin = 1;
@@ -1109,7 +1109,7 @@ namespace mtf{
 			parse_param(record_frames_dir, std::string);
 			parse_param(read_obj_fname, std::string);
 			parse_param(write_obj_fname, std::string);
-			parse_param(enable_visualization, atoc_i);
+			parse_param(mtf_visualize, atoc_i);
 			parse_param(show_ground_truth, atoc_i);
 			parse_param(xv_visualize, atoc_i);
 			parse_param(read_obj_from_gt, atoi);
@@ -1199,8 +1199,8 @@ namespace mtf{
 				tracker_labels.push_back(std::string(arg_val));
 				return;
 			}
-			if(!strcmp(arg_name, "enable_visualization")){
-				enable_visualization = arg_val[0] - '0';
+			if(!strcmp(arg_name, "mtf_visualize")){
+				mtf_visualize = arg_val[0] - '0';
 				return;
 			}
 			if(!strcmp(arg_name, "show_ground_truth")){
