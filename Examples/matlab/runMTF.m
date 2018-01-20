@@ -3,7 +3,6 @@ function runMTF(varargin)
 close all;
 
 % script parameters
-use_mtf_pipeline = 1;
 use_rgb_input = 1;
 init_from_gt = 1;
 show_fps = 0;
@@ -57,26 +56,15 @@ actor = actors{actor_id+1};
 seq_name = sequences{actor_id + 1}{seq_id + 1};
 seq_path = sprintf('%s/%s/%s', db_root_path, actor, seq_name);
 
-if use_mtf_pipeline 
-    [input_id, n_frames] = mexMTF('create_input', param_str);
-    if input_id == 0
-        error('MTF input pipeline creation was unsuccessful');
-    else
-        fprintf('MTF input pipeline created successfully');
-        if n_frames > 0
-            fprintf(' with %d frames', n_frames);
-        end
-        fprintf('\n');
-    end
-    [success, init_img] = mexMTF('update_input', input_id);
-    if ~success
-        error('MTF input pipeline update was unsuccessful');
-    end
+[input_id, n_frames] = mexMTF('init', param_str);
+if input_id == 0
+    error('MTF input pipeline creation was unsuccessful');
 else
-    img_files = dir([seq_path, sprintf('/*.%s', seq_fmt)]);
-    n_frames = length(img_files(not([img_files.isdir])));
-    init_img_path = sprintf('%s/frame%05d.%s', seq_path, init_frame_id, seq_fmt);
-    init_img = imread(init_img_path);
+    fprintf('MTF input pipeline created successfully');
+    if n_frames > 0
+        fprintf(' with %d frames', n_frames);
+    end
+    fprintf('\n');
 end
 
 tracker_id = mexMTF('create_tracker', param_str);
@@ -84,23 +72,6 @@ if ~tracker_id
     error('Tracker creation was unsuccessful');
 else
     fprintf('Tracker created successfully\n');
-end
-% pause;
-if init_from_gt
-    gt_path = sprintf('%s.txt', seq_path);
-    gt_struct = importdata(gt_path);
-    gt_data = gt_struct.data;
-    gt_corners = zeros(2, 4);
-    gt_corners(1, :) = gt_data(init_frame_id, [1, 3, 5, 7]);
-    gt_corners(2, :) = gt_data(init_frame_id, [2, 4, 6, 8]);
-    if ~use_rgb_input
-        init_img = rgb2gray(init_img);
-    end
-    success = mexMTF('initialize_tracker',...
-        tracker_id, uint8(init_img), double(gt_corners));
-else
-    success = mexMTF('initialize_tracker',...
-        tracker_id, uint8(init_img));
 end
 
 if ~success
@@ -115,20 +86,15 @@ if show_window
     h = figure; 
 end
 while 1
-    if use_mtf_pipeline
-        [success, curr_img] = mexMTF('update_input', input_id);
-        if ~success
-            error('MTF input pipeline update was unsuccessful for frame %d', frame_id + 1);
-        end
-    else
-        img_path = sprintf('%s/frame%05d.%s', seq_path, frame_id, seq_fmt);
-        curr_img = imread(img_path); 
+    [success, curr_img] = mexMTF('get_frame', input_id);
+    if ~success
+        error('MTF input pipeline update was unsuccessful for frame %d', frame_id + 1);
     end   
     if ~use_rgb_input
         curr_img = rgb2gray(curr_img);
     end
     start_t = tic;
-    [success, curr_corners] = mexMTF('update_tracker', tracker_id, uint8(curr_img));
+    [success, curr_corners] = mexMTF('get_region', tracker_id, uint8(curr_img));
     time_passed = toc(start_t);
     if ~success
         error('Tracker update was unsuccessful');
