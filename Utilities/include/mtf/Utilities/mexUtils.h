@@ -89,13 +89,16 @@ namespace utils{
 		if(!mxIsClass(mx_corners, "double")){
 			mexErrMsgTxt("Input corner array must be of 64 bit floating point type");
 		}
-		if(corners_n_dims == 0 || corners_n_dims > 2){
-			mexErrMsgTxt("Input corner array must be either 1 or 2 dimensional");
+		if(corners_n_dims != 2){
+			mexErrMsgTxt("Input corner array must be 2 dimensional");
 		}
-		const mwSize *corners_dims = mxGetDimensions(mx_corners);	
+		const mwSize *corners_dims = mxGetDimensions(mx_corners);
+		if((corners_dims[0] != 1 && corners_dims[0] != 2) || corners_dims[1] != 4){
+			mexErrMsgTxt("Input corner array must be of size 1 x 4 or 2 x 4");
+		}
+		double *corners_ptr = mxGetPr(mx_corners);
 		cv::Mat corners(2, 4, CV_64FC1);
-		if(corners_n_dims == 1){
-			double *corners_ptr = mxGetPr(mx_corners);
+		if(corners_dims[0] == 1){			
 			double ulx = corners_ptr[0];
 			double uly = corners_ptr[1];
 			double width = corners_ptr[2];
@@ -110,10 +113,7 @@ namespace utils{
 			corners.at<double>(0, 2) = brx;	corners.at<double>(1, 2) = bry;
 			corners.at<double>(0, 3) = ulx;	corners.at<double>(1, 3) = bry;
 		} else {
-			if(corners_dims[0] != 2 || corners_dims[1] != 4){
-				mexErrMsgTxt("2D input corner array must be of size 2 x 4");
-			}
-			cv::transpose(cv::Mat(4, 2, CV_64FC1, mxGetPr(mx_corners)), corners);			
+			cv::transpose(cv::Mat(4, 2, CV_64FC1, corners_ptr), corners);
 		}
 		return corners;
 	}
