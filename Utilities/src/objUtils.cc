@@ -202,7 +202,7 @@ namespace utils{
 					--clicked_point_count;
 				}
 			}
-			input->update();		
+			if(!input->update()){ return false; }
 		}
 		new_obj.size_x = abs(new_obj.max_point.x - new_obj.min_point.x);
 		new_obj.size_y = abs(new_obj.max_point.y - new_obj.min_point.y);
@@ -310,8 +310,7 @@ namespace utils{
 					--clicked_point_count;
 				}
 			}
-			input->update();
-			
+			if(!input->update()){ return false; }			
 		}
 		new_obj.min_point.x = new_obj.corners.at<double>(0, 0);
 		new_obj.min_point.y = new_obj.corners.at<double>(1, 0);
