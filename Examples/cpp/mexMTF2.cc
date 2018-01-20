@@ -21,7 +21,7 @@ using namespace mtf::params;
 struct InputStruct;
 typedef std::shared_ptr<mtf::utils::InputBase> Input;
 typedef std::shared_ptr<mtf::TrackerBase> Tracker;
-typedef std::shared_ptr<InputStruct> InputConstPtr;
+typedef std::shared_ptr<InputStruct> InputStructPtr;
 typedef PreProc_ PreProc;
 
 static std::map<std::string, const int> cmd_list = {
@@ -88,8 +88,39 @@ private:
 	boost::thread t;
 	bool is_valid, thread_created;
 };
+
+struct ObjectSelectionThread{
+	ObjectSelectionThread(InputStructPtr &_input) : input(_input) {}
+	void operator()(){
+		mtf::utils::ObjUtils obj_utils;
+		try{
+			if(mex_live_init){
+				if(!obj_utils.selectObjects(input.get(), 1,
+					patch_size, line_thickness, write_objs, sel_quad_obj,
+					write_obj_fname.c_str())){
+					mexErrMsgTxt("Object to be tracked could not be obtained.\n");
+				}
+			} else {
+				if(!obj_utils.selectObjects(input->getFrame(), 1,
+					patch_size, line_thickness, write_objs, sel_quad_obj,
+					write_obj_fname.c_str())){
+					mexErrMsgTxt("Object to be tracked could not be obtained.\n");
+				}
+			}
+		} catch(const mtf::utils::Exception &err){
+			mexErrMsgTxt(cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
+				err.type(), err.what()).c_str());
+		}
+		corners = obj_utils.getObj().corners.clone();
+	}
+	cv::Mat getCorners() const { return corners; }
+private:
+	InputStructPtr input;
+	cv::Mat corners;
+};
+
 struct TrackerThread{
-	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputConstPtr &_input) :
+	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input) :
 		input(_input), pre_proc(_pre_proc), tracker(_tracker) {}
 	void operator()(){
 		int frame_id = 0;
@@ -122,7 +153,7 @@ private:
 	Tracker tracker;
 };
 struct TrackerStruct{
-	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputConstPtr &_input) :
+	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input) :
 		tracker(_tracker), pre_proc(_pre_proc){
 		t = boost::thread{ TrackerThread(tracker, pre_proc, _input) };
 	}
@@ -142,7 +173,7 @@ private:
 	boost::thread t;
 };
 
-static InputConstPtr input;
+static InputStructPtr input;
 static std::map<int, TrackerStruct> trackers;
 
 static unsigned int _tracker_id = 0;
@@ -363,26 +394,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(nrhs>2) {
 			init_corners = mtf::utils::getCorners(prhs[2]);
 		} else {
-			mtf::utils::ObjUtils obj_utils;
-			try{
-				if(mex_live_init){
-					if(!obj_utils.selectObjects(input.get(), 1,
-						patch_size, line_thickness, write_objs, sel_quad_obj,
-						write_obj_fname.c_str())){
-						mexErrMsgTxt("Object to be tracked could not be obtained.\n");
-					}
-				} else {
-					if(!obj_utils.selectObjects(input->getFrame(), 1,
-						patch_size, line_thickness, write_objs, sel_quad_obj,
-						write_obj_fname.c_str())){
-						mexErrMsgTxt("Object to be tracked could not be obtained.\n");
-					}
-				}
-			} catch(const mtf::utils::Exception &err){
-				mexErrMsgTxt(cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
-					err.type(), err.what()).c_str());
-			}
-			init_corners = obj_utils.getObj().corners.clone();
+			ObjectSelectionThread obj_sel_thread(input);
+			boost::thread t(obj_sel_thread);
+			t.join();
+			init_corners = obj_sel_thread.getCorners();
 		}
 
 		if(!createTracker(init_corners)){ return; }
