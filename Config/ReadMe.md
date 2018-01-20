@@ -712,20 +712,22 @@ Tracker specific parameters:
 				strk:	Struck: structured output tracking with kernels
 				dft:	Descriptor Fields Tracker
 				frg:	Fragments based tracker (or FragTrack)
-			if ViSP template tracker module is enabled during compilation:
-				visp:	ViSP template tracker
-			if PFSL3 is enabled during compilation:
-				pfsl3: 8 DOF PF based tracker that uses SL3 parameterization
-			If Xvision is enabled during compilation:			
-				xv1 / xv1p:	XVSSD Rotate / Pyramidal version
-				xv2 / xv1p:	XVSSD Translation / Pyramidal version
-				xv3 / xv1p:	XVSSD RT / Pyramidal version
-				xv4 / xv1p:	XVSSD SE2 / Pyramidal version
-				xv6 / xv1p:	XVSSD Affine / Pyramidal version
-				xvc:	XVColor tracker
-				xve:	XVEdge tracker
-				xvg:	XV Grid tracker			
-				xvgl:	XV Grid Line tracker		
+				if MTF is compiled with OpenCV 3 and CV3 module is not disabled:
+					cv3:	OpenCV 3 tracker
+				if ViSP template tracker module is enabled during compilation:
+					visp:	ViSP template tracker
+				if PFSL3 is enabled during compilation:
+					pfsl3: 8 DOF PF based tracker that uses SL3 parameterization
+				If Xvision is enabled during compilation:			
+					xv1 / xv1p:	XVSSD Rotate / Pyramidal version
+					xv2 / xv1p:	XVSSD Translation / Pyramidal version
+					xv3 / xv1p:	XVSSD RT / Pyramidal version
+					xv4 / xv1p:	XVSSD SE2 / Pyramidal version
+					xv6 / xv1p:	XVSSD Affine / Pyramidal version
+					xvc:	XVColor tracker
+					xve:	XVEdge tracker
+					xvg:	XV Grid tracker			
+					xvgl:	XV Grid Line tracker		
 			
 	 Parameter:	'mtf_am'
 		Description:
