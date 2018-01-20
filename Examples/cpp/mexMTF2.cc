@@ -98,18 +98,18 @@ struct ObjectSelectorThread{
 				if(!obj_utils.selectObjects(input.get(), 1,
 					patch_size, line_thickness, write_objs, sel_quad_obj,
 					write_obj_fname.c_str())){
-					mexErrMsgTxt("Object to be tracked could not be obtained.\n");
+					cout << "Object to be tracked could not be obtained.\n";
 				}
 			} else {
 				if(!obj_utils.selectObjects(input->getFrame(), 1,
 					patch_size, line_thickness, write_objs, sel_quad_obj,
 					write_obj_fname.c_str())){
-					mexErrMsgTxt("Object to be tracked could not be obtained.\n");
+					cout<<"Object to be tracked could not be obtained.\n";
 				}
 			}
 		} catch(const mtf::utils::Exception &err){
-			mexErrMsgTxt(cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
-				err.type(), err.what()).c_str());
+			cout << cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
+				err.type(), err.what());
 		}
 		corners = obj_utils.getObj().corners.clone();
 	}
@@ -144,8 +144,12 @@ struct TrackerThread{
 				pre_proc->update(input->getFrame());
 				//! update tracker
 				tracker->update();
+
 				if(mex_visualize) {
-					imshow(win_name, input->getFrame());
+					cv::Mat disp_frame = input->getFrame().clone();
+					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), cv::Scalar(255, 0, 0), 
+						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
+					imshow(win_name, disp_frame);
 					if(show_proc_img){
 						pre_proc->showFrame(proc_win_name);
 					}
@@ -173,9 +177,10 @@ private:
 	string win_name, proc_win_name;
 };
 struct TrackerStruct{
-	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input) :
+	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
+		unsigned int id) :
 		tracker(_tracker), pre_proc(_pre_proc){
-		t = boost::thread{ TrackerThread(tracker, pre_proc, _input) };
+		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, id) };
 	}
 	void setRegion(const cv::Mat& corners){
 		tracker->setRegion(corners);		
@@ -307,7 +312,7 @@ bool createTracker(const cv::Mat &init_corners) {
 	}
 	++_tracker_id;
 	trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, 
-		TrackerStruct(tracker, pre_proc, input)));
+		TrackerStruct(tracker, pre_proc, input, _tracker_id)));
 	return true;
 }
 
