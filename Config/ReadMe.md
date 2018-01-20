@@ -348,7 +348,9 @@ Output parameters:
 			useful for benchmarking and batch mode testing;
 		Possible Values:
 			0: Disable
-			1: Enable		
+			1: Enable	
+		Applies to:
+			runMTF, extractPatch, trackUAVTrajectory, diagnoseMTF			
 			
 	 Parameter:	'show_ground_truth'
 		Description:
