@@ -5,10 +5,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include "boost/filesystem/operations.hpp"
 #include "opencv2/core/core.hpp"
 #include "mtf/Macros/common.h"
 
 #include "datasets.h"
+
+namespace fs = boost::filesystem;
 
 #define VID_FNAME "nl_bookI_s3"
 #define VID_FMT "mpg"
@@ -964,7 +967,7 @@ namespace mtf{
 			FILE *fid;
 			errno_t err;
 			if((err = fopen_s(&fid, fname, "r")) != 0) {
-				printf("\n Parameter file: %s not found: %s\n",
+				printf("Parameter file: %s not found: %s\n",
 					fname, strerror(err));
 				return 0;
 			}
@@ -4135,60 +4138,64 @@ namespace mtf{
 				cmd_argc -= 2;
 				printf("Reading configuration files from: %s\n", config_dir.c_str());
 			}
-			std::vector<char*> fargv;
-			//! read general parameters
-			int fargc = readParams(fargv, (config_dir + "/mtf.cfg").c_str());
-			if(fargc){
-				if(!parseArgumentPairs(fargv.data(), fargc)){
-					printf("Error in parsing mtf.cfg\n");
-					return false;
+			if(!fs::is_directory(config_dir)){
+				printf("Configuration folder: %s does not exist\n", config_dir.c_str());
+			} else {
+				std::vector<char*> fargv;
+				//! read general parameters
+				int fargc = readParams(fargv, (config_dir + "/mtf.cfg").c_str());
+				if(fargc){
+					if(!parseArgumentPairs(fargv.data(), fargc)){
+						printf("Error in parsing mtf.cfg\n");
+						return false;
+					}
+					fargv.clear();
 				}
-				fargv.clear();
-			}
-			//! read parameters specific to different modules
-			fargc = readParams(fargv, (config_dir + "/modules.cfg").c_str());
-			if(fargc){
-				if(!parseArgumentPairs(fargv.data(), fargc)){
-					printf("Error in parsing modules.cfg\n");
-					return false;
+				//! read parameters specific to different modules
+				fargc = readParams(fargv, (config_dir + "/modules.cfg").c_str());
+				if(fargc){
+					if(!parseArgumentPairs(fargv.data(), fargc)){
+						printf("Error in parsing modules.cfg\n");
+						return false;
+					}
+					fargv.clear();
 				}
-				fargv.clear();
-			}
-			//! read parameters for feature detectors and descriptors
-			fargc = readParams(fargv, (config_dir + "/feat.cfg").c_str());
-			if(fargc){
-				if(!parseArgumentPairs(fargv.data(), fargc)){
-					printf("Error in parsing feat.cfg\n");
-					return false;
+				//! read parameters for feature detectors and descriptors
+				fargc = readParams(fargv, (config_dir + "/feat.cfg").c_str());
+				if(fargc){
+					if(!parseArgumentPairs(fargv.data(), fargc)){
+						printf("Error in parsing feat.cfg\n");
+						return false;
+					}
+					fargv.clear();
 				}
-				fargv.clear();
-			}
-			//! read parameters for example applications
-			fargc = readParams(fargv, (config_dir + "/examples.cfg").c_str());
-			if(fargc){
-				if(!parseArgumentPairs(fargv.data(), fargc)){
-					printf("Error in parsing examples.cfg\n");
-					return false;
+				//! read parameters for example applications
+				fargc = readParams(fargv, (config_dir + "/examples.cfg").c_str());
+				if(fargc){
+					if(!parseArgumentPairs(fargv.data(), fargc)){
+						printf("Error in parsing examples.cfg\n");
+						return false;
+					}
+					fargv.clear();
 				}
-				fargv.clear();
-			}
-			//! read standard deviations and means for stochastic modules
-			fargc = readParams(fargv, (config_dir + "/sigma.cfg").c_str());
-			if(fargc){
-				if(!parseArgumentPairs(fargv.data(), fargc)){
-					printf("Error in parsing sigma.cfg\n");
-					return false;
+				//! read standard deviations and means for stochastic modules
+				fargc = readParams(fargv, (config_dir + "/sigma.cfg").c_str());
+				if(fargc){
+					if(!parseArgumentPairs(fargv.data(), fargc)){
+						printf("Error in parsing sigma.cfg\n");
+						return false;
+					}
+					fargv.clear();
 				}
-				fargv.clear();
-			}
-			//! read parameters for third party trackers
-			fargc = readParams(fargv, (config_dir + "/thirdparty.cfg").c_str());
-			if(fargc){
-				if(!parseArgumentPairs(fargv.data(), fargc)){
-					printf("Error in parsing thirdparty.cfg\n");
-					return false;
+				//! read parameters for third party trackers
+				fargc = readParams(fargv, (config_dir + "/thirdparty.cfg").c_str());
+				if(fargc){
+					if(!parseArgumentPairs(fargv.data(), fargc)){
+						printf("Error in parsing thirdparty.cfg\n");
+						return false;
+					}
+					fargv.clear();
 				}
-				fargv.clear();
 			}
 			//! parse command line arguments
 			if(!parseArgumentPairs(cmd_argv, cmd_argc, 1, 0)){
