@@ -89,19 +89,32 @@ namespace utils{
 		if(!mxIsClass(mx_corners, "double")){
 			mexErrMsgTxt("Input corner array must be of 64 bit floating point type");
 		}
-		if(corners_n_dims != 2){
-			mexErrMsgTxt("Input corner array must have 2 dimensions");
+		if(corners_n_dims == 0 || corners_n_dims > 2){
+			mexErrMsgTxt("Input corner array must be either 1 or 2 dimensional");
 		}
-		const mwSize *corners_dims = mxGetDimensions(mx_corners);
-		if(corners_dims[0] != 2 || corners_dims[1] != 4){
-			mexErrMsgTxt("Input corner array must be of size 2 x 4");
-		}
-		double *corners_ptr = mxGetPr(mx_corners);
-		cv::Mat corners_transposed(4, 2, CV_64FC1, corners_ptr);
-		//cout << "corners_transposed: \n" << corners_transposed << "\n";
+		const mwSize *corners_dims = mxGetDimensions(mx_corners);	
 		cv::Mat corners(2, 4, CV_64FC1);
-		cv::transpose(corners_transposed, corners);
-		//cout << "corners: \n" << corners << "\n";
+		if(corners_n_dims == 1){
+			double *corners_ptr = mxGetPr(mx_corners);
+			double ulx = corners_ptr[0];
+			double uly = corners_ptr[1];
+			double width = corners_ptr[2];
+			double height = corners_ptr[3];
+			if(width <= 0 || height <= 0) {
+				mexErrMsgTxt("Both height and width of the rectangle must be greater than 0");
+			}
+			double brx = ulx + width - 1;
+			double bry = uly + height - 1;
+			corners.at<double>(0, 0) = ulx;	corners.at<double>(1, 0) = uly;
+			corners.at<double>(0, 1) = brx;	corners.at<double>(1, 1) = uly;
+			corners.at<double>(0, 2) = brx;	corners.at<double>(1, 2) = bry;
+			corners.at<double>(0, 3) = ulx;	corners.at<double>(1, 3) = bry;
+		} else {
+			if(corners_dims[0] != 2 || corners_dims[1] != 4){
+				mexErrMsgTxt("2D input corner array must be of size 2 x 4");
+			}
+			cv::transpose(cv::Mat(4, 2, CV_64FC1, mxGetPr(mx_corners)), corners);			
+		}
 		return corners;
 	}
 	inline const char* toString(const mxArray *prhs){

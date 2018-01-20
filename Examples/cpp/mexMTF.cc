@@ -173,7 +173,7 @@ bool getFrame(mxArray* &plhs) {
 	if(frame.type() == CV_8UC1){
 		n_channels = 1;
 		n_dims = 2;
-	}	
+	}
 	mwSize *dims = new mwSize[n_dims];
 	dims[0] = frame.rows;
 	dims[1] = frame.cols;
@@ -302,22 +302,21 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 					err.type(), err.what()).c_str());
 			}
 			init_corners = obj_utils.getObj().corners.clone();
-
-			TrackerStruct tracker;
-			if(!tracker.create(input->getFrame(), init_corners)){
-				return;
-			}
-			++_tracker_id;
-			trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, tracker));
-			*ret_val = _tracker_id;
+		}
+		TrackerStruct tracker;
+		if(!tracker.create(input->getFrame(), init_corners)){
 			return;
 		}
+		++_tracker_id;
+		trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, tracker));
+		*ret_val = _tracker_id;
+		return;
 	}
 	case MEX_GET_REGION:
 	{
 		if(nrhs < 2){
 			mexErrMsgTxt("At least 2 input arguments are needed to get tracker region.");
-		}		
+		}
 		if(nlhs != 2){
 			mexErrMsgTxt("2 output arguments are needed to get tracker region.");
 		}
@@ -331,7 +330,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			printf("Invalid tracker ID: %d\n", tracker_id);
 			return;
 		}
-		if(!it->second.update(input->getFrame(), plhs[1])){			
+		if(!it->second.update(input->getFrame(), plhs[1])){
 			return;
 		}
 		*ret_val = 1;
@@ -351,7 +350,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			*ret_val = 0;
 			return;
 		}
-		
+
 		*ret_val = 1;
 		return;
 	}
@@ -378,7 +377,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	{
 		printf("Clearing up...");
 		input.reset();
-		trackers.clear();		
+		trackers.clear();
 		*ret_val = 1;
 		printf("Done\n");
 		return;

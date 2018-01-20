@@ -310,7 +310,7 @@ namespace utils{
 					--clicked_point_count;
 				}
 			}
-			if(!input->update()){ return false; }			
+			if(!input->update()){ return false; }
 		}
 		new_obj.min_point.x = new_obj.corners.at<double>(0, 0);
 		new_obj.min_point.y = new_obj.corners.at<double>(1, 0);

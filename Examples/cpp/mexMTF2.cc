@@ -80,7 +80,9 @@ struct InputStruct : public mtf::utils::InputBase {
 			is_valid = false;
 		}		
 	}
-	bool isValid() { return is_valid; }
+	bool isValid() const {
+		return is_valid && thread_created && !input->destroy;
+	}
 private:
 	Input input;
 	boost::thread t;
@@ -88,10 +90,10 @@ private:
 };
 struct TrackerThread{
 	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputConstPtr &_input) :
-		tracker(_tracker), pre_proc(_pre_proc), input(_input){}
+		input(_input), pre_proc(_pre_proc), tracker(_tracker) {}
 	void operator()(){
 		int frame_id = 0;
-		while(!input->destroy){
+		while(!input->isValid()){
 			if(frame_id == input->getFrameID()){
 				//! do not process the same image multiple times
 				continue;
@@ -142,10 +144,6 @@ private:
 
 static InputConstPtr input;
 static std::map<int, TrackerStruct> trackers;
-
-static double min_x, min_y, max_x, max_y;
-static double size_x, size_y;
-static int img_height, img_width;
 
 static unsigned int _tracker_id = 0;
 
@@ -200,14 +198,6 @@ bool getFrame(mxArray* &plhs){
 
 bool initializeTracker(Tracker &tracker, PreProc &pre_proc,
 	const cv::Mat &init_img, const cv::Mat &init_corners) {
-	img_height = init_img.rows;
-	img_width = init_img.cols;
-	min_x = init_corners.at<double>(0, 0);
-	min_y = init_corners.at<double>(1, 0);
-	max_x = init_corners.at<double>(0, 2);
-	max_y = init_corners.at<double>(1, 2);
-	size_x = max_x - min_x;
-	size_y = max_y - min_y;
 	try{
 		pre_proc->initialize(init_img);
 	} catch(const mtf::utils::Exception &err){
@@ -219,16 +209,24 @@ bool initializeTracker(Tracker &tracker, PreProc &pre_proc,
 		for(PreProc curr_obj = pre_proc; curr_obj; curr_obj = curr_obj->next){
 			tracker->setImage(curr_obj->getFrame());
 		}
-		printf("Initializing tracker with object of size %f x %f\n", size_x, size_y);
+		double min_x = init_corners.at<double>(0, 0);
+		double min_y = init_corners.at<double>(1, 0);
+		double max_x = init_corners.at<double>(0, 2);
+		double max_y = init_corners.at<double>(1, 2);
+		double size_x = max_x - min_x;
+		double size_y = max_y - min_y;
+		printf("Initializing tracker with object of size %f x %f...\n", size_x, size_y);
+
 		tracker->initialize(init_corners);
 	} catch(const mtf::utils::Exception &err){
 		printf("Exception of type %s encountered while initializing the tracker: %s\n",
 			err.type(), err.what());
 		return false;
 	}
+	printf("Initialization successful.\n");
 	return true;
 }
-bool createTracker() {
+bool createTracker(const cv::Mat &init_corners) {
 	if(!input->isValid()){
 		printf("Input has not been initialized\n");
 		return false;
@@ -253,26 +251,6 @@ bool createTracker() {
 			err.type(), err.what());
 		return false;
 	}
-	mtf::utils::ObjUtils obj_utils;
-	try{
-		if(mex_live_init){
-			if(!obj_utils.selectObjects(input.get(), 1,
-				patch_size, line_thickness, write_objs, sel_quad_obj,
-				write_obj_fname.c_str())){
-				mexErrMsgTxt("Object to be tracked could not be obtained.\n");
-			}
-		} else {
-			if(!obj_utils.selectObjects(input->getFrame(), 1,
-				patch_size, line_thickness, write_objs, sel_quad_obj,
-				write_obj_fname.c_str())){
-				mexErrMsgTxt("Object to be tracked could not be obtained.\n");
-			}
-		}
-	} catch(const mtf::utils::Exception &err){
-		mexErrMsgTxt(cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
-			err.type(), err.what()).c_str());
-	}
-	cv::Mat init_corners = obj_utils.getObj().corners.clone();
 	if(!initializeTracker(tracker, pre_proc, input->getFrame(), init_corners)){
 		mexErrMsgTxt("Tracker initialization failed");
 	}
@@ -380,8 +358,34 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 
 		if(!readParams(mtf::utils::toString(prhs[1]))) {
 			mexErrMsgTxt("Parameters could not be parsed");
-		}		
-		if(!createTracker()){ return; }
+		}
+		cv::Mat init_corners;
+		if(nrhs>2) {
+			init_corners = mtf::utils::getCorners(prhs[2]);
+		} else {
+			mtf::utils::ObjUtils obj_utils;
+			try{
+				if(mex_live_init){
+					if(!obj_utils.selectObjects(input.get(), 1,
+						patch_size, line_thickness, write_objs, sel_quad_obj,
+						write_obj_fname.c_str())){
+						mexErrMsgTxt("Object to be tracked could not be obtained.\n");
+					}
+				} else {
+					if(!obj_utils.selectObjects(input->getFrame(), 1,
+						patch_size, line_thickness, write_objs, sel_quad_obj,
+						write_obj_fname.c_str())){
+						mexErrMsgTxt("Object to be tracked could not be obtained.\n");
+					}
+				}
+			} catch(const mtf::utils::Exception &err){
+				mexErrMsgTxt(cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
+					err.type(), err.what()).c_str());
+			}
+			init_corners = obj_utils.getObj().corners.clone();
+		}
+
+		if(!createTracker(init_corners)){ return; }
 
 		if(nlhs > 1 && !getRegion(_tracker_id, plhs[1])){ return; }
 
