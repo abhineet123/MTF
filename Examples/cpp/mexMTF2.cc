@@ -1,5 +1,6 @@
 #include "mtf/mtf.h"
 #include "mtf/pipeline.h"
+#include "mtf/Utilities/miscUtils.h"
 #include "mtf/Utilities/mexUtils.h"
 
 #include <vector>
