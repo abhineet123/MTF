@@ -49,9 +49,10 @@ private:
 };
 struct InputStruct : public mtf::utils::InputBase {
 	InputStruct() : is_valid(false), thread_created(false){}
-	InputStruct(Input &_input) : input(_input), thread_created(false){
+	InputStruct(Input &_input) : input(_input), 
+		is_valid(false), thread_created(false){
 		t = boost::thread{ InputThread(input) };
-		thread_created = true;
+		is_valid = thread_created = true;
 	}
 	~InputStruct() {}
 	bool initialize() override{ return true; }
