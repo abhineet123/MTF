@@ -37,21 +37,14 @@ static std::map<std::string, const int> cmd_list = {
 
 struct InputThread{
 	InputThread(Input &_input) : input(_input){}
-	void operator()(){
-		while(input->update()){
-			if(input->destroy){ return; }
-			boost::this_thread::interruption_point();
-		}
-		input->destroy = true;
-	}
 private:
 	Input input;
 };
 struct InputStruct : public mtf::utils::InputBase {
-	InputStruct() : is_valid(false), thread_created(false){}
-	InputStruct(Input &_input) : input(_input), thread_created(false){
-		t = boost::thread{ InputThread(input) };
-		thread_created = true;
+	InputStruct() : is_valid(false), thread_running(false){}
+	InputStruct(Input &_input) : input(_input), thread_running(false){
+		t = boost::thread{ *this };
+		thread_running = true;
 	}
 	~InputStruct() {}
 	bool initialize() override{ return true; }
@@ -68,13 +61,13 @@ struct InputStruct : public mtf::utils::InputBase {
 	void reset(Input &_input) {
 		reset();
 		input = _input;
-		t = boost::thread{ InputThread(input) };
-		is_valid = thread_created = true;
+		t = boost::thread{ *this };
+		is_valid = thread_running = true;
 	}
 	void reset() {
-		if(thread_created) {
+		if(thread_running) {
 			t.interrupt();
-			thread_created = false;
+			thread_running = false;
 		}
 		if(is_valid) {
 			input.reset();
@@ -82,12 +75,20 @@ struct InputStruct : public mtf::utils::InputBase {
 		}		
 	}
 	bool isValid() const {
-		return is_valid && thread_created && !input->destroy;
+		return is_valid && thread_running && !input->destroy;
+	}
+	void operator()(){
+		while(input->update()){
+			if(input->destroy){ return; }
+			boost::this_thread::interruption_point();
+		}
+		is_valid = thread_running = false;
+		input->destroy = true;
 	}
 private:
 	Input input;
 	boost::thread t;
-	bool is_valid, thread_created;
+	bool is_valid, thread_running;
 };
 
 struct ObjectSelectorThread{
@@ -122,9 +123,27 @@ private:
 
 struct TrackerThread{
 	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input, 
-		unsigned int id = 1) : input(_input), pre_proc(_pre_proc), tracker(_tracker) {
+		unsigned int id = 1) : input(_input), pre_proc(_pre_proc), tracker(_tracker) {}
+private:	
+	PreProc pre_proc;
+	Tracker tracker;
+};
+struct TrackerStruct{
+	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
+		unsigned int id) : tracker(_tracker), pre_proc(_pre_proc), input(_input){
 		win_name = cv::format("mexMTF:: %d", id);
 		proc_win_name = cv::format("%s (Pre-processed)", win_name.c_str());
+		t = boost::thread{ *this };
+	}
+	void setRegion(const cv::Mat& corners){
+		tracker->setRegion(corners);		
+	}
+	const cv::Mat& getRegion() {
+		return tracker->getRegion();
+	}
+	void reset() {
+		t.interrupt();
+		tracker.reset();
 	}
 	void operator()(){
 		int frame_id = 0;
@@ -148,7 +167,7 @@ struct TrackerThread{
 
 				if(mex_visualize) {
 					cv::Mat disp_frame = input->getFrame().clone();
-					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), cv::Scalar(255, 0, 0), 
+					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), cv::Scalar(255, 0, 0),
 						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
 					imshow(win_name, disp_frame);
 					if(show_proc_img){
@@ -170,33 +189,14 @@ struct TrackerThread{
 			boost::this_thread::interruption_point();
 		}
 	}
-
 private:
+	Tracker tracker;
+	PreProc pre_proc;
 	std::shared_ptr<const InputStruct> input;
-	PreProc pre_proc;
-	Tracker tracker;
-	string win_name, proc_win_name;
-};
-struct TrackerStruct{
-	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
-		unsigned int id) :
-		tracker(_tracker), pre_proc(_pre_proc){
-		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, id) };
-	}
-	void setRegion(const cv::Mat& corners){
-		tracker->setRegion(corners);		
-	}
-	const cv::Mat& getRegion() {
-		return tracker->getRegion();
-	}
-	void reset() {
-		t.interrupt();
-		tracker.reset();
-	}
-private:
-	Tracker tracker;
-	PreProc pre_proc;
+
 	boost::thread t;
+	string win_name, proc_win_name;
+
 };
 
 static InputStructPtr input;
