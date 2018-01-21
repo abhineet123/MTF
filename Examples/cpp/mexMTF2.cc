@@ -44,7 +44,7 @@ struct InputStruct : public mtf::utils::InputBase {
 	InputStruct() : is_valid(false), thread_running(false){}
 	InputStruct(Input &_input) : input(_input), thread_running(false){
 		t = boost::thread{ *this };
-		thread_running = true;
+		is_valid = thread_running = true;
 	}
 	~InputStruct() {}
 	bool initialize() override{ return true; }
