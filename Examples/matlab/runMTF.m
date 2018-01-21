@@ -138,4 +138,4 @@ while 1
         break;
     end
 end
-mexMTF('clear');
+mexMTF('quit');
