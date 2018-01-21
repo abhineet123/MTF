@@ -35,11 +35,11 @@ static std::map<std::string, const int> cmd_list = {
 	{ "remove_tracker", MEX_REMOVE_TRACKER }
 };
 
-struct InputThread{
-	InputThread(Input &_input) : input(_input){}
-private:
-	Input input;
-};
+//struct InputThread{
+//	InputThread(Input &_input) : input(_input){}
+//private:
+//	Input input;
+//};
 struct InputStruct : public mtf::utils::InputBase {
 	InputStruct() : is_valid(false), thread_running(false){}
 	InputStruct(Input &_input) : input(_input), thread_running(false){
@@ -121,13 +121,13 @@ private:
 	cv::Mat corners;
 };
 
-struct TrackerThread{
-	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input, 
-		unsigned int id = 1) : input(_input), pre_proc(_pre_proc), tracker(_tracker) {}
-private:	
-	PreProc pre_proc;
-	Tracker tracker;
-};
+//struct TrackerThread{
+//	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input, 
+//		unsigned int id = 1) : input(_input), pre_proc(_pre_proc), tracker(_tracker) {}
+//private:	
+//	PreProc pre_proc;
+//	Tracker tracker;
+//};
 struct TrackerStruct{
 	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
 		unsigned int id) : tracker(_tracker), pre_proc(_pre_proc), input(_input){
