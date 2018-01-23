@@ -246,6 +246,9 @@ namespace utils{
 					vpDisplay::displayRectangle(hover_image, min_point, hover_width, hover_height, 
 						vpColor::red, false, line_thickness);
 					vpDisplay::flush(hover_image);
+				} else {
+					vpDisplay::displayPoint(hover_image, hover_point, vpColor::red, line_thickness);
+					vpDisplay::flush(hover_image);
 				}
 				if(!input->update()){ return false; }
 				input->convert(input->getFrame(), hover_image);
