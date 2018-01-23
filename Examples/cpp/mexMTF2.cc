@@ -200,12 +200,14 @@ struct TrackerThread{
 			}
 #endif
 		}
-		while(!input->isValid()){
+		while(input->isValid()){
 			if(frame_id == input->getFrameID()){
 				//! do not process the same image multiple times
+				cout << "skipping frame " << frame_id << "\n";
 				continue;
 			}
 			frame_id = input->getFrameID();
+			cout << "processing frame " << frame_id << "\n";
 			try{
 				//! update pre-processor
 				pre_proc->update(input->getFrame());
