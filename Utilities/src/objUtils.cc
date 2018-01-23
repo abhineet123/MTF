@@ -244,9 +244,11 @@ namespace utils{
 					int hover_width = static_cast<int>(abs(hover_point.get_i() - new_obj.min_point.x));
 					int hover_height = static_cast<int>(abs(hover_point.get_j() - new_obj.min_point.y));
 					vpDisplay::displayRectangle(hover_image, min_point, hover_width, hover_height, 
-						vpColor::red, true, line_thickness);
+						vpColor::red, false, line_thickness);
 					vpDisplay::flush(hover_image);
 				}
+				if(!input->update()){ return false; }
+				input->convert(input->getFrame(), hover_image);
 			}
 			++_clicked_point_count;
 			if(_clicked_point_count == 1) {
@@ -279,8 +281,6 @@ namespace utils{
 				}
 				break;
 			}
-			if(!input->update()){ return false; }
-			input->convert(input->getFrame(), hover_image);
 		}
 		new_obj.size_x = abs(new_obj.max_point.x - new_obj.min_point.x);
 		new_obj.size_y = abs(new_obj.max_point.y - new_obj.min_point.y);
