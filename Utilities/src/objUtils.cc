@@ -366,17 +366,17 @@ namespace utils{
 			if(sel_quad_obj){
 				printf("selecting quadrilateral object...\n");
 				if(!addQuadObject(input, window_title, line_thickness)){
-					cv::destroyWindow(window_title);
+					//cv::destroyWindow(window_title);
 					return false;
 				};
 			} else{
 				if(!addRectObject(input, window_title, line_thickness, patch_size)){
-					cv::destroyWindow(window_title);
+					//cv::destroyWindow(window_title);
 					return false;
 				};
 			}
 		}
-		cv::destroyWindow(window_title);
+		//cv::destroyWindow(window_title);
 		if(write_objs){
 			writeObjectsToFile(no_of_objs, filename);
 		}
