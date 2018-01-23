@@ -4,11 +4,19 @@
 #if CV_MAJOR_VERSION == 3
 #include "opencv2/imgproc/imgproc.hpp"
 #endif
+#ifndef DISABLE_VISP
+#if defined _WIN32
+#define VISP_HAVE_X11
+#endif
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/gui/vpDisplayX.h>
+#endif
 #include <fstream>
 #include <string>
 #ifdef _WIN32
 #include <sstream>
 #endif
+
 
 #define mat_to_pt(vert, id) cv::Point2d(vert.at<double>(0, id), vert.at<double>(1, id))
 #define eig_to_pt(vert, id) cv::Point2d(vert(0, id), vert(1, id))
@@ -185,13 +193,6 @@ namespace utils{
 			putText(img, label, vertices_p2d[0], cv::FONT_HERSHEY_SIMPLEX, font_size, col);
 		}
 	}
-#ifndef DISABLE_VISP
-#if defined _WIN32
-#define VISP_HAVE_X11
-#endif
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/gui/vpDisplayX.h>
-#endif
 
 #ifndef DISABLE_VISP
 	void drawRegion(vpImage<vpRGBa> &img, const cv::Mat &vertices, cv::Scalar col,
@@ -208,7 +209,7 @@ namespace utils{
 
 			vpDisplay::displayLine(img, pt1, pt2, vpColor::red, line_thickness);			
 			if(show_corner_ids){
-				vpDisplay::setFont(img, "FONT_HERSHEY_SIMPLEX");
+				//vpDisplay::setFont(img, "FONT_HERSHEY_SIMPLEX");
 				
 #ifdef _WIN32
 				vpDisplay::displayText(img, pt1, utils::to_string(vert_id), vpColor::red);
@@ -218,7 +219,7 @@ namespace utils{
 			}
 		}
 		if(label && show_label){
-			vpDisplay::setFont(img, "FONT_HERSHEY_SIMPLEX");
+			//vpDisplay::setFont(img, "FONT_HERSHEY_SIMPLEX");
 			vpDisplay::displayText(img, vpImagePoint(vertices_p2d[0].y, vertices_p2d[0].x),
 				label, vpColor::red);
 		}

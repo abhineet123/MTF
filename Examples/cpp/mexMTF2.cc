@@ -97,33 +97,46 @@ struct ObjectSelectorThread{
 		mtf::utils::ObjUtils obj_utils;
 #ifndef DISABLE_VISP
 		try{
-			if(!obj_utils.addRectObjectVP(input.get(), "Select an object",
-				line_thickness, patch_size)){
-				cout << "Object to be tracked could not be obtained.\n";
+			if(mex_live_init){
+				if(!obj_utils.selectObjectsVP(input.get(), 1,
+					patch_size, line_thickness, write_objs, sel_quad_obj,
+					write_obj_fname.c_str())){
+					cout << "Object to be tracked could not be obtained.\n";
+				}
+			} else {
+				if(!obj_utils.selectObjectsVP(input->getFrame(), 1,
+					patch_size, line_thickness, write_objs, sel_quad_obj,
+					write_obj_fname.c_str())){
+					cout << "Object to be tracked could not be obtained.\n";
+				}
 			}
+			//if(!obj_utils.addRectObjectVP(input.get(), "Select an object",
+			//	line_thickness, patch_size)){
+			//	cout << "Object to be tracked could not be obtained.\n";
+			//}
 		} catch(const mtf::utils::Exception &err){
 			cout << cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
 				err.type(), err.what());
 		}
 #else
-		//try{
-		//	if(mex_live_init){
-		//		if(!obj_utils.selectObjects(input.get(), 1,
-		//			patch_size, line_thickness, write_objs, sel_quad_obj,
-		//			write_obj_fname.c_str())){
-		//			cout << "Object to be tracked could not be obtained.\n";
-		//		}
-		//	} else {
-		//		if(!obj_utils.selectObjects(input->getFrame(), 1,
-		//			patch_size, line_thickness, write_objs, sel_quad_obj,
-		//			write_obj_fname.c_str())){
-		//			cout << "Object to be tracked could not be obtained.\n";
-		//		}
-		//	}
-		//} catch(const mtf::utils::Exception &err){
-		//	cout << cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
-		//		err.type(), err.what());
-		//}
+		try{
+			if(mex_live_init){
+				if(!obj_utils.selectObjects(input.get(), 1,
+					patch_size, line_thickness, write_objs, sel_quad_obj,
+					write_obj_fname.c_str())){
+					cout << "Object to be tracked could not be obtained.\n";
+				}
+			} else {
+				if(!obj_utils.selectObjects(input->getFrame(), 1,
+					patch_size, line_thickness, write_objs, sel_quad_obj,
+					write_obj_fname.c_str())){
+					cout << "Object to be tracked could not be obtained.\n";
+				}
+			}
+		} catch(const mtf::utils::Exception &err){
+			cout << cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
+				err.type(), err.what());
+		}
 #endif
 		obj_utils.getObj().corners.copyTo(corners);
 		cout << "ObjectSelectorThread :: corners: " << corners << "\n";
@@ -139,15 +152,36 @@ struct TrackerThread{
 		unsigned int id = 1) : input(_input), pre_proc(_pre_proc), tracker(_tracker) {
 		win_name = cv::format("mexMTF:: %d", id);
 		proc_win_name = cv::format("%s (Pre-processed)", win_name.c_str());
-		cout << "mex_visualize: " << mex_visualize << "\n";
+		//cout << "mex_visualize: " << mex_visualize << "\n";
 	}
 	void operator()(){
 		int frame_id = 0;
+
 		if(mex_visualize) {
+#ifndef DISABLE_VISP			
+			// Select one of the available video-devices
+#if defined VISP_HAVE_X11
+			display.reset(new vpDisplayX);
+#elif defined VISP_HAVE_GTK
+			display.reset(new vpDisplayGTK);
+#elif defined VISP_HAVE_GDI
+			display.reset(new vpDisplayGDI);
+#elif defined VISP_HAVE_D3D9
+			display.reset(new vpDisplayD3D);
+#elif defined VISP_HAVE_OPENCV
+			display.reset(new vpDisplayOpenCV);
+#else
+			throw InvalidArgument("None of the window backends supported by ViSP are available");
+#endif 
+			disp_frame.init(static_cast<int>(input->getHeight()),
+				static_cast<int>(input->getWidth()));
+			display->init(disp_frame, -1, -1, win_name);
+#else
 			cv::namedWindow(win_name, cv::WINDOW_AUTOSIZE);
 			if(show_proc_img) {
 				cv::namedWindow(proc_win_name, cv::WINDOW_AUTOSIZE);
 			}
+#endif
 		}
 		while(!input->isValid()){
 			if(frame_id == input->getFrameID()){
@@ -162,6 +196,11 @@ struct TrackerThread{
 				tracker->update();
 
 				if(mex_visualize) {
+#ifndef DISABLE_VISP
+					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), cv::Scalar(255, 0, 0),
+						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
+					vpDisplay::display(disp_frame);
+#else
 					cv::Mat disp_frame = input->getFrame().clone();
 					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), cv::Scalar(255, 0, 0),
 						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
@@ -173,6 +212,7 @@ struct TrackerThread{
 					if(pressed_key % 256 == 27){
 						break;
 					}
+#endif
 				}
 				if(reset_template){
 					tracker->initialize(tracker->getRegion());
@@ -184,6 +224,11 @@ struct TrackerThread{
 			}
 			boost::this_thread::interruption_point();
 		}
+#ifndef DISABLE_VISP
+		if(mex_visualize) {
+			vpDisplay::close(disp_frame);
+		}
+#endif
 	}
 
 private:
@@ -191,6 +236,10 @@ private:
 	PreProc pre_proc;
 	Tracker tracker;
 	string win_name, proc_win_name;
+#ifndef DISABLE_VISP
+	std::unique_ptr<vpDisplay> display;
+	vpImage<vpRGBa> disp_frame;
+#endif
 };
 struct TrackerStruct{
 	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,

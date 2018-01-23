@@ -70,29 +70,24 @@ namespace utils{
 	bool mouse_hover_event;
 	double hover_font_size = 0.50;
 	cv::Scalar hover_color(0, 255, 0);
-	inline void getClickedPoint(int mouse_event, int x, int y, int flags, void* param) {
 
+	inline void getClickedPoint(int mouse_event, int x, int y, int flags,
+		void* param) {
 		if(mouse_event == CV_EVENT_LBUTTONDOWN) {
-
 			//cout<<"\nReceived a left click at "<<x<<"\t"<<y<<"\n";
-
 			mouse_click_point.x = x;
 			mouse_click_point.y = y;
 			left_button_clicked = true;
 			point_selected = true;
-
 		} else if(mouse_event == CV_EVENT_RBUTTONDOWN) {
-
 			//cout<<"\nReceived a right click at "<<x<<"\t"<<y<<"\n";
 			point_selected = true;
 			right_button_clicked = true;
 		} else if(mouse_event == CV_EVENT_MBUTTONDOWN) {
-
 			//cout<<"\nReceived a right click at "<<x<<"\t"<<y<<"\n";
 			point_selected = true;
 			middle_button_clicked = true;
 		} else if(mouse_event == CV_EVENT_MOUSEMOVE) {
-
 			mouse_hover_point.x = x;
 			mouse_hover_point.y = y;
 			mouse_hover_event = true;
@@ -110,10 +105,26 @@ namespace utils{
 		obj_cols.push_back(cv::Scalar(255, 255, 255));
 		obj_cols.push_back(cv::Scalar(0, 0, 0));
 		no_of_cols = obj_cols.size();
+#ifndef DISABLE_VISP
+		obj_cols_vp.push_back(vpColor::red);
+		obj_cols_vp.push_back(vpColor::green);
+		obj_cols_vp.push_back(vpColor::blue);
+		obj_cols_vp.push_back(vpColor::cyan);
+		obj_cols_vp.push_back(vpColor::lightRed);
+		obj_cols_vp.push_back(vpColor::yellow);
+		obj_cols_vp.push_back(vpColor::purple);
+		obj_cols_vp.push_back(vpColor::orange);
+		obj_cols_vp.push_back(vpColor::white);
+		obj_cols_vp.push_back(vpColor::black);
+		no_of_cols_vp = obj_cols_vp.size();
+#endif		
 	}
 	ObjUtils::~ObjUtils(){
 		init_objects.clear();
 		obj_cols.clear();
+#ifndef DISABLE_VISP
+		obj_cols_vp.clear();
+#endif		
 		ground_truth.clear();
 		reinit_ground_truth.clear();
 	}
@@ -221,82 +232,6 @@ namespace utils{
 		init_objects.push_back(new_obj);
 		return true;
 	}
-#ifndef DISABLE_VISP
-	bool ObjUtils::addRectObjectVP(InputBase *input, string selection_window,
-		int line_thickness, int patch_size) {
-		//cout<<"Start getObject\n";
-		vpDisplayX display;	
-		ObjStruct new_obj;
-		vpImage<vpRGBa> hover_image(static_cast<int>(input->getHeight()),
-			static_cast<int>(input->getWidth()));
-		input->convert(input->getFrame(), hover_image);
-		display.init(hover_image, -1, -1, selection_window);
-		vpDisplay::display(hover_image);
-		vpImagePoint clicked_point, hover_point;
-		int _clicked_point_count = 0;
-		vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
-		while(_clicked_point_count < 2) {	
-			while(!vpDisplay::getClick(hover_image, clicked_point, button, false)) {
-				if(!input->update()){ return false; }
-				input->convert(input->getFrame(), hover_image);
-				vpDisplay::getPointerMotionEvent(hover_image, hover_point);
-				if(_clicked_point_count > 0){
-					vpImagePoint min_point(new_obj.min_point.y, new_obj.min_point.x);
-					int hover_width = static_cast<int>(abs(hover_point.get_j() - new_obj.min_point.x));
-					int hover_height = static_cast<int>(abs(hover_point.get_i() - new_obj.min_point.y));
-					vpDisplay::displayRectangle(hover_image, min_point, hover_width, hover_height, 
-						vpColor::red, false, line_thickness);
-					vpDisplay::flush(hover_image);
-				} else {
-					vpDisplay::displayPoint(hover_image, hover_point, vpColor::red, line_thickness);
-					vpDisplay::flush(hover_image);
-				}
-				vpDisplay::display(hover_image);
-			}
-			++_clicked_point_count;
-			if(_clicked_point_count == 1) {
-				//printf("Adding min point: %d %d\n", mouse_click_point.x, mouse_click_point.y);
-				if(patch_size > 0){
-					new_obj.min_point.x = clicked_point.get_j() - patch_size / 2.0;
-					new_obj.min_point.y = clicked_point.get_i() - patch_size / 2.0;
-					new_obj.max_point.x = clicked_point.get_j() + patch_size / 2.0;
-					new_obj.max_point.y = clicked_point.get_i() + patch_size / 2.0;
-					break;
-				} else{
-					new_obj.min_point.x = clicked_point.get_j();
-					new_obj.min_point.y = clicked_point.get_i();
-				}
-				hover_point = clicked_point;
-			} else if(_clicked_point_count == 2) {
-				//printf("Adding max point: %d %d\n", mouse_click_point.x, mouse_click_point.y);
-				new_obj.max_point.x = clicked_point.get_j();
-				new_obj.max_point.y = clicked_point.get_i();
-
-				if(new_obj.min_point.x > new_obj.max_point.x) {
-					double temp = new_obj.min_point.x;
-					new_obj.min_point.x = new_obj.max_point.x;
-					new_obj.max_point.x = temp;
-				}
-				if(new_obj.min_point.y > new_obj.max_point.y) {
-					double temp = new_obj.min_point.y;
-					new_obj.min_point.y = new_obj.max_point.y;
-					new_obj.max_point.y = temp;
-				}
-				break;
-			}
-		}
-		new_obj.size_x = abs(new_obj.max_point.x - new_obj.min_point.x);
-		new_obj.size_y = abs(new_obj.max_point.y - new_obj.min_point.y);
-
-		new_obj.pos_x = (new_obj.min_point.x + new_obj.max_point.x) / 2;
-		new_obj.pos_y = (new_obj.min_point.y + new_obj.max_point.y) / 2;
-		new_obj.updateCornerMat();
-
-		init_objects.push_back(new_obj);
-		vpDisplay::close(hover_image);
-		return true;
-	}
-#endif
 	/**
 	allows the user to select a quadrilateral by clicking on its 4 corners
 	*/
@@ -325,7 +260,7 @@ namespace utils{
 			}
 
 			// draw existing objects
-			for(unsigned int obj_id = 0; obj_id < init_objects.size(); obj_id++){
+			for(unsigned int obj_id = 0; obj_id < init_objects.size(); ++obj_id){
 				int col_id = obj_id % no_of_cols;
 				for(int pt_id = 0; pt_id < 3; ++pt_id){
 					cv::Point2d pt1(init_objects[obj_id].corners.at<double>(0, pt_id), init_objects[obj_id].corners.at<double>(1, pt_id));
@@ -441,10 +376,9 @@ namespace utils{
 				temp_stream << " by clicking at its two opposite corners";
 			}
 		}
-		//temp_stream << ". Middle mouse button / backspace removes the last added point";
 		string window_title = temp_stream.str();
 		cv::namedWindow(window_title, 1);
-		for(int i = 0; i < no_of_objs; i++) {
+		for(int i = 0; i < no_of_objs; ++i) {
 			if(sel_quad_obj){
 				printf("selecting quadrilateral object...\n");
 				if(!addQuadObject(input, window_title, line_thickness)){
@@ -464,6 +398,227 @@ namespace utils{
 		}
 		return !init_objects.empty();
 	}
+#ifndef DISABLE_VISP
+	bool ObjUtils::addRectObjectVP(InputBase *input, string selection_window,
+		int line_thickness, int patch_size) {
+		std::unique_ptr<vpDisplay> display;
+		// Select one of the available video-devices
+#if defined VISP_HAVE_X11
+		display.reset(new vpDisplayX);
+#elif defined VISP_HAVE_GTK
+		display.reset(new vpDisplayGTK);
+#elif defined VISP_HAVE_GDI
+		display.reset(new vpDisplayGDI);
+#elif defined VISP_HAVE_D3D9
+		display.reset(new vpDisplayD3D);
+#elif defined VISP_HAVE_OPENCV
+		display.reset(new vpDisplayOpenCV);
+#else
+		throw InvalidArgument("None of the window backends supported by ViSP are available");
+#endif 
+		ObjStruct new_obj;
+		vpImage<vpRGBa> hover_image(static_cast<int>(input->getHeight()),
+			static_cast<int>(input->getWidth()));
+		input->convert(input->getFrame(), hover_image);
+		display->init(hover_image, -1, -1, selection_window);
+		vpDisplay::display(hover_image);
+		vpImagePoint clicked_point, hover_point;
+		int _clicked_point_count = 0;
+		vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+		while(_clicked_point_count < 2) {	
+			while(!vpDisplay::getClick(hover_image, clicked_point, button, false)) {
+
+				if(!input->update()){ return false; }
+				input->convert(input->getFrame(), hover_image);
+
+				vpDisplay::getPointerMotionEvent(hover_image, hover_point);
+
+				if(_clicked_point_count > 0){
+					vpImagePoint min_point(new_obj.min_point.y, new_obj.min_point.x);
+					int hover_width = static_cast<int>(abs(hover_point.get_j() - new_obj.min_point.x));
+					int hover_height = static_cast<int>(abs(hover_point.get_i() - new_obj.min_point.y));
+					vpDisplay::displayRectangle(hover_image, min_point, hover_width, hover_height, 
+						vpColor::red, false, line_thickness);
+				} else {
+					vpDisplay::displayPoint(hover_image, hover_point, vpColor::red, line_thickness);
+				}
+				vpDisplay::flush(hover_image);
+				vpDisplay::display(hover_image);
+			}
+			++_clicked_point_count;
+			if(_clicked_point_count == 1) {
+				//printf("Adding min point: %d %d\n", mouse_click_point.x, mouse_click_point.y);
+				if(patch_size > 0){
+					new_obj.min_point.x = clicked_point.get_j() - patch_size / 2.0;
+					new_obj.min_point.y = clicked_point.get_i() - patch_size / 2.0;
+					new_obj.max_point.x = clicked_point.get_j() + patch_size / 2.0;
+					new_obj.max_point.y = clicked_point.get_i() + patch_size / 2.0;
+					break;
+				} else{
+					new_obj.min_point.x = clicked_point.get_j();
+					new_obj.min_point.y = clicked_point.get_i();
+				}
+				hover_point = clicked_point;
+			} else if(_clicked_point_count == 2) {
+				//printf("Adding max point: %d %d\n", mouse_click_point.x, mouse_click_point.y);
+				new_obj.max_point.x = clicked_point.get_j();
+				new_obj.max_point.y = clicked_point.get_i();
+
+				if(new_obj.min_point.x > new_obj.max_point.x) {
+					double temp = new_obj.min_point.x;
+					new_obj.min_point.x = new_obj.max_point.x;
+					new_obj.max_point.x = temp;
+				}
+				if(new_obj.min_point.y > new_obj.max_point.y) {
+					double temp = new_obj.min_point.y;
+					new_obj.min_point.y = new_obj.max_point.y;
+					new_obj.max_point.y = temp;
+				}
+				break;
+			}
+		}
+		new_obj.size_x = abs(new_obj.max_point.x - new_obj.min_point.x);
+		new_obj.size_y = abs(new_obj.max_point.y - new_obj.min_point.y);
+
+		new_obj.pos_x = (new_obj.min_point.x + new_obj.max_point.x) / 2;
+		new_obj.pos_y = (new_obj.min_point.y + new_obj.max_point.y) / 2;
+		new_obj.updateCornerMat();
+
+		init_objects.push_back(new_obj);
+		vpDisplay::close(hover_image);
+		return true;
+	}
+	bool ObjUtils::addQuadObjectVP(InputBase *input, string selection_window,
+		int line_thickness) {
+		std::unique_ptr<vpDisplay> display;
+		// Select one of the available video-devices
+#if defined VISP_HAVE_X11
+	display.reset(new vpDisplayX);
+#elif defined VISP_HAVE_GTK
+		display.reset(new vpDisplayGTK);
+#elif defined VISP_HAVE_GDI
+		display.reset(new vpDisplayGDI);
+#elif defined VISP_HAVE_D3D9
+		display.reset(new vpDisplayD3D);
+#elif defined VISP_HAVE_OPENCV
+		display.reset(new vpDisplayOpenCV);
+#else
+		throw InvalidArgument("None of the window backends supported by ViSP are available");
+#endif 
+		ObjStruct new_obj;
+		vpImage<vpRGBa> hover_image(static_cast<int>(input->getHeight()),
+			static_cast<int>(input->getWidth()));
+		input->convert(input->getFrame(), hover_image);
+		display->init(hover_image, -1, -1, selection_window);
+		vpDisplay::display(hover_image);
+
+		vpImagePoint clicked_pts[4];
+		vpImagePoint clicked_point, hover_point;
+		int _clicked_point_count = 0;
+		vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+		while(_clicked_point_count < 4) {
+			while(!vpDisplay::getClick(hover_image, clicked_point, button, false)) {
+
+				if(!input->update()){ return false; }
+				input->convert(input->getFrame(), hover_image);
+
+				vpDisplay::getPointerMotionEvent(hover_image, hover_point);
+
+				// draw new (incomplete) object
+				for(int pt_id = 0; pt_id < _clicked_point_count - 1; ++pt_id){
+					vpDisplay::displayLine(hover_image, clicked_pts[pt_id], clicked_pts[pt_id + 1], vpColor::red, line_thickness);
+				}
+				if(_clicked_point_count > 0){
+					vpDisplay::displayLine(hover_image, clicked_pts[_clicked_point_count - 1], hover_point, vpColor::red, line_thickness);
+					if(_clicked_point_count == 3){
+						vpDisplay::displayLine(hover_image, clicked_pts[0], hover_point, vpColor::red, line_thickness);
+					}
+				}
+				vpDisplay::flush(hover_image);
+				vpDisplay::display(hover_image);
+			}
+			clicked_pts[_clicked_point_count] = hover_point;
+
+			new_obj.corners.at<double>(0, _clicked_point_count) = clicked_point.get_j();
+			new_obj.corners.at<double>(1, _clicked_point_count) = clicked_point.get_i();
+
+			++_clicked_point_count;
+			if(_clicked_point_count == 4){
+				break;
+			} 
+			if(_clicked_point_count == 1){
+				hover_point = clicked_point;
+			}
+		}
+
+		new_obj.min_point.x = new_obj.corners.at<double>(0, 0);
+		new_obj.min_point.y = new_obj.corners.at<double>(1, 0);
+		new_obj.max_point.x = new_obj.corners.at<double>(0, 2);
+		new_obj.max_point.y = new_obj.corners.at<double>(1, 2);
+
+		new_obj.size_x = ((new_obj.corners.at<double>(0, 1) - new_obj.corners.at<double>(0, 0)) +
+			(new_obj.corners.at<double>(0, 2) - new_obj.corners.at<double>(0, 3))) / 2;
+		new_obj.size_y = ((new_obj.corners.at<double>(1, 3) - new_obj.corners.at<double>(1, 0)) +
+			(new_obj.corners.at<double>(1, 2) - new_obj.corners.at<double>(1, 1))) / 2;
+
+		new_obj.pos_x = (new_obj.min_point.x + new_obj.max_point.x) / 2;
+		new_obj.pos_y = (new_obj.min_point.y + new_obj.max_point.y) / 2;
+
+		init_objects.push_back(new_obj);
+		vpDisplay::close(hover_image);
+
+		return true;
+	}
+	//! overloaded variant for non-live input feed
+	bool ObjUtils::selectObjectsVP(const cv::Mat &img, int no_of_objs,
+		int patch_size, int line_thickness, int write_objs, bool sel_quad_obj,
+		const char* filename){
+		InputDummy input(img);
+		return selectObjectsVP(&input, no_of_objs, patch_size, line_thickness, write_objs,
+			sel_quad_obj, filename);
+	}
+	bool ObjUtils::selectObjectsVP(InputBase *input, int no_of_objs,
+		int patch_size, int line_thickness, int write_objs, bool sel_quad_obj,
+		const char* filename) {
+		stringstream temp_stream;
+		if(no_of_objs > 1) {
+			temp_stream << "Please select " << no_of_objs << " objects to track";
+			if(patch_size > 0){
+				temp_stream << " by clicking at the center of each to add a " << patch_size << "x" << patch_size << " patch";
+			} else if(sel_quad_obj){
+				temp_stream << " by clicking at the four corners of each";
+			} else{
+				temp_stream << " by clicking at two opposite corners of each";
+			}
+		} else {
+			temp_stream << "Please select the object to track";
+			if(patch_size > 0){
+				temp_stream << " by clicking at its center to add a " << patch_size << "x" << patch_size << " patch";
+			} else if(sel_quad_obj){
+				temp_stream << " by clicking at its four corners";
+			} else{
+				temp_stream << " by clicking at its two opposite corners";
+			}
+		}
+		string window_title = temp_stream.str();
+		for(int i = 0; i < no_of_objs; ++i) {
+			if(sel_quad_obj){
+				printf("selecting quadrilateral object...\n");
+				if(!addQuadObjectVP(input, window_title, line_thickness)){
+					return false;
+				}
+			} else{
+				if(!addRectObjectVP(input, window_title, line_thickness, patch_size)){
+					return false;
+				}
+			}
+		}
+		if(write_objs){
+			writeObjectsToFile(no_of_objs, filename);
+		}
+		return !init_objects.empty();
+	}
+#endif
 	void ObjUtils::writeObjectsToFile(int no_of_objs, const char* filename){
 		ofstream fout;
 		cout << "Writing object locations to file: " << filename << "\n";

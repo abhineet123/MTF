@@ -3,6 +3,11 @@
 
 #include "mtf/Macros/common.h"
 
+#ifndef DISABLE_VISP
+#include <visp3/core/vpImage.h>
+#endif
+
+
 _MTF_BEGIN_NAMESPACE
 
 namespace utils{
@@ -425,6 +430,11 @@ namespace utils{
 	void drawRegion(cv::Mat &img, const cv::Mat &vertices, cv::Scalar col = cv::Scalar(0, 255, 0),
 		int line_thickness = 2, const char *label = nullptr, double font_size = 0.50,
 		bool show_corner_ids = false, bool show_label = false, int line_type = 0);
+#ifndef DISABLE_VISP
+	void drawRegion(vpImage<vpRGBa> &img, const cv::Mat &vertices, cv::Scalar col = cv::Scalar(0, 255, 0),
+		int line_thickness = 2, const char *label = nullptr, double font_size = 0.50,
+		bool show_corner_ids = false, bool show_label = false, int line_type = 0);
+#endif
 	void drawGrid(cv::Mat &img, const PtsT &grid_pts, int res_x, int res_y,
 		cv::Scalar col = cv::Scalar(0, 255, 0), int thickness = 1);
 	template<typename ImgValT, typename PatchValT>

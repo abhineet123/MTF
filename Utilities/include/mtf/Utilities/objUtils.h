@@ -6,8 +6,9 @@
 
 #include "opencv2/core/core.hpp"
 #include "mtf/Utilities/inputUtils.h"
-
-#define MAX_HOVER_TEXT_SIZE 100
+#ifndef DISABLE_VISP
+#include <visp3/core/vpColor.h>
+#endif
 
 using namespace std;
 
@@ -55,10 +56,6 @@ namespace utils{
 		*/
 		bool addRectObject(InputBase *input, string selection_window,
 			int line_thickness = 2, int patch_size = 0);
-#ifndef DISABLE_VISP
-		bool addRectObjectVP(InputBase *input, string selection_window,
-			int line_thickness = 2, int patch_size = 0);
-#endif
 		/**
 		allows the user to select a quadrilateral by clicking on its 4 corners
 		*/
@@ -71,6 +68,19 @@ namespace utils{
 		bool selectObjects(InputBase *input, int no_of_objs, int patch_size = 0, 
 			int line_thickness = 1, int write_objs = 0, bool sel_quad_obj = false,
 			const char* filename = "selected_objects.txt");
+#ifndef DISABLE_VISP
+		bool addRectObjectVP(InputBase *input, string selection_window,
+			int line_thickness = 2, int patch_size = 0);
+		bool addQuadObjectVP(InputBase *input, string selection_window,
+			int line_thickness = 2);
+		//! overloaded variant for non-live input feed
+		bool selectObjectsVP(const cv::Mat &img, int no_of_objs,
+			int patch_size = 0, int line_thickness = 1, int write_objs = 0, bool sel_quad_obj = false,
+			const char* filename = "selected_objects.txt");
+		bool selectObjectsVP(InputBase *input, int no_of_objs, int patch_size = 0,
+			int line_thickness = 1, int write_objs = 0, bool sel_quad_obj = false,
+			const char* filename = "selected_objects.txt");
+#endif
 		void writeObjectsToFile(int no_of_objs,
 			const char* filename = "sel_objs/selected_objects.txt");
 		bool readObjectFromGT(string source_name, string source_path, int n_frames,
@@ -107,6 +117,11 @@ namespace utils{
 		string reinit_gt_filename;
 		vector<cv::Scalar> obj_cols;
 		int no_of_cols;
+#ifndef DISABLE_VISP
+		vector<vpColor> obj_cols_vp;
+		int no_of_cols_vp;
+#endif
+		
 		double resize_factor;
 		bool invert_seq;
 		//! read reinit GT for a specific frame
