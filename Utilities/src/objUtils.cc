@@ -4,6 +4,14 @@
 
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+#ifndef DISABLE_VISP
+#if defined _WIN32
+#define VISP_HAVE_X11
+#endif
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/gui/vpDisplayX.h>
+#endif
 
 #include<iostream>
 #include<fstream>
@@ -214,7 +222,76 @@ namespace utils{
 		init_objects.push_back(new_obj);
 		return true;
 	}
+#ifndef DISABLE_VISP
+	bool ObjUtils::addRectObjectVP(InputBase *input, string selection_window,
+		int line_thickness, int patch_size) {
+		//cout<<"Start getObject\n";
+		vpDisplayX display;	
+		ObjStruct new_obj;
+		vpImage<vpRGBa> hover_image(static_cast<int>(input->getHeight()),
+			static_cast<int>(input->getWidth()));
+		vpImageConvert::convert(input->getFrame(), hover_image);
+		display.init(hover_image, -1, -1, selection_window);
+		vpImagePoint clicked_point, hover_point;
+		int _clicked_point_count = 0;
+		while(_clicked_point_count < 2) {
+			vpImageConvert::convert(input->getFrame(), hover_image);			
+			vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+			while(!vpDisplay::getClick(hover_image, clicked_point, button, false)) {
+				vpDisplay::getPointerMotionEvent(hover_image, hover_point);
+				if(_clicked_point_count > 0){
+					vpImagePoint min_point(new_obj.min_point.x, new_obj.min_point.y);
+					int hover_width = static_cast<int>(abs(hover_point.get_i() - new_obj.min_point.x));
+					int hover_height = static_cast<int>(abs(hover_point.get_j() - new_obj.min_point.y));
+					vpDisplay::displayRectangle(hover_image, min_point, hover_width, hover_height, 
+						vpColor::red, true, line_thickness);
+				}
+			}
+			++_clicked_point_count;
+			if(_clicked_point_count == 1) {
+				//printf("Adding min point: %d %d\n", mouse_click_point.x, mouse_click_point.y);
+				if(patch_size > 0){
+					new_obj.min_point.x = clicked_point.get_i() - patch_size / 2.0;
+					new_obj.min_point.y = clicked_point.get_j() - patch_size / 2.0;
+					new_obj.max_point.x = clicked_point.get_i() + patch_size / 2.0;
+					new_obj.max_point.y = clicked_point.get_j() + patch_size / 2.0;
+					break;
+				} else{
+					new_obj.min_point.x = clicked_point.get_i();
+					new_obj.min_point.y = clicked_point.get_j();
+				}
+				hover_point = clicked_point;
+			} else if(_clicked_point_count == 2) {
+				//printf("Adding max point: %d %d\n", mouse_click_point.x, mouse_click_point.y);
+				new_obj.max_point.x = clicked_point.get_i();
+				new_obj.max_point.y = clicked_point.get_j();
 
+				if(new_obj.min_point.x > new_obj.max_point.x) {
+					double temp = new_obj.min_point.x;
+					new_obj.min_point.x = new_obj.max_point.x;
+					new_obj.max_point.x = temp;
+				}
+				if(new_obj.min_point.y > new_obj.max_point.y) {
+					double temp = new_obj.min_point.y;
+					new_obj.min_point.y = new_obj.max_point.y;
+					new_obj.max_point.y = temp;
+				}
+				break;
+			}
+			if(!input->update()){ return false; }
+		}
+		new_obj.size_x = abs(new_obj.max_point.x - new_obj.min_point.x);
+		new_obj.size_y = abs(new_obj.max_point.y - new_obj.min_point.y);
+
+		new_obj.pos_x = (new_obj.min_point.x + new_obj.max_point.x) / 2;
+		new_obj.pos_y = (new_obj.min_point.y + new_obj.max_point.y) / 2;
+		new_obj.updateCornerMat();
+
+		init_objects.push_back(new_obj);
+		vpDisplay::close(hover_image);
+		return true;
+	}
+#endif
 	/**
 	allows the user to select a quadrilateral by clicking on its 4 corners
 	*/
@@ -366,17 +443,17 @@ namespace utils{
 			if(sel_quad_obj){
 				printf("selecting quadrilateral object...\n");
 				if(!addQuadObject(input, window_title, line_thickness)){
-					//cv::destroyWindow(window_title);
+					cv::destroyWindow(window_title);
 					return false;
 				};
 			} else{
 				if(!addRectObject(input, window_title, line_thickness, patch_size)){
-					//cv::destroyWindow(window_title);
+					cv::destroyWindow(window_title);
 					return false;
 				};
 			}
 		}
-		//cv::destroyWindow(window_title);
+		cv::destroyWindow(window_title);
 		if(write_objs){
 			writeObjectsToFile(no_of_objs, filename);
 		}

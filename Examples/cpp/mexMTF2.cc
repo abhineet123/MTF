@@ -49,7 +49,7 @@ private:
 };
 struct InputStruct : public mtf::utils::InputBase {
 	InputStruct() : is_valid(false), thread_created(false){}
-	InputStruct(Input &_input) : input(_input), 
+	InputStruct(Input &_input) : input(_input),
 		is_valid(false), thread_created(false){
 		t = boost::thread{ InputThread(input) };
 		is_valid = thread_created = true;
@@ -59,12 +59,12 @@ struct InputStruct : public mtf::utils::InputBase {
 	bool update() override{ return true; }
 	void remapBuffer(unsigned char** new_addr) override{}
 	const cv::Mat& getFrame() const override{ return input->getFrame(); }
-	cv::Mat& getFrame(mtf::utils::FrameType) override{ 
+	cv::Mat& getFrame(mtf::utils::FrameType) override{
 		throw mtf::utils::InvalidArgument("Mutable frame cannot be obtained");
-	}	
+	}
 	int getFrameID() const override{ return input->getFrameID(); }
 	int getHeight() const override{ return input->getHeight(); }
-	int getWidth() const override{ return input->getWidth(); }	
+	int getWidth() const override{ return input->getWidth(); }
 
 	void reset(Input &_input) {
 		reset();
@@ -80,7 +80,7 @@ struct InputStruct : public mtf::utils::InputBase {
 		if(is_valid) {
 			input.reset();
 			is_valid = false;
-		}		
+		}
 	}
 	bool isValid() const {
 		return is_valid && thread_created && !input->destroy;
@@ -95,6 +95,17 @@ struct ObjectSelectorThread{
 	ObjectSelectorThread(InputStructPtr &_input, cv::Mat &_corners) : input(_input), corners(_corners) {}
 	void operator()(){
 		mtf::utils::ObjUtils obj_utils;
+#ifndef DISABLE_VISP
+		try{
+			if(!obj_utils.addRectObjectVP(input.get(), "Select an object",
+				line_thickness, patch_size)){
+				cout << "Object to be tracked could not be obtained.\n";
+			}
+		} catch(const mtf::utils::Exception &err){
+			cout << cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
+				err.type(), err.what());
+		}
+#else
 		try{
 			if(mex_live_init){
 				if(!obj_utils.selectObjects(input.get(), 1,
@@ -106,13 +117,14 @@ struct ObjectSelectorThread{
 				if(!obj_utils.selectObjects(input->getFrame(), 1,
 					patch_size, line_thickness, write_objs, sel_quad_obj,
 					write_obj_fname.c_str())){
-					cout<<"Object to be tracked could not be obtained.\n";
+					cout << "Object to be tracked could not be obtained.\n";
 				}
 			}
 		} catch(const mtf::utils::Exception &err){
 			cout << cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
 				err.type(), err.what());
 		}
+#endif
 		obj_utils.getObj().corners.copyTo(corners);
 		cout << "ObjectSelectorThread :: corners: " << corners << "\n";
 	}
@@ -123,10 +135,11 @@ private:
 };
 
 struct TrackerThread{
-	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input, 
+	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
 		unsigned int id = 1) : input(_input), pre_proc(_pre_proc), tracker(_tracker) {
 		win_name = cv::format("mexMTF:: %d", id);
 		proc_win_name = cv::format("%s (Pre-processed)", win_name.c_str());
+		cout << "mex_visualize: " << mex_visualize << "\n";
 	}
 	void operator()(){
 		int frame_id = 0;
@@ -150,7 +163,7 @@ struct TrackerThread{
 
 				if(mex_visualize) {
 					cv::Mat disp_frame = input->getFrame().clone();
-					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), cv::Scalar(255, 0, 0), 
+					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), cv::Scalar(255, 0, 0),
 						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
 					imshow(win_name, disp_frame);
 					if(show_proc_img){
@@ -186,7 +199,7 @@ struct TrackerStruct{
 		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, id) };
 	}
 	void setRegion(const cv::Mat& corners){
-		tracker->setRegion(corners);		
+		tracker->setRegion(corners);
 	}
 	const cv::Mat& getRegion() {
 		return tracker->getRegion();
@@ -227,7 +240,7 @@ bool createInput() {
 	} else {
 		input.reset(new InputStruct(_input));
 	}
-		
+
 	return true;
 }
 
@@ -241,7 +254,7 @@ bool getFrame(mxArray* &plhs){
 	if(frame.type() == CV_8UC1){
 		n_channels = 1;
 		n_dims = 2;
-	}	
+	}
 	mwSize *dims = new mwSize[n_dims];
 	dims[0] = frame.rows;
 	dims[1] = frame.cols;
@@ -315,7 +328,7 @@ bool createTracker(const cv::Mat &init_corners) {
 		return false;
 	}
 	++_tracker_id;
-	trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, 
+	trackers.insert(std::pair<int, TrackerStruct>(_tracker_id,
 		TrackerStruct(tracker, pre_proc, input, _tracker_id)));
 	return true;
 }
@@ -412,7 +425,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			mexErrMsgTxt("At least 2 input arguments are needed to create tracker.");
 		}
 		if(!mxIsChar(prhs[1])){
-			mexErrMsgTxt("The optional third input argument for creating tracker must be a string.");
+			mexErrMsgTxt("The second input argument for creating tracker must be a string.");
 		}
 		*ret_val = 0;
 
@@ -420,12 +433,12 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			mexErrMsgTxt("Parameters could not be parsed");
 		}
 		cv::Mat init_corners;
-		if(nrhs>2) {
+		if(nrhs > 2) {
 			init_corners = mtf::utils::getCorners(prhs[2]);
 		} else {
 			init_corners.create(2, 4, CV_64FC1);
 			ObjectSelectorThread obj_sel_thread(input, init_corners);
-				boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
+			boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
 			try{
 				t.join();
 			} catch(boost::thread_interrupted) {
@@ -503,7 +516,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		for(auto it = trackers.begin(); it != trackers.end(); ++it){
 			it->second.reset();
 		}
-		trackers.clear();		
+		trackers.clear();
 		*ret_val = 1;
 		printf("Done\n");
 		return;

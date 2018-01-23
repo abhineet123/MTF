@@ -55,6 +55,10 @@ namespace utils{
 		*/
 		bool addRectObject(InputBase *input, string selection_window,
 			int line_thickness = 2, int patch_size = 0);
+#ifndef DISABLE_VISP
+		bool addRectObjectVP(InputBase *input, string selection_window,
+			int line_thickness = 2, int patch_size = 0);
+#endif
 		/**
 		allows the user to select a quadrilateral by clicking on its 4 corners
 		*/
