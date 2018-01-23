@@ -3,7 +3,7 @@ function runMTF2(varargin)
 close all;
 
 % script parameters
-show_window = 0;
+show_window = 1;
 
 % MTF parameters
 config_dir = '../../Config';
