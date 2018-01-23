@@ -195,7 +195,7 @@ namespace utils{
 	}
 
 #ifndef DISABLE_VISP
-	void drawRegion(vpImage<vpRGBa> &img, const cv::Mat &vertices, cv::Scalar col,
+	void drawRegion(vpImage<vpRGBa> &img, const cv::Mat &vertices, vpColor col,
 		int line_thickness, const char *label, double font_size,
 		bool show_corner_ids, bool show_label, int line_type){
 		std::vector<cv::Point2d> vertices_p2d(vertices.cols);
@@ -207,21 +207,21 @@ namespace utils{
 			vpImagePoint pt1(vertices_p2d[vert_id].y, vertices_p2d[vert_id].x);
 			vpImagePoint pt2(vertices_p2d[(vert_id + 1) % vertices.cols].y, vertices_p2d[(vert_id + 1) % vertices.cols].x);
 
-			vpDisplay::displayLine(img, pt1, pt2, vpColor::red, line_thickness);			
+			vpDisplay::displayLine(img, pt1, pt2, col, line_thickness);			
 			if(show_corner_ids){
 				//vpDisplay::setFont(img, "FONT_HERSHEY_SIMPLEX");
 				
 #ifdef _WIN32
-				vpDisplay::displayText(img, pt1, utils::to_string(vert_id), vpColor::red);
+				vpDisplay::displayText(img, pt1, utils::to_string(vert_id), col);
 #else
-				vpDisplay::displayText(img, pt1, std::to_string(vert_id), vpColor::red);
+				vpDisplay::displayText(img, pt1, std::to_string(vert_id), col);
 #endif
 			}
 		}
 		if(label && show_label){
 			//vpDisplay::setFont(img, "FONT_HERSHEY_SIMPLEX");
 			vpDisplay::displayText(img, vpImagePoint(vertices_p2d[0].y, vertices_p2d[0].x),
-				label, vpColor::red);
+				label, col);
 		}
 		vpDisplay::flush(img);
 	}

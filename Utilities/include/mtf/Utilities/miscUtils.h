@@ -431,7 +431,7 @@ namespace utils{
 		int line_thickness = 2, const char *label = nullptr, double font_size = 0.50,
 		bool show_corner_ids = false, bool show_label = false, int line_type = 0);
 #ifndef DISABLE_VISP
-	void drawRegion(vpImage<vpRGBa> &img, const cv::Mat &vertices, cv::Scalar col = cv::Scalar(0, 255, 0),
+	void drawRegion(vpImage<vpRGBa> &img, const cv::Mat &vertices, vpColor col = vpColor::green,
 		int line_thickness = 2, const char *label = nullptr, double font_size = 0.50,
 		bool show_corner_ids = false, bool show_label = false, int line_type = 0);
 #endif

@@ -197,12 +197,12 @@ struct TrackerThread{
 
 				if(mex_visualize) {
 #ifndef DISABLE_VISP
-					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), cv::Scalar(255, 0, 0),
+					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), vpColor::red,
 						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
 					vpDisplay::display(disp_frame);
 #else
 					cv::Mat disp_frame = input->getFrame().clone();
-					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), cv::Scalar(255, 0, 0),
+					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), cv::Scalar(0, 0, 255),
 						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
 					imshow(win_name, disp_frame);
 					if(show_proc_img){
