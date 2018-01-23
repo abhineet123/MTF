@@ -241,8 +241,8 @@ namespace utils{
 				vpDisplay::getPointerMotionEvent(hover_image, hover_point);
 				if(_clicked_point_count > 0){
 					vpImagePoint min_point(new_obj.min_point.x, new_obj.min_point.y);
-					int hover_width = static_cast<int>(abs(hover_point.get_i() - new_obj.min_point.x));
-					int hover_height = static_cast<int>(abs(hover_point.get_j() - new_obj.min_point.y));
+					int hover_width = static_cast<int>(abs(hover_point.get_j() - new_obj.min_point.x));
+					int hover_height = static_cast<int>(abs(hover_point.get_i() - new_obj.min_point.y));
 					vpDisplay::displayRectangle(hover_image, min_point, hover_width, hover_height, 
 						vpColor::red, false, line_thickness);
 					vpDisplay::flush(hover_image);
@@ -254,20 +254,20 @@ namespace utils{
 			if(_clicked_point_count == 1) {
 				//printf("Adding min point: %d %d\n", mouse_click_point.x, mouse_click_point.y);
 				if(patch_size > 0){
-					new_obj.min_point.x = clicked_point.get_i() - patch_size / 2.0;
-					new_obj.min_point.y = clicked_point.get_j() - patch_size / 2.0;
-					new_obj.max_point.x = clicked_point.get_i() + patch_size / 2.0;
-					new_obj.max_point.y = clicked_point.get_j() + patch_size / 2.0;
+					new_obj.min_point.x = clicked_point.get_j() - patch_size / 2.0;
+					new_obj.min_point.y = clicked_point.get_i() - patch_size / 2.0;
+					new_obj.max_point.x = clicked_point.get_j() + patch_size / 2.0;
+					new_obj.max_point.y = clicked_point.get_i() + patch_size / 2.0;
 					break;
 				} else{
-					new_obj.min_point.x = clicked_point.get_i();
-					new_obj.min_point.y = clicked_point.get_j();
+					new_obj.min_point.x = clicked_point.get_j();
+					new_obj.min_point.y = clicked_point.get_i();
 				}
 				hover_point = clicked_point;
 			} else if(_clicked_point_count == 2) {
 				//printf("Adding max point: %d %d\n", mouse_click_point.x, mouse_click_point.y);
-				new_obj.max_point.x = clicked_point.get_i();
-				new_obj.max_point.y = clicked_point.get_j();
+				new_obj.max_point.x = clicked_point.get_j();
+				new_obj.max_point.y = clicked_point.get_i();
 
 				if(new_obj.min_point.x > new_obj.max_point.x) {
 					double temp = new_obj.min_point.x;
