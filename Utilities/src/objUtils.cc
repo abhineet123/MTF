@@ -235,8 +235,8 @@ namespace utils{
 		vpDisplay::display(hover_image);
 		vpImagePoint clicked_point, hover_point;
 		int _clicked_point_count = 0;
-		while(_clicked_point_count < 2) {			
-			vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+		vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
+		while(_clicked_point_count < 2) {		
 			while(!vpDisplay::getClick(hover_image, clicked_point, button, false)) {
 				vpDisplay::getPointerMotionEvent(hover_image, hover_point);
 				if(_clicked_point_count > 0){
