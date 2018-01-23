@@ -8,7 +8,6 @@
 #if defined _WIN32
 #define VISP_HAVE_X11
 #endif
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/gui/vpDisplayX.h>
 #endif

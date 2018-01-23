@@ -185,6 +185,46 @@ namespace utils{
 			putText(img, label, vertices_p2d[0], cv::FONT_HERSHEY_SIMPLEX, font_size, col);
 		}
 	}
+#ifndef DISABLE_VISP
+#if defined _WIN32
+#define VISP_HAVE_X11
+#endif
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/gui/vpDisplayX.h>
+#endif
+
+#ifndef DISABLE_VISP
+	void drawRegion(vpImage<vpRGBa> &img, const cv::Mat &vertices, cv::Scalar col,
+		int line_thickness, const char *label, double font_size,
+		bool show_corner_ids, bool show_label, int line_type){
+		std::vector<cv::Point2d> vertices_p2d(vertices.cols);
+		for(int vert_id = 0; vert_id < vertices.cols; ++vert_id) {
+			vertices_p2d[vert_id] = cv::Point2d(vertices.at<double>(0, vert_id), vertices.at<double>(1, vert_id));
+		}
+		if(line_type == 0){ line_type = CV_AA; }
+		for(int vert_id = 0; vert_id < vertices.cols; ++vert_id) {
+			vpImagePoint pt1(vertices_p2d[vert_id].y, vertices_p2d[vert_id].x);
+			vpImagePoint pt2(vertices_p2d[(vert_id + 1) % vertices.cols].y, vertices_p2d[(vert_id + 1) % vertices.cols].x);
+
+			vpDisplay::displayLine(img, pt1, pt2, vpColor::red, line_thickness);			
+			if(show_corner_ids){
+				vpDisplay::setFont(img, "FONT_HERSHEY_SIMPLEX");
+				
+#ifdef _WIN32
+				vpDisplay::displayText(img, pt1, utils::to_string(vert_id), vpColor::red);
+#else
+				vpDisplay::displayText(img, pt1, std::to_string(vert_id), vpColor::red);
+#endif
+			}
+		}
+		if(label && show_label){
+			vpDisplay::setFont(img, "FONT_HERSHEY_SIMPLEX");
+			vpDisplay::displayText(img, vpImagePoint(vertices_p2d[0].y, vertices_p2d[0].x),
+				label, vpColor::red);
+		}
+		vpDisplay::flush(img);
+	}
+#endif
 
 	void drawGrid(cv::Mat &img, const PtsT &grid_pts, int res_x, int res_y, cv::Scalar col, int thickness){
 		//draw vertical lines
