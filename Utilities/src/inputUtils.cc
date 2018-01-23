@@ -794,7 +794,7 @@ namespace utils{
 			for(unsigned int col_id = 0; col_id < _cv_img.cols; ++col_id){				
 				cv::Vec3b cv_val = _cv_img.at<cv::Vec3b>(row_id, col_id);
 				vpRGBa vp_val(cv_val[0], cv_val[1], cv_val[2]);
-				_vp_img(row_id, col_id) = vp_val;
+				_vp_img(row_id, col_id, vp_val);
 			}
 		}
 #endif	
