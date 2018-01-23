@@ -106,24 +106,24 @@ struct ObjectSelectorThread{
 				err.type(), err.what());
 		}
 #else
-		try{
-			if(mex_live_init){
-				if(!obj_utils.selectObjects(input.get(), 1,
-					patch_size, line_thickness, write_objs, sel_quad_obj,
-					write_obj_fname.c_str())){
-					cout << "Object to be tracked could not be obtained.\n";
-				}
-			} else {
-				if(!obj_utils.selectObjects(input->getFrame(), 1,
-					patch_size, line_thickness, write_objs, sel_quad_obj,
-					write_obj_fname.c_str())){
-					cout << "Object to be tracked could not be obtained.\n";
-				}
-			}
-		} catch(const mtf::utils::Exception &err){
-			cout << cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
-				err.type(), err.what());
-		}
+		//try{
+		//	if(mex_live_init){
+		//		if(!obj_utils.selectObjects(input.get(), 1,
+		//			patch_size, line_thickness, write_objs, sel_quad_obj,
+		//			write_obj_fname.c_str())){
+		//			cout << "Object to be tracked could not be obtained.\n";
+		//		}
+		//	} else {
+		//		if(!obj_utils.selectObjects(input->getFrame(), 1,
+		//			patch_size, line_thickness, write_objs, sel_quad_obj,
+		//			write_obj_fname.c_str())){
+		//			cout << "Object to be tracked could not be obtained.\n";
+		//		}
+		//	}
+		//} catch(const mtf::utils::Exception &err){
+		//	cout << cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
+		//		err.type(), err.what());
+		//}
 #endif
 		obj_utils.getObj().corners.copyTo(corners);
 		cout << "ObjectSelectorThread :: corners: " << corners << "\n";
