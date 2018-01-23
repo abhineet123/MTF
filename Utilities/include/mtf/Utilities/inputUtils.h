@@ -79,8 +79,11 @@ namespace utils{
 		*/
 		virtual bool constBuffer(){ return const_buffer; }
 #ifndef DISABLE_VISP
-		void convert(const vpImage<vpRGBa> &vp_img, cv::Mat &cv_img);
-		void convert(const cv::Mat &cv_img, vpImage<vpRGBa> &vp_img);
+		virtual void getFrame(vpImage<vpRGBa> &vp_img) const {
+			convert(getFrame(), vp_img);
+		}
+		virtual void convert(const vpImage<vpRGBa> &vp_img, cv::Mat &cv_img) const;
+		virtual void convert(const cv::Mat &cv_img, vpImage<vpRGBa> &vp_img) const;
 #endif
 
 	protected:

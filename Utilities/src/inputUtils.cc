@@ -774,7 +774,7 @@ namespace utils{
 		buffer_id = _buffer_id;
 		return true;
 	}
-	void InputBase::convert(const vpImage<vpRGBa> &_vp_img, cv::Mat &_cv_img){
+	void InputBase::convert(const vpImage<vpRGBa> &_vp_img, cv::Mat &_cv_img) const{
 #ifdef VISP_HAVE_OPENCV
 		vpImageConvert::convert(_vp_img, _cv_img);
 #else
@@ -786,7 +786,7 @@ namespace utils{
 		}
 #endif	
 	}
-	void InputBase::convert(const cv::Mat &_cv_img, vpImage<vpRGBa> &_vp_img){
+	void InputBase::convert(const cv::Mat &_cv_img, vpImage<vpRGBa> &_vp_img) const{
 #ifdef VISP_HAVE_OPENCV
 		vpImageConvert::convert(_cv_img, _vp_img);
 #else

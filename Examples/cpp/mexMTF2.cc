@@ -205,6 +205,7 @@ struct TrackerThread{
 
 				if(mex_visualize) {
 #ifndef DISABLE_VISP
+					input->convert(input->getFrame(), disp_frame);
 					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), vpColor::red,
 						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
 					vpDisplay::display(disp_frame);
