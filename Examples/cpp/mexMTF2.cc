@@ -178,7 +178,7 @@ struct TrackerThread{
 #ifndef DISABLE_VISP			
 			// Select one of the available video-devices
 #if defined VISP_HAVE_X11
-			display.reset(new vpDisplayX);mex_visualize
+			display.reset(new vpDisplayX);
 #elif defined VISP_HAVE_GTK
 			display.reset(new vpDisplayGTK);
 #elif defined VISP_HAVE_GDI
