@@ -232,6 +232,7 @@ namespace utils{
 			static_cast<int>(input->getWidth()));
 		input->convert(input->getFrame(), hover_image);
 		display.init(hover_image, -1, -1, selection_window);
+		vpDisplay::display(hover_image);
 		vpImagePoint clicked_point, hover_point;
 		int _clicked_point_count = 0;
 		while(_clicked_point_count < 2) {			
