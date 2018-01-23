@@ -70,6 +70,11 @@ struct InputStruct : public mtf::utils::InputBase {
 	cv::Mat& getFrame(mtf::utils::FrameType) override{
 		throw mtf::utils::InvalidArgument("Mutable frame cannot be obtained");
 	}
+#ifndef DISABLE_VISP
+	void getFrame(vpImage<vpRGBa> &vp_img) const override{
+		input->getFrame(vp_img);
+	}
+#endif
 	int getFrameID() const override{ return input->getFrameID(); }
 	int getHeight() const override{ return input->getHeight(); }
 	int getWidth() const override{ return input->getWidth(); }
@@ -157,19 +162,23 @@ private:
 
 struct TrackerThread{
 	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
-		unsigned int id = 1) : input(_input), pre_proc(_pre_proc), tracker(_tracker) {
+		unsigned int id = 1, int _visualize = 0) : input(_input), pre_proc(_pre_proc),
+		tracker(_tracker), visualize(_visualize){
 		win_name = cv::format("mexMTF:: %d", id);
 		proc_win_name = cv::format("%s (Pre-processed)", win_name.c_str());
-		//cout << "mex_visualize: " << mex_visualize << "\n";
+		if(visualize) {
+			cout << "Visualization is enabled for tracker " << id << "\n";
+		}
+		
 	}
 	void operator()(){
 		int frame_id = 0;
 
-		if(mex_visualize) {
+		if(visualize) {
 #ifndef DISABLE_VISP			
 			// Select one of the available video-devices
 #if defined VISP_HAVE_X11
-			display.reset(new vpDisplayX);
+			display.reset(new vpDisplayX);mex_visualize
 #elif defined VISP_HAVE_GTK
 			display.reset(new vpDisplayGTK);
 #elif defined VISP_HAVE_GDI
@@ -203,9 +212,9 @@ struct TrackerThread{
 				//! update tracker
 				tracker->update();
 
-				if(mex_visualize) {
+				if(visualize) {
 #ifndef DISABLE_VISP
-					input->convert(input->getFrame(), disp_frame);
+					input->getFrame(disp_frame);
 					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), vpColor::red,
 						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
 					vpDisplay::display(disp_frame);
@@ -234,7 +243,7 @@ struct TrackerThread{
 			boost::this_thread::interruption_point();
 		}
 #ifndef DISABLE_VISP
-		if(mex_visualize) {
+		if(visualize) {
 			vpDisplay::close(disp_frame);
 		}
 #endif
@@ -249,12 +258,13 @@ private:
 	std::unique_ptr<vpDisplay> display;
 	vpImage<vpRGBa> disp_frame;
 #endif
+	int visualize;
 };
 struct TrackerStruct{
 	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
 		unsigned int id) :
 		tracker(_tracker), pre_proc(_pre_proc){
-		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, id) };
+		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, id, mex_visualize) };
 	}
 	void setRegion(const cv::Mat& corners){
 		tracker->setRegion(corners);
