@@ -787,17 +787,17 @@ namespace utils{
 #endif	
 	}
 	void InputBase::convert(const cv::Mat &_cv_img, vpImage<vpRGBa> &_vp_img){
-//#ifdef VISP_HAVE_OPENCV
-//		vpImageConvert::convert(_cv_img, _vp_img);
-//#else
+#ifdef VISP_HAVE_OPENCV
+		vpImageConvert::convert(_cv_img, _vp_img);
+#else
 		for(unsigned int row_id = 0; row_id < _cv_img.rows; ++row_id){
 			for(unsigned int col_id = 0; col_id < _cv_img.cols; ++col_id){				
 				cv::Vec3b cv_val = _cv_img.at<cv::Vec3b>(row_id, col_id);
-				vpRGBa vp_val(cv_val[0], cv_val[1], cv_val[2]);
+				vpRGBa vp_val(cv_val[2], cv_val[1], cv_val[0]);
 				_vp_img(row_id, col_id, vp_val);
 			}
 		}
-//#endif	
+#endif	
 	}
 #endif
 #ifndef DISABLE_XVISION

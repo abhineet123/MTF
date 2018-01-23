@@ -242,7 +242,7 @@ namespace utils{
 				input->convert(input->getFrame(), hover_image);
 				vpDisplay::getPointerMotionEvent(hover_image, hover_point);
 				if(_clicked_point_count > 0){
-					vpImagePoint min_point(new_obj.min_point.x, new_obj.min_point.y);
+					vpImagePoint min_point(new_obj.min_point.y, new_obj.min_point.x);
 					int hover_width = static_cast<int>(abs(hover_point.get_j() - new_obj.min_point.x));
 					int hover_height = static_cast<int>(abs(hover_point.get_i() - new_obj.min_point.y));
 					vpDisplay::displayRectangle(hover_image, min_point, hover_width, hover_height, 
