@@ -236,8 +236,10 @@ namespace utils{
 		vpImagePoint clicked_point, hover_point;
 		int _clicked_point_count = 0;
 		vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
-		while(_clicked_point_count < 2) {		
+		while(_clicked_point_count < 2) {	
 			while(!vpDisplay::getClick(hover_image, clicked_point, button, false)) {
+				if(!input->update()){ return false; }
+				input->convert(input->getFrame(), hover_image);
 				vpDisplay::getPointerMotionEvent(hover_image, hover_point);
 				if(_clicked_point_count > 0){
 					vpImagePoint min_point(new_obj.min_point.x, new_obj.min_point.y);
@@ -250,8 +252,7 @@ namespace utils{
 					vpDisplay::displayPoint(hover_image, hover_point, vpColor::red, line_thickness);
 					vpDisplay::flush(hover_image);
 				}
-				if(!input->update()){ return false; }
-				input->convert(input->getFrame(), hover_image);
+				vpDisplay::display(hover_image);
 			}
 			++_clicked_point_count;
 			if(_clicked_point_count == 1) {
