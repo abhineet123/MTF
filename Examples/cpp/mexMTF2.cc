@@ -116,6 +116,7 @@ struct ObjectSelectorThread{
 		obj_utils.getObj().corners.copyTo(corners);
 		cout << "ObjectSelectorThread :: corners: " << corners << "\n";
 	}
+	const cv::Mat& getCorners() const{ return corners; }
 private:
 	InputStructPtr input;
 	cv::Mat corners;
@@ -423,7 +424,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			init_corners = mtf::utils::getCorners(prhs[2]);
 		} else {
 			init_corners.create(2, 4, CV_64FC1);
-			boost::thread t = boost::thread{ ObjectSelectorThread(input, init_corners) };
+			ObjectSelectorThread obj_sel_thread(input, init_corners);
+				boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
 			try{
 				t.join();
 			} catch(boost::thread_interrupted) {
@@ -431,6 +433,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			}
 			if(init_corners.empty()) {
 				cout << "init_corners:\n" << init_corners << "\n";
+				cout << "obj_sel_thread.corners:\n" << obj_sel_thread.getCorners() << "\n";
 				mexErrMsgTxt("Initial corners could not be obtained\n");
 			}
 		}
