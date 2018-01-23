@@ -2,6 +2,14 @@
 #include "mtf/pipeline.h"
 #include "mtf/Utilities/miscUtils.h"
 #include "mtf/Utilities/mexUtils.h"
+#ifndef DISABLE_VISP
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayD3D.h>
+#endif
 
 #include <vector>
 #include <map>

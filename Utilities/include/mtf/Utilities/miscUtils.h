@@ -5,6 +5,7 @@
 
 #ifndef DISABLE_VISP
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpColor.h>
 #endif
 
 

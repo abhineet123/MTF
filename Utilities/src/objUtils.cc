@@ -10,6 +10,10 @@
 #endif
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp/vpDisplayOpenCV.h>
+#include <visp/vpDisplayGTK.h>
+#include <visp/vpDisplayGDI.h>
+#include <visp/vpDisplayD3D.h>
 #endif
 
 #include<iostream>
