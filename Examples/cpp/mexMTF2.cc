@@ -105,7 +105,8 @@ private:
 };
 
 struct ObjectSelectorThread{
-	ObjectSelectorThread(InputStructPtr &_input, cv::Mat &_corners) : input(_input), corners(_corners) {}
+	ObjectSelectorThread(InputStructPtr &_input, cv::Mat &_corners) : success(false), 
+		input(_input), corners(_corners) {}
 	void operator()(){
 		mtf::utils::ObjUtils obj_utils;
 #ifndef DISABLE_VISP
@@ -115,12 +116,14 @@ struct ObjectSelectorThread{
 					patch_size, line_thickness, write_objs, sel_quad_obj,
 					write_obj_fname.c_str())){
 					cout << "Object to be tracked could not be obtained.\n";
+					return;
 				}
 			} else {
 				if(!obj_utils.selectObjectsVP(input->getFrame(), 1,
 					patch_size, line_thickness, write_objs, sel_quad_obj,
 					write_obj_fname.c_str())){
 					cout << "Object to be tracked could not be obtained.\n";
+					return;
 				}
 			}
 			//if(!obj_utils.addRectObjectVP(input.get(), "Select an object",
@@ -152,9 +155,11 @@ struct ObjectSelectorThread{
 		}
 #endif
 		obj_utils.getObj().corners.copyTo(corners);
-		cout << "ObjectSelectorThread :: corners: " << corners << "\n";
+		success = true;
+		//cout << "ObjectSelectorThread :: corners: " << corners << "\n";
 	}
 	const cv::Mat& getCorners() const{ return corners; }
+	bool success;
 private:
 	InputStructPtr input;
 	cv::Mat corners;
@@ -166,9 +171,9 @@ struct TrackerThread{
 		tracker(_tracker), visualize(_visualize){
 		win_name = cv::format("mexMTF:: %d", id);
 		proc_win_name = cv::format("%s (Pre-processed)", win_name.c_str());
-		if(visualize) {
-			cout << "Visualization is enabled for tracker " << id << "\n";
-		}
+		//if(visualize) {
+		//	cout << "Visualization is enabled for tracker " << id << "\n";
+		//}
 		
 	}
 	void operator()(){
@@ -520,9 +525,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			} catch(boost::thread_interrupted) {
 				printf("Caught exception from object selector thread");
 			}
-			if(init_corners.empty()) {
-				cout << "init_corners:\n" << init_corners << "\n";
-				cout << "obj_sel_thread.corners:\n" << obj_sel_thread.getCorners() << "\n";
+			if(!obj_sel_thread.success) {
+				//cout << "init_corners:\n" << init_corners << "\n";
+				//cout << "obj_sel_thread.corners:\n" << obj_sel_thread.getCorners() << "\n";
 				mexErrMsgTxt("Initial corners could not be obtained\n");
 			}
 		}
