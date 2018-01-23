@@ -47,9 +47,6 @@ if ~success
     error('MTF input pipeline creation was unsuccessful');
 else
     fprintf('MTF input pipeline created successfully');
-    if n_frames > 0
-        fprintf(' with %d frames', n_frames);
-    end
     fprintf('\n');
 end
 
