@@ -133,6 +133,7 @@ struct ObjectSelectorThread{
 		} catch(const mtf::utils::Exception &err){
 			cout << cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
 				err.type(), err.what());
+			return;
 		}
 #else
 		try{
