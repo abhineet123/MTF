@@ -245,6 +245,7 @@ namespace utils{
 					int hover_height = static_cast<int>(abs(hover_point.get_j() - new_obj.min_point.y));
 					vpDisplay::displayRectangle(hover_image, min_point, hover_width, hover_height, 
 						vpColor::red, true, line_thickness);
+					vpDisplay::flush(hover_image);
 				}
 			}
 			++_clicked_point_count;
