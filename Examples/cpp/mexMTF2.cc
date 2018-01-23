@@ -310,7 +310,8 @@ bool createTracker(const cv::Mat &init_corners) {
 		return false;
 	}
 	if(!initializeTracker(tracker, pre_proc, input->getFrame(), init_corners)){
-		mexErrMsgTxt("Tracker initialization failed");
+		printf("Tracker initialization failed");
+		return false;
 	}
 	++_tracker_id;
 	trackers.insert(std::pair<int, TrackerStruct>(_tracker_id, 
@@ -422,19 +423,24 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			init_corners = mtf::utils::getCorners(prhs[2]);
 		} else {
 			ObjectSelectorThread obj_sel_thread(input);
-			boost::thread t(obj_sel_thread);
+			boost::thread t = boost::thread{ obj_sel_thread };
 			try{
 				t.join();
 			} catch(boost::thread_interrupted) {
 				printf("Caught exception from object selector thread");
 			}
 			init_corners = obj_sel_thread.getCorners();
-			if(init_corners.empty()) { return; }
+			if(init_corners.empty()) {
+				mexErrMsgTxt("Initial corners could not be obtained\n");
+			}
 		}
 
-		if(!createTracker(init_corners)){ return; }
-
-		if(nlhs > 1 && !getRegion(_tracker_id, plhs[1])){ return; }
+		if(!createTracker(init_corners)) {
+			mexErrMsgTxt("Tracker creation was unsuccessful corners\n");
+		}
+		if(nlhs > 1 && !getRegion(_tracker_id, plhs[1])) {
+			mexErrMsgTxt("Tracker region could not be obtained\n");
+		}
 
 		*ret_val = _tracker_id;
 		return;
