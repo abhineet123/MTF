@@ -448,6 +448,13 @@ namespace utils{
 				}
 				vpDisplay::flush(hover_image);
 				vpDisplay::display(hover_image);
+				char pressed_key;
+				if(vpDisplay::getKeyboardEvent(hover_image, &pressed_key, false)) {
+					if(pressed_key % 256 == 27){
+						vpDisplay::close(hover_image);
+						return false;
+					}
+				}
 			}
 			++_clicked_point_count;
 			if(_clicked_point_count == 1) {
@@ -540,6 +547,13 @@ namespace utils{
 				}
 				vpDisplay::flush(hover_image);
 				vpDisplay::display(hover_image);
+				char pressed_key;
+				if(vpDisplay::getKeyboardEvent(hover_image, &pressed_key, false)) {
+					if(pressed_key % 256 == 27){
+						vpDisplay::close(hover_image);
+						return false;
+					}
+				}
 			}
 			clicked_pts[_clicked_point_count] = hover_point;
 

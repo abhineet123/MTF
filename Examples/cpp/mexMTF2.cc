@@ -220,6 +220,12 @@ struct TrackerThread{
 					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), vpColor::red,
 						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
 					vpDisplay::display(disp_frame);
+					char pressed_key;
+					if(vpDisplay::getKeyboardEvent(disp_frame, &pressed_key, false)) {
+						if(pressed_key % 256 == 27){
+							break;
+						}
+					}
 #else
 					cv::Mat disp_frame = input->getFrame().clone();
 					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), cv::Scalar(0, 0, 255),
