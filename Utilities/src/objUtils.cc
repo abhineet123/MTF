@@ -230,12 +230,11 @@ namespace utils{
 		ObjStruct new_obj;
 		vpImage<vpRGBa> hover_image(static_cast<int>(input->getHeight()),
 			static_cast<int>(input->getWidth()));
-		vpImageConvert::convert(input->getFrame(), hover_image);
+		input->convert(input->getFrame(), hover_image);
 		display.init(hover_image, -1, -1, selection_window);
 		vpImagePoint clicked_point, hover_point;
 		int _clicked_point_count = 0;
-		while(_clicked_point_count < 2) {
-			vpImageConvert::convert(input->getFrame(), hover_image);			
+		while(_clicked_point_count < 2) {			
 			vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
 			while(!vpDisplay::getClick(hover_image, clicked_point, button, false)) {
 				vpDisplay::getPointerMotionEvent(hover_image, hover_point);
@@ -279,6 +278,7 @@ namespace utils{
 				break;
 			}
 			if(!input->update()){ return false; }
+			input->convert(input->getFrame(), hover_image);
 		}
 		new_obj.size_x = abs(new_obj.max_point.x - new_obj.min_point.x);
 		new_obj.size_y = abs(new_obj.max_point.y - new_obj.min_point.y);

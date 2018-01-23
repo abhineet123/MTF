@@ -78,6 +78,10 @@ namespace utils{
 		the image returned by getFrame is always read into the same memory location
 		*/
 		virtual bool constBuffer(){ return const_buffer; }
+#ifndef DISABLE_VISP
+		void convert(const vpImage<vpRGBa> &vp_img, cv::Mat &cv_img);
+		void convert(const cv::Mat &cv_img, vpImage<vpRGBa> &vp_img);
+#endif
 
 	protected:
 		int n_frames, img_width, img_height, n_channels, frame_id;
@@ -178,7 +182,6 @@ namespace utils{
 		typedef vpImage<vpRGBa> VPImgType;
 		VPImgType vp_img;
 		std::unique_ptr<vpFrameGrabber> cap_obj;
-		void convert(const VPImgType &vp_img, cv::Mat &cv_img);
 	};
 #endif
 #ifndef DISABLE_XVISION

@@ -774,7 +774,7 @@ namespace utils{
 		buffer_id = _buffer_id;
 		return true;
 	}
-	void InputVP::convert(const VPImgType &_vp_img, cv::Mat &_cv_img){
+	void InputBase::convert(const vpImage<vpRGBa> &_vp_img, cv::Mat &_cv_img){
 #ifdef VISP_HAVE_OPENCV
 		vpImageConvert::convert(_vp_img, _cv_img);
 #else
@@ -783,6 +783,19 @@ namespace utils{
 				vpRGBa vp_val = _vp_img(row_id, col_id);
 				_cv_img.at<cv::Vec3b>(row_id, col_id) = cv::Vec3b(vp_val.B, vp_val.G, vp_val.R);
 			}		
+		}
+#endif	
+	}
+	void InputBase::convert(const cv::Mat &_cv_img, vpImage<vpRGBa> &_vp_img){
+#ifdef VISP_HAVE_OPENCV
+		vpImageConvert::convert(_cv_img, _vp_img);
+#else
+		for(unsigned int row_id = 0; row_id < _cv_img.rows; ++row_id){
+			for(unsigned int col_id = 0; col_id < _cv_img.cols; ++col_id){				
+				cv::Vec3b cv_val = _cv_img.at<cv::Vec3b>(row_id, col_id);
+				vpRGBa vp_val(cv_val[0], cv_val[1], cv_val[2]);
+				_vp_img(row_id, col_id) = vp_val;
+			}
 		}
 #endif	
 	}
