@@ -1,7 +1,7 @@
 mexMTF
 ------
 
-mexMTF is the Matlab interface to MTF.\
+mexMTF is the Matlab interface to MTF.
 
 mexMTF commands are invoked using the MATLAB function [success, out1,
 out2, ...] = mexMTF('command',p1,p2,...) where p1, p2, ... are the
@@ -14,44 +14,20 @@ complete example of using it can be found in
 \~vis/ugrad\_vision\_w13/src/MTF/Examples/matlab/runMTF2.m (or runMTF.m
 for the single threaded version).
 
-Preliminaries: Setting your environment variables and path
-----------------------------------------------------------
-
--   Put this line in your .bashrc: \
-     source \~vis/ugrad\_vision\_w13/scripts/vision\_exports\
-     This will set up environment variables to access the MTF video and
-    tracking software.\
-     export MATLABPATH=\$MATLABPATH:\~vis/matlabdirs/ \
-     This will set up mexMTF path for matlab.
--   It can be useful to test the camera with the linux software
-    *coriander*. Start coriander in a shell: \
-     \$coriander \
-     Check that the camera name shows (e.g. "pyro" or "PtGrey
-    Grasshopper") shows. Click the services tab. Click receive then
-    display.\
-     **When done with coriander, exit it.** This will let other programs
-    use the camera (such as mexMTF).
-
 Using mexMTF to capture images:
 -------------------------------
 
 -   In a terminal type:\
-     \$ matlab\
+     \`$ matlab`\
      to start Matlab
 -   In Matlab, create an MTF input pipeline as: \
-     \>\>success = mexMTF2('init','pipeline v img\_source f vp\_fw\_res
-    640x480'); \
-     for "new" point-grey firewire cameras at 640 x 480 resolution \
+     `\>\>success = mexMTF2('init','pipeline v img\_source f vp\_fw\_res
+    640x480');` \
+     for firewire camera at 640 x 480 resolution \
      OR\
-     \>\>success = mexMTF2('init','pipeline c img\_source u'); \
+     `\>\>success = mexMTF2('init','pipeline c img\_source u');` \
      for USB webcams at 640 X 480 resolution assuming that no firewire
     cameras are attached.\
-    -   USB cameras have to be accessed using the OpenCV pipeline as the
-        V4L2 module required by the ViSP pipeline is not installed
-        correctly on lab machines. OpenCV pipeline does not allow
-        detailed manipulation of camera settings so this is the only
-        available mode.
-    -   
 
 -   For initialization of firewire cameras at other resolutions and
     adjusting other settings like ISO, FPS and colour format, please
@@ -63,16 +39,10 @@ Using mexMTF to capture images:
         these are supported by mexMTF too except that the latter are
         represented by a single optional string argument into which all
         pairs have been combined (as shown above).
-    -   Note that the FlyCapture SDK based ViSP Point Grey firewire
-        pipeline ( img\_source p ) does not work on lab machines so its
-        corresponding parameters for setting camera shutter speed (
-        vp\_pg\_fw\_shutter\_ms ), exposure ( vp\_pg\_fw\_exposure ),
-        gain ( vp\_pg\_fw\_gain ) and brightness (
-        vp\_pg\_fw\_brightness ) are not available either.
 -   Update pipeline, capture an image and show it: \
-     \>\>[success, im] = mexMTF2('get\_frame');\
-     \>\>figure\
-     \>\>imshow(im);\
+     `\>\>[success, im] = mexMTF2('get\_frame');`\
+     `\>\>figure`\
+     `\>\>imshow(im);`\
 
 Using mexMTF to track objects:
 ------------------------------
