@@ -27,7 +27,7 @@ Using mexMTF to capture images:
      OR\
      `>>success = mexMTF2('init','pipeline c img_source u');` \
      for USB webcams at 640 X 480 resolution assuming that no firewire
-    cameras are attached.\
+    cameras are attached.
 
 -   For initialization of firewire cameras at other resolutions and
     adjusting other settings like ISO, FPS and colour format, please
