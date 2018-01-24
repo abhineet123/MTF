@@ -18,14 +18,14 @@ Using mexMTF to capture images:
 -------------------------------
 
 -   In a terminal type:\
-     \`$ matlab`\
+     `matlab`\
      to start Matlab
 -   In Matlab, create an MTF input pipeline as: \
-     `\>\>success = mexMTF2('init','pipeline v img\_source f vp\_fw\_res
+     `>>success = mexMTF2('init','pipeline v img_source f vp_fw_res
     640x480');` \
      for firewire camera at 640 x 480 resolution \
      OR\
-     `\>\>success = mexMTF2('init','pipeline c img\_source u');` \
+     `>>success = mexMTF2('init','pipeline c img_source u');` \
      for USB webcams at 640 X 480 resolution assuming that no firewire
     cameras are attached.\
 
@@ -40,43 +40,43 @@ Using mexMTF to capture images:
         represented by a single optional string argument into which all
         pairs have been combined (as shown above).
 -   Update pipeline, capture an image and show it: \
-     `\>\>[success, im] = mexMTF2('get\_frame');`\
-     `\>\>figure`\
-     `\>\>imshow(im);`\
+     `>>[success, im] = mexMTF2('get_frame');`\
+     `>>figure`\
+     `>>imshow(im);`\
 
 Using mexMTF to track objects:
 ------------------------------
 
 -   Create a tracker using:\
-     \>\>tracker\_id = mexMTF2('create\_tracker','mtf\_sm esm mtf\_am
-    ssd mtf\_ssm 2', init\_location); \
+     `>>tracker_id = mexMTF2('create_tracker','mtf_sm esm mtf_am
+    ssd mtf_ssm 2', init_location);` \
     -   This will create a tracker based on Efficient Second-order
         Minimization (ESM) search method, Sum of Squared Differences
         (SSD) appearance model and translation (2 DOF) state space
         model.
     -   For other types of trackers supported by MTF, refer to the
-        documentation for mtf\_sm, mtf\_am and mtf\_ssm on [its
+        documentation for `mtf_sm`, `mtf_am` and `mtf_ssm` on [its
         configuration
         page](http://webdocs.cs.ualberta.ca/~vis/mtf/params.html)
-    -   tracker\_id will be 0 if tracker creation was unsuccessful so it
+    -   `tracker_id` will be 0 if tracker creation was unsuccessful so it
         doubles as the success flag. An error message may also be
         produced.
-    -   init\_location is either a 1x4 or 2x4 matrix. In the former
+    -   `init_location` is either a 1x4 or 2x4 matrix. In the former
         case, it specifies a rectangle as [x, y, width, height] where
         (x, y) are the coordinates of the top left corner of the
         rectangle. In the latter case, it specifies an arbitrary
         quadrilateral whose x, y coordinates are arranged as: [top left,
         top right, bottom left and bottom right] such that the x and y
         coordinates are in the first and second row respectively.
-    -   If init\_location is omitted, the user will be asked to select
+    -   If `init_location` is omitted, the user will be asked to select
         the initial object location interactively.
 -   Update tracker and obtain the current location of the tracked
     object:\
-     \>\>[success, corners] = mexMTF2('get\_region', tracker\_id); \
+     `>>[success, corners] = mexMTF2('get_region', tracker_id);` \
      Depending on the tracker settings, the raw RGB image obtained from
     the input pipeline might need to be converted to grayscale before
     passing it to the tracker.
 -   Remove a tracker:\
-     \>\>success = mexMTF2('remove\_tracker', tracker\_id);
+     `>>success = mexMTF2('remove_tracker', tracker_id);`
 -   Delete all pipelines and trackers:\
-     \>\>success = mexMTF2('quit'); \
+     `>>success = mexMTF2('quit');` \
