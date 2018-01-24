@@ -42,7 +42,7 @@ Using mexMTF to capture images:
 -   Update pipeline, capture an image and show it: \
      `>>[success, im] = mexMTF2('get_frame');`\
      `>>figure`\
-     `>>imshow(im);`\
+     `>>imshow(im);`
 
 Using mexMTF to track objects:
 ------------------------------
