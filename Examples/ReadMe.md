@@ -3,16 +3,15 @@ mexMTF
 
 mexMTF is the Matlab interface to MTF.
 
-mexMTF commands are invoked using the MATLAB function [success, out1,
-out2, ...] = mexMTF('command',p1,p2,...) where p1, p2, ... are the
-parameters required for the command and out1, out2, ... are the outputs
-produced, if any. The first output success is a flag that indicates
+mexMTF commands are invoked using the MATLAB function `[success, out1,
+out2, ...] = mexMTF('command',p1,p2,...)` where `p1, p2, ...` are the
+parameters required for the command and `out1, out2, ...` are the outputs
+produced, if any. The first output `success` is a flag that indicates
 whether or not the command invocation was successful. \
  mexMTF has both single and multi threaded versions where the latter,
-called mexMTF2, is recommended as being faster and more stable. A
+called `mexMTF2`, is recommended as being faster and more stable. A
 complete example of using it can be found in
-\~vis/ugrad\_vision\_w13/src/MTF/Examples/matlab/runMTF2.m (or runMTF.m
-for the single threaded version).
+`matlab/runMTF2.m` (or `runMTF.m` for the single threaded version).
 
 Using mexMTF to capture images:
 -------------------------------
