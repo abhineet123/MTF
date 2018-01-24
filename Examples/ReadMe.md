@@ -49,7 +49,7 @@ Using mexMTF to track objects:
 
 -   Create a tracker using:\
      `>>tracker_id = mexMTF2('create_tracker','mtf_sm esm mtf_am
-    ssd mtf_ssm 2', init_location);` \
+    ssd mtf_ssm 2', init_location);`
     -   This will create a tracker based on Efficient Second-order
         Minimization (ESM) search method, Sum of Squared Differences
         (SSD) appearance model and translation (2 DOF) state space
@@ -79,4 +79,4 @@ Using mexMTF to track objects:
 -   Remove a tracker:\
      `>>success = mexMTF2('remove_tracker', tracker_id);`
 -   Delete all pipelines and trackers:\
-     `>>success = mexMTF2('quit');` \
+     `>>success = mexMTF2('quit');`
