@@ -26,7 +26,8 @@ Using mexMTF to capture images:
      OR\
      `>>success = mexMTF2('init','pipeline c img_source u');` \
      for USB webcams at 640 X 480 resolution assuming that no firewire
-    cameras are attached.
+    cameras are attached.<br>
+	This command only needs to be run once at the beginning of each Matlab session.
 
 -   For initialization of firewire cameras at other resolutions and
     adjusting other settings like ISO, FPS and colour format, please
@@ -65,7 +66,7 @@ Using mexMTF to track objects:
         (x, y) are the coordinates of the top left corner of the
         rectangle. In the latter case, it specifies an arbitrary
         quadrilateral whose x, y coordinates are arranged as: [top left,
-        top right, bottom left and bottom right] such that the x and y
+        top right, bottom left, bottom right] such that the x and y
         coordinates are in the first and second row respectively.
     -   If `init_location` is omitted, the user will be asked to select
         the initial object location interactively.
