@@ -3033,6 +3033,44 @@ Kernelized Correlation Filter (KCF) Tracker:
 			
 	 Additional References:
 		J. F. Henriques, R. Caseiro, P. Martins, and J. Batista, “High-speed tracking with kernelized correlation fiters,” IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 37, no. 3, pp. 583–596, 2015
+
+Structured Output Tracking with Kernels (Struck) Tracker:
+=========================================================
+	 Parameter:	'strk_config_path'
+		Description:
+			path of the cfg file containing Struck parameters (typically Config/thirdparty.cfg)
+			
+	 Parameter:	'strk_frameWidth'/'strk_frameHeight'
+		Description:
+			frame size for use during tracking; the input image is scaled to this size.		
+			
+	 Parameter:	'strk_seed'
+		Description:
+			seed for random number generator.
+			
+	 Parameter:	'strk_searchRadius'
+		Description:
+			tracker search radius in pixels.
+			
+	 Parameter:	'strk_svmC'
+		Description:
+			SVM regularization parameter.			
+			
+	 Parameter:	'strk_svmBudgetSize'
+		Description:
+			SVM budget size (0 = no budget).
+			
+	 Parameter:	'strk_feature'
+		Description:
+			image features to use; specified in the format: strk_feature kernel [kernel-params] 
+			where: 
+			feature = haar/raw/histogram 
+			kernel = gaussian/linear/intersection/chi2
+			or kernel=gaussian, kernel-params is sigma; 
+			multiple features can also be specified and will be combined
+			
+	 Additional References:
+		Sam Hare, Amir Saffari, Philip H. S. Torr, “Struck: Structured Output Tracking with Kernels,” International Conference on Computer Vision (ICCV), 2011
 		
 Xvision Trackers:
 =================		
