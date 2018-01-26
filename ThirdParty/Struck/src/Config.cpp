@@ -59,8 +59,7 @@ namespace struck{
 			else if(name == "strk_sequenceBasePath") iss >> sequenceBasePath;
 			else if(name == "strk_sequenceName") iss >> sequenceName;
 			else if(name == "strk_resultsPath") iss >> resultsPath;
-			else if(name == "strk_frameWidth") iss >> frameWidth;
-			else if(name == "strk_frameHeight") iss >> frameHeight;
+			else if(name == "strk_resize_factor") iss >> resize_factor;
 			else if(name == "strk_seed") iss >> seed;
 			else if(name == "strk_searchRadius") iss >> searchRadius;
 			else if(name == "strk_svmC") iss >> svmC;
@@ -115,8 +114,7 @@ namespace struck{
 		sequenceName = "";
 		resultsPath = "";
 
-		frameWidth = 320;
-		frameHeight = 240;
+		resize_factor = 1.0;
 
 		seed = 0;
 		searchRadius = 30;
@@ -166,8 +164,7 @@ namespace struck{
 		out << "  sequenceBasePath   = " << conf.sequenceBasePath << endl;
 		out << "  sequenceName       = " << conf.sequenceName << endl;
 		out << "  resultsPath        = " << conf.resultsPath << endl;
-		out << "  frameWidth         = " << conf.frameWidth << endl;
-		out << "  frameHeight        = " << conf.frameHeight << endl;
+		out << "  resize_factor         = " << conf.resize_factor << endl;
 		out << "  seed               = " << conf.seed << endl;
 		out << "  searchRadius       = " << conf.searchRadius << endl;
 		out << "  svmC               = " << conf.svmC << endl;

@@ -69,8 +69,7 @@ namespace struck{
 		std::string						sequenceName;
 		std::string						resultsPath;
 
-		int								frameWidth;
-		int								frameHeight;
+		double							resize_factor;
 
 		int								seed;
 		int								searchRadius;

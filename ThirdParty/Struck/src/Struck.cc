@@ -21,11 +21,10 @@ namespace struck{
 		name = "struck";
 		printf("Using Struck tracker with:\n");
 		std::cout << conf;
+		scaleW = scaleH = conf.resize_factor;
 	}
 	void Struck::setImage(const cv::Mat &img){
-		curr_img = img;
-		scaleW = (float)conf.frameWidth / curr_img.cols;
-		scaleH = (float)conf.frameHeight / curr_img.rows;
+		curr_img = img;		
 	}
 	void Struck::initialize(const cv::Mat& corners){
 		//double pos_x = corners.at<double>(0, 0);
@@ -35,7 +34,7 @@ namespace struck{
 		//double size_y = ((corners.at<double>(1, 3) - corners.at<double>(1, 0)) +
 		//	(corners.at<double>(1, 2) - corners.at<double>(1, 1))) / 2;
 
-		cv::resize(curr_img, curr_img_resized, cv::Size(conf.frameWidth, conf.frameHeight));
+		cv::resize(curr_img, curr_img_resized, cv::Size(0, 0), scaleW, scaleH);
 
 		cv::Rect_<float> best_fit_rect = mtf::utils::getBestFitRectangle<float>(corners,
 			curr_img.cols, curr_img.rows);
@@ -59,7 +58,7 @@ namespace struck{
 		cv_corners_mat.at<double>(1, 2) = cv_corners_mat.at<double>(1, 3) = y_min + height;
 	}
 	void Struck::update(){
-		cv::resize(curr_img, curr_img_resized, cv::Size(conf.frameWidth, conf.frameHeight));
+		cv::resize(curr_img, curr_img_resized, cv::Size(0, 0), scaleW, scaleH);
 		tracker.Track(curr_img_resized);
 		updateCVCorners();
 	}
