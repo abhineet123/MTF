@@ -3040,9 +3040,9 @@ Structured Output Tracking with Kernels (Struck) Tracker:
 		Description:
 			path of the cfg file containing Struck parameters (typically Config/thirdparty.cfg)
 			
-	 Parameter:	'strk_frameWidth'/'strk_frameHeight'
+	 Parameter:	'strk_resize_factor'
 		Description:
-			frame size for use during tracking; the input image is scaled to this size.		
+			multiplicative factor by which the input image is scaled before being used for tracking.		
 			
 	 Parameter:	'strk_seed'
 		Description:
