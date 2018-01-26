@@ -189,7 +189,7 @@ Compile/Runtime Notes:
 * if a runtime error like `cannot find libmtf` or something similar is encountered while running `runMTF`, _/usr/local/lib_ should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables as above (assuming the default MTF installation directory has not been changed - otherwise the new path should be used instead).
 * if a compile time error similar to this occurs: `/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h:233:98: error: no matching function for call to ‘Eigen::internal::blas_traits`, please update Eigen to the latest version;
 * ViSP cmake system has a bug in Ubuntu 16.04 so if a cmake error of type `Found ViSP for Windows but it has no binaries compatible with your
-  configuration. You should manually point CMake variable VISP_DIR to your build of ViSP library.` occurs, add `-DVISP_DIR=<path to ViSP build folder>` to the cmake command and rerun after cleaning up the existing cmake files
+  configuration. You should manually point CMake variable VISP_DIR to your build of ViSP library.` occurs, add `-DVISP_DIR=<path to ViSP build folder>` to the cmake command and rerun after removing the existing cmake files
 * **Using MTF on Macintosh Systems**
 	* if make build system is used, some third party modules might not compile successfully if cmake uses clang instead of gcc as the default compiler; in such cases compiling with `lt=0` to disable all third party modules is the best option.
     * if cmake build system is used, then following commands must be run so that cmake uses gcc during compilation:  
