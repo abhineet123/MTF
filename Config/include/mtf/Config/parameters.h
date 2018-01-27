@@ -949,8 +949,8 @@ namespace mtf{
 		//! pyMTF
 		int py_visualize = 0;
 		//! mexMTF
-		int mex_visualize = 0;
-		int mex_live_init = 0;
+		int mex_visualize = 1;
+		int mex_live_init = 1;
 
 		inline void split(const std::string &s, char delim, std::vector<std::string> &elems) {
 			stringstream ss(s);
