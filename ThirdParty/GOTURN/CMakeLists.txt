@@ -47,7 +47,7 @@ src/tracker/tracker_manager.cpp
 src/train/tracker_trainer.cpp
 src/loader/video.cpp
 src/loader/video_loader.cpp
-src/native/vot.cpp
+# src/native/vot.cpp
 )
 
 if(WIN32)
