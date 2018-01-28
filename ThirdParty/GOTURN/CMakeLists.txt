@@ -6,7 +6,7 @@ if (NOT CMAKE_BUILD_TYPE)
     message(STATUS "No build type selected, default to ${CMAKE_BUILD_TYPE}")
 endif()
 
-include("${CMAKE_SOURCE_DIR}/../../cmake/mtfUtils.cmake")
+# include("${CMAKE_SOURCE_DIR}/../cmake/mtfUtils.cmake")
 
 set(GOTURN_LIB_NAME goturn CACHE STRING "GOTURN_GOTURN_LIB_NAME")
 set(GOTURN_LIB_DEFS  CACHE STRING "GOTURN_LIB_DEFINITIONS")
