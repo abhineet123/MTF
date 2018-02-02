@@ -290,8 +290,8 @@ int main(int argc, char * argv[]) {
 	if(write_tracking_data){
 		string tracking_data_dir, tracking_data_path;
 		if(tracking_data_fname.empty()){
-			tracking_data_fname = cv::format("%s_%s_%s_%d_%ld", mtf_sm, mtf_am, mtf_ssm,
-				1 - hom_normalized_init, time(nullptr));
+			tracking_data_fname = cv::format("%s_%s_%s_%s", mtf_sm, mtf_am, mtf_ssm,
+				mtf::utils::getDateTime().c_str());
 		} else{
 			//! externally specified tracking_data_fname is assumed to indicate batch mode 
 			//! where if overwrite_gt is enabled, it is so by accident

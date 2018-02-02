@@ -16,7 +16,7 @@
 #ifdef _WIN32
 #include <sstream>
 #endif
-
+#include <ctime>
 
 #define mat_to_pt(vert, id) cv::Point2d(vert.at<double>(0, id), vert.at<double>(1, id))
 #define eig_to_pt(vert, id) cv::Point2d(vert(0, id), vert(1, id))
@@ -613,6 +613,17 @@ namespace utils{
 			}
 		}
 		return stacked_img;
+	}
+	std::string getDateTime() {
+		time_t rawtime;
+		struct tm * timeinfo;
+		char buffer[80];
+
+		time(&rawtime);
+		timeinfo = localtime(&rawtime);
+
+		strftime(buffer, sizeof(buffer), "%Y%m%d_%H%M%S", timeinfo);
+		return std::string(buffer);
 	}
 }
 
