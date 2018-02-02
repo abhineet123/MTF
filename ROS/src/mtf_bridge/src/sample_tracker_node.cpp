@@ -15,7 +15,7 @@
 #include <Eigen/Core>
 
 // Modular Tracking Framework
-#include <mtf/mtf.h>
+#include "mtf/mtf.h"
 #include "mtf/Utilities/miscUtils.h"
 
 #include "mtf/pipeline.h"

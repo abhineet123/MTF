@@ -11,7 +11,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Mo
 
 if(NOT WITH_TEMPLATED)
 message(STATUS "Templated implementations of SMs are disabled")
-set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DENABLE_ONLY_NT  -DDISABLE_NN)
+set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DENABLE_ONLY_NT  -DDISABLE_FLANN)
 else()
 find_package(FLANN)
 find_package(HDF5)
@@ -19,7 +19,7 @@ if(FLANN_FOUND AND HDF5_FOUND)
 set(MTF_LIBS ${MTF_LIBS} ${FLANN_LIBS} ${HDF5_LIBRARIES})
 else()
 message(STATUS "FLANN/HDF5 library not found so the templated version NN search method has been disabled")
-set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DDISABLE_NN)
+set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DDISABLE_FLANN)
 endif()
 endif()
 
@@ -55,8 +55,9 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(Eigen REQUIRED)
+find_package(Boost REQUIRED COMPONENTS random filesystem system)
 
-set(MTF_LIBS mtf ${OpenCV_LIBRARIES})
+set(MTF_LIBS mtf ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
 
 ################################################
 ## Declare ROS messages, services and actions ##
