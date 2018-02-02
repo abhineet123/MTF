@@ -622,7 +622,7 @@ namespace utils{
 		time(&rawtime);
 		timeinfo = localtime(&rawtime);
 
-		strftime(buffer, sizeof(buffer), "%Y%m%d_%H%M%S", timeinfo);
+		strftime(buffer, sizeof(buffer), "%y%m%d_%H%M%S", timeinfo);
 		return std::string(buffer);
 	}
 }
