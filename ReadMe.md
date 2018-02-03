@@ -249,7 +249,7 @@ There are two ways to use this file:
 This can be done, for instance, as:  
 `cmake .. -DMTF_DIR=<path to MTF build folder>`
 
-* The `mtfConfig.cmake` file is copied into the project tree and included in the _CMakeLists.txt_ file. Then, the defined variables can be used to obtain the header files, linked libraries and compile time definitions. More details can be found in the comments section of issue #11.
+* The `mtfConfig.cmake` file can be copied into the project tree and included in the _CMakeLists.txt_ file. Then, the defined variables can be used to obtain the header files, linked libraries and compile time definitions. More details can be found in the comments section of issue #11.
 
 An example _CMakeLists.txt_ file for a standalone project that uses either of the above methods is included in _cmake/CMakeLists.txt.example_.
 
