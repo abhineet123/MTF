@@ -54,10 +54,11 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_modules
 )
 
+find_package(MTF REQUIRED)
 find_package(Eigen REQUIRED)
 find_package(Boost REQUIRED COMPONENTS random filesystem system)
 
-set(MTF_LIBS mtf ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
+set(MTF_LIBS ${MTF_LIBRARIES} ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -126,8 +127,10 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${MTF_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${EIGEN_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
   /usr/include
   /usr/local/include  
 )

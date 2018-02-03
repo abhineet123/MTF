@@ -9,13 +9,20 @@
 # If FLANN_USE_STATIC is specified and then look for static libraries ONLY else
 # look for shared ones
 
+if(WIN32)
+	set(FLANN_BASE_NAME flann)
+else()
+	set(FLANN_BASE_NAME flann_cpp)
+endif() 
 if(FLANN_USE_STATIC)
-  set(FLANN_RELEASE_NAME flann_cpp_s)
-  set(FLANN_DEBUG_NAME flann_cpp_s-gd)
+  set(FLANN_RELEASE_NAME ${FLANN_BASE_NAME}_s)
+  set(FLANN_DEBUG_NAME ${FLANN_BASE_NAME}_s-gd)
 else(FLANN_USE_STATIC)
-  set(FLANN_RELEASE_NAME flann_cpp)
-  set(FLANN_DEBUG_NAME flann_cpp-gd)
+  set(FLANN_RELEASE_NAME ${FLANN_BASE_NAME})
+  set(FLANN_DEBUG_NAME ${FLANN_BASE_NAME}-gd)
 endif(FLANN_USE_STATIC)
+
+
 
 find_package(PkgConfig QUIET)
 if (FLANN_FIND_VERSION)
@@ -25,7 +32,7 @@ else(FLANN_FIND_VERSION)
 endif(FLANN_FIND_VERSION)
 
 set(FLANN_DEFINITIONS ${PC_FLANN_CFLAGS_OTHER})
-
+message(STATUS "FLANN_ROOT: " "$ENV{FLANN_ROOT}")
 find_path(FLANN_INCLUDE_DIR flann/flann.hpp
           HINTS ${PC_FLANN_INCLUDEDIR} ${PC_FLANN_INCLUDE_DIRS} "${FLANN_ROOT}" "$ENV{FLANN_ROOT}"
           PATHS "$ENV{PROGRAMFILES}/Flann" "$ENV{PROGRAMW6432}/Flann" 
