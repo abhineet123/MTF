@@ -39,3 +39,4 @@ ThirdParty/FRG/Build/
 ThirdParty/DFT/src/ISMAR_Demo/DFTDemo
 ThirdParty/DFT/src/*.o
 Examples/python/*.txt
+ROS/src/mtf_bridge/cmake/mtfConfig.cmake
