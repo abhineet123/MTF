@@ -121,7 +121,7 @@ catkin_package(
 ## Build ##
 ###########
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${MTF_CXX_FLAGS})
+# set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${MTF_CXX_FLAGS})
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
@@ -146,6 +146,10 @@ add_library(SharedImageReader src/SharedImageReader.cpp)
 add_dependencies(SharedImageReader ${catkin_EXPORTED_TARGETS})
 
 add_executable(sample_tracker_node src/sample_tracker_node.cpp)
+target_compile_definitions(sample_tracker_node PUBLIC ${MTF_DEFINITIONS})
+target_compile_options(sample_tracker_node PUBLIC ${MTF_CXX_FLAGS})
+# set_target_properties(sample_tracker_node PROPERTIES COMPILE_FLAGS ${MTF_RUNTIME_FLAGS}) 
+
 add_executable(SharedImageWriter src/SharedImageWriter.cpp)
 
 target_link_libraries(SharedImageReader
@@ -169,8 +173,3 @@ message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 message(STATUS "MTF_CXX_FLAGS: ${MTF_CXX_FLAGS}")
 message(STATUS "MTF_INCLUDE_DIRS: ${MTF_INCLUDE_DIRS}")
 message(STATUS "MTF_LIBRARIES: ${MTF_LIBRARIES}")
-
-target_compile_definitions(sample_tracker_node PUBLIC ${MTF_DEFINITIONS})
-# target_compile_options(sample_tracker_node PUBLIC ${MTF_CXX_FLAGS})
-
-# set_target_properties(sample_tracker_node PROPERTIES COMPILE_FLAGS ${MTF_RUNTIME_FLAGS}) 
