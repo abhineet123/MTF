@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(mtf_bridge)
 
-option(WITH_TEMPLATED "Enable templated implementations of search methods (faster at runtime but take much longer to compile)" OFF)
+option(WITH_TEMPLATED "Enable templated implementations of search methods (faster at runtime but take much longer to compile)" ON)
 option(WITH_THIRD_PARTY "Enable Third Party Trackers" ON)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
