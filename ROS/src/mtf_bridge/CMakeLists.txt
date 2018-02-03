@@ -4,8 +4,6 @@ project(mtf_bridge)
 # option(WITH_TEMPLATED "Enable templated implementations of search methods (faster at runtime but take much longer to compile)" ON)
 # option(WITH_THIRD_PARTY "Enable Third Party Trackers" ON)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
-
 # set(MTF_RUNTIME_FLAGS -Wfatal-errors -Wno-write-strings -O3 -DDISABLE_XVISION -DDISABLE_PFSL3 -DDISABLE_GOTURN -DDISABLE_GRID_FEAT -DDISABLE_REGNET -DDISABLE_DFM) 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/mtfConfig.cmake")
@@ -55,7 +53,7 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_modules
 )
 
-find_package(MTF REQUIRED)
+# find_package(MTF REQUIRED)
 # find_package(Eigen REQUIRED)
 # find_package(Boost REQUIRED COMPONENTS random filesystem system)
 
@@ -123,6 +121,8 @@ catkin_package(
 ## Build ##
 ###########
 
+set(CMAKE_CXX_FLAGS "${MTF_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
@@ -170,6 +170,6 @@ message(STATUS "MTF_INCLUDE_DIRS: ${MTF_INCLUDE_DIRS}")
 message(STATUS "MTF_LIBRARIES: ${MTF_LIBRARIES}")
 
 target_compile_definitions(sample_tracker_node PUBLIC ${MTF_DEFINITIONS})
-target_compile_options(sample_tracker_node PUBLIC ${MTF_CXX_FLAGS})
+# target_compile_options(sample_tracker_node PUBLIC ${MTF_CXX_FLAGS})
 
 # set_target_properties(sample_tracker_node PROPERTIES COMPILE_FLAGS ${MTF_RUNTIME_FLAGS}) 
