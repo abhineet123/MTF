@@ -240,13 +240,20 @@ A simple ROS package called `mtf_bridge` that demonstrates the integration of MT
 
 Building a new application that uses MTF:
 -----------------------------------------
-
 cmake
 -----
-The build process generates a `mtfConfig.cmake` file in the build folder with the main defines. This file should be  copied into the project tree and included in the CMakeLists.txt file. Then, the defined variables can be used to obtain the header files, linked libraries and compile time definitions. An example CMakeLists.txt file for a standalone project that uses the generated config file is included in `cmake/CMakeLists.txt.example`.
-More details can be found in the comments section of issue #11.
+The build process generates a `mtfConfig.cmake` file in the build folder with the main defines.
+There are two ways to use this file:
 
-If this method does not work, a manually created `FindMTF.cmake` file is also included in the `cmake/Modules` folder. It has not been widely tested but should work with most standard configurations.
+* The standard `find_package` command can be used but this requires `MTF_DIR` variable to be set to the MTF build folder while running the cmake command.
+This can be done, for instance, as: 
+`cmake .. -DMTF_DIR=<path to MTF build folder>`
+
+* The `mtfConfig.cmake` file is copied into the project tree and included in the _CMakeLists.txt_ file. Then, the defined variables can be used to obtain the header files, linked libraries and compile time definitions. More details can be found in the comments section of issue #11.
+
+An example _CMakeLists.txt_ file for a standalone project that uses either of the above methods is included in _cmake/CMakeLists.txt.example_.
+
+If neither of the above methods work, a manually created `FindMTF.cmake` file is also included in the `cmake/Modules` folder. It has not been widely tested but should work with most standard configurations.
 
 make
 ----
