@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(mtf_bridge)
 
 # option(WITH_TEMPLATED "Enable templated implementations of search methods (faster at runtime but take much longer to compile)" ON)
-# option(WITH_THIRD_PARTY "Enable Third Party Trackers" ON)
+option(WITH_THIRD_PARTY "Enable Third Party Trackers" ON)
 
 # set(MTF_RUNTIME_FLAGS -Wfatal-errors -Wno-write-strings -O3 -DDISABLE_XVISION -DDISABLE_PFSL3 -DDISABLE_GOTURN -DDISABLE_GRID_FEAT -DDISABLE_REGNET -DDISABLE_DFM) 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
