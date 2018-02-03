@@ -20,6 +20,10 @@
 
 #include "mtf/pipeline.h"
 
+using namespace mtf;
+using namespace mtf::params;
+using namespace mtf::utils;
+
 typedef std::unique_ptr<mtf::TrackerBase> Tracker_;
 
 int const rate = 30;
