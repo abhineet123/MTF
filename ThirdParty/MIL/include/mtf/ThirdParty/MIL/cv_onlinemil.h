@@ -57,7 +57,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
 
-namespace cv
+namespace mtf
 {
   namespace mil
   {

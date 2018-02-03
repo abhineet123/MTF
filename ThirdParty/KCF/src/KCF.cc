@@ -4,15 +4,17 @@
  */
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include "mtf/ThirdParty/KCF/KCF.h"
 #include <iostream>
 #include "stdio.h"
-#include "mtf/ThirdParty/DSST//HOG.h"
 #include <fstream>
 #include <iomanip>
-#include "mtf/ThirdParty/KCF/defines.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
+#include "mtf/ThirdParty/KCF/KCF.h"
+#include "mtf/ThirdParty/KCF/defines.h"
+#include "mtf/ThirdParty/DSST//HOG.h"
+
 #include "mtf/Utilities/miscUtils.h"
 
 #define KCF_PADDING 1

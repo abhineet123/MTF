@@ -49,7 +49,7 @@
 #include "cv_onlinemil.h"
 //#include "cv_linemod.h"
 
-namespace cv
+namespace mtf
 {
 
   // Various parameters used by the ObjectTracker class.  This may also

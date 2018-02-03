@@ -2,7 +2,7 @@
 #include "mtf/Utilities/miscUtils.h"
 #include "mtf/Utilities/excpUtils.h"
 
-#define MIL_ALGORITHM cv::MILTrackerParams::CV_ONLINEMIL
+#define MIL_ALGORITHM mtf::MILTrackerParams::CV_ONLINEMIL
 #define MIL_NUM_CLASSIFIERS 100
 #define MIL_OVERLAP 0.99f
 #define MIL_SEARCH_FACTOR 2.0f

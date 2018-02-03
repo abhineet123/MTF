@@ -90,7 +90,7 @@ int
 main(int argc, char** argv)
 {
   // Setup the parameters to use OnlineBoosting or MILTrack as the underlying tracking algorithm
-  cv::ObjectTrackerParams params;
+	mtf::MILTrackerParams params;
 #if 0
   params.algorithm_ = cv::ObjectTrackerParams::CV_ONLINEBOOSTING;
   //params.algorithm_ = cv::ObjectTrackerParams::CV_SEMIONLINEBOOSTING;
@@ -98,13 +98,13 @@ main(int argc, char** argv)
   params.overlap_ = 0.99f;
   params.search_factor_ = 2;
 #else
-  params.algorithm_ = cv::ObjectTrackerParams::CV_ONLINEMIL;
+	params.algorithm_ = mtf::MILTrackerParams::CV_ONLINEMIL;
   params.num_classifiers_ = 50;
   params.num_features_ = 250;
 #endif
 
   // Instantiate an object tracker
-  cv::MILTracker tracker(params);
+  mtf::MILTracker tracker(params);
 
   // Read in a sequence of images from disk as the video source
   const char* directory = "/home/abhineet/E/UofA/Thesis/Code/Datasets/TMT";

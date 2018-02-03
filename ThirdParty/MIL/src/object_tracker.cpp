@@ -45,7 +45,7 @@
 
 #include "mtf/ThirdParty/MIL/object_tracker.h"
 
-namespace cv
+namespace mtf
 {
 
 	//---------------------------------------------------------------------------

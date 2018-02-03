@@ -68,7 +68,7 @@ compute_integral(const cv::Mat & img, std::vector<cv::Mat_<float> > & ii_imgs)
   cv::split(ii_img, ii_imgs);
 }
 
-namespace cv
+namespace mtf
 {
   namespace mil
   {
