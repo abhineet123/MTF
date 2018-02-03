@@ -8,6 +8,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 # set(MTF_RUNTIME_FLAGS -Wfatal-errors -Wno-write-strings -O3 -DDISABLE_XVISION -DDISABLE_PFSL3 -DDISABLE_GOTURN -DDISABLE_GRID_FEAT -DDISABLE_REGNET -DDISABLE_DFM) 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/")
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/mtfConfig.cmake")
 
 # if(NOT WITH_TEMPLATED)
 # message(STATUS "Templated implementations of SMs are disabled")
@@ -164,7 +165,8 @@ target_link_libraries(sample_tracker_node
 add_dependencies(SharedImageReader ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
 add_dependencies(SharedImageWriter ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
 add_dependencies(sample_tracker_node ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
-
-target_compile_options(sample_tracker_node PUBLIC ${MTF_DEFINITIONS})
+message(STATUS "MTF_DEFINITIONS: ${MTF_DEFINITIONS}")
+message(STATUS "MTF_DEFS: ${MTF_DEFS}")
+target_compile_options(sample_tracker_node PUBLIC ${MTF_DEFINITIONS} ${MTF_DEFS})
 
 # set_target_properties(sample_tracker_node PROPERTIES COMPILE_FLAGS ${MTF_RUNTIME_FLAGS}) 
