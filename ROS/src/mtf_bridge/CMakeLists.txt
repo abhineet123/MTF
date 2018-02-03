@@ -24,26 +24,26 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/mtfConfig.cmake")
 # endif()
 # endif()
 
-# if(NOT WITH_THIRD_PARTY)
-# message(STATUS "Third party trackers disabled")
-# set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DDISABLE_THIRD_PARTY_TRACKERS)
-# else()
-# option(WITH_VISP "Enable ViSP template tracker and pipeline" OFF)
-# if(NOT WITH_VISP)
-# message(STATUS "ViSP disabled")
-# set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DDISABLE_VISP)
-# endif()
-# option(WITH_DFT "Enable Descriptor Fields tracker (third party) " OFF)
-# if(NOT WITH_DFT)
-# message(STATUS "DFT disabled")
-# set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DDISABLE_DFT)
-# endif()
-# option(WITH_MIL "Enable Multiple Instance Learning based tracker (third party)" OFF)
-# if(NOT WITH_MIL)
-# message(STATUS "MIL tracker disabled")
-# set(MTF_RUNTIME_FLAGS ${MTF_RUNTIME_FLAGS} -DDISABLE_MIL)
-# endif()
-# endif()
+if(NOT WITH_THIRD_PARTY)
+	message(STATUS "Third party trackers disabled")
+	set(MTF_DEFINITIONS ${MTF_DEFINITIONS} -DDISABLE_THIRD_PARTY_TRACKERS)
+else()
+	option(WITH_VISP "Enable ViSP template tracker and pipeline" ON)
+	if(NOT WITH_VISP)
+		message(STATUS "ViSP disabled")
+		set(MTF_DEFINITIONS ${MTF_DEFINITIONS} -DDISABLE_VISP)
+	endif()
+	option(WITH_DFT "Enable Descriptor Fields tracker (third party) " ON)
+	if(NOT WITH_DFT)
+		message(STATUS "DFT disabled")
+		set(MTF_DEFINITIONS ${MTF_DEFINITIONS} -DDISABLE_DFT)
+	endif()
+	option(WITH_MIL "Enable Multiple Instance Learning based tracker (third party)" OFF)
+	if(NOT WITH_MIL)
+		message(STATUS "MIL tracker disabled")
+		set(MTF_DEFINITIONS ${MTF_DEFINITIONS} -DDISABLE_MIL)
+	endif()
+endif()
 
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
@@ -56,10 +56,10 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(MTF REQUIRED)
-find_package(Eigen REQUIRED)
-find_package(Boost REQUIRED COMPONENTS random filesystem system)
+# find_package(Eigen REQUIRED)
+# find_package(Boost REQUIRED COMPONENTS random filesystem system)
 
-set(MTF_LIBS ${MTF_LIBRARIES} ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
+# set(MTF_LIBS ${MTF_LIBRARIES} ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -130,8 +130,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${MTF_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
-  ${EIGEN_INCLUDE_DIRS}
-  ${Boost_INCLUDE_DIRS}
   /usr/include
   /usr/local/include  
 )
@@ -167,12 +165,11 @@ add_dependencies(SharedImageWriter ${PROJECT_NAME}_generate_messages_cpp ${PROJE
 add_dependencies(sample_tracker_node ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
 
 message(STATUS "MTF_DEFINITIONS: ${MTF_DEFINITIONS}")
-message(STATUS "MTF_DEFS: ${MTF_DEFS}")
 message(STATUS "MTF_CXX_FLAGS: ${MTF_CXX_FLAGS}")
-message(STATUS "MTF_LIBRARIES: ${MTF_LIBRARIES}")
 message(STATUS "MTF_INCLUDE_DIRS: ${MTF_INCLUDE_DIRS}")
+message(STATUS "MTF_LIBRARIES: ${MTF_LIBRARIES}")
 
-target_compile_definitions(sample_tracker_node PUBLIC ${MTF_DEFS})
-# target_compile_options(sample_tracker_node PUBLIC ${MTF_CXX_FLAGS})
+target_compile_definitions(sample_tracker_node PUBLIC ${MTF_DEFINITIONS})
+target_compile_options(sample_tracker_node PUBLIC ${MTF_CXX_FLAGS})
 
 # set_target_properties(sample_tracker_node PROPERTIES COMPILE_FLAGS ${MTF_RUNTIME_FLAGS}) 
