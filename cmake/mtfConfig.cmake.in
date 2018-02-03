@@ -1,7 +1,7 @@
-# - Basig config file generator for the MTF package
+# Basic config file generator for MTF
 # It defines the following variables
 #  MTF_INCLUDE_DIRS - include directories for MTF
-#  MTF_CXX_FLAGS - Compile flags for GCC
+#  MTF_RUNTIME_FLAGS - Compile flags for GCC
 #  MTF_LIBRARIES    - libraries to link against
 #  MTF_DEFINITIONS - Preprocessor definitions for MTF
 #  MTF_VERSION - The current MTF version
@@ -9,7 +9,7 @@
  
 # Compute paths
 set(MTF_INCLUDE_DIRS "@MTF_HEADER_INSTALL_DIR@ @MTF_EXT_INCLUDE_DIRS@")
-set(MTF_CXX_FLAGS "@CMAKE_CXX_FLAGS@ @MTF_RUNTIME_FLAGS@")
+set(MTF_RUNTIME_FLAGS "@MTF_RUNTIME_FLAGS@")
 set(MTF_LIBRARIES "mtf;@MTF_LIBS@")
 set(MTF_DEFINITIONS "@MTF_DEFINITIONS@")
 set(MTF_VERSION "@MTF_VERSION_MAJOR@.@MTF_VERSION_MINOR@")

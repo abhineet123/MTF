@@ -147,7 +147,7 @@ add_dependencies(SharedImageReader ${catkin_EXPORTED_TARGETS})
 
 add_executable(sample_tracker_node src/sample_tracker_node.cpp)
 target_compile_definitions(sample_tracker_node PUBLIC ${MTF_DEFINITIONS})
-target_compile_options(sample_tracker_node PUBLIC ${MTF_CXX_FLAGS})
+target_compile_options(sample_tracker_node PUBLIC ${MTF_RUNTIME_FLAGS})
 # set_target_properties(sample_tracker_node PROPERTIES COMPILE_FLAGS ${MTF_RUNTIME_FLAGS}) 
 
 add_executable(SharedImageWriter src/SharedImageWriter.cpp)
@@ -170,6 +170,6 @@ add_dependencies(sample_tracker_node ${PROJECT_NAME}_generate_messages_cpp ${PRO
 
 message(STATUS "MTF_DEFINITIONS: ${MTF_DEFINITIONS}")
 message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
-message(STATUS "MTF_CXX_FLAGS: ${MTF_CXX_FLAGS}")
+message(STATUS "MTF_RUNTIME_FLAGS: ${MTF_RUNTIME_FLAGS}")
 message(STATUS "MTF_INCLUDE_DIRS: ${MTF_INCLUDE_DIRS}")
 message(STATUS "MTF_LIBRARIES: ${MTF_LIBRARIES}")
