@@ -165,6 +165,8 @@ void draw_frame(std::string cv_window_title) {
 //                            |      |
 //                            4 ---- 3
 void initialize_tracker() {
+	if(!readParams(0, nullptr)){ return; }
+
     cv::Mat new_tracker_corners(2, 4, CV_64FC1);
     new_tracker_corners.at<double>(0, 0) = new_tracker_points[0].x;
     new_tracker_corners.at<double>(1, 0) = new_tracker_points[0].y;

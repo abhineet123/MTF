@@ -4136,10 +4136,13 @@ namespace mtf{
 				config_dir = std::string(cmd_argv[2]);
 				cmd_argv += 2;
 				cmd_argc -= 2;
-				printf("Reading configuration files from: %s\n", config_dir.c_str());
+				printf("Reading configuration files from: %ls\n", 
+					fs::absolute(config_dir.c_str()).c_str());
 			}
 			if(!fs::is_directory(config_dir)){
-				printf("Configuration folder: %s does not exist\n", config_dir.c_str());
+				
+				printf("Configuration folder: %ls does not exist\n", 
+					fs::absolute(config_dir.c_str()).c_str());
 			} else {
 				std::vector<char*> fargv;
 				//! read general parameters
@@ -4198,7 +4201,7 @@ namespace mtf{
 				}
 			}
 			//! parse command line arguments
-			if(!parseArgumentPairs(cmd_argv, cmd_argc, 1, 0)){
+			if(cmd_argc > 0 && !parseArgumentPairs(cmd_argv, cmd_argc, 1, 0)){
 				printf("Error in parsing command line arguments\n");
 				return false;
 			}
