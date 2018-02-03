@@ -121,7 +121,7 @@ catkin_package(
 ## Build ##
 ###########
 
-set(CMAKE_CXX_FLAGS "${MTF_CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${MTF_CXX_FLAGS})
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
@@ -165,6 +165,7 @@ add_dependencies(SharedImageWriter ${PROJECT_NAME}_generate_messages_cpp ${PROJE
 add_dependencies(sample_tracker_node ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
 
 message(STATUS "MTF_DEFINITIONS: ${MTF_DEFINITIONS}")
+message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 message(STATUS "MTF_CXX_FLAGS: ${MTF_CXX_FLAGS}")
 message(STATUS "MTF_INCLUDE_DIRS: ${MTF_INCLUDE_DIRS}")
 message(STATUS "MTF_LIBRARIES: ${MTF_LIBRARIES}")
