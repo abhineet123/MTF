@@ -5,6 +5,7 @@ In order to build this package, place the src/mtf_bridge folder inside the src f
 The nodes can be run as:
 
 rosrun mtf_bridge SharedImageWriter
+
 rosrun mtf_bridge sample_tracker_node
 
 SharedImageWriter subscribes to /camera/image_raw/ for input images so a camera capture node also needs to be running that publishes to this topic.
