@@ -160,14 +160,19 @@ target_link_libraries(SharedImageWriter
 target_link_libraries(sample_tracker_node
   SharedImageReader
   ${catkin_LIBRARIES}
-  ${MTF_LIBS}
+  ${MTF_LIBRARIES}
 )
 add_dependencies(SharedImageReader ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
 add_dependencies(SharedImageWriter ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
 add_dependencies(sample_tracker_node ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
+
 message(STATUS "MTF_DEFINITIONS: ${MTF_DEFINITIONS}")
 message(STATUS "MTF_DEFS: ${MTF_DEFS}")
+message(STATUS "MTF_CXX_FLAGS: ${MTF_CXX_FLAGS}")
+message(STATUS "MTF_LIBRARIES: ${MTF_LIBRARIES}")
+message(STATUS "MTF_INCLUDE_DIRS: ${MTF_INCLUDE_DIRS}")
+
 target_compile_definitions(sample_tracker_node PUBLIC ${MTF_DEFS})
-# target_compile_options(sample_tracker_node PUBLIC ${MTF_DEFS})
+target_compile_options(sample_tracker_node PUBLIC ${MTF_CXX_FLAGS})
 
 # set_target_properties(sample_tracker_node PROPERTIES COMPILE_FLAGS ${MTF_RUNTIME_FLAGS}) 
