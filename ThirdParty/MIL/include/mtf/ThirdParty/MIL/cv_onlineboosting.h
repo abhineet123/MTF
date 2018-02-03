@@ -467,7 +467,7 @@ namespace mtf
 		{
 		public:
 
-			BaseClassifier(int numWeakClassifier, int iterationInit, Size patchSize);
+			BaseClassifier(int numWeakClassifier, int iterationInit, cv::Size patchSize);
 			BaseClassifier(int numWeakClassifier, int iterationInit, WeakClassifier** weakClassifier);
 
 			virtual
@@ -680,7 +680,7 @@ namespace mtf
 		{
 		public:
 
-			StrongClassifierStandard(int numBaseClassifier, int numWeakClassifier, Size patchSize, bool useFeatureExchange =
+			StrongClassifierStandard(int numBaseClassifier, int numWeakClassifier, cv::Size patchSize, bool useFeatureExchange =
 				false,
 				int iterationInit = 0);
 
@@ -700,7 +700,7 @@ namespace mtf
 		{
 		public:
 
-			StrongClassifierStandardSemi(int numBaseClassifier, int numWeakClassifier, Size patchSize,
+			StrongClassifierStandardSemi(int numBaseClassifier, int numWeakClassifier, cv::Size patchSize,
 				bool useFeatureExchange = false, int iterationInit = 0);
 
 			virtual

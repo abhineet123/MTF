@@ -222,13 +222,13 @@ namespace mtf
 
   private:
     // The main Online MIL tracker
-    cv::mil::SimpleTracker tracker_;
-    cv::mil::SimpleTrackerParams tracker_params_;
-    cv::mil::ClfStrongParams* clfparams_;
+    mtf::mil::SimpleTracker tracker_;
+	mtf::mil::SimpleTrackerParams tracker_params_;
+	mtf::mil::ClfStrongParams* clfparams_;
 
     // Feature parameters
-    cv::mil::FtrParams* ftrparams_;
-    cv::mil::HaarFtrParams haarparams_;
+	mtf::mil::FtrParams* ftrparams_;
+	mtf::mil::HaarFtrParams haarparams_;
 
     bool is_initialized;
   };

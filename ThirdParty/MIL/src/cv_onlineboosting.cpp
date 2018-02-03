@@ -1266,7 +1266,7 @@ namespace mtf
 			return 0;
 		}
 
-		WeakClassifierHaarFeature::WeakClassifierHaarFeature(Size patchSize)
+		WeakClassifierHaarFeature::WeakClassifierHaarFeature(cv::Size patchSize)
 		{
 			m_feature = new FeatureHaar(patchSize);
 			generateRandomClassifier();
@@ -1341,7 +1341,7 @@ namespace mtf
 			return static_cast<EstimatedGaussDistribution*>(m_classifier->getDistribution(-1));
 		}
 
-		BaseClassifier::BaseClassifier(int numWeakClassifier, int iterationInit, Size patchSize)
+		BaseClassifier::BaseClassifier(int numWeakClassifier, int iterationInit, cv::Size patchSize)
 		{
 			this->m_numWeakClassifier = numWeakClassifier;
 			this->m_iterationInit = iterationInit;
@@ -1392,7 +1392,7 @@ namespace mtf
 		}
 
 		void
-			BaseClassifier::generateRandomClassifier(Size patchSize)
+			BaseClassifier::generateRandomClassifier(cv::Size patchSize)
 		{
 			for(int curWeakClassifier = 0; curWeakClassifier < m_numWeakClassifier + m_iterationInit; curWeakClassifier++)
 			{
@@ -1514,7 +1514,7 @@ namespace mtf
 		}
 
 		int
-			BaseClassifier::replaceWeakestClassifier(const std::vector<float> & errors, Size patchSize)
+			BaseClassifier::replaceWeakestClassifier(const std::vector<float> & errors, cv::Size patchSize)
 		{
 			float maxError = 0.0f;
 			int index = -1;
@@ -1568,7 +1568,7 @@ namespace mtf
 			m_wCorrect[sourceIndex] = 1.0f;
 		}
 
-		StrongClassifier::StrongClassifier(int numBaseClassifier, int numWeakClassifier, Size patchSize,
+		StrongClassifier::StrongClassifier(int numBaseClassifier, int numWeakClassifier, cv::Size patchSize,
 			bool useFeatureExchange, int iterationInit)
 			:
 			baseClassifier(0)
@@ -1671,7 +1671,7 @@ namespace mtf
 		}
 
 		StrongClassifierDirectSelection::StrongClassifierDirectSelection(int numBaseClassifier, int numWeakClassifier,
-			Size patchSize, bool useFeatureExchange,
+			cv::Size patchSize, bool useFeatureExchange,
 			int iterationInit)
 			:
 			StrongClassifier(numBaseClassifier, numWeakClassifier, patchSize, useFeatureExchange, iterationInit)
@@ -1744,7 +1744,7 @@ namespace mtf
 			return true;
 		}
 
-		StrongClassifierStandard::StrongClassifierStandard(int numBaseClassifier, int numWeakClassifier, Size patchSize,
+		StrongClassifierStandard::StrongClassifierStandard(int numBaseClassifier, int numWeakClassifier, cv::Size patchSize,
 			bool useFeatureExchange, int iterationInit)
 			:
 			StrongClassifier(numBaseClassifier, numWeakClassifier, patchSize, useFeatureExchange, iterationInit)
@@ -1965,7 +1965,7 @@ namespace mtf
 			int numBaseClassifiers = m_classifier->getNumBaseClassifier();
 
 			PatchesRegularScan *regPatches = (PatchesRegularScan*)patches;
-			Size patchGrid = regPatches->getPatchGrid();
+			cv::Size patchGrid = regPatches->getPatchGrid();
 
 			if((patchGrid.width != m_confMatrix.cols) || (patchGrid.height != m_confMatrix.rows))
 			{
@@ -2182,7 +2182,7 @@ namespace mtf
 			int numWeakClassifier = 100;
 			bool useFeatureExchange = true;
 			int iterationInit = 50;
-			Size patchSize(initPatch.width, initPatch.height);
+			cv::Size patchSize(initPatch.width, initPatch.height);
 
 			this->validROI = validROI;
 

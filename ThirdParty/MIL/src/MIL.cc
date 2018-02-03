@@ -51,7 +51,7 @@ tracker(nullptr){
 	printf("\n");
 	cv_corners_mat.create(2, 4, CV_64FC1);
 
-	tracker = new cv::MILTracker(params.get());
+	tracker = new mtf::MILTracker(params.get());
 }
 void MIL::initialize(const cv::Mat& corners){
 	curr_location = mtf::utils::getBestFitRectangle<int>(corners,

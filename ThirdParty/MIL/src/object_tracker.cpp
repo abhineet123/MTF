@@ -435,8 +435,8 @@ namespace mtf
 		MILTrackingAlgorithm(),
 		is_initialized(false)
 	{
-		cv::mil::RandomGenerator::initialize((int)time(0));
-		clfparams_ = new cv::mil::ClfMilBoostParams();
+		mtf::mil::RandomGenerator::initialize((int)time(0));
+		clfparams_ = new mtf::mil::ClfMilBoostParams();
 		ftrparams_ = &haarparams_;
 		clfparams_->_ftrParams = ftrparams_;
 	}
@@ -454,8 +454,8 @@ namespace mtf
 	{
 		import_image(image);
 
-		((cv::mil::ClfMilBoostParams*) clfparams_)->_numSel = params.num_classifiers_;
-		((cv::mil::ClfMilBoostParams*) clfparams_)->_numFeat = params.num_features_;
+		((mtf::mil::ClfMilBoostParams*) clfparams_)->_numSel = params.num_classifiers_;
+		((mtf::mil::ClfMilBoostParams*) clfparams_)->_numFeat = params.num_features_;
 		tracker_params_._posradtrain = params.pos_radius_train_;
 		tracker_params_._negnumtrain = params.neg_num_train_;
 
@@ -472,8 +472,8 @@ namespace mtf
 		tracker_params_._debugv = false;
 		tracker_params_._disp = false; // set this to true if you want to see video output (though it slows things down)
 
-		clfparams_->_ftrParams->_width = (cv::mil::uint) init_bounding_box.width;
-		clfparams_->_ftrParams->_height = (cv::mil::uint) init_bounding_box.height;
+		clfparams_->_ftrParams->_width = (mtf::mil::uint) init_bounding_box.width;
+		clfparams_->_ftrParams->_height = (mtf::mil::uint) init_bounding_box.height;
 
 		tracker_.init(image_, tracker_params_, clfparams_);
 
