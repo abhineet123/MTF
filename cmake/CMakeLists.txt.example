@@ -1,12 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
-
 include(mtfConfig.cmake)
 
 include_directories(${MTF_INCLUDE_DIRS})
-
-add_definitions(${MTF_CXX_FLAGS})
-
 add_executable(test_MTF test_MTF.cpp)
-target_compile_definitions(test_MTF PUBLIC ${MTF_DEFS})
+target_compile_definitions(test_MTF PUBLIC ${MTF_DEFINITIONS})
+target_compile_options(sample_tracker_node PUBLIC ${MTF_RUNTIME_FLAGS})
 target_link_libraries(test_MTF ${MTF_LIBRARIES})

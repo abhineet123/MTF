@@ -169,7 +169,7 @@ add_dependencies(SharedImageWriter ${PROJECT_NAME}_generate_messages_cpp ${PROJE
 add_dependencies(sample_tracker_node ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
 
 message(STATUS "MTF_DEFINITIONS: ${MTF_DEFINITIONS}")
-message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+# message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 message(STATUS "MTF_RUNTIME_FLAGS: ${MTF_RUNTIME_FLAGS}")
 message(STATUS "MTF_INCLUDE_DIRS: ${MTF_INCLUDE_DIRS}")
 message(STATUS "MTF_LIBRARIES: ${MTF_LIBRARIES}")
