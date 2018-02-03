@@ -246,7 +246,7 @@ The build process generates a `mtfConfig.cmake` file in the build folder with th
 There are two ways to use this file:
 
 * The standard `find_package` command can be used but this requires `MTF_DIR` variable to be set to the MTF build folder while running the cmake command.
-This can be done, for instance, as: 
+This can be done, for instance, as:  
 `cmake .. -DMTF_DIR=<path to MTF build folder>`
 
 * The `mtfConfig.cmake` file is copied into the project tree and included in the _CMakeLists.txt_ file. Then, the defined variables can be used to obtain the header files, linked libraries and compile time definitions. More details can be found in the comments section of issue #11.
