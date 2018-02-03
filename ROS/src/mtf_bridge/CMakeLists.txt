@@ -167,6 +167,6 @@ add_dependencies(SharedImageWriter ${PROJECT_NAME}_generate_messages_cpp ${PROJE
 add_dependencies(sample_tracker_node ${PROJECT_NAME}_generate_messages_cpp ${PROJECT_NAME}_gencfg)
 message(STATUS "MTF_DEFINITIONS: ${MTF_DEFINITIONS}")
 message(STATUS "MTF_DEFS: ${MTF_DEFS}")
-target_compile_options(sample_tracker_node PUBLIC ${MTF_DEFINITIONS} ${MTF_DEFS})
+target_compile_options(sample_tracker_node PUBLIC ${MTF_DEFS})
 
 # set_target_properties(sample_tracker_node PROPERTIES COMPILE_FLAGS ${MTF_RUNTIME_FLAGS}) 
