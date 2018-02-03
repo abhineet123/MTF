@@ -173,6 +173,6 @@ message(STATUS "MTF_LIBRARIES: ${MTF_LIBRARIES}")
 message(STATUS "MTF_INCLUDE_DIRS: ${MTF_INCLUDE_DIRS}")
 
 target_compile_definitions(sample_tracker_node PUBLIC ${MTF_DEFS})
-target_compile_options(sample_tracker_node PUBLIC ${MTF_CXX_FLAGS})
+# target_compile_options(sample_tracker_node PUBLIC ${MTF_CXX_FLAGS})
 
 # set_target_properties(sample_tracker_node PROPERTIES COMPILE_FLAGS ${MTF_RUNTIME_FLAGS}) 
