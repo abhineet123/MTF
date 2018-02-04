@@ -765,6 +765,7 @@ int main(int argc, char * argv[]) {
 				"w", "\t", "\n", nullptr, mat_header);
 			double mean_sr = success_rates.mean();
 			fprintf(tracking_stats_fid, "\t %15.9f", mean_sr);
+			printf("Average Success Rate: %15.10f\n", mean_sr);
 		}
 		fprintf(tracking_stats_fid, "\n");
 		fclose(tracking_stats_fid);
