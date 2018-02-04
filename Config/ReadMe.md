@@ -387,16 +387,8 @@ Output parameters:
 			0: Disable
 			1: Enable
 		Applies to:
-			runMTF, mexMTF
-			
-	 Parameter:	'record_frames'
-		Description:
-			record the tracked frames into a video file called Tracked_video.avi; 
-			enabling this may significantly decrease the overall tracking speed
-		Possible Values:
-			0: Disable
-			1: Enable
-			
+			runMTF, mexMTF			
+		
 	 Parameter:	'pause_after_frame'
 		Description:
 			pause tracking after each frame; 
@@ -465,17 +457,38 @@ Output parameters:
 		Description:
 			write all 3 types of tracking errors - MCD, CLE and Jaccard - to a text file;
 			only matters if a single object is being tracked and ground truth is available;
-			only supported in runMTF;
 		Possible Values:
 			0: Disable
 			1: Enable
-	 
-	 Parameter:	'record_frames'
+		Applies to:
+			runMTF
+			
+	 Parameter:	'write_tracking_sr'
 		Description:
-			record the frames containing the output of the executable into a video file - this is currently used only in runMTF and showGroundTruth
+			compute, show and write the tracking success rate (SR) for a range of error thresholds as specified by sr_err_thresh;
+			the mean SR over all thresholds is displayed and also written to the tracking stats file (if write_tracking_data is enabled);
+			the SR and corresponding thresholds are also written to a text file;		
+			only matters if a single object is being tracked and ground truth is available;
 		Possible Values:
 			0: Disable
-			1: Enable		
+			1: Enable
+		Applies to:
+			runMTF
+			
+	 Parameter:	'sr_err_thresh'
+		Description:
+			a three element tuple specifying the error thresholds used for computing the SR as res,low,high where the thresholds are in the range [low, high] with res being the number of thresholds which must be an integer > 0;
+			
+	 Parameter:	'record_frames'
+		Description:
+			record the frames containing the output of the executable into a video file;
+			if write_tracking_data is enabled, only raw frames are written otherwise the tracked objects and other tracking information are drawn onto the frames before writing them;
+			enabling this may significantly decrease the overall tracking speed
+		Possible Values:
+			0: Disable
+			1: Enable
+		Applies to:
+			runMTF, showGroundTruth
 			
 	 Parameter:	'record_frames_fname'
 		Description:

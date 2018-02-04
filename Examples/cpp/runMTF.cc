@@ -338,7 +338,7 @@ int main(int argc, char * argv[]) {
 			printf("Tracking data directory: %s does not exist. Creating it...\n", tracking_data_dir.c_str());
 			fs::create_directories(tracking_data_dir);
 		}
-		if(write_tracking_error){
+		if(write_tracking_data){
 			string tracking_data_path = cv::format("%s/%s.txt", tracking_data_dir.c_str(), tracking_data_fname.c_str());
 			if(overwrite_gt){
 				printf("Overwriting existing GT at %s with the tracking data\n", tracking_data_path.c_str());
@@ -352,6 +352,10 @@ int main(int argc, char * argv[]) {
 				printf("Writing tracking data to: %s\n", tracking_data_path.c_str());
 			}
 			tracking_data_fid = fopen(tracking_data_path.c_str(), "w");
+			if(!tracking_data_fid) {
+				printf("Tracking data file could not be opened.\n");
+				return EXIT_FAILURE;
+			}
 			fprintf(tracking_data_fid, "frame ulx uly urx ury lrx lry llx lly\n");
 			if(overwrite_gt){
 				//! write the original GT for frames before the one where the tracker is initialized, if any
@@ -364,6 +368,10 @@ int main(int argc, char * argv[]) {
 			std::string tracking_err_path = cv::format("%s/%s.err", tracking_data_dir.c_str(), tracking_data_fname.c_str());
 			printf("Writing tracking errors to: %s\n", tracking_err_path.c_str());
 			tracking_error_fid = fopen(tracking_err_path.c_str(), "w");
+			if(!tracking_error_fid) {
+				printf("Tracking error file could not be opened.\n");
+				return EXIT_FAILURE;
+			}
 			fprintf(tracking_error_fid, "frame\t MCD\t CLE\t Jaccard\n");
 		}
 		if(record_frames){
@@ -380,6 +388,10 @@ int main(int argc, char * argv[]) {
 				record_frames_dir.c_str(), record_frames_fname.c_str());
 			printf("Recording tracking video to: %s\n", record_frames_path.c_str());
 			output.open(record_frames_path, CV_FOURCC('M', 'J', 'P', 'G'), 24, input->getFrame().size());
+			if(!output.isOpened()) {
+				printf("Tracking video file could not be opened.\n");
+				return EXIT_FAILURE;
+			}
 		}
 	}
 	if(mtf_visualize){
