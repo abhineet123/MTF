@@ -24,7 +24,7 @@
 _MTF_BEGIN_NAMESPACE
 namespace utils{
 
-	std::map<std::string, cv::Scalar> col_rgb = {
+	const std::map<std::string, cv::Scalar> col_rgb = {
 		{ "snow", cv::Scalar(250, 250, 255) },
 		{ "snow_2", cv::Scalar(233, 233, 238) },
 		{ "snow_3", cv::Scalar(201, 201, 205) },
