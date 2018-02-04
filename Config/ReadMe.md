@@ -477,7 +477,9 @@ Output parameters:
 			
 	 Parameter:	'sr_err_thresh'
 		Description:
-			a three element tuple specifying the error thresholds used for computing the SR as res,low,high where the thresholds are in the range [low, high] with res being the number of thresholds which must be an integer > 0;
+			a three element tuple res,low,high specifying the error thresholds used for computing the SR;
+			thresholds are in the range [low, high] with res being the number of thresholds which must be an integer > 0;
+			only matters if write_tracking_sr is enabled
 			
 	 Parameter:	'record_frames'
 		Description:
