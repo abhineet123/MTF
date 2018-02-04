@@ -287,8 +287,9 @@ int main(int argc, char * argv[]) {
 		}
 	}
 	FILE *tracking_data_fid = nullptr, *tracking_error_fid = nullptr;
-	string tracking_data_dir, tracking_data_path;
-	if(write_tracking_data){		
+	string tracking_data_dir;
+	cv::VideoWriter output;
+	if(write_tracking_data || write_tracking_error || write_tracking_sr || record_frames){
 		if(tracking_data_fname.empty()){
 			tracking_data_fname = cv::format("%s_%s_%s_%s", mtf_sm, mtf_am, mtf_ssm,
 				mtf::utils::getDateTime().c_str());
@@ -306,7 +307,8 @@ int main(int argc, char * argv[]) {
 				if(reinit_at_each_frame>1){
 					reinit_dir = cv::format("%s_%d", reinit_dir.c_str(), reinit_at_each_frame);
 				}
-				tracking_data_dir = cv::format("log/tracking_data/%s/%s/%s", reinit_dir.c_str(), actor.c_str(), seq_name.c_str());
+				tracking_data_dir = cv::format("log/tracking_data/%s/%s/%s", 
+					reinit_dir.c_str(), actor.c_str(), seq_name.c_str());
 			} else if(reset_at_each_frame){
 				std::string reset_dir = reset_to_init ? "reset_to_init" : "reset";
 				if(reset_at_each_frame>1){
@@ -336,24 +338,26 @@ int main(int argc, char * argv[]) {
 			printf("Tracking data directory: %s does not exist. Creating it...\n", tracking_data_dir.c_str());
 			fs::create_directories(tracking_data_dir);
 		}
-		tracking_data_path = cv::format("%s/%s.txt", tracking_data_dir.c_str(), tracking_data_fname.c_str());
-		if(overwrite_gt){
-			printf("Overwriting existing GT at %s with the tracking data\n", tracking_data_path.c_str());
-			//! create backup of existing GT if any
-			if(fs::exists(tracking_data_path)){
-				string backup_gt_path = cv::format("%s/%s.back_mtf", tracking_data_dir.c_str(), tracking_data_fname.c_str());
-				printf("Backing up existing GT to: %s\n", backup_gt_path.c_str());
-				fs::rename(tracking_data_path, backup_gt_path);
+		if(write_tracking_error){
+			string tracking_data_path = cv::format("%s/%s.txt", tracking_data_dir.c_str(), tracking_data_fname.c_str());
+			if(overwrite_gt){
+				printf("Overwriting existing GT at %s with the tracking data\n", tracking_data_path.c_str());
+				//! create backup of existing GT if any
+				if(fs::exists(tracking_data_path)){
+					string backup_gt_path = cv::format("%s/%s.back_mtf", tracking_data_dir.c_str(), tracking_data_fname.c_str());
+					printf("Backing up existing GT to: %s\n", backup_gt_path.c_str());
+					fs::rename(tracking_data_path, backup_gt_path);
+				}
+			} else{
+				printf("Writing tracking data to: %s\n", tracking_data_path.c_str());
 			}
-		} else{
-			printf("Writing tracking data to: %s\n", tracking_data_path.c_str());
-		}
-		tracking_data_fid = fopen(tracking_data_path.c_str(), "w");
-		fprintf(tracking_data_fid, "frame ulx uly urx ury lrx lry llx lly\n");
-		if(overwrite_gt){
-			//! write the original GT for frames before the one where the tracker is initialized, if any
-			for(int frame_id = 0; frame_id < init_frame_id; ++frame_id){
-				mtf::utils::writeCorners(tracking_data_fid, obj_utils.getGT(frame_id), frame_id);
+			tracking_data_fid = fopen(tracking_data_path.c_str(), "w");
+			fprintf(tracking_data_fid, "frame ulx uly urx ury lrx lry llx lly\n");
+			if(overwrite_gt){
+				//! write the original GT for frames before the one where the tracker is initialized, if any
+				for(int frame_id = 0; frame_id < init_frame_id; ++frame_id){
+					mtf::utils::writeCorners(tracking_data_fid, obj_utils.getGT(frame_id), frame_id);
+				}
 			}
 		}
 		if(write_tracking_error){
@@ -362,25 +366,22 @@ int main(int argc, char * argv[]) {
 			tracking_error_fid = fopen(tracking_err_path.c_str(), "w");
 			fprintf(tracking_error_fid, "frame\t MCD\t CLE\t Jaccard\n");
 		}
+		if(record_frames){
+			if(record_frames_dir.empty()){
+				record_frames_dir = tracking_data_dir;
+			} else if(!fs::exists(record_frames_dir)){
+				printf("Recording directory: %s does not exist. Creating it...\n", record_frames_dir.c_str());
+				fs::create_directories(record_frames_dir);
+			}
+			if(record_frames_fname.empty()){
+				record_frames_fname = tracking_data_fname;
+			}
+			std::string record_frames_path = cv::format("%s/%s.avi", 
+				record_frames_dir.c_str(), record_frames_fname.c_str());
+			printf("Recording tracking video to: %s\n", record_frames_path.c_str());
+			output.open(record_frames_path, CV_FOURCC('M', 'J', 'P', 'G'), 24, input->getFrame().size());
+		}
 	}
-	cv::VideoWriter output;
-	if(record_frames){
-		if(record_frames_dir.empty()){
-			record_frames_dir = "log";
-		}
-		if(!fs::exists(record_frames_dir)){
-			printf("Recording directory: %s does not exist. Creating it...\n", record_frames_dir.c_str());
-			fs::create_directories(record_frames_dir);
-		}
-		if(record_frames_fname.empty()){
-			record_frames_fname = write_tracking_data ? tracking_data_fname :
-				cv_format("%s_%s_%s_%d", mtf_sm, mtf_am, mtf_ssm, 1 - hom_normalized_init);
-		}
-		std::string record_frames_path = cv::format("%s/%s.avi", record_frames_dir.c_str(), tracking_data_fname.c_str());
-		printf("Recording tracking video to: %s\n", record_frames_path.c_str());
-		output.open(record_frames_path, CV_FOURCC('M', 'J', 'P', 'G'), 24, input->getFrame().size());
-	}
-
 	if(mtf_visualize){
 		for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
 			if(static_cast<int>(tracker_labels.size()) < tracker_id + 1){
@@ -723,6 +724,36 @@ int main(int argc, char * argv[]) {
 		}
 		printf("\n");
 	}
+	double mean_sr = 0;
+	if(write_tracking_sr) {
+		if(sr_err_thresh.empty()) {
+			sr_err_thresh.push_back(100);
+			sr_err_thresh.push_back(0.1);
+			sr_err_thresh.push_back(20);
+		}
+		if(sr_err_thresh[0] <= 0) {
+			throw mtf::utils::InvalidArgument(
+				cv_format("Invalid error threshold resolution provided: %f", sr_err_thresh[0]));
+		}
+		unsigned int n_thresh = static_cast<unsigned int>(sr_err_thresh[0]);
+		VectorXd err_thresholds = VectorXd::LinSpaced(
+			n_thresh, sr_err_thresh[1], sr_err_thresh[2]);
+		VectorXd success_rates(n_thresh);
+		double err_count = static_cast<double>(tracking_errors.size());
+		for(unsigned int i = 0; i < n_thresh; ++i) {
+			success_rates[i] = (tracking_errors <= err_thresholds[i]).count() / err_count;
+		}
+		mean_sr = success_rates.mean();
+		printf("Average Success Rate: %15.10f\n", mean_sr);
+
+		MatrixXd sr_out(n_thresh, 2);
+		sr_out << err_thresholds, success_rates;
+		std::string sr_path = cv::format("%s/%s.sr", tracking_data_dir.c_str(), tracking_data_fname.c_str());
+		printf("Writing success rates to: %s\n", sr_path.c_str());
+		const char *mat_header[2] = { "error_thresold", "success_rate" };
+		mtf::utils::printMatrixToFile(sr_out, nullptr, sr_path.c_str(), "%15.9f",
+			"w", "\t", "\n", nullptr, mat_header);
+	}
 	if(reinit_on_failure){
 		printf("Number of failures: %d\n", failure_count);
 		if(failure_count > 0){
@@ -747,42 +778,19 @@ int main(int argc, char * argv[]) {
 		if(show_tracking_error){
 			fprintf(tracking_stats_fid, "\t %15.9f", avg_err);
 		}
+		if(write_tracking_sr){
+			fprintf(tracking_stats_fid, "\t %15.9f", mean_sr);
+		}
 		if(reinit_on_failure){
 			fprintf(tracking_stats_fid, "\t %d", failure_count);
-		} 
-		if(write_tracking_sr) {
-			if(sr_err_thresh.empty()) {
-				sr_err_thresh.push_back(100);
-				sr_err_thresh.push_back(0.1);
-				sr_err_thresh.push_back(20);
-			}
-			unsigned int n_thresh = static_cast<unsigned int>(sr_err_thresh[0]);
-			VectorXd err_thresholds = VectorXd::LinSpaced(
-				n_thresh, sr_err_thresh[1], sr_err_thresh[2]);
-			VectorXd success_rates(n_thresh);
-			double err_count = static_cast<double>(tracking_errors.size());
-			for(unsigned int i = 0; i < n_thresh; ++i) {
-				success_rates[i] = (tracking_errors <= err_thresholds[i]).count() / err_count;
-			}
-			double mean_sr = success_rates.mean();
-			fprintf(tracking_stats_fid, "\t %15.9f", mean_sr);
-			printf("Average Success Rate: %15.10f\n", mean_sr);
-
-			MatrixXd sr_out(n_thresh, 2);
-			sr_out << err_thresholds, success_rates;
-			std::string sr_path = cv::format("%s/%s.sr", tracking_data_dir.c_str(), tracking_data_fname.c_str());
-			printf("Writing success rates to: %s\n", sr_path.c_str());
-			const char *mat_header[2] = { "error_thresold", "success_rate" };
-			mtf::utils::printMatrixToFile(sr_out, nullptr, sr_path.c_str(), "%15.9f",
-				"w", "\t", "\n", nullptr, mat_header);
 		}
 		fprintf(tracking_stats_fid, "\n");
 		fclose(tracking_stats_fid);
-		if(tracking_error_fid){
-			fclose(tracking_error_fid);
-		}
 	}
 	printf("Cleaning up...\n");
+	if(tracking_error_fid){
+		fclose(tracking_error_fid);
+	}
 	if(record_frames){
 		output.release();
 	}
