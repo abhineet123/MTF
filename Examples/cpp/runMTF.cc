@@ -239,7 +239,7 @@ int main(int argc, char * argv[]) {
 	*/
 	if(!read_obj_from_gt){
 		reset_at_each_frame = reinit_at_each_frame = reinit_on_failure =
-			show_tracking_error = write_tracking_error = show_ground_truth = 0;
+			compute_sr = show_tracking_error = write_tracking_error = show_ground_truth = 0;
 	}
 	/**
 	original GT will be overwritten by tracking data only if it is not read from reinit gt -
@@ -267,7 +267,7 @@ int main(int argc, char * argv[]) {
 	}
 	//! functionality that needs the full ground truth
 	bool full_gt_needed = show_tracking_error || write_tracking_error || reinit_on_failure || 
-		reset_at_each_frame || reinit_at_each_frame || show_ground_truth;
+		reset_at_each_frame || reinit_at_each_frame || show_ground_truth || compute_sr;
 	if(full_gt_needed){
 		if(input->getNFrames() <= 0 || valid_gt_frames < input->getNFrames()){
 			//! full ground truth is not available
@@ -280,15 +280,15 @@ int main(int argc, char * argv[]) {
 				printf("Disabling tracking error computation since ground truth is not available\n");
 			}
 			reset_at_each_frame = reinit_at_each_frame = reinit_on_failure =
-				show_tracking_error = write_tracking_error = show_ground_truth = 0;
+				compute_sr = show_tracking_error = write_tracking_error = show_ground_truth = 0;
 		} else{
 			printf("Using %s error to measure tracking accuracy\n",
 				mtf::utils::toString(static_cast<TrackErrT>(tracking_err_type)));
 		}
 	}
 	FILE *tracking_data_fid = nullptr, *tracking_error_fid = nullptr;
-	if(write_tracking_data){
-		string tracking_data_dir, tracking_data_path;
+	string tracking_data_dir, tracking_data_path;
+	if(write_tracking_data){		
 		if(tracking_data_fname.empty()){
 			tracking_data_fname = cv::format("%s_%s_%s_%s", mtf_sm, mtf_am, mtf_ssm,
 				mtf::utils::getDateTime().c_str());
@@ -394,14 +394,17 @@ int main(int argc, char * argv[]) {
 	int fps_count = 0;
 	double avg_err = 0;
 
-	cv::Point fps_origin(10, 20);
-	double fps_font_size = 0.50;
-	cv::Scalar fps_color(0, 255, 0);
-	cv::Point err_origin(10, 40);
-	double err_font_size = 0.50;
-	cv::Scalar err_color(0, 255, 0);
-	cv::Scalar gt_color(0, 255, 0);
+	ArrayXd tracking_errors;
+	if(compute_sr) {
+		tracking_errors = ArrayXd::Constant(input->getNFrames() - 1, 1000);
+	}
 
+	cv::Point fps_origin(10, 20), err_origin(10, 40);
+	double fps_font_size = 0.50, err_font_size = 0.50;
+	cv::Scalar fps_col_rgb = mtf::utils::col_rgb[fps_col];
+	cv::Scalar gt_color_rgb = mtf::utils::col_rgb[gt_col];
+	cv::Scalar err_col_rgb = mtf::utils::col_rgb[err_col];
+	
 	if(reset_template){ printf("Template resetting is enabled\n"); }
 
 	double tracking_err = 0;
@@ -424,6 +427,8 @@ int main(int argc, char * argv[]) {
 		printf("Using a gap of %d between consecutive tracked frames\n", frame_gap);
 	}
 	bool resized_images = img_resize_factor != 1;
+	bool tracking_error_needed = show_tracking_error || write_tracking_error || reinit_on_failure || compute_sr;
+	bool gt_corners_needed = tracking_error_needed || show_ground_truth;
 
 	// ********************************************************************************************** //
 	// *************************************** start tracking ! ************************************* //
@@ -431,7 +436,7 @@ int main(int argc, char * argv[]) {
 	while(true) {
 		// *********************** compute tracking error and reinitialize if needed *********************** //
 		cv::Mat gt_corners;
-		if(show_tracking_error || write_tracking_error || reinit_on_failure || show_ground_truth){
+		if(gt_corners_needed){
 			gt_corners = resized_images ? obj_utils.getGT(input->getFrameID(), reinit_frame_id) / img_resize_factor :
 				obj_utils.getGT(input->getFrameID(), reinit_frame_id);
 		}
@@ -448,7 +453,7 @@ int main(int argc, char * argv[]) {
 		if(print_corners){
 			cout << tracker_corners << "\n";
 		}
-		if(show_tracking_error || write_tracking_error || reinit_on_failure){
+		if(tracking_error_needed){
 			/**
 			both tracking result and GT are in the coordinate frame of the resized image
 			so must be scaled before computing the error
@@ -519,7 +524,10 @@ int main(int argc, char * argv[]) {
 			if(is_initialized){
 				is_initialized = false;
 			} else{
-				//! exclude initialization frames from those used for computing the average error                
+				//! exclude initialization frames from those used for computing the average error      
+				if(compute_sr) {
+					tracking_errors[valid_frame_count] = tracking_err;
+				}
 				++valid_frame_count;
 				avg_err += (tracking_err - avg_err) / valid_frame_count;
 			}
@@ -592,7 +600,7 @@ int main(int argc, char * argv[]) {
 			*/
 			if(show_ground_truth){
 				mtf::utils::drawRegion(input->getFrame(mtf::utils::MUTABLE), gt_corners,
-					gt_color, line_thickness, "ground_truth", fps_font_size,
+					gt_color_rgb, line_thickness, "ground_truth", fps_font_size,
 					show_corner_ids, 1 - show_corner_ids);
 			}
 			/**
@@ -601,7 +609,7 @@ int main(int argc, char * argv[]) {
 			*/
 			std::string fps_text = cv::format("frame: %d c: %9.3f a: %9.3f cw: %9.3f aw: %9.3f fps",
 				input->getFrameID() + 1, fps, avg_fps, fps_win, avg_fps_win);
-			putText(input->getFrame(mtf::utils::MUTABLE), fps_text, fps_origin, cv::FONT_HERSHEY_SIMPLEX, fps_font_size, fps_color);
+			putText(input->getFrame(mtf::utils::MUTABLE), fps_text, fps_origin, cv::FONT_HERSHEY_SIMPLEX, fps_font_size, fps_col_rgb);
 			/**
 			write tracking error for the first tracker - both current and average
 			*/
@@ -613,7 +621,7 @@ int main(int argc, char * argv[]) {
 						input->getFrame().cols, input->getFrame().rows);
 					err_text = err_text + cv::format(" je: %12.8f", jaccard_error);
 				}
-				putText(input->getFrame(mtf::utils::MUTABLE), err_text, err_origin, cv::FONT_HERSHEY_SIMPLEX, err_font_size, err_color);
+				putText(input->getFrame(mtf::utils::MUTABLE), err_text, err_origin, cv::FONT_HERSHEY_SIMPLEX, err_font_size, err_col_rgb);
 			}
 
 			if(record_frames && !write_tracking_data){
@@ -738,6 +746,25 @@ int main(int argc, char * argv[]) {
 		}
 		if(reinit_on_failure){
 			fprintf(tracking_stats_fid, "\t %d", failure_count);
+		}
+		if(compute_sr) {
+			unsigned int n_thresh = static_cast<unsigned int>(sr_err_thresh[0]);
+			VectorXd err_thresholds = VectorXd::LinSpaced(
+				n_thresh, sr_err_thresh[1], sr_err_thresh[2]);			
+			VectorXd success_rates(sr_err_thresh[0]);
+			double err_count = static_cast<double>(tracking_errors.size());
+			for(unsigned int i = 0; i < n_thresh; ++i) {
+				success_rates[i] = (tracking_errors <= err_thresholds[i]).count() / err_count;
+			}
+			MatrixXd sr_out(n_thresh, 2);
+			sr_out << err_thresholds, success_rates;
+			std::string sr_path = cv::format("%s/%s.sr", tracking_data_dir.c_str(), tracking_data_fname.c_str());
+			printf("Writing success rates to: %s\n", sr_path.c_str());
+			const char *mat_header[2] = {"error_thresold", "success_rate"};
+			mtf::utils::printMatrixToFile(sr_out, nullptr, sr_path.c_str(), "%15.9f",
+				"w", "\t", "\n", nullptr, mat_header);
+			double mean_sr = success_rates.mean();
+			fprintf(tracking_stats_fid, "\t %15.9f", mean_sr);
 		}
 		fprintf(tracking_stats_fid, "\n");
 		fclose(tracking_stats_fid);

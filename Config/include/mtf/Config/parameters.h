@@ -206,10 +206,15 @@ namespace mtf{
 
 		double zncc_likelihood_alpha = 50;
 
-
 		double res_from_size = 0;
 		int show_tracking_error = 0;
 		int write_tracking_error = 0;
+		int compute_sr = 0;
+		vectord sr_err_thresh = { 100, 0.1, 20 };
+
+		std::string fps_col = "green";
+		std::string gt_col = "green";
+		std::string err_col = "green";		
 
 		int tracking_err_type = 0;
 		bool show_jaccard_error = false;
@@ -1530,6 +1535,26 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "write_tracking_error")){
 				write_tracking_error = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "compute_sr")){
+				compute_sr = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "compute_sr")){
+				sr_err_thresh = atof_arr(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "fps_col")){
+				fps_col = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "gt_col")){
+				gt_col = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "err_col")){
+				err_col = std::string(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "tracking_err_type")){

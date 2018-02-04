@@ -100,14 +100,14 @@ namespace utils{
 	ObjUtils::ObjUtils(double _resize_factor) : init_frame_id(0),
 		use_reinit_gt(false), resize_factor(_resize_factor),
 		invert_seq(false){
-		obj_cols.push_back(cv::Scalar(0, 0, 255));
-		obj_cols.push_back(cv::Scalar(0, 255, 0));
-		obj_cols.push_back(cv::Scalar(255, 0, 0));
-		obj_cols.push_back(cv::Scalar(255, 255, 0));
-		obj_cols.push_back(cv::Scalar(255, 0, 255));
-		obj_cols.push_back(cv::Scalar(0, 255, 255));
-		obj_cols.push_back(cv::Scalar(255, 255, 255));
-		obj_cols.push_back(cv::Scalar(0, 0, 0));
+		obj_cols.push_back(col_rgb["blue"]);
+		obj_cols.push_back(col_rgb["green"]);
+		obj_cols.push_back(col_rgb["red"]);
+		obj_cols.push_back(col_rgb["yellow"]);
+		obj_cols.push_back(col_rgb["magenta"]);
+		obj_cols.push_back(col_rgb["cyan"]);
+		obj_cols.push_back(col_rgb["white"]);
+		obj_cols.push_back(col_rgb["black"]);
 		no_of_cols = obj_cols.size();
 #ifndef DISABLE_VISP
 		obj_cols_vp.push_back(vpColor::red);
