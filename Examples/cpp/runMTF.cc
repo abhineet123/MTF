@@ -733,31 +733,6 @@ int main(int argc, char * argv[]) {
 			printf("\n");
 		}
 	}
-	double mean_sr = 0;
-	if(write_tracking_sr) {
-		if(sr_err_thresh.empty()) {
-			sr_err_thresh.push_back(100);
-			sr_err_thresh.push_back(0.1);
-			sr_err_thresh.push_back(20);
-		}
-		unsigned int n_thresh = static_cast<unsigned int>(sr_err_thresh[0]);
-		VectorXd err_thresholds = VectorXd::LinSpaced(
-			n_thresh, sr_err_thresh[1], sr_err_thresh[2]);
-		VectorXd success_rates(n_thresh);
-		double err_count = static_cast<double>(tracking_errors.size());
-		for(unsigned int i = 0; i < n_thresh; ++i) {
-			success_rates[i] = (tracking_errors <= err_thresholds[i]).count() / err_count;
-		}
-		MatrixXd sr_out(n_thresh, 2);
-		sr_out << err_thresholds, success_rates;
-		std::string sr_path = cv::format("%s/%s.sr", tracking_data_dir.c_str(), tracking_data_fname.c_str());
-		printf("Writing success rates to: %s\n", sr_path.c_str());
-		const char *mat_header[2] = { "error_thresold", "success_rate" };
-		mtf::utils::printMatrixToFile(sr_out, nullptr, sr_path.c_str(), "%15.9f",
-			"w", "\t", "\n", nullptr, mat_header);
-		mean_sr = success_rates.mean();		
-		printf("Average Success Rate: %15.10f\n", mean_sr);
-	}
 	if(write_tracking_data){
 		if(!reinit_on_failure && invalid_tracker_state && input->getNFrames() > 0){
 			for(int frame_id = input->getFrameID(); frame_id < input->getNFrames(); ++frame_id){
@@ -774,18 +749,42 @@ int main(int argc, char * argv[]) {
 		}
 		if(reinit_on_failure){
 			fprintf(tracking_stats_fid, "\t %d", failure_count);
-		} else if(write_tracking_sr) {
+		} 
+		if(write_tracking_sr) {
+			if(sr_err_thresh.empty()) {
+				sr_err_thresh.push_back(100);
+				sr_err_thresh.push_back(0.1);
+				sr_err_thresh.push_back(20);
+			}
+			unsigned int n_thresh = static_cast<unsigned int>(sr_err_thresh[0]);
+			VectorXd err_thresholds = VectorXd::LinSpaced(
+				n_thresh, sr_err_thresh[1], sr_err_thresh[2]);
+			VectorXd success_rates(n_thresh);
+			double err_count = static_cast<double>(tracking_errors.size());
+			for(unsigned int i = 0; i < n_thresh; ++i) {
+				success_rates[i] = (tracking_errors <= err_thresholds[i]).count() / err_count;
+			}
+			double mean_sr = success_rates.mean();
 			fprintf(tracking_stats_fid, "\t %15.9f", mean_sr);
+			printf("Average Success Rate: %15.10f\n", mean_sr);
+
+			MatrixXd sr_out(n_thresh, 2);
+			sr_out << err_thresholds, success_rates;
+			std::string sr_path = cv::format("%s/%s.sr", tracking_data_dir.c_str(), tracking_data_fname.c_str());
+			printf("Writing success rates to: %s\n", sr_path.c_str());
+			const char *mat_header[2] = { "error_thresold", "success_rate" };
+			mtf::utils::printMatrixToFile(sr_out, nullptr, sr_path.c_str(), "%15.9f",
+				"w", "\t", "\n", nullptr, mat_header);
 		}
 		fprintf(tracking_stats_fid, "\n");
 		fclose(tracking_stats_fid);
+		if(tracking_error_fid){
+			fclose(tracking_error_fid);
+		}
 	}
 	printf("Cleaning up...\n");
 	if(record_frames){
 		output.release();
-	}
-	if(write_tracking_error){
-		fclose(tracking_error_fid);
 	}
 	pre_procs.clear();
 	trackers.clear();
