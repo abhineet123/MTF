@@ -15,7 +15,7 @@ using namespace std;
 
 _MTF_BEGIN_NAMESPACE
 namespace utils{
-	extern std::map<std::string, cv::Scalar> col_rgb;
+	//extern const std::map<std::string, cv::Scalar> col_rgb;
 	/**
 	simple structure to store an object read from ground truth or selected by the user;
 	requires that the object location be representable by a quadrilateral

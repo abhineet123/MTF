@@ -404,6 +404,10 @@ int main(int argc, char * argv[]) {
 	cv::Scalar fps_col_rgb = mtf::utils::col_rgb[fps_col];
 	cv::Scalar gt_color_rgb = mtf::utils::col_rgb[gt_col];
 	cv::Scalar err_col_rgb = mtf::utils::col_rgb[err_col];
+
+	cv::Scalar fps_col_rgb = cv::Scalar(0, 255, 0);
+	cv::Scalar gt_color_rgb = cv::Scalar(0, 255, 0);
+	cv::Scalar err_col_rgb = cv::Scalar(0, 255, 0);
 	
 	if(reset_template){ printf("Template resetting is enabled\n"); }
 
