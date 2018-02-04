@@ -209,7 +209,7 @@ namespace mtf{
 		double res_from_size = 0;
 		int show_tracking_error = 0;
 		int write_tracking_error = 0;
-		int compute_sr = 0;
+		int write_tracking_sr = 0;
 		vectord sr_err_thresh;
 
 		std::string fps_col = "green";
@@ -1537,11 +1537,11 @@ namespace mtf{
 				write_tracking_error = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "compute_sr")){
-				compute_sr = atoi(arg_val);
+			if(!strcmp(arg_name, "write_tracking_sr")){
+				write_tracking_sr = atoi(arg_val);
 				return;
 			}
-			if(!strcmp(arg_name, "compute_sr")){
+			if(!strcmp(arg_name, "sr_err_thresh")){
 				sr_err_thresh = atof_arr(arg_val);
 				return;
 			}
