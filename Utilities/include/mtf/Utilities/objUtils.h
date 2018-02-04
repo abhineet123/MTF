@@ -16,6 +16,10 @@ using namespace std;
 _MTF_BEGIN_NAMESPACE
 namespace utils{
 	extern std::map<std::string, cv::Scalar> col_rgb;
+#ifndef DISABLE_VISP
+	extern std::map<std::string, vpColor> col_rgb_vp;
+#endif
+
 	/**
 	simple structure to store an object read from ground truth or selected by the user;
 	requires that the object location be representable by a quadrilateral
@@ -48,7 +52,9 @@ namespace utils{
 	*/
 	class ObjUtils {
 	public:
-		ObjUtils(double _resize_factor = 1.0);
+		typedef std::vector<std::string> vector_s;
+		ObjUtils(const vector_s  &_obj_cols = vector_s(),
+			double _resize_factor = 1.0);
 		~ObjUtils();
 		const cv::Scalar &getObjCol(int col_id){
 			return obj_cols[col_id % no_of_cols];

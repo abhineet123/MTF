@@ -212,6 +212,7 @@ namespace mtf{
 		int write_tracking_sr = 0;
 		vectord sr_err_thresh;
 
+		vector_s obj_cols;
 		std::string fps_col = "green";
 		std::string gt_col = "green";
 		std::string err_col = "green";		
@@ -1092,6 +1093,15 @@ namespace mtf{
 			//	param_arr.push_back(temp);
 			return param_arr;
 		}
+		inline vector_s string_arr(char *str, const char *sep = ","){
+			char *param_str = strtok(str, sep);
+			vector_s param_arr;
+			while(param_str){
+				param_arr.push_back(std::string(param_str));
+				param_str = strtok(nullptr, sep);
+			}
+			return param_arr;
+		}
 		inline char atoc(char *arg_val){ return arg_val[0]; }
 		inline int atoc_i(char *arg_val){ return arg_val[0] - '0'; }
 
@@ -1547,6 +1557,10 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "fps_col")){
 				fps_col = std::string(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "obj_cols")){
+				obj_cols = string_arr(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "gt_col")){

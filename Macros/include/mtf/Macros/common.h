@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
+#include <string>
 
 #if defined(__GNUC__) || defined(__GNUG__)
 #define _force_inline_ __attribute__ (always_inline)
@@ -258,6 +259,7 @@ typedef cv::Rect_<double> Rectd;
 typedef std::vector<double> vectord;
 typedef std::vector<float> vectorf;
 typedef std::vector<int> vectori;
+typedef std::vector<std::string> vector_s;
 typedef std::vector<vectord> vectorvd;
 typedef std::vector<vectori> vectorvi;
 

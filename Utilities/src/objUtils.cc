@@ -180,6 +180,165 @@ namespace utils{
 		{ "magenta", cv::Scalar(255, 0, 255) }
 	};
 
+#ifndef DISABLE_VISP
+	std::map<std::string, vpColor> col_rgb_vp = {
+		{ "snow", vpColor(250, 250, 255) },
+		{ "snow_2", vpColor(233, 233, 238) },
+		{ "snow_3", vpColor(201, 201, 205) },
+		{ "snow_4", vpColor(137, 137, 139) },
+		{ "ghost_white", vpColor(255, 248, 248) },
+		{ "white_smoke", vpColor(245, 245, 245) },
+		{ "gainsboro", vpColor(220, 220, 220) },
+		{ "floral_white", vpColor(240, 250, 255) },
+		{ "old_lace", vpColor(230, 245, 253) },
+		{ "linen", vpColor(230, 240, 240) },
+		{ "antique_white", vpColor(215, 235, 250) },
+		{ "antique_white_2", vpColor(204, 223, 238) },
+		{ "antique_white_3", vpColor(176, 192, 205) },
+		{ "antique_white_4", vpColor(120, 131, 139) },
+		{ "papaya_whip", vpColor(213, 239, 255) },
+		{ "blanched_almond", vpColor(205, 235, 255) },
+		{ "bisque", vpColor(196, 228, 255) },
+		{ "bisque_2", vpColor(183, 213, 238) },
+		{ "bisque_3", vpColor(158, 183, 205) },
+		{ "bisque_4", vpColor(107, 125, 139) },
+		{ "peach_puff", vpColor(185, 218, 255) },
+		{ "peach_puff_2", vpColor(173, 203, 238) },
+		{ "peach_puff_3", vpColor(149, 175, 205) },
+		{ "peach_puff_4", vpColor(101, 119, 139) },
+		{ "navajo_white", vpColor(173, 222, 255) },
+		{ "moccasin", vpColor(181, 228, 255) },
+		{ "cornsilk", vpColor(220, 248, 255) },
+		{ "cornsilk_2", vpColor(205, 232, 238) },
+		{ "cornsilk_3", vpColor(177, 200, 205) },
+		{ "cornsilk_4", vpColor(120, 136, 139) },
+		{ "ivory", vpColor(240, 255, 255) },
+		{ "ivory_2", vpColor(224, 238, 238) },
+		{ "ivory_3", vpColor(193, 205, 205) },
+		{ "ivory_4", vpColor(131, 139, 139) },
+		{ "lemon_chiffon", vpColor(205, 250, 255) },
+		{ "seashell", vpColor(238, 245, 255) },
+		{ "seashell_2", vpColor(222, 229, 238) },
+		{ "seashell_3", vpColor(191, 197, 205) },
+		{ "seashell_4", vpColor(130, 134, 139) },
+		{ "honeydew", vpColor(240, 255, 240) },
+		{ "honeydew_2", vpColor(224, 238, 244) },
+		{ "honeydew_3", vpColor(193, 205, 193) },
+		{ "honeydew_4", vpColor(131, 139, 131) },
+		{ "mint_cream", vpColor(250, 255, 245) },
+		{ "azure", vpColor(255, 255, 240) },
+		{ "alice_blue", vpColor(255, 248, 240) },
+		{ "lavender", vpColor(250, 230, 230) },
+		{ "lavender_blush", vpColor(245, 240, 255) },
+		{ "misty_rose", vpColor(225, 228, 255) },
+		{ "white", vpColor(255, 255, 255) },
+		{ "black", vpColor(0, 0, 0) },
+		{ "dark_slate_gray", vpColor(79, 79, 49) },
+		{ "dim_gray", vpColor(105, 105, 105) },
+		{ "slate_gray", vpColor(144, 138, 112) },
+		{ "light_slate_gray", vpColor(153, 136, 119) },
+		{ "gray", vpColor(190, 190, 190) },
+		{ "light_gray", vpColor(211, 211, 211) },
+		{ "midnight_blue", vpColor(112, 25, 25) },
+		{ "navy", vpColor(128, 0, 0) },
+		{ "cornflower_blue", vpColor(237, 149, 100) },
+		{ "dark_slate_blue", vpColor(139, 61, 72) },
+		{ "slate_blue", vpColor(205, 90, 106) },
+		{ "medium_slate_blue", vpColor(238, 104, 123) },
+		{ "light_slate_blue", vpColor(255, 112, 132) },
+		{ "medium_blue", vpColor(205, 0, 0) },
+		{ "royal_blue", vpColor(225, 105, 65) },
+		{ "blue", vpColor(255, 0, 0) },
+		{ "dodger_blue", vpColor(255, 144, 30) },
+		{ "deep_sky_blue", vpColor(255, 191, 0) },
+		{ "sky_blue", vpColor(250, 206, 135) },
+		{ "light_sky_blue", vpColor(250, 206, 135) },
+		{ "steel_blue", vpColor(180, 130, 70) },
+		{ "light_steel_blue", vpColor(222, 196, 176) },
+		{ "light_blue", vpColor(230, 216, 173) },
+		{ "powder_blue", vpColor(230, 224, 176) },
+		{ "pale_turquoise", vpColor(238, 238, 175) },
+		{ "dark_turquoise", vpColor(209, 206, 0) },
+		{ "medium_turquoise", vpColor(204, 209, 72) },
+		{ "turquoise", vpColor(208, 224, 64) },
+		{ "cyan", vpColor(255, 255, 0) },
+		{ "light_cyan", vpColor(255, 255, 224) },
+		{ "cadet_blue", vpColor(160, 158, 95) },
+		{ "medium_aquamarine", vpColor(170, 205, 102) },
+		{ "aquamarine", vpColor(212, 255, 127) },
+		{ "dark_green", vpColor(0, 100, 0) },
+		{ "dark_olive_green", vpColor(47, 107, 85) },
+		{ "dark_sea_green", vpColor(143, 188, 143) },
+		{ "sea_green", vpColor(87, 139, 46) },
+		{ "medium_sea_green", vpColor(113, 179, 60) },
+		{ "light_sea_green", vpColor(170, 178, 32) },
+		{ "pale_green", vpColor(152, 251, 152) },
+		{ "spring_green", vpColor(127, 255, 0) },
+		{ "lawn_green", vpColor(0, 252, 124) },
+		{ "chartreuse", vpColor(0, 255, 127) },
+		{ "medium_spring_green", vpColor(154, 250, 0) },
+		{ "green_yellow", vpColor(47, 255, 173) },
+		{ "lime_green", vpColor(50, 205, 50) },
+		{ "yellow_green", vpColor(50, 205, 154) },
+		{ "forest_green", vpColor(34, 139, 34) },
+		{ "olive_drab", vpColor(35, 142, 107) },
+		{ "dark_khaki", vpColor(107, 183, 189) },
+		{ "khaki", vpColor(140, 230, 240) },
+		{ "pale_goldenrod", vpColor(170, 232, 238) },
+		{ "light_goldenrod_yellow", vpColor(210, 250, 250) },
+		{ "light_yellow", vpColor(224, 255, 255) },
+		{ "yellow", vpColor(0, 255, 255) },
+		{ "gold", vpColor(0, 215, 255) },
+		{ "light_goldenrod", vpColor(130, 221, 238) },
+		{ "goldenrod", vpColor(32, 165, 218) },
+		{ "dark_goldenrod", vpColor(11, 134, 184) },
+		{ "rosy_brown", vpColor(143, 143, 188) },
+		{ "indian_red", vpColor(92, 92, 205) },
+		{ "saddle_brown", vpColor(19, 69, 139) },
+		{ "sienna", vpColor(45, 82, 160) },
+		{ "peru", vpColor(63, 133, 205) },
+		{ "burlywood", vpColor(135, 184, 222) },
+		{ "beige", vpColor(220, 245, 245) },
+		{ "wheat", vpColor(179, 222, 245) },
+		{ "sandy_brown", vpColor(96, 164, 244) },
+		{ "tan", vpColor(140, 180, 210) },
+		{ "chocolate", vpColor(30, 105, 210) },
+		{ "firebrick", vpColor(34, 34, 178) },
+		{ "brown", vpColor(42, 42, 165) },
+		{ "dark_salmon", vpColor(122, 150, 233) },
+		{ "salmon", vpColor(114, 128, 250) },
+		{ "light_salmon", vpColor(122, 160, 255) },
+		{ "orange", vpColor(0, 165, 255) },
+		{ "dark_orange", vpColor(0, 140, 255) },
+		{ "coral", vpColor(80, 127, 255) },
+		{ "light_coral", vpColor(128, 128, 240) },
+		{ "tomato", vpColor(71, 99, 255) },
+		{ "orange_red", vpColor(0, 69, 255) },
+		{ "red", vpColor(0, 0, 255) },
+		{ "hot_pink", vpColor(180, 105, 255) },
+		{ "deep_pink", vpColor(147, 20, 255) },
+		{ "pink", vpColor(203, 192, 255) },
+		{ "light_pink", vpColor(193, 182, 255) },
+		{ "pale_violet_red", vpColor(147, 112, 219) },
+		{ "maroon", vpColor(96, 48, 176) },
+		{ "medium_violet_red", vpColor(133, 21, 199) },
+		{ "violet_red", vpColor(144, 32, 208) },
+		{ "violet", vpColor(238, 130, 238) },
+		{ "plum", vpColor(221, 160, 221) },
+		{ "orchid", vpColor(214, 112, 218) },
+		{ "medium_orchid", vpColor(211, 85, 186) },
+		{ "dark_orchid", vpColor(204, 50, 153) },
+		{ "dark_violet", vpColor(211, 0, 148) },
+		{ "blue_violet", vpColor(226, 43, 138) },
+		{ "purple", vpColor(240, 32, 160) },
+		{ "medium_purple", vpColor(219, 112, 147) },
+		{ "thistle", vpColor(216, 191, 216) },
+		{ "green", vpColor(0, 255, 0) },
+		{ "magenta", vpColor(255, 0, 255) }
+	};
+#endif
+
+
 	ObjStruct::ObjStruct(){
 		corners.create(2, 4, CV_64FC1);
 		size_x = size_y = 0;
@@ -254,12 +413,15 @@ namespace utils{
 			mouse_hover_event = true;
 		}
 	}
-	ObjUtils::ObjUtils(double _resize_factor) : init_frame_id(0),
-		use_reinit_gt(false), resize_factor(_resize_factor),
-		invert_seq(false){
-		obj_cols.push_back(col_rgb["blue"]);
-		obj_cols.push_back(col_rgb["green"]);
+	ObjUtils::ObjUtils(const vector_s &_obj_cols, double _resize_factor) :
+		init_frame_id(0), use_reinit_gt(false), 
+		resize_factor(_resize_factor), invert_seq(false){
+		for(vector_s::const_iterator it = _obj_cols.begin(); it != _obj_cols.end(); ++it) {
+			obj_cols.push_back(col_rgb[*it]);
+		}
 		obj_cols.push_back(col_rgb["red"]);
+		obj_cols.push_back(col_rgb["green"]);
+		obj_cols.push_back(col_rgb["blue"]);
 		obj_cols.push_back(col_rgb["yellow"]);
 		obj_cols.push_back(col_rgb["magenta"]);
 		obj_cols.push_back(col_rgb["cyan"]);
@@ -267,6 +429,9 @@ namespace utils{
 		obj_cols.push_back(col_rgb["black"]);
 		no_of_cols = obj_cols.size();
 #ifndef DISABLE_VISP
+		for(vector_s::const_iterator it = _obj_cols.begin(); it != _obj_cols.end(); ++it) {
+			obj_cols_vp.push_back(col_rgb_vp[*it]);
+		}
 		obj_cols_vp.push_back(vpColor::red);
 		obj_cols_vp.push_back(vpColor::green);
 		obj_cols_vp.push_back(vpColor::blue);

@@ -115,7 +115,7 @@ int main(int argc, char * argv[]) {
 	// ******************* get objects to be tracked and read ground truth if available ******************* //
 	// **************************************************************************************************** //
 
-	mtf::utils::ObjUtils obj_utils(img_resize_factor);
+	mtf::utils::ObjUtils obj_utils(obj_cols, img_resize_factor);
 	try{
 		if(!mtf::getObjectsToTrack(obj_utils, input.get())){
 			printf("Object(s) to be tracked could not be obtained.\n");
