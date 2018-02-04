@@ -748,6 +748,11 @@ int main(int argc, char * argv[]) {
 			fprintf(tracking_stats_fid, "\t %d", failure_count);
 		}
 		if(compute_sr) {
+			if(sr_err_thresh.empty()) {
+				sr_err_thresh.push_back(100);
+				sr_err_thresh.push_back(0.1);
+				sr_err_thresh.push_back(20);
+			}
 			unsigned int n_thresh = static_cast<unsigned int>(sr_err_thresh[0]);
 			VectorXd err_thresholds = VectorXd::LinSpaced(
 				n_thresh, sr_err_thresh[1], sr_err_thresh[2]);			

@@ -210,7 +210,7 @@ namespace mtf{
 		int show_tracking_error = 0;
 		int write_tracking_error = 0;
 		int compute_sr = 0;
-		vectord sr_err_thresh = { 100, 0.1, 20 };
+		vectord sr_err_thresh;
 
 		std::string fps_col = "green";
 		std::string gt_col = "green";
