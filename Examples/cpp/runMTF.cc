@@ -135,7 +135,7 @@ int main(int argc, char * argv[]) {
 
 	if(n_trackers > 1){
 		printf("Multi tracker setup enabled\n");
-		write_tracking_data = reinit_on_failure = show_ground_truth = 0;
+		read_obj_from_gt = write_tracking_data = reinit_on_failure = show_ground_truth = 0;
 	}
 	if(res_from_size){
 		printf("Getting sampling resolution from object size...\n");
@@ -239,7 +239,7 @@ int main(int argc, char * argv[]) {
 	*/
 	if(!read_obj_from_gt){
 		reset_at_each_frame = reinit_at_each_frame = reinit_on_failure =
-			compute_sr = show_tracking_error = write_tracking_error = show_ground_truth = 0;
+			write_tracking_sr = show_tracking_error = write_tracking_error = show_ground_truth = 0;
 	}
 	/**
 	original GT will be overwritten by tracking data only if it is not read from reinit gt -
@@ -267,7 +267,7 @@ int main(int argc, char * argv[]) {
 	}
 	//! functionality that needs the full ground truth
 	bool full_gt_needed = show_tracking_error || write_tracking_error || reinit_on_failure || 
-		reset_at_each_frame || reinit_at_each_frame || show_ground_truth || compute_sr;
+		reset_at_each_frame || reinit_at_each_frame || show_ground_truth || write_tracking_sr;
 	if(full_gt_needed){
 		if(input->getNFrames() <= 0 || valid_gt_frames < input->getNFrames()){
 			//! full ground truth is not available
@@ -280,7 +280,7 @@ int main(int argc, char * argv[]) {
 				printf("Disabling tracking error computation since ground truth is not available\n");
 			}
 			reset_at_each_frame = reinit_at_each_frame = reinit_on_failure =
-				compute_sr = show_tracking_error = write_tracking_error = show_ground_truth = 0;
+				write_tracking_sr = show_tracking_error = write_tracking_error = show_ground_truth = 0;
 		} else{
 			printf("Using %s error to measure tracking accuracy\n",
 				mtf::utils::toString(static_cast<TrackErrT>(tracking_err_type)));
@@ -395,18 +395,18 @@ int main(int argc, char * argv[]) {
 	double avg_err = 0;
 
 	ArrayXd tracking_errors;
-	if(compute_sr) {
+	if(write_tracking_sr) {
 		tracking_errors = ArrayXd::Constant(input->getNFrames() - 1, 1000);
 	}
 
 	cv::Point fps_origin(10, 20), err_origin(10, 40);
 	double fps_font_size = 0.50, err_font_size = 0.50;
 
-	//cv::Scalar fps_col_rgb = mtf::utils::col_rgb[fps_col];
-	//cv::Scalar gt_color_rgb = mtf::utils::col_rgb[gt_col];
-	//cv::Scalar err_col_rgb = mtf::utils::col_rgb[err_col];
+	cv::Scalar fps_col_rgb = mtf::utils::col_rgb[fps_col];
+	cv::Scalar gt_color_rgb = mtf::utils::col_rgb[gt_col];
+	cv::Scalar err_col_rgb = mtf::utils::col_rgb[err_col];
 
-	cv::Scalar fps_col_rgb(0, 255, 0), gt_color_rgb(0, 255, 0), err_col_rgb(0, 255, 0);
+	//cv::Scalar fps_col_rgb(0, 255, 0), gt_color_rgb(0, 255, 0), err_col_rgb(0, 255, 0);
 	
 	if(reset_template){ printf("Template resetting is enabled\n"); }
 
@@ -430,7 +430,7 @@ int main(int argc, char * argv[]) {
 		printf("Using a gap of %d between consecutive tracked frames\n", frame_gap);
 	}
 	bool resized_images = img_resize_factor != 1;
-	bool tracking_error_needed = show_tracking_error || write_tracking_error || reinit_on_failure || compute_sr;
+	bool tracking_error_needed = show_tracking_error || write_tracking_error || reinit_on_failure || write_tracking_sr;
 	bool gt_corners_needed = tracking_error_needed || show_ground_truth;
 
 	// ********************************************************************************************** //
@@ -528,7 +528,7 @@ int main(int argc, char * argv[]) {
 				is_initialized = false;
 			} else{
 				//! exclude initialization frames from those used for computing the average error      
-				if(compute_sr) {
+				if(write_tracking_sr) {
 					tracking_errors[valid_frame_count] = tracking_err;
 				}
 				++valid_frame_count;
@@ -733,27 +733,8 @@ int main(int argc, char * argv[]) {
 			printf("\n");
 		}
 	}
-	if(write_tracking_data){
-		if(!reinit_on_failure && invalid_tracker_state && input->getNFrames() > 0){
-			for(int frame_id = input->getFrameID(); frame_id < input->getNFrames(); ++frame_id){
-				fprintf(tracking_data_fid, "frame%05d.jpg invalid_tracker_state\n", frame_id + 1);
-			}
-		}
-		fclose(tracking_data_fid);
-		FILE *tracking_stats_fid = fopen("log/tracking_stats.txt", "a");
-		fprintf(tracking_stats_fid, "%s\t %s\t %s\t %s\t %d\t %s\t %15.9f\t %15.9f",
-			seq_name.c_str(), mtf_sm, mtf_am, mtf_ssm, hom_normalized_init,
-			tracking_data_fname.c_str(), avg_fps, avg_fps_win);
-		if(show_tracking_error){
-			fprintf(tracking_stats_fid, "\t %15.9f", avg_err);
-		}
-		if(reinit_on_failure){
-			fprintf(tracking_stats_fid, "\t %d", failure_count);
-		}
-		fprintf(tracking_stats_fid, "\n");
-		fclose(tracking_stats_fid);
-	}
-	if(compute_sr) {
+	double mean_sr = 0;
+	if(write_tracking_sr) {
 		if(sr_err_thresh.empty()) {
 			sr_err_thresh.push_back(100);
 			sr_err_thresh.push_back(0.1);
@@ -774,9 +755,30 @@ int main(int argc, char * argv[]) {
 		const char *mat_header[2] = { "error_thresold", "success_rate" };
 		mtf::utils::printMatrixToFile(sr_out, nullptr, sr_path.c_str(), "%15.9f",
 			"w", "\t", "\n", nullptr, mat_header);
-		double mean_sr = success_rates.mean();
-		fprintf(tracking_stats_fid, "\t %15.9f", mean_sr);
+		mean_sr = success_rates.mean();		
 		printf("Average Success Rate: %15.10f\n", mean_sr);
+	}
+	if(write_tracking_data){
+		if(!reinit_on_failure && invalid_tracker_state && input->getNFrames() > 0){
+			for(int frame_id = input->getFrameID(); frame_id < input->getNFrames(); ++frame_id){
+				fprintf(tracking_data_fid, "frame%05d.jpg invalid_tracker_state\n", frame_id + 1);
+			}
+		}
+		fclose(tracking_data_fid);
+		FILE *tracking_stats_fid = fopen("log/tracking_stats.txt", "a");
+		fprintf(tracking_stats_fid, "%s\t %s\t %s\t %s\t %d\t %s\t %15.9f\t %15.9f",
+			seq_name.c_str(), mtf_sm, mtf_am, mtf_ssm, hom_normalized_init,
+			tracking_data_fname.c_str(), avg_fps, avg_fps_win);
+		if(show_tracking_error){
+			fprintf(tracking_stats_fid, "\t %15.9f", avg_err);
+		}
+		if(reinit_on_failure){
+			fprintf(tracking_stats_fid, "\t %d", failure_count);
+		} else if(write_tracking_sr) {
+			fprintf(tracking_stats_fid, "\t %15.9f", mean_sr);
+		}
+		fprintf(tracking_stats_fid, "\n");
+		fclose(tracking_stats_fid);
 	}
 	printf("Cleaning up...\n");
 	if(record_frames){
