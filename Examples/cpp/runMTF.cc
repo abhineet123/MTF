@@ -751,7 +751,7 @@ int main(int argc, char * argv[]) {
 			unsigned int n_thresh = static_cast<unsigned int>(sr_err_thresh[0]);
 			VectorXd err_thresholds = VectorXd::LinSpaced(
 				n_thresh, sr_err_thresh[1], sr_err_thresh[2]);			
-			VectorXd success_rates(sr_err_thresh[0]);
+			VectorXd success_rates(n_thresh);
 			double err_count = static_cast<double>(tracking_errors.size());
 			for(unsigned int i = 0; i < n_thresh; ++i) {
 				success_rates[i] = (tracking_errors <= err_thresholds[i]).count() / err_count;
