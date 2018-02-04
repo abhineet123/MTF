@@ -724,8 +724,6 @@ int main(int argc, char * argv[]) {
 	}
 	cv::destroyAllWindows();
 
-	//double avg_fps = accumulate( fps_vector.begin(), fps_vector.end(), 0.0 )/ fps_vector.size();
-	//double avg_fps_win = accumulate( fps_win_vector.begin(), fps_win_vector.end(), 0.0 )/ fps_win_vector.size();
 	printf("Average FPS: %15.10f\n", avg_fps);
 	printf("Average FPS with Input: %15.10f\n", avg_fps_win);
 	if(show_tracking_error){
@@ -751,7 +749,7 @@ int main(int argc, char * argv[]) {
 		VectorXd err_thresholds = VectorXd::LinSpaced(
 			n_thresh, sr_err_thresh[1], sr_err_thresh[2]);
 		VectorXd success_rates(n_thresh);
-		double err_count = static_cast<double>(tracking_errors.size());
+		double err_count = static_cast<double>(valid_frame_count);
 		for(unsigned int i = 0; i < n_thresh; ++i) {
 			success_rates[i] = (tracking_errors <= err_thresholds[i]).count() / err_count;
 		}
