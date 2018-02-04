@@ -401,13 +401,12 @@ int main(int argc, char * argv[]) {
 
 	cv::Point fps_origin(10, 20), err_origin(10, 40);
 	double fps_font_size = 0.50, err_font_size = 0.50;
-	cv::Scalar fps_col_rgb = mtf::utils::col_rgb[fps_col];
-	cv::Scalar gt_color_rgb = mtf::utils::col_rgb[gt_col];
-	cv::Scalar err_col_rgb = mtf::utils::col_rgb[err_col];
 
-	cv::Scalar fps_col_rgb = cv::Scalar(0, 255, 0);
-	cv::Scalar gt_color_rgb = cv::Scalar(0, 255, 0);
-	cv::Scalar err_col_rgb = cv::Scalar(0, 255, 0);
+	//cv::Scalar fps_col_rgb = mtf::utils::col_rgb[fps_col];
+	//cv::Scalar gt_color_rgb = mtf::utils::col_rgb[gt_col];
+	//cv::Scalar err_col_rgb = mtf::utils::col_rgb[err_col];
+
+	cv::Scalar fps_col_rgb(0, 255, 0), gt_color_rgb(0, 255, 0), err_col_rgb(0, 255, 0);
 	
 	if(reset_template){ printf("Template resetting is enabled\n"); }
 
