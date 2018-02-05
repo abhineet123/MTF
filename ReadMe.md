@@ -236,7 +236,8 @@ Use either `make run` or `runMTF` to start the tracking application using the se
 Building the ROS package:
 ----------------------
 
-A simple ROS package called `mtf_bridge` that demonstrates the integration of MTF with ROS applications is included in the `ROS` sub directory. To build it, first [create a catkin workspace](http://wiki.ros.org/catkin/Tutorials/create_a_workspace) by running `catkin_init_workspace` from `ROS/src` and then build this package by running `catkin_make` from `ROS`. Also refer [this page](http://wiki.ros.org/ROS/Tutorials/BuildingPackages) for more details on building and running ROS packages.
+A simple ROS package called `mtf_bridge` that demonstrates the integration of MTF with ROS applications is included in the `ROS` sub directory.
+Details about building and using this package are in the ReadMe in this folder.
 
 Building a new application that uses MTF:
 -----------------------------------------

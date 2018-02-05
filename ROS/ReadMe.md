@@ -20,5 +20,7 @@ Finally, run `catkin_make` as usual to compile the nodes and run them as:
 
 `SharedImageWriter` subscribes to `/camera/image_raw/` for input images so a camera capture node also needs to be running that publishes to this topic.
 
+Also refer [this page](http://wiki.ros.org/ROS/Tutorials/BuildingPackages) for more details on building and running ROS packages.
+
 
 

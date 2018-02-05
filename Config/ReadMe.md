@@ -350,7 +350,15 @@ Output parameters:
 			0: Disable
 			1: Enable	
 		Applies to:
-			runMTF, extractPatch, trackUAVTrajectory, diagnoseMTF			
+			runMTF, extractPatch, trackUAVTrajectory, diagnoseMTF	
+			
+	 Parameter:	'obj_cols'
+		Description:
+			colours in which the bounding boxes of the tracked objects are shown in;
+			this is specified as a comma separated list of colour names;
+			if the number of tracked objects exceeds the number of specified colours, the list will be circled back;
+		Possible Values:
+			Refer to [this page](https://www.rapidtables.com/web/color/RGB_Color.html) or "col_rgb" in Utilities/src/objUtils.cc for a list of available colours;
 			
 	 Parameter:	'show_ground_truth'
 		Description:
@@ -360,6 +368,18 @@ Output parameters:
 		Possible Values:
 			0: Disable
 			1: Enable
+			
+	 Parameter:	'gt_col'
+		Description:
+			colour in which the bounding box of the ground truth is shown in;
+		Possible Values:
+			Refer to [this page](https://www.rapidtables.com/web/color/RGB_Color.html) or "col_rgb" in Utilities/src/objUtils.cc for a list of available colours;
+	 
+	 Parameter:	'fps_col'
+		Description:
+			colour in which the text showing the FPS and other tracking info will be shown in;
+		Possible Values:
+			Refer to [this page](https://www.rapidtables.com/web/color/RGB_Color.html) or "col_rgb" in Utilities/src/objUtils.cc for a list of available colours;
 			
 	 Parameter:	'show_tracking_error'
 		Description:
