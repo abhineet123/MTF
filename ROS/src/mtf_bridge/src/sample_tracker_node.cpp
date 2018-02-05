@@ -25,6 +25,7 @@ using namespace mtf::params;
 using namespace mtf::utils;
 
 typedef std::shared_ptr<mtf::TrackerBase> Tracker_;
+// neded to avoid duplicate preprocessors
 std::vector<PreProc_> pre_procs;
 
 int const rate = 30;
@@ -36,10 +37,6 @@ struct TrackerStruct{
 		tracker(_tracker), pre_proc(_pre_proc), id(_id){
 	}
 	bool update(const cv::Mat &frame, int frame_id = -1) {
-		if(!pre_proc || !tracker){
-			printf("Tracker has not been created");
-			return false;
-		}
 		try{
 			//! update pre-processor
 			pre_proc->update(frame, frame_id);
@@ -53,10 +50,6 @@ struct TrackerStruct{
 		return true;
 	}
 	void setRegion(const cv::Mat& corners){
-		if(!pre_proc || !tracker){
-			printf("Tracker has not been created");
-			return;
-		}
 		tracker->setRegion(corners);
 	}
 	const cv::Mat& getRegion() {
@@ -80,19 +73,7 @@ int n_colors;
 ros::Publisher tracker_pub;
 SharedImageReader *image_reader;
 
-struct Patch {
-    Patch(std::vector<cv::Point> points) {
-        assert(points.size() == 4);
-        for(unsigned long i = 0; i < points.size(); ++i) {
-            corners[i] = points[i];
-        }
-    }
-    cv::Point2d operator[](int i) { return corners[i];}
-    cv::Point2d corners[4];
-};
-
-cv::Point get_patch_center(const cv::Point2d (&cv_corners)[4]) {
-	;
+cv::Point getPatchCenter(const cv::Point2d (&cv_corners)[4]) {
     Eigen::Vector3d tl(cv_corners[0].x, cv_corners[0].y, 1);
     Eigen::Vector3d tr(cv_corners[1].x, cv_corners[1].y, 1);
     Eigen::Vector3d br(cv_corners[2].x, cv_corners[2].y, 1);
@@ -106,7 +87,7 @@ cv::Point get_patch_center(const cv::Point2d (&cv_corners)[4]) {
     return center;
 }
 
-mtf_bridge::Patch get_tracker_patch(TrackerStruct &tracker) {
+mtf_bridge::Patch getTrackerPatch(TrackerStruct &tracker) {
 	cv::Point2d cv_corners[4];
 	mtf::utils::Corners(tracker.getRegion()).points(cv_corners);
     mtf_bridge::Point top_left;
@@ -131,7 +112,7 @@ mtf_bridge::Patch get_tracker_patch(TrackerStruct &tracker) {
     patch.corners[2] = bot_right;
     patch.corners[3] = bot_left;
 
-	cv::Point center_point = get_patch_center(cv_corners);
+	cv::Point center_point = getPatchCenter(cv_corners);
 
     mtf_bridge::Point center;
     center.x = center_point.x;
@@ -141,7 +122,7 @@ mtf_bridge::Patch get_tracker_patch(TrackerStruct &tracker) {
     return patch;
 }
 
-void update_trackers() {
+void updateTrackers() {
     if (trackers.empty()) {
         return;
     }
@@ -150,20 +131,20 @@ void update_trackers() {
     for(std::vector<TrackerStruct>::iterator tracker = trackers.begin(); 
 		tracker != trackers.end(); ++tracker) {
 		(*tracker).update(*(image_reader->getFrame()), image_reader->getFrameID());
-        mtf_bridge::Patch tracker_patch = get_tracker_patch(*tracker);
+        mtf_bridge::Patch tracker_patch = getTrackerPatch(*tracker);
         tracker_msg.trackers.push_back(tracker_patch);
     }
     tracker_pub.publish(tracker_msg);
 }
 
-void draw_patch(const cv::Point2d* corners, cv::Scalar color) {
+void drawPatch(const cv::Point2d* corners, cv::Scalar color) {
     line(display_frame, corners[0], corners[1], color);
     line(display_frame, corners[1], corners[2], color);
     line(display_frame, corners[2], corners[3], color);
     line(display_frame, corners[3], corners[0], color);
 }
 
-void draw_frame(std::string cv_window_title) {
+void drawFrame(std::string cv_window_title) {
     cv::cvtColor(*(image_reader->getFrame()), display_frame, cv::COLOR_RGB2BGR);
 
     // Draw trackers
@@ -173,14 +154,13 @@ void draw_frame(std::string cv_window_title) {
 			cv::Point2d cv_corners[4];
 			mtf::utils::Corners((*tracker).getRegion()).points(cv_corners);
 			cv::Scalar obj_col = colors[(*tracker).getID() % n_colors];
-			draw_patch(cv_corners, obj_col);
-			cv::Point center = get_patch_center(cv_corners);
+			drawPatch(cv_corners, obj_col);
+			cv::Point center = getPatchCenter(cv_corners);
 			cv::circle(display_frame, center, 5, obj_col, -1);
             // Black outline
             cv::circle(display_frame, center, 5, cv::Scalar(0, 0, 0), 2);
         }
     }
-
     // Show construction of tracker
     for (std::vector<cv::Point>::const_iterator point = new_tracker_points.begin(); point != new_tracker_points.end(); ++point) {
         // White filled circle
@@ -247,7 +227,7 @@ bool create(const cv::Mat init_frame, const cv::Mat init_corners, int frame_id) 
 // Assume points are ordered: 1 ---- 2
 //                            |      |
 //                            4 ---- 3
-void initialize_tracker() {
+void initializeTracker() {
 	if(!readParams(0, nullptr)){ return; }
 
     cv::Mat cv_corners(2, 4, CV_64FC1);
@@ -259,10 +239,10 @@ void initialize_tracker() {
 		ROS_INFO_STREAM("Tracker could not be created");
 	}
     ROS_INFO_STREAM("Tracker initialized");
-    draw_frame("TrackingNode");
+    drawFrame("TrackingNode");
 }
 
-void mouse_cb(int mouse_event, int x, int y, int flags, void* param) {
+void mouseHandler(int mouse_event, int x, int y, int flags, void* param) {
     // Right mouse click restarts setting of tracker points
     if (mouse_event == CV_EVENT_RBUTTONUP) {
         new_tracker_points.clear();
@@ -273,7 +253,7 @@ void mouse_cb(int mouse_event, int x, int y, int flags, void* param) {
         ROS_DEBUG_STREAM("Click at x: " << x << ", " << y);
         new_tracker_points.push_back(cv::Point(x,y));
         if (new_tracker_points.size() == 4) {
-            initialize_tracker();
+            initializeTracker();
             new_tracker_points.clear();
         }
         return;
@@ -297,7 +277,7 @@ int main(int argc, char *argv[]) {
     // Initialize OpenCV window and mouse callback
     std::string cv_window_title = "TrackingNode";
 	cv::namedWindow(cv_window_title, cv::WINDOW_AUTOSIZE);
-    cv::setMouseCallback(cv_window_title, mouse_cb);
+    cv::setMouseCallback(cv_window_title, mouseHandler);
 
     tracker_pub = nh_.advertise<mtf_bridge::PatchTrackers>("patch_tracker", 1);
 
@@ -313,8 +293,8 @@ int main(int argc, char *argv[]) {
 
 	while(ros::ok()){
 		ros::spinOnce();
-        update_trackers();
-        draw_frame(cv_window_title);
+        updateTrackers();
+        drawFrame(cv_window_title);
 		loop_rate.sleep();
     }
     return 0;
