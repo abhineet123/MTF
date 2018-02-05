@@ -176,7 +176,7 @@ namespace utils{
 		printf("kernel_size: %d x %df\n",
 			kernel_size.width, kernel_size.height);
 		printf("sigma: %f x %f\n", sigma_x, sigma_y);
-		_type = cv::format("%s_%d_%d", _type.c_str(), sigma_x, sigma_y);
+		_type = cv::format("%s_%.2f_%.2f", _type.c_str(), sigma_x, sigma_y);
 	}
 	MedianFiltering::MedianFiltering( int _output_type, double _resize_factor,
 		bool _hist_eq, int _kernel_size) :
@@ -201,7 +201,7 @@ namespace utils{
 		printf("diameter: %d\n", diameter);
 		printf("sigma_col: %f\n", sigma_col);
 		printf("sigma_space: %f\n", sigma_space);
-		_type = cv::format("bilateral_%d_%d_%d", sigma_x, sigma_y);
+		_type = cv::format("bilateral_%d_%.2f_%.2f", diameter, sigma_col, sigma_space);
 	}
 	SobelFltering::SobelFltering(int _output_type, double _resize_factor,
 		bool _hist_eq, int _kernel_size, bool _normalize) :
