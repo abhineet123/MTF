@@ -78,6 +78,7 @@ struct TrackerStruct{
 				err.type(), err.what());
 			return false;
 		}
+		return true;
 	}
 	bool update(const cv::Mat &curr_img, mxArray* &plhs) {
 		if(!pre_proc || !tracker){
