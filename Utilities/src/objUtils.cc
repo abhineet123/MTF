@@ -419,29 +419,33 @@ namespace utils{
 		for(vector_s::const_iterator it = _obj_cols.begin(); it != _obj_cols.end(); ++it) {
 			obj_cols.push_back(col_rgb[*it]);
 		}
-		obj_cols.push_back(col_rgb["red"]);
-		obj_cols.push_back(col_rgb["green"]);
-		obj_cols.push_back(col_rgb["blue"]);
-		obj_cols.push_back(col_rgb["yellow"]);
-		obj_cols.push_back(col_rgb["magenta"]);
-		obj_cols.push_back(col_rgb["cyan"]);
-		obj_cols.push_back(col_rgb["white"]);
-		obj_cols.push_back(col_rgb["black"]);
+		if(obj_cols.empty()) {
+			obj_cols.push_back(col_rgb["red"]);
+			obj_cols.push_back(col_rgb["green"]);
+			obj_cols.push_back(col_rgb["blue"]);
+			obj_cols.push_back(col_rgb["yellow"]);
+			obj_cols.push_back(col_rgb["magenta"]);
+			obj_cols.push_back(col_rgb["cyan"]);
+			obj_cols.push_back(col_rgb["white"]);
+			obj_cols.push_back(col_rgb["black"]);
+		}
 		no_of_cols = obj_cols.size();
 #ifndef DISABLE_VISP
 		for(vector_s::const_iterator it = _obj_cols.begin(); it != _obj_cols.end(); ++it) {
 			obj_cols_vp.push_back(col_rgb_vp[*it]);
 		}
-		obj_cols_vp.push_back(vpColor::red);
-		obj_cols_vp.push_back(vpColor::green);
-		obj_cols_vp.push_back(vpColor::blue);
-		obj_cols_vp.push_back(vpColor::cyan);
-		obj_cols_vp.push_back(vpColor::lightRed);
-		obj_cols_vp.push_back(vpColor::yellow);
-		obj_cols_vp.push_back(vpColor::purple);
-		obj_cols_vp.push_back(vpColor::orange);
-		obj_cols_vp.push_back(vpColor::white);
-		obj_cols_vp.push_back(vpColor::black);
+		if(obj_cols.empty()) {
+			obj_cols_vp.push_back(vpColor::red);
+			obj_cols_vp.push_back(vpColor::green);
+			obj_cols_vp.push_back(vpColor::blue);
+			obj_cols_vp.push_back(vpColor::cyan);
+			obj_cols_vp.push_back(vpColor::lightRed);
+			obj_cols_vp.push_back(vpColor::yellow);
+			obj_cols_vp.push_back(vpColor::purple);
+			obj_cols_vp.push_back(vpColor::orange);
+			obj_cols_vp.push_back(vpColor::white);
+			obj_cols_vp.push_back(vpColor::black);
+		}
 		no_of_cols_vp = obj_cols_vp.size();
 #endif		
 	}
