@@ -25,62 +25,24 @@ using namespace mtf::params;
 using namespace mtf::utils;
 
 typedef std::shared_ptr<mtf::TrackerBase> Tracker_;
+std::vector<PreProc_> pre_procs;
 
 int const rate = 30;
 
 using namespace mtf::params;
 
 struct TrackerStruct{
-	TrackerStruct() : tracker(nullptr), pre_proc(nullptr){}
 	TrackerStruct(Tracker_ &_tracker, PreProc_ &_pre_proc) :
 		tracker(_tracker), pre_proc(_pre_proc){
 	}
-	bool create(const cv::Mat init_frame, const cv::Mat init_corners) {
-		try{
-			tracker.reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
-			if(!tracker){
-				printf("Tracker could not be created successfully\n");
-				return false;
-			}
-		} catch(const mtf::utils::Exception &err){
-			printf("Exception of type %s encountered while creating the tracker: %s\n",
-				err.type(), err.what());
-			return false;
-		}
-		try{
-			pre_proc = mtf::getPreProc(tracker->inputType(), pre_proc_type);
-		} catch(const mtf::utils::Exception &err){
-			printf("Exception of type %s encountered while creating the pre processor: %s\n",
-				err.type(), err.what());
-			return false;
-		}
-		try{
-			pre_proc->initialize(init_frame);
-		} catch(const mtf::utils::Exception &err){
-			printf("Exception of type %s encountered while initializing the pre processor: %s\n",
-				err.type(), err.what());
-			return false;
-		}
-		try{
-			for(PreProc_ curr_obj = pre_proc; curr_obj; curr_obj = curr_obj->next){
-				tracker->setImage(curr_obj->getFrame());
-			}
-			tracker->initialize(init_corners);
-		} catch(const mtf::utils::Exception &err){
-			printf("Exception of type %s encountered while initializing the tracker: %s\n",
-				err.type(), err.what());
-			return false;
-		}
-		return true;
-	}
-	bool update(const cv::Mat &curr_img) {
+	bool update(const cv::Mat &frame, int frame_id = -1) {
 		if(!pre_proc || !tracker){
 			printf("Tracker has not been created");
 			return false;
 		}
 		try{
 			//! update pre-processor
-			pre_proc->update(curr_img);
+			pre_proc->update(frame, frame_id);
 			//! update tracker
 			tracker->update();
 		} catch(const mtf::utils::Exception &err){
@@ -191,7 +153,7 @@ void update_trackers() {
     mtf_bridge::PatchTrackers tracker_msg;
     for(std::vector<TrackerStruct>::iterator tracker = trackers.begin(); 
 		tracker != trackers.end(); ++tracker) {
-		(*tracker).update(*(image_reader->get_next_frame()));
+		(*tracker).update(*(image_reader->getFrame()), image_reader->getFrameID());
         mtf_bridge::Patch tracker_patch = get_tracker_patch(*tracker);
         tracker_msg.trackers.push_back(tracker_patch);
     }
@@ -206,7 +168,7 @@ void draw_patch(const cv::Point2d* corners, cv::Scalar color) {
 }
 
 void draw_frame(std::string cv_window_title) {
-    cv::cvtColor(*(image_reader->get_next_frame()), display_frame, cv::COLOR_RGB2BGR);
+    cv::cvtColor(*(image_reader->getFrame()), display_frame, cv::COLOR_RGB2BGR);
 
     // Draw trackers
     if (!trackers.empty()) {
@@ -236,8 +198,52 @@ void draw_frame(std::string cv_window_title) {
     if (key == 'd') {
         if (trackers.size() > 0) {
             trackers.erase(trackers.begin());
+            pre_procs.erase(pre_procs.begin());
         }
     }
+}
+
+bool create(const cv::Mat init_frame, const cv::Mat init_corners, int frame_id) {
+	Tracker_ tracker;
+	PreProc_ pre_proc;
+	try{
+		tracker.reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
+		if(!tracker){
+			printf("Tracker could not be created successfully\n");
+			return false;
+		}
+	} catch(const mtf::utils::Exception &err){
+		printf("Exception of type %s encountered while creating the tracker: %s\n",
+			err.type(), err.what());
+		return false;
+	}
+	try{
+		pre_proc = mtf::getPreProc(pre_procs, tracker->inputType(), pre_proc_type);
+	} catch(const mtf::utils::Exception &err){
+		printf("Exception of type %s encountered while creating the pre processor: %s\n",
+			err.type(), err.what());
+		return false;
+	}
+	try{
+		pre_proc->initialize(init_frame, frame_id);
+	} catch(const mtf::utils::Exception &err){
+		printf("Exception of type %s encountered while initializing the pre processor: %s\n",
+			err.type(), err.what());
+		return false;
+	}
+	try{
+		for(PreProc_ curr_obj = pre_proc; curr_obj; curr_obj = curr_obj->next){
+			tracker->setImage(curr_obj->getFrame());
+		}
+		tracker->initialize(init_corners);
+	} catch(const mtf::utils::Exception &err){
+		printf("Exception of type %s encountered while initializing the tracker: %s\n",
+			err.type(), err.what());
+		return false;
+	}
+	trackers.push_back(TrackerStruct(tracker, pre_proc));
+	pre_procs.push_back(pre_proc);
+	return true;
 }
 
 // Assume points are ordered: 1 ---- 2
@@ -246,14 +252,14 @@ void draw_frame(std::string cv_window_title) {
 void initialize_tracker() {
 	if(!readParams(0, nullptr)){ return; }
 
-    cv::Mat new_tracker_corners(2, 4, CV_64FC1);
+    cv::Mat cv_corners(2, 4, CV_64FC1);
 	for(unsigned int i = 0; i < 4; ++i) {
-		new_tracker_corners.at<double>(0, i) = new_tracker_points[i].x;
-		new_tracker_corners.at<double>(1, i) = new_tracker_points[i].y;
+		cv_corners.at<double>(0, i) = new_tracker_points[i].x;
+		cv_corners.at<double>(1, i) = new_tracker_points[i].y;
+	}	
+	if(!create(*(image_reader->getFrame()), cv_corners, image_reader->getFrameID())) {
+		ROS_INFO_STREAM("Tracker could not be created");
 	}
-	TrackerStruct tracker;
-	tracker.create(*(image_reader->get_next_frame()), new_tracker_corners);
-
     ROS_INFO_STREAM("Tracker initialized");
     draw_frame("TrackingNode");
 }
@@ -298,7 +304,7 @@ int main(int argc, char *argv[]) {
 
 	ros::Rate loop_rate(rate);
 
-    while(!image_reader->is_initialized()) {
+    while(!image_reader->isInitialized()) {
         ROS_INFO_STREAM("Waiting while system initializes");
         ros::spinOnce();
         ros::Duration(0.7).sleep();

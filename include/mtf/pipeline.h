@@ -219,12 +219,13 @@ inline PreProc_ getPreProc(const vector<PreProc_> &existing_objs, int output_typ
 		}
 		return new_obj;
 	}
+	PreProc_ new_pre_proc(createPreProc(output_type, _pre_proc_type));
 	for(unsigned int obj_id = 0; obj_id < existing_objs.size(); ++obj_id){
 		for(PreProc_ curr_obj = existing_objs[obj_id]; curr_obj; curr_obj = curr_obj->next){
-			if(curr_obj->outputType() == output_type){ return curr_obj; }
+			if(curr_obj->type() == new_pre_proc->type()) { return curr_obj; }
 		}
 	}
-	return PreProc_(createPreProc(output_type, _pre_proc_type));
+	return new_pre_proc;
 }
 inline PreProc_ getPreProc(int output_type,
 	const std::string &_pre_proc_type){

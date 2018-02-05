@@ -24,8 +24,8 @@ namespace utils{
 		and multiple trackers efficiently
 		*/
 		Ptr next;
-		PreProcBase(int _output_type = CV_32FC1, double _resize_factor = 1,
-			bool _hist_eq = false);
+		PreProcBase(const std::string &name, int _output_type = CV_32FC1, 
+			double _resize_factor = 1, bool _hist_eq = false);
 		virtual ~PreProcBase(){
 			release();
 		}
@@ -39,6 +39,7 @@ namespace utils{
 		virtual const cv::Mat& getFrame(){
 			return resize_images ? frame_resized : rgb_output ? frame_rgb : frame_gs;
 		}
+		virtual std::string type(){ return _type; }
 		virtual void showFrame(std::string window_name);
 		virtual int outputType() const{ return output_type; }
 		virtual void setFrameID(int _frame_id){ frame_id = _frame_id; }
@@ -55,6 +56,8 @@ namespace utils{
 		double resize_factor;
 		bool resize_images;
 		const bool hist_eq;
+		//! unique ID to prevent creating duplicate pre processors with identical processing
+		std::string _type;
 
 		virtual void apply(cv::Mat &img_gs) const = 0;
 		virtual void processFrame(const cv::Mat &frame_raw);
@@ -142,14 +145,14 @@ namespace utils{
 	struct NoFiltering : public PreProcBase{
 		NoFiltering(int _output_type = CV_32FC1,
 			double _resize_factor = 1, bool _hist_eq = false) :
-			PreProcBase(_output_type, _resize_factor, _hist_eq){
+			PreProcBase("NoFiltering",_output_type, _resize_factor, _hist_eq){
 			printf("Filtering is disabled\n");
 		}
 		void apply(cv::Mat &img_gs) const override{}
 	};
 	struct NoPreProcessing : public PreProcBase{
 		NoPreProcessing(int _output_type = CV_32FC1) :
-			PreProcBase(_output_type){
+			PreProcBase("NoPreProcessing", _output_type){
 			printf("Pre processing is disabled\n");
 		}
 		void initialize(const cv::Mat &frame_raw,

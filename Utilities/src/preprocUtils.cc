@@ -4,11 +4,13 @@
 
 _MTF_BEGIN_NAMESPACE
 namespace utils{	
-	PreProcBase::PreProcBase(int _output_type, double _resize_factor,
-		bool _hist_eq) : next(nullptr), output_type(_output_type),
+	PreProcBase::PreProcBase(const std::string &name, int _output_type, 
+		double _resize_factor, bool _hist_eq) : next(nullptr), output_type(_output_type),
 		frame_id(-1), rgb_input(true), rgb_output(_output_type == CV_32FC3 || _output_type == CV_8UC3),
 		resize_factor(_resize_factor), resize_images(_resize_factor != 1),
-		hist_eq(_hist_eq){}
+		hist_eq(_hist_eq) {
+		_type = cv::format("%s_%d_%.2f_%d", name.c_str(), output_type, resize_factor, hist_eq);
+	}
 
 	void PreProcBase::release(){
 		frame_rgb.release();
@@ -166,7 +168,7 @@ namespace utils{
 	GaussianSmoothing::GaussianSmoothing(
 		int _output_type, double _resize_factor, bool _hist_eq,
 		int _kernel_size, double _sigma_x, double _sigma_y) :
-		PreProcBase(_output_type, _resize_factor, _hist_eq),
+		PreProcBase("GaussianSmoothing",_output_type, _resize_factor, _hist_eq),		
 		kernel_size(_kernel_size, _kernel_size),
 		sigma_x(_sigma_x),
 		sigma_y(_sigma_y){
@@ -174,39 +176,45 @@ namespace utils{
 		printf("kernel_size: %d x %df\n",
 			kernel_size.width, kernel_size.height);
 		printf("sigma: %f x %f\n", sigma_x, sigma_y);
+		_type = cv::format("%s_%d_%d", _type.c_str(), sigma_x, sigma_y);
 	}
 	MedianFiltering::MedianFiltering( int _output_type, double _resize_factor,
 		bool _hist_eq, int _kernel_size) :
-		PreProcBase(_output_type, _resize_factor, _hist_eq), kernel_size(_kernel_size){
+		PreProcBase("MedianFiltering",_output_type, _resize_factor, _hist_eq), kernel_size(_kernel_size){
 		printf("Using Median Filtering with:\n");
 		printf("kernel_size: %d\n", kernel_size);
+		_type = cv::format("%s_%d", _type.c_str(), kernel_size);
 	}
 	NormalizedBoxFiltering::NormalizedBoxFiltering(int _output_type , double _resize_factor,
 		bool _hist_eq,	int _kernel_size) :
-		PreProcBase(_output_type, _resize_factor, _hist_eq), kernel_size(_kernel_size, _kernel_size){
+		PreProcBase("NormalizedBoxFiltering",_output_type, _resize_factor, _hist_eq),
+		kernel_size(_kernel_size, _kernel_size){
 		printf("Using Normalized Box Fltering with:\n");
 		printf("kernel_size: %d x %d\n", kernel_size.width, kernel_size.height);
+		_type = cv::format("%s_%d", _type.c_str(), _kernel_size);
 	}
 	BilateralFiltering::BilateralFiltering(	int _output_type, double _resize_factor,
 		bool _hist_eq, int _diameter, double _sigma_col, double _sigma_space) :
-		PreProcBase(_output_type, _resize_factor, _hist_eq), diameter(_diameter),
+		PreProcBase("BilateralFiltering", _output_type, _resize_factor, _hist_eq), diameter(_diameter),
 		sigma_col(_sigma_col), sigma_space(_sigma_space){
 		printf("Using Bilateral Filtering with:\n");
 		printf("diameter: %d\n", diameter);
 		printf("sigma_col: %f\n", sigma_col);
 		printf("sigma_space: %f\n", sigma_space);
+		_type = cv::format("bilateral_%d_%d_%d", sigma_x, sigma_y);
 	}
 	SobelFltering::SobelFltering(int _output_type, double _resize_factor,
 		bool _hist_eq, int _kernel_size, bool _normalize) :
-		PreProcBase(_output_type, _resize_factor, _hist_eq),
+		PreProcBase("SobelFltering", _output_type, _resize_factor, _hist_eq),
 		kernel_size(_kernel_size), normalize(_normalize){
-		printf("Using Sobel Fltering with:\n");
-		printf("kernel_size: %d\n", kernel_size);
-		printf("normalize: %d\n", normalize);
 		if(output_type == CV_8UC3 || output_type == CV_8UC1){
 			throw mtf::utils::InvalidArgument(
 				cv::format("SobelFltering:: Only floating point output types are supported"));
 		}
+		printf("Using Sobel Fltering with:\n");
+		printf("kernel_size: %d\n", kernel_size);
+		printf("normalize: %d\n", normalize);
+		_type = cv::format("%s_%d_%d", _type.c_str(), _kernel_size, _normalize);
 	}
 	void SobelFltering::initialize(const cv::Mat &frame_raw,
 		int _frame_id, bool print_types){
@@ -290,12 +298,13 @@ namespace utils{
 	AnisotropicDiffusion::AnisotropicDiffusion(
 		int _output_type, double _resize_factor, bool _hist_eq,
 		double _lambda, double _k, unsigned int _n_iters) :
-		PreProcBase(_output_type, _resize_factor, _hist_eq),
+		PreProcBase("AnisotropicDiffusion", _output_type, _resize_factor, _hist_eq),
 		lambda(_lambda), k(_k), n_iters(_n_iters){
 		printf("Using Anisotropic Diffusion with:\n");
 		printf("lambda: %f\n", lambda);
 		printf("k: %f\n", k);
 		printf("n_iters: %d\n", n_iters);
+		_type = cv::format("%s_%.2f_%.2f_%d", _type.c_str(), lambda, k, n_iters);
 	}
 	void NoPreProcessing::initialize(const cv::Mat &frame_raw,
 		int _frame_id, bool print_types){

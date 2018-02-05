@@ -16,11 +16,13 @@
 class SharedImageReader {
 public:
     SharedImageReader ();
-    cv::Mat* get_next_frame();
+	bool isInitialized() { return initialized; };
 
-    int get_height() { return height; };
-    int get_width() { return width; };
-    bool is_initialized() {return initialized;};
+	cv::Mat* getFrame();
+	int getHeight() { return height; };
+    int getWidth() { return width; };
+	int getFrameID() { return frame_id; };
+
 
 private:
     bool initialized;
@@ -29,7 +31,8 @@ private:
     int channels;
     int buffer_count;
     int frame_size;
-    int current_index;
+    int frame_id;
+    int buffer_id;
 
     uchar** shared_mem_addrs;
     std::string shm_name;
