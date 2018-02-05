@@ -69,6 +69,6 @@ void SharedImageReader::initialize_shm() {
 	}
 }
 
-cv::Mat* SharedImageReader::get_next_frame() {
+cv::Mat* SharedImageReader::getFrame() {
 	return frame_buffer[buffer_id];
 }

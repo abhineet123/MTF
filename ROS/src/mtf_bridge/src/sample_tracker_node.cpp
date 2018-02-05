@@ -32,8 +32,8 @@ int const rate = 30;
 using namespace mtf::params;
 
 struct TrackerStruct{
-	TrackerStruct(Tracker_ &_tracker, PreProc_ &_pre_proc) :
-		tracker(_tracker), pre_proc(_pre_proc){
+	TrackerStruct(Tracker_ &_tracker, PreProc_ &_pre_proc, int _id) :
+		tracker(_tracker), pre_proc(_pre_proc), id(_id){
 	}
 	bool update(const cv::Mat &frame, int frame_id = -1) {
 		if(!pre_proc || !tracker){
@@ -52,7 +52,6 @@ struct TrackerStruct{
 		}
 		return true;
 	}
-
 	void setRegion(const cv::Mat& corners){
 		if(!pre_proc || !tracker){
 			printf("Tracker has not been created");
@@ -62,9 +61,6 @@ struct TrackerStruct{
 	}
 	const cv::Mat& getRegion() {
 		return tracker->getRegion();
-	}
-	void reset() {
-		tracker.reset();
 	}
 	int getID() const{ return id; }
 private:
@@ -172,11 +168,11 @@ void draw_frame(std::string cv_window_title) {
 
     // Draw trackers
     if (!trackers.empty()) {
-		for(unsigned int tracker_id = 0; tracker_id < trackers.size(); ++tracker_id) {
+		for(std::vector<TrackerStruct>::iterator tracker = trackers.begin();
+			tracker != trackers.end(); ++tracker) {
 			cv::Point2d cv_corners[4];
-			mtf::utils::Corners(trackers[tracker_id].getRegion()).points(cv_corners);
-			cv::Scalar obj_col = colors[trackers[tracker_id].getID()];
-			++tracker_id;
+			mtf::utils::Corners((*tracker).getRegion()).points(cv_corners);
+			cv::Scalar obj_col = colors[(*tracker).getID()];
 			draw_patch(cv_corners, obj_col);
 			cv::Point center = get_patch_center(cv_corners);
 			cv::circle(display_frame, center, 5, obj_col, -1);
@@ -241,8 +237,10 @@ bool create(const cv::Mat init_frame, const cv::Mat init_corners, int frame_id) 
 			err.type(), err.what());
 		return false;
 	}
-	trackers.push_back(TrackerStruct(tracker, pre_proc));
+
+	trackers.push_back(TrackerStruct(tracker, pre_proc, tracker_id % n_colors));
 	pre_procs.push_back(pre_proc);
+	++tracker_id;
 	return true;
 }
 
@@ -294,6 +292,7 @@ int main(int argc, char *argv[]) {
 	n_colors = colors.size();
 
     image_reader = new SharedImageReader();
+	tracker_id = 0;
 
     // Initialize OpenCV window and mouse callback
     std::string cv_window_title = "TrackingNode";
