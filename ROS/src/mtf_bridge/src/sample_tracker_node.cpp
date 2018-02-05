@@ -16,9 +16,9 @@
 
 // Modular Tracking Framework
 #include "mtf/mtf.h"
-#include "mtf/Utilities/miscUtils.h"
-
 #include "mtf/pipeline.h"
+#include "mtf/Utilities/miscUtils.h"
+#include "mtf/Utilities/objUtils.h"
 
 using namespace mtf;
 using namespace mtf::params;
@@ -32,6 +32,8 @@ cv::Mat display_frame;
 std::vector<cv::Point> new_tracker_points;
 std::vector<Tracker_> trackers;
 std::vector<PreProc_> pre_procs;
+std::vector<cv::Scalar> colors;
+int n_colors;
 
 ros::Publisher tracker_pub;
 SharedImageReader *image_reader;
@@ -132,13 +134,14 @@ void draw_frame(std::string cv_window_title) {
 
     // Draw trackers
     if (!trackers.empty()) {
-		for(std::vector<Tracker_>::const_iterator tracker = trackers.begin(); 
-			tracker != trackers.end(); ++tracker) {
+		for(unsigned int tracker_id = 0; tracker_id < trackers.size(); ++tracker_id) {
 			cv::Point2d cv_corners[4];
-			mtf::utils::Corners((*tracker)->getRegion()).points(cv_corners);
-            draw_patch(cv_corners, cv::Scalar(0, 0, 255));
-            cv::Point center = get_patch_center(**tracker);
-            cv::circle(display_frame, center, 5, cv::Scalar(0, 0, 255), -1);
+			mtf::utils::Corners(trackers[tracker_id]->getRegion()).points(cv_corners);
+			cv::Scalar obj_col = colors[tracker_id % n_colors];
+			++tracker_id;
+			draw_patch(cv_corners, obj_col);
+			cv::Point center = get_patch_center(*trackers[tracker_id]);
+			cv::circle(display_frame, center, 5, obj_col, -1);
             // Black outline
             cv::circle(display_frame, center, 5, cv::Scalar(0, 0, 0), 2);
         }
@@ -214,6 +217,9 @@ int main(int argc, char *argv[]) {
     // Initialize input_obj
 	config_dir = ros::package::getPath("mtf_bridge") + "/cfg";
 	if(!readParams(argc, argv)){ return EXIT_FAILURE; }
+
+	ObjUtils(obj_cols).getCols(colors);
+	n_colors = colors.size();
 
     image_reader = new SharedImageReader();
 

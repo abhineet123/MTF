@@ -608,7 +608,7 @@ int main(int argc, char * argv[]) {
 					resized_images ? trackers[tracker_id]->getRegion() / img_resize_factor :
 					trackers[tracker_id]->getRegion();
 				mtf::utils::drawRegion(input->getFrame(mtf::utils::MUTABLE), drawn_corners,
-					obj_utils.getObjCol(tracker_id), line_thickness, tracker_labels[tracker_id].c_str(),
+					obj_utils.getCol(tracker_id), line_thickness, tracker_labels[tracker_id].c_str(),
 					fps_font_size, show_corner_ids, 1 - show_corner_ids);
 			}
 			/**

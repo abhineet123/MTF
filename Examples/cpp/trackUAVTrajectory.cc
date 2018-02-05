@@ -156,12 +156,12 @@ int main(int argc, char * argv[]) {
 		if(record_frames || mtf_visualize){
 			/* draw tracker positions to satellite image */
 			obj_utils.cornersToPoint2D(corners, uav_tracker->getRegion());
-			line(satellite_img_copy, corners[0], corners[1], obj_utils.getObjCol(0), line_thickness);
-			line(satellite_img_copy, corners[1], corners[2], obj_utils.getObjCol(0), line_thickness);
-			line(satellite_img_copy, corners[2], corners[3], obj_utils.getObjCol(0), line_thickness);
-			line(satellite_img_copy, corners[3], corners[0], obj_utils.getObjCol(0), line_thickness);
+			line(satellite_img_copy, corners[0], corners[1], obj_utils.getCol(0), line_thickness);
+			line(satellite_img_copy, corners[1], corners[2], obj_utils.getCol(0), line_thickness);
+			line(satellite_img_copy, corners[2], corners[3], obj_utils.getCol(0), line_thickness);
+			line(satellite_img_copy, corners[3], corners[0], obj_utils.getCol(0), line_thickness);
 			putText(satellite_img_copy, uav_tracker->name, corners[0],
-				cv::FONT_HERSHEY_SIMPLEX, fps_font_size, obj_utils.getObjCol(0));
+				cv::FONT_HERSHEY_SIMPLEX, fps_font_size, obj_utils.getCol(0));
 
 			Matrix2Xd warped_pts(2, 1);
 			VectorXd curr_ssm_state(uav_tracker->getSSM()->getStateSize());

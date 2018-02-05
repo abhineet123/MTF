@@ -52,13 +52,23 @@ namespace utils{
 	*/
 	class ObjUtils {
 	public:
-		typedef std::vector<std::string> vector_s;
 		ObjUtils(const vector_s  &_obj_cols = vector_s(),
 			double _resize_factor = 1.0);
 		~ObjUtils();
-		const cv::Scalar &getObjCol(int col_id){
+		const cv::Scalar &getCol(int col_id){
 			return obj_cols[col_id % no_of_cols];
 		}
+		void getCols(vector<cv::Scalar> &cols) {
+			cols = obj_cols;
+		}
+#ifndef DISABLE_VISP
+		const vpColor &getColVp(int col_id){
+			return obj_cols_vp[col_id % no_of_cols_vp];
+		}
+		void getCols(vector<vpColor> &cols) {
+			cols = obj_cols_vp;
+		}
+#endif
 		/**
 		allows the user to select a rectangle by clicking on its opposite corners
 		*/
