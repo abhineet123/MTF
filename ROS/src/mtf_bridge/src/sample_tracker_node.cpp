@@ -172,7 +172,7 @@ void draw_frame(std::string cv_window_title) {
 			tracker != trackers.end(); ++tracker) {
 			cv::Point2d cv_corners[4];
 			mtf::utils::Corners((*tracker).getRegion()).points(cv_corners);
-			cv::Scalar obj_col = colors[(*tracker).getID()];
+			cv::Scalar obj_col = colors[(*tracker).getID() % n_colors];
 			draw_patch(cv_corners, obj_col);
 			cv::Point center = get_patch_center(cv_corners);
 			cv::circle(display_frame, center, 5, obj_col, -1);
@@ -238,7 +238,7 @@ bool create(const cv::Mat init_frame, const cv::Mat init_corners, int frame_id) 
 		return false;
 	}
 
-	trackers.push_back(TrackerStruct(tracker, pre_proc, tracker_id % n_colors));
+	trackers.push_back(TrackerStruct(tracker, pre_proc, tracker_id));
 	pre_procs.push_back(pre_proc);
 	++tracker_id;
 	return true;
