@@ -34,6 +34,7 @@ namespace fs = boost::filesystem;
 #define CV_CAM_ID 0
 
 #define CASCADE_MAX_TRACKERS 10
+#define MAX_ABS_PATH 500
 
 #define parse_param(param_name, param_func)\
 	do{if(!strcmp(arg_name, #param_name)){\
@@ -4171,27 +4172,30 @@ namespace mtf{
 			}
 			return true;
 		}
+		inline std::string getAbsolutePath(const std::string &file) {			
+#ifdef _WIN32
+			TCHAR abs_path[MAX_PATH];
+			GetFullPathName(file.c_str(), MAX_PATH, abs_path, NULL);
+			return std::string(abs_path);
+#else
+			char abs_path[MAX_ABS_PATH];
+			realpath(file.c_str(), abs_path);
+			return std::string(abs_path);
+#endif
+			//return fs::absolute(config_dir.c_str());
+		}
 		inline bool readParams(int cmd_argc, char* cmd_argv[]){
 			//! check if a custom configuration directory has been specified
 			if(cmd_argc > 2 && !strcmp(cmd_argv[1], "config_dir")){
 				config_dir = std::string(cmd_argv[2]);
 				cmd_argv += 2;
 				cmd_argc -= 2;
-#ifndef DISABLE_BOOST_ABSOLUTE
 				std::cout << "Reading configuration files from: " <<
-					fs::absolute(config_dir.c_str()).c_str() << "\n";
-#else
-				printf("Reading configuration files from: %s\n", config_dir.c_str());
-#endif
+					getAbsolutePath(config_dir) << "\n";
 			}
 			if(!fs::is_directory(config_dir)){
-#ifndef DISABLE_BOOST_ABSOLUTE
 				std::cout << "Configuration folder: " <<
-					fs::absolute(config_dir.c_str()).c_str() << " does not exist\n";
-#else
-				printf("Configuration folder: %s does not exist\n", 
-					config_dir.c_str());
-#endif
+					getAbsolutePath(config_dir) << " does not exist\n";
 			} else {
 				std::vector<char*> fargv;
 				//! read general parameters
