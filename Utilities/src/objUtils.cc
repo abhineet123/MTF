@@ -23,8 +23,7 @@
 
 _MTF_BEGIN_NAMESPACE
 namespace utils{
-#ifndef DISABLE_COL_RGB
-	std::map<std::string, cv::Scalar> col_rgb = {
+	const std::map<std::string, cv::Scalar> ObjUtils::col_rgb = {
 		{ "snow", cv::Scalar(250, 250, 255) },
 		{ "snow_2", cv::Scalar(233, 233, 238) },
 		{ "snow_3", cv::Scalar(201, 201, 205) },
@@ -181,7 +180,7 @@ namespace utils{
 	};
 
 #ifndef DISABLE_VISP
-	std::map<std::string, vpColor> col_rgb_vp = {
+	const std::map<std::string, vpColor> ObjUtils::col_rgb_vp = {
 		{ "snow", vpColor(250, 250, 255) },
 		{ "snow_2", vpColor(233, 233, 238) },
 		{ "snow_3", vpColor(201, 201, 205) },
@@ -337,8 +336,6 @@ namespace utils{
 		{ "magenta", vpColor(255, 0, 255) }
 	};
 #endif
-#endif
-
 	ObjStruct::ObjStruct(){
 		corners.create(2, 4, CV_64FC1);
 		size_x = size_y = 0;
