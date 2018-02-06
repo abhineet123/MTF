@@ -416,9 +416,12 @@ int main(int argc, char * argv[]) {
 	double fps_font_size = 0.50, err_font_size = 0.50;
 	cv::Scalar fps_col_rgb, gt_color_rgb, err_col_rgb;
 	try{
-		fps_col_rgb = mtf::utils::ObjUtils::col_rgb.at(fps_col);
-		gt_color_rgb = mtf::utils::ObjUtils::col_rgb.at(gt_col);
-		err_col_rgb = mtf::utils::ObjUtils::col_rgb.at(err_col);
+		//fps_col_rgb = mtf::utils::ObjUtils::col_rgb.at(fps_col);
+		//gt_color_rgb = mtf::utils::ObjUtils::col_rgb.at(gt_col);
+		//err_col_rgb = mtf::utils::ObjUtils::col_rgb.at(err_col);
+		fps_col_rgb = obj_utils.col_rgb.at(fps_col);
+		gt_color_rgb = obj_utils.col_rgb.at(gt_col);
+		err_col_rgb = obj_utils.col_rgb.at(err_col);
 	} catch(std::out_of_range e){
 		printf("Invalid GT, FPS or error color provided: %s", e.what());
 		return EXIT_FAILURE;
