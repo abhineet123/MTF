@@ -414,22 +414,26 @@ namespace utils{
 		init_frame_id(0), use_reinit_gt(false), 
 		resize_factor(_resize_factor), invert_seq(false){
 		for(vector_s::const_iterator it = _obj_cols.begin(); it != _obj_cols.end(); ++it) {
-			obj_cols.push_back(col_rgb[*it]);
+			try{
+				obj_cols.push_back(col_rgb.at(*it));
+			} catch(std::out_of_range){
+				printf("Invalid color provided: %s", it->c_str());
+			}
 		}
 		if(obj_cols.empty()) {
-			obj_cols.push_back(col_rgb["red"]);
-			obj_cols.push_back(col_rgb["green"]);
-			obj_cols.push_back(col_rgb["blue"]);
-			obj_cols.push_back(col_rgb["yellow"]);
-			obj_cols.push_back(col_rgb["magenta"]);
-			obj_cols.push_back(col_rgb["cyan"]);
-			obj_cols.push_back(col_rgb["white"]);
-			obj_cols.push_back(col_rgb["black"]);
+			obj_cols.push_back(col_rgb.at("red"));
+			obj_cols.push_back(col_rgb.at("green"));
+			obj_cols.push_back(col_rgb.at("blue"));
+			obj_cols.push_back(col_rgb.at("yellow"));
+			obj_cols.push_back(col_rgb.at("magenta"));
+			obj_cols.push_back(col_rgb.at("cyan"));
+			obj_cols.push_back(col_rgb.at("white"));
+			obj_cols.push_back(col_rgb.at("black"));
 		}
 		no_of_cols = obj_cols.size();
 #ifndef DISABLE_VISP
 		for(vector_s::const_iterator it = _obj_cols.begin(); it != _obj_cols.end(); ++it) {
-			obj_cols_vp.push_back(col_rgb_vp[*it]);
+			obj_cols_vp.push_back(col_rgb_vp.at(*it));
 		}
 		if(obj_cols.empty()) {
 			obj_cols_vp.push_back(vpColor::red);
