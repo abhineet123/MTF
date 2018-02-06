@@ -263,7 +263,7 @@ namespace utils{
 		col_rgb_vp(colors(vpColor)),
 #endif
 		init_frame_id(0), use_reinit_gt(false), 
-		resize_factor(_resize_factor), invert_seq(false),
+		resize_factor(_resize_factor), invert_seq(false)
 		{
 		for(vector_s::const_iterator it = _obj_cols.begin(); it != _obj_cols.end(); ++it) {
 			try{
