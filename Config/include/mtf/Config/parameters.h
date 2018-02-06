@@ -4191,11 +4191,11 @@ namespace mtf{
 				cmd_argv += 2;
 				cmd_argc -= 2;
 				std::cout << "Reading configuration files from: " <<
-					getAbsolutePath(config_dir) << "\n";
+					config_dir << "\n";
 			}
 			if(!fs::is_directory(config_dir)){
 				std::cout << "Configuration folder: " <<
-					getAbsolutePath(config_dir) << " does not exist\n";
+					config_dir << " does not exist\n";
 			} else {
 				std::vector<char*> fargv;
 				//! read general parameters
