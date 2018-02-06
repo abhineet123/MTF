@@ -23,7 +23,7 @@
 
 _MTF_BEGIN_NAMESPACE
 namespace utils{
-
+#ifndef DISABLE_COL_RGB
 	std::map<std::string, cv::Scalar> col_rgb = {
 		{ "snow", cv::Scalar(250, 250, 255) },
 		{ "snow_2", cv::Scalar(233, 233, 238) },
@@ -337,7 +337,7 @@ namespace utils{
 		{ "magenta", vpColor(255, 0, 255) }
 	};
 #endif
-
+#endif
 
 	ObjStruct::ObjStruct(){
 		corners.create(2, 4, CV_64FC1);
