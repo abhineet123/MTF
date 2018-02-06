@@ -433,7 +433,12 @@ namespace utils{
 		no_of_cols = obj_cols.size();
 #ifndef DISABLE_VISP
 		for(vector_s::const_iterator it = _obj_cols.begin(); it != _obj_cols.end(); ++it) {
-			obj_cols_vp.push_back(col_rgb_vp.at(*it));
+			try{
+				obj_cols_vp.push_back(col_rgb_vp.at(*it));
+			} catch(std::out_of_range){
+				printf("Invalid color provided: %s", it->c_str());
+			}
+			
 		}
 		if(obj_cols.empty()) {
 			obj_cols_vp.push_back(vpColor::red);
