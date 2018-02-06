@@ -4177,14 +4177,21 @@ namespace mtf{
 				config_dir = std::string(cmd_argv[2]);
 				cmd_argv += 2;
 				cmd_argc -= 2;
+#ifndef DISABLE_BOOST_ABSOLUTE
 				std::cout << "Reading configuration files from: " <<
 					fs::absolute(config_dir.c_str()).c_str() << "\n";
+#else
+				printf("Reading configuration files from: %s\n", config_dir.c_str());
+#endif
 			}
 			if(!fs::is_directory(config_dir)){
+#ifndef DISABLE_BOOST_ABSOLUTE
 				std::cout << "Configuration folder: " <<
-					fs::absolute(config_dir.c_str()).c_str() << " does not exist\n";				
-				//printf("Configuration folder: %ls does not exist\n", 
-					//fs::absolute(config_dir.c_str()).c_str());
+					fs::absolute(config_dir.c_str()).c_str() << " does not exist\n";
+#else
+				printf("Configuration folder: %s does not exist\n", 
+					config_dir.c_str());
+#endif
 			} else {
 				std::vector<char*> fargv;
 				//! read general parameters

@@ -1,3 +1,7 @@
+//! Matlab comes with its own horrible version of boost libraries that cause the mex module to segfault if boost::filesystem::absolute is used
+//! It is also apparently impossible to force Matlab to load the correct version of boost libraries through LD_PRELOAD; attempting to do so causes Matlab itself to segfault at startup
+#define DISABLE_BOOST_ABSOLUTE
+
 #include "mtf/mtf.h"
 #include "mtf/pipeline.h"
 #include "mtf/Utilities/mexUtils.h"

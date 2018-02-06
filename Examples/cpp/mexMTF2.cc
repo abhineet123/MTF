@@ -1,3 +1,7 @@
+//! Matlab comes with its own horrible version of boost libraries that cause the mex module to segfault if boost::filesystem::absolute is used
+//! It is also apparently impossible to force Matlab to load the correct version of boost libraries through LD_PRELOAD; attempting to do so causes Matlab itself to segfault at startup
+#define DISABLE_BOOST_ABSOLUTE
+
 #include "mtf/mtf.h"
 #include "mtf/pipeline.h"
 #include "mtf/Utilities/miscUtils.h"
@@ -479,9 +483,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(!mxIsChar(prhs[1])){
 			mexErrMsgTxt("Second input argument for creating input pipeline must be a string.");
 		}
-		//if(!readParams(mtf::utils::toString(prhs[1]))) {
-		//	mexErrMsgTxt("Parameters could not be parsed");
-		//}
+		if(!readParams(mtf::utils::toString(prhs[1]))) {
+			mexErrMsgTxt("Parameters could not be parsed");
+		}
 		if(!createInput()){
 			*ret_val = 0;
 			return;
@@ -518,9 +522,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 
 		if(!checkInput()){ return; }
 
-		//if(!readParams(mtf::utils::toString(prhs[1]))) {
-		//	mexErrMsgTxt("Parameters could not be parsed");
-		//}
+		if(!readParams(mtf::utils::toString(prhs[1]))) {
+			mexErrMsgTxt("Parameters could not be parsed");
+		}
 		cv::Mat init_corners;
 		if(nrhs > 2) {
 			init_corners = mtf::utils::getCorners(prhs[2]);
