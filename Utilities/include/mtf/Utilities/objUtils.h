@@ -50,9 +50,9 @@ namespace utils{
 		ObjUtils(const vector_s  &_obj_cols = vector_s(),
 			double _resize_factor = 1.0);
 		~ObjUtils();
-		static constexpr std::map<std::string, cv::Scalar> col_rgb;
+		static const std::map<std::string, cv::Scalar> col_rgb;
 #ifndef DISABLE_VISP
-		static constexpr std::map<std::string, vpColor> col_rgb_vp;
+		static const std::map<std::string, vpColor> col_rgb_vp;
 #endif
 		const cv::Scalar &getCol(int col_id){
 			return obj_cols[col_id % no_of_cols];
