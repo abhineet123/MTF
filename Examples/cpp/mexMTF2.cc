@@ -325,12 +325,18 @@ bool createInput() {
 
 	return true;
 }
-
-bool getFrame(mxArray* &plhs){
-	if(!input->isValid()){
-		printf("Input has not been initialized\n");
+bool checkInput() {
+	if(!input){
+		printf("Input pipeline has not been initialized\n");
 		return false;
 	}
+	if(!input->isValid()) {
+		printf("Input pipeline is not active\n");
+		return false;
+	}
+	return true;
+}
+bool getFrame(mxArray* &plhs){
 	const cv::Mat frame = input->getFrame();
 	int n_channels = 3, n_dims = 3;
 	if(frame.type() == CV_8UC1){
@@ -494,15 +500,16 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(nlhs != 2){
 			mexErrMsgTxt("2 output arguments (success, frame) are needed to get frame.");
 		}
-		if(!getFrame(plhs[1])){
-			*ret_val = 0;
-			return;
-		}
+		*ret_val = 0;
+		if(!checkInput()){ return; }
+		if(!getFrame(plhs[1])){ return; }
 		*ret_val = 1;
 		return;
 	}
 	case MEX_CREATE_TRACKER:
 	{
+		
+
 		if(nrhs < 2){
 			mexErrMsgTxt("At least 2 input arguments are needed to create tracker.");
 		}
@@ -510,6 +517,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			mexErrMsgTxt("The second input argument for creating tracker must be a string.");
 		}
 		*ret_val = 0;
+
+		if(!checkInput()){ return; }
 
 		if(!readParams(mtf::utils::toString(prhs[1]))) {
 			mexErrMsgTxt("Parameters could not be parsed");
