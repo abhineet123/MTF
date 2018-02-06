@@ -479,9 +479,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(!mxIsChar(prhs[1])){
 			mexErrMsgTxt("Second input argument for creating input pipeline must be a string.");
 		}
-		if(!readParams(mtf::utils::toString(prhs[1]))) {
-			mexErrMsgTxt("Parameters could not be parsed");
-		}
+		//if(!readParams(mtf::utils::toString(prhs[1]))) {
+		//	mexErrMsgTxt("Parameters could not be parsed");
+		//}
 		if(!createInput()){
 			*ret_val = 0;
 			return;
@@ -507,9 +507,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		return;
 	}
 	case MEX_CREATE_TRACKER:
-	{
-		
-
+	{	
 		if(nrhs < 2){
 			mexErrMsgTxt("At least 2 input arguments are needed to create tracker.");
 		}
@@ -520,9 +518,9 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 
 		if(!checkInput()){ return; }
 
-		if(!readParams(mtf::utils::toString(prhs[1]))) {
-			mexErrMsgTxt("Parameters could not be parsed");
-		}
+		//if(!readParams(mtf::utils::toString(prhs[1]))) {
+		//	mexErrMsgTxt("Parameters could not be parsed");
+		//}
 		cv::Mat init_corners;
 		if(nrhs > 2) {
 			init_corners = mtf::utils::getCorners(prhs[2]);
