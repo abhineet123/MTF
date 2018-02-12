@@ -32,10 +32,10 @@ else()
 	add_library (${FRG_LIB_NAME} SHARED ${FRG_SRC})
 endif()
 
-add_executable(FragTrack ${FRG_SRC})
-target_include_directories(FragTrack PUBLIC include ${OpenCV_INCLUDE_DIRS})
+# add_executable(FragTrack ${FRG_SRC})
+# target_include_directories(FragTrack PUBLIC include ${OpenCV_INCLUDE_DIRS})
+# target_link_libraries(FragTrack ${OpenCV_LIBS})
 
-target_link_libraries(FragTrack ${OpenCV_LIBS})
 target_link_libraries(${FRG_LIB_NAME} ${OpenCV_LIBS})
 target_include_directories(${FRG_LIB_NAME} PUBLIC include ${OpenCV_INCLUDE_DIRS})
 if(WIN32)
