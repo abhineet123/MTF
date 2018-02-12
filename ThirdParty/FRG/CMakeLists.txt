@@ -22,7 +22,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 set(FRG_LIB_NAME frg CACHE STRING "FRG_LIB_NAME")
-set(FRG_SRC src/fragtrack_envelope.cpp src/Fragments_Tracker.cpp src/emd.cpp)
+set(FRG_SRC src/Fragments_Tracker.cpp src/emd.cpp)
 
 #INCLUDE_DIRECTORIES ( ${OpenCV_INCLUDE_DIRS})
 

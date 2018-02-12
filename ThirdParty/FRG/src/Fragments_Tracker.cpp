@@ -1163,60 +1163,60 @@ namespace frg{
 		Update_Template(curr_template->height, curr_template->width, new_yM, new_xM, 1, I);
 	}
 
-	void Fragments_Tracker::Handle_Frame_challenge(CvMat* I, const char* outwin, VOT * vot_io)
-	{
+	//void Fragments_Tracker::Handle_Frame_challenge(CvMat* I, const char* outwin, VOT * vot_io)
+	//{
 
-		handled_frame_number = handled_frame_number + 1;
+	//	handled_frame_number = handled_frame_number + 1;
 
-		//
-		// build this image's IH. From now on, we only work with
-		// this data structure and not with the image itself
-		//
+	//	//
+	//	// build this image's IH. From now on, we only work with
+	//	// this data structure and not with the image itself
+	//	//
 
-		int img_height;
-		int img_width;
+	//	int img_height;
+	//	int img_width;
 
-		compute_IH(I, IIV_I);
-		img_height = I->height;
-		img_width = I->width;
+	//	compute_IH(I, IIV_I);
+	//	img_height = I->height;
+	//	img_width = I->width;
 
-		//
-		// find the current template in the current image
-		//
+	//	//
+	//	// find the current template in the current image
+	//	//
 
-		vector<int> x_coords;
-		vector<int> y_coords;
+	//	vector<int> x_coords;
+	//	vector<int> y_coords;
 
-		int new_yM, new_xM;
-		double score_M;
+	//	int new_yM, new_xM;
+	//	double score_M;
 
-		find_template(template_patches_histograms,
-			patches,
-			img_height, img_width,
-			curr_pos_y - (params->search_margin),
-			curr_pos_x - (params->search_margin),
-			curr_pos_y + (params->search_margin),
-			curr_pos_x + (params->search_margin),
-			new_yM, new_xM, score_M,
-			x_coords, y_coords);
-
-
-		Update_Template(curr_template->height, curr_template->width, new_yM, new_xM, 1, I);
-
-		//
-		// finished. now output the results
-		//
-
-		//
-		// output tracking position
-		//
+	//	find_template(template_patches_histograms,
+	//		patches,
+	//		img_height, img_width,
+	//		curr_pos_y - (params->search_margin),
+	//		curr_pos_x - (params->search_margin),
+	//		curr_pos_y + (params->search_margin),
+	//		curr_pos_x + (params->search_margin),
+	//		new_yM, new_xM, score_M,
+	//		x_coords, y_coords);
 
 
-		cv::Rect output = cv::Rect(curr_template_tl_x, curr_template_tl_y, curr_template_width, curr_template_height);
+	//	Update_Template(curr_template->height, curr_template->width, new_yM, new_xM, 1, I);
 
-		vot_io->outputBoundingBox(output);
+	//	//
+	//	// finished. now output the results
+	//	//
 
-		return;
+	//	//
+	//	// output tracking position
+	//	//
 
-	}
+
+	//	cv::Rect output = cv::Rect(curr_template_tl_x, curr_template_tl_y, curr_template_width, curr_template_height);
+
+	//	vot_io->outputBoundingBox(output);
+
+	//	return;
+
+	//}
 }

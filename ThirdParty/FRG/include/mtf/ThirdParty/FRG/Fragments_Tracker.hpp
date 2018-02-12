@@ -31,7 +31,7 @@ using namespace std;
 // additional files
 
 #include "emd.hpp"
-#include "vot.hpp"
+//#include "vot.hpp"
 
 namespace frg{
 
@@ -154,7 +154,7 @@ namespace frg{
 
 		void Handle_Frame(CvMat* I, const char* outwin);
 		void Handle_Frame(CvMat* I);
-		void Handle_Frame_challenge(CvMat* I, const char* outwin, VOT * vot_io);
+		//void Handle_Frame_challenge(CvMat* I, const char* outwin, VOT * vot_io);
 
 		~Fragments_Tracker(void);
 
