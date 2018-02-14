@@ -27,6 +27,8 @@
 #define MEX_GET_REGION 5
 #define MEX_SET_REGION 6
 #define MEX_REMOVE_TRACKER 7
+#define MEX_REMOVE_TRACKERS 8
+#define MEX_IS_INITIALIZED 9
 
 using namespace std;
 using namespace mtf::params;
@@ -39,12 +41,14 @@ typedef PreProc_ PreProc;
 
 static std::map<std::string, const int> cmd_list = {
 	{ "init", MEX_INIT_INPUT },
+	{ "is_initialized", MEX_IS_INITIALIZED },
 	{ "quit", MEX_QUIT },
 	{ "get_frame", MEX_GET_FRAME },
 	{ "create_tracker", MEX_CREATE_TRACKER },
 	{ "get_region", MEX_GET_REGION },
 	{ "set_region", MEX_SET_REGION },
-	{ "remove_tracker", MEX_REMOVE_TRACKER }
+	{ "remove_tracker", MEX_REMOVE_TRACKER },
+	{ "remove_trackers", MEX_REMOVE_TRACKERS }
 };
 
 struct InputThread{
@@ -313,7 +317,7 @@ bool createInput() {
 	try{
 		_input.reset(mtf::getInput(pipeline));
 		if(!_input->initialize()){
-			printf("Pipeline could not be initialized successfully. Exiting...\n");
+			printf("Pipeline could not be initialized successfully\n");
 			return false;
 		}
 	} catch(const mtf::utils::Exception &err){
@@ -329,13 +333,17 @@ bool createInput() {
 
 	return true;
 }
-bool checkInput() {
+bool checkInput(bool verbose=true) {
 	if(!input){
-		printf("Input pipeline has not been initialized\n");
+		if(verbose){
+			printf("Input pipeline has not been initialized\n");
+		}
 		return false;
 	}
 	if(!input->isValid()) {
-		printf("Input pipeline is not active\n");
+		if(verbose){
+			printf("Input pipeline is not active\n");
+		}
 		return false;
 	}
 	return true;
@@ -477,6 +485,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	switch(cmd_id) {
 	case MEX_INIT_INPUT:
 	{
+		if(checkInput(false)) {
+			printf("Input pipeline has already been initialized\n");
+			*ret_val = 1;
+			return;
+		}
 		if(nrhs < 2){
 			mexErrMsgTxt("At least two input arguments are needed to initialize input pipeline.");
 		}
@@ -491,12 +504,21 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			return;
 		}
 		if(nlhs >= 2){
-			mwSize dims[2] = { 1, 1 };
-			plhs[1] = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
+			mwSize _dims[2] = { 1, 1 };
+			plhs[1] = mxCreateNumericArray(2, _dims, mxUINT32_CLASS, mxREAL);
 			unsigned int *n_frames = (unsigned int*)mxGetPr(plhs[1]);
 			*n_frames = static_cast<unsigned int>(input->getNFrames());
 		}
 		*ret_val = 1;
+		return;
+	}
+	case MEX_IS_INITIALIZED:
+	{
+		if(checkInput(false)) {
+			*ret_val = 1;
+		} else {
+			*ret_val = 0;
+		}
 		return;
 	}
 	case MEX_GET_FRAME:
@@ -535,7 +557,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			try{
 				t.join();
 			} catch(boost::thread_interrupted) {
-				printf("Caught exception from object selector thread");
+				printf("Caught exception from object selector thread\n");
 			}
 			if(!obj_sel_thread.success) {
 				//cout << "init_corners:\n" << init_corners << "\n";
@@ -600,6 +622,17 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		it->second.reset();
 		trackers.erase(it);
 		*ret_val = 1;
+		return;
+	}
+	case MEX_REMOVE_TRACKERS:
+	{
+		printf("Removing all trackers...");
+		for(auto it = trackers.begin(); it != trackers.end(); ++it){
+			it->second.reset();
+		}
+		trackers.clear();
+		*ret_val = 1;
+		printf("Done\n");
 		return;
 	}
 	case MEX_QUIT:

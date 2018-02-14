@@ -360,7 +360,7 @@ int main(int argc, char * argv[]) {
 			if(overwrite_gt){
 				//! write the original GT for frames before the one where the tracker is initialized, if any
 				for(int frame_id = 0; frame_id < init_frame_id; ++frame_id){
-					mtf::utils::writeCorners(tracking_data_fid, obj_utils.getGT(frame_id), frame_id);
+					mtf::utils::writeCorners(tracking_data_fid, obj_utils.getGT(frame_id)/img_resize_factor, frame_id);
 				}
 			}
 		}
@@ -419,9 +419,9 @@ int main(int argc, char * argv[]) {
 		//fps_col_rgb = mtf::utils::ObjUtils::col_rgb.at(fps_col);
 		//gt_color_rgb = mtf::utils::ObjUtils::col_rgb.at(gt_col);
 		//err_col_rgb = mtf::utils::ObjUtils::col_rgb.at(err_col);
-		fps_col_rgb = obj_utils.col_rgb.at(fps_col);
-		gt_color_rgb = obj_utils.col_rgb.at(gt_col);
-		err_col_rgb = obj_utils.col_rgb.at(err_col);
+		fps_col_rgb = obj_utils.getCol(fps_col);
+		gt_color_rgb = obj_utils.getCol(gt_col);
+		err_col_rgb = obj_utils.getCol(err_col);
 	} catch(std::out_of_range e){
 		printf("Invalid GT, FPS or error color provided: %s", e.what());
 		return EXIT_FAILURE;

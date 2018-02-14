@@ -50,12 +50,11 @@ namespace utils{
 		ObjUtils(const vector_s  &_obj_cols = vector_s(),
 			double _resize_factor = 1.0);
 		~ObjUtils();
-		const std::map<std::string, cv::Scalar> col_rgb;
-#ifndef DISABLE_VISP
-		const std::map<std::string, vpColor> col_rgb_vp;
-#endif
 		const cv::Scalar &getCol(int col_id){
 			return obj_cols[col_id % no_of_cols];
+		}
+		const cv::Scalar &getCol(const std::string &col_name){
+			return col_rgb.at(col_name);
 		}
 		void getCols(vector<cv::Scalar> &cols) {
 			cols = obj_cols;
@@ -63,6 +62,9 @@ namespace utils{
 #ifndef DISABLE_VISP
 		const vpColor &getColVp(int col_id){
 			return obj_cols_vp[col_id % no_of_cols_vp];
+		}
+		const vpColor &getColVp(const std::string &col_name){
+			return col_rgb_vp.at(col_name);
 		}
 		void getCols(vector<vpColor> &cols) {
 			cols = obj_cols_vp;
@@ -125,6 +127,10 @@ namespace utils{
 		void cornersToPoint2D(cv::Point2d(&cv_corners)[4], const cv::Mat &cv_corners_mat);
 		
 	private:
+		const std::map<std::string, cv::Scalar> col_rgb;
+#ifndef DISABLE_VISP
+		const std::map<std::string, vpColor> col_rgb_vp;
+#endif
 		vector<ObjStruct> init_objects;
 		vector<cv::Mat> ground_truth;
 		vector<cv::Mat> reinit_ground_truth;
@@ -138,8 +144,8 @@ namespace utils{
 		vector<vpColor> obj_cols_vp;
 		int no_of_cols_vp;
 #endif
-
-		double resize_factor;
+		const double resize_factor;
+		const bool resized_images;
 		bool invert_seq;
 		//! read reinit GT for a specific frame
 		void readReinitGT(int _reinit_frame_id);

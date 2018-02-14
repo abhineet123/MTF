@@ -160,7 +160,8 @@ Input parameters:
 			
 	 Parameter:	'img_resize_factor'
 		Description:
-			factor by which the input images are resized before being used for tracking; this is the size ratio of the tracked image to the input image so that a value smaller than 1 means that the tracked image will be smaller than the input one.
+			factor by which the input images are resized before being used for tracking;
+			this is the size ratio of the tracked image to the input image so that a value smaller than 1 means that the tracked image will be smaller than the input one.
 
 	 Parameter:	'input_buffer_size'
 		Description:

@@ -4186,17 +4186,23 @@ namespace mtf{
 		}
 		inline bool readParams(int cmd_argc, char* cmd_argv[]){
 			//! check if a custom configuration directory has been specified
+			bool custom_cfg = false;
 			if(cmd_argc > 2 && !strcmp(cmd_argv[1], "config_dir")){
 				config_dir = std::string(cmd_argv[2]);
 				cmd_argv += 2;
 				cmd_argc -= 2;
-				std::cout << "Reading configuration files from: " <<
-					config_dir << "\n";
+				custom_cfg = true;
 			}
 			if(!fs::is_directory(config_dir)){
-				std::cout << "Configuration folder: " <<
-					config_dir << " does not exist\n";
+				if(custom_cfg) {
+					std::cout << "Configuration folder: " <<
+						config_dir << " does not exist\n";
+				}
 			} else {
+				if(custom_cfg) {
+					std::cout << "Reading configuration files from: " <<
+						config_dir << "\n";
+				}
 				std::vector<char*> fargv;
 				//! read general parameters
 				int fargc = readParams(fargv, (config_dir + "/mtf.cfg").c_str());
@@ -4282,7 +4288,7 @@ namespace mtf{
 			//printf("fargv.size(): %d\n", fargv.size());
 			if(fargv.size() % 2 == 0){
 				//printf("param_str: %s\n", param_str);
-				printf("Parameters must be provided in pairs");
+				std::cout << "Parameters must be provided in pairs\n";
 				return false;
 			}
 			return readParams(fargv.size(), fargv.data());

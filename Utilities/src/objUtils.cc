@@ -263,7 +263,9 @@ namespace utils{
 		col_rgb_vp(colors(vpColor)),
 #endif
 		init_frame_id(0), use_reinit_gt(false), 
-		resize_factor(_resize_factor), invert_seq(false)
+		resize_factor(_resize_factor), 
+		resized_images(_resize_factor != 1),
+		invert_seq(false)
 		{
 		for(vector_s::const_iterator it = _obj_cols.begin(); it != _obj_cols.end(); ++it) {
 			try{
@@ -328,7 +330,7 @@ namespace utils{
 		point_selected = false;
 		clicked_point_count = 0;
 		while(clicked_point_count < 2) {
-			if(resize_factor != 1){
+			if(resized_images){
 				cv::resize(input->getFrame(), hover_image, hover_image.size());
 			} else{
 				hover_image = input->getFrame().clone();
@@ -441,7 +443,7 @@ namespace utils{
 		cv::setMouseCallback(selection_window, getClickedPoint, nullptr);
 		clicked_point_count = 0;
 		while(clicked_point_count < 4) {
-			if(resize_factor != 1){
+			if(resized_images){
 				cv::resize(input->getFrame(), hover_image, hover_image.size());
 			} else{
 				hover_image = input->getFrame().clone();
@@ -874,9 +876,9 @@ namespace utils{
 		ObjStruct obj;
 		obj.corners = _use_reinit_gt ? ground_truth[0] : ground_truth[_init_frame_id];
 		obj.updateCornerPoints();
-		if(resize_factor != 1){
-			obj *= resize_factor;
-		}
+		//if(resized_images){
+		//	obj *= resize_factor;
+		//}
 		init_objects.push_back(obj);
 		//printf("Done reading objects from ground truth\n");
 		return true;
@@ -904,6 +906,7 @@ namespace utils{
 				frame_id, ground_truth.size()));
 		}
 		return ground_truth[frame_id];
+
 	}
 	const cv::Mat& ObjUtils::getReinitGT(int frame_id, int _reinit_frame_id){
 		if(_reinit_frame_id < 0){ _reinit_frame_id = reinit_frame_id; }
@@ -995,6 +998,9 @@ namespace utils{
 			ground_truth[gt_id].at<double>(1, 1) = ury;
 			ground_truth[gt_id].at<double>(1, 2) = lry;
 			ground_truth[gt_id].at<double>(1, 3) = lly;
+			if(resized_images) {
+				ground_truth[gt_id] *= resize_factor;
+			}
 		}
 		fin.close();
 		return true;
@@ -1064,7 +1070,7 @@ namespace utils{
 
 			obj.updateCornerMat();
 
-			if(resize_factor != 1){
+			if(resized_images){
 				obj *= resize_factor;
 			}
 
@@ -1107,6 +1113,9 @@ namespace utils{
 		for(int frame_id = _reinit_frame_id; frame_id < reinit_n_frames; ++frame_id) {
 			cv::Mat curr_gt(2, 4, CV_64FC1);
 			fin.read((char*)(curr_gt.data), 8 * sizeof(double));
+			if(resized_images) {
+				curr_gt *= resize_factor;
+			}
 			reinit_ground_truth.push_back(curr_gt);
 		}
 		fin.close();
