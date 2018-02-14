@@ -16,7 +16,9 @@
 #define MEX_GET_REGION 4
 #define MEX_SET_REGION 5
 #define MEX_TRACKER_REMOVE 6
-#define MEX_QUIT 7
+#define MEX_TRACKERS_REMOVE 7
+#define MEX_QUIT 8
+#define MEX_IS_INITIALIZED 9
 
 using namespace std;
 using namespace mtf::params;
@@ -26,11 +28,13 @@ typedef PreProc_ PreProc;
 
 static std::map<std::string, const int> cmd_list = {
 	{ "init", MEX_INIT },
+	{ "is_initialized", MEX_IS_INITIALIZED },
 	{ "get_frame", MEX_GET_FRAME },
 	{ "create_tracker", MEX_TRACKER_CREATE },
 	{ "get_region", MEX_GET_REGION },
 	{ "set_region", MEX_SET_REGION },
 	{ "remove_tracker", MEX_TRACKER_REMOVE },
+	{ "remove_trackers", MEX_TRACKERS_REMOVE },
 	{ "quit", MEX_QUIT }
 };
 
@@ -232,6 +236,11 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 	switch(cmd_id) {
 	case MEX_INIT:
 	{
+		if(input){
+			printf("Input pipeline has already been initialized");
+			*ret_val = 1;
+			return;
+		}
 		if(nrhs > 1){
 			if(!mxIsChar(prhs[1])){
 				mexErrMsgTxt("Second input argument for creating input pipeline must be a string.");
@@ -249,6 +258,15 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			plhs[1] = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
 			unsigned int *n_frames = (unsigned int*)mxGetPr(plhs[1]);
 			*n_frames = static_cast<unsigned int>(input->getNFrames());
+		}
+		return;
+	}
+	case MEX_IS_INITIALIZED:
+	{
+		if(input) {
+			*ret_val = 1;
+		} else {
+			*ret_val = 0;
 		}
 		return;
 	}
@@ -373,6 +391,14 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		}
 		trackers.erase(it);
 		*ret_val = 1;
+		return;
+	}
+	case MEX_TRACKERS_REMOVE:
+	{
+		printf("Removing all trackers...");
+		trackers.clear();
+		*ret_val = 1;
+		printf("Done\n");
 		return;
 	}
 	case MEX_QUIT:
