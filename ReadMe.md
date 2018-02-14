@@ -188,6 +188,14 @@ Compile/Runtime Notes:
 	`echo "export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc`  
 * if a runtime error like `cannot find libmtf` or something similar is encountered while running `runMTF`, _/usr/local/lib_ should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables as above (assuming the default MTF installation directory has not been changed - otherwise the new path should be used instead).
 * if a compile time error similar to this occurs: `/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h:233:98: error: no matching function for call to ‘Eigen::internal::blas_traits`, please update Eigen to the latest version;
+* if a compile time error similar to this occurs:  
+`/usr/bin/ld: cannot find -lQt5::Core`  
+`/usr/bin/ld: cannot find -lQt5::Gui`  
+`/usr/bin/ld: cannot find -lQt5::Widgets`  
+`/usr/bin/ld: cannot find -lQt5::Test`  
+`/usr/bin/ld: cannot find -lQt5::Concurrent`  
+`/usr/bin/ld: cannot find -lQt5::OpenGL`  
+there is probably something wrong with the OpenCV installation. Reinstalling that should fix it (refer to issue #13).
 * ViSP cmake system has a bug in Ubuntu 16.04 so if a cmake error of type `Found ViSP for Windows but it has no binaries compatible with your
   configuration. You should manually point CMake variable VISP_DIR to your build of ViSP library.` occurs, add `-DVISP_DIR=<path to ViSP build folder>` to the cmake command and rerun after removing the existing cmake files
 * **Using MTF on Macintosh Systems**
