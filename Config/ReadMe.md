@@ -855,14 +855,16 @@ Tracker specific parameters:
 			
 	 Parameter:	'enable_learning'
 		Description:
-			enable online learning in AMs that support it - only SSD and NCC currently do; 
+			enable online learning of the template in AMs that support it - only SSD and NCC currently do; 
 			online learning means that the template changes over time based on the observed appearances of the tracked object; 
+			rate of change of template appearance can be specified using 'learning_rate';			
 			this is automatically enabled in AMs, like PCA, that involve learning as an essential part;
 			
 	 Parameter:	'learning_rate'
 		Description:
 			rate at which the template is updated;
 			varies between 0 and 1 - 0 means that there is no learning; 1 means that the template is updated to the latest patch in each frame;
+			only matters if 'enable_learning' is set to 1;
 			
 	 Parameter:	'likelihood_alpha'
 		Description:
