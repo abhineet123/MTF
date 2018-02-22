@@ -198,6 +198,10 @@ Compile/Runtime Notes:
 there is probably something wrong with the OpenCV installation. Reinstalling that should fix it (refer to issue #13).
 * ViSP cmake system has a bug in Ubuntu 16.04 so if a cmake error of type `Found ViSP for Windows but it has no binaries compatible with your
   configuration. You should manually point CMake variable VISP_DIR to your build of ViSP library.` occurs, add `-DVISP_DIR=<path to ViSP build folder>` to the cmake command and rerun after removing the existing cmake files
+* A compile time error similar to this:  
+`error: no matching function for call to vpDisplay::init(vpImage<vpRGBa>&, int, int, std::string&)`  
+probably indicates that an outdated version of ViSP is installed. This can be resolved by either updating it to 3.0.1 or newer or using `-DWITH_VISP=0`/`vp=0` cmake/make option to disable ViSP.
+
 * **Using MTF on Macintosh Systems**
 	* if make build system is used, some third party modules might not compile successfully if cmake uses clang instead of gcc as the default compiler; in such cases compiling with `lt=0` to disable all third party modules is the best option.
     * if cmake build system is used, then following commands must be run so that cmake uses gcc during compilation:  
