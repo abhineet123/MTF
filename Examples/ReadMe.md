@@ -99,4 +99,4 @@ In addition, the following function allows the internal state of a tracker to be
 
 -   `success = pyMTF.setRegion(corners, id)`
 
-There is currently no multi threaded version of pyMTF nor does it support acquiring images. These functionalities will be added soon.
+Unlike mexMTF, there is currently no multi threaded version of pyMTF nor does it support acquiring images. These functionalities will be added soon.
