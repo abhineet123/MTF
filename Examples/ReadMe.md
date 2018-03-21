@@ -95,7 +95,7 @@ It is very simple to use - there are just 3 functions:
 
 `id` is an integer that starts at 0 and increments by 1 every time `pyMTF.create` is called.
 `image` can be RGB or grayscale but must be of type `numpy.uint8` while `corners` must be a 2x4 matrix of type `numpy.float64`.
-In addition, the following function allows the internal state of a tracker to be modified so the object is located at the provided location instead of where it was after the last update. 
+In addition, the following function allows the internal state of a tracker to be modified so the object is located at the provided location instead of where it was after the last update:
 
 -   `success = pyMTF.setRegion(corners, id)`
 
