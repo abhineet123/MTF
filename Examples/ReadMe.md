@@ -87,7 +87,7 @@ pyMTF
 
 pyMTF is the Python interface to MTF.
 
-It is very simple to use - there are just 3 functions:
+It is very simple to use - there are just 3 main functions needed to track an object:
 
 -   `success = pyMTF.create(config_root_dir)` to create a new tracker
 -   `success = pyMTF.initialize(image, corners, id)` to initialize the tracker
