@@ -295,7 +295,16 @@ static PyObject* setRegion(PyObject* self, PyObject* args) {
 			tracker_id, trackers.size());
 		return Py_BuildValue("i", 0);
 	}
-	cv::Mat corners(2, 4, CV_64FC1, in_corners_py->data);
+	cv::Mat temp(2, 4, CV_64FC1, in_corners_py->data);
+	cv::Mat corners(2, 4, CV_64FC1);
+	corners.at<double>(0, 0) = temp.at<double>(0, 0);
+	corners.at<double>(1, 0) = temp.at<double>(0, 1);
+	corners.at<double>(0, 1) = temp.at<double>(0, 2);
+	corners.at<double>(1, 1) = temp.at<double>(0, 3);
+	corners.at<double>(0, 2) = temp.at<double>(1, 0);
+	corners.at<double>(1, 2) = temp.at<double>(1, 1);
+	corners.at<double>(0, 3) = temp.at<double>(1, 2);
+	corners.at<double>(1, 3) = temp.at<double>(1, 3);
 	try{
 		trackers[tracker_id]->setRegion(corners);
 	} catch(const mtf::utils::Exception &err){
