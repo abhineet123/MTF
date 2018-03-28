@@ -91,7 +91,7 @@ It is very simple to use - there are just 3 main functions needed to track an ob
 
 -   `success = pyMTF.create(config_root_dir)` to create a new tracker
 -   `success = pyMTF.initialize(image, corners, id)` to initialize the tracker
--   `corners = pyMTF.update(image, id)` to update the tracker and get new location
+-   `success = pyMTF.update(image, corners, id)` to update the tracker and get new location
 
 `id` is an integer that starts at 0 and increments by 1 every time `pyMTF.create` is called.
 `image` can be RGB or grayscale but must be of type `numpy.uint8` while `corners` must be a 2x4 matrix of type `numpy.float64`.
