@@ -1,10 +1,11 @@
 #include "mtf/SSM//SSMEstimator.h"
+#include "mtf/SSM/internal/cv2_q_sort.h"
 #include "opencv2/core/core_c.h"
-#if CV_MAJOR_VERSION < 3
-#include "opencv2/core/internal.hpp"
-#else
-#include "mtf/SM//opencv2/core/internal.hpp"
-#endif
+//#if CV_MAJOR_VERSION < 3
+//#include "opencv2/core/internal.hpp"
+//#else
+////#include "mtf/SM//opencv2/core/internal.hpp"
+//#endif
 #include <boost/random/random_device.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
