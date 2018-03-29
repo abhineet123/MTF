@@ -5,8 +5,8 @@
 //! disable the annoying: warning C4503: 'Eigen::DenseBase<Derived>': decorated name length exceeded, name was truncated
 //! error in VS
 #pragma warning(disable:4503)
-#include <winsock2.h>
-#include <windows.h>
+//#include <winsock2.h>
+//#include <windows.h>
 
 #endif
 

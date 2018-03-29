@@ -133,7 +133,8 @@ class FILELOG_DECLSPEC FILELog : public Log<Output2FILE> {};
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 
-#include <windows.h>
+//#define NOMINMAX
+//#include <windows.h>
 
 inline std::string NowTime()
 {

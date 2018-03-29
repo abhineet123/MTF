@@ -4172,18 +4172,18 @@ namespace mtf{
 			}
 			return true;
 		}
-		inline std::string getAbsolutePath(const std::string &file) {			
-#ifdef _WIN32
-			TCHAR abs_path[MAX_PATH];
-			GetFullPathName(file.c_str(), MAX_PATH, abs_path, NULL);
-			return std::string(abs_path);
-#else
-			char abs_path[MAX_ABS_PATH];
-			realpath(file.c_str(), abs_path);
-			return std::string(abs_path);
-#endif
-			//return fs::absolute(config_dir.c_str());
-		}
+//		inline std::string getAbsolutePath(const std::string &file) {			
+//#ifdef _WIN32
+//			TCHAR abs_path[MAX_PATH];
+//			GetFullPathName(file.c_str(), MAX_PATH, abs_path, NULL);
+//			return std::string(abs_path);
+//#else
+//			char abs_path[MAX_ABS_PATH];
+//			realpath(file.c_str(), abs_path);
+//			return std::string(abs_path);
+//#endif
+//			//return fs::absolute(config_dir.c_str());
+//		}
 		inline bool readParams(int cmd_argc, char* cmd_argv[]){
 			//! check if a custom configuration directory has been specified
 			bool custom_cfg = false;

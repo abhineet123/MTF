@@ -5,9 +5,9 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #endif
 #ifndef DISABLE_VISP
-#if defined _WIN32
-#define VISP_HAVE_X11
-#endif
+//#if defined _WIN32
+//#define VISP_HAVE_X11
+//#endif
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/gui/vpDisplayX.h>
 #endif
