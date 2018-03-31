@@ -11,11 +11,11 @@ from datasets import sequences, actors
 if __name__ == '__main__':
 
     config_root_dir = '../../Config'
-    db_root_dir = '../../../../../Datasets';
+    db_root_dir = '../../../../../Datasets'
     actor_id = 0
     seq_id = 0
-    seq_fmt = 'jpg';
-    use_rgb_input = 0;
+    seq_fmt = 'jpg'
+    use_rgb_input = 0
 
     write_stats_to_file = 0
     show_tracking_output = 1
@@ -40,8 +40,8 @@ if __name__ == '__main__':
     print 'seq_id: ', seq_id
     print 'seq_name: ', seq_name
 
-    src_fname =  '{:s}/{:s}/{:s}/frame%05d.{:s}'.format(db_root_dir, actor, seq_name, seq_fmt)
-    ground_truth_fname =  '{:s}/{:s}/{:s}.txt'.format(db_root_dir, actor, seq_name)
+    src_fname = '{:s}/{:s}/{:s}/frame%05d.{:s}'.format(db_root_dir, actor, seq_name, seq_fmt)
+    ground_truth_fname = '{:s}/{:s}/{:s}.txt'.format(db_root_dir, actor, seq_name)
     result_fname = seq_name + '_res.txt'
 
     if not pyMTF.create(config_root_dir):
@@ -77,7 +77,7 @@ if __name__ == '__main__':
                     ground_truth[0, 4:6].tolist(),
                     ground_truth[0, 6:8].tolist()]
     init_corners = np.array(init_corners).T
-    # write the initial corners to the result file
+    # print('init_corners:\n {}'.format(init_corners))
 
     # initialize tracker with the first frame and the initial corners
     if not use_rgb_input:
@@ -94,7 +94,7 @@ if __name__ == '__main__':
     # lists for accumulating the tracking error and fps for all the frames
     tracking_errors = []
     tracking_fps = []
-    
+
     tracker_corners = np.zeros((2, 4), dtype=np.float64)
 
     for frame_id in xrange(1, no_of_frames):
@@ -109,7 +109,11 @@ if __name__ == '__main__':
         actual_corners = np.array(actual_corners).T
 
         if not use_rgb_input:
+            src_img_disp = src_img.copy()
             src_img = cv2.cvtColor(src_img, cv2.COLOR_RGB2GRAY)
+        else:
+            src_img_disp = src_img
+
         start_time = time.clock()
 
         # update the tracker with the current frame
@@ -118,6 +122,10 @@ if __name__ == '__main__':
         if not isinstance(tracker_corners, np.ndarray):
             print 'Tracker update was unsuccessful'
             sys.exit()
+
+        # print('tracker_corners before:\n {}'.format(tracker_corners))
+        pyMTF.setRegion(tracker_corners)
+        # print('tracker_corners after:\n {}\n\n'.format(tracker_corners))
 
         end_time = time.clock()
 
@@ -131,13 +139,14 @@ if __name__ == '__main__':
 
         if show_tracking_output:
             # draw the ground truth location
-            drawRegion(src_img, actual_corners, ground_truth_color, thickness)
+            drawRegion(src_img_disp, actual_corners, ground_truth_color, thickness)
             # draw the tracker location
-            drawRegion(src_img, tracker_corners, result_color, thickness)
+            drawRegion(src_img_disp, tracker_corners, result_color, thickness)
             # write statistics (error and fps) to the image
-            cv2.putText(src_img, "{:5.2f} {:5.2f}".format(current_fps, current_error), (5, 15), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 255))
+            cv2.putText(src_img_disp, "{:5.2f} {:5.2f}".format(current_fps, current_error), (5, 15),
+                        cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 255))
             # display the image
-            cv2.imshow(window_name, src_img)
+            cv2.imshow(window_name, src_img_disp)
 
             if cv2.waitKey(1) == 27:
                 break
