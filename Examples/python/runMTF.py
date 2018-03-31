@@ -124,7 +124,7 @@ if __name__ == '__main__':
             sys.exit()
 
         # print('tracker_corners before:\n {}'.format(tracker_corners))
-        pyMTF.setRegion(tracker_corners)
+        # pyMTF.setRegion(tracker_corners)
         # print('tracker_corners after:\n {}\n\n'.format(tracker_corners))
 
         end_time = time.clock()
