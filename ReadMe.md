@@ -270,7 +270,7 @@ If neither of the above methods work, a manually created `FindMTF.cmake` file is
 
 Windows
 -------
-If MTF needs to be used within an existing VS project that was built without using cmake, the required preprocessor definitions can be [added manually](https://stackoverflow.com/questions/5100283/how-do-i-setup-visual-studio-to-register-some-defines-globally?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa).
+If MTF needs to be used within an existing VS project that was built without using cmake, the required preprocessor definitions and linked libraries can be [added manually](https://stackoverflow.com/questions/5100283/how-do-i-setup-visual-studio-to-register-some-defines-globally?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa).
 
 * Right click on one of the executables in MTF solution (e.g. `runMTF`), go to `Properties -> C/C++ -> Preprocessor -> Preprocessor Definitions` and copy all flags there to the same location in your own project.
 
