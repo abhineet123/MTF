@@ -268,6 +268,10 @@ An example _CMakeLists.txt_ file for a standalone project that uses either of th
 
 If neither of the above methods work, a manually created `FindMTF.cmake` file is also included in the `cmake/Modules` folder. It has not been widely tested but should work with most standard configurations.
 
+Windows
+-------
+If MTF needs to be used within an existing VS project that was built without using cmake, the required preprocessor definitions can be [added manually](https://stackoverflow.com/questions/5100283/how-do-i-setup-visual-studio-to-register-some-defines-globally?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa). Just right click on one of the executables in MTF solution (e.g. `runMTF`), go to `Properties -> C/C++ -> Preprocessor -> Preprocessor definitions` and copy all flags there to the same location in your own project.
+	
 make
 ----
 Use the `make app app=<APPLICATION_NAME>` command as detailed in the make commands section.
