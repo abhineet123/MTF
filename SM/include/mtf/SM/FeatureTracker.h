@@ -5,9 +5,8 @@
 
 #ifndef DISABLE_FLANN
 #include "FLANNParams.h"
-#else
-#include "FLANNCVParams.h"
 #endif
+#include "FLANNCVParams.h"
 
 #if CV_MAJOR_VERSION < 3
 #include "opencv2/features2d/features2d.hpp"
@@ -368,7 +367,7 @@ private:
 
 	char* patch_win_name;
 
-	MatrixXi _linear_idx;//used for indexing the sub region locations
+	MatrixXi _linear_idx;
 	int pause_seq;
 	bool use_feature_detector;
 

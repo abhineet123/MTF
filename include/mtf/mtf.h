@@ -735,7 +735,10 @@ TrackerBase *getTracker(const char *sm_type,
 		_ssm_params.resy = feat_params.getResY();
 		return new FeatureTracker<SSMType>(
 			&feat_params, 
+#ifndef DISABLE_FLANN
 			getFLANNParams().get(), 
+#endif
+			getFLANNCVParams().get(),
 			getSSMEstParams().get(),
 			&_ssm_params);
 	}
