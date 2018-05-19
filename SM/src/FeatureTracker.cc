@@ -842,7 +842,7 @@ FeatureTracker<SSM>::FeatureTracker(
 			ssm.getResX(), ssm.getResY()));
 	}
 
-	matcher = cv::makePtr<cv::FlannBasedMatcher>(new cv::FlannBasedMatcher(
+	matcher = cv::Ptr<cv::FlannBasedMatcher>(new cv::FlannBasedMatcher(
 		flanncv_params.getIndexParams(), flanncv_params.getSearchParams()));
 
 	switch(params.detector_type){
