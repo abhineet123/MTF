@@ -174,7 +174,7 @@ const FLANNCVParams::IndexParamsPtr& FLANNCVParams::getIndexParams(){
 		return IndexParamsPtr(new cv::flann::AutotunedIndexParams(auto_target_precision, auto_build_weight,
 			auto_memory_weight, auto_sample_fraction));
 	default:
-		printf("Invalid index type specified: %d. Using KD Tree index by default...\n", _index_type);
+		printf("Invalid index type specified: %d. Using KD Tree index by default...\n", index_type);
 		return IndexParamsPtr(new cv::flann::KDTreeIndexParams(kdt_trees));
 	}
 }

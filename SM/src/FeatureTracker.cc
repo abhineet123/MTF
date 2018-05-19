@@ -1137,9 +1137,9 @@ void FeatureTracker<SSM>::matchKeyPoints() {
 #endif
 		std::vector<std::vector<cv::DMatch>> matches;
 		if(params.rebuild_index){
-			matcher.knnMatch(prev_descriptors, curr_descriptors, matches, 2);
+			matcher->knnMatch(prev_descriptors, curr_descriptors, matches, 2);
 		} else{
-			matcher.knnMatch(curr_descriptors, prev_descriptors, matches, 2);
+			matcher->knnMatch(curr_descriptors, prev_descriptors, matches, 2);
 		}
 		for(unsigned int match_id = 0; match_id < matches.size(); ++match_id){
 			best_distances.at<float>(match_id, 0) = matches[match_id][0].distance;
