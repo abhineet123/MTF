@@ -223,18 +223,19 @@ typedef std::unique_ptr<IALKParams> IALKParams_;
 typedef std::unique_ptr<FCSDParams> FCSDParams_;
 typedef std::unique_ptr<PFParams> PFParams_;
 typedef std::unique_ptr<NNParams> NNParams_;
+
 #ifndef DISABLE_FLANN
 typedef std::unique_ptr<FLANNParams> FLANNParams_;
-#else
-#ifndef DISABLE_FEAT
-typedef std::unique_ptr<FLANNCVParams> FLANNParams_;
 #endif
-#endif
+
 #ifndef DISABLE_FEAT
+typedef std::unique_ptr<FLANNCVParams> FLANNCVParams_;
 typedef FeatureTrackerParams::DetectorType DetectorType;
 typedef FeatureTrackerParams::DescriptorType DescriptorType;
 typedef FeatureTrackerParams::DetectorParamsType DetectorParamsType;
 typedef FeatureTrackerParams::DescriptorParamsType DescriptorParamsType;
+
+FLANNCVParams_ getFLANNCVParams();
 DetectorParamsType getDetectorParams(DetectorType detector_type);
 DescriptorParamsType getDescriptorParams(DescriptorType descriptor_type);
 #endif
@@ -256,10 +257,6 @@ PFParams_ getPFParams();
 NNParams_ getNNParams();
 #ifndef DISABLE_FLANN
 FLANNParams_ getFLANNParams();
-#else
-#ifndef DISABLE_FEAT
-FLANNParams_ getFLANNParams();
-#endif
 #endif
 #ifndef DISABLE_REGNET
 RegNetParams_ getRegNetParams();
@@ -736,8 +733,11 @@ TrackerBase *getTracker(const char *sm_type,
 		typename SSMType::ParamType _ssm_params(ssm_params);
 		_ssm_params.resx = feat_params.getResX();
 		_ssm_params.resy = feat_params.getResY();
-		return new FeatureTracker<SSMType>(&feat_params, 
-			getFLANNParams().get(), getSSMEstParams().get(), &_ssm_params);
+		return new FeatureTracker<SSMType>(
+			&feat_params, 
+			getFLANNParams().get(), 
+			getSSMEstParams().get(),
+			&_ssm_params);
 	}
 #endif
 #ifndef DISABLE_GRID
@@ -1515,10 +1515,11 @@ inline FLANNParams_ getFLANNParams(){
 		nn_auto_sample_fraction
 		));
 }
-#else
+#endif
+
 #ifndef DISABLE_FEAT
-inline FLANNParams_ getFLANNParams(){
-	return FLANNParams_(new FLANNCVParams(
+inline FLANNCVParams_ getFLANNCVParams(){
+	return FLANNCVParams_(new FLANNCVParams(
 		static_cast<FLANNCVParams::IdxType>(nn_index_type),
 		nn_srch_checks,
 		nn_srch_eps,
@@ -1540,9 +1541,6 @@ inline FLANNParams_ getFLANNParams(){
 		nn_auto_sample_fraction
 		));
 }
-#endif
-#endif
-#ifndef DISABLE_FEAT
 inline DetectorParamsType getDetectorParams(DetectorType detector_type){
 	DetectorParamsType detector_params;
 	switch(detector_type){

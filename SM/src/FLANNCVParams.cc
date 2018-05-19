@@ -106,7 +106,12 @@ auto_sample_fraction(FLANNCV_AUTO_SAMPLE_FRACTION){
 	}
 }
 
-const cv::flann::IndexParams FLANNCVParams::getIndexParams(IdxType _index_type){
+const cv::Ptr<cv::flann::SearchParams>& FLANNCVParams::getSearchParams(){
+	return cv::makePtr<cv::flann::SearchParams>(new cv::flann::SearchParams(
+		srch_checks, srch_eps, srch_sorted));
+}
+
+const cv::Ptr<cv::flann::IndexParams>& FLANNCVParams::getIndexParams(IdxType _index_type){
 	switch(_index_type){
 	case IdxType::Linear:
 		printf("Using Linear index\n");

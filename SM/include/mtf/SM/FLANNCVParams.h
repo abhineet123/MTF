@@ -15,18 +15,15 @@ struct FLANNCVParams{
 	};
 	static const char* toString(IdxType index_type);
 
-	const cv::flann::IndexParams getIndexParams(
+	const cv::Ptr<cv::flann::IndexParams> &getIndexParams(
 		IdxType _index_type = IdxType::KDTree);
+	const cv::Ptr<cv::flann::SearchParams>& getSearchParams();
 
 
 	void printParams();
 
 	IdxType index_type;
 
-	cv::flann::SearchParams getSearchParams(){
-		return cv::flann::SearchParams(
-			srch_checks, srch_eps, srch_sorted);
-	}
 	int srch_checks;
 	float srch_eps;
 	bool srch_sorted;

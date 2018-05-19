@@ -296,7 +296,7 @@ public:
 	typedef std::shared_ptr<flannMatT> FlannMatPtr;
 	typedef std::shared_ptr<flannIdxT> FlannIdxPtr;
 #else
-	typedef FLANNCVParams FLANNParams;
+	typedef void FLANNParams;
 #endif
 	
 	typedef cv::Ptr<cv::FeatureDetector> DetectorPtr;
@@ -304,9 +304,11 @@ public:
 
 	FeatureTracker(
 		const ParamType *grid_params = nullptr,
-		const FLANNParams *_flann_params = nullptr,
 		const EstimatorParams *_est_params = nullptr,
-		const SSMParams *ssm_params = nullptr);
+		const SSMParams *ssm_params = nullptr,
+		const FLANNCVParams *_flann_cv_params = nullptr,
+		const FLANNParams *_flann_params = nullptr)
+		;
 	~FeatureTracker(){}
 
 	void initialize(const cv::Mat &corners) override;
@@ -338,7 +340,7 @@ private:
 	ParamType params;	
 	FLANNParams flann_params;
 	EstimatorParams est_params;
-	cv::FlannBasedMatcher matcher;
+	cv::Ptr<cv::FlannBasedMatcher> matcher;
 	DetectorPtr detector;
 	DescriptorPtr descriptor;
 

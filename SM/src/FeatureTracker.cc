@@ -830,6 +830,9 @@ FeatureTracker<SSM>::FeatureTracker(
 			ssm.getResX(), ssm.getResY()));
 	}
 
+	matcher = cv::makePtr<cv::FlannBasedMatcher>(new cv::FlannBasedMatcher(
+		flann_params.getIndexParams(), flann_params.getSearchParams()));
+
 	switch(params.detector_type){
 	case DetectorType::NONE:
 		printf("Feature detection is disabled.\n");
