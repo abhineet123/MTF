@@ -111,8 +111,8 @@ const FLANNCVParams::SearchParamsPtr& FLANNCVParams::getSearchParams(){
 		srch_checks, srch_eps, srch_sorted));
 }
 
-const FLANNCVParams::IndexParamsPtr& FLANNCVParams::getIndexParams(IdxType _index_type){
-	switch(_index_type){
+const FLANNCVParams::IndexParamsPtr& FLANNCVParams::getIndexParams(){
+	switch(index_type){
 	case IdxType::Linear:
 		printf("Using Linear index\n");
 		return IndexParamsPtr(new cv::flann::LinearIndexParams());
