@@ -19,8 +19,6 @@
 #include "opencv2/highgui/highgui.hpp"
 
 #include <Python.h>
-#include <patchlevel.h>
-
 #include <numpy/arrayobject.h>
 
 using namespace std;
@@ -44,7 +42,7 @@ static PyMethodDef pyMTFMethods[] = {
 	{ "update", update, METH_VARARGS },
 	{ "setRegion", setRegion, METH_VARARGS },
 	{ "remove", remove, METH_VARARGS },
-	{ NULL, NULL }     /* Sentinel - marks the end of this structure */
+	{ NULL, NULL, 0, NULL }     /* Sentinel - marks the end of this structure */
 };
 
 #if PY_MAJOR_VERSION < 3
@@ -61,9 +59,9 @@ static struct PyModuleDef pyMTFModule = {
 			  or -1 if the module keeps state in global variables. */
 	pyMTFMethods
 };
-PyMODINIT_FUNC PyInit_pyMTF() {
-	PyModule_Create(&pyMTFModule);
-	import_array();  // Must be present for NumPy.  Called first after above line.
+PyMODINIT_FUNC PyInit_pyMTF(void) {
+	import_array();
+	return PyModule_Create(&pyMTFModule);
 }
 #endif
 
