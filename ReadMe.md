@@ -215,21 +215,11 @@ probably indicates that an outdated version of ViSP is installed. This can be re
     * third party trackers in particular are likely to have issues with OpenCV 3.x as many use legacy versions so these should be disabled using `lt=0`/`-DWITH_THIRD_PARTY=OFF` if compilation or linking errors pertaining to these are found.
     * if a linking error of type `/usr/bin/ld: cannot find -lippicv` occurs, remove `-ippicv` from opencv pkg-config configuration file which is usually located at `/usr/local/lib/pkgconfig/opencv.pc` or follow the procedures suggested [here](http://answers.opencv.org/question/84265/compiling-error-with-lippicv/)
 * **only make build system** : if MTF had earlier been compiled with `only_nt=0` (or `nn=1`) and is recompiled with `only_nt=1` (or `nn=0`) such that the **executable does not get recompiled**, a runtime error of the type: `symbol lookup error: runMTF: undefined symbol:` may occur on running the executable; to resolve this, remove `runMTF` (or whatever executable is causing the error) from the build folder (Build/Release or Build/Debug) by running, for instance `rm Build/Release/runMTF` and recompile; this happens because using `only_nt=1` or `nn=0` turns off part of the code in the library but the executable will continue to expect these to be present till it is recompiled;
-* Following errors have been known to occur with some installations of OpenCV 3.4. These are caused by some peculiar bugs within the FLANN module of OpenCV itself and no solutions are known for this yet except to disable the feature tracker module that uses OpenCV FLANN when the original FLANN library is unavailable. This can be done using `-DWITH_FEAT=OFF`/`feat=0`.
-    * `FLANNCVParams.h:28:38: error: use of deleted function ‘cv::flann::SearchParams::SearchParams(cv::flann::SearchParams&&)’`
-    * `error: ‘cv::flann::IndexParams::IndexParams(const cv::flann::IndexParams&)’ is private`
 * if compilation is taking too long and optional components are not needed, following cmake/make commands can be used to build a minimal version of MTF with full core functionality:  
 	`cmake .. -DWITH_THIRD_PARTY=OFF -DWITH_TEMPLATED=OFF`  
 	`make mtfall lt=0 nt=1`  
     * if FLANN based NN is not needed (graph based NN will still be available), `-DWITH_FLANN=OFF`/`nn=0` can be specified too 
     * if feature tracker is not needed, `-DWITH_FEAT=OFF`/`feat=0` can be specified too 
-
-	
-<!--- 
-[](* if MTF had earlier been compiled with `only_nt=0` (or `nn=1`) and is recompiled with `only_nt=1` (or `nn=0`) **or vice versa**, some linking error with missing symbols related to `mtf::NNParams` or `mtf::FLANNParams` may occur when compiling the executable; to fix this, remove `NNParams.o` from the build folder (Build/Release or Build/Debug) by running, for instance `rm Build/Release/NNParams.o` so this recompiles too; some of the code in `NNParams` is conditional on whether standard version of NN (that uses FLANN) is enabled or not so having a wrong version compiled causes this error and, unfortunately, there is no way to automatically recompile this file when FLANN based NN is enabled or disabled through compile time switches;)
-
-[](* switching from `only_nt=1` to `only_nt=0` can sometimes also lead to linking errors of the type: `undefined reference to `mtf::gnn::GNN<[some AM]>::[some function]`; to resolve this, remove `GNN.o` and `FGNN.o` from the build folder by running, for instance `rm Build/Release/GNN.o Build/Release/FGNN.o` and recompile.)
----> 
 
 Setting Parameters:
 -------------------
