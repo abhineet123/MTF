@@ -795,17 +795,29 @@ std::string FeatureTrackerParams::toString(DescriptorType _descriptor_type){
 template<class SSM>
 FeatureTracker<SSM>::FeatureTracker(
 	const ParamType *grid_params,
+#ifndef DISABLE_FLANN
 	const FLANNParams *_flann_params,
+#endif
+	const FLANNCVParams *_flanncv_params,
 	const EstimatorParams *_est_params,
 	const SSMParams *_ssm_params) :
-	FeatureBase(), ssm(_ssm_params), params(grid_params),
-	flann_params(_flann_params), est_params(_est_params),
+	FeatureBase(), 
+	ssm(_ssm_params),
+	params(grid_params),
+#ifndef DISABLE_FLANN
+	flann_params(_flann_params),
+#endif
+	flanncv_params(_flanncv_params),
+	est_params(_est_params),
 	use_feature_detector(true){
 	printf("\n");
 	printf("Using Feature tracker with:\n");
 	printf("grid_size: %d x %d\n", params.grid_size_x, params.grid_size_y);
 	printf("search window size: %d x %d\n", params.search_window_x, params.search_window_y);
+#ifndef DISABLE_FLANN
 	printf("flann_index_type: %s\n", FLANNParams::toString(flann_params.index_type));
+#endif
+	printf("flanncv_index_type: %s\n", FLANNCVParams::toString(flanncv_params.index_type));
 	printf("init_at_each_frame: %d\n", params.init_at_each_frame);
 	printf("detector_type: %d\n", params.detector_type);
 	printf("descriptor_type: %d\n", params.descriptor_type);
@@ -831,7 +843,7 @@ FeatureTracker<SSM>::FeatureTracker(
 	}
 
 	matcher = cv::makePtr<cv::FlannBasedMatcher>(new cv::FlannBasedMatcher(
-		flann_params.getIndexParams(), flann_params.getSearchParams()));
+		flanncv_params.getIndexParams(), flanncv_params.getSearchParams()));
 
 	switch(params.detector_type){
 	case DetectorType::NONE:

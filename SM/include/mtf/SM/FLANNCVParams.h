@@ -13,12 +13,14 @@ struct FLANNCVParams{
 		KDTree, HierarchicalClustering, KMeans, Composite, Linear,
 		LSH, Autotuned
 	};
+
+	typedef cv::Ptr<cv::flann::SearchParams> SearchParamsPtr;
+	typedef cv::Ptr<cv::flann::IndexParams> IndexParamsPtr;
+
 	static const char* toString(IdxType index_type);
 
-	const cv::Ptr<cv::flann::IndexParams> &getIndexParams(
-		IdxType _index_type = IdxType::KDTree);
-	const cv::Ptr<cv::flann::SearchParams>& getSearchParams();
-
+	const SearchParamsPtr& getSearchParams();
+	const IndexParamsPtr& getIndexParams();
 
 	void printParams();
 

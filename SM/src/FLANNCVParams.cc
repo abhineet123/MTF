@@ -106,20 +106,20 @@ auto_sample_fraction(FLANNCV_AUTO_SAMPLE_FRACTION){
 	}
 }
 
-const cv::Ptr<cv::flann::SearchParams>& FLANNCVParams::getSearchParams(){
-	return cv::makePtr<cv::flann::SearchParams>(new cv::flann::SearchParams(
+const FLANNCVParams::SearchParamsPtr& FLANNCVParams::getSearchParams(){
+	return SearchParamsPtr(new cv::flann::SearchParams(
 		srch_checks, srch_eps, srch_sorted));
 }
 
-const cv::Ptr<cv::flann::IndexParams>& FLANNCVParams::getIndexParams(IdxType _index_type){
+const FLANNCVParams::IndexParamsPtr& FLANNCVParams::getIndexParams(IdxType _index_type){
 	switch(_index_type){
 	case IdxType::Linear:
 		printf("Using Linear index\n");
-		return cv::flann::LinearIndexParams();
+		return IndexParamsPtr(new cv::flann::LinearIndexParams());
 	case IdxType::KDTree:
 		printf("Using KD Tree index with:\n");
 		printf("n_trees: %d\n", kdt_trees);
-		return cv::flann::KDTreeIndexParams(kdt_trees);
+		return IndexParamsPtr(new cv::flann::KDTreeIndexParams(kdt_trees));
 	case IdxType::KMeans:
 		if(!(km_centers_init == cvflann::FLANN_CENTERS_RANDOM ||
 			km_centers_init == cvflann::FLANN_CENTERS_GONZALES ||
@@ -133,8 +133,8 @@ const cv::Ptr<cv::flann::IndexParams>& FLANNCVParams::getIndexParams(IdxType _in
 		printf("iterations: %d\n", km_iterations);
 		printf("centers_init: %d\n", km_centers_init);
 		printf("cb_index: %f\n", km_cb_index);
-		return cv::flann::KMeansIndexParams(km_branching, km_iterations,
-			km_centers_init, km_cb_index);
+		return IndexParamsPtr(new cv::flann::KMeansIndexParams(km_branching, km_iterations,
+			km_centers_init, km_cb_index));
 	case IdxType::Composite:
 		if(!(km_centers_init == cvflann::FLANN_CENTERS_RANDOM ||
 			km_centers_init == cvflann::FLANN_CENTERS_GONZALES ||
@@ -148,8 +148,8 @@ const cv::Ptr<cv::flann::IndexParams>& FLANNCVParams::getIndexParams(IdxType _in
 		printf("iterations: %d\n", km_iterations);
 		printf("centers_init: %d\n", km_centers_init);
 		printf("cb_index: %f\n", km_cb_index);
-		return cv::flann::CompositeIndexParams(kdt_trees, km_branching, km_iterations,
-			km_centers_init, km_cb_index);
+		return IndexParamsPtr(new cv::flann::CompositeIndexParams(kdt_trees, km_branching, km_iterations,
+			km_centers_init, km_cb_index));
 	case IdxType::HierarchicalClustering:
 		if(!(hc_centers_init == cvflann::FLANN_CENTERS_RANDOM ||
 			hc_centers_init == cvflann::FLANN_CENTERS_GONZALES ||
@@ -163,19 +163,19 @@ const cv::Ptr<cv::flann::IndexParams>& FLANNCVParams::getIndexParams(IdxType _in
 		printf("centers_init: %d\n", hc_centers_init);
 		printf("trees: %d\n", hc_trees);
 		printf("leaf_max_size: %d\n", hc_leaf_max_size);
-		return cv::flann::HierarchicalClusteringIndexParams(hc_branching,
-			hc_centers_init, hc_trees, hc_leaf_max_size);
+		return IndexParamsPtr(new cv::flann::HierarchicalClusteringIndexParams(hc_branching,
+			hc_centers_init, hc_trees, hc_leaf_max_size));
 	case IdxType::Autotuned:
 		printf("Using Autotuned index with:\n");
 		printf("target_precision: %f\n", auto_target_precision);
 		printf("build_weight: %f\n", auto_build_weight);
 		printf("memory_weight: %f\n", auto_memory_weight);
 		printf("sample_fraction: %f\n", auto_sample_fraction);
-		return cv::flann::AutotunedIndexParams(auto_target_precision, auto_build_weight,
-			auto_memory_weight, auto_sample_fraction);
+		return IndexParamsPtr(new cv::flann::AutotunedIndexParams(auto_target_precision, auto_build_weight,
+			auto_memory_weight, auto_sample_fraction));
 	default:
 		printf("Invalid index type specified: %d. Using KD Tree index by default...\n", _index_type);
-		return cv::flann::KDTreeIndexParams(kdt_trees);
+		return IndexParamsPtr(new cv::flann::KDTreeIndexParams(kdt_trees));
 	}
 }
 
