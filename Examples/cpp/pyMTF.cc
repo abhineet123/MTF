@@ -19,6 +19,8 @@
 #include "opencv2/highgui/highgui.hpp"
 
 #include <Python.h>
+#include <patchlevel.h>
+
 #include <numpy/arrayobject.h>
 
 using namespace std;
@@ -45,12 +47,25 @@ static PyMethodDef pyMTFMethods[] = {
 	{ NULL, NULL }     /* Sentinel - marks the end of this structure */
 };
 
-/* ==== Initialize the C_test functions ====================== */
-// Module name must be pyMTF in compile and linked
+#if PY_MAJOR_VERSION < 3
 PyMODINIT_FUNC initpyMTF()  {
 	(void)Py_InitModule("pyMTF", pyMTFMethods);
 	import_array();  // Must be present for NumPy.  Called first after above line.
 }
+#else
+static struct PyModuleDef pyMTFModule = {
+	PyModuleDef_HEAD_INIT,
+	"pyMTF",   /* name of module */
+	NULL, /* module documentation, may be NULL */
+	-1,       /* size of per-interpreter state of the module,
+			  or -1 if the module keeps state in global variables. */
+	pyMTFMethods
+};
+PyMODINIT_FUNC PyInit_pyMTF() {
+	PyModule_Create(&pyMTFModule);
+	import_array();  // Must be present for NumPy.  Called first after above line.
+}
+#endif
 
 static PyObject* create(PyObject* self, PyObject* args) {
 	char* config_root_dir;
