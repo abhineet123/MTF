@@ -23,10 +23,10 @@ struct FLANNCVParams{
 
 	IdxType index_type;
 
-	cv::flann::SearchParams getSearchParams(){
-		return cv::flann::SearchParams(
-			srch_checks, srch_eps, srch_sorted);
-	}
+	//cv::flann::SearchParams getSearchParams(){
+	//	return cv::flann::SearchParams(
+	//		srch_checks, srch_eps, srch_sorted);
+	//}
 	int srch_checks;
 	float srch_eps;
 	bool srch_sorted;
