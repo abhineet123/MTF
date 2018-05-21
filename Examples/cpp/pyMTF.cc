@@ -272,5 +272,6 @@ static PyObject* remove(PyObject* self, PyObject* args) {
 		return Py_BuildValue("i", 0);
 	}
 	trackers.erase(it);
+	PySys_WriteStdout("Removed tracker with ID: %u\n", tracker_id);
 	return Py_BuildValue("i", 1);
 }
