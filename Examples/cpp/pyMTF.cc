@@ -148,14 +148,14 @@ static PyObject* create(PyObject* self, PyObject* args) {
 	if(py_visualize) {
 		cv::namedWindow("PyMTF", cv::WINDOW_AUTOSIZE);
 	}
-	return Py_BuildValue("i", _tracker_id);
+	return Py_BuildValue("I", _tracker_id);
 }
 
 static PyObject* getRegion(PyObject* self, PyObject* args) {
 	PyArrayObject *img_py, *out_corners_py;
 	unsigned int tracker_id;
 	/*parse first input array*/
-	if(!PyArg_ParseTuple(args, "O!O!|i", &PyArray_Type, &img_py, &PyArray_Type, &out_corners_py, &tracker_id)) {
+	if(!PyArg_ParseTuple(args, "O!O!I", &PyArray_Type, &img_py, &PyArray_Type, &out_corners_py, &tracker_id)) {
 		PySys_WriteStdout("\n----pyMTF::update: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
@@ -209,7 +209,7 @@ static PyObject* setRegion(PyObject* self, PyObject* args) {
 	PyArrayObject *in_corners_py;
 	unsigned int tracker_id = trackers.size() == 0 ? 0 : trackers.size() - 1;
 	/*parse first input array*/
-	if(!PyArg_ParseTuple(args, "O!|i", &PyArray_Type, &in_corners_py, &tracker_id)) {
+	if(!PyArg_ParseTuple(args, "O!I", &PyArray_Type, &in_corners_py, &tracker_id)) {
 		PySys_WriteStdout("\n----pyMTF::setRegion: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
@@ -220,11 +220,6 @@ static PyObject* setRegion(PyObject* self, PyObject* args) {
 	if(in_corners_py->dimensions[0] != 2 || in_corners_py->dimensions[1] != 4){
 		PySys_WriteStdout("pyMTF:: Corners matrix has incorrect dimensions: %ld, %ld\n",
 			in_corners_py->dimensions[0], in_corners_py->dimensions[1]);
-		return Py_BuildValue("i", 0);
-	}
-	if(tracker_id >= trackers.size()){
-		PySys_WriteStdout("\n----pyMTF::setRegion: tracker_id %d is invalid as only %lu trackers exist----\n\n",
-			tracker_id, trackers.size());
 		return Py_BuildValue("i", 0);
 	}
 	cv::Mat corners(2, 4, CV_64FC1);
@@ -265,7 +260,7 @@ static PyObject* setRegion(PyObject* self, PyObject* args) {
 static PyObject* remove(PyObject* self, PyObject* args) {
 	unsigned int tracker_id;
 	/*parse first input array*/
-	if(!PyArg_ParseTuple(args, "|i", &PyArray_Type, &tracker_id)) {
+	if(!PyArg_ParseTuple(args, "I", &PyArray_Type, &tracker_id)) {
 		PySys_WriteStdout("\n----pyMTF::remove: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
