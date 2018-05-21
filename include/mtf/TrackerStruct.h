@@ -4,6 +4,9 @@
 
 typedef std::shared_ptr<mtf::TrackerBase> Tracker;
 typedef PreProc_ PreProc;
+
+using namespace mtf::params;
+
 struct TrackerStruct{
 	TrackerStruct() : tracker(nullptr), pre_proc(nullptr){}
 	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc) :
