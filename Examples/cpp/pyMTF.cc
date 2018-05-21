@@ -193,8 +193,8 @@ static PyObject* getRegion(PyObject* self, PyObject* args) {
 		line(curr_img_cv, corners[3], corners[0], CV_RGB(255, 0, 0), line_thickness);
 		putText(curr_img_cv, it->second.name(), corners[0],
 			cv::FONT_HERSHEY_SIMPLEX, fps_font_size, CV_RGB(255, 0, 0));
-		std::string fps_text = cv::format("c: %12.6f cw: %12.6f", fps, fps_win);
-		putText(curr_img_cv, fps_text, fps_origin, cv::FONT_HERSHEY_SIMPLEX, fps_font_size, fps_color);
+		//std::string fps_text = cv::format("c: %12.6f cw: %12.6f", fps, fps_win);
+		//putText(curr_img_cv, fps_text, fps_origin, cv::FONT_HERSHEY_SIMPLEX, fps_font_size, fps_color);
 		imshow("PyMTF", curr_img_cv);
 		cv::waitKey(1);
 	}
