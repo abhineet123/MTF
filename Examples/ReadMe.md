@@ -85,18 +85,20 @@ Using mexMTF to track objects:
 pyMTF
 -----
 
-pyMTF is the Python interface to MTF.
+pyMTF is the Python interface to MTF that supports both Python 2.7 and 3.x.
 
-It is very simple to use - there are just 3 main functions needed to track an object:
+It is very simple to use - there are just 2 main functions needed to track an object:
 
--   `success = pyMTF.create(config_root_dir)` to create a new tracker
--   `success = pyMTF.initialize(image, corners, id)` to initialize the tracker
--   `success = pyMTF.update(image, corners, id)` to update the tracker and get new location
+-   `tracker_id = pyMTF.create(image, corners, config_root_dir)` to create and initialize a new tracker
+-   `success = pyMTF.getRegion(image, corners, id)` to update the tracker and get new location
 
-`id` is an integer that starts at 0 and increments by 1 every time `pyMTF.create` is called.
+`tracker_id` is an unsigned integer that starts at 1 and increments by 1 every time `pyMTF.create` is called; `tracker_id=0` indicates that the tracker creation/initialization failed
 `image` can be RGB or grayscale but must be of type `numpy.uint8` while `corners` must be a 2x4 matrix of type `numpy.float64`.
 In addition, the following function allows the internal state of a tracker to be modified so the object is located at the provided location instead of where it was after the last update:
 
--   `success = pyMTF.setRegion(corners, id)`
+-   `success = pyMTF.setRegion(corners, tracker_id)`
+Finally, this can be used to remove an existing tracker:
+
+-   `success = pyMTF.remove(tracker_id)`
 
 Unlike mexMTF, there is currently no multi threaded version of pyMTF nor does it support acquiring images. These functionalities will be added soon.

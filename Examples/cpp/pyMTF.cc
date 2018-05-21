@@ -148,6 +148,8 @@ static PyObject* create(PyObject* self, PyObject* args) {
 	if(py_visualize) {
 		cv::namedWindow("PyMTF", cv::WINDOW_AUTOSIZE);
 	}
+	PySys_WriteStdout("Created tracker with ID: %u\n", _tracker_id);
+
 	return Py_BuildValue("I", _tracker_id);
 }
 
