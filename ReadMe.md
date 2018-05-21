@@ -119,8 +119,10 @@ Installation:
     * **`make mtfi` : all of the above - recommended command that compiles and installs the library and the executable**
     * **`make py`/`make install_py`** : compile/install the Python interface to MTF - this creates a Python module called _pyMTF_ that serves as a front end for running these trackers from Python.
 	    - usage of this module is demonstrated in _Examples/python/runMTF.py_
-	    -  installation location can be specified through `MTF_PY_INSTALL_DIR` in _Examples.mak/cmake_ (defaults to _/usr/local/lib/python2.7/dist-packages/_)
-		- currently only supports Python 2.7 so will give compilation errors if Python 3 is also installed and set as default
+		- supports both Python 2.7 and 3.x but only a particular version is built at a time - this can be specified using the `PY_VER`/`py_ver` cmake/make variable (set to 2.7 by default)
+		- if multiple Python versions are installed on the system, cmake might not be able to find the desired one even if `PY_VER` is provided; in this case Python header and library locations must be provided though the variables `PYTHON_INCLUDE_DIR` and `PYTHON_LIBRARY`
+		- neither cmake nor make systems currently support inferring the correct install location for _pyMTF_ from Python library/header paths so this must be specified through `MTF_PY_INSTALL_DIR` (in _Examples.mak/cmake_) if using a custom Python version (defaults to _/usr/local/lib/python2.7/dist-packages/_)
+		- refer to _cmake/cmake.md_ for an example cmake command to compile _pyMTF_ with Python 3.5;
     * **`make mex`/`make install_mex`** : compile/install the MATLAB interface to MTF - this creates a MATLAB module called _mexMTF_ that serves as a front end for running these trackers from MATLAB.
 	    - set `MATLAB_DIR` variable in _Examples.mak_ to the root of the MATLAB installation folder 
 		- usage of this module is demonstrated in _Examples/matlab/runMTF.m_

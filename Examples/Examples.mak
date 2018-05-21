@@ -1,22 +1,25 @@
 MTF_EXEC_INSTALL_DIR ?= $(MTF_INSTALL_DIR)/bin
 MTF_DIAG_INSTALL_DIR ?= $(MTF_INSTALL_DIR)/bin
 
+
 ifeq ($(OS),Windows_NT)
-	MTF_PY_INSTALL_DIR ?= C:/Python27/Lib/site-packages
-	PYTHON_INCLUDE_DIR ?= C:/Python27/include 
-	PYTHON_LIBS_DIR ?= C:/Python27/libs 
-	NUMPY_INCLUDE_DIR ?= C:/Python27/Lib/site-packages/numpy/core/include
+	py_ver ?= 27
+	MTF_PY_INSTALL_DIR ?= C:/Python$(py_ver)/Lib/site-packages
+	PYTHON_INCLUDE_DIR ?= C:/Python$(py_ver)/include 
+	PYTHON_LIBS_DIR ?= C:/Python$(py_ver)/libs 
+	NUMPY_INCLUDE_DIR ?= C:/Python$(py_ver)/Lib/site-packages/numpy/core/include
 	MTF_PY_LIB_NAME ?= pyMTF.pyd
-	PYTHON_LIB_NAME ?= python27
+	PYTHON_LIB_NAME ?= python$(py_ver)
 	MATLAB_DIR ?= E:/Program\ Files/MATLAB/R2013a
 	MEX_EXT = mexw64
 else
-	MTF_PY_INSTALL_DIR ?= /usr/local/lib/python2.7/dist-packages/
-	PYTHON_INCLUDE_DIR ?= /usr/include/python2.7
+	py_ver ?= 2.7
+	MTF_PY_INSTALL_DIR ?= /usr/local/lib/python$(py_ver)/dist-packages/
+	PYTHON_INCLUDE_DIR ?= /usr/include/python$(py_ver)
 	PYTHON_LIBS_DIR ?= 
 	NUMPY_INCLUDE_DIR ?= ${PYTHON_INCLUDE_DIR}/numpy
 	MTF_PY_LIB_NAME ?= pyMTF.so
-	PYTHON_LIB_NAME ?= python2.7
+	PYTHON_LIB_NAME ?= python$(py_ver)
 	# add "sudo" to the cp/mkdir commands if the executable installation folder needs administrative access
 	ifneq (,$(findstring /usr,$(MTF_EXEC_INSTALL_DIR)))
 		MTF_EXE_INSTALL_CMD_PREFIX = sudo
