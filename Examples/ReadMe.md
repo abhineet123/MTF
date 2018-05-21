@@ -90,7 +90,7 @@ pyMTF is the Python interface to MTF that supports both Python 2.7 and 3.x.
 It is very simple to use - there are just 2 main functions needed to track an object:
 
 -   `tracker_id = pyMTF.create(image, corners, config_root_dir)` to create and initialize a new tracker
--   `success = pyMTF.getRegion(image, corners, id)` to update the tracker and get new location
+-   `success = pyMTF.getRegion(image, corners, id)` to update the tracker and get its new location
 
 `tracker_id` is an unsigned integer that starts at 1 and increments by 1 every time `pyMTF.create` is called; `tracker_id=0` indicates that the tracker creation/initialization failed.  
 `image` can be RGB or grayscale but must be of type `numpy.uint8` while `corners` must be a 2x4 matrix of type `numpy.float64`.  
