@@ -92,7 +92,7 @@ It is very simple to use - there are just 2 main functions needed to track an ob
 -   `tracker_id = pyMTF.create(image, corners, config_root_dir)` to create and initialize a new tracker
 -   `success = pyMTF.getRegion(image, corners, id)` to update the tracker and get new location
 
-`tracker_id` is an unsigned integer that starts at 1 and increments by 1 every time `pyMTF.create` is called; `tracker_id=0` indicates that the tracker creation/initialization failed
+`tracker_id` is an unsigned integer that starts at 1 and increments by 1 every time `pyMTF.create` is called; `tracker_id=0` indicates that the tracker creation/initialization failed.  
 `image` can be RGB or grayscale but must be of type `numpy.uint8` while `corners` must be a 2x4 matrix of type `numpy.float64`.  
 
 In addition, the following function allows the internal state of a tracker to be modified so the object is located at the provided location instead of where it was after the last update:
