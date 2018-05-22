@@ -114,14 +114,14 @@ if __name__ == '__main__':
         start_time = time.clock()
 
         # update the tracker with the current frame
-        pyMTF.getRegion(src_img.astype(np.uint8), tracker_corners, tracker_id)
+        success = pyMTF.getRegion(src_img.astype(np.uint8), tracker_corners, tracker_id)
 
-        if not isinstance(tracker_corners, np.ndarray):
+        if not success:
             print 'Tracker update was unsuccessful'
             sys.exit()
 
         # print('tracker_corners before:\n {}'.format(tracker_corners))
-        # pyMTF.setRegion(tracker_corners)
+        # success = pyMTF.setRegion(tracker_corners, tracker_id)
         # print('tracker_corners after:\n {}\n\n'.format(tracker_corners))
 
         end_time = time.clock()
