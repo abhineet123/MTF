@@ -198,8 +198,8 @@ if(WITH_PY)
 			message(STATUS "PYTHON_INCLUDE_DIRS: ${PYTHON_INCLUDE_DIRS}")
 			message(STATUS "PYTHON_LIBRARIES: ${PYTHON_LIBRARIES}")		
 			target_link_libraries(pyMTF2 mtf ${MTF_LIBS} ${PYTHON_LIBRARIES} ${PYTHON_LIBS})	
-			install(TARGETS pyMTF2 LIBRARY DESTINATION ${MTF_PY_INSTALL_DIR} COMPONENT pyMTF)
-			add_custom_target(py DEPENDS pyMTF2)
+			install(TARGETS pyMTF2 LIBRARY DESTINATION ${MTF_PY_INSTALL_DIR} COMPONENT py2)
+			add_custom_target(py2 DEPENDS pyMTF2)
 			if(NOT WIN32)
 				add_custom_target(install_py2
 				  ${CMAKE_COMMAND}
