@@ -1,35 +1,18 @@
-//! Matlab comes with its own horrible version of boost libraries that cause the mex module to segfault if boost::filesystem::absolute is used
-//! It is also apparently impossible to force Matlab to load the correct version of boost libraries through LD_PRELOAD; attempting to do so causes Matlab itself to segfault at startup
-//#define DISABLE_BOOST_ABSOLUTE
+#ifndef DISABLE_VISP
+//! needed to avoid a weird bug in ViSP
+#define PNG_SKIP_SETJMP_CHECK
+#endif
+#ifdef _WIN32
+#define hypot _hypot
+#endif
 
 #include "mtf/TrackerStrct_mt.h"
 
 #include <map>
 #include <memory>
 
-#define MEX_INIT_INPUT 1
-#define MEX_GET_FRAME 2
-#define MEX_QUIT 3
-#define MEX_CREATE_TRACKER 4
-#define MEX_GET_REGION 5
-#define MEX_SET_REGION 6
-#define MEX_REMOVE_TRACKER 7
-#define MEX_REMOVE_TRACKERS 8
-#define MEX_IS_INITIALIZED 9
-
 using namespace std;
 
-static std::map<std::string, const int> cmd_list = {
-	{ "init", MEX_INIT_INPUT },
-	{ "is_initialized", MEX_IS_INITIALIZED },
-	{ "quit", MEX_QUIT },
-	{ "get_frame", MEX_GET_FRAME },
-	{ "create_tracker", MEX_CREATE_TRACKER },
-	{ "get_region", MEX_GET_REGION },
-	{ "set_region", MEX_SET_REGION },
-	{ "remove_tracker", MEX_REMOVE_TRACKER },
-	{ "remove_trackers", MEX_REMOVE_TRACKERS }
-};
 
 static InputStructPtr input;
 static std::map<int, TrackerStruct> trackers;
