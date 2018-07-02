@@ -15,25 +15,25 @@ using namespace std;
 using namespace mtf::params;
 
 static PyObject* init(PyObject* self, PyObject* args);
-static PyObject* is_initialized(PyObject* self, PyObject* args);
+static PyObject* isInitialized(PyObject* self, PyObject* args);
 static PyObject* quit(PyObject* self, PyObject* args);
-static PyObject* get_frame(PyObject* self, PyObject* args);
-static PyObject* create_tracker(PyObject* self, PyObject* args, PyObject *keywds);
-static PyObject* get_region(PyObject* self, PyObject* args);
-static PyObject* set_region(PyObject* self, PyObject* args);
-static PyObject* remove_tracker(PyObject* self, PyObject* args);
-static PyObject* remove_trackers(PyObject* self, PyObject* args);
+static PyObject* getFrame(PyObject* self, PyObject* args);
+static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds);
+static PyObject* getRegion(PyObject* self, PyObject* args);
+static PyObject* setRegion(PyObject* self, PyObject* args);
+static PyObject* removeTracker(PyObject* self, PyObject* args);
+static PyObject* removeTrackers(PyObject* self, PyObject* args);
 
 static PyMethodDef pyMTF2Methods[] = {
 	{ "init", init, METH_VARARGS },
-	{ "is_initialized", is_initialized, METH_VARARGS },
+	{ "isInitialized", isInitialized, METH_VARARGS },
 	{ "quit", quit, METH_VARARGS },
-	{ "get_frame", get_frame, METH_VARARGS },
-	{ "create_tracker", create_tracker, METH_VARARGS | METH_KEYWORDS },
-	{ "get_region", get_region, METH_VARARGS },
-	{ "set_region", set_region, METH_VARARGS },
-	{ "remove_tracker", remove_tracker, METH_VARARGS },
-	{ "remove_trackers", remove_trackers, METH_VARARGS },
+	{ "getFrame", getFrame, METH_VARARGS },
+	{ "createTracker", (PyCFunction)createTracker, METH_VARARGS | METH_KEYWORDS },
+	{ "getRegion", getRegion, METH_VARARGS },
+	{ "setRegion", setRegion, METH_VARARGS },
+	{ "removeTracker", removeTracker, METH_VARARGS },
+	{ "removeTrackers", removeTrackers, METH_VARARGS },
 	{ NULL, NULL, 0, NULL }     /* Sentinel - marks the end of this structure */
 };
 
@@ -186,7 +186,7 @@ static PyObject* init(PyObject* self, PyObject* args) {
 	return Py_BuildValue("i", 1);
 }
 
-static PyObject* is_initialized(PyObject* self, PyObject* args) {
+static PyObject* isInitialized(PyObject* self, PyObject* args) {
 	if(checkInput(false)) {
 		return Py_BuildValue("i", 1);
 	}
@@ -204,7 +204,7 @@ static PyObject* quit(PyObject* self, PyObject* args) {
 	return Py_BuildValue("i", 1);
 }
 
-static PyObject* get_frame(PyObject* self, PyObject* args) {
+static PyObject* getFrame(PyObject* self, PyObject* args) {
 	if(!checkInput()) {
 		return Py_BuildValue("");
 	}
@@ -228,7 +228,7 @@ static PyObject* get_frame(PyObject* self, PyObject* args) {
 	return Py_BuildValue("O", frame_py);
 }
 
-static PyObject* create_tracker(PyObject* self, PyObject* args, PyObject *keywds) {
+static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds) {
 	PyArrayObject *in_corners_py = nullptr;
 	char* _params = nullptr;
 	static char *kwlist[] = { "params", "corners", NULL };
@@ -272,10 +272,10 @@ static PyObject* create_tracker(PyObject* self, PyObject* args, PyObject *keywds
 	return Py_BuildValue("I", _tracker_id);
 }
 
-static PyObject* get_region(PyObject* self, PyObject* args) {
+static PyObject* getRegion(PyObject* self, PyObject* args) {
 	unsigned int tracker_id;
 	if(!PyArg_ParseTuple(args, "I", &tracker_id)) {
-		PySys_WriteStdout("\n----pyMTF2::get_region: Input argument could not be parsed----\n\n");
+		PySys_WriteStdout("\n----pyMTF2::getRegion: Input argument could not be parsed----\n\n");
 		return Py_BuildValue("");
 	}
 
@@ -296,11 +296,11 @@ static PyObject* get_region(PyObject* self, PyObject* args) {
 }
 
 
-static PyObject* set_region(PyObject* self, PyObject* args) {
+static PyObject* setRegion(PyObject* self, PyObject* args) {
 	unsigned int tracker_id;
 	PyArrayObject *corners_py;
 	if(!PyArg_ParseTuple(args, "O!I", &PyArray_Type, &corners_py, &tracker_id)) {
-		PySys_WriteStdout("\n----pyMTF2::set_region: Input arguments could not be parsed----\n\n");
+		PySys_WriteStdout("\n----pyMTF2::setRegion: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
 
@@ -310,11 +310,11 @@ static PyObject* set_region(PyObject* self, PyObject* args) {
 		return Py_BuildValue("i", 0);
 	}
 	if(corners_py == NULL) {
-		PySys_WriteStdout("\n----pyMTF2::set_region::init_corners is NULL----\n\n");
+		PySys_WriteStdout("\n----pyMTF2::setRegion::init_corners is NULL----\n\n");
 		return Py_BuildValue("i", 0);
 	}
 	if(corners_py->dimensions[0] != 2 || corners_py->dimensions[1] != 4){
-		PySys_WriteStdout("pyMTF2::set_region::Corners matrix has incorrect dimensions: %ld, %ld\n",
+		PySys_WriteStdout("pyMTF2::setRegion::Corners matrix has incorrect dimensions: %ld, %ld\n",
 			corners_py->dimensions[0], corners_py->dimensions[1]);
 		return Py_BuildValue("i", 0);
 	}
@@ -335,7 +335,7 @@ static PyObject* set_region(PyObject* self, PyObject* args) {
 }
 
 
-static PyObject* remove_trackers(PyObject* self, PyObject* args) {
+static PyObject* removeTrackers(PyObject* self, PyObject* args) {
 	PySys_WriteStdout("pyMTF2 :: removing all trackers...");
 	for(auto it = trackers.begin(); it != trackers.end(); ++it){
 		it->second.reset();
@@ -345,10 +345,10 @@ static PyObject* remove_trackers(PyObject* self, PyObject* args) {
 	return Py_BuildValue("i", 1);
 }
 
-static PyObject* remove_tracker(PyObject* self, PyObject* args) {
+static PyObject* removeTracker(PyObject* self, PyObject* args) {
 	unsigned int tracker_id;
 	if(!PyArg_ParseTuple(args, "I", &tracker_id)) {
-		PySys_WriteStdout("\n----pyMTF2::remove_tracker: Input arguments could not be parsed----\n\n");
+		PySys_WriteStdout("\n----pyMTF2::removeTracker: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
 	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
