@@ -168,23 +168,7 @@ bool createTracker(const cv::Mat &init_corners) {
 	}
 	++_tracker_id;
 	trackers.insert(std::pair<int, TrackerStruct>(_tracker_id,
-		TrackerStruct(tracker, pre_proc, input, _tracker_id)));
-	return true;
-}
-
-bool setRegion(unsigned int tracker_id, const cv::Mat &corners) {
-	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
-	if(it == trackers.end()){
-		PySys_WriteStdout("Invalid tracker ID: %d\n", tracker_id);
-		return false;
-	}
-	try{
-		it->second.setRegion(corners);
-	} catch(const mtf::utils::Exception &err){
-		PySys_WriteStdout("Exception of type %s encountered while resetting the tracker: %s\n",
-			err.type(), err.what());
-		return false;
-	}
+		TrackerStruct(tracker, pre_proc, input, _tracker_id, py_visualize, "pyMTF2")));
 	return true;
 }
 

@@ -157,7 +157,7 @@ bool createTracker(const cv::Mat &init_corners) {
 	}
 	++_tracker_id;
 	trackers.insert(std::pair<int, TrackerStruct>(_tracker_id,
-		TrackerStruct(tracker, pre_proc, input, _tracker_id)));
+		TrackerStruct(tracker, pre_proc, input, _tracker_id, mex_visualize, "mexMTF2")));
 	return true;
 }
 
