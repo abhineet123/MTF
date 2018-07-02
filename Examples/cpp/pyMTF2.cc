@@ -101,12 +101,6 @@ bool checkInput(bool verbose = true) {
 	}
 	return true;
 }
-bool getFrame(){
-
-	return true;
-}
-
-
 bool initializeTracker(Tracker &tracker, PreProc &pre_proc,
 	const cv::Mat &init_img, const cv::Mat &init_corners) {
 	try{
