@@ -84,13 +84,13 @@ private:
 };
 
 struct ObjectSelectorThread{
-	ObjectSelectorThread(InputStructPtr &_input, cv::Mat &_corners) : success(false),
-		input(_input), corners(_corners) {}
+	ObjectSelectorThread(InputStructPtr &_input, cv::Mat &_corners, bool _live_init) : success(false),
+		input(_input), corners(_corners), live_init(_live_init){}
 	void operator()(){
 		mtf::utils::ObjUtils obj_utils;
 #ifndef DISABLE_VISP
 		try{
-			if(mex_live_init){
+			if(live_init){
 				if(!obj_utils.selectObjectsVP(input.get(), 1,
 					patch_size, line_thickness, write_objs, sel_quad_obj,
 					write_obj_fname.c_str())){
@@ -116,7 +116,7 @@ struct ObjectSelectorThread{
 		}
 #else
 		try{
-			if(mex_live_init){
+			if(live_init){
 				if(!obj_utils.selectObjects(input.get(), 1,
 					patch_size, line_thickness, write_objs, sel_quad_obj,
 					write_obj_fname.c_str())){
@@ -143,13 +143,14 @@ struct ObjectSelectorThread{
 private:
 	InputStructPtr input;
 	cv::Mat corners;
+	bool live_init;
 };
 
 struct TrackerThread{
 	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
-		unsigned int id = 1, int _visualize = 0) : input(_input), pre_proc(_pre_proc),
+		unsigned int id, int _visualize, const char* module_name) : input(_input), pre_proc(_pre_proc),
 		tracker(_tracker), visualize(_visualize){
-		win_name = cv::format("mexMTF:: %d", id);
+		win_name = cv::format("%s :: %d", module_name, id);
 		proc_win_name = cv::format("%s (Pre-processed)", win_name.c_str());
 		//if(visualize) {
 		//	cout << "Visualization is enabled for tracker " << id << "\n";
@@ -255,9 +256,10 @@ private:
 };
 struct TrackerStruct{
 	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
-		unsigned int id) :
-		tracker(_tracker), pre_proc(_pre_proc){
-		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, id, mex_visualize) };
+		unsigned int id, bool _visualize, const char* module_name) :
+		tracker(_tracker), pre_proc(_pre_proc), visualize(_visualize){
+		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, id, 
+			visualize, module_name) };
 	}
 	void setRegion(const cv::Mat& corners){
 		tracker->setRegion(corners);
@@ -273,5 +275,6 @@ private:
 	Tracker tracker;
 	PreProc pre_proc;
 	boost::thread t;
+	bool visualize;
 };
 

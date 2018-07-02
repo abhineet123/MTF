@@ -17,8 +17,12 @@ using namespace mtf::params;
 static PyObject* init(PyObject* self, PyObject* args);
 static PyObject* is_initialized(PyObject* self, PyObject* args);
 static PyObject* quit(PyObject* self, PyObject* args);
-static PyObject* setRegion(PyObject* self, PyObject* args);
-static PyObject* remove(PyObject* self, PyObject* args);
+static PyObject* get_frame(PyObject* self, PyObject* args);
+static PyObject* create_tracker(PyObject* self, PyObject* args, PyObject *keywds);
+static PyObject* get_region(PyObject* self, PyObject* args);
+static PyObject* set_region(PyObject* self, PyObject* args);
+static PyObject* remove_tracker(PyObject* self, PyObject* args);
+static PyObject* remove_trackers(PyObject* self, PyObject* args);
 
 static PyMethodDef pyMTF2Methods[] = {
 	{ "init", init, METH_VARARGS },
@@ -82,7 +86,7 @@ bool createInput() {
 
 	return true;
 }
-bool checkInput(bool verbose=true) {
+bool checkInput(bool verbose = true) {
 	if(!input){
 		if(verbose){
 			PySys_WriteStdout("Input pipeline has not been initialized\n");
