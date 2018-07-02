@@ -260,7 +260,6 @@ static PyObject* setRegion(PyObject* self, PyObject* args) {
 }
 static PyObject* remove(PyObject* self, PyObject* args) {
 	unsigned int tracker_id;
-	/*parse first input array*/
 	if(!PyArg_ParseTuple(args, "I", &tracker_id)) {
 		PySys_WriteStdout("\n----pyMTF::remove: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
@@ -271,6 +270,6 @@ static PyObject* remove(PyObject* self, PyObject* args) {
 		return Py_BuildValue("i", 0);
 	}
 	trackers.erase(it);
-	PySys_WriteStdout("Removed tracker with ID: %u\n", tracker_id);
+	PySys_WriteStdout("pyMTF :: removed tracker with ID: %u\n", tracker_id);
 	return Py_BuildValue("i", 1);
 }
