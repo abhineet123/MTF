@@ -3,6 +3,7 @@
 //#define DISABLE_BOOST_ABSOLUTE
 
 #include "mtf/TrackerStrct_mt.h"
+#include "mtf/Utilities/mexUtils.h"
 
 #include <map>
 #include <memory>

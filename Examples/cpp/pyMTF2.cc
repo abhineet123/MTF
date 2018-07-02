@@ -8,11 +8,50 @@
 
 #include "mtf/TrackerStrct_mt.h"
 
-#include <map>
-#include <memory>
+#include <Python.h>
+#include <numpy/arrayobject.h>
 
 using namespace std;
+using namespace mtf::params;
 
+static PyObject* initInput(PyObject* self, PyObject* args);
+static PyObject* create(PyObject* self, PyObject* args);
+static PyObject* getRegion(PyObject* self, PyObject* args);
+static PyObject* setRegion(PyObject* self, PyObject* args);
+static PyObject* remove(PyObject* self, PyObject* args);
+
+static PyMethodDef pyMTF2Methods[] = {
+	{ "init", init, METH_VARARGS },
+	{ "is_initialized", is_initialized, METH_VARARGS },
+	{ "quit", quit, METH_VARARGS },
+	{ "get_frame", get_frame, METH_VARARGS },
+	{ "create_tracker", create_tracker, METH_VARARGS | METH_KEYWORDS },
+	{ "get_region", get_region, METH_VARARGS },
+	{ "set_region", set_region, METH_VARARGS },
+	{ "remove_tracker", remove_tracker, METH_VARARGS },
+	{ "remove_trackers", remove_trackers, METH_VARARGS },
+	{ NULL, NULL, 0, NULL }     /* Sentinel - marks the end of this structure */
+};
+
+#if PY_MAJOR_VERSION < 3
+PyMODINIT_FUNC initpyMTF2()  {
+	(void)Py_InitModule("pyMTF2", pyMTF2Methods);
+	import_array();  // Must be present for NumPy.  Called first after above line.
+}
+#else
+static struct PyModuleDef pyMTF2Module = {
+	PyModuleDef_HEAD_INIT,
+	"pyMTF2",   /* name of module */
+	NULL, /* module documentation, may be NULL */
+	-1,       /* size of per-interpreter state of the module,
+			  or -1 if the module keeps state in global variables. */
+			  pyMTF2Methods
+};
+PyMODINIT_FUNC PyInit_pyMTF2(void) {
+	import_array();
+	return PyModule_Create(&pyMTF2Module);
+}
+#endif
 
 static InputStructPtr input;
 static std::map<int, TrackerStruct> trackers;
@@ -27,11 +66,11 @@ bool createInput() {
 	try{
 		_input.reset(mtf::getInput(pipeline));
 		if(!_input->initialize()){
-			printf("Pipeline could not be initialized successfully\n");
+			PySys_WriteStdout("Pipeline could not be initialized successfully\n");
 			return false;
 		}
 	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while initializing the input pipeline: %s\n",
+		PySys_WriteStdout("Exception of type %s encountered while initializing the input pipeline: %s\n",
 			err.type(), err.what());
 		return false;
 	}
@@ -46,34 +85,20 @@ bool createInput() {
 bool checkInput(bool verbose=true) {
 	if(!input){
 		if(verbose){
-			printf("Input pipeline has not been initialized\n");
+			PySys_WriteStdout("Input pipeline has not been initialized\n");
 		}
 		return false;
 	}
 	if(!input->isValid()) {
 		if(verbose){
-			printf("Input pipeline is not active\n");
+			PySys_WriteStdout("Input pipeline is not active\n");
 		}
 		return false;
 	}
 	return true;
 }
-bool getFrame(mxArray* &plhs){
-	const cv::Mat frame = input->getFrame();
-	int n_channels = 3, n_dims = 3;
-	if(frame.type() == CV_8UC1){
-		n_channels = 1;
-		n_dims = 2;
-	}
-	mwSize *dims = new mwSize[n_dims];
-	dims[0] = frame.rows;
-	dims[1] = frame.cols;
-	if(n_channels == 3){
-		dims[2] = n_channels;
-	}
-	plhs = mxCreateNumericArray(n_dims, dims, mxUINT8_CLASS, mxREAL);
-	mtf::utils::copyMatrixToMatlab<unsigned char>(frame, (unsigned char*)mxGetPr(plhs), n_channels);
-	delete(dims);
+bool getFrame(){
+
 	return true;
 }
 
@@ -83,7 +108,7 @@ bool initializeTracker(Tracker &tracker, PreProc &pre_proc,
 	try{
 		pre_proc->initialize(init_img);
 	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while initializing the pre processor: %s\n",
+		PySys_WriteStdout("Exception of type %s encountered while initializing the pre processor: %s\n",
 			err.type(), err.what());
 		return false;
 	}
@@ -97,31 +122,31 @@ bool initializeTracker(Tracker &tracker, PreProc &pre_proc,
 		double max_y = init_corners.at<double>(1, 2);
 		double size_x = max_x - min_x;
 		double size_y = max_y - min_y;
-		printf("Initializing tracker with object of size %f x %f...\n", size_x, size_y);
+		PySys_WriteStdout("Initializing tracker with object of size %f x %f...\n", size_x, size_y);
 
 		tracker->initialize(init_corners);
 	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while initializing the tracker: %s\n",
+		PySys_WriteStdout("Exception of type %s encountered while initializing the tracker: %s\n",
 			err.type(), err.what());
 		return false;
 	}
-	printf("Initialization successful.\n");
+	PySys_WriteStdout("Initialization successful.\n");
 	return true;
 }
 bool createTracker(const cv::Mat &init_corners) {
 	if(!input->isValid()){
-		printf("Input has not been initialized\n");
+		PySys_WriteStdout("Input has not been initialized\n");
 		return false;
 	}
 	Tracker tracker;
 	try{
 		tracker.reset(mtf::getTracker(mtf_sm, mtf_am, mtf_ssm, mtf_ilm));
 		if(!tracker){
-			printf("Tracker could not be created successfully\n");
+			PySys_WriteStdout("Tracker could not be created successfully\n");
 			return false;
 		}
 	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while creating the tracker: %s\n",
+		PySys_WriteStdout("Exception of type %s encountered while creating the tracker: %s\n",
 			err.type(), err.what());
 		return false;
 	}
@@ -129,12 +154,12 @@ bool createTracker(const cv::Mat &init_corners) {
 	try{
 		pre_proc = mtf::getPreProc(tracker->inputType(), pre_proc_type);
 	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while creating the pre processor: %s\n",
+		PySys_WriteStdout("Exception of type %s encountered while creating the pre processor: %s\n",
 			err.type(), err.what());
 		return false;
 	}
 	if(!initializeTracker(tracker, pre_proc, input->getFrame(), init_corners)){
-		printf("Tracker initialization failed");
+		PySys_WriteStdout("Tracker initialization failed");
 		return false;
 	}
 	++_tracker_id;
@@ -146,218 +171,142 @@ bool createTracker(const cv::Mat &init_corners) {
 bool setRegion(unsigned int tracker_id, const cv::Mat &corners) {
 	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
-		printf("Invalid tracker ID: %d\n", tracker_id);
+		PySys_WriteStdout("Invalid tracker ID: %d\n", tracker_id);
 		return false;
 	}
 	try{
 		it->second.setRegion(corners);
 	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while resetting the tracker: %s\n",
+		PySys_WriteStdout("Exception of type %s encountered while resetting the tracker: %s\n",
 			err.type(), err.what());
 		return false;
 	}
 	return true;
 }
-bool getRegion(unsigned int tracker_id, mxArray* &plhs) {
+bool getRegion(unsigned int tracker_id) {
 	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
-		printf("Invalid tracker ID: %d\n", tracker_id);
+		PySys_WriteStdout("Invalid tracker ID: %d\n", tracker_id);
 		return false;
 	}
-	plhs = mtf::utils::setCorners(it->second.getRegion());
 	return true;
 }
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
-	mwSize dims[2] = { 1, 1 };
-	plhs[0] = mxCreateNumericArray(2, dims, mxUINT32_CLASS, mxREAL);
-	//plhs[0] = mxCreateDoubleMatrix(1, 1, mxREAL);
-	unsigned int *ret_val = (unsigned int*)mxGetPr(plhs[0]);
-	if(nrhs < 1){
-		mexErrMsgTxt("Not enough input arguments.");
+
+static PyMethodDef pyMTF2Methods[] = {
+	{ "get_region", get_region, METH_VARARGS },
+	{ "set_region", set_region, METH_VARARGS },
+	{ "remove_tracker", remove_tracker, METH_VARARGS },
+	{ "remove_trackers", remove_trackers, METH_VARARGS },
+	{ NULL, NULL, 0, NULL }     /* Sentinel - marks the end of this structure */
+};
+
+static PyObject* create_tracker(PyObject* self, PyObject* args, PyObject *keywds) {
+	PyArrayObject *in_corners_py=nullptr;
+	char* _params=nullptr;
+	static char *kwlist[] = { "params", "corners", NULL };
+	if(!PyArg_ParseTupleAndKeywords(args, keywds, "|zO!", &_params, &PyArray_Type, &in_corners_py)) {
+		PySys_WriteStdout("\n----pyMTF::init: Input arguments could not be parsed----\n\n");
+		return Py_BuildValue("i", 0);
 	}
-	if(!mxIsChar(prhs[0])){
-		mexErrMsgTxt("The first argument must be a string.");
+	if(!readParams(_params)) {
+		PySys_WriteStdout("Parameters could not be parsed");
+		return Py_BuildValue("i", 0);
 	}
-	int cmd_str_len = mxGetM(prhs[0])*mxGetN(prhs[0]) + 1;
-	char *cmd_str = (char *)mxMalloc(cmd_str_len);
-	mxGetString(prhs[0], cmd_str, cmd_str_len);
 
-	//printf("cmd_str: %s\n", cmd_str);
-	//int k;
-	//scanf("Press any key to continue: %d", &k);
-
-	auto cmd_iter = cmd_list.find(std::string(cmd_str));
-	if(cmd_iter == cmd_list.end()){
-		mexErrMsgTxt(cv::format("Invalid command provided: %s.", cmd_str).c_str());
+	cv::Mat init_corners_cv(2, 4, CV_64FC1);
+	if(in_corners_py) {
+		cv::Mat temp(2, 4, CV_64FC1, in_corners_py->data);
+		init_corners_cv.at<double>(0, 0) = temp.at<double>(0, 0);
+		init_corners_cv.at<double>(1, 0) = temp.at<double>(0, 1);
+		init_corners_cv.at<double>(0, 1) = temp.at<double>(0, 2);
+		init_corners_cv.at<double>(1, 1) = temp.at<double>(0, 3);
+		init_corners_cv.at<double>(0, 2) = temp.at<double>(1, 0);
+		init_corners_cv.at<double>(1, 2) = temp.at<double>(1, 1);
+		init_corners_cv.at<double>(0, 3) = temp.at<double>(1, 2);
+		init_corners_cv.at<double>(1, 3) = temp.at<double>(1, 3);
+	} else {
+		ObjectSelectorThread obj_sel_thread(input, init_corners_cv);
+		boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
+		try{
+			t.join();
+		} catch(boost::thread_interrupted) {
+			printf("Caught exception from object selector thread\n");
+		}
+		if(!obj_sel_thread.success) {
+			PySys_WriteStdout("Initial corners could not be obtained\n");
+			return Py_BuildValue("i", 0);
+		}
 	}
-	const int cmd_id = cmd_iter->second;
-
-	switch(cmd_id) {
-	case MEX_INIT_INPUT:
-	{
-		if(checkInput(false)) {
-			printf("Input pipeline has already been initialized\n");
-			*ret_val = 1;
-			return;
-		}
-		if(nrhs < 2){
-			mexErrMsgTxt("At least two input arguments are needed to initialize input pipeline.");
-		}
-		if(!mxIsChar(prhs[1])){
-			mexErrMsgTxt("Second input argument for creating input pipeline must be a string.");
-		}
-		if(!readParams(mtf::utils::toString(prhs[1]))) {
-			mexErrMsgTxt("Parameters could not be parsed");
-		}
-		if(!createInput()){
-			*ret_val = 0;
-			return;
-		}
-		if(nlhs >= 2){
-			mwSize _dims[2] = { 1, 1 };
-			plhs[1] = mxCreateNumericArray(2, _dims, mxUINT32_CLASS, mxREAL);
-			unsigned int *n_frames = (unsigned int*)mxGetPr(plhs[1]);
-			*n_frames = static_cast<unsigned int>(input->getNFrames());
-		}
-		*ret_val = 1;
-		return;
+	if(!createTracker(init_corners_cv)) {
+		PySys_WriteStdout("Tracker creation was unsuccessful corners\n");
+		return Py_BuildValue("i", 0);
 	}
-	case MEX_IS_INITIALIZED:
-	{
-		if(checkInput(false)) {
-			*ret_val = 1;
-		} else {
-			*ret_val = 0;
-		}
-		return;
+	return Py_BuildValue("i", 1);
+}
+
+
+static PyObject* init(PyObject* self, PyObject* args) {
+	if(checkInput(false)) {
+		PySys_WriteStdout("Input pipeline has already been initialized\n");
+		return Py_BuildValue("i", 1);
 	}
-	case MEX_GET_FRAME:
-	{
-		if(nlhs != 2){
-			mexErrMsgTxt("2 output arguments (success, frame) are needed to get frame.");
-		}
-		*ret_val = 0;
-		if(!checkInput()){ return; }
-		if(!getFrame(plhs[1])){ return; }
-		*ret_val = 1;
-		return;
+	char* _params = nullptr;
+	if(!PyArg_ParseTuple(args, "|z", &_params)) {
+		PySys_WriteStdout("\n----pyMTF::init: Input arguments could not be parsed----\n\n");
+		return Py_BuildValue("i", 0);
 	}
-	case MEX_CREATE_TRACKER:
-	{	
-		if(nrhs < 2){
-			mexErrMsgTxt("At least 2 input arguments are needed to create tracker.");
-		}
-		if(!mxIsChar(prhs[1])){
-			mexErrMsgTxt("The second input argument for creating tracker must be a string.");
-		}
-		*ret_val = 0;
-
-		if(!checkInput()){ return; }
-
-		if(!readParams(mtf::utils::toString(prhs[1]))) {
-			mexErrMsgTxt("Parameters could not be parsed");
-		}
-		cv::Mat init_corners;
-		if(nrhs > 2) {
-			init_corners = mtf::utils::getCorners(prhs[2]);
-		} else {
-			init_corners.create(2, 4, CV_64FC1);
-			ObjectSelectorThread obj_sel_thread(input, init_corners);
-			boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
-			try{
-				t.join();
-			} catch(boost::thread_interrupted) {
-				printf("Caught exception from object selector thread\n");
-			}
-			if(!obj_sel_thread.success) {
-				//cout << "init_corners:\n" << init_corners << "\n";
-				//cout << "obj_sel_thread.corners:\n" << obj_sel_thread.getCorners() << "\n";
-				mexErrMsgTxt("Initial corners could not be obtained\n");
-			}
-		}
-
-		if(!createTracker(init_corners)) {
-			mexErrMsgTxt("Tracker creation was unsuccessful corners\n");
-		}
-		if(nlhs > 1 && !getRegion(_tracker_id, plhs[1])) {
-			mexErrMsgTxt("Tracker region could not be obtained\n");
-		}
-
-		*ret_val = _tracker_id;
-		return;
+	if(_params == NULL) {
+		PySys_WriteStdout("\n----pyMTF::init::_params is NULL----\n\n");
+		return Py_BuildValue("i", 0);
 	}
-	case MEX_GET_REGION:
-	{
-		if(nlhs != 2){
-			mexErrMsgTxt("2 output arguments [success, region] are needed to get tracker region.");
-		}
-		if(nrhs < 2){
-			mexErrMsgTxt("At least 2 input arguments are needed to get tracker region.");
-		}
-		*ret_val = 0;
-
-		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
-		if(!getRegion(tracker_id, plhs[1])){ return; }
-		*ret_val = 1;
-		return;
+	if(!readParams(_params)) {
+		PySys_WriteStdout("Parameters could not be parsed");
+		return Py_BuildValue("i", 0);
 	}
-	case MEX_SET_REGION:
-	{
-		if(nrhs < 2){
-			mexErrMsgTxt("At least 2 input arguments are needed to reset tracker.");
-		}
-		*ret_val = 0;
-
-		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
-		cv::Mat curr_corners = mtf::utils::getCorners(prhs[2]);
-		if(!setRegion(tracker_id, curr_corners)){ return; }
-
-		if(nlhs > 1 && !getRegion(_tracker_id, plhs[1])){ return; }
-
-		*ret_val = 1;
-		return;
+	if(!createInput()){
+		return Py_BuildValue("i", 0);
 	}
-	case MEX_REMOVE_TRACKER:
-	{
-		if(nrhs < 2){
-			mexErrMsgTxt("At least 2 input arguments are needed to remove tracker.");
-		}
-		unsigned int tracker_id = mtf::utils::getID(prhs[1]);
-		std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
-		if(it == trackers.end()){
-			printf("Invalid tracker ID: %d\n", tracker_id);
-			*ret_val = 0;
-			return;
-		}
+	return Py_BuildValue("i", 1);
+}
+
+static PyObject* is_initialized(PyObject* self, PyObject* args) {
+	if(checkInput(false)) {
+		return Py_BuildValue("i", 1);
+	}
+	return Py_BuildValue("i", 0);
+}
+
+static PyObject* quit(PyObject* self, PyObject* args) {
+	PySys_WriteStdout("Clearing up...");
+	input->reset();
+	for(auto it = trackers.begin(); it != trackers.end(); ++it){
 		it->second.reset();
-		trackers.erase(it);
-		*ret_val = 1;
-		return;
 	}
-	case MEX_REMOVE_TRACKERS:
-	{
-		printf("Removing all trackers...");
-		for(auto it = trackers.begin(); it != trackers.end(); ++it){
-			it->second.reset();
+	trackers.clear();
+	PySys_WriteStdout("Done\n");
+	return Py_BuildValue("i", 1);
+}
+
+static PyObject* get_frame(PyObject* self, PyObject* args) {
+	if(!checkInput()) {
+		return Py_BuildValue("i", 0);
+	}
+
+	const cv::Mat frame = input->getFrame();
+	int n_rows = frame.rows, n_cols = frame.cols;
+
+	int dims[] = { n_rows, n_cols, 3 };
+	PyArrayObject *frame_py = (PyArrayObject *)PyArray_FromDims(3, dims, NPY_UBYTE);
+	unsigned char *result = (unsigned char*)frame_py->data;
+
+	for(int row = 0; row < n_rows; ++row) {
+		for(int col = 0; col < n_cols; ++col) {
+			int np_location = col*frame_py->strides[1] + row*frame_py->strides[0];
+			cv::Vec3b pix_vals = frame.at<cv::Vec3b>(row, col);
+			for(int ch = 0; ch < 3; ++ch) {
+				*(result + np_location + ch*frame_py->strides[2]) = pix_vals[ch];
+			}
 		}
-		trackers.clear();
-		*ret_val = 1;
-		printf("Done\n");
-		return;
 	}
-	case MEX_QUIT:
-	{
-		printf("Clearing up...");
-		input->reset();
-		for(auto it = trackers.begin(); it != trackers.end(); ++it){
-			it->second.reset();
-		}
-		trackers.clear();
-		*ret_val = 1;
-		printf("Done\n");
-		return;
-	}
-	default:
-		mexErrMsgTxt(cv::format("Invalid command provided: %s.", cmd_str).c_str());
-	}
+	return Py_BuildValue("O", frame_py);
 }
