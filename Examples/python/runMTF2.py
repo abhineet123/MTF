@@ -90,7 +90,7 @@ if __name__ == '__main__':
             drawRegion(src_img_disp, curr_corners, result_color, thickness)
             # display the image
             cv2.imshow(window_name, src_img_disp)
-
+			
             if cv2.waitKey(1) == 27:
                 break
 	
