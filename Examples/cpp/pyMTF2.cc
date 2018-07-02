@@ -176,10 +176,6 @@ static PyObject* init(PyObject* self, PyObject* args) {
 		PySys_WriteStdout("\n----pyMTF::init: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
-	if(_params == NULL) {
-		PySys_WriteStdout("\n----pyMTF::init::_params is NULL----\n\n");
-		return Py_BuildValue("i", 0);
-	}
 	if(!readParams(_params)) {
 		PySys_WriteStdout("Parameters could not be parsed");
 		return Py_BuildValue("i", 0);
