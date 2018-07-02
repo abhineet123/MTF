@@ -183,67 +183,35 @@ bool setRegion(unsigned int tracker_id, const cv::Mat &corners) {
 	}
 	return true;
 }
-bool getRegion(unsigned int tracker_id) {
-	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
-	if(it == trackers.end()){
-		PySys_WriteStdout("Invalid tracker ID: %d\n", tracker_id);
-		return false;
-	}
-	return true;
-}
-
 static PyMethodDef pyMTF2Methods[] = {
-	{ "get_region", get_region, METH_VARARGS },
 	{ "set_region", set_region, METH_VARARGS },
 	{ "remove_tracker", remove_tracker, METH_VARARGS },
 	{ "remove_trackers", remove_trackers, METH_VARARGS },
 	{ NULL, NULL, 0, NULL }     /* Sentinel - marks the end of this structure */
 };
 
-static PyObject* create_tracker(PyObject* self, PyObject* args, PyObject *keywds) {
-	PyArrayObject *in_corners_py=nullptr;
-	char* _params=nullptr;
-	static char *kwlist[] = { "params", "corners", NULL };
-	if(!PyArg_ParseTupleAndKeywords(args, keywds, "|zO!", &_params, &PyArray_Type, &in_corners_py)) {
-		PySys_WriteStdout("\n----pyMTF::init: Input arguments could not be parsed----\n\n");
-		return Py_BuildValue("i", 0);
-	}
-	if(!readParams(_params)) {
-		PySys_WriteStdout("Parameters could not be parsed");
-		return Py_BuildValue("i", 0);
+static PyObject* get_region(PyObject* self, PyObject* args) {
+	unsigned int tracker_id;
+	if(!PyArg_ParseTuple(args, "I", &tracker_id)) {
+		PySys_WriteStdout("\n----pyMTF2::get_region: Input argument could not be parsed----\n\n");
+		return Py_BuildValue("");
 	}
 
-	cv::Mat init_corners_cv(2, 4, CV_64FC1);
-	if(in_corners_py) {
-		cv::Mat temp(2, 4, CV_64FC1, in_corners_py->data);
-		init_corners_cv.at<double>(0, 0) = temp.at<double>(0, 0);
-		init_corners_cv.at<double>(1, 0) = temp.at<double>(0, 1);
-		init_corners_cv.at<double>(0, 1) = temp.at<double>(0, 2);
-		init_corners_cv.at<double>(1, 1) = temp.at<double>(0, 3);
-		init_corners_cv.at<double>(0, 2) = temp.at<double>(1, 0);
-		init_corners_cv.at<double>(1, 2) = temp.at<double>(1, 1);
-		init_corners_cv.at<double>(0, 3) = temp.at<double>(1, 2);
-		init_corners_cv.at<double>(1, 3) = temp.at<double>(1, 3);
-	} else {
-		ObjectSelectorThread obj_sel_thread(input, init_corners_cv);
-		boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
-		try{
-			t.join();
-		} catch(boost::thread_interrupted) {
-			printf("Caught exception from object selector thread\n");
-		}
-		if(!obj_sel_thread.success) {
-			PySys_WriteStdout("Initial corners could not be obtained\n");
-			return Py_BuildValue("i", 0);
-		}
+	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
+	if(it == trackers.end()){
+		PySys_WriteStdout("Invalid tracker ID: %d\n", tracker_id);
+		return Py_BuildValue("");
 	}
-	if(!createTracker(init_corners_cv)) {
-		PySys_WriteStdout("Tracker creation was unsuccessful corners\n");
-		return Py_BuildValue("i", 0);
+	cv::Mat corners = it->second.getRegion();
+	int dims[] = { 2, 4 };
+	PyArrayObject *corners_py = (PyArrayObject *)PyArray_FromDims(2, dims, NPY_DOUBLE);
+	double* corners_py_data = (double*)corners_py->data;
+	for(unsigned int corner_id = 0; corner_id < 4; ++corner_id) {
+		corners_py_data[corner_id] = corners.at<double>(0, corner_id);
+		corners_py_data[corner_id + 4] = corners.at<double>(1, corner_id);
 	}
-	return Py_BuildValue("i", 1);
+	return Py_BuildValue("O", corners_py);
 }
-
 
 static PyObject* init(PyObject* self, PyObject* args) {
 	if(checkInput(false)) {
@@ -309,4 +277,48 @@ static PyObject* get_frame(PyObject* self, PyObject* args) {
 		}
 	}
 	return Py_BuildValue("O", frame_py);
+}
+
+static PyObject* create_tracker(PyObject* self, PyObject* args, PyObject *keywds) {
+	PyArrayObject *in_corners_py = nullptr;
+	char* _params = nullptr;
+	static char *kwlist[] = { "params", "corners", NULL };
+	if(!PyArg_ParseTupleAndKeywords(args, keywds, "|zO!", &_params, &PyArray_Type, &in_corners_py)) {
+		PySys_WriteStdout("\n----pyMTF::init: Input arguments could not be parsed----\n\n");
+		return Py_BuildValue("i", 0);
+	}
+	if(!readParams(_params)) {
+		PySys_WriteStdout("Parameters could not be parsed");
+		return Py_BuildValue("i", 0);
+	}
+
+	cv::Mat init_corners_cv(2, 4, CV_64FC1);
+	if(in_corners_py) {
+		cv::Mat temp(2, 4, CV_64FC1, in_corners_py->data);
+		init_corners_cv.at<double>(0, 0) = temp.at<double>(0, 0);
+		init_corners_cv.at<double>(1, 0) = temp.at<double>(0, 1);
+		init_corners_cv.at<double>(0, 1) = temp.at<double>(0, 2);
+		init_corners_cv.at<double>(1, 1) = temp.at<double>(0, 3);
+		init_corners_cv.at<double>(0, 2) = temp.at<double>(1, 0);
+		init_corners_cv.at<double>(1, 2) = temp.at<double>(1, 1);
+		init_corners_cv.at<double>(0, 3) = temp.at<double>(1, 2);
+		init_corners_cv.at<double>(1, 3) = temp.at<double>(1, 3);
+	} else {
+		ObjectSelectorThread obj_sel_thread(input, init_corners_cv);
+		boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
+		try{
+			t.join();
+		} catch(boost::thread_interrupted) {
+			printf("Caught exception from object selector thread\n");
+		}
+		if(!obj_sel_thread.success) {
+			PySys_WriteStdout("Initial corners could not be obtained\n");
+			return Py_BuildValue("i", 0);
+		}
+	}
+	if(!createTracker(init_corners_cv)) {
+		PySys_WriteStdout("Tracker creation was unsuccessful corners\n");
+		return Py_BuildValue("i", 0);
+	}
+	return Py_BuildValue("I", _tracker_id);
 }

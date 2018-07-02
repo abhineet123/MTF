@@ -156,7 +156,6 @@ static PyObject* create(PyObject* self, PyObject* args) {
 static PyObject* getRegion(PyObject* self, PyObject* args) {
 	PyArrayObject *img_py, *out_corners_py;
 	unsigned int tracker_id;
-	/*parse first input array*/
 	if(!PyArg_ParseTuple(args, "O!O!I", &PyArray_Type, &img_py, &PyArray_Type, &out_corners_py, &tracker_id)) {
 		PySys_WriteStdout("\n----pyMTF::update: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
