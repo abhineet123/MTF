@@ -289,7 +289,7 @@ static PyObject* quit(PyObject* self, PyObject* args) {
 
 static PyObject* get_frame(PyObject* self, PyObject* args) {
 	if(!checkInput()) {
-		return Py_BuildValue("i", 0);
+		return Py_BuildValue("");
 	}
 
 	const cv::Mat frame = input->getFrame();
