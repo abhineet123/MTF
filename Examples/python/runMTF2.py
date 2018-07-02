@@ -9,106 +9,91 @@ from utilities import readGroundTruth, writeCorners, drawRegion
 from datasets import sequences, actors
 
 if __name__ == '__main__':
+	# script parameters
+	show_tracking_output = 1;
 
-    config_root_dir = '../../Config'
-    use_rgb_input = 0
+	# MTF parameters
+	config_dir = '../../Config';
+	db_root_path = '../../../Datasets';
+	pipeline = 'c';
+	img_source = 'u';
+	actor_id = 1;
+	seq_id = 16;
+	seq_fmt = 'jpg';
+	init_frame_id = 1;
 
-    write_stats_to_file = 0
-    show_tracking_output = 1
-
-    arg_id = 1
-    if len(sys.argv) > arg_id:
-        write_stats_to_file = int(sys.argv[arg_id])
-        arg_id += 1
-    if len(sys.argv) > arg_id:
-        show_tracking_output = int(sys.argv[arg_id])
-        arg_id += 1
+	param_str = 'db_root_path {:s}'.format( db_root_path)
+	param_str = '{:s} pipeline {:s}'.format( param_str, pipeline)
+	param_str = '{:s} img_source {:s}'.format( param_str, img_source)
+	param_str = '{:s} actor_id {:d}'.format( param_str, actor_id)
+	param_str = '{:s} seq_id {:d}'.format( param_str, seq_id)
+	param_str = '{:s} seq_fmt {:s}'.format( param_str, seq_fmt)
+	param_str = '{:s} init_frame_id {:d}'.format( param_str, init_frame_id)
+	nargin = len(sys.argv) - 1
+	if nargin % 2 != 0:
+		error('Optional arguments must be specified in pairs');
+	end
+	# parse optional arguments
+	arg_id = 1;
+	while arg_id <= nargin:    
+		arg_name = sys.argv[arg_id];
+		arg_val = sys.argv[arg_id + 1];
+		if arg_name == 'config_dir':
+			config_dir = arg_val;
+		elif arg_name == 'show_tracking_output':
+			show_tracking_output = arg_val;
+		else:
+			param_str = '%s %s %s'.format(param_str,...
+				arg_name, arg_val);
+		end
+		arg_id += 2;
+	end   
+	param_str = 'config_dir %s %s'.format(config_dir, param_str);
 
     # thickness of the bounding box lines drawn on the image
     thickness = 2
-    # ground truth location drawn in green
-    ground_truth_color = (0, 255, 0)
     # tracker location drawn in red
     result_color = (0, 0, 255)
 	
-	# initialize input pipeline to get images from USB camera
+	# initialize input pipeline	
+	if not pyMTF2.init(param_str):
+		raise SystemError('MTF input pipeline creation was unsuccessful')
+	else:
+		print('MTF input pipeline created successfully');
 	
-	pyMTF2.init()
-
-    # initialize tracker with the first frame and the initial corners
-	tracker_id = 	pyMTF2.create(init_img.astype(np.uint8), init_corners.astype(np.float64), config_root_dir)
-    if not tracker_id:
-        print 'Tracker creation/initialization was unsuccessful'
-        sys.exit()
+	tracker_id = pyMTF2.create_tracker(param_str);
+	
+	if not tracker_id:
+		raise SystemError('Tracker creation was unsuccessful');
+	else:
+		print('Tracker created successfully');	
 
     if show_tracking_output:
         # window for displaying the tracking result
         window_name = 'Tracking Result'
         cv2.namedWindow(window_name)
 
-    # lists for accumulating the tracking fps for all the frames
-    tracking_fps = []
+    while True:
+		src_img = pyMTF2.get_frame();
+		if curr_img is None:
+			print('Frame extraction was unsuccessful');
+			break
+			
+        curr_corners = pyMTF2.get_region(tracker_id);
+		if curr_corners is None:
+			print('Tracker update was unsuccessful');
+			sys.exit()
 
-    tracker_corners = np.zeros((2, 4), dtype=np.float64)
-
-    for frame_id in xrange(1, no_of_frames):
-        ret, src_img = cap.read()
-        if not ret:
-            print "Frame ", frame_id, " could not be read"
-            break
-        actual_corners = [ground_truth[frame_id, 0:2].tolist(),
-                          ground_truth[frame_id, 2:4].tolist(),
-                          ground_truth[frame_id, 4:6].tolist(),
-                          ground_truth[frame_id, 6:8].tolist()]
-        actual_corners = np.array(actual_corners).T
-
-        if not use_rgb_input:
-            src_img_disp = src_img.copy()
-            src_img = cv2.cvtColor(src_img, cv2.COLOR_RGB2GRAY)
-        else:
-            src_img_disp = src_img
-
-        start_time = time.clock()
-
-        # update the tracker with the current frame
-        success = pyMTF.getRegion(src_img.astype(np.uint8), tracker_corners, tracker_id)
-
-        if not success:
-            print 'Tracker update was unsuccessful'
-            sys.exit()
-
-        # print('tracker_corners before:\n {}'.format(tracker_corners))
-        # success = pyMTF.setRegion(tracker_corners, tracker_id)
-        # print('tracker_corners after:\n {}\n\n'.format(tracker_corners))
-
-        end_time = time.clock()
-
-        # compute the tracking fps
-        current_fps = 1.0 / (end_time - start_time)
-        tracking_fps.append(current_fps)
-
-        # compute the tracking error
-        current_error = math.sqrt(np.sum(np.square(actual_corners - tracker_corners)) / 4)
-        tracking_errors.append(current_error)
 
         if show_tracking_output:
-            # draw the ground truth location
-            drawRegion(src_img_disp, actual_corners, ground_truth_color, thickness)
             # draw the tracker location
-            drawRegion(src_img_disp, tracker_corners, result_color, thickness)
-            # write statistics (error and fps) to the image
-            cv2.putText(src_img_disp, "{:5.2f} {:5.2f}".format(current_fps, current_error), (5, 15),
-                        cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 255))
+            drawRegion(src_img_disp, curr_corners, result_color, thickness)
             # display the image
             cv2.imshow(window_name, src_img_disp)
 
             if cv2.waitKey(1) == 27:
                 break
 	
-	pyMTF.remove(tracker_id)
+	pyMTF2.remove_tracker(tracker_id)
+	pyMTF2.quit()
 	
-    mean_error = np.mean(tracking_errors)
-    mean_fps = np.mean(tracking_fps)
-
-    print 'mean_error: ', mean_error
-    print 'mean_fps: ', mean_fps
