@@ -205,5 +205,5 @@ def drawRegion(img, corners, color, thickness=1, label=None):
             font_line_type = cv2.LINE_AA
         else:
             font_line_type = cv2.CV_AA
-        cv2.putText(img, label, (int(corners[0, 0] - 1),  int(corners[0, 1] - 1)), cv2.FONT_HERSHEY_SIMPLEX,
+        cv2.putText(img, label, (int(corners[0, 0] - 1),  int(corners[1, 0] - 1)), cv2.FONT_HERSHEY_SIMPLEX,
                     0.5, col_rgb[color], 1, font_line_type)
