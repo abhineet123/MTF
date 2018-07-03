@@ -109,15 +109,16 @@ pyMTF2
 
 Similar to `mexMTF2`, this is the multi threaded version that also supports acquiring images.
 This is more suited to live tracking as the input pipeline continuously updates itself and so would quickly run out of images in a pre-recorded sequence.
-Its usage is demonstrated in _python/runMTF2.py_.
 
+Usage of `pyMTF2` is demonstrated in _python/runMTF2.py_.
 It provides the following functions that closely mirror those of `mexMTF2` (`[]`indicates optional arguments):
 
 
 -   `success = pyMTF2.init([params])`
     - initializes the input pipeline
-    - `params` is a string containing pairwise arguments similar to those accepted by runMTF
+    - `params` is a string containing pairwise arguments similar to those accepted by the main application `runMTF`
     - refer to the ReadMe in the _Config_ folder for a complete list of arguments
+    - there are also a few arguments specific to this interface that start with `py_`	
     - only one pipeline at a time is currently supported so all calls to this function after the first one will be ignored till `quit` is called to clear the existing pipeline and all trackers attached to it
 
 -   `tracker_id = pyMTF2.createTracker([corners, params])`
@@ -128,18 +129,19 @@ It provides the following functions that closely mirror those of `mexMTF2` (`[]`
     - `tracker_id` is an unsigned integer that starts at 1 and increments by 1 every time `pyMTF.create` is called
     - `tracker_id=0` indicates that the tracker creation/initialization failed.
 	
--   `success = pyMTF2.getRegion(tracker_id)`
+-   `corners = pyMTF2.getRegion(tracker_id)`
     - returns the latest location of the given tracker
+    - `corners` is a 2x4 matrix of type `numpy.float64` and will be `None` if tracker has stopped working	
 	
 -   `image = pyMTF2.getFrame()`
     - returns the latest frame captured by the input pipeline
-    - `image` is an RGB image stored in a numpy array of type `numpy.uint8`
+    - `image` is an RGB image stored in a numpy array of type `numpy.uint8` and will be `None` if pipeline has stopped working
 	
 -   `success = pyMTF2.setRegion(corners, tracker_id)`
     - modifies internal state of the tracker so the object is located at the provided location instead of where it was at the time of this call
     - currently not supported by third party trackers
 
--   `success = pyMTF2.isInitialized()`
+-   `init_status = pyMTF2.isInitialized()`
     - returns 1 if the input pipeline has been initialized, 0 otherwise	
 
 -   `success = pyMTF2.removeTracker(tracker_id)`
