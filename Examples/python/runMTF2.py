@@ -82,20 +82,21 @@ if __name__ == '__main__':
         if src_img is None:
             print('Frame extraction was unsuccessful')
             break
-        src_img = np.asarray(src_img)
+
+        # src_img = np.asarray(src_img)
         # print('got frame {}/{}'.format(src_img.shape, src_img.dtype))
 
         curr_corners = pyMTF2.getRegion(tracker_id)
         if curr_corners is None:
             print('Tracker update was unsuccessful')
-            sys.exit()
+            break
 
         # print('curr_corners: ', curr_corners)
-        if show_tracking_output:
-            drawRegion(src_img, curr_corners, result_color, thickness)
-            plt.imshow(src_img)
-            plt.draw()
-            plt.pause(0.00001)
+        # if show_tracking_output:
+        #     drawRegion(src_img, curr_corners, result_color, thickness)
+            # plt.imshow(src_img)
+            # plt.draw()
+            # plt.pause(0.00001)
             # if cv2.waitKey(1) == 27:
             #     break
 

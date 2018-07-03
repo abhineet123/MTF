@@ -148,7 +148,9 @@ private:
 
 struct TrackerThread{
 	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
-		unsigned int id, int _visualize, const char* module_name) : input(_input), pre_proc(_pre_proc),
+		unsigned int id, bool & _is_running, 
+		int _visualize, const char* module_name) : 
+		input(_input), pre_proc(_pre_proc), is_running(_is_running),
 		tracker(_tracker), visualize(_visualize){
 		win_name = cv::format("%s :: %d", module_name, id);
 		proc_win_name = cv::format("%s (Pre-processed)", win_name.c_str());
@@ -186,6 +188,7 @@ struct TrackerThread{
 			}
 #endif
 		}
+		is_running = true;
 		while(input->isValid()){
 			if(frame_id == input->getFrameID()){
 				//! do not process the same image multiple times
@@ -236,6 +239,7 @@ struct TrackerThread{
 			}
 			boost::this_thread::interruption_point();
 		}
+		is_running = false;
 #ifndef DISABLE_VISP
 		if(visualize) {
 			vpDisplay::close(disp_frame);
@@ -253,13 +257,14 @@ private:
 	vpImage<vpRGBa> disp_frame;
 #endif
 	int visualize;
+	bool is_running;
 };
 struct TrackerStruct{
 	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
 		unsigned int id, bool _visualize, const char* module_name) :
 		tracker(_tracker), pre_proc(_pre_proc), visualize(_visualize){
-		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, id, 
-			visualize, module_name) };
+		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, is_running, 
+			id, visualize, module_name) };
 	}
 	void setRegion(const cv::Mat& corners){
 		tracker->setRegion(corners);
@@ -267,6 +272,7 @@ struct TrackerStruct{
 	const cv::Mat& getRegion() {
 		return tracker->getRegion();
 	}
+	bool isRunning(){ return is_running; }
 	void reset() {
 		t.interrupt();
 		tracker.reset();
@@ -276,5 +282,6 @@ private:
 	PreProc pre_proc;
 	boost::thread t;
 	bool visualize;
+	bool is_running;
 };
 

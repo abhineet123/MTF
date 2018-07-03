@@ -8,7 +8,7 @@ cmake -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so -DPYTHON_INCLU
 
 ## use cuda 9.0 and resolve VISP cmake bug 
 
-cmake -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 -DPY_VER=3.5 -DMTF_PY_INSTALL_DIR=/usr/local/lib/python3.5/dist-packages -DWITH_TEMPLATED=OFF -DWITH_FLANN=OFF -DWITH_FEAT=OFF -DWITH_MEX=ON  -D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-9.0 -DVISP_DIR=/home/abhineet/visp-3.1.0/build/ ..
+cmake -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 -DPY_VER=3.5 -DMTF_PY_INSTALL_DIR=/usr/local/lib/python3.5/dist-packages -DWITH_TEMPLATED=OFF -DWITH_FLANN=OFF -DWITH_FEAT=OFF -DWITH_MEX=ON  -D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda-9.0 -DVISP_DIR=/home/abhineet/visp-3.1.0/build/ ../..
 
 ## feature tracker enabled
 

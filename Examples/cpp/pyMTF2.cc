@@ -205,7 +205,7 @@ static PyObject* quit(PyObject* self, PyObject* args) {
 }
 
 static PyObject* getFrame(PyObject* self, PyObject* args) {
-	if(!checkInput()) {
+	if(!checkInput(false)) {
 		return Py_BuildValue("");
 	}
 
