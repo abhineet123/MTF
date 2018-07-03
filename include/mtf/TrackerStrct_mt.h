@@ -148,7 +148,7 @@ private:
 
 struct TrackerThread{
 	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
-		unsigned int id, bool* _is_running, 
+		unsigned int id, std::shared_ptr<int> _is_running,
 		int _visualize, const char* module_name) : 
 		input(_input), pre_proc(_pre_proc), tracker(_tracker), 
 		is_running(_is_running), visualize(_visualize){
@@ -188,7 +188,7 @@ struct TrackerThread{
 			}
 #endif
 		}
-		(*is_running) = true;
+		(*is_running) = 1;
 		while(input->isValid()){
 			if(frame_id == input->getFrameID()){
 				//! do not process the same image multiple times
@@ -239,7 +239,7 @@ struct TrackerThread{
 			}
 			boost::this_thread::interruption_point();
 		}
-		(*is_running) = false;
+		(*is_running) = 0;
 		printf("TrackerThread::is_running: %d\n", *is_running);
 #ifndef DISABLE_VISP
 		if(visualize) {
@@ -252,7 +252,7 @@ private:
 	std::shared_ptr<const InputStruct> input;
 	PreProc pre_proc;
 	Tracker tracker;
-	bool *is_running;
+	std::shared_ptr<int> is_running;
 
 	int visualize;
 	string win_name, proc_win_name;
@@ -264,8 +264,8 @@ private:
 struct TrackerStruct{
 	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
 		unsigned int id, bool _visualize, const char* module_name) :
-		tracker(_tracker), pre_proc(_pre_proc), visualize(_visualize){
-		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, id, &is_running, 
+		tracker(_tracker), pre_proc(_pre_proc), visualize(_visualize), is_running(new int()){
+		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, id, is_running, 
 			visualize, module_name) };
 	}
 	void setRegion(const cv::Mat& corners){
@@ -274,9 +274,9 @@ struct TrackerStruct{
 	const cv::Mat& getRegion() {
 		return tracker->getRegion();
 	}
-	bool isRunning() {
-		printf("TrackerStruct::is_running: %d\n", is_running);
-		return is_running;
+	int isRunning() {
+		printf("TrackerStruct::is_running: %d\n", *is_running);
+		return *is_running;
 	}
 	void reset() {
 		t.interrupt();
@@ -285,7 +285,7 @@ struct TrackerStruct{
 private:
 	Tracker tracker;
 	PreProc pre_proc;
-	bool is_running;
+	std::shared_ptr<int> is_running;
 	boost::thread t;
 	bool visualize;
 };
