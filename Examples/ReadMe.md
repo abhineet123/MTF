@@ -110,7 +110,7 @@ pyMTF2
 Similar to mexMTF2, this is the multi threaded version that also supports acquiring images. 
 Its usage is demonstrated in _python/runMTF2.py_.
 
-It provides the following functions that closely mirror those of mexMTF2 ([]  indicates optional argument):
+It provides the following functions that closely mirror those of mexMTF2 (`[]`indicates optional arguments):
 
 
 -   `success = pyMTF2.init([params])`
@@ -121,8 +121,8 @@ It provides the following functions that closely mirror those of mexMTF2 ([]  in
 
 -   `tracker_id = pyMTF2.createTracker([corners, params])`
     - creates and initializes a new tracker
-    - both  `corners`  and `params` are optional and keyword based arguments;
-    - `corners` must be a 2x4 matrix of type `numpy.float64`;
+    - both  `corners`  and `params` are optional and keyword arguments
+    - `corners` must be a 2x4 matrix of type `numpy.float64`
     - if `corners` is not provided, user will be asked to select the object to track interactively
     - `tracker_id` is an unsigned integer that starts at 1 and increments by 1 every time `pyMTF.create` is called
     - `tracker_id=0` indicates that the tracker creation/initialization failed.
