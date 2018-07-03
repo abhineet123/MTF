@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 if __name__ == '__main__':
     # script parameters
     show_tracking_output = 1
+    num_trackers = 1
 
     # MTF parameters
     config_dir = '../../Config'
@@ -22,7 +23,6 @@ if __name__ == '__main__':
     seq_fmt = 'jpg'
     init_frame_id = 1
     py_visualize = 0
-    num_trackers = 1
 
     param_str = 'db_root_path {:s}'.format(db_root_path)
     param_str = '{:s} pipeline {:s}'.format(param_str, pipeline)
