@@ -6,7 +6,7 @@ import math
 import time
 import pyMTF2
 from utilities import drawRegion
-from datasets import sequences, actors
+from matplotlib import pyplot as plt
 
 if __name__ == '__main__':
     # script parameters
@@ -21,6 +21,7 @@ if __name__ == '__main__':
     seq_id = 16
     seq_fmt = 'jpg'
     init_frame_id = 1
+    py_visualize = 0
 
     param_str = 'db_root_path {:s}'.format(db_root_path)
     param_str = '{:s} pipeline {:s}'.format(param_str, pipeline)
@@ -29,6 +30,8 @@ if __name__ == '__main__':
     param_str = '{:s} seq_id {:d}'.format(param_str, seq_id)
     param_str = '{:s} seq_fmt {:s}'.format(param_str, seq_fmt)
     param_str = '{:s} init_frame_id {:d}'.format(param_str, init_frame_id)
+    param_str = '{:s} init_frame_id {:d}'.format(param_str, py_visualize)
+
     nargin = len(sys.argv) - 1
     if nargin % 2 != 0:
         raise IOError('Optional arguments must be specified in pairs')
@@ -64,32 +67,37 @@ if __name__ == '__main__':
     if not tracker_id:
         raise SystemError('Tracker creation was unsuccessful')
     else:
-        print('Tracker created successfully')
+        print('Tracker {} created successfully'.format(tracker_id))
 
     if show_tracking_output:
+        plt.ion()
+        plt.show()
         # window for displaying the tracking result
         window_name = 'Tracking Result'
-        cv2.namedWindow(window_name)
+        # cv2.namedWindow(window_name)
 
     while True:
+        # print('getting frame')
         src_img = pyMTF2.getFrame()
         if src_img is None:
             print('Frame extraction was unsuccessful')
             break
+        src_img = np.asarray(src_img)
+        # print('got frame {}/{}'.format(src_img.shape, src_img.dtype))
 
         curr_corners = pyMTF2.getRegion(tracker_id)
         if curr_corners is None:
             print('Tracker update was unsuccessful')
             sys.exit()
 
+        # print('curr_corners: ', curr_corners)
         if show_tracking_output:
-            # draw the tracker location
             drawRegion(src_img, curr_corners, result_color, thickness)
-            # display the image
-            cv2.imshow(window_name, src_img)
-
-            if cv2.waitKey(1) == 27:
-                break
+            plt.imshow(src_img)
+            plt.draw()
+            plt.pause(0.00001)
+            # if cv2.waitKey(1) == 27:
+            #     break
 
     pyMTF2.removeTracker(tracker_id)
     pyMTF2.quit()

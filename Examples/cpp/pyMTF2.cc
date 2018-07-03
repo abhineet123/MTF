@@ -266,7 +266,7 @@ static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds)
 		}
 	}
 	if(!createTracker(init_corners_cv)) {
-		PySys_WriteStdout("Tracker creation was unsuccessful corners\n");
+		PySys_WriteStdout("Tracker creation was unsuccessful\n");
 		return Py_BuildValue("i", 0);
 	}
 	return Py_BuildValue("I", _tracker_id);
