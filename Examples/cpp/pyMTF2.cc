@@ -237,7 +237,7 @@ static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds)
 		return Py_BuildValue("i", 0);
 	}
 	if(!readParams(_params)) {
-		PySys_WriteStdout("Parameters could not be parsed");
+		PySys_WriteStdout("Parameters could not be parsed\n");
 		return Py_BuildValue("i", 0);
 	}
 

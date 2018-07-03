@@ -46,6 +46,8 @@ if __name__ == '__main__':
         arg_id += 2
     param_str = 'config_dir %s %s'.format(config_dir, param_str)
 
+    print('param_str: ', param_str)
+
     # thickness of the bounding box lines drawn on the image
     thickness = 2
     # tracker location drawn in red
