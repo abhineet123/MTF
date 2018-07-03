@@ -108,6 +108,9 @@ if __name__ == '__main__':
                 del tracker_ids[i]
                 num_trackers -= 1
 
+            if not tracker_ids:
+                break
+                
             if show_tracking_output:
                 # plt.imshow(src_img)
                 # plt.draw()
