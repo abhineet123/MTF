@@ -22,6 +22,7 @@ if __name__ == '__main__':
     seq_fmt = 'jpg'
     init_frame_id = 1
     py_visualize = 0
+    num_trackers = 1
 
     param_str = 'db_root_path {:s}'.format(db_root_path)
     param_str = '{:s} pipeline {:s}'.format(param_str, pipeline)
@@ -43,7 +44,9 @@ if __name__ == '__main__':
         if arg_name == 'config_dir':
             config_dir = arg_val
         elif arg_name == 'show_tracking_output':
-            show_tracking_output = arg_val
+            show_tracking_output = int(arg_val)
+        elif arg_name == 'num_trackers':
+            num_trackers = int(arg_val)
         else:
             param_str = '{:s} {:s} {:s}'.format(param_str, arg_name, arg_val)
         arg_id += 2
@@ -62,19 +65,22 @@ if __name__ == '__main__':
     else:
         print('MTF input pipeline created successfully')
 
-    tracker_id = pyMTF2.createTracker(param_str)
-
-    if not tracker_id:
-        raise SystemError('Tracker creation was unsuccessful')
-    else:
-        print('Tracker {} created successfully'.format(tracker_id))
+    tracker_ids = []
+    for i in range(num_trackers):
+        tracker_id = pyMTF2.createTracker(param_str)
+        if not tracker_id:
+            raise SystemError('Tracker {} creation was unsuccessful'.format(i + 1))
+        else:
+            print('Tracker {} created successfully'.format(i + 1))
+        tracker_ids.append(tracker_id)
 
     if show_tracking_output:
-        plt.ion()
-        plt.show()
+        # plt.ion()
+        # plt.show()
+
         # window for displaying the tracking result
         window_name = 'Tracking Result'
-        # cv2.namedWindow(window_name)
+        cv2.namedWindow(window_name)
 
     while True:
         # print('getting frame')
@@ -86,19 +92,25 @@ if __name__ == '__main__':
         # src_img = np.asarray(src_img)
         # print('got frame {}/{}'.format(src_img.shape, src_img.dtype))
 
-        curr_corners = pyMTF2.getRegion(tracker_id)
-        if curr_corners is None:
-            print('Tracker update was unsuccessful')
-            break
+        for i in range(num_trackers):
 
-        # print('curr_corners: ', curr_corners)
-        # if show_tracking_output:
-        #     drawRegion(src_img, curr_corners, result_color, thickness)
+            curr_corners = pyMTF2.getRegion(tracker_ids[i])
+            if curr_corners is None:
+                print('Tracker update was unsuccessful')
+                break
+
+            # print('curr_corners: ', curr_corners)
+            if show_tracking_output:
+                drawRegion(src_img, curr_corners, result_color, thickness)
+
+        if show_tracking_output:
             # plt.imshow(src_img)
             # plt.draw()
             # plt.pause(0.00001)
-            # if cv2.waitKey(1) == 27:
-            #     break
 
-    pyMTF2.removeTracker(tracker_id)
+            cv2.imshow(window_name, src_img)
+            if cv2.waitKey(1) == 27:
+                break
+
+    pyMTF2.removeTrackers()
     pyMTF2.quit()

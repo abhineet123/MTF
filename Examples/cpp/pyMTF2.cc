@@ -194,7 +194,7 @@ static PyObject* isInitialized(PyObject* self, PyObject* args) {
 }
 
 static PyObject* quit(PyObject* self, PyObject* args) {
-	PySys_WriteStdout("Clearing up...");
+	PySys_WriteStdout("pyMTF2 :: clearing up...\n");
 	input->reset();
 	for(auto it = trackers.begin(); it != trackers.end(); ++it){
 		it->second.reset();
@@ -233,7 +233,7 @@ static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds)
 	char* _params = nullptr;
 	static char *kwlist[] = { "params", "corners", NULL };
 	if(!PyArg_ParseTupleAndKeywords(args, keywds, "|zO!", kwlist, &_params, &PyArray_Type, &in_corners_py)) {
-		PySys_WriteStdout("\n----pyMTF::createTracker: Input arguments could not be parsed----\n\n");
+		PySys_WriteStdout("\n----pyMTF2::createTracker: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
 	if(!readParams(_params)) {
@@ -275,7 +275,7 @@ static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds)
 static PyObject* getRegion(PyObject* self, PyObject* args) {
 	unsigned int tracker_id;
 	if(!PyArg_ParseTuple(args, "I", &tracker_id)) {
-		PySys_WriteStdout("\n----pyMTF2::getRegion: Input argument could not be parsed----\n\n");
+		PySys_WriteStdout("\n----pyMTF2::getRegion: input argument could not be parsed----\n\n");
 		return Py_BuildValue("");
 	}
 
@@ -317,7 +317,7 @@ static PyObject* setRegion(PyObject* self, PyObject* args) {
 		return Py_BuildValue("i", 0);
 	}
 	if(corners_py->dimensions[0] != 2 || corners_py->dimensions[1] != 4){
-		PySys_WriteStdout("pyMTF2::setRegion::Corners matrix has incorrect dimensions: %ld, %ld\n",
+		PySys_WriteStdout("pyMTF2::setRegion :: corners matrix has incorrect dimensions: %ld, %ld\n",
 			corners_py->dimensions[0], corners_py->dimensions[1]);
 		return Py_BuildValue("i", 0);
 	}
@@ -339,7 +339,7 @@ static PyObject* setRegion(PyObject* self, PyObject* args) {
 
 
 static PyObject* removeTrackers(PyObject* self, PyObject* args) {
-	PySys_WriteStdout("pyMTF2 :: removing all trackers...");
+	PySys_WriteStdout("pyMTF2 :: removing all trackers...\n");
 	for(auto it = trackers.begin(); it != trackers.end(); ++it){
 		it->second.reset();
 	}
@@ -351,12 +351,12 @@ static PyObject* removeTrackers(PyObject* self, PyObject* args) {
 static PyObject* removeTracker(PyObject* self, PyObject* args) {
 	unsigned int tracker_id;
 	if(!PyArg_ParseTuple(args, "I", &tracker_id)) {
-		PySys_WriteStdout("\n----pyMTF2::removeTracker: Input arguments could not be parsed----\n\n");
+		PySys_WriteStdout("\n----pyMTF2::removeTracker: input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
 	std::map<int, TrackerStruct>::iterator it = trackers.find(tracker_id);
 	if(it == trackers.end()){
-		PySys_WriteStdout("Invalid tracker ID: %d\n", tracker_id);
+		PySys_WriteStdout("pyMTF2 :: invalid tracker ID: %d\n", tracker_id);
 		return Py_BuildValue("i", 0);
 	}
 	trackers.erase(it);
