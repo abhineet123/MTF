@@ -240,7 +240,7 @@ struct TrackerThread{
 			boost::this_thread::interruption_point();
 		}
 		(*is_running) = 0;
-		printf("TrackerThread::is_running: %d\n", *is_running);
+		//printf("TrackerThread::is_running: %d\n", *is_running);
 #ifndef DISABLE_VISP
 		if(visualize) {
 			vpDisplay::close(disp_frame);
@@ -275,7 +275,7 @@ struct TrackerStruct{
 		return tracker->getRegion();
 	}
 	int isRunning() {
-		printf("TrackerStruct::is_running: %d\n", *is_running);
+		//printf("TrackerStruct::is_running: %d\n", *is_running);
 		return *is_running;
 	}
 	void reset() {

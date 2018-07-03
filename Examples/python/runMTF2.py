@@ -97,6 +97,7 @@ if __name__ == '__main__':
             curr_corners = pyMTF2.getRegion(tracker_ids[i])
             if curr_corners is None:
                 print('Tracker {} update was unsuccessful'.format(i + 1))
+                pyMTF2.removeTracker(tracker_ids[i])
                 stopped_ids.append(i)
                 continue
             # print('curr_corners: ', curr_corners)
@@ -104,21 +105,21 @@ if __name__ == '__main__':
                 col = result_colors[i % n_cols]
                 drawRegion(src_img, curr_corners, col, thickness, '{}'.format(tracker_id))
 
-            for i in stopped_ids:
-                del tracker_ids[i]
-                num_trackers -= 1
+        for i in stopped_ids:
+            del tracker_ids[i]
+            num_trackers -= 1
 
-            if not tracker_ids:
+        if not tracker_ids:
+            break
+
+        if show_tracking_output:
+            # plt.imshow(src_img)
+            # plt.draw()
+            # plt.pause(0.00001)
+
+            cv2.imshow(window_name, src_img)
+            if cv2.waitKey(1) == 27:
                 break
-                
-            if show_tracking_output:
-                # plt.imshow(src_img)
-                # plt.draw()
-                # plt.pause(0.00001)
-
-                cv2.imshow(window_name, src_img)
-                if cv2.waitKey(1) == 27:
-                    break
 
     pyMTF2.removeTrackers()
     pyMTF2.quit()

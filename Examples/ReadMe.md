@@ -108,20 +108,44 @@ Finally, this can be used to remove an existing tracker:
 Similar to mexMTF2, there is also a multi threaded version called **pyMTF2** that also supports acquiring images. 
 Its usage is demonstrated in _python/runMTF2.py_.
 
-It provides the following functions that closely mirror those of mexMTF2:
+It provides the following functions that closely mirror those of mexMTF2 ([]  indicates optional argument):
 
--   `success = pyMTF.init(params)` to initialize the input pipeline; `params` is a string containing pairwise arguments similar to those accepted by runMTF (refer to the ReadMe in the _Config_ folder for a complete list of arguments)
 
--   `tracker_id = pyMTF.create(image, corners, config_root_dir)` to create and initialize a new tracker
--   `success = pyMTF.getRegion(image, corners, id)` to update the tracker and get its new location
+-   `success = pyMTF2.init([params])`
+    - initializes the input pipeline
+    - `params` is a string containing pairwise arguments similar to those accepted by runMTF
+    - refer to the ReadMe in the _Config_ folder for a complete list of arguments
+    - only one pipeline at a time is currently supported so all calls to this function after the first one will be ignored till `quit` is called to clear the existing pipeline and all trackers attached to it
 
-`tracker_id` is an unsigned integer that starts at 1 and increments by 1 every time `pyMTF.create` is called; `tracker_id=0` indicates that the tracker creation/initialization failed.  
-`image` can be RGB or grayscale but must be of type `numpy.uint8` while `corners` must be a 2x4 matrix of type `numpy.float64`.  
+-   `tracker_id = pyMTF2.createTracker([corners, params])`
+    - creates and initializes a new tracker
+    - both  `corners`  and `params` are optional and keyword based arguments;
+    - `corners` must be a 2x4 matrix of type `numpy.float64`;
+    - if `corners` is not provided, user will be asked to select the object to track interactively
+    - `tracker_id` is an unsigned integer that starts at 1 and increments by 1 every time `pyMTF.create` is called
+    - `tracker_id=0` indicates that the tracker creation/initialization failed.
+	
+-   `success = pyMTF2.getRegion(tracker_id)`
+    - returns the latest location of the given tracker
+	
+-   `image = pyMTF2.getFrame()`
+    - returns the latest frame captured by the input pipeline
+    - `image` is an RGB image stored in a numpy array of type `numpy.uint8`
+	
+-   `success = pyMTF2.setRegion(corners)`
+    - delete all trackers
 
-In addition, the following function allows the internal state of a tracker to be modified so the object is located at the provided location instead of where it was after the last update:
+-   `success = pyMTF2.isInitialized()`
+    - returns 1 if the input pipeline has been initialized, 0 otherwise	
 
--   `success = pyMTF.setRegion(corners, tracker_id)`  
+-   `success = pyMTF2.removeTracker(tracker_id)`
+    - delete the given tracker
+	
+-   `success = pyMTF2.removeTrackers()`
+    - delete all trackers	
+	
+-   `success = pyMTF2.quit()`
+    - delete the input pipeline and all existing trackers
+	
+	
 
-Finally, this can be used to remove an existing tracker:
-
--   `success = pyMTF.remove(tracker_id)`
