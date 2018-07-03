@@ -91,17 +91,21 @@ if __name__ == '__main__':
 
         # src_img = np.asarray(src_img)
         # print('got frame {}/{}'.format(src_img.shape, src_img.dtype))
-
+        stopped_ids = []
         for i in range(num_trackers):
 
-            curr_corners = pyMTF2.getRegion(tracker_ids[i])
+            curr_corners = pyMTF2.getRegion()
             if curr_corners is None:
-                print('Tracker update was unsuccessful')
-                break
-
+                print('Tracker {} update was unsuccessful'.format(i+1))
+                stopped_ids.append(i)
+                continue
             # print('curr_corners: ', curr_corners)
             if show_tracking_output:
                 drawRegion(src_img, curr_corners, result_color, thickness)
+
+        for i in stopped_ids:
+            del tracker_ids[i]
+            num_trackers -= 1
 
         if show_tracking_output:
             # plt.imshow(src_img)
