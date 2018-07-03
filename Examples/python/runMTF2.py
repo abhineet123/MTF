@@ -42,9 +42,9 @@ if __name__ == '__main__':
         elif arg_name == 'show_tracking_output':
             show_tracking_output = arg_val
         else:
-            param_str = '%s %s %s'.format(param_str, arg_name, arg_val)
+            param_str = '{:s} {:s} {:s}'.format(param_str, arg_name, arg_val)
         arg_id += 2
-    param_str = 'config_dir %s %s'.format(config_dir, param_str)
+    param_str = 'config_dir {:s} {:s}'.format(config_dir, param_str)
 
     print('param_str: ', param_str)
 
