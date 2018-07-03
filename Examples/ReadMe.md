@@ -86,6 +86,7 @@ pyMTF
 -----
 
 pyMTF is the Python interface to MTF that supports both Python 2.7 and 3.x.
+Its usage is demonstrated in _python/runMTF.py_.
 
 It is very simple to use - there are just 2 main functions needed to track an object:
 
@@ -103,4 +104,24 @@ Finally, this can be used to remove an existing tracker:
 
 -   `success = pyMTF.remove(tracker_id)`
 
-Unlike mexMTF, there is currently no multi threaded version of pyMTF nor does it support acquiring images. These functionalities will be added soon.
+
+Similar to mexMTF2, there is also a multi threaded version called **pyMTF2** that also supports acquiring images. 
+Its usage is demonstrated in _python/runMTF2.py_.
+
+It provides the following functions that closely mirror those of mexMTF2:
+
+-   `success = pyMTF.init(params)` to initialize the input pipeline; `params` is a string containing pairwise arguments similar to those accepted by runMTF (refer to the ReadMe in the _Config_ folder for a complete list of arguments)
+
+-   `tracker_id = pyMTF.create(image, corners, config_root_dir)` to create and initialize a new tracker
+-   `success = pyMTF.getRegion(image, corners, id)` to update the tracker and get its new location
+
+`tracker_id` is an unsigned integer that starts at 1 and increments by 1 every time `pyMTF.create` is called; `tracker_id=0` indicates that the tracker creation/initialization failed.  
+`image` can be RGB or grayscale but must be of type `numpy.uint8` while `corners` must be a 2x4 matrix of type `numpy.float64`.  
+
+In addition, the following function allows the internal state of a tracker to be modified so the object is located at the provided location instead of where it was after the last update:
+
+-   `success = pyMTF.setRegion(corners, tracker_id)`  
+
+Finally, this can be used to remove an existing tracker:
+
+-   `success = pyMTF.remove(tracker_id)`

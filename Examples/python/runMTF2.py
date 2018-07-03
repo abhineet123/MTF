@@ -57,7 +57,8 @@ if __name__ == '__main__':
     # thickness of the bounding box lines drawn on the image
     thickness = 2
     # tracker location drawn in red
-    result_color = (0, 0, 255)
+    result_colors = ('red', 'green', 'blue', 'magenta', 'cyan', 'purple')
+    n_cols = len(result_colors)
 
     # initialize input pipeline
     if not pyMTF2.init(param_str):
@@ -93,28 +94,28 @@ if __name__ == '__main__':
         # print('got frame {}/{}'.format(src_img.shape, src_img.dtype))
         stopped_ids = []
         for i in range(num_trackers):
-
-            curr_corners = pyMTF2.getRegion()
+            curr_corners = pyMTF2.getRegion(tracker_ids[i])
             if curr_corners is None:
-                print('Tracker {} update was unsuccessful'.format(i+1))
+                print('Tracker {} update was unsuccessful'.format(i + 1))
                 stopped_ids.append(i)
                 continue
             # print('curr_corners: ', curr_corners)
             if show_tracking_output:
-                drawRegion(src_img, curr_corners, result_color, thickness)
+                col = result_colors[i % n_cols]
+                drawRegion(src_img, curr_corners, col, thickness, '{}'.format(tracker_id))
 
-        for i in stopped_ids:
-            del tracker_ids[i]
-            num_trackers -= 1
+            for i in stopped_ids:
+                del tracker_ids[i]
+                num_trackers -= 1
 
-        if show_tracking_output:
-            # plt.imshow(src_img)
-            # plt.draw()
-            # plt.pause(0.00001)
+            if show_tracking_output:
+                # plt.imshow(src_img)
+                # plt.draw()
+                # plt.pause(0.00001)
 
-            cv2.imshow(window_name, src_img)
-            if cv2.waitKey(1) == 27:
-                break
+                cv2.imshow(window_name, src_img)
+                if cv2.waitKey(1) == 27:
+                    break
 
     pyMTF2.removeTrackers()
     pyMTF2.quit()

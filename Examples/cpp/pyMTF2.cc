@@ -194,13 +194,13 @@ static PyObject* isInitialized(PyObject* self, PyObject* args) {
 }
 
 static PyObject* quit(PyObject* self, PyObject* args) {
-	PySys_WriteStdout("pyMTF2 :: clearing up...\n");
+	PySys_WriteStdout("pyMTF2 :: clearing up...");
 	input->reset();
 	for(auto it = trackers.begin(); it != trackers.end(); ++it){
 		it->second.reset();
 	}
 	trackers.clear();
-	PySys_WriteStdout("Done\n");
+	PySys_WriteStdout("done\n");
 	return Py_BuildValue("i", 1);
 }
 
@@ -258,7 +258,7 @@ static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds)
 		try{
 			t.join();
 		} catch(boost::thread_interrupted) {
-			printf("Caught exception from object selector thread\n");
+			PySys_WriteStdout("Caught exception from object selector thread\n");
 		}
 		if(!obj_sel_thread.success) {
 			PySys_WriteStdout("Initial corners could not be obtained\n");
@@ -330,7 +330,7 @@ static PyObject* setRegion(PyObject* self, PyObject* args) {
 	try{
 		it->second.setRegion(corners);
 	} catch(const mtf::utils::Exception &err){
-		printf("Exception of type %s encountered while resetting the tracker: %s\n",
+		PySys_WriteStdout("Exception of type %s encountered while resetting the tracker: %s\n",
 			err.type(), err.what());
 		return Py_BuildValue("i", 0);
 	}
@@ -339,12 +339,12 @@ static PyObject* setRegion(PyObject* self, PyObject* args) {
 
 
 static PyObject* removeTrackers(PyObject* self, PyObject* args) {
-	PySys_WriteStdout("pyMTF2 :: removing all trackers...\n");
+	PySys_WriteStdout("pyMTF2 :: removing all trackers...");
 	for(auto it = trackers.begin(); it != trackers.end(); ++it){
 		it->second.reset();
 	}
 	trackers.clear();
-	printf("Done\n");
+	PySys_WriteStdout("done\n");
 	return Py_BuildValue("i", 1);
 }
 

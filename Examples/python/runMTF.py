@@ -52,9 +52,9 @@ if __name__ == '__main__':
     # thickness of the bounding box lines drawn on the image
     thickness = 2
     # ground truth location drawn in green
-    ground_truth_color = (0, 255, 0)
+    ground_truth_color = 'green'
     # tracker location drawn in red
-    result_color = (0, 0, 255)
+    result_color = 'red'
 
     # read the ground truth
     ground_truth = readGroundTruth(ground_truth_fname)

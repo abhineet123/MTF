@@ -188,7 +188,7 @@ struct TrackerThread{
 			}
 #endif
 		}
-		*is_running = true;
+		(*is_running) = true;
 		while(input->isValid()){
 			if(frame_id == input->getFrameID()){
 				//! do not process the same image multiple times
@@ -239,7 +239,8 @@ struct TrackerThread{
 			}
 			boost::this_thread::interruption_point();
 		}
-		*is_running = false;
+		(*is_running) = false;
+		printf("TrackerThread::is_running: %d\n", *is_running);
 #ifndef DISABLE_VISP
 		if(visualize) {
 			vpDisplay::close(disp_frame);
@@ -273,7 +274,10 @@ struct TrackerStruct{
 	const cv::Mat& getRegion() {
 		return tracker->getRegion();
 	}
-	bool isRunning(){ return is_running; }
+	bool isRunning() {
+		printf("TrackerStruct::is_running: %d\n", is_running);
+		return is_running;
+	}
 	void reset() {
 		t.interrupt();
 		tracker.reset();
