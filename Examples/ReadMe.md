@@ -105,12 +105,13 @@ Finally, this can be used to remove an existing tracker:
 -   `success = pyMTF.remove(tracker_id)`
 
 pyMTF2
------
+------
 
-Similar to mexMTF2, this is the multi threaded version that also supports acquiring images. 
+Similar to `mexMTF2`, this is the multi threaded version that also supports acquiring images.
+This is more suited to live tracking as the input pipeline continuously updates itself and so would quickly run out of images in a pre-recorded sequence.
 Its usage is demonstrated in _python/runMTF2.py_.
 
-It provides the following functions that closely mirror those of mexMTF2 (`[]`indicates optional arguments):
+It provides the following functions that closely mirror those of `mexMTF2` (`[]`indicates optional arguments):
 
 
 -   `success = pyMTF2.init([params])`
@@ -134,8 +135,8 @@ It provides the following functions that closely mirror those of mexMTF2 (`[]`in
     - returns the latest frame captured by the input pipeline
     - `image` is an RGB image stored in a numpy array of type `numpy.uint8`
 	
--   `success = pyMTF2.setRegion(corners)`
-    - delete all trackers
+-   `success = pyMTF2.setRegion(corners, tracker_id)`
+    - modifies internal state of the tracker so the object is located at the provided location instead of where it was at the time of this call
 
 -   `success = pyMTF2.isInitialized()`
     - returns 1 if the input pipeline has been initialized, 0 otherwise	
