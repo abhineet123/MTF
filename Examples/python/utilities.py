@@ -4,7 +4,7 @@ import cv2
 
 def readGroundTruth(filename):
     if not os.path.isfile(filename):
-        print "Tracking data file not found:\n ", filename
+        print("Tracking data file not found:\n ", filename)
         sys.exit()
 
     data_file = open(filename, 'r')
