@@ -232,8 +232,8 @@ static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds)
 	PyArrayObject *in_corners_py = nullptr;
 	char* _params = nullptr;
 	static char *kwlist[] = { "params", "corners", NULL };
-	if(!PyArg_ParseTupleAndKeywords(args, keywds, "|zO!", &_params, &PyArray_Type, &in_corners_py)) {
-		PySys_WriteStdout("\n----pyMTF::init: Input arguments could not be parsed----\n\n");
+	if(!PyArg_ParseTupleAndKeywords(args, keywds, "|zO!", kwlist, &_params, &PyArray_Type, &in_corners_py)) {
+		PySys_WriteStdout("\n----pyMTF::createTracker: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
 	if(!readParams(_params)) {
