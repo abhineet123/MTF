@@ -916,7 +916,7 @@ actors = {
     17: 'Live'
 }
 
-sequences = dict(zip([actors[i] for i in xrange(len(actors))],
+sequences = dict(zip([actors[i] for i in range(len(actors))],
                      [sequences_tmt,
                       sequences_ucsb,
                       sequences_lintrack,
