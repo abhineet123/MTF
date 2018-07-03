@@ -148,10 +148,10 @@ private:
 
 struct TrackerThread{
 	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
-		unsigned int id, bool & _is_running, 
+		unsigned int id, bool* _is_running, 
 		int _visualize, const char* module_name) : 
-		input(_input), pre_proc(_pre_proc), is_running(_is_running),
-		tracker(_tracker), visualize(_visualize){
+		input(_input), pre_proc(_pre_proc), tracker(_tracker), 
+		is_running(_is_running), visualize(_visualize){
 		win_name = cv::format("%s :: %d", module_name, id);
 		proc_win_name = cv::format("%s (Pre-processed)", win_name.c_str());
 		//if(visualize) {
@@ -188,7 +188,7 @@ struct TrackerThread{
 			}
 #endif
 		}
-		is_running = true;
+		*is_running = true;
 		while(input->isValid()){
 			if(frame_id == input->getFrameID()){
 				//! do not process the same image multiple times
@@ -239,7 +239,7 @@ struct TrackerThread{
 			}
 			boost::this_thread::interruption_point();
 		}
-		is_running = false;
+		*is_running = false;
 #ifndef DISABLE_VISP
 		if(visualize) {
 			vpDisplay::close(disp_frame);
@@ -251,20 +251,21 @@ private:
 	std::shared_ptr<const InputStruct> input;
 	PreProc pre_proc;
 	Tracker tracker;
+	bool *is_running;
+
+	int visualize;
 	string win_name, proc_win_name;
 #ifndef DISABLE_VISP
 	std::unique_ptr<vpDisplay> display;
 	vpImage<vpRGBa> disp_frame;
 #endif
-	int visualize;
-	bool is_running;
 };
 struct TrackerStruct{
 	TrackerStruct(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
 		unsigned int id, bool _visualize, const char* module_name) :
 		tracker(_tracker), pre_proc(_pre_proc), visualize(_visualize){
-		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, is_running, 
-			id, visualize, module_name) };
+		t = boost::thread{ TrackerThread(tracker, pre_proc, _input, id, &is_running, 
+			visualize, module_name) };
 	}
 	void setRegion(const cv::Mat& corners){
 		tracker->setRegion(corners);
@@ -280,8 +281,8 @@ struct TrackerStruct{
 private:
 	Tracker tracker;
 	PreProc pre_proc;
+	bool is_running;
 	boost::thread t;
 	bool visualize;
-	bool is_running;
 };
 

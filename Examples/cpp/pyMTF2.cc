@@ -284,6 +284,9 @@ static PyObject* getRegion(PyObject* self, PyObject* args) {
 		PySys_WriteStdout("Invalid tracker ID: %d\n", tracker_id);
 		return Py_BuildValue("");
 	}
+	if(!it->second.isRunning()) {
+		return Py_BuildValue("");
+	}
 	cv::Mat corners = it->second.getRegion();
 	int dims[] = { 2, 4 };
 	PyArrayObject *corners_py = (PyArrayObject *)PyArray_FromDims(2, dims, NPY_DOUBLE);
