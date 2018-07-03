@@ -253,7 +253,7 @@ static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds)
 		init_corners_cv.at<double>(0, 3) = temp.at<double>(1, 2);
 		init_corners_cv.at<double>(1, 3) = temp.at<double>(1, 3);
 	} else {
-		ObjectSelectorThread obj_sel_thread(input, init_corners_cv);
+		ObjectSelectorThread obj_sel_thread(input, init_corners_cv, py_live_init);
 		boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
 		try{
 			t.join();

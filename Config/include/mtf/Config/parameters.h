@@ -956,7 +956,8 @@ namespace mtf{
 		bool qr_init_with_rect = 1;
 		int qr_n_markers = -1;
 		//! pyMTF
-		int py_visualize = 0;
+		int py_visualize = 1;
+		int py_live_init = 1;
 		//! mexMTF
 		int mex_visualize = 1;
 		int mex_live_init = 1;
@@ -4001,6 +4002,10 @@ namespace mtf{
 			}
 			if(!strcmp(arg_name, "py_visualize")){
 				py_visualize = atoi(arg_val);
+				return;
+			}
+			if(!strcmp(arg_name, "py_live_init")){
+				py_live_init = atoi(arg_val);
 				return;
 			}
 			if(!strcmp(arg_name, "mex_visualize")){

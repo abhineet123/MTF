@@ -280,7 +280,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 			init_corners = mtf::utils::getCorners(prhs[2]);
 		} else {
 			init_corners.create(2, 4, CV_64FC1);
-			ObjectSelectorThread obj_sel_thread(input, init_corners);
+			ObjectSelectorThread obj_sel_thread(input, init_corners, mex_live_init);
 			boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
 			try{
 				t.join();
