@@ -61,7 +61,7 @@ if __name__ == '__main__':
 	else:
 		print('MTF input pipeline created successfully');
 	
-	tracker_id = pyMTF2.create_tracker(param_str);
+	tracker_id = pyMTF2.createTracker(param_str);
 	
 	if not tracker_id:
 		raise SystemError('Tracker creation was unsuccessful');
@@ -74,12 +74,12 @@ if __name__ == '__main__':
         cv2.namedWindow(window_name)
 
     while True:
-		src_img = pyMTF2.get_frame();
+		src_img = pyMTF2.getFrame();
 		if curr_img is None:
 			print('Frame extraction was unsuccessful');
 			break
 			
-        curr_corners = pyMTF2.get_region(tracker_id);
+        curr_corners = pyMTF2.getRegion(tracker_id);
 		if curr_corners is None:
 			print('Tracker update was unsuccessful');
 			sys.exit()
@@ -94,6 +94,6 @@ if __name__ == '__main__':
             if cv2.waitKey(1) == 27:
                 break
 	
-	pyMTF2.remove_tracker(tracker_id)
+	pyMTF2.removeTracker(tracker_id)
 	pyMTF2.quit()
 	
