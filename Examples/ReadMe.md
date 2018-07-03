@@ -104,8 +104,10 @@ Finally, this can be used to remove an existing tracker:
 
 -   `success = pyMTF.remove(tracker_id)`
 
+pyMTF2
+-----
 
-Similar to mexMTF2, there is also a multi threaded version called **pyMTF2** that also supports acquiring images. 
+Similar to mexMTF2, this is the multi threaded version that also supports acquiring images. 
 Its usage is demonstrated in _python/runMTF2.py_.
 
 It provides the following functions that closely mirror those of mexMTF2 ([]  indicates optional argument):
