@@ -5,7 +5,7 @@ import numpy as np
 import math
 import time
 import pyMTF2
-from utilities import readGroundTruth, writeCorners, drawRegion
+from utilities import drawRegion
 from datasets import sequences, actors
 
 if __name__ == '__main__':
@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     while True:
         src_img = pyMTF2.getFrame()
-        if curr_img is None:
+        if src_img is None:
             print('Frame extraction was unsuccessful')
             break
 
@@ -82,9 +82,9 @@ if __name__ == '__main__':
 
         if show_tracking_output:
             # draw the tracker location
-            drawRegion(src_img_disp, curr_corners, result_color, thickness)
+            drawRegion(src_img, curr_corners, result_color, thickness)
             # display the image
-            cv2.imshow(window_name, src_img_disp)
+            cv2.imshow(window_name, src_img)
 
             if cv2.waitKey(1) == 27:
                 break
