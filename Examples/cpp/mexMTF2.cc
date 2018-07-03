@@ -182,6 +182,10 @@ bool getRegion(unsigned int tracker_id, mxArray* &plhs) {
 		printf("Invalid tracker ID: %d\n", tracker_id);
 		return false;
 	}
+	if(!it->second.isRunning()) {
+		printf("Tracker %d has been stopped\n", tracker_id);
+		return false;
+	}
 	plhs = mtf::utils::setCorners(it->second.getRegion());
 	return true;
 }
