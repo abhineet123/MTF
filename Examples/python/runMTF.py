@@ -32,13 +32,13 @@ if __name__ == '__main__':
         arg_id += 1
 
     if seq_id >= len(sequences):
-        print 'Invalid dataset_id: ', seq_id
+        print('Invalid dataset_id: ', seq_id)
         sys.exit()
 
     actor = actors[actor_id]
     seq_name = sequences[actor][seq_id]
-    print 'seq_id: ', seq_id
-    print 'seq_name: ', seq_name
+    print('seq_id: ', seq_id)
+    print('seq_name: ', seq_name)
 
     src_fname = '{:s}/{:s}/{:s}/frame%05d.{:s}'.format(db_root_dir, actor, seq_name, seq_fmt)
     ground_truth_fname = '{:s}/{:s}/{:s}.txt'.format(db_root_dir, actor, seq_name)
@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     cap = cv2.VideoCapture()
     if not cap.open(src_fname):
-        print 'The video file ', src_fname, ' could not be opened'
+        print('The video file ', src_fname, ' could not be opened')
         sys.exit()
 
     # thickness of the bounding box lines drawn on the image
@@ -60,11 +60,11 @@ if __name__ == '__main__':
     ground_truth = readGroundTruth(ground_truth_fname)
     no_of_frames = ground_truth.shape[0]
 
-    print 'no_of_frames: ', no_of_frames
+    print('no_of_frames: ', no_of_frames)
 
     ret, init_img = cap.read()
     if not ret:
-        print "Initial frame could not be read"
+        print('Initial frame could not be read')
         sys.exit(0)
 
     # extract the true corners in the first frame and place them into a 2x4 array
@@ -78,9 +78,9 @@ if __name__ == '__main__':
     # initialize tracker with the first frame and the initial corners
     if not use_rgb_input:
         init_img = cv2.cvtColor(init_img, cv2.COLOR_RGB2GRAY)
-	tracker_id = 	pyMTF.create(init_img.astype(np.uint8), init_corners.astype(np.float64), config_root_dir)
+        tracker_id = pyMTF.create(init_img.astype(np.uint8), init_corners.astype(np.float64), config_root_dir)
     if not tracker_id:
-        print 'Tracker creation/initialization was unsuccessful'
+        print('Tracker creation/initialization was unsuccessful')
         sys.exit()
 
     if show_tracking_output:
@@ -94,10 +94,10 @@ if __name__ == '__main__':
 
     tracker_corners = np.zeros((2, 4), dtype=np.float64)
 
-    for frame_id in xrange(1, no_of_frames):
+    for frame_id in range(1, no_of_frames):
         ret, src_img = cap.read()
         if not ret:
-            print "Frame ", frame_id, " could not be read"
+            print("Frame ", frame_id, " could not be read")
             break
         actual_corners = [ground_truth[frame_id, 0:2].tolist(),
                           ground_truth[frame_id, 2:4].tolist(),
@@ -117,7 +117,7 @@ if __name__ == '__main__':
         success = pyMTF.getRegion(src_img.astype(np.uint8), tracker_corners, tracker_id)
 
         if not success:
-            print 'Tracker update was unsuccessful'
+            print('Tracker update was unsuccessful')
             sys.exit()
 
         # print('tracker_corners before:\n {}'.format(tracker_corners))
@@ -147,11 +147,11 @@ if __name__ == '__main__':
 
             if cv2.waitKey(1) == 27:
                 break
-	
-	pyMTF.remove(tracker_id)
-	
+
+        pyMTF.remove(tracker_id)
+
     mean_error = np.mean(tracking_errors)
     mean_fps = np.mean(tracking_fps)
 
-    print 'mean_error: ', mean_error
-    print 'mean_fps: ', mean_fps
+    print('mean_error: ', mean_error)
+    print('mean_fps: ', mean_fps)
