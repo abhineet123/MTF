@@ -137,6 +137,7 @@ It provides the following functions that closely mirror those of `mexMTF2` (`[]`
 	
 -   `success = pyMTF2.setRegion(corners, tracker_id)`
     - modifies internal state of the tracker so the object is located at the provided location instead of where it was at the time of this call
+    - currently not supported by third party trackers
 
 -   `success = pyMTF2.isInitialized()`
     - returns 1 if the input pipeline has been initialized, 0 otherwise	
