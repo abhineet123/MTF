@@ -46,6 +46,7 @@ Installation:
     * [Intel TBB](https://www.threadingbuildingblocks.org/) / [OpenMP](http://openmp.org/wp/) should be installed if parallelization is to be enabled.
     * [ViSP](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see [compile time switches](#compile-time-switches)).
 	    - Note that [version 3.0.0](http://gforge.inria.fr/frs/download.php/latestfile/475/visp-3.0.0.zip)+ is required. The Ubuntu apt package is 2.8 and is therefore incompatible.
+	    - ViSP is also needed for interactive operations in the multi threaded versions of the Matlab and Python interfaces as OpenCV window system has an unresolved bug/incompatibility with boost threading library which causes it to hangup or crash the program.
     * [Caffe](http://caffe.berkeleyvision.org/) is needed for some optional modules including FMaps, Regnet and GOTURN if these are enabled during compilation
 	* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see [compile time switches](#compile-time-switches)).
 	    - **Not recommended** as Xvision is very difficult to install and configure on modern systems
@@ -117,19 +118,21 @@ Installation:
 	    - library should be installed before running this, otherwise linking will not succeed
 		- installation folder is _/usr/local/bin_ by default; this needs administrative privilege too - change `MTF_INSTALL_DIR` as above if this is not available
     * **`make mtfi` : all of the above - recommended command that compiles and installs the library and the executable**
-    * **`make py`/`make install_py`** : compile/install the Python interface to MTF - this creates a Python module called _pyMTF_ that serves as a front end for running these trackers from Python.
-	    - usage of this module is demonstrated in _Examples/python/runMTF.py_
+    * **`make py`/`make install_py`** (**`make py2`/`make install_py2`**) : compile/install the Python interface to MTF (or its multi threaded version) - this creates a Python module called _pyMTF_ (_pyMTF2_) that serves as a front end for using MTF from Python.
+	    - usage of this module is demonstrated in _Examples/python/runMTF.py_ (_runMTF2.py_) and function specification is in the ReadMe in the _Examples_ folder 
 		- supports both Python 2.7 and 3.x but only a particular version is built at a time - this can be specified using the `PY_VER`/`py_ver` cmake/make variable (set to 2.7 by default)
 		- if multiple Python versions are installed on the system, cmake might not be able to find the desired one even if `PY_VER` is provided; in this case Python header and library locations must be provided though the variables `PYTHON_INCLUDE_DIR` and `PYTHON_LIBRARY`
 		- neither cmake nor make systems currently support inferring the correct install location for _pyMTF_ from Python library/header paths so this must be specified through `MTF_PY_INSTALL_DIR` (in _Examples.mak/cmake_) if using a custom Python version (defaults to _/usr/local/lib/python2.7/dist-packages/_)
 		- refer to _cmake/cmake.md_ for an example cmake command to compile _pyMTF_ with Python 3.5;
-    * **`make mex`/`make install_mex`** : compile/install the MATLAB interface to MTF - this creates a MATLAB module called _mexMTF_ that serves as a front end for running these trackers from MATLAB.
+		- _pyMTF2_ needs ViSP to be installed and enabled during compilation for its interactive operations
+    * **`make mex`/`make install_mex`** (**`make mex2`/`make install_mex2`**) : compile/install the MATLAB interface to MTF (or its multi threaded version) - this creates a MATLAB module called _mexMTF_ (_mexMTF2_) that serves as a front end for using MTF from MATLAB.
 	    - set `MATLAB_DIR` variable in _Examples.mak_ to the root of the MATLAB installation folder 
-		- usage of this module is demonstrated in _Examples/matlab/runMTF.m_
+		- usage of this module is demonstrated in _Examples/matlab/runMTF.m_ (_runMTF2.m_) and function specification is in the ReadMe in the _Examples_ folder
 	    -  installation location can be specified through `MTF_MEX_INSTALL_DIR` in _Examples.mak/cmake_ (defaults to _<MATLAB_DIR>/toolbox/local_) 
 		- if CMake is being used under Unix, the restriction of matching build target and MATLAB installation type mentioned in the Windows installation section applies here too; however, it is possible to compile `mexMTF` in Unix even if MATLAB is not detected by CMake by running the command written to a file called `mtf_mex_cmd.txt` in the build folder;
 			- the command can be run at the MATLAB prompt or even at the terminal if the location of the `mex` executable is present in the `PATH` environment variable;
 			- a few changes need to be made to it first as detailed in the CMake message;
+		- _mexMTF2_ needs ViSP to be installed and enabled during compilation for its interactive operations
     * `make uav`/`make install_uav` : compile/install an application called `trackUAVTrajectory` that tracks the trajectory of a UAV in a satellite image of the area over which it flew while capturing images from above
     * `make mos`/`make install_mos` : compile/install an application called `createMosaic` that constructs a live mosaic from a video of the region to be stitched
     * `make qr`/`make install_qr` : compile/install an application called `trackMarkers` that automatically detects one or more markers in the input stream and starts tracking them
