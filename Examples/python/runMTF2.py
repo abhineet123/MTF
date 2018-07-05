@@ -11,7 +11,6 @@ from matplotlib import pyplot as plt
 if __name__ == '__main__':
     # script parameters
     show_tracking_output = 1
-    num_trackers = 1
 
     # MTF parameters
     config_dir = '../../Config'
@@ -23,6 +22,7 @@ if __name__ == '__main__':
     seq_fmt = 'jpg'
     init_frame_id = 1
     py_visualize = 0
+    n_trackers = 1
 
     param_str = 'db_root_path {:s}'.format(db_root_path)
     param_str = '{:s} pipeline {:s}'.format(param_str, pipeline)
@@ -31,7 +31,8 @@ if __name__ == '__main__':
     param_str = '{:s} seq_id {:d}'.format(param_str, seq_id)
     param_str = '{:s} seq_fmt {:s}'.format(param_str, seq_fmt)
     param_str = '{:s} init_frame_id {:d}'.format(param_str, init_frame_id)
-    param_str = '{:s} init_frame_id {:d}'.format(param_str, py_visualize)
+    param_str = '{:s} py_visualize {:d}'.format(param_str, py_visualize)
+    param_str = '{:s} n_trackers {:d}'.format(param_str, n_trackers)
 
     nargin = len(sys.argv) - 1
     if nargin % 2 != 0:
@@ -45,8 +46,6 @@ if __name__ == '__main__':
             config_dir = arg_val
         elif arg_name == 'show_tracking_output':
             show_tracking_output = int(arg_val)
-        elif arg_name == 'num_trackers':
-            num_trackers = int(arg_val)
         else:
             param_str = '{:s} {:s} {:s}'.format(param_str, arg_name, arg_val)
         arg_id += 2
@@ -66,8 +65,10 @@ if __name__ == '__main__':
     else:
         print('MTF input pipeline created successfully')
 
-    tracker_ids = []
-    for i in range(num_trackers):
+    if n_trackers > 1:
+        tracker_ids = pyMTF2.createTracker(param_str)
+    else:
+        tracker_ids = []
         tracker_id = pyMTF2.createTracker(param_str)
         if not tracker_id:
             raise SystemError('Tracker {} creation was unsuccessful'.format(i + 1))
@@ -93,7 +94,7 @@ if __name__ == '__main__':
         # src_img = np.asarray(src_img)
         # print('got frame {}/{}'.format(src_img.shape, src_img.dtype))
         stopped_ids = []
-        for i in range(num_trackers):
+        for i in range(n_trackers):
             curr_corners = pyMTF2.getRegion(tracker_ids[i])
             if curr_corners is None:
                 print('Tracker {} update was unsuccessful'.format(i + 1))
@@ -107,7 +108,7 @@ if __name__ == '__main__':
 
         for i in stopped_ids:
             del tracker_ids[i]
-            num_trackers -= 1
+            n_trackers -= 1
 
         if not tracker_ids:
             break

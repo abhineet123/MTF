@@ -276,7 +276,7 @@ static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds)
 }
 
 
-static PyObject* createTrackers(PyObject* self, PyObject* args, PyObject *keywds) {
+static PyObject* createTrackers(PyObject* self, PyObject* args) {
 	char* _params = nullptr;
 	static char *kwlist[] = { "params", "corners", NULL };
 	if(!PyArg_ParseTupleAndKeywords(args, keywds, "|zO!", kwlist, &_params)) {
