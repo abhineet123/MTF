@@ -102,14 +102,14 @@ Installation:
     `git clone https://github.com/abhineet123/MTF.git`
 	
 * **Recommended Installation**  
- MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the latter is recommended for most users of the library and can be used as follows:
+ MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system but the latter is recommended for most users of the library and can be used as follows:
     * use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile for Unix or Visual Studio solution for Windows
 	* **Unix**: use `make` to compile (`make -j<n>` for _n_-threaded compilation) and `sudo make install` to install
     * **Windows**: open `MTF.sln` in Visual Studio and run `Build->Build Solution`
 	    - if needed, change the solution configuration to `Release` from `Debug` to build the faster version
 		- right click on `Solution Explorer->INSTALL` and select `Build` to install the library, header and executable files to the installation directory (`C:/MTF` by default); add `<installation_folder>/bin` to `Path` environment variable to be able to run the executables from any location;
 		
-	The make system might be used by developers/contributors as it can potentially offer a finer level of control. Note, however, that it is not tested as well as the cmake system so is not guaranteed to work in all configurations.
+	The make system might be used by developers/contributors as it can potentially offer a finer level of control. Note, however, that it is not tested as well as the cmake system so is not guaranteed to work in all configurations or be up to date with the latest changes.
 		
 * **Advanced Installation**  
 Following are commands and switches for both make and cmake systems to customize the installation or disable parts of the library:
