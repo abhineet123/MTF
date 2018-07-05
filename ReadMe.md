@@ -112,7 +112,7 @@ Installation:
 	The make system might be used by developers/contributors as it can potentially offer a finer level of control. Note, however, that it is not tested as well as the cmake system so is not guaranteed to work in all configurations.
 		
 * **Advanced Installation**  
-Following are commands and switches for both make and cmake systems to compile and install only parts of the library and example applications:
+Following are commands and switches for both make and cmake systems to customize the installation or disable parts of the library:
     * `make` or `make mtf` : compiles the shared library (_libmtf.so_) to the build directory (_Build/Release_)
     * `make install` : compiles the shared library if needed and copies it to _/usr/local/lib_; also copies the headers to _/usr/local/include_; (use `make install_lib` or `make install_header` for only one of the two); if third party trackers are enabled, their respective library files will be installed too;
 	    - this needs administrative (sudo) privilege; if not available, the variable `MTF_INSTALL_DIR` in the makefile can be modified to install elsewhere. This can be done either by editing the file itself or providing it with the make/cmake command as:  
