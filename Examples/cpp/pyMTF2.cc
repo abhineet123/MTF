@@ -278,9 +278,8 @@ static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds)
 
 static PyObject* createTrackers(PyObject* self, PyObject* args) {
 	char* _params = nullptr;
-	static char *kwlist[] = { "params", "corners", NULL };
-	if(!PyArg_ParseTupleAndKeywords(args, keywds, "|zO!", kwlist, &_params)) {
-		PySys_WriteStdout("\n----pyMTF2::createTracker: Input arguments could not be parsed----\n\n");
+	if(!PyArg_ParseTuple(args, "|z", &_params)) {
+		PySys_WriteStdout("\n----pyMTF2::createTrackers: input argument could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
 	if(!readParams(_params)) {
