@@ -48,6 +48,8 @@ if __name__ == '__main__':
             show_tracking_output = int(arg_val)
         else:
             param_str = '{:s} {:s} {:s}'.format(param_str, arg_name, arg_val)
+        if arg_name == 'n_trackers':
+            n_trackers = int(arg_val)
         arg_id += 2
     param_str = 'config_dir {:s} {:s}'.format(config_dir, param_str)
 
@@ -66,14 +68,15 @@ if __name__ == '__main__':
         print('MTF input pipeline created successfully')
 
     if n_trackers > 1:
-        tracker_ids = pyMTF2.createTracker(param_str)
+        tracker_ids = pyMTF2.createTrackers(param_str)
+        print('Created {} trackers with tracker_ids: {} '.format(n_trackers, tracker_ids))
     else:
         tracker_ids = []
         tracker_id = pyMTF2.createTracker(param_str)
         if not tracker_id:
-            raise SystemError('Tracker {} creation was unsuccessful'.format(i + 1))
+            raise SystemError('Tracker creation was unsuccessful')
         else:
-            print('Tracker {} created successfully'.format(i + 1))
+            print('Tracker created successfully')
         tracker_ids.append(tracker_id)
 
     if show_tracking_output:
@@ -84,6 +87,8 @@ if __name__ == '__main__':
         window_name = 'Tracking Result'
         cv2.namedWindow(window_name)
 
+    tracker_ids = list(tracker_ids)
+    
     while True:
         # print('getting frame')
         src_img = pyMTF2.getFrame()
@@ -104,7 +109,7 @@ if __name__ == '__main__':
             # print('curr_corners: ', curr_corners)
             if show_tracking_output:
                 col = result_colors[i % n_cols]
-                drawRegion(src_img, curr_corners, col, thickness, '{}'.format(tracker_id))
+                drawRegion(src_img, curr_corners, col, thickness, '{}'.format(tracker_ids[i]))
 
         for i in stopped_ids:
             del tracker_ids[i]
