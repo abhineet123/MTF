@@ -28,7 +28,7 @@ Finally, if any issues are encountered while installing or running the library, 
 
 Installation:
 -------------
-* **Prerequisites**:
+* **General Prerequisites**:
     *  MTF uses some [C++11](https://en.wikipedia.org/wiki/C%2B%2B11) features so a supporting compiler is needed ([GCC 4.7](https://gcc.gnu.org/projects/cxx0x.html) or newer)
     * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) should be installed and added to the C/C++ include paths. This can be done, for instance, by running the following commands, assuming that Eigen is installed in _/usr/include/eigen3_:  
 	`echo "export C_INCLUDE_PATH=${C_INCLUDE_PATH}:/usr/include/eigen3" >> ~/.bashrc`  
@@ -50,7 +50,7 @@ Installation:
     * [Caffe](http://caffe.berkeleyvision.org/) is needed for some optional modules including FMaps, Regnet and GOTURN if these are enabled during compilation
 	* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see [compile time switches](#compile-time-switches)).
 	    - **Not recommended** as Xvision is very difficult to install and configure on modern systems
-* **Installation in Windows**
+* **Prerequisites in Windows**
 	* Using CMake with Visual Studio (**Recommended**)
 		- Install a recent version of Visual Studio
 			- the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine; 
@@ -100,14 +100,19 @@ Installation:
 		
 * **Download** the source code as zip file or clone using:  
     `git clone https://github.com/abhineet123/MTF.git`
-* MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the former is recommended for developers/contributors as it offers finer level of control while the latter is for users of the library who only want to install it once. For cmake:
+	
+* **Recommended Installation**  
+ MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system where the latter is recommended for most users of the library and can be used as follows:
     * use the [standard method](https://cmake.org/runningcmake/) (i.e. ``mkdir build && cd build && cmake ..``) to create the makefile for Unix or Visual Studio solution for Windows
-	* in the former case, use one of the make commands specified below
-    * in the latter case, open `MTF.sln` in Visual Studio and run `Build->Build Solution`
+	* **Unix**: use `make` to compile (`make -j<n>` for _n_-threaded compilation) and `sudo make install` to install
+    * **Windows**: open `MTF.sln` in Visual Studio and run `Build->Build Solution`
 	    - if needed, change the solution configuration to `Release` from `Debug` to build the faster version
 		- right click on `Solution Explorer->INSTALL` and select `Build` to install the library, header and executable files to the installation directory (`C:/MTF` by default); add `<installation_folder>/bin` to `Path` environment variable to be able to run the executables from any location;
-
-* On Unix or when using MinGW on Windows, run one of the following make commands to compile and install the library and the example applications:
+		
+	The make system might be used by developers/contributors as it can potentially offer a finer level of control. Note, however, that it is not tested as well as the cmake system so is not guaranteed to work in all configurations.
+		
+* **Advanced Installation**  
+Following are detailed detailed commands and switches for both make and cmake systems to compile and install only parts of the library and example applications:
     * `make` or `make mtf` : compiles the shared library (_libmtf.so_) to the build directory (_Build/Release_)
     * `make install` : compiles the shared library if needed and copies it to _/usr/local/lib_; also copies the headers to _/usr/local/include_; (use `make install_lib` or `make install_header` for only one of the two); if third party trackers are enabled, their respective library files will be installed too;
 	    - this needs administrative (sudo) privilege; if not available, the variable `MTF_INSTALL_DIR` in the makefile can be modified to install elsewhere. This can be done either by editing the file itself or providing it with the make/cmake command as:  
