@@ -12,11 +12,12 @@
 #define MEX_GET_FRAME 2
 #define MEX_QUIT 3
 #define MEX_CREATE_TRACKER 4
-#define MEX_GET_REGION 5
-#define MEX_SET_REGION 6
-#define MEX_REMOVE_TRACKER 7
-#define MEX_REMOVE_TRACKERS 8
-#define MEX_IS_INITIALIZED 9
+#define MEX_CREATE_TRACKERS 5
+#define MEX_GET_REGION 6
+#define MEX_SET_REGION 7
+#define MEX_REMOVE_TRACKER 8
+#define MEX_REMOVE_TRACKERS 9
+#define MEX_IS_INITIALIZED 10
 
 using namespace std;
 
@@ -26,6 +27,7 @@ static std::map<std::string, const int> cmd_list = {
 	{ "quit", MEX_QUIT },
 	{ "get_frame", MEX_GET_FRAME },
 	{ "create_tracker", MEX_CREATE_TRACKER },
+	{ "create_trackers", MEX_CREATE_TRACKERS },
 	{ "get_region", MEX_GET_REGION },
 	{ "set_region", MEX_SET_REGION },
 	{ "remove_tracker", MEX_REMOVE_TRACKER },
@@ -279,12 +281,12 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		if(!readParams(mtf::utils::toString(prhs[1]))) {
 			mexErrMsgTxt("Parameters could not be parsed");
 		}
+
 		cv::Mat init_corners;
 		if(nrhs > 2) {
 			init_corners = mtf::utils::getCorners(prhs[2]);
 		} else {
-			init_corners.create(2, 4, CV_64FC1);
-			ObjectSelectorThread obj_sel_thread(input, init_corners, mex_live_init);
+			ObjectSelectorThread obj_sel_thread(input, 1, mex_live_init);
 			boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
 			try{
 				t.join();
@@ -296,6 +298,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 				//cout << "obj_sel_thread.corners:\n" << obj_sel_thread.getCorners() << "\n";
 				mexErrMsgTxt("Initial corners could not be obtained\n");
 			}
+			init_corners = obj_sel_thread.getCorners(0);
 		}
 
 		if(!createTracker(init_corners)) {
@@ -306,6 +309,59 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]){
 		}
 
 		*ret_val = _tracker_id;
+		return;
+	}
+	case MEX_CREATE_TRACKERS:
+	{
+		if(nrhs < 2){
+			mexErrMsgTxt("At least 2 input arguments are needed to create trackers.");
+		}
+		if(!mxIsChar(prhs[1])){
+			mexErrMsgTxt("The second input argument for creating tracker must be a string.");
+		}
+		if(nlhs != 2){
+			mexErrMsgTxt("2 output arguments (success, tracker_ids) are needed to create multiple trackers.");
+		}
+		*ret_val = 0;
+
+		if(!checkInput()){ return; }
+
+		if(!readParams(mtf::utils::toString(prhs[1]))) {
+			mexErrMsgTxt("Parameters could not be parsed");
+		}
+		ObjectSelectorThread obj_sel_thread(input, n_trackers, mex_live_init);
+		boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
+		try{
+			t.join();
+		} catch(boost::thread_interrupted) {
+			printf("Caught exception from object selector thread\n");
+		}
+		if(!obj_sel_thread.success) {
+			//cout << "init_corners:\n" << init_corners << "\n";
+			//cout << "obj_sel_thread.corners:\n" << obj_sel_thread.getCorners() << "\n";
+			mexErrMsgTxt("Initial corners could not be obtained\n");
+		}
+		FILE *multi_fid = nullptr;
+		std::vector<unsigned int> tracker_ids;
+		for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
+			if(n_trackers > 1){ multi_fid = readTrackerParams(multi_fid); }
+			if(!createTracker(obj_sel_thread.getCorners(tracker_id))) {
+				mexErrMsgTxt(cv::format("Tracker %d creation was unsuccessful\n", tracker_id).c_str());
+			}
+			if(nlhs > 1 && !getRegion(_tracker_id, plhs[1])) {
+				mexErrMsgTxt(cv::format("Tracker %d region could not be obtained\n", tracker_id).c_str());
+			}
+			tracker_ids.push_back(_tracker_id);
+		}
+		mwSize *_dims = new mwSize[1];
+		_dims[0] = n_trackers;
+		plhs[1] = mxCreateNumericArray(1, _dims, mxUINT32_CLASS, mxREAL);
+		unsigned int* out_ptr = (unsigned int*)mxGetPr(plhs[1]);
+		for(unsigned int _id = 0; _id < n_trackers; ++_id) {
+			out_ptr[_id] = tracker_ids[_id];
+		}
+		delete(_dims);
+		*ret_val = 1;
 		return;
 	}
 	case MEX_GET_REGION:

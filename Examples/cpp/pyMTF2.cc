@@ -255,7 +255,7 @@ static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds)
 		init_corners_cv.at<double>(0, 3) = temp.at<double>(1, 2);
 		init_corners_cv.at<double>(1, 3) = temp.at<double>(1, 3);
 	} else {
-		ObjectSelectorThread obj_sel_thread(input, init_corners_cv, py_live_init);
+		ObjectSelectorThread obj_sel_thread(input, 1, py_live_init);
 		boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
 		try{
 			t.join();
@@ -266,6 +266,7 @@ static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds)
 			PySys_WriteStdout("Initial corners could not be obtained\n");
 			return Py_BuildValue("i", 0);
 		}
+		init_corners_cv = obj_sel_thread.getCorners(0);
 	}
 	if(!createTracker(init_corners_cv)) {
 		PySys_WriteStdout("Tracker creation was unsuccessful\n");
@@ -298,14 +299,22 @@ static PyObject* createTrackers(PyObject* self, PyObject* args, PyObject *keywds
 		return Py_BuildValue("i", 0);
 	}
 	FILE *multi_fid = nullptr;
+	std::vector<unsigned int> tracker_ids;
 	for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
 		if(n_trackers > 1){ multi_fid = readTrackerParams(multi_fid); }
 		if(!createTracker(obj_sel_thread.getCorners(tracker_id))) {
 			PySys_WriteStdout("pyMTF2 :: tracker %d creation was unsuccessful\n", tracker_id);
 			return Py_BuildValue("i", 0);
 		}
+		tracker_ids.push_back(_tracker_id);
 	}
-	return Py_BuildValue("I", _tracker_id);
+	int dims[] = { n_trackers};
+	PyArrayObject *tracker_ids_py = (PyArrayObject *)PyArray_FromDims(1, dims, NPY_UINT);
+	unsigned int *out_ptr = (unsigned int*)tracker_ids_py->data;
+	for(unsigned int _id = 0; _id < n_trackers; ++_id) {
+		out_ptr[_id] = tracker_ids[_id];
+	}
+	return Py_BuildValue("O", tracker_ids_py);
 }
 
 static PyObject* getRegion(PyObject* self, PyObject* args) {
