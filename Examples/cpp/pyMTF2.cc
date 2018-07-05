@@ -19,6 +19,7 @@ static PyObject* isInitialized(PyObject* self, PyObject* args);
 static PyObject* quit(PyObject* self, PyObject* args);
 static PyObject* getFrame(PyObject* self, PyObject* args);
 static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds);
+static PyObject* createTrackers(PyObject* self, PyObject* args);
 static PyObject* getRegion(PyObject* self, PyObject* args);
 static PyObject* setRegion(PyObject* self, PyObject* args);
 static PyObject* removeTracker(PyObject* self, PyObject* args);
@@ -30,6 +31,7 @@ static PyMethodDef pyMTF2Methods[] = {
 	{ "quit", quit, METH_VARARGS },
 	{ "getFrame", getFrame, METH_VARARGS },
 	{ "createTracker", (PyCFunction)createTracker, METH_VARARGS | METH_KEYWORDS },
+	{ "createTrackers", createTrackers, METH_VARARGS },
 	{ "getRegion", getRegion, METH_VARARGS },
 	{ "setRegion", setRegion, METH_VARARGS },
 	{ "removeTracker", removeTracker, METH_VARARGS },
@@ -268,6 +270,40 @@ static PyObject* createTracker(PyObject* self, PyObject* args, PyObject *keywds)
 	if(!createTracker(init_corners_cv)) {
 		PySys_WriteStdout("Tracker creation was unsuccessful\n");
 		return Py_BuildValue("i", 0);
+	}
+	return Py_BuildValue("I", _tracker_id);
+}
+
+
+static PyObject* createTrackers(PyObject* self, PyObject* args, PyObject *keywds) {
+	char* _params = nullptr;
+	static char *kwlist[] = { "params", "corners", NULL };
+	if(!PyArg_ParseTupleAndKeywords(args, keywds, "|zO!", kwlist, &_params)) {
+		PySys_WriteStdout("\n----pyMTF2::createTracker: Input arguments could not be parsed----\n\n");
+		return Py_BuildValue("i", 0);
+	}
+	if(!readParams(_params)) {
+		PySys_WriteStdout("Parameters could not be parsed\n");
+		return Py_BuildValue("i", 0);
+	}
+	ObjectSelectorThread obj_sel_thread(input, n_trackers, py_live_init);
+	boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
+	try{
+		t.join();
+	} catch(boost::thread_interrupted) {
+		PySys_WriteStdout("Caught exception from object selector thread\n");
+	}
+	if(!obj_sel_thread.success) {
+		PySys_WriteStdout("Initial corners could not be obtained\n");
+		return Py_BuildValue("i", 0);
+	}
+	FILE *multi_fid = nullptr;
+	for(unsigned int tracker_id = 0; tracker_id < n_trackers; ++tracker_id) {
+		if(n_trackers > 1){ multi_fid = readTrackerParams(multi_fid); }
+		if(!createTracker(obj_sel_thread.getCorners(tracker_id))) {
+			PySys_WriteStdout("pyMTF2 :: tracker %d creation was unsuccessful\n", tracker_id);
+			return Py_BuildValue("i", 0);
+		}
 	}
 	return Py_BuildValue("I", _tracker_id);
 }

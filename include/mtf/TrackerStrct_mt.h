@@ -84,21 +84,21 @@ private:
 };
 
 struct ObjectSelectorThread{
-	ObjectSelectorThread(InputStructPtr &_input, cv::Mat &_corners, bool _live_init) : success(false),
-		input(_input), corners(_corners), live_init(_live_init){}
+	ObjectSelectorThread(InputStructPtr &_input, int _n_objects, bool _live_init) : success(false),
+		input(_input), n_objects(_n_objects), live_init(_live_init){}
 	void operator()(){
 		mtf::utils::ObjUtils obj_utils;
 #ifndef DISABLE_VISP
 		try{
 			if(live_init){
-				if(!obj_utils.selectObjectsVP(input.get(), 1,
+				if(!obj_utils.selectObjectsVP(input.get(), n_objects,
 					patch_size, line_thickness, write_objs, sel_quad_obj,
 					write_obj_fname.c_str())){
 					cout << "Object to be tracked could not be obtained.\n";
 					return;
 				}
 			} else {
-				if(!obj_utils.selectObjectsVP(input->getFrame(), 1,
+				if(!obj_utils.selectObjectsVP(input->getFrame(), n_objects,
 					patch_size, line_thickness, write_objs, sel_quad_obj,
 					write_obj_fname.c_str())){
 					cout << "Object to be tracked could not be obtained.\n";
@@ -110,7 +110,7 @@ struct ObjectSelectorThread{
 			//	cout << "Object to be tracked could not be obtained.\n";
 			//}
 		} catch(const mtf::utils::Exception &err){
-			cout << cv::format("Exception of type %s encountered while obtaining the object to track: %s\n",
+			cout << cv::format("Exception of type %s encountered while obtaining the objects to track: %s\n",
 				err.type(), err.what());
 			return;
 		}
@@ -134,15 +134,19 @@ struct ObjectSelectorThread{
 				err.type(), err.what());
 		}
 #endif
-		obj_utils.getObj().corners.copyTo(corners);
+		corners.resize(n_objects);
+		for(unsigned int obj_id = 0; obj_id < n_objects; ++obj_id) {
+			obj_utils.getObj(obj_id).corners.copyTo(corners[obj_id]);
+		}
 		success = true;
 		//cout << "ObjectSelectorThread :: corners: " << corners << "\n";
 	}
-	const cv::Mat& getCorners() const{ return corners; }
+	const cv::Mat& getCorners(unsigned int _id) const{ return corners[_id]; }
 	bool success;
 private:
 	InputStructPtr input;
-	cv::Mat corners;
+	std::vector<cv::Mat> corners;
+	int n_objects;
 	bool live_init;
 };
 
