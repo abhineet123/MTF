@@ -154,7 +154,7 @@ struct TrackerThread{
 	TrackerThread(Tracker &_tracker, PreProc &_pre_proc, const InputStructPtr &_input,
 		unsigned int id, std::shared_ptr<int> _is_running,
 		int _visualize, const char* module_name) : 
-		input(_input), pre_proc(_pre_proc), tracker(_tracker), 
+		input(_input), pre_proc(_pre_proc), tracker(_tracker), tracker_id(id),
 		is_running(_is_running), visualize(_visualize){
 		win_name = cv::format("%s :: %d", module_name, id);
 		proc_win_name = cv::format("%s (Pre-processed)", win_name.c_str());
@@ -209,8 +209,10 @@ struct TrackerThread{
 
 				if(visualize) {
 #ifndef DISABLE_VISP
+					
 					input->getFrame(disp_frame);
-					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), vpColor::red,
+
+					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), mtf::utils::ObjUtils().getColVp(tracker_id),
 						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
 					vpDisplay::display(disp_frame);
 					char pressed_key;
@@ -257,6 +259,7 @@ private:
 	PreProc pre_proc;
 	Tracker tracker;
 	std::shared_ptr<int> is_running;
+	int tracker_id;
 
 	int visualize;
 	string win_name, proc_win_name;

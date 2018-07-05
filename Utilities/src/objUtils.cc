@@ -606,6 +606,9 @@ namespace utils{
 #else
 		throw InvalidArgument("None of the window backends supported by ViSP are available");
 #endif 
+		int n_existing_objs = init_objects.size();
+		vpColor curr_col = getColVp(n_existing_objs);
+
 		ObjStruct new_obj;
 		vpImage<vpRGBa> hover_image(static_cast<int>(input->getHeight()),
 			static_cast<int>(input->getWidth()));
@@ -628,9 +631,12 @@ namespace utils{
 					int hover_width = static_cast<int>(abs(hover_point.get_j() - new_obj.min_point.x));
 					int hover_height = static_cast<int>(abs(hover_point.get_i() - new_obj.min_point.y));
 					vpDisplay::displayRectangle(hover_image, min_point, hover_width, hover_height, 
-						vpColor::red, false, line_thickness);
+						curr_col, false, line_thickness);
 				} else {
-					vpDisplay::displayPoint(hover_image, hover_point, vpColor::red, line_thickness);
+					vpDisplay::displayPoint(hover_image, hover_point, curr_col, line_thickness);
+				}
+				for(unsigned int obj_id = 0; obj_id < n_existing_objs; ++obj_id) {
+					mtf::utils::drawRegion(hover_image, init_objects[obj_id].corners, getColVp(obj_id), line_thickness);
 				}
 				vpDisplay::flush(hover_image);
 				vpDisplay::display(hover_image);
@@ -702,6 +708,9 @@ namespace utils{
 #else
 		throw InvalidArgument("None of the window backends supported by ViSP are available");
 #endif 
+		int n_existing_objs = init_objects.size();
+		vpColor curr_col = getColVp(n_existing_objs);
+
 		ObjStruct new_obj;
 		vpImage<vpRGBa> hover_image(static_cast<int>(input->getHeight()),
 			static_cast<int>(input->getWidth()));
@@ -723,14 +732,18 @@ namespace utils{
 
 				// draw new (incomplete) object
 				for(int pt_id = 0; pt_id < _clicked_point_count - 1; ++pt_id){
-					vpDisplay::displayLine(hover_image, clicked_pts[pt_id], clicked_pts[pt_id + 1], vpColor::red, line_thickness);
+					vpDisplay::displayLine(hover_image, clicked_pts[pt_id], clicked_pts[pt_id + 1], curr_col, line_thickness);
 				}
 				if(_clicked_point_count > 0){
-					vpDisplay::displayLine(hover_image, clicked_pts[_clicked_point_count - 1], hover_point, vpColor::red, line_thickness);
+					vpDisplay::displayLine(hover_image, clicked_pts[_clicked_point_count - 1], hover_point, curr_col, line_thickness);
 					if(_clicked_point_count == 3){
-						vpDisplay::displayLine(hover_image, clicked_pts[0], hover_point, vpColor::red, line_thickness);
+						vpDisplay::displayLine(hover_image, clicked_pts[0], hover_point, curr_col, line_thickness);
 					}
 				}
+				for(unsigned int obj_id = 0; obj_id < n_existing_objs; ++obj_id) {
+					mtf::utils::drawRegion(hover_image, init_objects[obj_id].corners, getColVp(obj_id), line_thickness);
+				}
+
 				vpDisplay::flush(hover_image);
 				vpDisplay::display(hover_image);
 				char pressed_key;
