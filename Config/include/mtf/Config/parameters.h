@@ -4023,9 +4023,12 @@ namespace mtf{
 			// a blank line signals the end of the current tracker's parameters
 			// a line starting with # is treated as comment and ignored
 			if(!fid){
-				const char *fname = (config_dir + "/multi.cfg").c_str();
-				printf("Opening file: %s...\n", fname);
-				if(!(fid = fopen(fname, "r"))){
+				if(!fs::is_directory(config_dir)) {
+					return nullptr;
+				}
+				std::string fname = config_dir + "/multi.cfg";
+				printf("Opening file: %s...\n", fname.c_str());
+				if(!(fid = fopen(fname.c_str(), "r"))){
 					printf("readTrackerParams :: Error: File could not be opened\n");
 					return nullptr;
 				}

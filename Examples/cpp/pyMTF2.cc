@@ -287,7 +287,7 @@ static PyObject* createTrackers(PyObject* self, PyObject* args) {
 		return Py_BuildValue("");
 	}
 
-	PySys_WriteStdout("done reading parameters\n");
+	//PySys_WriteStdout("done reading parameters\n");
 
 	ObjectSelectorThread obj_sel_thread(input, n_trackers, py_live_init);
 	boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
