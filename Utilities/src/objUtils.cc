@@ -294,7 +294,7 @@ namespace utils{
 			}
 			
 		}
-		if(obj_cols.empty()) {
+		if(obj_cols_vp.empty()) {
 			obj_cols_vp.push_back(vpColor::red);
 			obj_cols_vp.push_back(vpColor::green);
 			obj_cols_vp.push_back(vpColor::blue);
@@ -607,7 +607,10 @@ namespace utils{
 		throw InvalidArgument("None of the window backends supported by ViSP are available");
 #endif 
 		int n_existing_objs = init_objects.size();
+		printf("n_existing_objs: %d\n", n_existing_objs);
+
 		vpColor curr_col = getColVp(n_existing_objs);
+		printf("curr_col: %d, %d, %d\n", curr_col.R, curr_col.G, curr_col.B);
 
 		ObjStruct new_obj;
 		vpImage<vpRGBa> hover_image(static_cast<int>(input->getHeight()),
@@ -826,6 +829,7 @@ namespace utils{
 					return false;
 				}
 			} else{
+				printf("selecting rectangular object...\n");
 				if(!addRectObjectVP(input, window_title, line_thickness, patch_size)){
 					return false;
 				}
