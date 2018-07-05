@@ -797,6 +797,7 @@ namespace utils{
 	bool ObjUtils::selectObjectsVP(InputBase *input, int no_of_objs,
 		int patch_size, int line_thickness, int write_objs, bool sel_quad_obj,
 		const char* filename) {
+		printf("ObjUtils::selectObjectsVP...\n");
 		stringstream temp_stream;
 		if(no_of_objs > 1) {
 			temp_stream << "Please select " << no_of_objs << " objects to track";

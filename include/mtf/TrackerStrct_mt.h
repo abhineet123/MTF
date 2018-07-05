@@ -167,7 +167,8 @@ struct TrackerThread{
 		int frame_id = 0;
 
 		if(visualize) {
-#ifndef DISABLE_VISP			
+#ifndef DISABLE_VISP	
+			vpColor obj_col = mtf::utils::ObjUtils().getColVp(tracker_id);
 			// Select one of the available video-devices
 #if defined VISP_HAVE_X11
 			display.reset(new vpDisplayX);
@@ -189,9 +190,14 @@ struct TrackerThread{
 			cv::namedWindow(win_name, cv::WINDOW_AUTOSIZE);
 			if(show_proc_img) {
 				cv::namedWindow(proc_win_name, cv::WINDOW_AUTOSIZE);
-			}
+			}			
 #endif
 		}
+#ifndef DISABLE_VISP	
+		vpColor obj_col = mtf::utils::ObjUtils().getColVp(tracker_id - 1);
+#else
+		cv::Scalar obj_col = mtf::utils::ObjUtils().getCol(tracker_id - 1);
+#endif
 		(*is_running) = 1;
 		while(input->isValid()){
 			if(frame_id == input->getFrameID()){
@@ -208,11 +214,9 @@ struct TrackerThread{
 				tracker->update();
 
 				if(visualize) {
-#ifndef DISABLE_VISP
-					
+#ifndef DISABLE_VISP					
 					input->getFrame(disp_frame);
-
-					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), mtf::utils::ObjUtils().getColVp(tracker_id),
+					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), obj_col,
 						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
 					vpDisplay::display(disp_frame);
 					char pressed_key;
@@ -223,7 +227,7 @@ struct TrackerThread{
 					}
 #else
 					cv::Mat disp_frame = input->getFrame().clone();
-					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), cv::Scalar(0, 0, 255),
+					mtf::utils::drawRegion(disp_frame, tracker->getRegion(), obj_col,
 						line_thickness, tracker->name.c_str(), 0.50, show_corner_ids, 1 - show_corner_ids);
 					imshow(win_name, disp_frame);
 					if(show_proc_img){

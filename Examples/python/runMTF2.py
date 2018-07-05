@@ -13,7 +13,7 @@ if __name__ == '__main__':
     show_tracking_output = 1
 
     # MTF parameters
-    config_dir = '../../Config'
+    config_dir = '../Config'
     db_root_path = '../../../Datasets'
     pipeline = 'c'
     img_source = 'u'
@@ -69,14 +69,15 @@ if __name__ == '__main__':
 
     if n_trackers > 1:
         tracker_ids = pyMTF2.createTrackers(param_str)
+        if tracker_ids is None:
+            raise SystemError('Tracker creation was unsuccessful')
         print('Created {} trackers with tracker_ids: {} '.format(n_trackers, tracker_ids))
     else:
         tracker_ids = []
         tracker_id = pyMTF2.createTracker(param_str)
         if not tracker_id:
             raise SystemError('Tracker creation was unsuccessful')
-        else:
-            print('Tracker created successfully')
+        print('Tracker created successfully')
         tracker_ids.append(tracker_id)
 
     if show_tracking_output:
@@ -88,7 +89,7 @@ if __name__ == '__main__':
         cv2.namedWindow(window_name)
 
     tracker_ids = list(tracker_ids)
-    
+
     while True:
         # print('getting frame')
         src_img = pyMTF2.getFrame()

@@ -280,12 +280,15 @@ static PyObject* createTrackers(PyObject* self, PyObject* args) {
 	char* _params = nullptr;
 	if(!PyArg_ParseTuple(args, "|z", &_params)) {
 		PySys_WriteStdout("\n----pyMTF2::createTrackers: input argument could not be parsed----\n\n");
-		return Py_BuildValue("i", 0);
+		return Py_BuildValue("");
 	}
 	if(!readParams(_params)) {
 		PySys_WriteStdout("Parameters could not be parsed\n");
-		return Py_BuildValue("i", 0);
+		return Py_BuildValue("");
 	}
+
+	PySys_WriteStdout("done reading parameters\n");
+
 	ObjectSelectorThread obj_sel_thread(input, n_trackers, py_live_init);
 	boost::thread t = boost::thread{ boost::ref(obj_sel_thread) };
 	try{
@@ -295,7 +298,7 @@ static PyObject* createTrackers(PyObject* self, PyObject* args) {
 	}
 	if(!obj_sel_thread.success) {
 		PySys_WriteStdout("Initial corners could not be obtained\n");
-		return Py_BuildValue("i", 0);
+		return Py_BuildValue("");
 	}
 	FILE *multi_fid = nullptr;
 	std::vector<unsigned int> tracker_ids;
@@ -303,11 +306,11 @@ static PyObject* createTrackers(PyObject* self, PyObject* args) {
 		if(n_trackers > 1){ multi_fid = readTrackerParams(multi_fid); }
 		if(!createTracker(obj_sel_thread.getCorners(tracker_id))) {
 			PySys_WriteStdout("pyMTF2 :: tracker %d creation was unsuccessful\n", tracker_id);
-			return Py_BuildValue("i", 0);
+			return Py_BuildValue("");
 		}
 		tracker_ids.push_back(_tracker_id);
 	}
-	int dims[] = { n_trackers};
+	int dims[] = { static_cast<int>(n_trackers)};
 	PyArrayObject *tracker_ids_py = (PyArrayObject *)PyArray_FromDims(1, dims, NPY_UINT);
 	unsigned int *out_ptr = (unsigned int*)tracker_ids_py->data;
 	for(unsigned int _id = 0; _id < n_trackers; ++_id) {

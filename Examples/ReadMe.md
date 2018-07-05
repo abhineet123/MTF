@@ -129,6 +129,12 @@ It provides the following functions that closely mirror those of `mexMTF2` (`[]`
     - `tracker_id` is an unsigned integer that starts at 1 and increments by 1 every time `pyMTF.create` is called
     - `tracker_id=0` indicates that the tracker creation/initialization failed.
 	
+-   `tracker_ids = pyMTF2.createTrackers([params])`
+    - creates and initializes multiple new trackers
+	- number of trackers is specified through the `n_trackers` MTF parameter within `params`
+    - user will be asked to select the objects to track interactively
+    - `tracker_ids` is a 1D array of unsigned integers and will be `None` if any tracker creation/initialization failed.	
+	
 -   `corners = pyMTF2.getRegion(tracker_id)`
     - returns the latest location of the given tracker
     - `corners` is a 2x4 matrix of type `numpy.float64` and will be `None` if tracker has stopped working	
