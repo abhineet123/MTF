@@ -13,7 +13,7 @@ if __name__ == '__main__':
     show_tracking_output = 1
 
     # MTF parameters
-    config_dir = '../Config'
+    config_dir = '../../Config'
     db_root_path = '../../../Datasets'
     pipeline = 'c'
     img_source = 'u'
@@ -58,7 +58,9 @@ if __name__ == '__main__':
     # thickness of the bounding box lines drawn on the image
     thickness = 2
     # tracker location drawn in red
-    result_colors = ('red', 'green', 'blue', 'magenta', 'cyan', 'purple')
+    result_colors = ('red', 'green', 'blue',  'cyan', 'orange_red', 'yellow', 'magenta',
+                     'purple', 'orange', 'white', 'black')
+
     n_cols = len(result_colors)
 
     # initialize input pipeline

@@ -607,10 +607,9 @@ namespace utils{
 		throw InvalidArgument("None of the window backends supported by ViSP are available");
 #endif 
 		int n_existing_objs = init_objects.size();
-		printf("n_existing_objs: %d\n", n_existing_objs);
-
 		vpColor curr_col = getColVp(n_existing_objs);
-		printf("curr_col: %d, %d, %d\n", curr_col.R, curr_col.G, curr_col.B);
+		//printf("n_existing_objs: %d\n", n_existing_objs);
+		//printf("curr_col: %d, %d, %d\n", curr_col.R, curr_col.G, curr_col.B);
 
 		ObjStruct new_obj;
 		vpImage<vpRGBa> hover_image(static_cast<int>(input->getHeight()),
@@ -800,7 +799,7 @@ namespace utils{
 	bool ObjUtils::selectObjectsVP(InputBase *input, int no_of_objs,
 		int patch_size, int line_thickness, int write_objs, bool sel_quad_obj,
 		const char* filename) {
-		printf("ObjUtils::selectObjectsVP...\n");
+		//printf("ObjUtils::selectObjectsVP...\n");
 		stringstream temp_stream;
 		if(no_of_objs > 1) {
 			temp_stream << "Please select " << no_of_objs << " objects to track";
