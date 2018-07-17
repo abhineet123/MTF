@@ -79,8 +79,12 @@ endif()
 option(WITH_TIMING "Show timing information during compilation" OFF)
 
 set(MTF_INSTALL_DIR ${MTF_INSTALL_DIR_DEFAULT} CACHE PATH "Directory to install the library and header files")
-set(MTF_LIBS ${OpenCV_LIBS} ${Boost_LIBRARIES})
-set(MTF_INCLUDE_DIRS include)
+set(MTF_LIBS "" CACHE STRING "Any additional libraries to link against that are missed by the cmake process")
+set(MTF_INCLUDE_DIRS "" CACHE STRING    "Any additional header directories that are missed by the cmake process")
+
+set(MTF_LIBS ${MTF_LIBS} ${OpenCV_LIBS} ${Boost_LIBRARIES})
+set(MTF_INCLUDE_DIRS ${MTF_INCLUDE_DIRS} include)
+
 set(MTF_EXT_INCLUDE_DIRS ${OpenCV_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIR} ${Boost_INCLUDE_DIRS})
 set(MTF_SRC "")
 set(MTF_SPECIFIC_SRC "")

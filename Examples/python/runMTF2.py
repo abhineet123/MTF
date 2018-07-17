@@ -21,7 +21,7 @@ if __name__ == '__main__':
     seq_id = 16
     seq_fmt = 'jpg'
     init_frame_id = 1
-    py_visualize = 0
+    py_visualize = 1
     n_trackers = 1
 
     param_str = 'db_root_path {:s}'.format(db_root_path)
