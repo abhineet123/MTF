@@ -16,6 +16,9 @@ Date:	November 18'th, 2007
 #if CV_MAJOR_VERSION == 3
 #define cvCvtPixToPlane cvSplit
 #define cvCvtPlaneToPix cvMerge
+#ifndef CV_RGB
+#define CV_RGB( r, g, b )  cvScalar( (b), (g), (r), 0 )
+#endif
 #endif
 //
 // global variable required for the EMD calculation
