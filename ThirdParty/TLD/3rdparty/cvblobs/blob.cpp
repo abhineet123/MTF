@@ -16,10 +16,8 @@ MODIFICATIONS (Modification, Author, Date):
 #ifdef _WIN32
 #pragma warning(disable:4244)
 #endif
-#if CV_MAJOR_VERSION == 3
 #ifndef CV_RGB
 #define CV_RGB( r, g, b )  cvScalar( (b), (g), (r), 0 )
-#endif
 #endif
 #include "blob.h"
 
