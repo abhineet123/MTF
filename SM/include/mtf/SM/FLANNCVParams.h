@@ -19,8 +19,8 @@ struct FLANNCVParams{
 
 	static const char* toString(IdxType index_type);
 
-	const SearchParamsPtr& getSearchParams();
-	const IndexParamsPtr& getIndexParams();
+	const SearchParamsPtr getSearchParams();
+	const IndexParamsPtr getIndexParams();
 
 	void printParams();
 
