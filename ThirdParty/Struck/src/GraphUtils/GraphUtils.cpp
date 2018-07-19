@@ -27,7 +27,11 @@ using namespace std;
 #ifndef _WIN32
 #define sprintf_s(buffer, buffer_size, stringbuffer, ...) (sprintf(buffer, stringbuffer, __VA_ARGS__))
 #endif
-
+#if CV_MAJOR_VERSION == 3
+#ifndef CV_RGB
+#define CV_RGB( r, g, b )  cvScalar( (b), (g), (r), 0 )
+#endif
+#endif
 
 
 //------------------------------------------------------------------------------
