@@ -174,6 +174,9 @@
 #define cv_format(...) cv::format(__VA_ARGS__)
 #else
 #define cv_format(...) cv::format(__VA_ARGS__).c_str()
+#ifndef CV_RGB
+#define CV_RGB( r, g, b )  cvScalar( (b), (g), (r), 0 )
+#endif
 #endif
 
 using namespace std;
