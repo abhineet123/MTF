@@ -38,15 +38,15 @@ target_include_directories(runMTF PUBLIC  ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCLUDE_
 target_link_libraries(runMTF mtf ${MTF_LIBS})
 install(TARGETS runMTF RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT exe)
 add_custom_target(exe DEPENDS runMTF)
-if(NOT WIN32)
-	add_custom_target(install_exe
-	  ${CMAKE_COMMAND}
-	  -D "CMAKE_INSTALL_COMPONENT=exe"
-	  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-	   DEPENDS runMTF
-	  )
-	add_custom_target(mtfe DEPENDS runMTF install_exe)
-endif()
+# if(NOT WIN32)
+	# add_custom_target(install_exe
+	  # ${CMAKE_COMMAND}
+	  # -D "CMAKE_INSTALL_COMPONENT=exe"
+	  # -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+	   # DEPENDS runMTF
+	  # )
+	# add_custom_target(mtfe DEPENDS runMTF install_exe)
+# endif()
 
 
 add_executable(trackUAVTrajectory Examples/cpp/trackUAVTrajectory.cc)
@@ -56,15 +56,15 @@ target_include_directories(trackUAVTrajectory PUBLIC  ${MTF_INCLUDE_DIRS} ${MTF_
 target_link_libraries(trackUAVTrajectory mtf ${MTF_LIBS})
 install(TARGETS trackUAVTrajectory RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT uav)
 add_custom_target(uav DEPENDS trackUAVTrajectory)
-if(NOT WIN32)
-	add_custom_target(install_uav
-	  ${CMAKE_COMMAND}
-	  -D "CMAKE_INSTALL_COMPONENT=uav"
-	  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-	   DEPENDS trackUAVTrajectory
-	  )
-	add_custom_target(mtfu DEPENDS trackUAVTrajectory install_uav)
-endif()
+# if(NOT WIN32)
+	# add_custom_target(install_uav
+	  # ${CMAKE_COMMAND}
+	  # -D "CMAKE_INSTALL_COMPONENT=uav"
+	  # -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+	   # DEPENDS trackUAVTrajectory
+	  # )
+	# add_custom_target(mtfu DEPENDS trackUAVTrajectory install_uav)
+# endif()
 
 if(FEAT_ENABLED)	
 	add_executable(trackMarkers Examples/cpp/trackMarkers.cc)
@@ -74,17 +74,17 @@ if(FEAT_ENABLED)
 	target_link_libraries(trackMarkers mtf ${MTF_LIBS})
 	install(TARGETS trackMarkers RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT qr)
 	add_custom_target(qr DEPENDS trackMarkers)
-	if(NOT WIN32)
-		add_custom_target(install_qr
-		  ${CMAKE_COMMAND}
-		  -D "CMAKE_INSTALL_COMPONENT=qr"
-		  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-		   DEPENDS trackMarkers
-		  )
-		add_custom_target(mtfq DEPENDS trackMarkers install_qr)
-		set(EX_INSTALL_TARGET_NAMES ${EX_INSTALL_TARGET_NAMES} install_qr) 
-		set(EX_COMBINED_TARGET_NAMES ${EX_COMBINED_TARGET_NAMES} mtfq) 
-	endif()
+	# if(NOT WIN32)
+		# add_custom_target(install_qr
+		  # ${CMAKE_COMMAND}
+		  # -D "CMAKE_INSTALL_COMPONENT=qr"
+		  # -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+		   # DEPENDS trackMarkers
+		  # )
+		# add_custom_target(mtfq DEPENDS trackMarkers install_qr)
+		# set(EX_INSTALL_TARGET_NAMES ${EX_INSTALL_TARGET_NAMES} install_qr) 
+		# set(EX_COMBINED_TARGET_NAMES ${EX_COMBINED_TARGET_NAMES} mtfq) 
+	# endif()
 	set(EX_TARGET_NAMES ${EX_TARGET_NAMES} trackMarkers) 	
 endif()
 
@@ -95,15 +95,15 @@ target_include_directories(extractPatch PUBLIC  ${MTF_INCLUDE_DIRS} ${MTF_EXT_IN
 target_link_libraries(extractPatch mtf ${MTF_LIBS})
 install(TARGETS extractPatch RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT patch)
 add_custom_target(patch DEPENDS extractPatch)
-if(NOT WIN32)
-	add_custom_target(install_patch
-	  ${CMAKE_COMMAND}
-	  -D "CMAKE_INSTALL_COMPONENT=patch"
-	  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-	   DEPENDS extractPatch
-	  )
-	add_custom_target(mtfpa DEPENDS extractPatch install_patch)
-endif()
+# if(NOT WIN32)
+	# add_custom_target(install_patch
+	  # ${CMAKE_COMMAND}
+	  # -D "CMAKE_INSTALL_COMPONENT=patch"
+	  # -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+	   # DEPENDS extractPatch
+	  # )
+	# add_custom_target(mtfpa DEPENDS extractPatch install_patch)
+# endif()
 
 add_executable(generateSyntheticSeq Examples/cpp/generateSyntheticSeq.cc)
 target_compile_definitions(generateSyntheticSeq PUBLIC ${MTF_DEFINITIONS})
@@ -112,15 +112,15 @@ target_include_directories(generateSyntheticSeq PUBLIC  ${MTF_INCLUDE_DIRS} ${MT
 target_link_libraries(generateSyntheticSeq mtf ${MTF_LIBS})
 install(TARGETS generateSyntheticSeq RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT syn)
 add_custom_target(syn DEPENDS generateSyntheticSeq)
-if(NOT WIN32)
-	add_custom_target(install_syn
-	  ${CMAKE_COMMAND}
-	  -D "CMAKE_INSTALL_COMPONENT=syn"
-	  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-	   DEPENDS generateSyntheticSeq
-	  )
-	add_custom_target(mtfs DEPENDS generateSyntheticSeq install_syn)
-endif()
+# if(NOT WIN32)
+	# add_custom_target(install_syn
+	  # ${CMAKE_COMMAND}
+	  # -D "CMAKE_INSTALL_COMPONENT=syn"
+	  # -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+	   # DEPENDS generateSyntheticSeq
+	  # )
+	# add_custom_target(mtfs DEPENDS generateSyntheticSeq install_syn)
+# endif()
 
 add_executable(createMosaic Examples/cpp/createMosaic.cc)
 target_compile_definitions(createMosaic PUBLIC ${MTF_DEFINITIONS})
@@ -129,15 +129,15 @@ target_include_directories(createMosaic PUBLIC  ${MTF_INCLUDE_DIRS} ${MTF_EXT_IN
 target_link_libraries(createMosaic mtf ${MTF_LIBS})
 install(TARGETS createMosaic RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT mos)
 add_custom_target(mos DEPENDS createMosaic)
-if(NOT WIN32)
-	add_custom_target(install_mos
-	  ${CMAKE_COMMAND}
-	  -D "CMAKE_INSTALL_COMPONENT=mos"
-	  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-	   DEPENDS createMosaic
-	  )
-	add_custom_target(mtfm DEPENDS createMosaic install_mos)
-endif()
+# if(NOT WIN32)
+	# add_custom_target(install_mos
+	  # ${CMAKE_COMMAND}
+	  # -D "CMAKE_INSTALL_COMPONENT=mos"
+	  # -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+	   # DEPENDS createMosaic
+	  # )
+	# add_custom_target(mtfm DEPENDS createMosaic install_mos)
+# endif()
 
 add_executable(registerSeq Examples/cpp/registerSeq.cc)
 target_compile_definitions(registerSeq PUBLIC ${MTF_DEFINITIONS})
@@ -146,15 +146,15 @@ target_include_directories(registerSeq PUBLIC  ${MTF_INCLUDE_DIRS} ${MTF_EXT_INC
 target_link_libraries(registerSeq mtf ${MTF_LIBS})
 install(TARGETS registerSeq RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT reg)
 add_custom_target(reg DEPENDS registerSeq)
-if(NOT WIN32)
-	add_custom_target(install_reg
-	  ${CMAKE_COMMAND}
-	  -D "CMAKE_INSTALL_COMPONENT=reg"
-	  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-	   DEPENDS registerSeq
-	  )
-	add_custom_target(mtfr DEPENDS registerSeq install_reg)
-endif()
+# if(NOT WIN32)
+	# add_custom_target(install_reg
+	  # ${CMAKE_COMMAND}
+	  # -D "CMAKE_INSTALL_COMPONENT=reg"
+	  # -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+	   # DEPENDS registerSeq
+	  # )
+	# add_custom_target(mtfr DEPENDS registerSeq install_reg)
+# endif()
 
 if(WITH_PY)
 	find_package(PythonLibs ${PY_VER})
@@ -174,17 +174,17 @@ if(WITH_PY)
 			target_link_libraries(pyMTF mtf ${MTF_LIBS} ${PYTHON_LIBRARIES} ${PYTHON_LIBS})	
 			install(TARGETS pyMTF LIBRARY DESTINATION ${MTF_PY_INSTALL_DIR} COMPONENT py)
 			add_custom_target(py DEPENDS pyMTF)
-			if(NOT WIN32)
-				add_custom_target(install_py
-				  ${CMAKE_COMMAND}
-				  -D "CMAKE_INSTALL_COMPONENT=py"
-				  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-				   DEPENDS pyMTF
-				  )
-				  add_custom_target(mtfp DEPENDS pyMTF install_py)
-				  set(EX_INSTALL_TARGET_NAMES ${EX_INSTALL_TARGET_NAMES} install_py)			  
-				  set(EX_COMBINED_TARGET_NAMES ${EX_COMBINED_TARGET_NAMES} mtfp)			  
-			endif()
+			# if(NOT WIN32)
+				# add_custom_target(install_py
+				  # ${CMAKE_COMMAND}
+				  # -D "CMAKE_INSTALL_COMPONENT=py"
+				  # -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+				   # DEPENDS pyMTF
+				  # )
+				  # add_custom_target(mtfp DEPENDS pyMTF install_py)
+				  # set(EX_INSTALL_TARGET_NAMES ${EX_INSTALL_TARGET_NAMES} install_py)			  
+				  # set(EX_COMBINED_TARGET_NAMES ${EX_COMBINED_TARGET_NAMES} mtfp)			  
+			# endif()
 			set(EX_TARGET_NAMES ${EX_TARGET_NAMES} pyMTF)
 
 			
@@ -202,17 +202,17 @@ if(WITH_PY)
 			target_link_libraries(pyMTF2 mtf ${MTF_LIBS} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${PYTHON_LIBS})	
 			install(TARGETS pyMTF2 LIBRARY DESTINATION ${MTF_PY_INSTALL_DIR} COMPONENT py2)
 			add_custom_target(py2 DEPENDS pyMTF2)
-			if(NOT WIN32)
-				add_custom_target(install_py2
-				  ${CMAKE_COMMAND}
-				  -D "CMAKE_INSTALL_COMPONENT=py2"
-				  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-				   DEPENDS pyMTF2
-				  )
-				  add_custom_target(mtfp2 DEPENDS pyMTF2 install_py2)
-				  set(EX_INSTALL_TARGET_NAMES ${EX_INSTALL_TARGET_NAMES} install_py2)			  
-				  set(EX_COMBINED_TARGET_NAMES ${EX_COMBINED_TARGET_NAMES} mtfp2)			  
-			endif()
+			# if(NOT WIN32)
+				# add_custom_target(install_py2
+				  # ${CMAKE_COMMAND}
+				  # -D "CMAKE_INSTALL_COMPONENT=py2"
+				  # -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+				   # DEPENDS pyMTF2
+				  # )
+				  # add_custom_target(mtfp2 DEPENDS pyMTF2 install_py2)
+				  # set(EX_INSTALL_TARGET_NAMES ${EX_INSTALL_TARGET_NAMES} install_py2)			  
+				  # set(EX_COMBINED_TARGET_NAMES ${EX_COMBINED_TARGET_NAMES} mtfp2)			  
+			# endif()
 			set(EX_TARGET_NAMES ${EX_TARGET_NAMES} pyMTF2)				
 		# else()
 			# message(STATUS "Incompatible version of Python library found so pyMTF is disabled: " ${PYTHONLIBS_VERSION_STRING})
@@ -245,17 +245,17 @@ if(WITH_MEX)
 		LIBRARY DESTINATION ${MTF_MEX_INSTALL_DIR}
 		COMPONENT mex)
 		add_custom_target(mex DEPENDS mexMTF)
-		if(NOT WIN32)
-			add_custom_target(install_mex
-			  ${CMAKE_COMMAND}
-			  -D "CMAKE_INSTALL_COMPONENT=mex"
-			  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-			   DEPENDS mexMTF
-			  )
-			add_custom_target(mtfx DEPENDS mexMTF install_mex)			
-			set(EX_INSTALL_TARGET_NAMES ${EX_INSTALL_TARGET_NAMES} install_mex)	
-			set(EX_COMBINED_TARGET_NAMES ${EX_COMBINED_TARGET_NAMES} mtfx)			  
-		endif()
+		# if(NOT WIN32)
+			# add_custom_target(install_mex
+			  # ${CMAKE_COMMAND}
+			  # -D "CMAKE_INSTALL_COMPONENT=mex"
+			  # -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+			   # DEPENDS mexMTF
+			  # )
+			# add_custom_target(mtfx DEPENDS mexMTF install_mex)			
+			# set(EX_INSTALL_TARGET_NAMES ${EX_INSTALL_TARGET_NAMES} install_mex)	
+			# set(EX_COMBINED_TARGET_NAMES ${EX_COMBINED_TARGET_NAMES} mtfx)			  
+		# endif()
 		set(EX_TARGET_NAMES ${EX_TARGET_NAMES} mexMTF)
 		
 		find_package(Boost REQUIRED COMPONENTS thread)
@@ -270,17 +270,17 @@ if(WITH_MEX)
 			LIBRARY DESTINATION ${MTF_MEX_INSTALL_DIR}
 			COMPONENT mex2)
 			add_custom_target(mex2 DEPENDS mexMTF2)
-			if(NOT WIN32)
-				add_custom_target(install_mex2
-				  ${CMAKE_COMMAND}
-				  -D "CMAKE_INSTALL_COMPONENT=mex2"
-				  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-				   DEPENDS mexMTF2
-				  )
-				add_custom_target(mtfx2 DEPENDS mexMTF2 install_mex2)			
-				set(EX_INSTALL_TARGET_NAMES ${EX_INSTALL_TARGET_NAMES} install_mex2)	
-				set(EX_COMBINED_TARGET_NAMES ${EX_COMBINED_TARGET_NAMES} mtfx2)			  
-			endif()
+			# if(NOT WIN32)
+				# add_custom_target(install_mex2
+				  # ${CMAKE_COMMAND}
+				  # -D "CMAKE_INSTALL_COMPONENT=mex2"
+				  # -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+				   # DEPENDS mexMTF2
+				  # )
+				# add_custom_target(mtfx2 DEPENDS mexMTF2 install_mex2)			
+				# set(EX_INSTALL_TARGET_NAMES ${EX_INSTALL_TARGET_NAMES} install_mex2)	
+				# set(EX_COMBINED_TARGET_NAMES ${EX_COMBINED_TARGET_NAMES} mtfx2)			  
+			# endif()
 			set(EX_TARGET_NAMES ${EX_TARGET_NAMES} mexMTF2)
 		else(Boost_FOUND)
 			message(STATUS "Boost thread module not found")	
@@ -311,17 +311,19 @@ target_include_directories(diagnoseMTF PUBLIC ${MTF_INCLUDE_DIRS} ${MTF_EXT_INCL
 target_link_libraries(diagnoseMTF mtf_diag mtf ${MTF_LIBS})
 install(TARGETS diagnoseMTF RUNTIME DESTINATION ${MTF_EXEC_INSTALL_DIR} COMPONENT diag)
 add_custom_target(diag DEPENDS diagnoseMTF)
-if(NOT WIN32)
-	add_custom_target(install_diag
-	  ${CMAKE_COMMAND}
-	  -D "CMAKE_INSTALL_COMPONENT=diag"
-	  -P "${MTF_BINARY_DIR}/cmake_install.cmake"
-	   DEPENDS diagnoseMTF
-	  )
-	add_custom_target(mtft DEPENDS diagnoseMTF mtf_diag install_diag install_diag_lib)
-endif() 
+# if(NOT WIN32)
+	# add_custom_target(install_diag
+	  # ${CMAKE_COMMAND}
+	  # -D "CMAKE_INSTALL_COMPONENT=diag"
+	  # -P "${MTF_BINARY_DIR}/cmake_install.cmake"
+	   # DEPENDS diagnoseMTF
+	  # )
+	# add_custom_target(mtft DEPENDS diagnoseMTF mtf_diag install_diag install_diag_lib)
+# endif() 
+
 # add_custom_target(all DEPENDS ${EX_TARGET_NAMES})
-if(NOT WIN32)
-	add_custom_target(install_all DEPENDS ${EX_INSTALL_TARGET_NAMES})
-	add_custom_target(mtfall DEPENDS ${EX_COMBINED_TARGET_NAMES})
-endif() 
+
+# if(NOT WIN32)
+	# add_custom_target(install_all DEPENDS ${EX_INSTALL_TARGET_NAMES})
+	# add_custom_target(mtfall DEPENDS ${EX_COMBINED_TARGET_NAMES})
+# endif() 
