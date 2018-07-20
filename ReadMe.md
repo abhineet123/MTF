@@ -319,8 +319,8 @@ All steps are identical for adding a new Search Method (SM) too except the last 
 
 
 
-Example: Implementing a minimalistic AM that can be used with Nearest Neighbour search method:
-----------------------------------------------------------------------------------------------
+Example: Implementing a minimalistic AM that can be used with Nearest Neighbour SM:
+-----------------------------------------------------------------------------------
 
 You need to create a new derived class from AppearanceModel.
 Implement the following functions:
@@ -330,8 +330,8 @@ Implement the following functions:
 3. `getDistFeat`: returns a pointer to an array containing the distance feature vector computed by the above function. There is also an overloaded variant of updateDistFeat  that takes a pointer as input and directly writes this feature vector to the pre-allocated array pointed to by this pointer.
 4. distance functor (`operator()`): computes a scalar that measures the dissimilarity or distance between two feature vectors (obtained using the previous two functions).
 
-Example: Implementing a minimalistic AM that can be used with Particle Filter search method:
---------------------------------------------------------------------------------------------
+Example: Implementing a minimalistic AM that can be used with Particle Filter SM:
+---------------------------------------------------------------------------------
 
 You need to create a new derived class from AppearanceModel.
 Implement the following functions:
