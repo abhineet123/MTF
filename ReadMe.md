@@ -212,6 +212,11 @@ there is probably something wrong with the OpenCV installation. Reinstalling tha
 * A compile time error similar to this:  
 `error: no matching function for call to vpDisplay::init(vpImage<vpRGBa>&, int, int, std::string&)`  
 probably indicates that an outdated version of ViSP is installed. This can be resolved by either updating it to 3.0.1 or newer or using `-DWITH_VISP=0`/`vp=0` cmake/make option to disable ViSP.
+* A compile time error similar to this:  
+`undefined reference to LZ4_compress_HC_continue`  
+occurs when the cmake module for one of the dependencies is not configured properly and does not return one or more libraries it needs to be linked against (`liblz4` in this case).
+    * This can be resolved by adding `-D MTF_LIBS=<name_of_missing_library>` (in this case: `-D MTF_LIBS=lz4`) to the cmake command.
+    * The corresponding library might also need to be installed, for instance, by using `sudo apt-get install liblz4-dev`
 
 * **Using MTF on Macintosh Systems**
 	* if make build system is used, some third party modules might not compile successfully if cmake uses clang instead of gcc as the default compiler; in such cases compiling with `lt=0` to disable all third party modules is the best option.
