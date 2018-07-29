@@ -65,11 +65,11 @@ static std::map<int, TrackerStruct> trackers;
 static unsigned int _tracker_id = 0;
 
 static PyObject* create(PyObject* self, PyObject* args) {
-	char* config_root_dir;
+	char* config_root_dir = nullptr, *cmd_args = nullptr;
 	PyArrayObject *img_py, *in_corners_py;
 
-	if(!PyArg_ParseTuple(args, "O!O!|z", &PyArray_Type, &img_py,
-		&PyArray_Type, &in_corners_py, &config_root_dir)) {
+	if(!PyArg_ParseTuple(args, "O!O!|zz", &PyArray_Type, &img_py,
+		&PyArray_Type, &in_corners_py, &config_root_dir, &cmd_args)) {
 		PySys_WriteStdout("\n----pyMTF::create: Input arguments could not be parsed----\n\n");
 		return Py_BuildValue("i", 0);
 	}
@@ -97,6 +97,7 @@ static PyObject* create(PyObject* self, PyObject* args) {
 	}
 	config_dir = std::string(config_root_dir);
 	if(!readParams(0, nullptr)){ return Py_BuildValue("i", 0); }
+	if(!readParams(cmd_args)){ return Py_BuildValue("i", 0); }
 
 	PySys_WriteStdout("*******************************\n");
 	PySys_WriteStdout("Using parameters:\n");

@@ -4279,7 +4279,7 @@ namespace mtf{
 			return true;
 		}
 		inline bool readParams(const char* param_str){
-			if(!param_str) {
+			if(!param_str || !strlen(param_str)) {
 				return true;
 			}
 			std::vector<char*> fargv;
