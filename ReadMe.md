@@ -217,6 +217,11 @@ probably indicates that an outdated version of ViSP is installed. This can be re
 occurs when the cmake module for one of the dependencies is not configured properly and does not return one or more libraries it needs to be linked against (`liblz4` in this case).
     * This can be resolved by adding `-D MTF_LIBS=<name_of_missing_library>` (in this case: `-D MTF_LIBS=lz4`) to the cmake command.
     * The corresponding library might also need to be installed, for instance, by using `sudo apt-get install liblz4-dev`
+* if a run time error similar to this:  
+`undefined symbol: _ZN3cmt7Matcher10initializeERKSt6vectorIN2cv6Point_IfEESaIS4_EENS2_3MatERKS1_IiSaIiEES9_S4_`  
+suddenly occurs or running `runMTF` causes segmentation fault with no messages **right after installing ROS**, it is probably because MTF is linking with an incorrect version of OpenCV installed by ROS.
+    * The only known solution guaranteed to work is to uninstall either the original or the ROS version of OpenCV and then recompile MTF.
+    * Possible ways to have both versions installed and have MTF link with the correct one are suggested [here](https://stackoverflow.com/questions/29479379/opencv-linking-problems-with-ros). These have not been tested with MTF so might not work.	
 
 * **Using MTF on Macintosh Systems**
 	* if make build system is used, some third party modules might not compile successfully if cmake uses clang instead of gcc as the default compiler; in such cases compiling with `lt=0` to disable all third party modules is the best option.
