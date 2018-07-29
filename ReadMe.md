@@ -112,7 +112,7 @@ Installation:
 	The make system might be used by developers/contributors as it can potentially offer a finer level of control. Note, however, that it is not tested as well as the cmake system so is not guaranteed to work in all configurations or be up to date with the latest changes.
 		
 * **Advanced Installation**  
-Following are commands and switches for both make and cmake systems to customize the installation or disable parts of the library:
+Following are commands and switches for both make and cmake systems to customize the installation by disabling parts of the library or to only compile specific components. It also contains general information about the Python and Matlab wrappers and example applications. Not all of the make commands may work with the cmake system.
     * `make` or `make mtf` : compiles the shared library (_libmtf.so_) to the build directory (_Build/Release_)
     * `make install` : compiles the shared library if needed and copies it to _/usr/local/lib_; also copies the headers to _/usr/local/include_; (use `make install_lib` or `make install_header` for only one of the two); if third party trackers are enabled, their respective library files will be installed too;
 	    - this needs administrative (sudo) privilege; if not available, the variable `MTF_INSTALL_DIR` in the makefile can be modified to install elsewhere. This can be done either by editing the file itself or providing it with the make/cmake command as:  
@@ -122,15 +122,15 @@ Following are commands and switches for both make and cmake systems to customize
     * `make exe`/`make install_exe` : compile/install the main example file _Examples/cpp/runMTF.cc_ to create an executable called `runMTF` that uses this library to track objects. 
 	    - library should be installed before running this, otherwise linking will not succeed
 		- installation folder is _/usr/local/bin_ by default; this needs administrative privilege too - change `MTF_INSTALL_DIR` as above if this is not available
-    * **`make mtfi` : all of the above - recommended command that compiles and installs the library and the executable**
-    * **`make py`/`make install_py`** (**`make py2`/`make install_py2`**) : compile/install the Python interface to MTF (or its multi threaded version) - this creates a Python module called _pyMTF_ (_pyMTF2_) that serves as a front end for using MTF from Python.
+    * `make mtfi` : all of the above 
+    * `make py`/`make install_py` (`make py2`/`make install_py2`) : compile/install the **Python interface** to MTF (or its multi threaded version) - this creates a Python module called _pyMTF_ (_pyMTF2_) that serves as a front end for using MTF from Python.
 	    - usage of this module is demonstrated in _Examples/python/runMTF.py_ (_runMTF2.py_) and function specification is in the ReadMe in the _Examples_ folder 
 		- supports both Python 2.7 and 3.x but only a particular version is built at a time - this can be specified using the `PY_VER`/`py_ver` cmake/make variable (set to 2.7 by default) (e.g. `-D PY_VER=3.5` for Python 3.5)
 		- if multiple Python versions are installed on the system, cmake might not be able to find the desired one even if `PY_VER` is provided; in this case Python header and library locations must be provided though the variables `PYTHON_INCLUDE_DIR` and `PYTHON_LIBRARY` (e.g. `-D PYTHON_INCLUDE_DIR=/usr/include/python3.5 -D PYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.5m.so` for Python 3.5)
 		- neither cmake nor make systems currently support inferring the correct install location for _pyMTF_ from Python library/header paths so this must be specified through `MTF_PY_INSTALL_DIR` (in _Examples.mak/cmake_) if using a custom Python version (defaults to _/usr/local/lib/python2.7/dist-packages/_)
 		- refer to _cmake/cmake.md_ for an example cmake command to compile _pyMTF_ with Python 3.5;
 		- _pyMTF2_ needs ViSP to be installed and enabled during compilation for its interactive operations
-    * **`make mex`/`make install_mex`** (**`make mex2`/`make install_mex2`**) : compile/install the MATLAB interface to MTF (or its multi threaded version) - this creates a MATLAB module called _mexMTF_ (_mexMTF2_) that serves as a front end for using MTF from MATLAB.
+    * `make mex`/`make install_mex` (`make mex2`/`make install_mex2`) : compile/install the **MATLAB interface** to MTF (or its multi threaded version) - this creates a MATLAB module called _mexMTF_ (_mexMTF2_) that serves as a front end for using MTF from MATLAB.
 	    - set `MATLAB_DIR` variable in _Examples.mak_ to the root of the MATLAB installation folder 
 		- usage of this module is demonstrated in _Examples/matlab/runMTF.m_ (_runMTF2.m_) and function specification is in the ReadMe in the _Examples_ folder
 	    -  installation location can be specified through `MTF_MEX_INSTALL_DIR` in _Examples.mak/cmake_ (defaults to _<MATLAB_DIR>/toolbox/local_) 
@@ -143,7 +143,7 @@ Following are commands and switches for both make and cmake systems to customize
     * `make qr`/`make install_qr` : compile/install an application called `trackMarkers` that automatically detects one or more markers in the input stream and starts tracking them
 	    - this uses the Feature tracker so will only compile if that is enabled (see below)
 	    - this reads marker images from `Data/Markers` folder by default; this can be changed by adjusting `qr_root_dir` in `Config/examples.cfg` where the names of marker files and the number of markers can also be specified along with some other parameters;
-    * **`make all`/`make install_all`** : compile/install all example applications that come with MTF along with the Python and Matlab interfaces
+    * `make all`/`make install_all` : compile/install all example applications that come with MTF along with the Python and Matlab interfaces
 	* `make app app=<APPLICATION_NAME>`: build a custom application that uses MTF with its source code located in `<APPLICATION_NAME>.cc`; the compiled executable goes in the build directory;
 	    - location of the source file (<APPLICATION_NAME>.cc) can be specified through `MTF_APP_SRC_DIR` (defaults to _Examples/cpp_)
 	    - `make mtfa` will install it too - installation location can be specified through `MTF_APP_INSTALL_DIR` (defaults to the current folder)
