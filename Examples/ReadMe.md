@@ -171,7 +171,7 @@ Usage:
 from mtf import mtf
 cap = mtf.VideoCapture(cap_id, cap_args)
 img_width = cap.get(3) # or cap.get('width')
-img_height = cap.get(3) # or cap.get('height')
+img_height = cap.get(4) # or cap.get('height')
 while True:
 	ret, img = cap.read()
 	if not ret:
