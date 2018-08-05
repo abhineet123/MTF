@@ -3,9 +3,6 @@ import os
 
 class VideoCapture():
     def __init__(self, cap_src='', cap_args=''):
-        self.open(cap_src, cap_args)
-
-    def open(self, cap_src='', cap_args=''):
         if cap_src:
             try:
                 mtf_args = 'img_source u'

@@ -159,5 +159,36 @@ It provides the following functions that closely mirror those of `mexMTF2` (`[]`
 -   `success = pyMTF2.quit()`
     - delete the input pipeline and all existing trackers
 	
+mtf.VideoCapture
+----------------
+
+This is a convenience wrapper for the input pipeline in `pyMTF2` that provides an an interface similar to _cv2.VideoCapture_ but can be used, through ViSP pipeline, to access USB and firewire cameras with custom resolution and other settings that are unavailable in _cv2_.
+It can be installed by running `python setup.py install` or `python3 setup.py install` from _Examples/python_ folder.
+
+Usage:
+
+```
+from mtf import mtf
+cap = mtf.VideoCapture(cap_id, cap_args)
+img_width = cap.get(3) # or cap.get('width')
+img_height = cap.get(3) # or cap.get('height')
+while True:
+	ret, img = cap.read()
+	if not ret:
+		print('Image could not be read')
+		break
+cap.release()		
+```
+-   `cap_id` can be an integer for camera, a directory containing an image sequence (only `image%06d` format is supported), a video file or empty string if source is specified directly through `cap_args`.
+
+-   `cap_args` is a string containing pairwise arguments for passing directly to `pyMTF2`
+
+- both `cap_id` and `mtf_args` are optional and keyword based calling is also supported
+
+
+
+
+
+	
 	
 
