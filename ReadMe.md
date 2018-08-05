@@ -130,7 +130,7 @@ Following are commands and switches for both make and cmake systems to customize
 		- neither cmake nor make systems currently support inferring the correct install location for _pyMTF_ from Python library/header paths so this must be specified through `MTF_PY_INSTALL_DIR` (in _Examples.mak/cmake_) if using a custom Python version (defaults to _/usr/local/lib/python2.7/dist-packages/_)
 		- refer to _cmake/cmake.md_ for an example cmake command to compile _pyMTF_ with Python 3.5;
 		- _pyMTF2_ needs ViSP to be installed and enabled during compilation for its interactive operations
-		- there is also an additional wrapper for _pyMTF2_ input pipeline called _mtf.VideoCapture that provides an interface similar to _cv2.VideoCapture but can be used, through ViSP pipeline, to access USB and firewire cameras with custom resolution and other settings that are unavailable in _cv2_.
+		- there is also an additional wrapper for _pyMTF2_ input pipeline called _mtf.VideoCapture_ that provides an interface similar to _cv2.VideoCapture_ but can be used, through ViSP pipeline, to access USB and firewire cameras with custom resolution and other settings that are unavailable in _cv2_.
 		It can be installed by running `python setup.py install` or `python3 setup.py install` from _Examples/python_ folder.
     * `make mex`/`make install_mex` (`make mex2`/`make install_mex2`) : compile/install the **MATLAB interface** to MTF (or its multi threaded version) - this creates a MATLAB module called _mexMTF_ (_mexMTF2_) that serves as a front end for using MTF from MATLAB.
 	    - set `MATLAB_DIR` variable in _Examples.mak_ to the root of the MATLAB installation folder 
