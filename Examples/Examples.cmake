@@ -202,7 +202,7 @@ if(WITH_PY)
 			target_link_libraries(pyMTF2 mtf ${MTF_LIBS} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} ${PYTHON_LIBS})	
 			install(TARGETS pyMTF2 LIBRARY DESTINATION ${MTF_PY_INSTALL_DIR} COMPONENT py2)
 			add_custom_target(py2 DEPENDS pyMTF2)
-			install(CODE "execute_process(COMMAND python setup.py install -f --prefix=${MTF_PY_INSTALL_DIR} WORKING_DIRECTORY python)")
+			# install(CODE "execute_process(COMMAND python setup.py install -f --prefix=${MTF_PY_INSTALL_DIR} WORKING_DIRECTORY python)")
 			install(DIRECTORY ${MTF_INCLUDE_DIRS}
 				DESTINATION ${MTF_HEADER_INSTALL_DIR}
 				COMPONENT header
