@@ -76,7 +76,7 @@ namespace mtf{
 		unsigned int n_trackers = 1;
 		bool track_single_obj = false;
 		char pipeline = 'c';
-		char img_source = 'j';
+		char img_source = 'u';
 		double img_resize_factor = 1.0;
 		int input_buffer_size = 10;
 		int buffer_id = 0;
