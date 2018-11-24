@@ -928,9 +928,9 @@ TrackerBase *getTracker(const char *sm_type, const char *ssm_type,
 //! main function for creating trackers
 inline TrackerBase *getTracker(const char *sm_type, const char *am_type,
 	const char *ssm_type, const char *ilm_type){
-#ifdef DISABLE_TEMPLATED_SM
-	enable_nt = 1;
-#endif
+//#ifdef DISABLE_TEMPLATED_SM
+//	enable_nt = 1;
+//#endif
 	// check for 3rd party trackers
 	TrackerBase *third_party_tracker = getTracker(sm_type);
 	if(third_party_tracker)

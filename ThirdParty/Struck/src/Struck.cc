@@ -21,7 +21,7 @@ namespace struck{
 		name = "struck";
 		printf("Using Struck tracker with:\n");
 		std::cout << conf;
-		scaleW = scaleH = conf.resize_factor;
+		scaleW = scaleH = static_cast<float>(conf.resize_factor);
 	}
 	void Struck::setImage(const cv::Mat &img){
 		curr_img = img;		
