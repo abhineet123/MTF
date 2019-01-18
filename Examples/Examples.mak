@@ -199,7 +199,7 @@ endif
 
 
 .PHONY: exe uav mos syn py diag gt patch qr app mtfi mtfp mtfc mtfu mtfd mtfs mtfm
-.PHONY: install_exe install_uav install_mos install_patch install_qr install_rec install_syn install_py install_diag install_app install_all
+.PHONY: install_exe install_uav install_mos install_patch install_qr install_rec install_syn install_py install_diag install_app install_all install_mex2 install_mex
 .PHONY: run
 
 exe: ${BUILD_DIR}/${MTF_EXE_NAME}
