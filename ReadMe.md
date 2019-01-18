@@ -49,6 +49,7 @@ Installation:
     * [Caffe](http://caffe.berkeleyvision.org/) is needed for some optional modules including FMaps, Regnet and GOTURN if these are enabled during compilation
 	* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see [compile time switches](#compile-time-switches)).
 	    - **Not recommended** as Xvision is very difficult to install and configure on modern systems
+	* Additional installation instructions for Ubuntu 18.04 with Matlab 2018b are available [here](Docs/MTF_setup_Ubuntu18_Matlab2018b.md). These may contain solutions for some issues on newer platforms that are not documented here.
 * **Prerequisites in Windows**
 	* Using CMake with Visual Studio (**Recommended**)
 		- Install a recent version of Visual Studio
