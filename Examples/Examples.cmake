@@ -161,7 +161,7 @@ if(WITH_PY)
 	find_package(NumPy)
 	if(PYTHONLIBS_FOUND AND PYTHON_NUMPY_FOUND)
 		execute_process (COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())" OUTPUT_VARIABLE MTF_PY_INSTALL_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
-		message(STATUS "MDP_PY_INSTALL_DIR: ${MDP_PY_INSTALL_DIR}")
+		message(STATUS "MTF_PY_INSTALL_DIR: ${MTF_PY_INSTALL_DIR}")
 
 		# if(PYTHONLIBS_VERSION_STRING VERSION_LESS 3.0.0)
 			add_library(pyMTF MODULE Examples/cpp/pyMTF.cc)
