@@ -292,7 +292,9 @@ These apply to all of the above commands and the equivalent cmake options, where
 <a id="windows__1"></a>
 ### Windows
 
-Using Visual Studio 2017 or newer to build OpenCV 3.x.x might lead to an error like `Found OpenCV Windows Pack but it has not binaries compatible with your configuration` in cmake. This can be resolved using the following steps. These are for 64 bit build of OpenCV 3.4.1 with Visual Studio 2019 but adapting for other versions should be straightforward.
+Using Visual Studio 2017 or newer to build OpenCV 3.x.x might lead to a cmake error like `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`. 
+This can be resolved using the following steps which are for OpenCV 3.4.1 64 bit build with Visual Studio 2019 but adapting for other versions should be straightforward.
+
 1. add 
 
       elseif(MSVC_VERSION MATCHES "^192[0-9]$")
