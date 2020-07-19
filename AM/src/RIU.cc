@@ -119,7 +119,7 @@ void RIU::cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dp){
 }
 void RIU::cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dp,
 	const MatrixXd &d2I0_dp2){
-	int p_size = d2f_dp2.rows();
+	int p_size = static_cast<int>(d2f_dp2.rows());
 	assert(d2f_dp2.cols() == p_size);
 	assert(d2I0_dp2.rows() == p_size * p_size);
 
@@ -195,7 +195,7 @@ void RIU::cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp){
 }
 void RIU::cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dp,
 	const MatrixXd &d2It_dp2){
-	int p_size = d2f_dp2.rows();
+	int p_size = static_cast<int>(d2f_dp2.rows());
 	assert(d2f_dp2.cols() == p_size);
 	assert(d2It_dp2.rows() == p_size * p_size);
 

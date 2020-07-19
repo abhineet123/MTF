@@ -192,7 +192,7 @@ void SSDBase::cmptDifferenceOfJacobians(RowVectorXd &df_dp_diff,
 
 void SSDBase::cmptILMHessian(MatrixXd &d2f_dp2, const MatrixXd &dI_dpssm,
 	const double* I, const double* df_dg){
-	int ssm_state_size = dI_dpssm.cols();
+	int ssm_state_size = static_cast<int>(dI_dpssm.cols());
 
 	assert(d2f_dp2.rows() == state_size + ssm_state_size);
 	assert(d2f_dp2.cols() == state_size + ssm_state_size);
@@ -312,7 +312,7 @@ void SSDBase::cmptSumOfHessians(MatrixXd &d2f_dp2_sum,
 
 void SSDBase::cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dpssm,
 	const MatrixXd &d2I0_dpssm2){
-	int ssm_state_size = d2f_dp2.rows();
+	int ssm_state_size = static_cast<int>(d2f_dp2.rows());
 	assert(d2f_dp2.cols() == ssm_state_size + state_size);
 	assert(d2I0_dpssm2.rows() == ssm_state_size * ssm_state_size && d2I0_dpssm2.cols() == n_channels*n_pix);
 
@@ -343,7 +343,7 @@ void SSDBase::cmptInitHessian(MatrixXd &d2f_dp2, const MatrixXd &dI0_dpssm,
 
 void SSDBase::cmptCurrHessian(MatrixXd &d2f_dp2, const MatrixXd &dIt_dpssm,
 	const MatrixXd &d2It_dpssm2){
-	int ssm_state_size = d2f_dp2.rows();
+	int ssm_state_size = static_cast<int>(d2f_dp2.rows());
 
 	assert(d2f_dp2.cols() == ssm_state_size + state_size);
 	assert(d2It_dpssm2.rows() == ssm_state_size * ssm_state_size && d2It_dpssm2.cols() == n_channels * n_pix);
@@ -377,7 +377,7 @@ void SSDBase::cmptSumOfHessians(MatrixXd &d2f_dp2_sum,
 	const MatrixXd &dI0_dpssm, const MatrixXd &dIt_dpssm,
 	const MatrixXd &d2I0_dpssm2, const MatrixXd &d2It_dpssm2){
 
-	int ssm_state_size = d2f_dp2_sum.rows();
+	int ssm_state_size = static_cast<int>(d2f_dp2_sum.rows());
 	assert(d2f_dp2_sum.cols() == ssm_state_size);
 	assert(d2I0_dpssm2.rows() == ssm_state_size * ssm_state_size && d2I0_dpssm2.cols() == n_channels * n_pix);
 	assert(d2It_dpssm2.rows() == ssm_state_size * ssm_state_size && d2It_dpssm2.cols() == n_channels * n_pix);

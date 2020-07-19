@@ -548,7 +548,7 @@ namespace utils{
 		const char* filename) {
 		stringstream temp_stream;
 		if(no_of_objs > 1) {
-			temp_stream << "Please select " << no_of_objs << " objects to track";
+			temp_stream << "Select " << no_of_objs << " objects to track";
 			if(patch_size > 0){
 				temp_stream << " by clicking at the center of each to add a " << patch_size << "x" << patch_size << " patch";
 			} else if(sel_quad_obj){
@@ -557,7 +557,7 @@ namespace utils{
 				temp_stream << " by clicking at two opposite corners of each";
 			}
 		} else {
-			temp_stream << "Please select the object to track";
+			temp_stream << "Select the object to track";
 			if(patch_size > 0){
 				temp_stream << " by clicking at its center to add a " << patch_size << "x" << patch_size << " patch";
 			} else if(sel_quad_obj){
@@ -802,7 +802,7 @@ namespace utils{
 		//printf("ObjUtils::selectObjectsVP...\n");
 		stringstream temp_stream;
 		if(no_of_objs > 1) {
-			temp_stream << "Please select " << no_of_objs << " objects to track";
+			temp_stream << "Select " << no_of_objs << " objects to track";
 			if(patch_size > 0){
 				temp_stream << " by clicking at the center of each to add a " << patch_size << "x" << patch_size << " patch";
 			} else if(sel_quad_obj){
@@ -811,7 +811,7 @@ namespace utils{
 				temp_stream << " by clicking at two opposite corners of each";
 			}
 		} else {
-			temp_stream << "Please select the object to track";
+			temp_stream << "Select the object to track";
 			if(patch_size > 0){
 				temp_stream << " by clicking at its center to add a " << patch_size << "x" << patch_size << " patch";
 			} else if(sel_quad_obj){

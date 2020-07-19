@@ -77,7 +77,7 @@ namespace nt{
 			curr_img_uchar.create(am->getCurrImg().rows, am->getCurrImg().cols, CV_8UC3);
 			if(params.show_patch){
 				curr_patch_eig.resize(am->getPatchSize());	
-				printf("curr_patch_eig size: %ld\n", curr_patch_eig.size());
+				printf("curr_patch_eig size: %ld\n", static_cast<long>(curr_patch_eig.size()));
 				int type_f, type_u;
 				if(am->getCurrImg().type() == CV_32FC1){
 					printf("Using single channel images\n");

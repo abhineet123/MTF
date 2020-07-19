@@ -1,6 +1,9 @@
 project(struck)
 
 cmake_minimum_required(VERSION 2.6)
+if(CMAKE_MAJOR_VERSION EQUAL 3)
+	cmake_policy(SET CMP0074 NEW)
+endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
 

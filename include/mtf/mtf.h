@@ -268,7 +268,7 @@ template< class AMType, class SSMType >
 bool getPFk(vector<SearchMethod<AMType, SSMType>*> &trackers,
 	const typename AMType::ParamType *am_params = nullptr,
 	const typename SSMType::ParamType *ssm_params = nullptr){
-	int n_pfk_ssm_sigma_ids = pfk_ssm_sigma_ids.size();
+	int n_pfk_ssm_sigma_ids = static_cast<int>(pfk_ssm_sigma_ids.size());
 	if(n_pfk_ssm_sigma_ids < pfk_n_layers){
 		printf("Insufficient sigma IDs specified for %d layer PF: %d\n",
 			pfk_n_layers, n_pfk_ssm_sigma_ids);
@@ -927,7 +927,7 @@ TrackerBase *getTracker(const char *sm_type, const char *ssm_type,
 }
 //! main function for creating trackers
 inline TrackerBase *getTracker(const char *sm_type, const char *am_type,
-	const char *ssm_type, const char *ilm_type){
+	const char *ssm_type, const char *ilm_type=""){
 //#ifdef DISABLE_TEMPLATED_SM
 //	enable_nt = 1;
 //#endif
@@ -1759,7 +1759,7 @@ inline bool getNNk(vector<TrackerBase*> &trackers, const char *am_type,
 	}
 	//! take the last 'nnk_n_layers' ssm_sigma_ids added to nnk_ssm_sigma_ids so that the ones specified 
 	//! in modules.cfg can be completely overridden at runtime by command line arguments that are parsed last
-	unsigned int start_id = nnk_ssm_sigma_ids.size() - static_cast<unsigned int>(nnk_n_layers);
+	unsigned int start_id = static_cast<unsigned int>(nnk_ssm_sigma_ids.size()) - static_cast<unsigned int>(nnk_n_layers);
 	for(unsigned int layer_id = start_id; layer_id < nnk_ssm_sigma_ids.size(); ++layer_id){
 		nn_ssm_sigma_ids = nnk_ssm_sigma_ids[layer_id];
 		trackers.push_back(getSM("nn", am_type, ssm_type, ilm_type));

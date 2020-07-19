@@ -211,7 +211,7 @@ void Diagnostics::initialize(const cv::Mat &corners,
 	corners.copyTo(init_corners);
 
 	if(params.show_corners){
-		init_img_cv_uchar.create(init_img.rows(), init_img.cols(), CV_8UC3);
+		init_img_cv_uchar.create(static_cast<int>(init_img.rows()), static_cast<int>(init_img.cols()), CV_8UC3);
 		init_img_cv.convertTo(init_img_cv_uchar, init_img_cv_uchar.type());
 		drawCurrCorners(init_img_cv_uchar);
 		cv::namedWindow(init_img_win_name);

@@ -36,7 +36,8 @@ Installation:
     * [OpenCV](http://opencv.org/) should be installed.
 		- comprehensive testing has only been done with OpenCV 2.4.13 and 3.3.0; 
 		- 2.4.x is recommended for widest compatibility as rare issues with OpenCV 3.x have been known to prevent successful compilation with some configurations (see [Compile/Runtime Notes](#compileruntime-notes) section below)
-		- 3.3.x is recommended for widest functionality
+		- 3.3.x or 3.4.x is recommended for widest functionality
+		- 4.x.x is **not** supported
 		- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) / [contrib](https://github.com/opencv/opencv_contrib) module should be [installed too](http://stackoverflow.com/a/31097788) if the corresponding feature detectors and descriptors (SIFT and SURF) are to be available in the feature tracker
     * [Boost](http://www.boost.org/) should be installed
     * [FLANN](http://www.cs.ubc.ca/research/flann/) should be installed for the NN search method
@@ -54,7 +55,7 @@ Installation:
 	* Using CMake with Visual Studio (**Recommended**)
 		- Install a recent version of Visual Studio
 			- the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine; 
-			- it seems that the `OpenCVConfig.cmake` file that comes with the latest version of OpenCV simply does not recognize Visual C++ 2017 so cmake might not be able to find it and instead exit with the erroneous message: `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`; a similar issue is exhibited by ViSP so it is best to use 2015 or older versions of Visual Studio.		
+			- it seems that the `OpenCVConfig.cmake` file that comes with the latest version of OpenCV simply does not recognize Visual C++ 2017 so cmake might not be able to find it and instead exit with the erroneous message: `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`; a similar issue is exhibited by ViSP so it is best to use 2015 or older versions of Visual Studio; a possible way to resolve this issue is in the [Compile/Runtime Notes](#compileruntime-notes) section if a newer version must be used.		
 			- the freely available [Express/Community edition](https://www.visualstudio.com/vs/visual-studio-express/) can be used too
 		- Set `EIGEN3_ROOT`, `EIGEN3_DIR` and `EIGEN3_ROOT_DIR` [environment variables](http://www.computerhope.com/issues/ch000549.htm) to the folder containing the Eigen header files
 		    - this folder should contain the sub folders `Eigen` and `unsupported` and a file called `signature_of_eigen3_matrix_library`
@@ -189,6 +190,21 @@ Following are commands and switches for both make and cmake systems to customize
 
 Compile/Runtime Notes:
 ----------------------
+* Using Visual Studio 2017 or newer to build OpenCV 3.x.x might lead to an error like `Found OpenCV Windows Pack but it has not binaries compatible with your configuration` in cmake. This can be resolved using the following steps. These are for 64 bit build of OpenCV 3.4.1 with Visual Studio 2019 but adapting for other versions should be straightforward.
+    * add 
+```
+  elseif(MSVC_VERSION MATCHES "^192[0-9]$")
+    set(OpenCV_RUNTIME vc16)
+```
+right after
+```
+  elseif(MSVC_VERSION EQUAL 1900)
+    set(OpenCV_RUNTIME vc14)
+  elseif(MSVC_VERSION MATCHES "^191[0-9]$")
+    set(OpenCV_RUNTIME vc15)
+```
+in `OpenCVConfig.cmake`.
+    * move bin, lib and include folders to `x64/vc16/` after creating the same.
 * if an error like `cannot find -l<name of library>` (for instance `cannot find -lhdf5` or `cannot find -lmtf`) occurs at compile time, location of the corresponding library should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables in the **.bashrc** file. 
     * For instance HDF5 installs in _/usr/local/hdf5/lib_ by default so  following commands can be run to add its path there:  
 	`echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc`  

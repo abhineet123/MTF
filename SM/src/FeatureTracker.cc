@@ -1176,7 +1176,7 @@ void FeatureTracker<SSM>::matchKeyPoints() {
 			}
 		}
 	}
-	n_good_key_pts = curr_pts.size();
+	n_good_key_pts = static_cast<int>(curr_pts.size());
 	if(params.debug_mode){
 		printf("n_good_key_pts: %d\n", n_good_key_pts);
 	}

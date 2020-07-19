@@ -142,7 +142,7 @@ void SSIM::updateCurrGrad(){
 }
 
 void SSIM::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jacobian){
-	int ssm_state_size = init_hessian.rows();
+	int ssm_state_size = static_cast<int>(init_hessian.rows());
 	assert(init_hessian.cols() == ssm_state_size);
 
 	double a_diff = 2.0 * curr_pix_mean / patch_size;
@@ -186,7 +186,7 @@ void SSIM::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jaco
 
 void SSIM::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jacobian,
 	const MatrixXd &init_pix_hessian){
-	int ssm_state_size = init_hessian.rows();
+	int ssm_state_size = static_cast<int>(init_hessian.rows());
 	assert(init_hessian.cols() == ssm_state_size);
 	assert(init_pix_hessian.rows() == ssm_state_size * ssm_state_size);
 
@@ -198,7 +198,7 @@ void SSIM::cmptInitHessian(MatrixXd &init_hessian, const MatrixXd &init_pix_jaco
 }
 
 void SSIM::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacobian){
-	int ssm_state_size = curr_hessian.rows();
+	int ssm_state_size = static_cast<int>(curr_hessian.rows());
 	assert(curr_hessian.cols() == ssm_state_size);
 
 	double a_diff = 2.0 * init_pix_mean / patch_size;
@@ -255,7 +255,7 @@ void SSIM::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jaco
 
 void SSIM::cmptCurrHessian(MatrixXd &curr_hessian, const MatrixXd &curr_pix_jacobian,
 	const MatrixXd &curr_pix_hessian){
-	int ssm_state_size = curr_hessian.rows();
+	int ssm_state_size = static_cast<int>(curr_hessian.rows());
 	assert(curr_hessian.cols() == ssm_state_size);
 	assert(curr_pix_hessian.rows() == ssm_state_size * ssm_state_size);
 

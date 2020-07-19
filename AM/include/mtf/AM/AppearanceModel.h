@@ -193,7 +193,8 @@ public:
 	/** analogous to cmptDifferenceOfJacobians except for computing the mean of the current and initial Hessians */
 	virtual void cmptSumOfHessians(MatrixXd &d2f_dp2_sum,
 		const MatrixXd &dI0_dpssm, const MatrixXd &dIt_dpssm){
-		int pssm_size = dIt_dpssm.cols();
+		int pssm_size = static_cast<int>(dIt_dpssm.cols());
+
 		assert(d2f_dp2_sum.rows() == pssm_size && d2f_dp2_sum.cols() == pssm_size);
 		MatrixXd d2f_dp2_0(pssm_size, pssm_size);
 		cmptInitHessian(d2f_dp2_0, dI0_dpssm);
@@ -206,7 +207,7 @@ public:
 	virtual void cmptSumOfHessians(MatrixXd &d2f_dp2_sum,
 		const MatrixXd &dI0_dpssm, const MatrixXd &dIt_dpssm,
 		const MatrixXd &d2I0_dpssm2, const MatrixXd &d2It_dpssm2){
-		int pssm_size = dIt_dpssm.cols();
+		int pssm_size = static_cast<int>(dIt_dpssm.cols());
 		assert(d2f_dp2_sum.rows() == pssm_size && d2f_dp2_sum.cols() == pssm_size);
 		MatrixXd d2f_dp2_0(pssm_size, pssm_size);
 		cmptInitHessian(d2f_dp2_0, dI0_dpssm, d2I0_dpssm2);

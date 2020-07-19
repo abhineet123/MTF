@@ -34,12 +34,12 @@ namespace utils{
 	public:
 		InputParams(const InputParams *_params = nullptr);
 		InputParams(
-			char _img_source,
-			string _dev_name,
-			string _dev_fmt,
-			string _dev_path,
-			int _n_buffers,
-			bool _invert_seq);
+			char _img_source='u',
+			string _dev_name="",
+			string _dev_fmt="",
+			string _dev_path="",
+			int _n_buffers=10,
+			bool _invert_seq=false);
 		char img_source;
 		string dev_name;
 		string dev_fmt;
