@@ -5,6 +5,10 @@ Welcome to the home of **Modular Tracking Framework (MTF)** !
 <!-- MarkdownTOC -->
 
 - [Introduction](#introductio_n_)
+	- [Documentation](#documentation_)
+	- [Implementation](#implementatio_n_)
+	- [Platforms](#platforms_)
+	- [License and citing](#license_and_citing_)
 - [Prerequisites](#prerequisites_)
 	- [General](#general_)
 	- [Windows](#windows_)
@@ -56,6 +60,9 @@ It utilizes a modular decomposition of trackers in this domain wherein each trac
     *  **Illumination Model (ILM)**: [GB](http://www.ncbi.nlm.nih.gov/pubmed/18988945), [PGB](http://ieeexplore.ieee.org/document/4270018/) and [RBF](http://ieeexplore.ieee.org/document/4270018/)
 3. **State Space Model (SSM)**: [Spline](http://www.hpl.hp.com/techreports/Compaq-DEC/CRL-94-1.html) (50+ DOF), [TPS](http://dl.acm.org/citation.cfm?id=66134) (50+ DOF), [Homography](https://en.wikipedia.org/wiki/Homography) (8 DOF), [Affine](https://en.wikipedia.org/wiki/Affine_transformation) (6 DOF), ASRT (Anisotropic Scaling, Rotation and Translation - 5 DOF ), [Similitude](https://en.wikipedia.org/wiki/Similarity_%28geometry%29) (4 DOF), AST (Anisotropic Scaling and Translation - 4 DOF), [Isometry](http://mathworld.wolfram.com/Isometry.html) (3 DOF), IST (Isotropic Scaling and Translation - 3 DOF ) or [Translation](https://en.wikipedia.org/wiki/Translation_%28geometry%29) (2 DOF)
 
+<a id="documentation_"></a>
+## Documentation
+
 Please refer these papers:
 [[**cviu**]](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_cviu.pdf)
 [[**iros17**]](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_iros17.pdf)
@@ -63,13 +70,22 @@ for details on the system design, these:
 [[**crv16**]](http://webdocs.cs.ualberta.ca/~vis/mtf/modular_crv16.pdf)[[**wacv17**]](http://webdocs.cs.ualberta.ca/~vis/mtf/ssim_wacv17.pdf)[[**crv17**]](http://webdocs.cs.ualberta.ca/~vis/mtf/rsst_crv17.pdf)
 for some performance results and [**this thesis**](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_thesis.pdf) for a comprehensive description. There is also a [**dedicated website**](http://webdocs.cs.ualberta.ca/~vis/mtf/) where Doxygen documentation will soon be available along with detailed tutorials and examples. It also provides several datasets formatted to work with MTF.
 
+<a id="implementatio_n_"></a>
+## Implementation
+
 The library is implemented entirely in **C++** though interfaces for **Python** and **MATLAB** are also provided to aid its use in research applications.
 A simple interface for [**ROS**](http://www.ros.org/) is likewise provided for seamless integration with robotics projects.
 In addition to the registration tracking modules, MTF comes bundled with several state of the art learning and detection based trackers whose C++ implementations are publicly available - [DSST](http://www.cvl.isy.liu.se/en/research/objrec/visualtracking/scalvistrack/index.html), [KCF](http://home.isr.uc.pt/~henriques/circulant/), [CMT](http://www.gnebehay.com/cmt/), [TLD](http://www.gnebehay.com/tld/), [RCT](http://www4.comp.polyu.edu.hk/~cslzhang/CT/CT.htm), [MIL](http://vision.ucsd.edu/~bbabenko/project_miltrack.html), [Struck](http://www.samhare.net/research/struck), [FragTrack](http://www.cs.technion.ac.il/~amita/fragtrack/fragtrack.htm), [GOTURN](https://github.com/davheld/GOTURN) and [DFT](http://cvlab.epfl.ch/page-107683-en.html).
 It can thus be used as a general purpose tracking test bed too. 
 
+<a id="platforms_"></a>
+## Platforms
+
 MTF supports both **Unix** and **Windows** platforms. Though the Unix build system has been tested comprehensively only under Linux, specifically Ubuntu 14.04/16.04, it should work on Macintosh systems too (see [Installation Issues](#installation_issues__) section below for resolving possible issues).
-The Windows build system has been tested on Windows 8.1 with Visual Studio 2015 though it should work fine with any recent versions of the OS and IDE.
+The Windows build system has been tested on Windows 8.1 and 10 with Visual Studio 2015, 2017 and 2019 though it should work fine with any non-ancient versions of the OS and IDE.
+
+<a id="license_and_citing_"></a>
+## License and citing
 
 MTF is provided under [BSD license](https://opensource.org/licenses/BSD-3-Clause) and so is free for research and commercial applications. We do request, however, that [this paper](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_iros17.pdf) [[bibtex](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_iros_bibtex.txt)] [[arxiv version](https://arxiv.org/abs/1602.09130)] be cited by any publications resulting from projects that use MTF so more people can get to know about and benefit from it.
 Finally, if any issues are encountered while installing or running the library, please create an entry in the [issues](https://github.com/abhineet123/MTF/issues) section and we will do our best to resolve it as soon as possible.
