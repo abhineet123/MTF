@@ -94,13 +94,13 @@ Finally, if any issues are encountered while installing or running the library, 
 * [Boost](http://www.boost.org/) should be installed
 * [FLANN](http://www.cs.ubc.ca/research/flann/) should be installed for the NN search method
     - Compilation from source of version **1.8.4**  available on the [website](http://www.cs.ubc.ca/research/flann/#download) is recommended as the version in the Ubuntu (and git) repo might give linker errors ([Issue #3](https://github.com/abhineet123/MTF/issues/3)).
-    - NN can be disabled at compile time using `nn=0` switch if FLANN is not available (see [compile time switches](#_compile_time_switches__)).
+    - NN can be disabled at compile time using `nn=0` switch if FLANN is not available (see [compile time switches](#compile_time_switches_)).
 * [Intel TBB](https://www.threadingbuildingblocks.org/) / [OpenMP](http://openmp.org/wp/) should be installed if parallelization is to be enabled.
-* [ViSP](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see [compile time switches](#_compile_time_switches__)).
+* [ViSP](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see [compile time switches](#compile_time_switches_)).
     - Note that [version 3.0.0](http://gforge.inria.fr/frs/download.php/latestfile/475/visp-3.0.0.zip)+ is required. The Ubuntu apt package is 2.8 and is therefore incompatible.
     - ViSP is also needed for interactive operations in the multi threaded versions of the Matlab and Python interfaces as OpenCV window system has an unresolved bug/incompatibility with boost threading library which causes it to hangup or crash the program.
 * [Caffe](http://caffe.berkeleyvision.org/) is needed for some optional modules including FMaps, Regnet and GOTURN if these are enabled during compilation
-* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see [compile time switches](#_compile_time_switches__)).
+* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see [compile time switches](#compile_time_switches_)).
     - **Not recommended** as Xvision is very difficult to install and configure on modern systems
 * Additional installation instructions for Ubuntu 18.04 with Matlab 2018b are available [here](Docs/MTF_setup_Ubuntu18_Matlab2018b.md). These may contain solutions for some issues on newer platforms that are not documented here.
 
