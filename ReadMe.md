@@ -138,11 +138,12 @@ Finally, if any issues are encountered while installing or running the library, 
 	- [set environment variable](http://www.computerhope.com/issues/ch000549.htm) `OpenCV_DIR` to the folder where the binaries have been built or downloaded; this should contain the `OpenCVConfig.cmake` file along with the `lib` and `bin` folders
 	- add the location of the `bin` folder to the `Path` environment variable
 	- if cmake still fails to find OpenCV, set `OPENCV_INCLUDE_DIR_WIN`, `OPENCV_LIB_DIR_WIN` and `OpenCV_SUFFIX` variables in `CMakeLists.txt` (line 14-16) to the respective values
-- [Build Boost from source using Visual Studio (`toolset=msvc`)](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary).
+- [Build Boost from source using Visual Studio (`toolset=msvc`)](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary) or download [prebuilt binaries](https://sourceforge.net/projects/boost/files/boost-binaries/) built with the correct version of visual studio if available.
 	- using the steps under [Simplified Build From Source](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#simplified-build-from-source) should work too
 	- set `BOOST_INCLUDEDIR` and `BOOST_LIBRARYDIR` environment variables to the locations of the header and library (*.lib) files respectively.
 	- add the location of the `bin` folder containing the *.dll files to the `Path` environment variable
 	- if cmake still fails to find Boost, set `BOOST_INCLUDE_DIR_WIN`, `BOOST_LIB_DIR_WIN` and `Boost_SUFFIX` variables in `CMakeLists.txt` (line 17-19) to the respective values		
+	- prebuilt binaries from a similar though not exacly matching versions of vidual studio should be usable too after modifying the contents of all `.cmake` files and names of all `.lib` and `.dll` files to change the version number as needed.		
 - If [FLANN](http://www.cs.ubc.ca/research/flann/) is needed, build it from source using Visual Studio and set `FLANN_ROOT` environment variable to the folder containing the compiled library and header files respectively
 	- this folder should have sub folders called `lib`, `bin` and `include` that contain the *.lib, *.dll and the header files 
 	- add the `bin` sub folder to the `Path` environment variable
