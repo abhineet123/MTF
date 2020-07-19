@@ -19,7 +19,7 @@ Welcome to the home of **Modular Tracking Framework (MTF)** !
 			- [MATLAB](#matla_b_)
 		- [Compile time switches](#compile_time_switches_)
 		- [Clean up:](#clean_up__)
-- [Installation Issues:](#installation_issues__)
+- [Installation Issues](#installation_issues_)
 	- [Cmake](#cmake_)
 		- [Windows](#windows__1)
 	- [Compile time](#compile_time_)
@@ -68,7 +68,7 @@ A simple interface for [**ROS**](http://www.ros.org/) is likewise provided for s
 In addition to the registration tracking modules, MTF comes bundled with several state of the art learning and detection based trackers whose C++ implementations are publicly available - [DSST](http://www.cvl.isy.liu.se/en/research/objrec/visualtracking/scalvistrack/index.html), [KCF](http://home.isr.uc.pt/~henriques/circulant/), [CMT](http://www.gnebehay.com/cmt/), [TLD](http://www.gnebehay.com/tld/), [RCT](http://www4.comp.polyu.edu.hk/~cslzhang/CT/CT.htm), [MIL](http://vision.ucsd.edu/~bbabenko/project_miltrack.html), [Struck](http://www.samhare.net/research/struck), [FragTrack](http://www.cs.technion.ac.il/~amita/fragtrack/fragtrack.htm), [GOTURN](https://github.com/davheld/GOTURN) and [DFT](http://cvlab.epfl.ch/page-107683-en.html).
 It can thus be used as a general purpose tracking test bed too. 
 
-MTF supports both **Unix** and **Windows** platforms. Though the Unix build system has been tested comprehensively only under Linux, specifically Ubuntu 14.04/16.04, it should work on Macintosh systems too (see [Compile/Runtime Notes](#compileruntime-notes) section below for resolving possible issues).
+MTF supports both **Unix** and **Windows** platforms. Though the Unix build system has been tested comprehensively only under Linux, specifically Ubuntu 14.04/16.04, it should work on Macintosh systems too (see [Installation Issues](#installation_issues__) section below for resolving possible issues).
 The Windows build system has been tested on Windows 8.1 with Visual Studio 2015 though it should work fine with any recent versions of the OS and IDE.
 
 MTF is provided under [BSD license](https://opensource.org/licenses/BSD-3-Clause) and so is free for research and commercial applications. We do request, however, that [this paper](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_iros17.pdf) [[bibtex](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_iros_bibtex.txt)] [[arxiv version](https://arxiv.org/abs/1602.09130)] be cited by any publications resulting from projects that use MTF so more people can get to know about and benefit from it.
@@ -87,7 +87,7 @@ Finally, if any issues are encountered while installing or running the library, 
     - version 3.2.10 or newer is needed
 * [OpenCV](http://opencv.org/) should be installed.
 	- comprehensive testing has only been done with OpenCV 2.4.13 and 3.3.0; 
-	- 2.4.x is recommended for widest compatibility as rare issues with OpenCV 3.x have been known to prevent successful compilation with some configurations (see [Compile/Runtime Notes](#compileruntime-notes) section below)
+	- 2.4.x is recommended for widest compatibility as rare issues with OpenCV 3.x have been known to prevent successful compilation with some configurations (see [Installation Issues](#installation_issues__) section below)
 	- 3.3.x or 3.4.x is recommended for widest functionality
 	- 4.x.x is **not** supported
 	- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) / [contrib](https://github.com/opencv/opencv_contrib) module should be [installed too](http://stackoverflow.com/a/31097788) if the corresponding feature detectors and descriptors (SIFT and SURF) are to be available in the feature tracker
@@ -112,7 +112,7 @@ Finally, if any issues are encountered while installing or running the library, 
 
 - Install a recent version of Visual Studio
 	- the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine; 
-	- it seems that the `OpenCVConfig.cmake` file that comes with the latest version of OpenCV simply does not recognize Visual C++ 2017 so cmake might not be able to find it and instead exit with the erroneous message: `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`; a similar issue is exhibited by ViSP so it is best to use 2015 or older versions of Visual Studio; a possible way to resolve this issue is in the [Compile/Runtime Notes](#compileruntime-notes) section if a newer version must be used.		
+	- it seems that the `OpenCVConfig.cmake` file that comes with the latest version of OpenCV simply does not recognize Visual C++ 2017 so cmake might not be able to find it and instead exit with the erroneous message: `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`; a similar issue is exhibited by ViSP so it is best to use 2015 or older versions of Visual Studio; a possible way to resolve this issue is in the [Installation Issues](#installation_issues__) section if a newer version must be used.		
 	- the freely available [Express/Community edition](https://www.visualstudio.com/vs/visual-studio-express/) can be used too
 - Set `EIGEN3_ROOT`, `EIGEN3_DIR` and `EIGEN3_ROOT_DIR` [environment variables](http://www.computerhope.com/issues/ch000549.htm) to the folder containing the Eigen header files
     - this folder should contain the sub folders `Eigen` and `unsupported` and a file called `signature_of_eigen3_matrix_library`
@@ -280,8 +280,8 @@ These apply to all of the above commands and the equivalent cmake options, where
 * `make clean` : removes all the .o files and the .so file created during compilation from the Build folder.
 * `make mtfc` : also removes the executable.
 
-<a id="installation_issues__"></a>
-# Installation Issues:
+<a id="installation_issues_"></a>
+# Installation Issues
 
 <a id="cmake_"></a>
 ## Cmake
