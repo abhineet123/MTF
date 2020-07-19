@@ -193,18 +193,15 @@ Compile/Runtime Notes:
 * Using Visual Studio 2017 or newer to build OpenCV 3.x.x might lead to an error like `Found OpenCV Windows Pack but it has not binaries compatible with your configuration` in cmake. This can be resolved using the following steps. These are for 64 bit build of OpenCV 3.4.1 with Visual Studio 2019 but adapting for other versions should be straightforward.
     * add 
     
-        ```
           elseif(MSVC_VERSION MATCHES "^192[0-9]$")
-           set(OpenCV_RUNTIME vc16)
-        ```
+            set(OpenCV_RUNTIME vc16)
+            
     right after
 
-        ```
         elseif(MSVC_VERSION EQUAL 1900)
-        set(OpenCV_RUNTIME vc14)
+          set(OpenCV_RUNTIME vc14)
         elseif(MSVC_VERSION MATCHES "^191[0-9]$")
-        set(OpenCV_RUNTIME vc15)
-        ```
+          set(OpenCV_RUNTIME vc15)
 
         in `OpenCVConfig.cmake`.    
     * move bin, lib and include folders to `x64/vc16/` after creating the same.
