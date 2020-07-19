@@ -81,7 +81,7 @@ It can thus be used as a general purpose tracking test bed too.
 <a id="platforms_"></a>
 ## Platforms
 
-MTF supports both **Unix** and **Windows** platforms. Though the Unix build system has been tested comprehensively only under Linux, specifically Ubuntu 14.04/16.04, it should work on Macintosh systems too (see [Installation Issues](#installation_issues__) section below for resolving possible issues).
+MTF supports both **Unix** and **Windows** platforms. Though the Unix build system has been tested comprehensively only under Linux, specifically Ubuntu 14.04/16.04, it should work on Macintosh systems too (see [Installation Issues](#installation_issues_) section below for resolving possible issues).
 The Windows build system has been tested on Windows 8.1 and 10 with Visual Studio 2015, 2017 and 2019 though it should work fine with any non-ancient versions of the OS and IDE.
 
 <a id="license_and_citing_"></a>
@@ -103,7 +103,7 @@ Finally, if any issues are encountered while installing or running the library, 
     - version 3.2.10 or newer is needed
 * [OpenCV](http://opencv.org/) should be installed.
 	- comprehensive testing has only been done with OpenCV 2.4.13 and 3.3.0; 
-	- 2.4.x is recommended for widest compatibility as rare issues with OpenCV 3.x have been known to prevent successful compilation with some configurations (see [Installation Issues](#installation_issues__) section below)
+	- 2.4.x is recommended for widest compatibility as rare issues with OpenCV 3.x have been known to prevent successful compilation with some configurations (see [Installation Issues](#installation_issues_) section below)
 	- 3.3.x or 3.4.x is recommended for widest functionality
 	- 4.x.x is **not** supported
 	- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) / [contrib](https://github.com/opencv/opencv_contrib) module should be [installed too](http://stackoverflow.com/a/31097788) if the corresponding feature detectors and descriptors (SIFT and SURF) are to be available in the feature tracker
@@ -128,7 +128,7 @@ Finally, if any issues are encountered while installing or running the library, 
 
 - Install a recent version of Visual Studio
 	- the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine; 
-	- it seems that the `OpenCVConfig.cmake` file that comes with the latest version of OpenCV simply does not recognize Visual C++ 2017 so cmake might not be able to find it and instead exit with the erroneous message: `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`; a similar issue is exhibited by ViSP so it is best to use 2015 or older versions of Visual Studio; a possible way to resolve this issue is in the [Installation Issues](#installation_issues__) section if a newer version must be used.		
+	- it seems that the `OpenCVConfig.cmake` file that comes with the latest version of OpenCV simply does not recognize Visual C++ 2017 so cmake might not be able to find it and instead exit with the erroneous message: `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`; a similar issue is exhibited by ViSP so it is best to use 2015 or older versions of Visual Studio; a possible way to resolve this issue is in the [Installation Issues](#installation_issues_) section if a newer version must be used.		
 	- the freely available [Express/Community edition](https://www.visualstudio.com/vs/visual-studio-express/) can be used too
 - Set `EIGEN3_ROOT`, `EIGEN3_DIR` and `EIGEN3_ROOT_DIR` [environment variables](http://www.computerhope.com/issues/ch000549.htm) to the folder containing the Eigen header files
     - this folder should contain the sub folders `Eigen` and `unsupported` and a file called `signature_of_eigen3_matrix_library`
