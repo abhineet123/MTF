@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.8)
 # suppress the warning for "install" target
 if(CMAKE_MAJOR_VERSION EQUAL 3)
-	cmake_policy(SET CMP0074 NEW)
+	cmake_policy(SET CMP0037 OLD)
 endif()
 project(MTF)
 set (MTF_VERSION_MAJOR 1)
