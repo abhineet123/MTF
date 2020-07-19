@@ -19,8 +19,11 @@ Welcome to the home of **Modular Tracking Framework (MTF)** !
 			- [MATLAB](#matla_b_)
 		- [Compile time switches](#compile_time_switches_)
 		- [Clean up:](#clean_up__)
-- [Compile/Runtime Notes:](#compile_runtime_notes_)
-	- [Windows](#windows__1)
+- [Installation Issues:](#installation_issues__)
+	- [Cmake](#cmake_)
+		- [Windows](#windows__1)
+	- [Compile time](#compile_time_)
+	- [Runtime](#runtime_)
 	- [Macintosh](#macintosh_)
 	- [OpenCV 3.x](#opencv_3__x_)
 	- [make build system](#make_build_system_)
@@ -28,12 +31,12 @@ Welcome to the home of **Modular Tracking Framework (MTF)** !
 - [Run the demo application](#run_the_demo_applicatio_n_)
 - [Build the ROS package](#build_the_ros_packag_e_)
 - [Build a new application](#build_a_new_applicatio_n_)
-	- [cmake](#cmake_)
+	- [cmake](#cmake__1)
 		- [Windows](#windows__2)
 	- [make](#mak_e_)
 - [For Developers](#for_developers_)
 	- [Add a new AM or SSM](#add_a_new_am_or_ss_m_)
-		- [cmake](#cmake__1)
+		- [cmake](#cmake__2)
 		- [make](#mak_e__1)
 	- [Examples](#example_s__1)
 		- [Implement minimalistic AM that can be used with Nearest Neighbour SM](#implement_minimalistic_am_that_can_be_used_with_nearest_neighbour_sm_)
@@ -277,48 +280,17 @@ These apply to all of the above commands and the equivalent cmake options, where
 * `make clean` : removes all the .o files and the .so file created during compilation from the Build folder.
 * `make mtfc` : also removes the executable.
 
-<a id="compile_runtime_notes_"></a>
-# Compile/Runtime Notes:
+<a id="installation_issues__"></a>
+# Installation Issues:
 
-* if an error like `cannot find -l<name of library>` (for instance `cannot find -lhdf5` or `cannot find -lmtf`) occurs at compile time, location of the corresponding library should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables in the **.bashrc** file. 
-    * For instance HDF5 installs in _/usr/local/hdf5/lib_ by default so  following commands can be run to add its path there:  
-	`echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc`  
-	`echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc`  
-	Similarly, MTF installs to _/usr/local/lib_ by default so following can be run for it:   
-	`echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc`  
-	`echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc`  
-	* The bashrc file should be reloaded by either restarting the terminal or running `. ~/.bashrc` and compilation should be tried again.
-* similar compile time errors pertaining to missing header files may be encountered in which case the location of the `include` folder of the corresponding library should be added to **C_INCLUDE_PATH** and **CPLUS_INCLUDE_PATH** variables. For instance, following commands can be run for HDF5:  
-	`echo "export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc`  
-	`echo "export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc`  
-* if a runtime error like `cannot find libmtf` or something similar is encountered while running `runMTF`, _/usr/local/lib_ should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables as above (assuming the default MTF installation directory has not been changed - otherwise the new path should be used instead).
-* if a compile time error similar to this occurs: `/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h:233:98: error: no matching function for call to ‘Eigen::internal::blas_traits`, please update Eigen to the latest version;
-* if a compile time error similar to this occurs:  
-`/usr/bin/ld: cannot find -lQt5::Core`  
-`/usr/bin/ld: cannot find -lQt5::Gui`  
-`/usr/bin/ld: cannot find -lQt5::Widgets`  
-`/usr/bin/ld: cannot find -lQt5::Test`  
-`/usr/bin/ld: cannot find -lQt5::Concurrent`  
-`/usr/bin/ld: cannot find -lQt5::OpenGL`  
-there is probably something wrong with the OpenCV installation. Reinstalling that should fix it (refer to issue #13).
+<a id="cmake_"></a>
+## Cmake
+
 * ViSP cmake system has a bug in Ubuntu 16.04 so if a cmake error of type `Found ViSP for Windows but it has no binaries compatible with your
   configuration. You should manually point CMake variable VISP_DIR to your build of ViSP library.` occurs, add `-DVISP_DIR=<path to ViSP build folder>` to the cmake command and rerun after removing the existing cmake files
-* A compile time error similar to this:  
-`error: no matching function for call to vpDisplay::init(vpImage<vpRGBa>&, int, int, std::string&)`  
-probably indicates that an outdated version of ViSP is installed. This can be resolved by either updating it to 3.0.1 or newer or using `-DWITH_VISP=0`/`vp=0` cmake/make option to disable ViSP.
-* A compile time error similar to this:  
-`undefined reference to LZ4_compress_HC_continue`  
-occurs when the cmake module for one of the dependencies is not configured properly and does not return one or more libraries it needs to be linked against (`liblz4` in this case).
-    * This can be resolved by adding `-D MTF_LIBS=<name_of_missing_library>` (in this case: `-D MTF_LIBS=lz4`) to the cmake command.
-    * The corresponding library might also need to be installed, for instance, by using `sudo apt-get install liblz4-dev`
-* if a run time error similar to this:  
-`undefined symbol: _ZN3cmt7Matcher10initializeERKSt6vectorIN2cv6Point_IfEESaIS4_EENS2_3MatERKS1_IiSaIiEES9_S4_`  
-suddenly occurs or running `runMTF` causes segmentation fault with no messages **right after installing ROS**, it is probably because MTF is linking with an incorrect version of OpenCV installed by ROS.
-    * The only known solution guaranteed to work is to uninstall either the original or the ROS version of OpenCV and then recompile MTF.
-    * Possible ways to have both versions installed and have MTF link with the correct one are suggested [here](https://stackoverflow.com/questions/29479379/opencv-linking-problems-with-ros). These have not been tested with MTF so might not work.	
 
 <a id="windows__1"></a>
-## Windows
+### Windows
 
 * Using Visual Studio 2017 or newer to build OpenCV 3.x.x might lead to an error like `Found OpenCV Windows Pack but it has not binaries compatible with your configuration` in cmake. This can be resolved using the following steps. These are for 64 bit build of OpenCV 3.4.1 with Visual Studio 2019 but adapting for other versions should be straightforward.
     * add 
@@ -335,6 +307,50 @@ suddenly occurs or running `runMTF` causes segmentation fault with no messages *
 
     in `OpenCVConfig.cmake`.    
     * move bin, lib and include folders to `x64/vc16/` after creating the same.
+
+<a id="compile_time_"></a>
+## Compile time
+
+* if an error like `cannot find -l<name of library>` (for instance `cannot find -lhdf5` or `cannot find -lmtf`) occurs at compile time, location of the corresponding library should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables in the **.bashrc** file. 
+    * For instance HDF5 installs in _/usr/local/hdf5/lib_ by default so  following commands can be run to add its path there:  
+	`echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc`  
+	`echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc`  
+	Similarly, MTF installs to _/usr/local/lib_ by default so following can be run for it:   
+	`echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc`  
+	`echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc`  
+	* The bashrc file should be reloaded by either restarting the terminal or running `. ~/.bashrc` and compilation should be tried again.
+* similar compile time errors pertaining to missing header files may be encountered in which case the location of the `include` folder of the corresponding library should be added to **C_INCLUDE_PATH** and **CPLUS_INCLUDE_PATH** variables. For instance, following commands can be run for HDF5:  
+	`echo "export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc`  
+	`echo "export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc`  
+
+* if a compile time error similar to this occurs: `/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h:233:98: error: no matching function for call to ‘Eigen::internal::blas_traits`, please update Eigen to the latest version;
+* if a compile time error similar to this occurs:  
+`/usr/bin/ld: cannot find -lQt5::Core`  
+`/usr/bin/ld: cannot find -lQt5::Gui`  
+`/usr/bin/ld: cannot find -lQt5::Widgets`  
+`/usr/bin/ld: cannot find -lQt5::Test`  
+`/usr/bin/ld: cannot find -lQt5::Concurrent`  
+`/usr/bin/ld: cannot find -lQt5::OpenGL`  
+there is probably something wrong with the OpenCV installation. Reinstalling that should fix it (refer to issue #13).
+* A compile time error similar to this:  
+`error: no matching function for call to vpDisplay::init(vpImage<vpRGBa>&, int, int, std::string&)`  
+probably indicates that an outdated version of ViSP is installed. This can be resolved by either updating it to 3.0.1 or newer or using `-DWITH_VISP=0`/`vp=0` cmake/make option to disable ViSP.
+* A compile time error similar to this:  
+`undefined reference to LZ4_compress_HC_continue`  
+occurs when the cmake module for one of the dependencies is not configured properly and does not return one or more libraries it needs to be linked against (`liblz4` in this case).
+    * This can be resolved by adding `-D MTF_LIBS=<name_of_missing_library>` (in this case: `-D MTF_LIBS=lz4`) to the cmake command.
+    * The corresponding library might also need to be installed, for instance, by using `sudo apt-get install liblz4-dev`
+
+<a id="runtime_"></a>
+## Runtime
+
+* if a runtime error like `cannot find libmtf` or something similar is encountered while running `runMTF`, _/usr/local/lib_ should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables as above (assuming the default MTF installation directory has not been changed - otherwise the new path should be used instead).
+
+* if a run time error similar to this:  
+`undefined symbol: _ZN3cmt7Matcher10initializeERKSt6vectorIN2cv6Point_IfEESaIS4_EENS2_3MatERKS1_IiSaIiEES9_S4_`  
+suddenly occurs or running `runMTF` causes segmentation fault with no messages **right after installing ROS**, it is probably because MTF is linking with an incorrect version of OpenCV installed by ROS.
+    * The only known solution guaranteed to work is to uninstall either the original or the ROS version of OpenCV and then recompile MTF.
+    * Possible ways to have both versions installed and have MTF link with the correct one are suggested [here](https://stackoverflow.com/questions/29479379/opencv-linking-problems-with-ros). These have not been tested with MTF so might not work.	
 
 <a id="macintosh_"></a>
 ## Macintosh
@@ -392,7 +408,7 @@ Details about building and using this package are in the ReadMe in this folder.
 <a id="build_a_new_applicatio_n_"></a>
 # Build a new application 
 
-<a id="cmake_"></a>
+<a id="cmake__1"></a>
 ## cmake
 
 The build process generates a `mtfConfig.cmake` file in the build folder with the main defines.
@@ -429,7 +445,7 @@ Use the `make app app=<APPLICATION_NAME>` command as detailed in the make comman
 <a id="add_a_new_am_or_ss_m_"></a>
 ## Add a new AM or SSM
 
-<a id="cmake__1"></a>
+<a id="cmake__2"></a>
 ### cmake
 
 1. Modify the .cmake files in the respective sub directories:
