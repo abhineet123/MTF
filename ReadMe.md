@@ -203,7 +203,7 @@ right after
   elseif(MSVC_VERSION MATCHES "^191[0-9]$")
     set(OpenCV_RUNTIME vc15)
 ```
-in `OpenCVConfig.cmake`.
+in `OpenCVConfig.cmake`.  
     * move bin, lib and include folders to `x64/vc16/` after creating the same.
 * if an error like `cannot find -l<name of library>` (for instance `cannot find -lhdf5` or `cannot find -lmtf`) occurs at compile time, location of the corresponding library should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables in the **.bashrc** file. 
     * For instance HDF5 installs in _/usr/local/hdf5/lib_ by default so  following commands can be run to add its path there:  
