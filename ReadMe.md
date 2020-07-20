@@ -22,7 +22,7 @@ Welcome to the home of **Modular Tracking Framework (MTF)** !
 			- [Python](#pytho_n_)
 			- [MATLAB](#matla_b_)
 		- [Compile time switches](#compile_time_switches_)
-		- [Clean up:](#clean_up__)
+		- [Clean up](#clean_up_)
 - [Installation Issues](#installation_issues_)
 	- [Cmake](#cmake_)
 		- [Windows](#windows__1)
@@ -291,8 +291,8 @@ These apply to all of the above commands and the equivalent cmake options, where
 	* it may take some time (20-30 minutes) to compile as the entire library has to be consolidated into a single executable
 	* this version should be faster in theory as the compiler has access to all code at once and can thus optimize better but tests so far have not found any significant difference in speed from the standard version
 	
-<a id="clean_up__"></a>
-### Clean up:
+<a id="clean_up_"></a>
+### Clean up
 
 * `make clean` : removes all the .o files and the .so file created during compilation from the Build folder.
 * `make mtfc` : also removes the executable.
