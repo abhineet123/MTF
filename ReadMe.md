@@ -101,7 +101,7 @@ Finally, if any issues are encountered while installing or running the library, 
 <a id="require_d_"></a>
 ### Required
 
-*  MTF uses some [C++11](https://en.wikipedia.org/wiki/C%2B%2B11) features so a supporting compiler is needed ([GCC 4.7](https://gcc.gnu.org/projects/cxx0x.html) or newer)
+*  compiler supporting [C++11](https://en.wikipedia.org/wiki/C%2B%2B11) ([GCC 4.7](https://gcc.gnu.org/projects/cxx0x.html) or newer)
 * [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) 
     - needs to be added to the C/C++ include paths which can be done, for instance (linux), by running the following commands, assuming that Eigen is installed in _/usr/include/eigen3_:  
 `echo "export C_INCLUDE_PATH=${C_INCLUDE_PATH}:/usr/include/eigen3" >> ~/.bashrc`  
