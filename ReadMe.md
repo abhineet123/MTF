@@ -15,6 +15,8 @@ Welcome to the home of **Modular Tracking Framework (MTF)** !
 		- [Optional](#optiona_l_)
 	- [Windows](#windows_)
 		- [CMake with Visual Studio \(Recommended\)](#cmake_with_visual_studio__recommended__)
+			- [Required](#require_d__1)
+			- [Optional](#optiona_l__1)
 		- [GNU Make with MinGW](#gnu_make_with_ming_w_)
 - [Installation](#installatio_n_)
 	- [Recommended](#recommended_)
@@ -143,6 +145,9 @@ Finally, if any issues are encountered while installing or running the library, 
 <a id="cmake_with_visual_studio__recommended__"></a>
 ### CMake with Visual Studio (Recommended) 
 
+<a id="require_d__1"></a>
+#### Required
+
 - Install a recent version of Visual Studio
 	- the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine; 
 	- it seems that the `OpenCVConfig.cmake` file that comes with the latest version of OpenCV simply does not recognize Visual C++ 2017 so cmake might not be able to find it and instead exit with the erroneous message: `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`; a similar issue is exhibited by ViSP so it is best to use 2015 or older versions of Visual Studio; a possible way to resolve this issue is in the [Installation Issues](#installation_issues_) section if a newer version must be used.		
@@ -161,6 +166,9 @@ Finally, if any issues are encountered while installing or running the library, 
 	- add the location of the `bin` folder containing the *.dll files to the `Path` environment variable
 	- if cmake still fails to find Boost, set `BOOST_INCLUDE_DIR_WIN`, `BOOST_LIB_DIR_WIN` and `Boost_SUFFIX` variables in `CMakeLists.txt` (line 17-19) to the respective values		
 	- prebuilt binaries from a similar though not exacly matching version of visual studio should be usable too after modifying the contents of all `.cmake` files and names of all `.lib` and `.dll` files to change the version number as needed.		
+<a id="optiona_l__1"></a>
+#### Optional
+
 - If [FLANN](http://www.cs.ubc.ca/research/flann/) is needed, build it from source using Visual Studio and set `FLANN_ROOT` environment variable to the folder containing the compiled library and header files respectively
 	- this folder should have sub folders called `lib`, `bin` and `include` that contain the *.lib, *.dll and the header files 
 	- add the `bin` sub folder to the `Path` environment variable
