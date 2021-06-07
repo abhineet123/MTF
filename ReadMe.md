@@ -11,6 +11,8 @@ Welcome to the home of **Modular Tracking Framework (MTF)** !
 	- [License and citing](#license_and_citing_)
 - [Prerequisites](#prerequisites_)
 	- [General](#general_)
+		- [Required](#require_d_)
+		- [Optional](#optiona_l_)
 	- [Windows](#windows_)
 		- [CMake with Visual Studio \(Recommended\)](#cmake_with_visual_studio__recommended__)
 		- [GNU Make with MinGW](#gnu_make_with_ming_w_)
@@ -96,28 +98,43 @@ Finally, if any issues are encountered while installing or running the library, 
 <a id="general_"></a>
 ## General
 
+<a id="require_d_"></a>
+### Required
+
 *  MTF uses some [C++11](https://en.wikipedia.org/wiki/C%2B%2B11) features so a supporting compiler is needed ([GCC 4.7](https://gcc.gnu.org/projects/cxx0x.html) or newer)
-* [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) should be installed and added to the C/C++ include paths. This can be done, for instance, by running the following commands, assuming that Eigen is installed in _/usr/include/eigen3_:  
+* [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) 
+    - needs to be added to the C/C++ include paths which can be done, for instance (linux), by running the following commands, assuming that Eigen is installed in _/usr/include/eigen3_:  
 `echo "export C_INCLUDE_PATH=${C_INCLUDE_PATH}:/usr/include/eigen3" >> ~/.bashrc`  
 `echo "export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:/usr/include/eigen3" >> ~/.bashrc`
     - version 3.2.10 or newer is needed
-* [OpenCV](http://opencv.org/) should be installed.
+* [OpenCV](http://opencv.org/)
 	- comprehensive testing has only been done with OpenCV 2.4.13 and 3.3.0; 
 	- 2.4.x is recommended for widest compatibility as rare issues with OpenCV 3.x have been known to prevent successful compilation with some configurations (see [Installation Issues](#installation_issues_) section below)
 	- 3.3.x or 3.4.x is recommended for widest functionality
 	- 4.x.x is **not** supported
 	- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) / [contrib](https://github.com/opencv/opencv_contrib) module should be [installed too](http://stackoverflow.com/a/31097788) if the corresponding feature detectors and descriptors (SIFT and SURF) are to be available in the feature tracker
-* [Boost](http://www.boost.org/) should be installed
-* [FLANN](http://www.cs.ubc.ca/research/flann/) should be installed for the NN search method
+* [Boost](http://www.boost.org/)
+	- testing has been done with 1.5.x - 1.7.x though older versions should work too
+
+<a id="optiona_l_"></a>
+### Optional
+
+* [FLANN](http://www.cs.ubc.ca/research/flann/) 
+    - needed for the faster variant of NN search method
     - Compilation from source of version **1.8.4**  available on the [website](http://www.cs.ubc.ca/research/flann/#download) is recommended as the version in the Ubuntu (and git) repo might give linker errors ([Issue #3](https://github.com/abhineet123/MTF/issues/3)).
     - NN can be disabled at compile time using `nn=0` switch if FLANN is not available (see [compile time switches](#compile_time_switches_)).
-* [Intel TBB](https://www.threadingbuildingblocks.org/) / [OpenMP](http://openmp.org/wp/) should be installed if parallelization is to be enabled.
-* [ViSP](https://visp.inria.fr/) should be installed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) is enabled during compilation (see [compile time switches](#compile_time_switches_)).
+* [Intel TBB](https://www.threadingbuildingblocks.org/) / [OpenMP](http://openmp.org/wp/)
+    - needed for parallelization
+    - preliminary testing has not shown significant performance improvements 
+* [ViSP](https://visp.inria.fr/)
+    - needed if its [template tracker module](https://visp.inria.fr/template-tracking/) or [input pipeline](http://visp-doc.inria.fr/doxygen/visp-3.0.0/group__group__io__video.html) are enabled during compilation (see [compile time switches](#compile_time_switches_)).
     - Note that [version 3.0.0](http://gforge.inria.fr/frs/download.php/latestfile/475/visp-3.0.0.zip)+ is required. The Ubuntu apt package is 2.8 and is therefore incompatible.
-    - ViSP is also needed for interactive operations in the multi threaded versions of the Matlab and Python interfaces as OpenCV window system has an unresolved bug/incompatibility with boost threading library which causes it to hangup or crash the program.
-* [Caffe](http://caffe.berkeleyvision.org/) is needed for some optional modules including FMaps, Regnet and GOTURN if these are enabled during compilation
-* [Xvision](https://github.com/abhineet123/Xvision2) should be installed if it is enabled during compilation (see [compile time switches](#compile_time_switches_)).
-    - **Not recommended** as Xvision is very difficult to install and configure on modern systems
+    - also needed for interactive operations in the multi threaded versions of the Matlab and Python interfaces as OpenCV window system has an unresolved bug/incompatibility with boost threading library which causes it to hangup or crash the program.
+* [Caffe](http://caffe.berkeleyvision.org/)
+    - needed for some optional modules including FMaps, Regnet and GOTURN if these are enabled during compilation
+* [Xvision](https://github.com/abhineet123/Xvision2)
+    - obsolete and only needed if it is enabled during compilation (see [compile time switches](#compile_time_switches_)).
+    - **Not recommended** as it is very difficult to install and configure on modern systems
 * Additional installation instructions for Ubuntu 18.04 with Matlab 2018b are available [here](Docs/MTF_setup_Ubuntu18_Matlab2018b.md). These may contain solutions for some issues on newer platforms that are not documented here.
 
 <a id="windows_"></a>
