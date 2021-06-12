@@ -110,7 +110,7 @@ Finally, if any issues are encountered while installing or running the library, 
 `echo "export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:/usr/include/eigen3" >> ~/.bashrc`
     - version 3.2.10 or newer is needed
 * [OpenCV](http://opencv.org/)
-	- comprehensive testing has only been done with OpenCV 2.4.13 and 3.3.0; 
+	- comprehensive testing has only been done with versions 2.4.13, 3.3.0 and 3.4.1; 
 	- 2.4.x is recommended for widest compatibility as rare issues with OpenCV 3.x have been known to prevent successful compilation with some configurations (see [Installation Issues](#installation_issues_) section below)
 	- 3.3.x or 3.4.x is recommended for widest functionality
 	- 4.x.x is **not** supported
