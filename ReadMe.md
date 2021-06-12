@@ -35,20 +35,20 @@ Welcome to the home of **Modular Tracking Framework (MTF)** !
 	- [Macintosh](#macintosh_)
 	- [OpenCV 3.x](#opencv_3__x_)
 	- [make build system](#make_build_system_)
-- [Set Parameters](#set_parameters_)
-- [Run the demo application](#run_the_demo_applicatio_n_)
-- [Build the ROS package](#build_the_ros_packag_e_)
-- [Build a new application](#build_a_new_applicatio_n_)
+- [Setting Parameters](#setting_parameters_)
+- [Running the demo application](#running_the_demo_applicatio_n_)
+- [Building ROS package](#building_ros_packag_e_)
+- [Building a new application](#building_a_new_applicatio_n_)
 	- [cmake](#cmake__1)
 		- [Windows](#windows__2)
 	- [make](#mak_e_)
 - [For Developers](#for_developers_)
-	- [Add a new AM or SSM](#add_a_new_am_or_ss_m_)
+	- [Adding a new AM or SSM](#adding_a_new_am_or_ss_m_)
 		- [cmake](#cmake__2)
 		- [make](#mak_e__1)
 	- [Examples](#example_s__1)
-		- [Implement minimalistic AM that can be used with Nearest Neighbour SM](#implement_minimalistic_am_that_can_be_used_with_nearest_neighbour_sm_)
-		- [Implement a minimalistic AM that can be used with Particle Filter SM](#implement_a_minimalistic_am_that_can_be_used_with_particle_filter_sm_)
+		- [Implementing minimalistic AM that can be used with Nearest Neighbour SM](#implementing_minimalistic_am_that_can_be_used_with_nearest_neighbour_sm_)
+		- [Implementing a minimalistic AM that can be used with Particle Filter SM](#implementing_a_minimalistic_am_that_can_be_used_with_particle_filter_sm_)
 
 <!-- /MarkdownTOC -->
 
@@ -421,8 +421,8 @@ suddenly occurs or running `runMTF` causes segmentation fault with no messages *
     * if FLANN based NN is not needed (graph based NN will still be available), `-DWITH_FLANN=OFF`/`nn=0` can be specified too 
     * if feature tracker is not needed, `-DWITH_FEAT=OFF`/`feat=0` can be specified too 
 
-<a id="set_parameters_"></a>
-# Set Parameters
+<a id="setting_parameters_"></a>
+# Setting Parameters
 
 MTF parameters can be specified either in the _cfg_ files present in the _Config_ sub folder or from the command line.
 Please refer the ReadMe in the **_Config_** sub folder or [this configuration page](http://webdocs.cs.ualberta.ca/~vis/mtf/params.html) for detailed instructions.
@@ -437,19 +437,19 @@ Some **preconfigured cfg files** are provided here to get the system up and runn
 * [Particle Filter](http://ieeexplore.ieee.org/document/6589599/?tp=&arnumber=6589599) with 500 particles followed by [Forward Compositional](http://link.springer.com/article/10.1023%2FA%3A1008195814169) [Levenberg Marquardt](https://en.wikipedia.org/wiki/Levenberg%E2%80%93Marquardt_algorithm) SM with [Structural Similarity](http://link.springer.com/article/10.1007/s00138-007-0107-x) AM and 8 DOF (homography) SSM 
     * [`towel` sequence from LinTrack dataset](http://webdocs.cs.ualberta.ca/~vis/mtf/pffclm_500_ssim_lintrack_2.zip)
 
-<a id="run_the_demo_applicatio_n_"></a>
-# Run the demo application
+<a id="running_the_demo_applicatio_n_"></a>
+# Running the demo application
 
 Use either `make run` or `runMTF` to start the tracking application using the settings specified as above.
 
-<a id="build_the_ros_packag_e_"></a>
-# Build the ROS package
+<a id="building_ros_packag_e_"></a>
+# Building ROS package
 
 A simple ROS package called `mtf_bridge` that demonstrates the integration of MTF with ROS applications is included in the `ROS` sub directory.
 Details about building and using this package are in the ReadMe in this folder.
 
-<a id="build_a_new_applicatio_n_"></a>
-# Build a new application 
+<a id="building_a_new_applicatio_n_"></a>
+# Building a new application 
 
 <a id="cmake__1"></a>
 ## cmake
@@ -485,8 +485,8 @@ Use the `make app app=<APPLICATION_NAME>` command as detailed in the make comman
 <a id="for_developers_"></a>
 # For Developers
 
-<a id="add_a_new_am_or_ss_m_"></a>
-## Add a new AM or SSM
+<a id="adding_a_new_am_or_ss_m_"></a>
+## Adding a new AM or SSM
 
 <a id="cmake__2"></a>
 ### cmake
@@ -511,8 +511,8 @@ All steps are identical for adding a new Search Method (SM) too except the last 
 <a id="example_s__1"></a>
 ## Examples
 
-<a id="implement_minimalistic_am_that_can_be_used_with_nearest_neighbour_sm_"></a>
-### Implement minimalistic AM that can be used with Nearest Neighbour SM
+<a id="implementing_minimalistic_am_that_can_be_used_with_nearest_neighbour_sm_"></a>
+### Implementing minimalistic AM that can be used with Nearest Neighbour SM
 
 You need to create a new derived class from AppearanceModel.
 Implement the following functions:
@@ -522,8 +522,8 @@ Implement the following functions:
 3. `getDistFeat`: returns a pointer to an array containing the distance feature vector computed by the above function. There is also an overloaded variant of updateDistFeat  that takes a pointer as input and directly writes this feature vector to the pre-allocated array pointed to by this pointer.
 4. distance functor (`operator()`): computes a scalar that measures the dissimilarity or distance between two feature vectors (obtained using the previous two functions).
 
-<a id="implement_a_minimalistic_am_that_can_be_used_with_particle_filter_sm_"></a>
-### Implement a minimalistic AM that can be used with Particle Filter SM
+<a id="implementing_a_minimalistic_am_that_can_be_used_with_particle_filter_sm_"></a>
+### Implementing a minimalistic AM that can be used with Particle Filter SM
 
 You need to create a new derived class from AppearanceModel.
 Implement the following functions:
