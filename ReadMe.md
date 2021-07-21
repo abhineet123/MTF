@@ -5,50 +5,50 @@ Welcome to the home of **Modular Tracking Framework (MTF)** !
 <!-- MarkdownTOC -->
 
 - [Introduction](#introductio_n_)
-	- [Documentation](#documentation_)
-	- [Implementation](#implementatio_n_)
-	- [Platforms](#platforms_)
-	- [License and citing](#license_and_citing_)
+    - [Documentation](#documentation_)
+    - [Implementation](#implementatio_n_)
+    - [Platforms](#platforms_)
+    - [License and citing](#license_and_citing_)
 - [Prerequisites](#prerequisites_)
-	- [General](#general_)
-		- [Required](#require_d_)
-		- [Optional](#optiona_l_)
-	- [Windows](#windows_)
-		- [CMake with Visual Studio \(Recommended\)](#cmake_with_visual_studio__recommended__)
-			- [Required](#require_d__1)
-			- [Optional](#optiona_l__1)
-		- [GNU Make with MinGW](#gnu_make_with_ming_w_)
+    - [General](#general_)
+        - [Required](#require_d_)
+        - [Optional](#optiona_l_)
+    - [Windows](#windows_)
+        - [CMake with Visual Studio \(Recommended\)](#cmake_with_visual_studio__recommended__)
+            - [Required](#require_d__1)
+            - [Optional](#optiona_l__1)
+        - [GNU Make with MinGW](#gnu_make_with_ming_w_)
 - [Installation](#installatio_n_)
-	- [Recommended](#recommended_)
-	- [Advanced](#advance_d_)
-		- [Commands](#command_s_)
-			- [Examples](#example_s_)
-			- [Python](#pytho_n_)
-			- [MATLAB](#matla_b_)
-		- [Compile time switches](#compile_time_switches_)
-		- [Clean up](#clean_up_)
+    - [Recommended](#recommended_)
+    - [Advanced](#advance_d_)
+        - [Commands](#command_s_)
+            - [Examples](#example_s_)
+            - [Python](#pytho_n_)
+            - [MATLAB](#matla_b_)
+        - [Compile time switches](#compile_time_switches_)
+        - [Clean up](#clean_up_)
 - [Installation Issues](#installation_issues_)
-	- [Cmake](#cmake_)
-		- [Windows](#windows__1)
-	- [Compile time](#compile_time_)
-	- [Runtime](#runtime_)
-	- [Macintosh](#macintosh_)
-	- [OpenCV 3.x](#opencv_3__x_)
-	- [make build system](#make_build_system_)
+    - [Cmake](#cmake_)
+        - [Windows](#windows__1)
+    - [Compile time](#compile_time_)
+    - [Runtime](#runtime_)
+    - [Macintosh](#macintosh_)
+    - [OpenCV 3.x](#opencv_3__x_)
+    - [make build system](#make_build_system_)
 - [Setting Parameters](#setting_parameters_)
 - [Running the demo application](#running_the_demo_applicatio_n_)
 - [Building ROS package](#building_ros_packag_e_)
 - [Building a new application](#building_a_new_applicatio_n_)
-	- [cmake](#cmake__1)
-		- [Windows](#windows__2)
-	- [make](#mak_e_)
+    - [cmake](#cmake__1)
+        - [Windows](#windows__2)
+    - [make](#mak_e_)
 - [For Developers](#for_developers_)
-	- [Adding a new AM or SSM](#adding_a_new_am_or_ss_m_)
-		- [cmake](#cmake__2)
-		- [make](#mak_e__1)
-	- [Examples](#example_s__1)
-		- [Implementing minimalistic AM that can be used with Nearest Neighbour SM](#implementing_minimalistic_am_that_can_be_used_with_nearest_neighbour_sm_)
-		- [Implementing a minimalistic AM that can be used with Particle Filter SM](#implementing_a_minimalistic_am_that_can_be_used_with_particle_filter_sm_)
+    - [Adding a new AM or SSM](#adding_a_new_am_or_ss_m_)
+        - [cmake](#cmake__2)
+        - [make](#mak_e__1)
+    - [Examples](#example_s__1)
+        - [Implementing minimalistic AM that can be used with Nearest Neighbour SM](#implementing_minimalistic_am_that_can_be_used_with_nearest_neighbour_sm_)
+        - [Implementing a minimalistic AM that can be used with Particle Filter SM](#implementing_a_minimalistic_am_that_can_be_used_with_particle_filter_sm_)
 
 <!-- /MarkdownTOC -->
 
@@ -110,13 +110,13 @@ Finally, if any issues are encountered while installing or running the library, 
 `echo "export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:/usr/include/eigen3" >> ~/.bashrc`
     - version 3.2.10 or newer is needed
 * [OpenCV](http://opencv.org/)
-	- comprehensive testing has only been done with versions 2.4.13, 3.3.0 and 3.4.1; 
-	- 2.4.x is recommended for widest compatibility as rare issues with OpenCV 3.x have been known to prevent successful compilation with some configurations (see [Installation Issues](#installation_issues_) section below)
-	- 3.3.x or 3.4.x is recommended for widest functionality
-	- 4.x.x is **not** supported
-	- the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) / [contrib](https://github.com/opencv/opencv_contrib) module should be [installed too](http://stackoverflow.com/a/31097788) if the corresponding feature detectors and descriptors (SIFT and SURF) are to be available in the feature tracker
+    - comprehensive testing has only been done with versions 2.4.13, 3.3.0 and 3.4.1; 
+    - 2.4.x is recommended for widest compatibility as rare issues with OpenCV 3.x have been known to prevent successful compilation with some configurations (see [Installation Issues](#installation_issues_) section below)
+    - 3.3.x or 3.4.x is recommended for widest functionality
+    - 4.x.x is **not** supported
+    - the [nonfree](http://docs.opencv.org/2.4/modules/nonfree/doc/nonfree.html) / [contrib](https://github.com/opencv/opencv_contrib) module should be [installed too](http://stackoverflow.com/a/31097788) if the corresponding feature detectors and descriptors (SIFT and SURF) are to be available in the feature tracker
 * [Boost](http://www.boost.org/)
-	- testing has been done with 1.5.x - 1.7.x though older versions should work too
+    - testing has been done with 1.5.x - 1.7.x though older versions should work too
 
 <a id="optiona_l_"></a>
 ### Optional
@@ -149,42 +149,42 @@ Finally, if any issues are encountered while installing or running the library, 
 #### Required
 
 - Install a recent version of Visual Studio
-	- the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine; 
-	- it seems that the `OpenCVConfig.cmake` file that comes with the latest version of OpenCV simply does not recognize Visual C++ 2017 so cmake might not be able to find it and instead exit with the erroneous message: `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`; a similar issue is exhibited by ViSP so it is best to use 2015 or older versions of Visual Studio; a possible way to resolve this issue is in the [Installation Issues](#installation_issues_) section if a newer version must be used.		
-	- the freely available [Express/Community edition](https://www.visualstudio.com/vs/visual-studio-express/) can be used too
+    - the installation has been tested comprehensively with Visual Studio 2015 but any recent version (2013 or newer) should work fine; 
+    - it seems that the `OpenCVConfig.cmake` file that comes with the latest version of OpenCV simply does not recognize Visual C++ 2017 so cmake might not be able to find it and instead exit with the erroneous message: `Found OpenCV Windows Pack but it has not binaries compatible with your configuration`; a similar issue is exhibited by ViSP so it is best to use 2015 or older versions of Visual Studio; a possible way to resolve this issue is in the [Installation Issues](#installation_issues_) section if a newer version must be used.     
+    - the freely available [Express/Community edition](https://www.visualstudio.com/vs/visual-studio-express/) can be used too
 - Set `EIGEN3_ROOT`, `EIGEN3_DIR` and `EIGEN3_ROOT_DIR` [environment variables](http://www.computerhope.com/issues/ch000549.htm) to the folder containing the Eigen header files
     - this folder should contain the sub folders `Eigen` and `unsupported` and a file called `signature_of_eigen3_matrix_library`
-	- if cmake still fails to find Eigen, set `EIGEN_INCLUDE_DIR_WIN` variable in `CMakeLists.txt` (line 13) to the location of this folder
-- [Build OpenCV from source using Visual Studio](http://docs.opencv.org/2.4/doc/tutorials/introduction/windows_install/windows_install.html#installation-by-making-your-own-libraries-from-the-source-files) or download the [pre built binaries](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/) built with the correct version of visual studio if available.	
+    - if cmake still fails to find Eigen, set `EIGEN_INCLUDE_DIR_WIN` variable in `CMakeLists.txt` (line 13) to the location of this folder
+- [Build OpenCV from source using Visual Studio](http://docs.opencv.org/2.4/doc/tutorials/introduction/windows_install/windows_install.html#installation-by-making-your-own-libraries-from-the-source-files) or download the [pre built binaries](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/) built with the correct version of visual studio if available.    
     - as mentioned before, version 2.4.x is recommended; if 3.x is used instead and compile time errors occur, try disabling third party trackers by passing the switch `-DWITH_THIRD_PARTY=0` to cmake
-	- [set environment variable](http://www.computerhope.com/issues/ch000549.htm) `OpenCV_DIR` to the folder where the binaries have been built or downloaded; this should contain the `OpenCVConfig.cmake` file along with the `lib` and `bin` folders
-	- add the location of the `bin` folder to the `Path` environment variable
-	- if cmake still fails to find OpenCV, set `OPENCV_INCLUDE_DIR_WIN`, `OPENCV_LIB_DIR_WIN` and `OpenCV_SUFFIX` variables in `CMakeLists.txt` (line 14-16) to the respective values
+    - [set environment variable](http://www.computerhope.com/issues/ch000549.htm) `OpenCV_DIR` to the folder where the binaries have been built or downloaded; this should contain the `OpenCVConfig.cmake` file along with the `lib` and `bin` folders
+    - add the location of the `bin` folder to the `Path` environment variable
+    - if cmake still fails to find OpenCV, set `OPENCV_INCLUDE_DIR_WIN`, `OPENCV_LIB_DIR_WIN` and `OpenCV_SUFFIX` variables in `CMakeLists.txt` (line 14-16) to the respective values
 - [Build Boost from source using Visual Studio (`toolset=msvc`)](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#prepare-to-use-a-boost-library-binary) or download [prebuilt binaries](https://sourceforge.net/projects/boost/files/boost-binaries/) built with the correct version of visual studio if available.
-	- using the steps under [Simplified Build From Source](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#simplified-build-from-source) should work too
-	- set `BOOST_INCLUDEDIR` and `BOOST_LIBRARYDIR` environment variables to the locations of the header and library (*.lib) files respectively.
-	- add the location of the `bin` folder containing the *.dll files to the `Path` environment variable
-	- if cmake still fails to find Boost, set `BOOST_INCLUDE_DIR_WIN`, `BOOST_LIB_DIR_WIN` and `Boost_SUFFIX` variables in `CMakeLists.txt` (line 17-19) to the respective values		
-	- prebuilt binaries from a similar though not exacly matching version of visual studio should be usable too after modifying the contents of all `.cmake` files and names of all `.lib` and `.dll` files to change the version number as needed.		
+    - using the steps under [Simplified Build From Source](http://www.boost.org/doc/libs/1_63_0/more/getting_started/windows.html#simplified-build-from-source) should work too
+    - set `BOOST_INCLUDEDIR` and `BOOST_LIBRARYDIR` environment variables to the locations of the header and library (*.lib) files respectively.
+    - add the location of the `bin` folder containing the *.dll files to the `Path` environment variable
+    - if cmake still fails to find Boost, set `BOOST_INCLUDE_DIR_WIN`, `BOOST_LIB_DIR_WIN` and `Boost_SUFFIX` variables in `CMakeLists.txt` (line 17-19) to the respective values       
+    - prebuilt binaries from a similar though not exacly matching version of visual studio should be usable too after modifying the contents of all `.cmake` files and names of all `.lib` and `.dll` files to change the version number as needed.     
 <a id="optiona_l__1"></a>
 #### Optional
 
 - If [FLANN](http://www.cs.ubc.ca/research/flann/) is needed, build it from source using Visual Studio and set `FLANN_ROOT` environment variable to the folder containing the compiled library and header files respectively
-	- this folder should have sub folders called `lib`, `bin` and `include` that contain the *.lib, *.dll and the header files 
-	- add the `bin` sub folder to the `Path` environment variable
+    - this folder should have sub folders called `lib`, `bin` and `include` that contain the *.lib, *.dll and the header files 
+    - add the `bin` sub folder to the `Path` environment variable
 - If [ViSP](http://www.cs.ubc.ca/research/flann/) is needed, [build ViSP from source using Visual Studio](http://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win10-msvc14.html) and set `VISP_DIR` environment variable to the folder containing the library and header files
-	- this folder should have a file called `VISPConfig.cmake` along with sub folders called `x86/vc<version>/lib`, `x86/vc<version>/bin` and `include` that contain the *.lib, *.dll and the header files respectively.
-	- add the path of the `bin` folder to the `Path` environment variable	
+    - this folder should have a file called `VISPConfig.cmake` along with sub folders called `x86/vc<version>/lib`, `x86/vc<version>/bin` and `include` that contain the *.lib, *.dll and the header files respectively.
+    - add the path of the `bin` folder to the `Path` environment variable   
 - if the Python interface is to be built, install [Python 2.7.x](https://www.python.org/downloads/windows/) and [Numpy](http://www.numpy.org/).
     - CMake should normally be able to find the needed Python/Numpy libraries and headers without any other setup
-	- if any problems are encountered, please open an issue to let us know about it
+    - if any problems are encountered, please open an issue to let us know about it
 - MATLAB interface
-	- the MATLAB finding module of cmake has a [limitation](https://cmake.org/Bug/view.php?id=15786) that it can only find a MATLAB installation of the same build type as the target build, i.e. a 32 bit target build (default) can only find a 32 bit installation of MATLAB and same for 64 bit
-	- the recommended approach is to [install 32 bit version of MATLAB](https://se.mathworks.com/matlabcentral/answers/5407-install-both-32bit-and-64bit-versions-of-matlab-on-windows-7) but if that is not possible, a 64 bit CMake target build can be specified using, for instance the instructions given [here](https://stackoverflow.com/questions/28350214/how-to-build-x86-and-or-x64-on-windows-from-command-line-with-cmake)
-		- 64 bit builds have not been tested so cannot be guaranteed to work;
-		- all dependencies - OpenCV, Boost, FLANN and ViSP - must also be built using 64 bit builds for the linking to work
-	- if multiple MATLAB versions are installed or if the installed version is not found, set variable `Matlab_ROOT_DIR` or `Matlab_ROOT_DIR_DEFAULT` in Examples.cmake to the MATLAB installation folder to help CMake find the correct version
-	- the module is installed to `<Matlab_ROOT_DIR>/toolbox/local` by default; this location may need to be [added to the MATLAB path](https://se.mathworks.com/help/matlab/ref/addpath.html) for it to be found;
+    - the MATLAB finding module of cmake has a [limitation](https://cmake.org/Bug/view.php?id=15786) that it can only find a MATLAB installation of the same build type as the target build, i.e. a 32 bit target build (default) can only find a 32 bit installation of MATLAB and same for 64 bit
+    - the recommended approach is to [install 32 bit version of MATLAB](https://se.mathworks.com/matlabcentral/answers/5407-install-both-32bit-and-64bit-versions-of-matlab-on-windows-7) but if that is not possible, a 64 bit CMake target build can be specified using, for instance the instructions given [here](https://stackoverflow.com/questions/28350214/how-to-build-x86-and-or-x64-on-windows-from-command-line-with-cmake)
+        - 64 bit builds have not been tested so cannot be guaranteed to work;
+        - all dependencies - OpenCV, Boost, FLANN and ViSP - must also be built using 64 bit builds for the linking to work
+    - if multiple MATLAB versions are installed or if the installed version is not found, set variable `Matlab_ROOT_DIR` or `Matlab_ROOT_DIR_DEFAULT` in Examples.cmake to the MATLAB installation folder to help CMake find the correct version
+    - the module is installed to `<Matlab_ROOT_DIR>/toolbox/local` by default; this location may need to be [added to the MATLAB path](https://se.mathworks.com/help/matlab/ref/addpath.html) for it to be found;
 
 <a id="gnu_make_with_ming_w_"></a>
 ### GNU Make with MinGW
@@ -205,7 +205,7 @@ Finally, if any issues are encountered while installing or running the library, 
 
 Download the source code as zip file or clone using:  
     `git clone https://github.com/abhineet123/MTF.git`
-	
+    
 <a id="recommended_"></a>
 ## Recommended 
  MTF comes with both a [make](https://www.gnu.org/software/make/) and a [cmake](https://cmake.org/) build system but the latter is recommended for most users of the library and can be used as follows:
@@ -214,10 +214,10 @@ Download the source code as zip file or clone using:
 * **Unix**: use `make` to compile (`make -j<n>` for _n_-threaded compilation) and `sudo make install` to install
 * **Windows**: open `MTF.sln` in Visual Studio and run `Build->Build Solution`
     - if needed, change the solution configuration to `Release` from `Debug` to build the faster version
-	- right click on `Solution Explorer->INSTALL` and select `Build` to install the library, header and executable files to the installation directory (`C:/MTF` by default); add `<installation_folder>/bin` to `Path` environment variable to be able to run the executables from any location;
-	
+    - right click on `Solution Explorer->INSTALL` and select `Build` to install the library, header and executable files to the installation directory (`C:/MTF` by default); add `<installation_folder>/bin` to `Path` environment variable to be able to run the executables from any location;
+    
 The make system might be used by developers/contributors as it can potentially offer a finer level of control. Note, however, that it is not tested as well as the cmake system so is not guaranteed to work in all configurations or be up to date with the latest changes.
-	
+    
 <a id="advance_d_"></a>
 ## Advanced  
 
@@ -229,16 +229,16 @@ Following are commands and switches for both make and cmake systems to customize
 * `make` or `make mtf` : compiles the shared library (_libmtf.so_) to the build directory (_Build/Release_)
 * `make install` : compiles the shared library if needed and copies it to _/usr/local/lib_; also copies the headers to _/usr/local/include_; (use `make install_lib` or `make install_header` for only one of the two); if third party trackers are enabled, their respective library files will be installed too;
     - this needs administrative (sudo) privilege; if not available, the variable `MTF_INSTALL_DIR` in the makefile can be modified to install elsewhere. This can be done either by editing the file itself or providing it with the make/cmake command as:  
-	`make install MTF_INSTALL_DIR=<installation_dir>`  
-	`cmake .. -D MTF_INSTALL_DIR=<installation_dir>`
-	    - the `lib` and `include` sub folders within this folder should be present in LD_LIBRARY_PATH and C_INCLUDE_PATH/CPLUS_INCLUDE_PATH environment variables respectively so any application using MTF can find the library and headers.
-	     
+    `make install MTF_INSTALL_DIR=<installation_dir>`  
+    `cmake .. -D MTF_INSTALL_DIR=<installation_dir>`
+        - the `lib` and `include` sub folders within this folder should be present in LD_LIBRARY_PATH and C_INCLUDE_PATH/CPLUS_INCLUDE_PATH environment variables respectively so any application using MTF can find the library and headers.
+         
 <a id="example_s_"></a>
 #### Examples
 
 * `make exe`/`make install_exe` : compile/install the main example file _Examples/cpp/runMTF.cc_ to create an executable called `runMTF` that uses this library to track objects. 
     - library should be installed before running this, otherwise linking will not succeed
-	- installation folder is _/usr/local/bin_ by default; this needs administrative privilege too - change `MTF_INSTALL_DIR` as above if this is not available
+    - installation folder is _/usr/local/bin_ by default; this needs administrative privilege too - change `MTF_INSTALL_DIR` as above if this is not available
 * `make mtfi` : all of the above
 * `make uav`/`make install_uav` : compile/install an application called `trackUAVTrajectory` that tracks the trajectory of a UAV in a satellite image of the area over which it flew while capturing images from above
 * `make mos`/`make install_mos` : compile/install an application called `createMosaic` that constructs a live mosaic from a video of the region to be stitched
@@ -274,8 +274,8 @@ Its usage is demonstrated in the ReadMe in _Examples_ folder.
 - usage of this module is demonstrated in _Examples/matlab/runMTF.m_ (_runMTF2.m_) and function specification is in the ReadMe in the _Examples_ folder
 -  installation location can be specified through `MTF_MEX_INSTALL_DIR` in _Examples.mak/cmake_ (defaults to _<MATLAB_DIR>/toolbox/local_) 
 - if CMake is being used under Unix, the restriction of matching build target and MATLAB installation type mentioned in the Windows installation section applies here too; however, it is possible to compile `mexMTF` in Unix even if MATLAB is not detected by CMake by running the command written to a file called `mtf_mex_cmd.txt` in the build folder;
-	- the command can be run at the MATLAB prompt or even at the terminal if the location of the `mex` executable is present in the `PATH` environment variable;
-	- a few changes need to be made to it first as detailed in the CMake message;
+    - the command can be run at the MATLAB prompt or even at the terminal if the location of the `mex` executable is present in the `PATH` environment variable;
+    - a few changes need to be made to it first as detailed in the CMake message;
 - _mexMTF2_ needs ViSP to be installed and enabled during compilation for its interactive operations
 
 <a id="compile_time_switches_"></a>
@@ -298,9 +298,9 @@ These apply to all of the above commands and the equivalent cmake options, where
 - `lt=0`(`WITH_THIRD_PARTY=OFF`) will disable the third party open source learning based trackers - [DSST](http://www.cvl.isy.liu.se/en/research/objrec/visualtracking/scalvistrack/index.html), [KCF](http://home.isr.uc.pt/~henriques/circulant/), [CMT](http://www.gnebehay.com/cmt/), [TLD](http://www.gnebehay.com/tld/), [RCT](http://www4.comp.polyu.edu.hk/~cslzhang/CT/CT.htm), [MIL](http://vision.ucsd.edu/~bbabenko/project_miltrack.html), [Struck](http://www.samhare.net/research/struck), [FragTrack](http://www.cs.technion.ac.il/~amita/fragtrack/fragtrack.htm), [GOTURN](https://github.com/davheld/GOTURN) and [DFT](http://cvlab.epfl.ch/page-107683-en.html) - that are also bundled with this library (in _ThirdParty_ subfolder) (enabled by default except MIL, DFT and GOTURN).
     - several third party trackers that have a CMake build system do not compile under Windows yet and are thus not available;
 - `gtrn=1`(`WITH_GOTURN=ON`) will enable [GOTURN](https://github.com/davheld/GOTURN) deep learning based tracker (disabled by default)
-	- requires [Caffe]((http://caffe.berkeleyvision.org/)) to be installed and configured
-	    * if not installed in `~/caffe/build/install`, specify `CAFFE_INSTALL_DIR` either at compile time or by editing `ThirdParty/GOTURN/GOTURN.mak`
-	- optional data for use with it is available [here](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_data.zip) - this should be extracted inside the MTF root folder before running GOTURN
+    - requires [Caffe]((http://caffe.berkeleyvision.org/)) to be installed and configured
+        * if not installed in `~/caffe/build/install`, specify `CAFFE_INSTALL_DIR` either at compile time or by editing `ThirdParty/GOTURN/GOTURN.mak`
+    - optional data for use with it is available [here](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_data.zip) - this should be extracted inside the MTF root folder before running GOTURN
 - `dft=1`(`WITH_DFT=ON`) will enable the [Descriptor Fields Tracker](http://cvlab.epfl.ch/page-107683-en.html) (disabled by default)
     * this is known to have issues with OpenCV 3.x so should not be enabled if that is being used
 - `mil=1`(`WITH_MIL=ON`) will enable the [Multiple Instance Learning tracker](http://vision.ucsd.edu/~bbabenko/project_miltrack.html) (disabled by default)
@@ -312,10 +312,10 @@ These apply to all of the above commands and the equivalent cmake options, where
 - `ver=<version_postfix>` will postfix all compiled library and executable files with the provided postfix so that multiple versions may coexist on the same system without conflict; e.g. `ver=2` will create libmtf_v2.so and runMTF_v2 and same for all libraries created during MTF compilation (including those for third party trackers);
 - `header_only=1` can be used with `make exe` or `make mtfe` to build a stand alone version of _runMTF_ called _runMTFh_ that does not need to link with _libmtf.so_
     * this disables third party trackers automatically as several of those have their own libraries built from within MTF
-	* it will still need to link against external libraries that it uses (like OpenCV, FLANN and boost)
-	* it may take some time (20-30 minutes) to compile as the entire library has to be consolidated into a single executable
-	* this version should be faster in theory as the compiler has access to all code at once and can thus optimize better but tests so far have not found any significant difference in speed from the standard version
-	
+    * it will still need to link against external libraries that it uses (like OpenCV, FLANN and boost)
+    * it may take some time (20-30 minutes) to compile as the entire library has to be consolidated into a single executable
+    * this version should be faster in theory as the compiler has access to all code at once and can thus optimize better but tests so far have not found any significant difference in speed from the standard version
+    
 <a id="clean_up_"></a>
 ### Clean up
 
@@ -339,14 +339,14 @@ This can be resolved using the following steps which are for OpenCV 3.4.1 64 bit
 1. Modify `OpenCVConfig.cmake` to add
 
         elseif(MSVC_VERSION MATCHES "^192[0-9]$")
-		    set(OpenCV_RUNTIME vc16)
+            set(OpenCV_RUNTIME vc16)
         
 right after
 
-	    elseif(MSVC_VERSION EQUAL 1900)
-	      set(OpenCV_RUNTIME vc14)
-	    elseif(MSVC_VERSION MATCHES "^191[0-9]$")
-	      set(OpenCV_RUNTIME vc15)
+        elseif(MSVC_VERSION EQUAL 1900)
+          set(OpenCV_RUNTIME vc14)
+        elseif(MSVC_VERSION MATCHES "^191[0-9]$")
+          set(OpenCV_RUNTIME vc15)
 
  
 2. Move bin, lib and include folders to `x64/vc16/` after creating the same.
@@ -356,15 +356,15 @@ right after
 
 * if an error like `cannot find -l<name of library>` (for instance `cannot find -lhdf5` or `cannot find -lmtf`) occurs at compile time, location of the corresponding library should be added to **LIBRARY_PATH** and **LD_LIBRARY_PATH** environment variables in the **.bashrc** file. 
     * For instance HDF5 installs in _/usr/local/hdf5/lib_ by default so  following commands can be run to add its path there:  
-	`echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc`  
-	`echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc`  
-	Similarly, MTF installs to _/usr/local/lib_ by default so following can be run for it:   
-	`echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc`  
-	`echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc`  
-	* The bashrc file should be reloaded by either restarting the terminal or running `. ~/.bashrc` and compilation should be tried again.
+    `echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc`  
+    `echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/hdf5/lib" >> ~/.bashrc`  
+    Similarly, MTF installs to _/usr/local/lib_ by default so following can be run for it:   
+    `echo "export LIBRARY_PATH=$LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc`  
+    `echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib" >> ~/.bashrc`  
+    * The bashrc file should be reloaded by either restarting the terminal or running `. ~/.bashrc` and compilation should be tried again.
 * similar compile time errors pertaining to missing header files may be encountered in which case the location of the `include` folder of the corresponding library should be added to **C_INCLUDE_PATH** and **CPLUS_INCLUDE_PATH** variables. For instance, following commands can be run for HDF5:  
-	`echo "export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc`  
-	`echo "export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc`  
+    `echo "export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc`  
+    `echo "export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/usr/local/hdf5/include" >> ~/.bashrc`  
 
 * if a compile time error similar to this occurs: `/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h:233:98: error: no matching function for call to ‘Eigen::internal::blas_traits`, please update Eigen to the latest version;
 * if a compile time error similar to this occurs:  
@@ -393,7 +393,7 @@ occurs when the cmake module for one of the dependencies is not configured prope
 `undefined symbol: _ZN3cmt7Matcher10initializeERKSt6vectorIN2cv6Point_IfEESaIS4_EENS2_3MatERKS1_IiSaIiEES9_S4_`  
 suddenly occurs or running `runMTF` causes segmentation fault with no messages **right after installing ROS**, it is probably because MTF is linking with an incorrect version of OpenCV installed by ROS.
     * The only known solution guaranteed to work is to uninstall either the original or the ROS version of OpenCV and then recompile MTF.
-    * Possible ways to have both versions installed and have MTF link with the correct one are suggested [here](https://stackoverflow.com/questions/29479379/opencv-linking-problems-with-ros). These have not been tested with MTF so might not work.	
+    * Possible ways to have both versions installed and have MTF link with the correct one are suggested [here](https://stackoverflow.com/questions/29479379/opencv-linking-problems-with-ros). These have not been tested with MTF so might not work.  
 
 <a id="macintosh_"></a>
 ## Macintosh
@@ -416,8 +416,8 @@ suddenly occurs or running `runMTF` causes segmentation fault with no messages *
 
 * If MTF had earlier been compiled with `only_nt=0` (or `nn=1`) and is recompiled with `only_nt=1` (or `nn=0`) such that the **executable does not get recompiled**, a runtime error of the type: `symbol lookup error: runMTF: undefined symbol:` may occur on running the executable; to resolve this, remove `runMTF` (or whatever executable is causing the error) from the build folder (Build/Release or Build/Debug) by running, for instance `rm Build/Release/runMTF` and recompile; this happens because using `only_nt=1` or `nn=0` turns off part of the code in the library but the executable will continue to expect these to be present till it is recompiled;
 * if compilation is taking too long and optional components are not needed, following cmake/make commands can be used to build a minimal version of MTF with full core functionality:  
-	`cmake .. -DWITH_THIRD_PARTY=OFF -DWITH_TEMPLATED=OFF`  
-	`make mtfall lt=0 nt=1`  
+    `cmake .. -DWITH_THIRD_PARTY=OFF -DWITH_TEMPLATED=OFF`  
+    `make mtfall lt=0 nt=1`  
     * if FLANN based NN is not needed (graph based NN will still be available), `-DWITH_FLANN=OFF`/`nn=0` can be specified too 
     * if feature tracker is not needed, `-DWITH_FEAT=OFF`/`feat=0` can be specified too 
 
@@ -433,7 +433,7 @@ Some **preconfigured cfg files** are provided here to get the system up and runn
     * [live sequence from USB or Firewire camera](http://webdocs.cs.ualberta.ca/~vis/mtf/rkl_esmlm_ncc_10r_25p_usb.zip)
     * [`nl_cereal_s3` sequence from TMT dataset](http://webdocs.cs.ualberta.ca/~vis/mtf/rkl_esmlm_ncc_10r_25p_tmt_3.zip)
 * [Nearest Neighbour](http://www.comp.nus.edu.sg/~haoyu/rss/rss09/p44.html) with 1000 samples followed by [Inverse Compositional](http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=990652&url=http%3A%2F%2Fieeexplore.ieee.org%2Fiel5%2F7768%2F21353%2F00990652.pdf%3Farnumber%3D990652) [Levenberg Marquardt](https://en.wikipedia.org/wiki/Levenberg%E2%80%93Marquardt_algorithm) SM with [Mutual Information](https://www.irisa.fr/lagadic/pdf/2010_ismar_dame.pdf) AM and 8 DOF (homography) SSM 
-    * [live sequence from USB or Firewire camera](http://webdocs.cs.ualberta.ca/~vis/mtf/nniclm_1k_mi_usb.zip)	
+    * [live sequence from USB or Firewire camera](http://webdocs.cs.ualberta.ca/~vis/mtf/nniclm_1k_mi_usb.zip)  
 * [Particle Filter](http://ieeexplore.ieee.org/document/6589599/?tp=&arnumber=6589599) with 500 particles followed by [Forward Compositional](http://link.springer.com/article/10.1023%2FA%3A1008195814169) [Levenberg Marquardt](https://en.wikipedia.org/wiki/Levenberg%E2%80%93Marquardt_algorithm) SM with [Structural Similarity](http://link.springer.com/article/10.1007/s00138-007-0107-x) AM and 8 DOF (homography) SSM 
     * [`towel` sequence from LinTrack dataset](http://webdocs.cs.ualberta.ca/~vis/mtf/pffclm_500_ssim_lintrack_2.zip)
 
@@ -475,7 +475,7 @@ If MTF needs to be used within an existing VS project that was built without usi
 * Right click on one of the executables in MTF solution (e.g. `runMTF`), go to `Properties -> C/C++ -> Preprocessor -> Preprocessor Definitions` and copy all flags there to the same location in your own project.
 
 * Repeat this with `Properties -> Linker -> Input -> Additional Dependencies` to add all required libraries for linking.
-	
+    
 <a id="mak_e_"></a>
 ## make
 
@@ -502,7 +502,7 @@ Use the `make app app=<APPLICATION_NAME>` command as detailed in the make comman
 ### make
 1. Modify the .mak file in the respective sub directory to:
     - add the name of the AM/SSM to the variable `APPEARANCE_MODELS` or `STATE_SPACE_MODELS` respectively
-	- add rule to compile the .o of the new AM/SSM that is dependent on its source and header files - simplest method would be to copy an existing command and change the names of the model.
+    - add rule to compile the .o of the new AM/SSM that is dependent on its source and header files - simplest method would be to copy an existing command and change the names of the model.
 2. Modify makefile to add any extra dependencies that the new files need to include under variable `FLAGS64`
 and extra libraries to link against under `LIB_MTF_LIBS`
 
