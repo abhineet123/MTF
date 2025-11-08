@@ -67,16 +67,17 @@ It utilizes a modular decomposition of trackers in this domain wherein each trac
 <a id="documentation_"></a>
 ## Documentation
 
-Please refer the following documentation for more details:
-- system design paper
-    - [IROS](https://ieeexplore.ieee.org/document/8206227) [[pdf]](Docs/mtf_iros17.pdf)
+Please refer the following documents for more details:
+- [msc thesis](docs/mtf_thesis.pdf)
+- system design papers
+    - [IROS 2017](https://ieeexplore.ieee.org/document/8206227) [[pdf]](Docs/mtf_iros17.pdf)
     - CVIU (draft) [[pdf]](Docs/mtf_cviu.pdf)
+- results papers
+    - [CRV 2016](https://ieeexplore.ieee.org/document/8206227) [[pdf]](Docs/mtf_results_crv16.pdf)
+    - [CRV 2017](https://ieeexplore.ieee.org/document/8206227) [[pdf]](Docs/rsst_crv17.pdf)
+    - [WACV 2017](https://ieeexplore.ieee.org/document/8206227) [[pdf]](Docs/ssim_wacv17.pdf)
 
-[[**cviu**]](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_cviu.pdf)
-[[**iros17**]](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_iros17.pdf)
-for details on the system design, these:
-[[**crv16**]](http://webdocs.cs.ualberta.ca/~vis/mtf/modular_crv16.pdf)[[**wacv17**]](http://webdocs.cs.ualberta.ca/~vis/mtf/ssim_wacv17.pdf)[[**crv17**]](http://webdocs.cs.ualberta.ca/~vis/mtf/rsst_crv17.pdf)
-for some performance results and [**this thesis**](http://webdocs.cs.ualberta.ca/~vis/mtf/mtf_thesis.pdf) for a comprehensive description. There is also a [**dedicated website**](http://webdocs.cs.ualberta.ca/~vis/mtf/) where Doxygen documentation will soon be available along with detailed tutorials and examples. It also provides several datasets formatted to work with MTF.
+There is also a [**dedicated website**](http://webdocs.cs.ualberta.ca/~vis/mtf/) where Doxygen documentation will soon be available along with detailed tutorials and examples. It also provides several datasets formatted to work with MTF.
 
 <a id="implementatio_n_"></a>
 ## Implementation
