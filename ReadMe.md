@@ -68,7 +68,7 @@ It utilizes a modular decomposition of trackers in this domain wherein each trac
 ## Documentation
 
 Please refer the following documentation for more details:
-- [system design paper (IROS)](https://ieeexplore.ieee.org/document/11115031) [[pdf]](Docs/mtf_iros17.pdf)
+- system design paper
     - [(IROS)](https://ieeexplore.ieee.org/document/11115031) [[pdf]](Docs/mtf_iros17.pdf)
     - CVIU draft [[pdf]](Docs/mtf_cviu.pdf)
 
