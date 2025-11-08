@@ -68,7 +68,7 @@ It utilizes a modular decomposition of trackers in this domain wherein each trac
 ## Documentation
 
 Please refer the following documents for more details:
-- [msc thesis](docs/mtf_thesis.pdf)
+- [msc thesis](https://ualberta.scholaris.ca/items/1a0cf295-3a0a-4779-ba54-94a8f74da865) [[pdf]](Docs/mtf_thesis.pdf)
 - system design papers
     - [IROS 2017](https://ieeexplore.ieee.org/document/8206227) [[pdf]](Docs/mtf_iros17.pdf)
     - CVIU (draft) [[pdf]](Docs/mtf_cviu.pdf)
