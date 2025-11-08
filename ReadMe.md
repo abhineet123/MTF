@@ -73,9 +73,9 @@ Please refer the following documents for more details:
     - [IROS 2017](https://ieeexplore.ieee.org/document/8206227) [[pdf]](Docs/mtf_iros17.pdf)
     - CVIU (draft) [[pdf]](Docs/mtf_cviu.pdf)
 - results papers
-    - [CRV 2016](https://ieeexplore.ieee.org/document/8206227) [[pdf]](Docs/mtf_results_crv16.pdf)
-    - [CRV 2017](https://ieeexplore.ieee.org/document/8206227) [[pdf]](Docs/rsst_crv17.pdf)
-    - [WACV 2017](https://ieeexplore.ieee.org/document/8206227) [[pdf]](Docs/ssim_wacv17.pdf)
+    - [CRV 2016](https://ieeexplore.ieee.org/document/7801507) [[pdf]](Docs/mtf_results_crv16.pdf)
+    - [CRV 2017](https://ieeexplore.ieee.org/document/8287712) [[pdf]](Docs/rsst_crv17.pdf)
+    - [WACV 2017](https://ieeexplore.ieee.org/document/7926602) [[pdf]](Docs/ssim_wacv17.pdf)
 
 There is also a [**dedicated website**](http://webdocs.cs.ualberta.ca/~vis/mtf/) where Doxygen documentation will soon be available along with detailed tutorials and examples. It also provides several datasets formatted to work with MTF.
 
