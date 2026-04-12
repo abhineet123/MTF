@@ -2,5 +2,6 @@
 html/
 latex/
 !*.pdf
+!*.pptx
 !ToDo.md
 !MTF_setup_Ubuntu18_Matlab2018b.md
